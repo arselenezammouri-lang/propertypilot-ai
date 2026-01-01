@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 🎨 PROPERTYCOPY PRO - PREMIUM PALETTE LIGHT MODE */
+    
+    /* Primary Brand Colors */
+    --luxury-indigo: 267 22% 24%;        /* #3B2F4A - Navbar, Sidebar, Dominante */
+    --royal-purple: 262 100% 61%;        /* #6E3AFF - Pulsanti primari, Highlights */
+    --electric-blue: 206 100% 65%;       /* #4DA8FF - Icone, Bordi, Glowing */
+    --pearl-white: 215 33% 97%;          /* #F5F7FA - Background sezioni */
+    --carbon-black: 240 4% 10%;          /* #1A1A1C - Titoli, Testo forte */
+    
+    /* Secondary Accent Colors */
+    --neon-aqua: 166 91% 63%;            /* #4BF7D3 - Animazioni, AI Glow */
+    --sunset-gold: 42 100% 70%;          /* #FFD166 - Badge Premium, Prezzi */
+    --silver-frost: 216 31% 89%;         /* #D9DFEC - Divider, Bordi eleganti */
+    
+    /* Semantic Token Mapping */
+    --background: var(--pearl-white);
+    --foreground: var(--carbon-black);
+    --card: 0 0% 100%;
+    --card-foreground: var(--carbon-black);
+    --popover: 0 0% 100%;
+    --popover-foreground: var(--carbon-black);
+    --primary: var(--royal-purple);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--electric-blue);
+    --secondary-foreground: 0 0% 100%;
+    --muted: var(--silver-frost);
+    --muted-foreground: 240 4% 46%;
+    --accent: var(--neon-aqua);
+    --accent-foreground: var(--carbon-black);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: var(--silver-frost);
+    --input: var(--silver-frost);
+    --ring: var(--royal-purple);
+    --radius: 1rem;
+    --gold: var(--sunset-gold);
+    
+    /* 🌈 Premium Gradients */
+    --gradient-ai-aurora: linear-gradient(135deg, hsl(262 100% 61%) 0%, hsl(206 100% 65%) 100%);
+    --gradient-luxury-gold: linear-gradient(135deg, hsl(42 100% 70%) 0%, hsl(38 100% 64%) 100%);
+    --gradient-cyber-glow: linear-gradient(135deg, hsl(166 91% 63%) 0%, hsl(206 100% 65%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(215 33% 97%) 0%, hsl(0 0% 100%) 100%);
+  }
+
+  .dark {
+    /* 🌙 PROPERTYCOPY PRO - PREMIUM PALETTE DARK MODE */
+    
+    /* Primary Brand Colors (Dark Mode Optimized) */
+    --luxury-indigo: 267 22% 24%;        /* Base scura dominante */
+    --royal-purple: 262 100% 68%;        /* Più luminoso per dark */
+    --electric-blue: 206 100% 70%;       /* Più luminoso per dark */
+    --pearl-white: 215 33% 97%;          /* Invariato */
+    --carbon-black: 240 4% 10%;          /* Background principale dark */
+    
+    /* Secondary Accent Colors */
+    --neon-aqua: 166 91% 70%;            /* Più luminoso per dark */
+    --sunset-gold: 42 100% 75%;          /* Più luminoso per dark */
+    --silver-frost: 216 31% 25%;         /* Scuro per dark mode */
+    
+    /* Semantic Token Mapping - Dark Mode */
+    --background: var(--carbon-black);
+    --foreground: var(--pearl-white);
+    --card: 267 22% 16%;
+    --card-foreground: var(--pearl-white);
+    --popover: 267 22% 16%;
+    --popover-foreground: var(--pearl-white);
+    --primary: var(--royal-purple);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--electric-blue);
+    --secondary-foreground: 0 0% 100%;
+    --muted: var(--silver-frost);
+    --muted-foreground: 215 20% 65%;
+    --accent: var(--neon-aqua);
+    --accent-foreground: var(--carbon-black);
+    --destructive: 0 62.8% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: var(--silver-frost);
+    --input: var(--silver-frost);
+    --ring: var(--royal-purple);
+    --gold: var(--sunset-gold);
+    
+    /* 🌈 Premium Gradients - Dark Mode */
+    --gradient-ai-aurora: linear-gradient(135deg, hsl(262 100% 68%) 0%, hsl(206 100% 70%) 100%);
+    --gradient-luxury-gold: linear-gradient(135deg, hsl(42 100% 75%) 0%, hsl(38 100% 68%) 100%);
+    --gradient-cyber-glow: linear-gradient(135deg, hsl(166 91% 70%) 0%, hsl(206 100% 70%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(240 4% 10%) 0%, hsl(267 22% 16%) 100%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* 💎 Premium Card with Glow Effect */
+  .premium-card {
+    @apply bg-card border border-border/50 rounded-2xl shadow-lg transition-all duration-300 
+           hover:shadow-2xl hover:scale-[1.02] hover:border-primary/50 hover:shadow-primary/20;
+  }
+  
+  /* ✨ Futuristic Card with Glassmorphism */
+  .futuristic-card {
+    @apply bg-card/80 backdrop-blur-xl border border-primary/20 rounded-2xl shadow-lg 
+           transition-all duration-300 hover:border-primary/40 hover:shadow-primary/30;
+  }
+  
+  /* 🎨 Gradient Text - AI Aurora */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+  
+  /* 🟣 Royal Purple Gradient Text */
+  .gradient-text-purple {
+    background: var(--gradient-ai-aurora);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* 🟡 Gold Gradient Text */
+  .gradient-text-gold {
+    background: var(--gradient-luxury-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* 🔮 Glass Morphism Effect */
+  .glass {
+    @apply bg-background/60 backdrop-blur-2xl border border-border/30;
+  }
+  
+  /* ⚡ Neon Glow Button */
+  .neon-button {
+    @apply bg-gradient-to-r from-primary to-secondary text-primary-foreground 
+           rounded-xl px-6 py-3 font-semibold transition-all duration-300
+           hover:shadow-lg hover:shadow-primary/50 hover:scale-105
+           active:scale-95;
+  }
+  
+  /* 🌟 Premium Badge */
+  .premium-badge {
+    background: var(--gradient-luxury-gold);
+    @apply text-carbon-black px-3 py-1 rounded-full text-xs font-bold 
+           shadow-md hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  /* 💫 AI Badge with Glow */
+  .ai-badge {
+    @apply bg-gradient-to-r from-accent to-secondary text-white px-3 py-1 
+           rounded-full text-xs font-bold animate-pulse-glow;
+  }
+  
+  /* 🎯 Hover Lift Effect */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+}
+
+@layer utilities {
+  /* 🎬 Custom Animations */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fade-in-down {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--neon-aqua) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--neon-aqua) / 0.8);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes rotate-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Animation Classes */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
+  }
+  
+  .animate-fade-in-down {
+    animation: fade-in-down 0.8s ease-out;
+  }
+  
+  .animate-slide-in-left {
+    animation: slide-in-left 0.8s ease-out;
+  }
+  
+  .animate-slide-in-right {
+    animation: slide-in-right 0.8s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.6s ease-out;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-rotate-slow {
+    animation: rotate-slow 20s linear infinite;
+  }
+  
+  /* Animated Gradient for Headlines */
+  @keyframes gradient-x {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .animate-gradient-x {
+    animation: gradient-x 4s ease infinite;
+  }
+  
+  /* Stagger Animation Delays */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+  .delay-800 { animation-delay: 800ms; }
+  
+  /* Custom Utility Classes */
+  .text-luxury-indigo { color: hsl(var(--luxury-indigo)); }
+  .text-royal-purple { color: hsl(var(--royal-purple)); }
+  .text-electric-blue { color: hsl(var(--electric-blue)); }
+  .text-neon-aqua { color: hsl(var(--neon-aqua)); }
+  .text-sunset-gold { color: hsl(var(--sunset-gold)); }
+  .text-carbon-black { color: hsl(var(--carbon-black)); }
+  
+  .bg-luxury-indigo { background-color: hsl(var(--luxury-indigo)); }
+  .bg-royal-purple { background-color: hsl(var(--royal-purple)); }
+  .bg-electric-blue { background-color: hsl(var(--electric-blue)); }
+  .bg-neon-aqua { background-color: hsl(var(--neon-aqua)); }
+  .bg-sunset-gold { background-color: hsl(var(--sunset-gold)); }
+  
+  .border-royal-purple { border-color: hsl(var(--royal-purple)); }
+  .border-electric-blue { border-color: hsl(var(--electric-blue)); }
+  .border-neon-aqua { border-color: hsl(var(--neon-aqua)); }
+  
+  /* Gradient Backgrounds */
+  .bg-gradient-ai-aurora {
+    background: var(--gradient-ai-aurora);
+  }
+  
+  .bg-gradient-luxury-gold {
+    background: var(--gradient-luxury-gold);
+  }
+  
+  .bg-gradient-cyber-glow {
+    background: var(--gradient-cyber-glow);
+  }
+  
+  /* Shadow Effects */
+  .shadow-glow-purple {
+    box-shadow: 0 0 30px hsl(var(--royal-purple) / 0.3);
+  }
+  
+  .shadow-glow-blue {
+    box-shadow: 0 0 30px hsl(var(--electric-blue) / 0.3);
+  }
+  
+  .shadow-glow-aqua {
+    box-shadow: 0 0 30px hsl(var(--neon-aqua) / 0.3);
+  }
+  
+  .shadow-glow-gold {
+    box-shadow: 0 0 30px hsl(var(--sunset-gold) / 0.3);
+  }
+}

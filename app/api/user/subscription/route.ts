@@ -1,0 +1,211 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { requireStripe } from '@/lib/stripe/config';
+import { createClient as createAdminClient } from '@supabase/supabase-js';
+
+export const dynamic = "force-dynamic";
+
+const supabaseAdmin = createAdminClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
+);
+
+const PAID_STATUSES = ['starter', 'pro', 'agency'];
+
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { data: subscription, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[GET SUBSCRIPTION] Error:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch subscription' },
+        { status: 500 }
+      );
+    }
+
+    if (!subscription) {
+      const { data: newSubscription, error: insertError} = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          status: 'free',
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('[CREATE SUBSCRIPTION] Error:', insertError);
+        return NextResponse.json(
+          { error: 'Failed to create subscription' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...newSubscription,
+          cancel_at_period_end: false,
+          stripe_verified: false,
+        },
+      });
+    }
+
+    if (PAID_STATUSES.includes(subscription.status) && subscription.stripe_subscription_id) {
+      try {
+        const stripe = requireStripe();
+        const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripe_subscription_id);
+        
+        const isActive = stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing';
+        
+        if (!isActive) {
+          console.log(`[SUBSCRIPTION SYNC] User ${user.id} has ${subscription.status} in DB but Stripe status is ${stripeSubscription.status}. Downgrading to free.`);
+          
+          const { error: updateError } = await supabaseAdmin
+            .from('subscriptions')
+            .update({
+              status: 'free',
+              updated_at: new Date().toISOString(),
+            })
+            .eq('user_id', user.id);
+
+          if (updateError) {
+            console.error('[SUBSCRIPTION SYNC] Failed to downgrade:', updateError);
+          }
+
+          return NextResponse.json({
+            success: true,
+            data: {
+              ...subscription,
+              status: 'free',
+              cancel_at_period_end: false,
+              stripe_verified: true,
+              stripe_status: stripeSubscription.status,
+              sync_action: 'downgraded_inactive',
+            },
+          });
+        }
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            ...subscription,
+            cancel_at_period_end: subscription.cancel_at_period_end ?? stripeSubscription.cancel_at_period_end,
+            stripe_verified: true,
+            stripe_status: stripeSubscription.status,
+          },
+        });
+      } catch (stripeError: any) {
+        if (stripeError.code === 'resource_missing') {
+          console.log(`[SUBSCRIPTION SYNC] User ${user.id} has stripe_subscription_id ${subscription.stripe_subscription_id} but it doesn't exist in Stripe. Downgrading to free.`);
+          
+          const { error: updateError } = await supabaseAdmin
+            .from('subscriptions')
+            .update({
+              status: 'free',
+              stripe_subscription_id: null,
+              price_id: null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('user_id', user.id);
+
+          if (updateError) {
+            console.error('[SUBSCRIPTION SYNC] Failed to clean up invalid subscription:', updateError);
+          }
+
+          return NextResponse.json({
+            success: true,
+            data: {
+              ...subscription,
+              status: 'free',
+              stripe_subscription_id: null,
+              cancel_at_period_end: false,
+              stripe_verified: true,
+              sync_action: 'cleaned_invalid_subscription',
+            },
+          });
+        }
+        
+        console.error('[SUBSCRIPTION VERIFY] Stripe error:', stripeError.message);
+        return NextResponse.json({
+          success: true,
+          data: {
+            ...subscription,
+            cancel_at_period_end: subscription.cancel_at_period_end ?? false,
+            stripe_verified: false,
+            stripe_error: stripeError.message,
+          },
+        });
+      }
+    }
+
+    if (PAID_STATUSES.includes(subscription.status) && !subscription.stripe_subscription_id) {
+      console.log(`[SUBSCRIPTION SYNC] User ${user.id} has ${subscription.status} status but NO stripe_subscription_id. Downgrading to free.`);
+      
+      const { error: updateError } = await supabaseAdmin
+        .from('subscriptions')
+        .update({
+          status: 'free',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (updateError) {
+        console.error('[SUBSCRIPTION SYNC] Failed to downgrade orphan subscription:', updateError);
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...subscription,
+          status: 'free',
+          cancel_at_period_end: false,
+          stripe_verified: true,
+          sync_action: 'downgraded_no_stripe_id',
+        },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...subscription,
+        cancel_at_period_end: subscription.cancel_at_period_end ?? false,
+        stripe_verified: subscription.status === 'free',
+      },
+    });
+
+  } catch (error: any) {
+    console.error('[USER SUBSCRIPTION API] Error:', error);
+    
+    return NextResponse.json(
+      { 
+        error: 'Internal server error',
+        message: error.message || 'Si è verificato un errore.'
+      },
+      { status: 500 }
+    );
+  }
+}

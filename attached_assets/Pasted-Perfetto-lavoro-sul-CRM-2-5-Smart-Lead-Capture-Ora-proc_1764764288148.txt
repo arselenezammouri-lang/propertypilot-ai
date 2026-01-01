@@ -1,0 +1,84 @@
+Perfetto lavoro sul CRM 2.5 — Smart Lead Capture.
+
+Ora procediamo con la prossima fase del nostro piano operativo: **CRM 3.0 – Automation Center + Lead Routing**.
+
+Ecco le specifiche tecniche e funzionali:
+
+---------------------------------------
+FASE SUCCESSIVA: CRM 3.0 — Automation Center
+---------------------------------------
+
+🎯 OBIETTIVO:
+Costruire un pannello centralizzato dove l’utente può:
+- creare automazioni avanzate
+- definire condizioni (es. “se lead_score > 70 → sposta in Follow-up”)
+- attivare follow-up automatici
+- creare regole di routing (es. assegnare lead a agenti diversi)
+- attivare notifiche email/sms automatiche
+- attivare sequenze drip (1-3-7 giorni)
+
+---------------------------------------
+COMPONENTI DA COSTRUIRE
+---------------------------------------
+
+1️⃣ **Nuova Tabella Supabase: automations_rules**
+- id UUID
+- user_id TEXT
+- trigger_type TEXT  ("new_lead", "score_updated", "status_changed")
+- condition JSONB     (es. { "score": { "gt": 70 } })
+- action JSONB        (es. { "move_to": "followup" } )
+- active BOOLEAN
+- created_at
+- updated_at
+
+2️⃣ **Tabella automations_assignments**
+Per routing automatico:
+- id UUID
+- user_id TEXT
+- lead_id UUID
+- assigned_to TEXT
+- rule_id UUID
+- created_at
+
+3️⃣ **Endpoint API CRUD**
+/api/automations/rules
+- Create rule
+- Update rule
+- Delete rule
+- List rules
+
+/api/automations/execute-rule
+- Trigger automation
+- Apply routing
+- Apply status updates
+- Apply follow-up email automation
+
+4️⃣ **UI: Automation Center**
+Nuova pagina:
+👉 /dashboard/crm/automations
+
+Funzionalità UI:
+- Elenco regole
+- Pulsante “Crea nuova automazione”
+- Editor grafico con:
+  • TRIGGER (dropdown)
+  • CONDIZIONE (builder interattivo)
+  • AZIONE (selezione multipla)
+- Toggle ON/OFF
+- Log esecuzioni
+
+5️⃣ **Integrazione con Pipeline + Lead Detail**
+- Quando una regola scatta → UI aggiorna automaticamente
+- Badge “⚡ Automazione applicata”
+- Log visibile nella pagina del lead
+
+---------------------------------------
+PRIORITÀ
+---------------------------------------
+1. Creazione tabelle + tipi TypeScript
+2. CRUD API per automazioni
+3. Funzione server che valuta condizioni e applica azioni
+4. UI Automation Center
+5. Integrazione con Lead Pipeline + Lead Detail
+
+Possiamo procedere.

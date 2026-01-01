@@ -1,0 +1,120 @@
+Ciao! Ho bisogno del vostro aiuto tecnico per impostare il piano operativo del mio SaaS nei prossimi 90 giorni. Voglio garantirne stabilità, scalabilità e crescita veloce.
+
+📌 PRODOTTO:
+PropertyCopyPro — un SaaS AI verticale per agenti immobiliari.
+Funzioni attuali MVP:
+
+Generazione copy annunci immobiliari
+
+Ottimizzazione SEO
+
+Formattazione professionale
+
+Abbonamenti Stripe (Pro/Business)
+
+Import dati da link (Idealista/Immobiliare)
+
+Dashboard base
+
+Login / registrazione
+
+Deploy funzionante su Replit
+
+🎯 OBIETTIVO BUSINESS (90 giorni):
+Arrivare a un flusso di 3.000–5.000 €/settimana combinando:
+
+SaaS ricorrente (29€ / 79€)
+
+Pacchetti high-ticket Italia (297€, 497€, 997€)
+
+Pacchetti high-ticket USA (997€, 1497€)
+
+Il modello è:
+SaaS + servizi premium alimentati dal SaaS (AI-assisted Real Estate Marketing).
+
+📌 ROADMAP 90 GIORNI (alta priorità)
+🟦 MESE 1 — Stabilità & vendite iniziali
+
+MVP stabile al 100%
+
+Nessun errore 500/timeout
+
+Test intensivi (10–20 generazioni di fila)
+
+Stripe abbonamenti + Stripe pagamenti one-shot
+
+Deploy continuo e affidabile
+
+5 funzioni micro-miglioramenti (layout, tonalità, score annuncio)
+
+🎯 Obiettivo:
+10 clienti SaaS
+5 pacchetti da 297€
+
+🟦 MESE 2 — High-ticket Italia
+
+Ottimizzazione performance Replit
+
+Miglioramento flusso UX
+
+Aggiunta 2–3 funzioni ad alto valore
+
+Preparazione per traffico da ads FB/IG
+
+Protezione scraping o alternative sicure
+
+🎯 Obiettivo:
+20 clienti SaaS
+8 pacchetti da 497€
+3 pacchetti da 997€
+
+🟦 MESE 3 — Scaling + USA
+
+Preparazione versione inglese
+
+Ottimizzazione backend per carichi più alti
+
+Preparazione API
+
+Test intensivi scalabilità
+
+Aggiunta funzioni premium (white-label, tone presets, social pack)
+
+🎯 Obiettivo:
+40 clienti SaaS
+10 pacchetti Italia/USA
+2 pacchetti premium high-ticket
+
+📌 COSA MI SERVE ORA DAL TEAM REPLIT / SUPPORTO AI:
+
+Valutazione tecnica del progetto:
+quali punti critici potrebbero impedire scale-up in 90 giorni?
+
+Consigli per massimizzare la stabilità del deploy Replit
+(runtime, keepalive, best practice, error handling).
+
+Ottimizzazione performance AI:
+prompt, caching, riduzione costi, batching, retry logic.
+
+Suggerimenti per strutturare i pagamenti Stripe:
+
+piani ricorrenti
+
+pagamenti una tantum (297–1497€)
+
+evitare errori nel webhook
+
+Come preparare il progetto per supportare traffico da Italia & USA
+senza downtime.
+
+Eventuali miglioramenti al database e struttura del codice
+per i prossimi mesi (scalabilità).
+
+Best practice per errori 500, timeouts, rate limits
+quando il numero di utenti aumenta.
+
+In pratica:
+Sto costruendo un SaaS che deve essere veloce, stabile e pronto a scalare.
+Vorrei un vostro feedback tecnico su come impostarlo al meglio dentro Replit per sostenere crescita, traffico e vendite high-ticket.
+
+Grazie!

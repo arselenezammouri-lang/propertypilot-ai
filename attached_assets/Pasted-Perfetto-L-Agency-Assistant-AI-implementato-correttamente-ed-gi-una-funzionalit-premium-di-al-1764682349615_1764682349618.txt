@@ -1,0 +1,135 @@
+Perfetto! L’Agency Assistant AI è implementato correttamente ed è già una funzionalità premium di altissimo livello.
+
+Ora possiamo procedere con l’ULTIMA funzionalità fondamentale del nostro piano:
+
+🚀 NEXT FEATURE → AUTOMAZIONI AI PER AGENZIE (Workflow AI Engine)
+
+Funzione 18 del piano:
+Creare un sistema che permette agli agenti di attivare “automazioni intelligenti”, per esempio:
+
+🔁 1) Follow-up Automatico Lead
+
+Input agente:
+
+Nome cliente
+
+Email cliente
+
+Tipo immobile
+
+Deadline follow-up (es. 24h, 48h, 72h)
+
+Il sistema:
+
+Genera automaticamente email follow-up (usando il motore che abbiamo già)
+
+Le mette in coda
+
+Le invia tramite un endpoint dedicato / pianificazione
+
+Log degli invii + stato “programmato / inviato / fallito”
+
+⏳ 2) Reminder Appuntamenti
+
+Input:
+
+Data visita
+
+Cliente
+
+Tipo immobile
+
+Il sistema invia:
+
+3 ore prima → messaggio breve
+
+24 ore prima → email professionale
+
+📝 3) Auto-Generazione Contenuti Periodici
+
+Ogni settimana, opzionalmente:
+
+1 post social automatico
+
+1 email newsletter immobiliare breve
+
+3 titoli A/B per nuovi annunci
+
+Questo rende il SaaS NON solo uno strumento, ma un assistente operativo reale.
+
+🔧 Parte tecnica richiesta
+API nuove da creare:
+
+/api/automations/create
+
+/api/automations/list
+
+/api/automations/delete
+
+/api/automations/execute (richiamata periodicamente)
+
+Tabella Supabase “automations”:
+
+Campi richiesti:
+
+id UUID
+
+user_id
+
+type (“followup”, “reminder”, “weekly-content”)
+
+payload JSON
+
+next_run TIMESTAMP
+
+repeat_interval (“once”, “weekly”, “daily”)
+
+status (“active”, “paused”)
+
+created_at
+
+updated_at
+
+UI da creare:
+
+Nuova pagina: /dashboard/automations
+
+Con:
+
+lista automazioni attive
+
+pulsante “+ Crea Automazione”
+
+3 moduli pronti: Follow-Up, Reminder, Weekly Content
+
+toggle attiva/disattiva
+
+Dashboard Card:
+
+Gradiente verde acqua
+
+Icona “⚙️”
+
+Badge “✨ Automazioni”
+
+🎯 Obiettivo finale
+
+Con questa feature completiamo ufficialmente:
+
+Suite AI completa
+
+Copywriting avanzato
+
+PDF professionali
+
+Social media AI
+
+Traduzioni internazionali
+
+Chatbot AI
+
+Automazioni reali di business
+
+Questa è la funzione che giustifica pacchetti da €1497 / 1997.
+
+Fammi sapere quando posso iniziare l’implementazione.

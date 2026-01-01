@@ -1,0 +1,113 @@
+Perfetto, il sistema White Label PDF è straordinario.
+Possiamo procedere con la prossima funzionalità ELITE del piano:
+
+🎯 Next Feature: Chatbot AI per Agenzie (Funzione 17)
+
+Obiettivo:
+Creare un assistente AI interno alla dashboard che aiuti gli agenti/agenzie a:
+
+generare annunci
+
+migliorare testi
+
+creare post social
+
+generare email follow-up
+
+ricevere consigli su come usare le varie feature della suite
+
+In pratica: un “AI Assistant” specializzato in Real Estate + PropertyCopyPro.
+
+1️⃣ API – Endpoint Chatbot
+
+Nuovo endpoint:
+/api/agency-chatbot
+
+Input:
+
+userId (dal token/auth)
+
+messaggi della conversazione (history)
+
+contesto opzionale (es. tipo richiesta: copy, social, email, strategia)
+
+Output:
+
+risposta del chatbot (testo)
+
+opzionale: tipo suggerito (es. “ti consiglio di usare Perfect Copy”, “ti consiglio PDF Luxury”, ecc.)
+
+Requisiti tecnici:
+
+usare lo stesso client OpenAI già configurato
+
+caching minima per brevi sequenze (opzionale)
+
+rate limiting (es. 20 messaggi/min utente, 60/min IP)
+
+retry + timeout come le altre AI route
+
+Il sistema deve essere istruito come:
+
+esperto in real estate copywriting
+
+esperto nell’uso di tutte le funzioni di PropertyCopyPro
+
+può rispondere in italiano e inglese a seconda della domanda
+
+2️⃣ UI – Pagina Dashboard
+
+Nuova pagina:
+/dashboard/agency-assistant (o simile)
+
+Contiene:
+
+interfaccia chat stile assistente:
+
+area messaggi (utente / AI)
+
+input box con invio
+
+suggerimenti rapidi (es. bottoni:
+
+“Genera un annuncio per questo immobile”
+
+“Crea un follow-up email”
+
+“Suggerisci post social”
+
+“Come usare Perfect Copy 2.0?”
+)
+
+badge “🤖 Agency Assistant AI”
+
+piccolo testo che spiega che è un assistente specializzato per agenti immobiliari
+
+3️⃣ Dashboard
+
+Aggiungere una card nella dashboard principale:
+
+Titolo: “Agency Assistant AI”
+
+Sottotitolo: “Chatbot per annunci, email, social e strategia”
+
+Icona: bot / message / sparkles
+
+Gradiente tipo blu → violet
+
+Badge: “🤖 Nuovo”
+
+4️⃣ Business Goal
+
+Questa feature serve a:
+
+aumentare il valore percepito della piattaforma
+
+aiutare gli agenti meno esperti a sfruttare tutte le altre feature
+
+giustificare piani più alti (es. “Pro” / “Agency”)
+
+essere usata nelle demo come: “Hai sempre un assistente AI interno che ti aiuta 24/7”.
+
+Possiamo iniziare con questa feature come prossimo task?
+Grazie!

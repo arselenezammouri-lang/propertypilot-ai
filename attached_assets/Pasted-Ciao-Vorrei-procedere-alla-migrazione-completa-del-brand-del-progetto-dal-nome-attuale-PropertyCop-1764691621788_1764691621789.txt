@@ -1,0 +1,73 @@
+Ciao! Vorrei procedere alla migrazione completa del brand del progetto dal nome attuale “PropertyCopy Pro” al nuovo nome ufficiale “Propilot AI”.
+Ecco tutto ciò che serve aggiornare in modo sistematico:
+
+1️⃣ Aggiornamenti di UI/Frontend
+
+Per favore aggiornate:
+
+Branding generale
+
+Sostituire ovunque “PropertyCopy Pro” → “Propilot AI”
+
+Aggiornare logo/placeholder brand (anche temporaneo se serve)
+
+Aggiornare header, footer, menu, dashboard, titoli pagine
+
+Homepage
+
+Aggiornare titolo principale e sottotitolo in:
+“PROPILOT AI — Pilot Your Agency to the Next Level”
+
+Dashboard
+
+Aggiornare nome e slogan nella sidebar/topbar
+
+Aggiornare favicon e title browser
+
+2️⃣ Aggiornamenti Tecnici
+Meta & SEO
+
+Aggiornare meta-title, meta-description e og tags al nuovo brand
+
+Aggiornare replit.md e documentazione interna con il nome nuovo
+
+Aggiornare eventuali riferimenti nelle API response o naming interni (solo se necessario)
+
+Ambientazione generale
+
+Verificare se ci sono variabili env, costanti, path o testi statici che contengono il vecchio nome.
+Se presenti, aggiornarli a “propilot” o “propilot_ai”.
+
+3️⃣ Aggiornamenti PDF & Template
+
+Nei generatori PDF e nella UI:
+
+Sostituire header/footer brand da PropertyCopy Pro → Propilot AI
+
+Aggiornare colori primari se necessario (preferibile palette blu-navy + turchese)
+
+Aggiornare watermark, badge, etichette di branding
+
+4️⃣ Aggiornamenti nelle Email/Automazioni
+
+Aggiornare nome della piattaforma nelle automazioni AI
+
+Aggiornare firma email predefinita → “Propilot AI”
+
+5️⃣ Verifiche Finali
+
+Controllo generale post-migrazione
+
+Test pagina pubblica, login e tutte le dashboard card
+
+Verifica che il branding agency white-label continui a funzionare senza conflitti
+
+Test generazione PDF con il nuovo brand di default
+
+Obiettivo della migrazione
+
+Portare tutto il progetto nella sua nuova identità premium “PROPILOT AI”, mantenendo stabile e intatto l’intero sistema funzionale già sviluppato.
+
+📌 In caso di dubbio su qualche file o naming, potete chiedermi prima del cambiamento.
+
+Grazie mille! Procediamo 💙

@@ -1,0 +1,92 @@
+🔁 CORREZIONE PIANI – QUESTA È LA VERSIONE GIUSTA
+
+Il messaggio precedente sui piani era sbagliato, ti chiedo di ignorarlo.
+
+✅ I piani ufficiali da usare per il SaaS sono ESATTAMENTE quelli che vedi ora nella pagina che ti ho mostrato nello screenshot:
+
+1. Starter – 97€/mese (subscription)
+
+Prezzo: €97 / mese
+
+Testo breve: “AI listing tools for solo agents”
+
+Vantaggi (in bullet):
+
+Strumenti AI di base per annunci
+
+Per singoli agenti
+
+Accesso alle funzioni core di generazione annunci
+
+2. Pro – 297€/mese (subscription)
+
+Prezzo: €297 / mese
+
+Testo breve: “CRM, automations & AI tools”
+
+Vantaggi (in bullet):
+
+Tutte le funzionalità Starter
+
+CRM e automazioni
+
+Strumenti AI avanzati per agenzie
+
+3. Agency – 497€/mese (subscription)
+
+Prezzo: €497 / mese
+
+Testo breve: “For teams up to 10 agents”
+
+Vantaggi (in bullet):
+
+Tutte le funzionalità Pro
+
+Pensato per team fino a 10 agenti
+
+Gestione multi-utente / multi-agenzia
+
+4. Agency Boost – 2.497€ one-time (pacchetto una tantum)
+
+Prezzo: €2.497 una tantum
+
+Testo breve: “Done-for-you setup package”
+
+Vantaggi (in bullet):
+
+Setup completo “done-for-you”
+
+Implementazione e onboarding guidato
+
+Supporto premium per il lancio
+
+🎯 Obiettivo tecnico Stripe
+
+Creare 3 prodotti ricorrenti su Stripe (Starter 97, Pro 297, Agency 497)
+
+Creare 1 prodotto one-time per Agency Boost (2.497€)
+
+Mappare i relativi Price ID in questi secrets:
+
+NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID → Starter 97€/mese
+
+NEXT_PUBLIC_STRIPE_PRO_PRICE_ID → Pro 297€/mese
+
+NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID → Agency 497€/mese
+
+NEXT_PUBLIC_STRIPE_AGENCY_BOOST_PRICE_ID → Agency Boost 2.497€ (one-time)
+
+Assicurarsi che:
+
+i bottoni dei tre piani mensili aprano Stripe Checkout per le relative subscription
+
+il bottone di Agency Boost apra Stripe Checkout con pagamento una tantum
+
+🔥 Pulizia:
+
+Tutti i vecchi prodotti/price Stripe usati nelle versioni precedenti (altri importi, pacchetti Italia/USA, piani con 49€/mese, ecc.)
+👉 vanno considerati legacy e non più collegati all’app.
+
+La UI della pagina Pricing deve mostrare solo questi 4 piani con prezzi e vantaggi coerenti con quanto scritto sopra.
+
+Così abbiamo un solo set di piani, un solo listino chiaro e una integrazione Stripe pulita e pronta per il go-live.

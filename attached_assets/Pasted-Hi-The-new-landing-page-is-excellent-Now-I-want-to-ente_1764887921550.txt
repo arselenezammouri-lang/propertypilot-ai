@@ -1,0 +1,132 @@
+Hi! The new landing page is excellent. Now I want to enter Phase 2: OPTIMIZATION for Global Launch.
+Please complete the following 8 tasks, working ONLY inside app/page.tsx, app/layout.tsx, and /public if needed.
+
+🔧 TASK 1 — Improve Hero Section Visual Impact
+
+Please:
+
+Increase H1 size by +10–15%
+
+Add a subtle animated gradient on the headline (premium SaaS style)
+
+Add a small glow behind the dashboard mockup
+
+Smooth entrance animations (fade-up + slight scale)
+
+Use framer-motion if already available; if not, use minimal CSS animations.
+
+🔧 TASK 2 — Replace Placeholder Logos with Neutral Vector Logos
+
+Add clean, neutral SVG logos in the Social Proof Strip:
+
+Keller Williams
+
+RE/MAX
+
+Century 21
+
+eXp Realty
+
+Coldwell Banker
+
+Immobiliare.it
+
+Idealista
+
+Use simple monochrome SVG icons in /public/logos/ (or inline if easier).
+Do NOT claim real partnership; keep low-opacity.
+
+🔧 TASK 3 — Improve the 3 Pillars Section
+
+For the 3 pillars (“AI Listing Engine”, “CRM & Automation Engine”, “Global & Multi-Language”):
+
+Add subtle background gradients
+
+Add icon animations on hover
+
+Increase spacing on mobile
+
+Add small bullet icons (checkmarks or sparkles)
+
+🔧 TASK 4 — Polish Deep-Dive Sections
+
+For the 3 deep-dive sections:
+
+Add alternating background stripes
+
+Add smooth fade-left / fade-right animations
+
+Make images/screenshots slightly rounded with shadow
+
+Ensure perfect mobile stacking
+
+🔧 TASK 5 — Improve International Section
+
+In the “From Milan to Miami” section:
+
+Add a soft glowing world map silhouette in the background
+
+Add flag emojis as icons next to each bullet
+
+Improve section spacing for desktop
+
+🔧 TASK 6 — Pricing Preview UI Enhancements
+
+Do NOT change pricing or Stripe logic.
+Only improve the preview blocks by:
+
+Adding a soft border
+
+Improving CTA button size
+
+Adding a small highlight to the Pro plan (“Most Popular” badge)
+
+🔧 TASK 7 — Testimonials Upgrade
+
+Please:
+
+Add rounded cards
+
+Add soft gradients (same style as landing)
+
+Add flag icons for each reviewer
+
+Light fade-in animation
+
+Add a 4th testimonial (English, US agent)
+
+Keep everything anonymous (first name only)
+
+🔧 TASK 8 — Final Call to Action Section
+
+Strengthen the final CTA:
+
+Larger headline
+
+Brighter gradient button for Start Free
+
+Add small trust badges:
+
+“No credit card required”
+
+“Cancel anytime”
+
+“Trusted by agents in 12+ countries”
+
+All elements must stay visually consistent with the current brand identity.
+
+🧪 After finishing, please run the following checks:
+
+Home page loads with no layout shifts
+
+All animations run smoothly
+
+Mobile layout tested at <500px
+
+No TypeScript errors
+
+No warnings in console
+
+Then give me a summary of what was changed.
+
+Thanks!

@@ -1,0 +1,109 @@
+Perfetto, procediamo con la prossima funzionalità ELITE:
+
+🎯 Next Feature: White Label Schede PDF per Agenzie (Funzione 16)
+
+Questa feature è fondamentale per vendere pacchetti high-ticket alle agenzie e per preparare il futuro piano “Agency / White Label”.
+
+📌 Obiettivo
+
+Permettere alle agenzie di:
+
+caricare logo e colori del brand
+
+salvare un profilo di branding
+
+generare schede PDF immobili con il loro logo, colori e contatti, invece del brand PropertyCopyPro.
+
+1) Struttura dati / Database
+
+Nuova tabella, ad esempio agency_branding:
+
+id
+
+user_id (owner)
+
+agency_name
+
+logo_url
+
+primary_color
+
+secondary_color
+
+accent_color
+
+contact_name
+
+contact_phone
+
+contact_email
+
+website_url (opzionale)
+
+created_at / updated_at
+
+1 profilo di branding per ora per ogni utente è sufficiente (o multi-brand se è semplice da gestire).
+
+2) API richieste
+
+a) /api/agency-branding
+
+GET: recupera il branding dell’utente
+
+POST/PUT: crea o aggiorna logo + colori + contatti
+
+b) Estensione PDF generator
+Aggiornare /api/generate-pdf per accettare un parametro opzionale:
+
+brandingMode: "default" | "agency"
+
+se "agency":
+
+carica il branding da agency_branding
+
+usa logo, colori e contatti dell’agenzia nel layout
+
+3) UI Dashboard
+
+Nuova pagina: /dashboard/agency-branding
+
+form per:
+
+nome agenzia
+
+upload logo (o URL, a seconda di come è gestito ora)
+
+selezione colori (primary/secondary/accent, es. color picker)
+
+dati contatto (telefono, email, sito)
+
+preview piccola di una scheda PDF con i colori e logo dell’agenzia
+
+pulsante “Salva branding”
+
+Aggiornare la pagina /dashboard/pdf:
+
+aggiungere toggle/switch:
+
+“Usa Branding PropertyCopyPro”
+
+“Usa Branding Agenzia (White Label)”
+
+Quando è selezionato “Branding Agenzia”, il PDF viene generato con:
+
+logo agenzia (nell’header)
+
+colori agenzia
+
+contatti agenzia a piè di pagina
+
+4) Business goal
+
+base per pacchetti Agency (997–1497€)
+
+perfetta per demo a grandi agenzie
+
+elemento chiave di differenziazione rispetto ai competitor
+
+Possiamo iniziare con questa feature come prossimo task?
+Grazie!

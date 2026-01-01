@@ -1,0 +1,67 @@
+PALETTE COLORI PREMIUM – REAL ESTATE + FUTURISTICO + LUXURY
+
+Questa palette è studiata per:
+
+immobili di fascia alta
+
+branding premium
+
+design futuristico-tech
+
+UX moderna e magnetica
+
+🎨 Colori Primari
+Nome	HEX	Uso
+Luxury Indigo	#3B2F4A	Colore dominante del brand, navbar, sidebar, hero background
+Royal Purple	#6E3AFF	Accent futuristico per pulsanti primari e highlights
+Electric Blue	#4DA8FF	Linee, icone, microinterazioni, glowing effects
+Pearl White	#F5F7FA	Sfondo pagine, sezioni pulite, spazi ampi
+Carbon Black	#1A1A1C	testi forti, titoli, modali scuri
+🎨 Colori Secondari
+Nome	HEX	Uso
+Neon Aqua	#4BF7D3	Animazioni, bordi, glowing AI, badge “AI generated”
+Sunset Gold	#FFD166	Highlights premium, prezzo piani, badge Pro/Business
+Silver Frost	#D9DFEC	Divider, bordi card, sfumature eleganti
+🌈 Gradients (per un look super moderno)
+Nome	Gradient	Uso
+AI Aurora	linear-gradient(135deg, #6E3AFF 0%, #4DA8FF 100%)	Pulsanti grandi, hero, card AI
+Luxury Gold Beam	linear-gradient(135deg, #FFD166 0%, #FFB947 100%)	Badge premium, titoli di categorie Pro
+Cyber Glow	linear-gradient(135deg, #4BF7D3 0%, #4DA8FF 100%)	Hover su card, bordi animati
+🧠 MOODBOARD FUTURISTICO – REAL ESTATE PREMIUM
+
+Ecco lo stile che vogliamo ottenere.
+Puoi incollare questo moodboard come messaggio a Replit per guidarli nel redesign.
+
+🔮 MOODBOARD STILE (da condividere a Replit)
+Stile UI desiderato:
+
+1) Atmosfera generale:
+- Look futuristico e pulito, stile SaaS AI premium
+- Interfacce “glowing”, luci morbide e neon moderni
+- Trasparenze leggere (glassmorphism)
+- Gradienti eleganti, non aggressivi
+- Grosse spaziature, layout molto arioso
+
+2) Tipografia:
+- Titoli forti in stile futuristico (inter, space grotesk, oppure exo 2)
+- Sottotitoli leggeri con un contrasto morbido
+- Molto spazio verticale
+
+3) Componenti UI:
+- Card con bordi arrotondati 16–24px
+- Sottili glowing borders nei colori Electric Blue e Neon Aqua
+- Bottoni potenti con gradienti AI Aurora
+- Micro-animazioni al passaggio del mouse (hover lift, glow spread)
+- Navbar minimal, icone sottili, indicatori luminosi
+
+4) Atmosfera visiva:
+- Stile “AI + Real Estate Premium”
+- Immagini di case di alta fascia, rendering puliti, dark/light mode
+- Effetti glass + neon, senza esagerare
+- Effetto “ultra professionale, moderno, caro”
+
+5) UX:
+- Dashboard con sidebar elegante
+- Card grandi e leggibili
+- Tab dinamici con animazioni
+- Indicatori di performance (AI score) molto moderni

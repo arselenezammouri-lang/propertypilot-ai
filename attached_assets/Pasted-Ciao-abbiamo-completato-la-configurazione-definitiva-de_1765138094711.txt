@@ -1,0 +1,147 @@
+Ciao,
+abbiamo completato la configurazione definitiva dei prodotti su Stripe in modalità TEST.
+Ora è necessario collegare correttamente TUTTI i piani del Pricing di PropertyPilot AI con Stripe, eliminando ogni riferimento ai vecchi piani o prezzi incoerenti.
+
+✅ QUESTI SONO I 4 PIANI UFFICIALI FINALI (DA USARE OVUNQUE)
+
+Starter
+
+Prezzo: €97 / mese
+
+Tipo: Abbonamento ricorrente
+
+Stripe Price ID:
+
+price_[INSERIRE QUI IL TUO STARTER ID ESATTO]
+
+
+Pro
+
+Prezzo: €297 / mese
+
+Tipo: Abbonamento ricorrente
+
+Stripe Price ID:
+
+price_1SbnImP1XFceTuVDLUsvCg
+
+
+Agency
+
+Prezzo: €497 / mese
+
+Tipo: Abbonamento ricorrente
+
+Stripe Price ID:
+
+price_1SbnuWPIXFceTuUzZnECDZR
+
+
+Agency Boost
+
+Prezzo: €2497 una tantum
+
+Tipo: Pagamento singolo (one-time)
+
+Stripe Price ID:
+
+price_1SbnzvP1XFceTuLETLvT9G
+
+✅ OPERAZIONI TECNICHE DA FARE NEL CODICE
+
+Aggiornare lib/stripe/config.ts
+
+Inserire ESCLUSIVAMENTE questi 4 Price ID
+
+Rimuovere:
+
+Tutti i vecchi piani
+
+Tutti i pacchetti Italia/USA separati
+
+Tutti i prezzi non coerenti
+
+Collegare la Pricing Page (app/pricing/page.tsx)
+
+I pulsanti devono fare:
+
+Starter → /api/stripe/checkout con piano starter
+
+Pro → /api/stripe/checkout con piano pro
+
+Agency → /api/stripe/checkout con piano agency
+
+Agency Boost → /api/stripe/checkout con pagamento one-time
+
+Dashboard Billing
+
+Aggiornare il piano attivo dell’utente in base alla subscription Stripe:
+
+starter, pro, agency
+
+Agency Boost non è subscription → solo flag extra servizi
+
+Blocco funzionalità per piano
+
+Free → 5 annunci/mese
+
+Starter → 50 annunci/mese
+
+Pro → 200 annunci/mese + CRM Light + PDF + Social
+
+Agency → Illimitato + Multi-agenzia + Supporto prioritario
+
+Webhook
+
+Verificare che:
+
+checkout.session.completed
+
+customer.subscription.created / updated / deleted
+aggiornino correttamente:
+
+stripe_subscription_id
+
+price_id
+
+plan_type
+
+status
+
+✅ OBIETTIVO FINALE
+
+Unica versione ufficiale dei piani
+
+Stripe allineato al 100%
+
+Checkout funzionante per:
+
+Starter
+
+Pro
+
+Agency
+
+Agency Boost
+
+Dashboard che riconosce automaticamente il piano attivo
+
+SaaS pronto per:
+
+Go Live
+
+Clienti reali
+
+Fatturazione reale
+
+Scalabilità internazionale
+
+Quando completato:
+✅ testate almeno una transazione per Starter
+✅ una per Pro
+✅ una per Agency
+✅ una per Agency Boost
+
+E comunicatemi che Stripe + Replit sono ufficialmente allineati.
+
+Grazie.

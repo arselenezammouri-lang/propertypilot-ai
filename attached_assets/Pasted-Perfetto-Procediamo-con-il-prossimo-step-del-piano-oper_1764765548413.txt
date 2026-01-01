@@ -1,0 +1,82 @@
+Perfetto! Procediamo con il prossimo step del piano operativo: CRM 4.0 — Communication Hub (Email + WhatsApp + SMS).
+
+Questa è la specifica tecnica completa per iniziare lo sviluppo:
+
+---------------------------------------
+CRM 4.0 — Communication Hub
+---------------------------------------
+
+🎯 OBIETTIVO:
+Creare un centro comunicazioni unificato per ogni lead, con:
+- Email inviate dal CRM
+- WhatsApp (template + generazione AI)
+- SMS (per reminder e follow-up rapidi)
+- Log cronologico di tutte le comunicazioni
+- Integrazione diretta con Lead Scoring e Automazioni
+
+---------------------------------------
+FASE 1 — Database
+---------------------------------------
+Nuove tabelle:
+
+communication_logs:
+- id UUID
+- lead_id UUID
+- user_id TEXT
+- channel TEXT       ('email', 'whatsapp', 'sms')
+- direction TEXT     ('outbound', 'inbound')
+- subject TEXT
+- message TEXT
+- created_at TIMESTAMPTZ
+
+communication_templates:
+- id UUID
+- user_id TEXT
+- channel TEXT
+- name TEXT
+- content TEXT
+- tone TEXT          ('professional', 'emotional', 'luxury')
+- created_at
+
+---------------------------------------
+FASE 2 — API Endpoints
+---------------------------------------
+/api/communications/send-email
+/api/communications/send-sms
+/api/communications/send-whatsapp
+/api/communications/logs
+/api/communications/templates
+
+Funzioni AI integrate:
+- Genera email follow-up basate sul lead
+- Genera varianti WhatsApp
+- Genera SMS brevi (≤160 caratteri)
+
+---------------------------------------
+FASE 3 — UI /dashboard/leads/[id]/communications
+---------------------------------------
+Nuova sezione nella pagina dettaglio lead:
+
+- Tab Comunicazioni (email, whatsapp, sms)
+- Box scrittura messaggi (con AI)
+- Lista cronologica comunicazioni
+- Pulsanti rapidi:
+  • "Genera risposta AI"
+  • "Genera WhatsApp"
+  • "Genera SMS 160 caratteri"
+
+---------------------------------------
+FASE 4 — Integrazione con Automations
+---------------------------------------
+Nuovi trigger:
+- "email_sent"
+- "sms_sent"
+- "whatsapp_sent"
+
+Nuove azioni:
+- invia email automatica
+- invia sms automatico
+- genera messaggio whatsapp AI
+
+---------------------------------------
+Procedi con la FASE 1 (Database) e poi passa alle API.

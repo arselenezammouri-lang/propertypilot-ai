@@ -1,0 +1,179 @@
+Ciao! Ecco la PRIMA funzione da implementare nel mio SaaS.
+
+🔥 FEATURE 1: Analisi Automatica Annuncio da Link (AI Scraper)
+
+Questa funzione permette all’utente di incollare un URL di un annuncio immobiliare →
+il sistema estrae i dati automaticamente → l’AI genera contenuti professionali →
+il tutto viene salvato in Supabase in modo strutturato.
+
+✔️ 1. Portali da supportare (priorità 1)
+
+Scraping pubblico senza login da:
+
+immobiliare.it
+
+idealista.it
+
+casa.it
+
+subito.it
+
+(Aggiungeremo altri portali dopo.)
+
+✔️ 2. Workflow della funzione
+A) Input
+
+Un campo dove l’utente incolla un URL.
+
+B) API Route (Nuova)
+
+Crea la route:
+
+POST /api/scrape-listing
+
+Questa route deve:
+
+Riconoscere il dominio (immobiliare, idealista, casa, subito)
+
+Selezionare automaticamente il modulo scraper corretto
+
+Estrarre i dati pubblici, inclusi:
+
+titolo annuncio
+
+prezzo
+
+indirizzo/località
+
+metratura
+
+locali/vani
+
+caratteristiche
+
+descrizione originale
+
+fino a 10 foto
+
+Restituire un JSON normalizzato con questo schema:
+
+{
+  "title": "",
+  "price": "",
+  "location": "",
+  "surface": "",
+  "rooms": "",
+  "features": [],
+  "description_raw": "",
+  "images": []
+}
+
+
+Passare questo JSON al modulo AI.
+
+✔️ 3. Moduli Scraper da creare
+
+In /lib/scrapers/ creare:
+
+immobiliare.ts
+
+idealista.ts
+
+casa.ts
+
+subito.ts
+
+Ogni modulo deve:
+
+accettare l’URL
+
+fare scraping dei dati pubblici
+
+restituire il JSON normalizzato
+
+usare un User-Agent realistico, timeout e retry
+
+evitare blocco IP
+
+✔️ 4. Generazione AI (nuova funzione)
+
+Crea un modulo:
+
+/lib/ai/generateListingContent.ts
+
+Il modulo deve ricevere il JSON dello scraping e generare:
+
+Descrizioni
+
+descrizione lunga professionale e SEO
+
+descrizione breve
+
+descrizione emozionale
+
+descrizione per portali immobiliari
+
+traduzione inglese
+
+Titoli
+
+5 titoli ottimizzati (max 60 caratteri)
+
+Extra
+
+script video in stile reel
+
+email follow-up per potenziali clienti
+
+lista punti di forza
+
+lista difetti trasformati in vantaggi
+
+suggerimenti di home staging
+
+testi pronti per Subito/Idealista/Immobiliare
+
+✔️ 5. Salvataggio in Supabase
+
+In saved_listings salvare:
+
+user_id
+
+source_url
+
+scraped_data (JSON)
+
+ai_output (JSON)
+
+created_at
+
+updated_at
+
+Assicurarsi che:
+
+RLS viene rispettato
+
+solo il proprietario può vedere i suoi listings
+
+✔️ 6. UI nella Dashboard
+
+Crea nuova pagina:
+
+/dashboard/scraper
+
+Elementi:
+
+input URL
+
+pulsante “Analizza Annuncio”
+
+loading state
+
+box con dati estratti
+
+box con i contenuti AI generati
+
+pulsante “Salva nella Libreria”
+
+Fammi sapere quando hai bisogno del JSON di esempio, del prompt completo o della UI proposta.
+Così possiamo procedere alla funzione successiva.

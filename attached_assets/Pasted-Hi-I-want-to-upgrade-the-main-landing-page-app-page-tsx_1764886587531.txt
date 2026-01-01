@@ -1,0 +1,303 @@
+Hi! I want to upgrade the main landing page (app/page.tsx) to a dual-focus, enterprise-grade landing for PropertyPilot AI: USA + International.
+
+Please DO NOT touch pricing (/pricing), demo (/demo), auth routes, CRM, or Stripe logic.
+Only work on:
+
+app/page.tsx (main landing)
+
+SEO meta for the home page if needed (title/description/json-ld)
+
+Optional small updates in app/layout.tsx only for meta tags (no routing changes)
+
+Keep the current dark, premium style and brand name:
+
+PropertyPilot AI – Pilot Your Agency to the Next Level
+
+🎯 GOAL
+
+Turn the home page into a world-class SaaS landing, inspired by HubSpot / KVCore / Zillow:
+
+Hero in ENGLISH, focused on US real estate agents
+
+All copy in English by default (we will keep Italian for pricing/demo etc.)
+
+Highlight that the tool works globally (Europe, LATAM, etc.)
+
+Show that the product is trusted by agents in 12+ countries
+
+🧩 SECTION STRUCTURE (NEW LANDING)
+
+Please rework app/page.tsx with this structure:
+
+1) HERO SECTION (USA + Global)
+
+Big headline (H1):
+
+The AI Operating System for Real Estate Agencies
+
+Sub-headline:
+
+Close more deals, write better listings, and automate follow-ups.
+Built for agents and teams in the US, Europe, and beyond.
+
+Above headline badge (small pill):
+
+Built for Real Estate • Powered by GPT-4
+
+CTAs (side-by-side):
+
+Primary: Start Free → links to /auth/signup
+
+Secondary: Book a Demo → links to /demo
+
+Under the CTAs, add a tiny line:
+
+“Also available in Italian and 12+ languages for your listings.”
+
+On the right side (or below on mobile) show a nice dashboard screenshot (use existing dashboard UI) inside a blurred/glass card with a subtle glow.
+
+2) SOCIAL PROOF STRIP
+
+Just below the hero, add a strip like:
+
+Trusted by agents and agencies in 12+ countries
+
+Then a row of logo placeholders (we can use simple text logos for now):
+
+Keller Williams
+
+RE/MAX
+
+Century 21
+
+Coldwell Banker
+
+eXp Realty
+
+Immobiliare.it
+
+Idealista
+
+(Use low-key opacity so they look like “trusted by” logos, not real partnerships.)
+
+3) “WHY PROPERTYPILOT AI” – 3 PILLARS
+
+Create a section with 3 big cards (responsive grid):
+
+Pillar 1 – AI Listing Engine
+
+Text example:
+
+Write perfect MLS & Zillow-ready listings in seconds.
+Titles, descriptions, hashtags, video scripts, and luxury PDF brochures.
+
+Pillar 2 – CRM & Automation Engine
+
+Visual pipelines, lead scoring, automated follow-ups via email, SMS, and WhatsApp.
+
+Pillar 3 – Global & Multi-Language
+
+Listings and marketing content in 12+ languages.
+Perfect for cross-border clients, expats, and international investors.
+
+Each card should have:
+
+An icon (you can reuse existing icons: pen, workflow, globe, etc.)
+
+Short bullet list (2–3 bullets)
+
+Light gradient backgrounds (stay consistent with current theme)
+
+4) FEATURE DEEP DIVE – 3 SECTIONS
+
+Create a three-step vertical section with a left-right layout (image + text):
+
+4.1 – Listing Suite Pro
+
+Bullets:
+
+AI titles A/B tested for high CTR
+
+Descriptions optimized for MLS & portals (Zillow, Immobiliare, Idealista, etc.)
+
+Brochures and luxury PDF templates included
+
+4.2 – CRM & Pipeline for Real Estate
+
+Bullets:
+
+Kanban pipeline for New / Contacted / Follow-Up / Closed / Lost
+
+Lead notes, history, and scoring (Hot / Warm / Cold)
+
+Smart automations: change status, assign, send follow-up email/SMS
+
+4.3 – Communication Hub
+
+Bullets:
+
+Email, SMS, WhatsApp from one place
+
+AI-generated scripts with tones: professional, luxury, emotional, urgent
+
+Full history of messages per lead
+
+Use our existing screenshots (CRM / pipeline / communication hub) or simple UI mockups with gradients.
+
+5) “BUILT FOR AGENTS & TEAMS” (ENTERPRISE-STYLE)
+
+Create a section with two columns:
+
+Left side title:
+
+For solo agents, small teams, and growing agencies
+
+Left bullet list:
+
+Solo agents: get a personal AI assistant for every listing
+
+Teams: share leads, notes, and automations in one workspace
+
+Agencies: manage up to 10+ agents with roles and reporting
+
+Right side: a highlighted card for Agency & Teams:
+
+Small badge: For Teams & Brokerages
+
+Bullets:
+
+Lead routing and assignment rules
+
+Multi-agent activity reports
+
+White-label PDFs and branding
+
+Priority support
+
+Add a CTA button inside this card:
+
+Book an Agency Demo → /demo
+
+6) GLOBAL MAP / INTERNATIONAL SECTION
+
+Short section emphasizing global reach:
+
+Title:
+
+From Milan to Miami: one platform for global real estate
+
+Bullets (simple grid with flags icons):
+
+🇺🇸 US & Canada – MLS & Zillow-style listings
+
+🇮🇹 Italy – Immobiliare.it, Casa.it, Idealista
+
+🇪🇸 Spain & 🇵🇹 Portugal – international buyers & investors
+
+🌍 Dubai, France, UK, LATAM – 12+ languages for your listings
+
+Small note:
+
+“PropertyPilot AI is already used by agents in multiple countries. We’re ready for your market.”
+
+7) PRICING PREVIEW (SYNCHRONIZED WITH /PRICING)
+
+Create a shorter “Plans overview” section (do NOT change prices or links, just summarize):
+
+Cards for Starter, Pro, Agency, Agency Boost with:
+
+Same prices as /pricing
+
+One-line description each
+
+Button:
+
+Starter: Start Free → /auth/signup
+
+Pro: See Pro plan details → /pricing (anchor to Pro)
+
+Agency: Book Agency Demo → /demo
+
+Boost: Agency Boost: one-time setup → /pricing or /demo
+
+8) “HOW IT WORKS” – 3 STEPS
+
+Small section:
+
+Create your account – Start free, no credit card required
+
+Connect your leads & listings – Import or paste your existing content
+
+Let AI do the heavy lifting – Listings, follow-ups, and CRM in one place
+
+Include a simple CTA:
+
+Start Free in 2 Minutes → /auth/signup
+
+9) TESTIMONIALS
+
+Replace or extend current testimonials with international flavor (placeholders are fine):
+
+US Realtor
+
+Italian agent
+
+French or Spanish agent
+
+Each testimonial: 1–2 sentences, 5 stars icons, role + country flag.
+
+10) FINAL CTA + FOOTER
+
+At the bottom, a strong final CTA block:
+
+Title:
+
+Ready to upgrade your real estate business with AI?
+
+Buttons:
+
+Start Free → /auth/signup
+
+Book a 1:1 Demo → /demo
+
+Below, keep the existing footer (Terms, Privacy, Refund, etc.) but ensure there is a visible link:
+
+Demo
+
+Pricing
+
+Login
+
+Start Free
+
+🎨 DESIGN & TECH REQUIREMENTS
+
+Keep the current dark theme and general style (gradients, neon, glow).
+
+Make all new sections fully responsive (mobile-first).
+
+Don’t introduce any new libraries; use existing components (buttons, cards, badges, etc.).
+
+Keep text mainly in English, but it’s ok to keep some Italian where already present in other pages.
+
+Don’t break any existing routes, API calls, or Stripe / Supabase logic.
+
+When you’re done, please:
+
+Run the app and test:
+
+/ (home)
+
+/pricing
+
+/demo
+
+/auth/login and /auth/signup
+
+Confirm there are no TypeScript errors.
+
+Confirm all CTAs navigate correctly.
+
+Then send me a short summary of what you changed in app/page.tsx and/or layout metadata.
+
+Grazie!
