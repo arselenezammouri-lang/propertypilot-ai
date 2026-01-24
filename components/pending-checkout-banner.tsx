@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 const PLAN_DETAILS: Record<string, { name: string; price: string; color: string }> = {
   starter: { name: "Starter", price: "€97/mese", color: "from-blue-500 to-cyan-500" },
   pro: { name: "Pro", price: "€297/mese", color: "from-purple-500 to-pink-500" },
-  agency: { name: "Agency", price: "€497/mese", color: "from-amber-500 to-orange-500" },
+  agency: { name: "Agency", price: "€597/mese", color: "from-amber-500 to-orange-500" },
   boost: { name: "Agency Boost", price: "€2.497", color: "from-emerald-500 to-teal-500" },
 };
 

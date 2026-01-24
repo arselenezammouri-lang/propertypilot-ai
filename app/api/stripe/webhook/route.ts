@@ -216,27 +216,27 @@ async function handleOneShotPayment(session: Stripe.Checkout.Session, userId: st
 }
 
 async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, userId: string) {
-  const planType = session.metadata?.planType as SubscriptionStatus;
-
-  if (!planType) {
-    console.error('[WEBHOOK ERROR] Missing planType in subscription checkout', {
-      sessionId: session.id,
-      metadata: session.metadata,
-    });
-    throw new Error('Missing planType in subscription checkout session');
-  }
-
-  const validPlans: SubscriptionStatus[] = ['starter', 'pro', 'agency'];
-  if (!validPlans.includes(planType)) {
-    console.error('[WEBHOOK ERROR] Invalid planType:', planType);
-    throw new Error(`Invalid planType: ${planType}`);
-  }
-
   try {
     const stripe = requireStripe();
     const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
+
+    // SECURITY: Use real price_id from Stripe, not metadata (which can be manipulated)
+    const priceId = subscription.items.data[0].price.id;
+    const detectedPlan = getPlanByPriceId(priceId);
+
+    if (!detectedPlan) {
+      console.error('[WEBHOOK ERROR] Unrecognized price_id in checkout:', {
+        priceId,
+        sessionId: session.id,
+        userId,
+        subscriptionId: subscription.id,
+      });
+      throw new Error(`Unrecognized price_id: ${priceId}. This price is not configured in the system.`);
+    }
+
+    const planType = detectedPlan as SubscriptionStatus;
 
     const periodStart = (subscription as any).current_period_start;
     const periodEnd = (subscription as any).current_period_end;
@@ -246,7 +246,7 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
       .update({
         stripe_subscription_id: subscription.id,
         stripe_customer_id: session.customer as string,
-        price_id: subscription.items.data[0].price.id,
+        price_id: priceId,
         status: planType,
         current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
         current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
@@ -273,6 +273,12 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
       });
       throw new Error(`No subscription found for user ${userId}`);
     }
+
+    // Aggiorna anche profiles.subscription_plan
+    await supabaseAdmin
+      .from('profiles')
+      .update({ subscription_plan: planType })
+      .eq('id', userId);
 
     console.log('[WEBHOOK SUCCESS] Subscription updated:', {
       userId,
@@ -316,19 +322,21 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   try {
     const priceId = subscription.items.data[0].price.id;
     
-    let planType: SubscriptionStatus = 'free';
-    
+    // Use centralized logic from lib/stripe/config.ts
     const detectedPlan = getPlanByPriceId(priceId);
+    
+    let planType: SubscriptionStatus = 'free';
     if (detectedPlan) {
       planType = detectedPlan as SubscriptionStatus;
     } else {
-      if (priceId === process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID) {
-        planType = 'starter';
-      } else if (priceId === process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID) {
-        planType = 'pro';
-      } else if (priceId === process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID) {
-        planType = 'agency';
-      }
+      // Price ID not recognized: log error but don't crash (safer for updates)
+      console.error('[WEBHOOK ERROR] Unrecognized price_id in subscription update:', {
+        priceId,
+        subscriptionId: subscription.id,
+        userId,
+      });
+      // Keep 'free' as safe default for unrecognized prices
+      planType = 'free';
     }
 
     const isActive = subscription.status === 'active' || subscription.status === 'trialing';
@@ -369,6 +377,12 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       });
       throw new Error(`No subscription found for subscription ID ${subscription.id}`);
     }
+
+    // Aggiorna anche profiles.subscription_plan
+    await supabaseAdmin
+      .from('profiles')
+      .update({ subscription_plan: isActive ? planType : 'free' })
+      .eq('id', userId);
 
     console.log('[WEBHOOK SUCCESS] Subscription updated:', {
       subscriptionId: subscription.id,
@@ -416,6 +430,20 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
         subscriptionId: subscription.id,
       });
     } else {
+      // Aggiorna anche profiles.subscription_plan a 'free'
+      const { data: subData } = await supabaseAdmin
+        .from('subscriptions')
+        .select('user_id')
+        .eq('stripe_subscription_id', subscription.id)
+        .single();
+      
+      if (subData?.user_id) {
+        await supabaseAdmin
+          .from('profiles')
+          .update({ subscription_plan: 'free' })
+          .eq('id', subData.user_id);
+      }
+
       console.log('[WEBHOOK SUCCESS] Subscription deleted:', {
         subscriptionId: subscription.id,
       });

@@ -93,7 +93,7 @@ CRITERI DI VALUTAZIONE (5 fattori, 0-20 punti ciascuno):
 5. CHIAREZZA MESSAGGIO (0-20): Richiesta precisa? Informazioni complete? Professionalità?
 
 CATEGORIE LEAD:
-- 🔥 HOT LEAD (80-100): Pronto all'acquisto, alta urgenza, budget chiaro, motivazione forte
+- 🔥 HOT LEAD (80-100): Pronto all'acquisto, alta urgenza, budget chiaro, motivazione forte - Da chiamare entro 5 minuti
 - ⭐ WARM LEAD (50-79): Interessato ma ha bisogno di nurturing, potenziale medio-alto
 - ❄️ COLD LEAD (0-49): Ricerca esplorativa, bassa urgenza, richiede qualificazione
 
@@ -108,7 +108,7 @@ Analizza questo lead e genera un JSON con questa struttura ESATTA:
 {
   "leadScore": <numero 0-100>,
   "categoria": "<hot|warm|cold>",
-  "categoriaLabel": "<🔥 Hot Lead|⭐ Warm Lead|❄️ Cold Lead>",
+  "categoriaLabel": "<🔥 Hot Lead - Da chiamare entro 5 minuti|⭐ Warm Lead|❄️ Cold Lead>",
   "sintesiAnalisi": "<sintesi in 2-3 frasi della qualità del lead>",
   "breakdown": [
     {
@@ -140,9 +140,9 @@ Analizza questo lead e genera un JSON con questa struttura ESATTA:
   "prioritaAzione": [
     {
       "priorita": 1,
-      "azione": "<azione specifica>",
-      "motivazione": "<perché questa azione>",
-      "tempistica": "<quando fare questa azione>"
+      "azione": "<azione specifica, concreta e persuasiva in linguaggio naturale. Es: 'Chiama subito al telefono per fissare una visita oggi pomeriggio' o 'Invia la brochure PDF della villa via WhatsApp con un messaggio personalizzato' - NON generico come 'contattare il lead'>",
+      "motivazione": "<perché questa azione è efficace per questo lead specifico, citando elementi del messaggio>",
+      "tempistica": "<quando fare questa azione: per HOT LEAD usa 'entro 5 minuti', per WARM usa 'entro 2 ore', per COLD usa 'entro 24 ore'>"
     },
     ... (5 azioni totali)
   ],
@@ -173,7 +173,15 @@ IMPORTANTE:
 - Adatta il tono al mercato ${input.mercato === 'italia' ? 'italiano (formale ma cordiale)' : 'USA (friendly e diretto)'}
 - Le risposte template devono essere pronte all'uso, professionali
 - I suggerimenti Perfect Copy devono essere specifici per questo lead
-- Sii specifico e concreto nelle motivazioni, citando elementi del messaggio`;
+- Sii specifico e concreto nelle motivazioni, citando elementi del messaggio
+- Le azioni in "prioritaAzione" devono essere SCRITTE IN LINGUAGGIO UMANO E PERSUASIVO:
+  * Usa verbi d'azione concreti: "Chiama", "Invia", "Fissa", "Proponi"
+  * Specifica il canale: "via WhatsApp", "al telefono", "via email"
+  * Per HOT LEAD (80-100): usa tempistica "entro 5 minuti" e azioni immediate
+  * Per WARM LEAD (50-79): usa tempistica "entro 2 ore" e azioni di nurturing
+  * Per COLD LEAD (0-49): usa tempistica "entro 24 ore" e azioni di qualificazione
+  * NON usare frasi generiche come "contattare il lead" o "inviare informazioni"
+  * Scrivi come parlerebbe un agente immobiliare esperto al suo collega`;
 
   const generateScore = async (signal: AbortSignal) => {
     const completion = await openai.chat.completions.create({
@@ -205,13 +213,19 @@ IMPORTANTE:
       
       const categoria = parsed.categoria || 'cold';
       let categoriaEmoji = '❄️';
-      if (categoria === 'hot') categoriaEmoji = '🔥';
-      else if (categoria === 'warm') categoriaEmoji = '⭐';
+      let categoriaLabelDefault = '❄️ Cold Lead';
+      if (categoria === 'hot') {
+        categoriaEmoji = '🔥';
+        categoriaLabelDefault = '🔥 Hot Lead - Da chiamare entro 5 minuti';
+      } else if (categoria === 'warm') {
+        categoriaEmoji = '⭐';
+        categoriaLabelDefault = '⭐ Warm Lead';
+      }
 
       return {
         leadScore: parsed.leadScore || 0,
         categoria: categoria as 'hot' | 'warm' | 'cold',
-        categoriaLabel: parsed.categoriaLabel || `${categoriaEmoji} ${categoria.charAt(0).toUpperCase() + categoria.slice(1)} Lead`,
+        categoriaLabel: parsed.categoriaLabel || categoriaLabelDefault,
         categoriaEmoji,
         sintesiAnalisi: parsed.sintesiAnalisi || '',
         breakdown: parsed.breakdown || [],

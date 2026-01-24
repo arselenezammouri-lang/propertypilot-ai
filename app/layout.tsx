@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 
-const inter = Inter({ 
+const interTight = Inter_Tight({ 
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-inter-tight",
 });
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
@@ -21,7 +21,7 @@ const SALES_EMAIL = 'sales@propertypilotai.com';
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: `${APP_NAME} - AI Operating System for Real Estate`,
+    default: `${APP_NAME} - The Real Estate Operating System | AI-Powered Property Platform`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
@@ -132,7 +132,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={interTight.variable}>
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
@@ -143,7 +143,7 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={inter.className}>
+      <body className={interTight.className}>
         <Providers>
           <ThemeProvider
             defaultTheme="light"

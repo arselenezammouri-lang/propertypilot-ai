@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/prospecting/automate",
+      "schedule": "0 */6 * * *"
+    }
+  ]
+}
+

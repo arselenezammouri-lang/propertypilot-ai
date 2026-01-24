@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { getAICacheService } from '@/lib/cache/ai-cache';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
@@ -239,7 +240,26 @@ Formato: una nota per riga, max 50 parole ciascuna.`
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: 'Non autorizzato. Effettua il login per continuare.' },
+        { status: 401 }
+      );
+    }
+
+    // SECURITY: Check active subscription
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: subscriptionCheck.error || 'Abbonamento richiesto',
+          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+        },
+        { status: 403 }
+      );
+    }
 
     const clientIP = request.headers.get('x-forwarded-for')?.split(',')[0] || 
                      request.headers.get('x-real-ip') || 

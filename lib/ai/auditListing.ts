@@ -514,7 +514,6 @@ export async function auditListing(
     throw new Error('Il testo dell\'annuncio deve contenere almeno 50 caratteri');
   }
 
-  console.log(`[AUDIT] Starting comprehensive audit for ${options.mercato} market, objective: ${options.obiettivo}`);
 
   const [
     qualityResult,
@@ -538,7 +537,6 @@ export async function auditListing(
     analyzeMarketContext(listingText, options),
   ]);
 
-  console.log(`[AUDIT] Comprehensive audit completed. Score: ${qualityResult.score}/100`);
 
   return {
     qualityScore: qualityResult.score,

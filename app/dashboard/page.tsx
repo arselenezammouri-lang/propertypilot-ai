@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
+import { Dashboard3DStats } from "@/components/dashboard-3d-stats";
+import { MorningBriefingBox } from "@/components/morning-briefing-box";
+import { SniperStats } from "@/components/sniper-stats";
+import { GlobalLiveFeed } from "@/components/global-live-feed";
+import { WelcomeTour } from "@/components/welcome-tour";
+import { DashboardHelpButton } from "@/components/dashboard-help-button";
+import { AriaCoach } from "@/components/aria-coach";
 import Link from "next/link";
 import { 
   Home, 
@@ -122,6 +129,18 @@ export default async function DashboardPage() {
           <DashboardProBanner />
         )}
 
+        {/* 🌅 AI MORNING INTEL BRIEFING */}
+        {(currentPlan === "pro" || currentPlan === "agency") && (
+          <MorningBriefingBox />
+        )}
+
+        {/* 🌍 GLOBAL LIVE FEED */}
+        {(currentPlan === "pro" || currentPlan === "agency") && (
+          <div className="mb-10 md:mb-14">
+            <GlobalLiveFeed />
+          </div>
+        )}
+
         {/* 📊 STATS GRID - Premium Futuristic Cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-14">
           {/* Current Plan Card - Royal Purple */}
@@ -188,6 +207,11 @@ export default async function DashboardPage() {
               Nessun annuncio salvato
             </p>
           </div>
+
+          {/* Progetti 3D Generati & WhatsApp Stats - Solo per PRO/AGENCY */}
+          {(currentPlan === "pro" || currentPlan === "agency") && (
+            <Dashboard3DStats />
+          )}
         </div>
 
         {/* ⚡ QUICK ACTIONS - Futuristic Premium Cards */}
@@ -792,6 +816,12 @@ export default async function DashboardPage() {
           </div>
         </div>
       </main>
+
+      {/* Welcome Tour Modal */}
+      <WelcomeTour />
+
+      {/* Aria Coach - Floating AI Assistant */}
+      <AriaCoach userName={profile?.full_name || undefined} userPlan={currentPlan as any} />
     </div>
   );
 }

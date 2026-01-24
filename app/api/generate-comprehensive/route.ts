@@ -10,6 +10,7 @@ import {
 } from '@/lib/utils/rate-limit';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 export async function POST(request: NextRequest) {
   try {

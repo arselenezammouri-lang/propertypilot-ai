@@ -635,9 +635,31 @@ export default function LeadsPage() {
                   </TableHeader>
                   <TableBody>
                     {leads.map((lead) => (
-                      <TableRow key={lead.id} className="cursor-pointer hover:bg-muted/50" data-testid={`row-lead-${lead.id}`}>
+                      <TableRow 
+                        key={lead.id} 
+                        className={`cursor-pointer hover:bg-muted/50 ${
+                          lead.lead_score > 90 
+                            ? 'bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 border-l-4 border-purple-500 shadow-lg shadow-purple-500/20' 
+                            : lead.lead_score >= 85 
+                            ? 'bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-l-4 border-amber-500' 
+                            : ''
+                        }`}
+                        data-testid={`row-lead-${lead.id}`}
+                      >
                         <TableCell>
-                          <div className="font-medium">{lead.nome}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-medium">{lead.nome}</div>
+                            {lead.lead_score > 90 && (
+                              <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
+                                💎 SOLDI
+                              </Badge>
+                            )}
+                            {lead.lead_score >= 85 && lead.lead_score <= 90 && (
+                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-2 py-0.5 animate-pulse shadow-lg">
+                                🔥 TOP DEAL
+                              </Badge>
+                            )}
+                          </div>
                           {lead.messaggio && (
                             <div className="text-sm text-muted-foreground truncate max-w-[200px]">
                               {lead.messaggio}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import OpenAI from 'openai';
 import { z } from 'zod';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import type { Lead, CommunicationChannel, CommunicationTone } from '@/lib/types/database.types';
 
 const openai = new OpenAI({

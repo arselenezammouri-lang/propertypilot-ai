@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
@@ -291,6 +292,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Non autorizzato. Effettua il login per continuare.' },
         { status: 401 }
+      );
+    }
+
+    // SECURITY: Check active subscription
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: subscriptionCheck.error || 'Abbonamento richiesto',
+          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+        },
+        { status: 403 }
       );
     }
 

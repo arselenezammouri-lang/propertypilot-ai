@@ -1,123 +1,95 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { requireStripe, STRIPE_PLANS, PlanType } from '@/lib/stripe/config';
-import type { SubscriptionStatus } from '@/lib/types/database.types';
+import { createCheckoutSession, getOrCreateCustomer, PLAN_TO_PRICE_ID } from '@/lib/stripe';
+import { z } from 'zod';
 
-const VALID_PLANS: SubscriptionStatus[] = ['starter', 'pro', 'agency'];
+const checkoutSchema = z.object({
+  plan: z.enum(['STARTER', 'PRO', 'AGENCY']),
+});
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    const { planType } = await request.json();
+    const body = await request.json();
+    const { plan } = checkoutSchema.parse(body);
 
-    if (!planType || !VALID_PLANS.includes(planType)) {
+    // Recupera profilo utente
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('email, full_name, stripe_customer_id')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile) {
       return NextResponse.json(
-        { error: 'Invalid plan type. Must be "starter", "pro" or "agency"' },
+        { error: 'Profile not found' },
+        { status: 404 }
+      );
+    }
+
+    // Ottieni o crea customer Stripe
+    const customer = await getOrCreateCustomer(
+      user.id,
+      profile.email || user.email || '',
+      profile.full_name || undefined
+    );
+
+    // Salva customer ID se non presente
+    if (!profile.stripe_customer_id) {
+      await supabase
+        .from('profiles')
+        .update({ stripe_customer_id: customer.id })
+        .eq('id', user.id);
+    }
+
+    // Ottieni Price ID
+    const priceId = PLAN_TO_PRICE_ID[plan];
+    if (!priceId) {
+      return NextResponse.json(
+        { error: 'Invalid plan' },
         { status: 400 }
       );
     }
 
-    const selectedPlan = STRIPE_PLANS[planType as PlanType];
-    const priceId = selectedPlan?.priceId;
-
-    if (!priceId) {
-      return NextResponse.json(
-        { error: 'Price ID not configured for this plan. Please configure NEXT_PUBLIC_STRIPE_' + planType.toUpperCase() + '_PRICE_ID' },
-        { status: 500 }
-      );
-    }
-
-    const { data: subscription } = await supabase
-      .from('subscriptions')
-      .select('stripe_customer_id, stripe_subscription_id, status')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (subscription?.stripe_subscription_id && subscription.status !== 'free') {
-      console.log(`User ${user.id} already has active subscription:`, subscription.stripe_subscription_id);
-      return NextResponse.json(
-        { 
-          error: 'Active subscription exists',
-          message: 'Hai già un abbonamento attivo. Gestiscilo dalla pagina Billing.',
-          currentPlan: subscription.status
-        },
-        { status: 409 }
-      );
-    }
-
-    let customerId = subscription?.stripe_customer_id;
-
-    const stripe = requireStripe();
-
-    if (!customerId) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user.id)
-        .single();
-
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: profile?.full_name || undefined,
-        metadata: {
-          userId: user.id,
-        },
-      });
-
-      customerId = customer.id;
-
-      const { error: upsertError } = await supabase
-        .from('subscriptions')
-        .upsert({
-          user_id: user.id,
-          stripe_customer_id: customerId,
-          status: 'free',
-        }, {
-          onConflict: 'user_id'
-        });
-
-      if (upsertError) {
-        console.error('Failed to update subscription with customer ID:', upsertError);
-        return NextResponse.json(
-          { error: 'Failed to initialize subscription' },
-          { status: 500 }
-        );
+    // Crea checkout session
+    const session = await createCheckoutSession(
+      customer.id,
+      priceId,
+      user.id,
+      `${request.nextUrl.origin}/dashboard?success=true`,
+      `${request.nextUrl.origin}/dashboard?canceled=true`,
+      {
+        plan,
+        email: profile.email || user.email || '',
       }
+    );
+
+    return NextResponse.json({
+      success: true,
+      sessionId: session.id,
+      url: session.url,
+    });
+  } catch (error) {
+    console.error('[STRIPE CHECKOUT] Error:', error);
+    
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid request', details: error.errors },
+        { status: 400 }
+      );
     }
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?canceled=true`,
-      metadata: {
-        userId: user.id,
-        planType,
-      },
-    });
-
-    return NextResponse.json({ sessionId: session.id, url: session.url });
-  } catch (error) {
-    console.error('Stripe checkout error:', error);
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

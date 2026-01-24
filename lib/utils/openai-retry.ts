@@ -51,12 +51,9 @@ export async function withRetryAndTimeout<T>(
     }, config.timeoutMs);
 
     try {
-      console.log(`[OPENAI RETRY] Attempt ${attempt + 1}/${config.maxRetries + 1}`);
-      
       const result = await operation(controller.signal);
       
       clearTimeout(timeoutId);
-      console.log(`[OPENAI RETRY] Success on attempt ${attempt + 1}`);
       return result;
       
     } catch (error: any) {
@@ -80,7 +77,6 @@ export async function withRetryAndTimeout<T>(
 
       if (attempt < config.maxRetries) {
         const delay = getExponentialDelay(attempt, config.baseDelayMs, config.maxDelayMs);
-        console.log(`[OPENAI RETRY] Waiting ${Math.round(delay)}ms before retry...`);
         await sleep(delay);
       }
     }

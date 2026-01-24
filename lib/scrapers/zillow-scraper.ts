@@ -8,12 +8,10 @@ export class ZillowScraper extends BaseScraper {
 
   async scrape(url: string): Promise<ScraperResult> {
     try {
-      console.log('[ZillowScraper] Attempting to scrape:', url);
       const html = await this.fetchHTML(url);
       
       const jsonLdData = this.extractJsonLd(html);
       if (jsonLdData) {
-        console.log('[ZillowScraper] Using JSON-LD structured data');
         return { success: true, data: jsonLdData };
       }
       
@@ -263,7 +261,6 @@ export class ZillowScraper extends BaseScraper {
 
       return null;
     } catch (error) {
-      console.log('[ZillowScraper] JSON-LD extraction failed, falling back to HTML parsing');
       return null;
     }
   }

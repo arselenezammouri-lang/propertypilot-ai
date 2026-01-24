@@ -236,6 +236,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // SECURITY: Check active subscription
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: subscriptionCheck.error || 'Abbonamento richiesto',
+          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+        },
+        { status: 403 }
+      );
+    }
+
     const clientIp = getClientIp(request);
     
     if (clientIp) {

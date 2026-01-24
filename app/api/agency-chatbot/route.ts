@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -99,6 +100,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Devi effettuare il login per utilizzare l\'assistente AI.' },
         { status: 401 }
+      );
+    }
+
+    // SECURITY: Check active subscription
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: subscriptionCheck.error || 'Abbonamento richiesto',
+          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+        },
+        { status: 403 }
       );
     }
 

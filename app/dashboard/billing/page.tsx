@@ -396,7 +396,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Agency €497
+                  Passa a Agency €597
                 </Button>
               </>
             )}
@@ -429,7 +429,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €497
+                  Upgrade a Agency €597
                 </Button>
               </>
             )}
@@ -447,7 +447,7 @@ export default function BillingPage() {
                   ) : (
                     <Crown className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €497
+                  Upgrade a Agency €597
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </>
@@ -618,7 +618,7 @@ export default function BillingPage() {
                 <p className="text-sm text-muted-foreground font-medium mb-4">Per team</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-purple">€497</span>
+                  <span className="text-4xl font-black gradient-text-purple">€597</span>
                   <span className="text-lg text-gray-100">/mese</span>
                 </div>
                 

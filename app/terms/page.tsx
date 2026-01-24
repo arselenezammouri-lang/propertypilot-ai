@@ -113,7 +113,7 @@ export default function TermsPage() {
             <ul className="list-disc list-inside text-muted-foreground mt-4 space-y-2">
               <li><strong>Starter (€97/mese)</strong>: Funzionalità base per agenti singoli</li>
               <li><strong>Pro (€297/mese)</strong>: CRM completo e automazioni avanzate</li>
-              <li><strong>Agency (€497/mese)</strong>: Per team fino a 10 agenti</li>
+              <li><strong>Agency (€597/mese)</strong>: Per team fino a 10 agenti</li>
               <li><strong>Agency Boost (€2.497 una tantum)</strong>: Setup completo e consulenza</li>
             </ul>
             <p className="text-muted-foreground leading-relaxed mt-4">

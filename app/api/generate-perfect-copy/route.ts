@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import OpenAI from 'openai';
+import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const requestSchema = z.object({
   tipoImmobile: z.enum(['appartamento', 'casa', 'villa', 'attico', 'loft', 'bilocale', 'trilocale', 'monolocale', 'rustico', 'casale', 'palazzo', 'locale_commerciale', 'ufficio', 'terreno', 'garage', 'box']),
@@ -327,6 +329,28 @@ Rispondi in italiano, tono professionale ma amichevole.`;
 }
 
 export async function POST(request: NextRequest) {
+  const supabase = await createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  
+  if (userError || !user) {
+    return NextResponse.json(
+      { error: 'Non autorizzato. Effettua il login per continuare.' },
+      { status: 401 }
+    );
+  }
+
+  // SECURITY: Check active subscription
+  const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+  if (!subscriptionCheck.allowed) {
+    return NextResponse.json(
+      { 
+        error: subscriptionCheck.error || 'Abbonamento richiesto',
+        message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+      },
+      { status: 403 }
+    );
+  }
+
   const clientIP = getClientIP(request);
   
   if (!checkRateLimit(clientIP, false)) {

@@ -32,6 +32,8 @@ export interface PropertyInput {
   price?: string;
   features?: string;
   notes?: string;
+  style?: 'luxury' | 'investment' | 'standard';
+  market?: 'usa' | 'italy';
 }
 
 export interface GeneratedContent {

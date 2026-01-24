@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const requestSchema = z.object({
   originalText: z.string().min(50, 'Il testo originale deve avere almeno 50 caratteri').max(3000),
@@ -239,6 +240,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Devi effettuare il login per utilizzare questa funzione.' },
         { status: 401 }
+      );
+    }
+
+    // SECURITY: Check active subscription
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: subscriptionCheck.error || 'Abbonamento richiesto',
+          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+        },
+        { status: 403 }
       );
     }
 

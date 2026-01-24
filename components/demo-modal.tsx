@@ -21,12 +21,12 @@ export function DemoModal() {
 
   return (
     <>
-      {/* Fixed Button - Bottom Right */}
-      <div className="fixed bottom-6 right-6 z-50 animate-fade-in-up">
+      {/* Fixed Button - Bottom Right - Responsive positioning */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-fade-in-up">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button
-              className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-6 py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300"
+              className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
               size="lg"
               data-testid="button-demo-modal-trigger"
             >

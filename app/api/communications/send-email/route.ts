@@ -46,9 +46,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Il lead non ha un indirizzo email' }, { status: 400 });
     }
 
-    // In production, integrate with email service (SendGrid, Resend, etc.)
-    // For now, we simulate sending and log the communication
-    const emailSent = true; // Simulated
+    // Send email via Resend
+    const { sendEmail } = await import('@/lib/utils/email');
+    
+    let emailSent = false;
+    let emailMessageId: string | undefined;
+    let emailError: string | undefined;
+
+    try {
+      const emailResult = await sendEmail({
+        to: lead.email,
+        subject: subject,
+        html: message,
+      });
+
+      if (emailResult.success) {
+        emailSent = true;
+        emailMessageId = emailResult.messageId;
+        // Log senza email esposta (solo in sviluppo)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[SEND EMAIL] Email sent successfully, messageId: ${emailMessageId}`);
+        }
+      } else {
+        emailError = emailResult.error;
+        console.error(`[SEND EMAIL] Failed to send email to ${lead.email}:`, emailError);
+      }
+    } catch (error: any) {
+      emailError = error.message || 'Unknown error';
+      console.error('[SEND EMAIL] Error sending email:', error);
+    }
+
     const status = emailSent ? 'sent' : 'failed';
 
     const logData: InsertCommunicationLog & { user_id: string } = {
@@ -63,6 +90,8 @@ export async function POST(request: NextRequest) {
         recipient_email: lead.email,
         recipient_name: lead.nome,
         sent_at: new Date().toISOString(),
+        message_id: emailMessageId,
+        error: emailError,
       },
       status,
     };

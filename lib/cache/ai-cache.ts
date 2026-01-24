@@ -69,8 +69,6 @@ export class AICacheService {
       }
 
       if (data) {
-        console.log('[AI CACHE] Cache HIT:', { cacheKey, promptType, hitCount: data.hit_count + 1 });
-        
         supabaseAdmin
           .from('ai_response_cache')
           .update({ hit_count: (data.hit_count || 0) + 1 })
@@ -80,7 +78,6 @@ export class AICacheService {
         return data.response_data;
       }
 
-      console.log('[AI CACHE] Cache MISS:', { cacheKey, promptType });
       return null;
     } catch (error) {
       console.error('[AI CACHE] Error in get:', error);
@@ -122,8 +119,6 @@ export class AICacheService {
 
       if (error) {
         console.error('[AI CACHE] Error storing in cache:', error);
-      } else {
-        console.log('[AI CACHE] Stored response:', { cacheKey, promptType, expiresAt });
       }
     } catch (error) {
       console.error('[AI CACHE] Error in set:', error);
@@ -144,9 +139,6 @@ export class AICacheService {
       }
 
       const count = data?.length || 0;
-      if (count > 0) {
-        console.log('[AI CACHE] Cleared expired entries:', count);
-      }
       return count;
     } catch (error) {
       console.error('[AI CACHE] Error in clearExpired:', error);

@@ -83,6 +83,14 @@ const config: Config = {
         'shimmer': 'shimmer 3s linear infinite',
         'float': 'float 3s ease-in-out infinite',
         'rotate-slow': 'rotate-slow 20s linear infinite',
+        'spin-slow': 'spin 8s linear infinite',
+        'scroll': 'scroll 60s linear infinite',
+      },
+      keyframes: {
+        scroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
     },
   },

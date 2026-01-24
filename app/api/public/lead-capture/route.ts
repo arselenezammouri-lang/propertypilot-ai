@@ -166,13 +166,14 @@ export async function POST(request: NextRequest) {
 
         if (scoreResponse.ok) {
           const scoreData = await scoreResponse.json();
-          if (scoreData.leadScore?.score_totale) {
+          // Bug fix: la risposta API ha struttura { success: true, data: { leadScore: number, ... } }
+          if (scoreData.success && scoreData.data?.leadScore !== undefined) {
             await supabaseAdmin
               .from('leads')
-              .update({ lead_score: scoreData.leadScore.score_totale })
+              .update({ lead_score: scoreData.data.leadScore })
               .eq('id', newLead.id);
             
-            automationResults.lead_score = scoreData.leadScore.score_totale;
+            automationResults.lead_score = scoreData.data.leadScore;
           }
         }
       } catch (scoreError) {

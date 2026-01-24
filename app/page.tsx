@@ -2,1327 +2,1017 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { 
-  Sparkles, 
-  Globe, 
-  FileText, 
-  CheckCircle, 
-  ArrowRight,
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PropertyPilotLogo } from "@/components/logo";
+import {
+  Sparkles,
+  Globe,
   Zap,
+  Check,
+  Minus,
+  ArrowRight,
+  Phone,
+  Bot,
+  BarChart3,
+  FileText,
   Users,
   Star,
-  Rocket,
   Crown,
   Building2,
-  Calendar,
+  Rocket,
+  Shield,
+  Clock,
   MessageCircle,
   Mail,
   Smartphone,
-  BarChart3,
+  TrendingUp,
   Target,
   Workflow,
   Languages,
   MapPin,
   Play,
-  Check,
   ChevronRight,
-  Shield,
-  Award
+  Award,
+  Brain,
+  PhoneCall,
+  Search,
+  Calendar,
+  CheckCircle2,
+  Radio,
+  Filter,
+  CalendarCheck,
+  Radar,
+  Sparkle,
+  Loader2,
+  Heart,
 } from "lucide-react";
-import { SiWhatsapp } from "react-icons/si";
-import { motion } from "framer-motion";
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, ease: "easeOut" }
-};
-
-const fadeInLeft = {
-  initial: { opacity: 0, x: -50 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.7, ease: "easeOut" }
-};
-
-const fadeInRight = {
-  initial: { opacity: 0, x: 50 },
-  animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.7, ease: "easeOut" }
-};
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { opacity: 1, scale: 1 },
-  transition: { duration: 0.6, ease: "easeOut" }
-};
-
-const staggerContainer = {
-  animate: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const AgencyLogos = () => {
-  const logos = [
-    { name: "Keller Williams", svg: (
-      <svg viewBox="0 0 120 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <text x="0" y="22" fontSize="16" fontWeight="bold" fontFamily="sans-serif">KW</text>
-        <rect x="30" y="5" width="2" height="20" />
-        <text x="38" y="22" fontSize="12" fontFamily="sans-serif">KELLER WILLIAMS</text>
-      </svg>
-    )},
-    { name: "RE/MAX", svg: (
-      <svg viewBox="0 0 100 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <text x="0" y="22" fontSize="18" fontWeight="bold" fontFamily="sans-serif">RE/MAX</text>
-      </svg>
-    )},
-    { name: "Century 21", svg: (
-      <svg viewBox="0 0 100 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <text x="0" y="22" fontSize="14" fontWeight="bold" fontFamily="sans-serif">CENTURY 21</text>
-      </svg>
-    )},
-    { name: "Coldwell Banker", svg: (
-      <svg viewBox="0 0 130 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <text x="0" y="22" fontSize="13" fontWeight="bold" fontFamily="sans-serif">COLDWELL BANKER</text>
-      </svg>
-    )},
-    { name: "eXp Realty", svg: (
-      <svg viewBox="0 0 100 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <text x="0" y="22" fontSize="16" fontWeight="bold" fontFamily="sans-serif">eXp</text>
-        <text x="35" y="22" fontSize="12" fontFamily="sans-serif">REALTY</text>
-      </svg>
-    )},
-    { name: "Immobiliare.it", svg: (
-      <svg viewBox="0 0 120 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <rect x="0" y="5" width="20" height="20" rx="3" />
-        <text x="25" y="22" fontSize="12" fontFamily="sans-serif">immobiliare.it</text>
-      </svg>
-    )},
-    { name: "Idealista", svg: (
-      <svg viewBox="0 0 90 30" className="h-6 md:h-8 w-auto opacity-40 hover:opacity-70 transition-opacity" fill="currentColor">
-        <circle cx="10" cy="15" r="8" />
-        <text x="22" y="22" fontSize="14" fontFamily="sans-serif">idealista</text>
-      </svg>
-    )}
-  ];
-
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16">
-      {logos.map((logo, index) => (
-        <motion.div 
-          key={index}
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.5 }}
-          viewport={{ once: true }}
-          className="text-muted-foreground"
-          data-testid={`logo-${logo.name.toLowerCase().replace(/[^a-z0-9]/g, '')}`}
-        >
-          {logo.svg}
-        </motion.div>
-      ))}
-    </div>
-  );
-};
+import { useEffect, useRef, useState } from "react";
+import { InteractiveSearchHook } from "@/components/interactive-search-hook";
+import { SuccessStories } from "@/components/success-stories";
+import { AriaCoach } from "@/components/aria-coach";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency";
+import { Menu, X } from "lucide-react";
 
 export default function LandingPage() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency>('EUR');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  // Carica valuta da localStorage al mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedCurrency = localStorage.getItem('propertypilot_currency') as Currency;
+      if (savedCurrency && ['USD', 'EUR', 'GBP'].includes(savedCurrency)) {
+        setSelectedCurrency(savedCurrency);
+      }
+    }
+  }, []);
+
+  // Chiudi menu mobile quando si clicca fuori
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('nav')) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    setIsVisible(true);
+    
+    // Smooth Scroll
+    document.documentElement.style.scrollBehavior = "smooth";
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-fade-in-up");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll(".fade-on-scroll").forEach((el) => observer.observe(el));
+
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.scrollBehavior = "auto";
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* HEADER - Glassmorphism Premium */}
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
-              </div>
-            </Link>
+    <div className="min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif]">
+      {/* Mesh Gradient Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-[#06b6d4]/15 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#9333ea]/10 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Navbar - Glassmorphism */}
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/5 border-b border-white/10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <Link href="/" className="flex items-center space-x-3">
+            <PropertyPilotLogo className="h-8 w-8" />
+            <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              PropertyPilot AI
+            </span>
+          </Link>
+          
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center space-x-4">
+            <span className="text-sm text-gray-400">Pilot Your Agency to the Next Level</span>
             
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/demo">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-sunset-gold transition-colors" data-testid="button-demo">
-                  Demo
+            {/* Locale & Currency Selector */}
+            <LocaleCurrencySelector 
+              currentCurrency={selectedCurrency}
+              onCurrencyChange={setSelectedCurrency}
+            />
+            
+            <a href="#features">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white transition-all active:scale-95">
+                Features
+              </Button>
+            </a>
+            <a href="#pricing">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white transition-all active:scale-95">
+                Pricing
+              </Button>
+            </a>
+            <Link href="/compliance">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white transition-all active:scale-95">
+                Compliance
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white transition-all active:scale-95">
+                Login
+              </Button>
+            </Link>
+            <Link href="/auth/signup">
+              <Button size="sm" className="bg-gradient-to-r from-[#9333ea] to-[#9333ea]/80 hover:from-[#9333ea] hover:to-[#9333ea]/90 text-white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
+                Get Started
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden flex items-center gap-2">
+            <LocaleCurrencySelector 
+              currentCurrency={selectedCurrency}
+              onCurrencyChange={setSelectedCurrency}
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-white"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white/5 backdrop-blur-md border-b border-white/10 animate-fade-in-down">
+            <div className="container mx-auto px-4 py-4 space-y-2">
+              <a href="#features" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
+                  Features
                 </Button>
-              </Link>
-              <Link href="/pricing">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-pricing">
+              </a>
+              <a href="#pricing" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
                   Pricing
                 </Button>
+              </a>
+              <Link href="/compliance" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
+                  Compliance
+                </Button>
               </Link>
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-login">
+              <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="ghost" className="w-full justify-start text-gray-300 hover:text-white">
                   Login
                 </Button>
               </Link>
-              <Link href="/auth/signup">
-                <Button size="sm" className="neon-button" data-testid="button-signup">
-                  Start Free
-                  <Rocket className="ml-2 h-4 w-4" />
+              <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/80 hover:from-[#9333ea] hover:to-[#9333ea]/90 text-white">
+                  Get Started
                 </Button>
               </Link>
-            </nav>
+            </div>
           </div>
-        </div>
-      </header>
+        )}
+      </nav>
 
-      {/* SECTION 1: HERO - USA + Global Focus with Enhanced Animations */}
-      <section className="relative overflow-hidden py-24 md:py-32 lg:py-40 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-hero" />
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--royal-purple)/0.15),transparent_50%)] animate-pulse-glow" />
-        </div>
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI4MCIgaGVpZ2h0PSI4MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiM2RTNBRkYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-40" />
-        
-        <div className="relative max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left: Text Content */}
-            <div className="text-center lg:text-left">
-              {/* Badge */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center space-x-2 ai-badge mb-6"
-              >
-                <Sparkles size={16} className="animate-pulse" />
-                <span className="text-sm font-bold">Built for Real Estate • Powered by GPT-4</span>
-              </motion.div>
-              
-              {/* Main Headline - LARGER with animated gradient */}
-              <motion.h1 
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight" 
-                data-testid="text-hero-title"
-              >
-                <span className="inline-block bg-gradient-to-r from-royal-purple via-electric-blue to-neon-aqua bg-[length:200%_auto] animate-gradient-x bg-clip-text text-transparent">
-                  The AI Operating System
+          {/* Hero Section - Apple Style */}
+      <section ref={heroRef} className={`relative pt-24 sm:pt-32 md:pt-40 pb-24 px-4 overflow-hidden transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="container mx-auto max-w-7xl relative z-10">
+          <div className="text-center mb-12">
+            {/* Badge Powered by GPT-4 */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/30 mb-8 relative backdrop-blur-md">
+              <Brain className="h-4 w-4 text-[#06b6d4]" />
+              <span className="text-sm font-medium text-[#06b6d4]">Powered by GPT-4</span>
+              <div className="absolute inset-0 rounded-full bg-[#06b6d4]/20 blur-xl animate-pulse"></div>
+            </div>
+            
+            {/* Gigantic Title with Metallic AI Reflection */}
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold mb-6 leading-[1.1]">
+              <span className="bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#9333ea] bg-clip-text text-transparent">
+                Il tuo Agente
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent animate-gradient">
+                Immobiliare{" "}
+              </span>
+              <span className="relative inline-block">
+                <span className="bg-gradient-to-r from-[#06b6d4] via-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent bg-[length:200%_100%] animate-shimmer">
+                  AI
                 </span>
-                <br />
-                <span className="text-foreground">for Real Estate Agencies</span>
-              </motion.h1>
-              
-              {/* Sub-headline */}
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed" 
-                data-testid="text-hero-subtitle"
-              >
-                Close more deals, write better listings, and automate follow-ups.
-                <br className="hidden sm:inline" />
-                <span className="text-electric-blue font-semibold">Built for agents and teams in the US, Europe, and beyond.</span>
-              </motion.p>
-              
-              {/* CTA Buttons */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
-              >
-                <Link href="/auth/signup">
-                  <Button size="lg" className="neon-button text-lg px-10 py-7 w-full sm:w-auto group shadow-lg shadow-royal-purple/25" data-testid="button-cta-signup">
-                    Start Free
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Link href="/demo">
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="text-lg px-10 py-7 w-full sm:w-auto border-2 border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all group" 
-                    data-testid="button-book-demo"
-                  >
-                    <Calendar className="mr-2 h-5 w-5" />
-                    Book a Demo
-                  </Button>
-                </Link>
-              </motion.div>
-
-              {/* Language note */}
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="text-sm text-muted-foreground mt-6"
-              >
-                <Globe className="inline h-4 w-4 mr-1" />
-                Also available in Italian and 12+ languages for your listings.
-              </motion.p>
-            </div>
-
-            {/* Right: Dashboard Preview with ENHANCED GLOW */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, x: 30 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative hidden lg:block"
-            >
-              <div className="relative">
-                {/* Enhanced multi-layer glow effect */}
-                <div className="absolute -inset-8 bg-gradient-to-r from-royal-purple/30 via-electric-blue/30 to-neon-aqua/30 rounded-3xl blur-3xl animate-pulse-glow" />
-                <div className="absolute -inset-4 bg-gradient-to-r from-royal-purple/20 via-electric-blue/20 to-neon-aqua/20 rounded-3xl blur-2xl" />
-                
-                {/* Glass card with dashboard mockup */}
-                <div className="relative glass rounded-2xl p-6 border border-silver-frost/30 shadow-2xl">
-                  <div className="bg-background/80 rounded-xl p-4 space-y-4">
-                    {/* Mock dashboard header */}
-                    <div className="flex items-center justify-between border-b border-silver-frost/20 pb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-red-500" />
-                        <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                        <div className="w-3 h-3 rounded-full bg-green-500" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">PropertyPilot AI Dashboard</span>
-                    </div>
-                    
-                    {/* Mock stats */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="bg-gradient-to-br from-royal-purple/20 to-transparent rounded-lg p-3 text-center">
-                        <p className="text-2xl font-bold text-royal-purple">247</p>
-                        <p className="text-xs text-muted-foreground">Leads</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-neon-aqua/20 to-transparent rounded-lg p-3 text-center">
-                        <p className="text-2xl font-bold text-neon-aqua">89</p>
-                        <p className="text-xs text-muted-foreground">Listings</p>
-                      </div>
-                      <div className="bg-gradient-to-br from-sunset-gold/20 to-transparent rounded-lg p-3 text-center">
-                        <p className="text-2xl font-bold text-sunset-gold">$2.4M</p>
-                        <p className="text-xs text-muted-foreground">Pipeline</p>
-                      </div>
-                    </div>
-
-                    {/* Mock AI generation */}
-                    <div className="bg-gradient-to-r from-electric-blue/10 to-royal-purple/10 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="h-4 w-4 text-electric-blue" />
-                        <span className="text-sm font-medium">AI Listing Generator</span>
-                      </div>
-                      <div className="h-2 bg-silver-frost/20 rounded-full overflow-hidden">
-                        <div className="h-full w-3/4 bg-gradient-to-r from-electric-blue to-royal-purple rounded-full animate-pulse" />
-                      </div>
-                    </div>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 animate-shine"></div>
+              </span>
+            </h1>
+            
+            {/* Social Proof */}
+            <div className="flex items-center justify-center gap-6 mb-8 text-lg">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-cyan-400 border-2 border-[#0a0a0a]"></div>
+                  ))}
                 </div>
+                <span className="text-gray-300 font-semibold">Scelto da <span className="text-[#06b6d4]">+500 agenzie</span> in Europa</span>
               </div>
-            </motion.div>
-          </div>
-
-          {/* Trust Indicators */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-16 flex flex-wrap items-center justify-center gap-8 md:gap-12 text-sm text-muted-foreground"
-          >
-            <div className="flex items-center space-x-2 group">
-              <CheckCircle className="h-5 w-5 text-neon-aqua" />
-              <span>No credit card required</span>
             </div>
-            <div className="flex items-center space-x-2 group">
-              <CheckCircle className="h-5 w-5 text-neon-aqua" />
-              <span>Cancel anytime</span>
-            </div>
-            <div className="flex items-center space-x-2 group">
-              <Star className="h-5 w-5 text-sunset-gold fill-sunset-gold" />
-              <span>Premium AI Technology</span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SECTION 2: SOCIAL PROOF STRIP with SVG Logos */}
-      <section className="py-12 border-y border-silver-frost/20 bg-luxury-indigo/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center text-sm text-muted-foreground mb-8 uppercase tracking-wider"
-          >
-            Trusted by agents and agencies in 12+ countries
-          </motion.p>
-          <AgencyLogos />
-        </div>
-      </section>
-
-      {/* SECTION 3: WHY PROPERTYPILOT AI - 3 PILLARS with Enhanced Design */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8" id="features">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              Why <span className="gradient-text-purple">PropertyPilot AI</span>?
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Three powerful engines to transform your real estate business
+            
+            <p className="text-2xl md:text-3xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
+              L'unico Sistema Operativo AI che trova, analizza e ottiene mandati in totale autonomia
             </p>
-          </motion.div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-8 md:gap-10"
-          >
-            {/* Pillar 1: AI Listing Engine */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="card-pillar-listing"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-electric-blue/10 via-transparent to-royal-purple/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-8 h-full hover-lift">
-                <div className="w-16 h-16 bg-gradient-to-br from-electric-blue/30 to-royal-purple/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-glow-aqua">
-                  <FileText className="h-8 w-8 text-electric-blue" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 gradient-text-purple">AI Listing Engine</h3>
-                <p className="text-muted-foreground mb-6">
-                  Write perfect MLS & Zillow-ready listings in seconds. Titles, descriptions, hashtags, video scripts, and luxury PDF brochures.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>A/B tested titles for high CTR</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>SEO-optimized descriptions</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>Professional PDF brochures</span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Pillar 2: CRM & Automation Engine */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="card-pillar-crm"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-royal-purple/10 via-transparent to-sunset-gold/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-8 h-full hover-lift">
-                <div className="w-16 h-16 bg-gradient-to-br from-royal-purple/30 to-sunset-gold/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-glow-purple">
-                  <Workflow className="h-8 w-8 text-royal-purple" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 gradient-text-gold">CRM & Automation</h3>
-                <p className="text-muted-foreground mb-6">
-                  Visual pipelines, lead scoring, automated follow-ups via email, SMS, and WhatsApp.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>Kanban lead pipeline</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>AI-powered lead scoring</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>Multi-channel automation</span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Pillar 3: Global & Multi-Language */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="card-pillar-global"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-aqua/10 via-transparent to-electric-blue/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-8 h-full hover-lift">
-                <div className="w-16 h-16 bg-gradient-to-br from-neon-aqua/30 to-electric-blue/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-glow-aqua">
-                  <Globe className="h-8 w-8 text-neon-aqua" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-neon-aqua">Global & Multi-Language</h3>
-                <p className="text-muted-foreground mb-6">
-                  Listings and marketing content in 12+ languages. Perfect for cross-border clients, expats, and international investors.
-                </p>
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>12+ languages supported</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>International portal formats</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-neon-aqua flex-shrink-0" />
-                    <span>Cross-border ready</span>
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SECTION 4: FEATURE DEEP DIVE with Alternating Backgrounds & Animations */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              Everything You Need to <span className="gradient-text-purple">Close More Deals</span>
-            </h2>
-          </motion.div>
-
-          {/* Feature 4.1: Listing Suite Pro - Dark stripe */}
-          <div className="relative py-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-luxury-indigo/5 rounded-3xl mb-8" data-testid="feature-listing-suite">
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="order-2 lg:order-1"
-              >
-                <div className="inline-flex items-center gap-2 ai-badge mb-4">
-                  <FileText className="h-4 w-4" />
-                  <span className="text-sm font-semibold">Listing Suite Pro</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-6">
-                  Create <span className="gradient-text-purple">Perfect Listings</span> in Seconds
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">AI titles A/B tested for high CTR</p>
-                      <p className="text-sm text-muted-foreground">Get 5 headline variations optimized for clicks</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Descriptions optimized for MLS & portals</p>
-                      <p className="text-sm text-muted-foreground">Zillow, Immobiliare.it, Idealista, Casa.it & more</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Luxury PDF brochures included</p>
-                      <p className="text-sm text-muted-foreground">White-label templates with your branding</p>
-                    </div>
-                  </li>
-                </ul>
-              </motion.div>
-              <motion.div 
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="order-1 lg:order-2"
-              >
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-gradient-to-r from-electric-blue/10 to-royal-purple/10 rounded-3xl blur-xl" />
-                  <div className="relative glass rounded-2xl p-6 border border-silver-frost/30 shadow-xl">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 pb-3 border-b border-silver-frost/20">
-                        <Sparkles className="h-5 w-5 text-electric-blue" />
-                        <span className="font-medium">AI Listing Generator</span>
-                      </div>
-                      <div className="bg-background/60 rounded-lg p-4">
-                        <p className="text-sm text-muted-foreground mb-2">Generated Title:</p>
-                        <p className="font-medium text-electric-blue">&quot;Stunning 4BR Modern Home with Pool & City Views&quot;</p>
-                      </div>
-                      <div className="bg-background/60 rounded-lg p-4">
-                        <p className="text-sm text-muted-foreground mb-2">SEO Description:</p>
-                        <p className="text-sm">Welcome to this breathtaking 4-bedroom residence featuring contemporary design, floor-to-ceiling windows...</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Feature 4.2: CRM & Pipeline - Light stripe */}
-          <div className="relative py-16 mb-8" data-testid="feature-crm-pipeline">
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-gradient-to-r from-royal-purple/10 to-sunset-gold/10 rounded-3xl blur-xl" />
-                  <div className="relative glass rounded-2xl p-6 border border-silver-frost/30 shadow-xl">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 pb-3 border-b border-silver-frost/20">
-                        <BarChart3 className="h-5 w-5 text-royal-purple" />
-                        <span className="font-medium">Lead Pipeline</span>
-                      </div>
-                      <div className="flex gap-2 overflow-x-auto pb-2">
-                        {["New", "Contacted", "Follow-Up", "Closed"].map((stage, i) => (
-                          <div key={stage} className="flex-shrink-0 w-28 bg-background/60 rounded-lg p-3">
-                            <p className="text-xs text-muted-foreground mb-2">{stage}</p>
-                            <div className={`h-2 rounded-full ${i === 3 ? 'bg-neon-aqua' : 'bg-silver-frost/30'}`} />
-                            <p className="text-lg font-bold mt-2">{[12, 8, 5, 24][i]}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-              <motion.div 
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <div className="inline-flex items-center gap-2 ai-badge mb-4">
-                  <Target className="h-4 w-4" />
-                  <span className="text-sm font-semibold">CRM & Pipeline</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-6">
-                  <span className="gradient-text-gold">Manage Every Lead</span> with Precision
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-sunset-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-sunset-gold" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Kanban pipeline for visual tracking</p>
-                      <p className="text-sm text-muted-foreground">New / Contacted / Follow-Up / Closed / Lost</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-sunset-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-sunset-gold" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Lead notes, history, and AI scoring</p>
-                      <p className="text-sm text-muted-foreground">Hot / Warm / Cold classification with 0-100 score</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-sunset-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-sunset-gold" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Smart automations that work 24/7</p>
-                      <p className="text-sm text-muted-foreground">Auto-assign, status changes, follow-up triggers</p>
-                    </div>
-                  </li>
-                </ul>
-              </motion.div>
-            </div>
-          </div>
-
-          {/* Feature 4.3: Communication Hub - Dark stripe */}
-          <div className="relative py-16 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-luxury-indigo/5 rounded-3xl" data-testid="feature-communication-hub">
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="order-2 lg:order-1"
-              >
-                <div className="inline-flex items-center gap-2 ai-badge mb-4">
-                  <MessageCircle className="h-4 w-4" />
-                  <span className="text-sm font-semibold">Communication Hub</span>
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-6">
-                  All Your <span className="text-neon-aqua">Messages in One Place</span>
-                </h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Email, SMS, WhatsApp from one place</p>
-                      <p className="text-sm text-muted-foreground">Unified inbox for all lead communications</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">AI-generated scripts with tone selection</p>
-                      <p className="text-sm text-muted-foreground">Professional, luxury, emotional, urgent</p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-neon-aqua/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Check className="h-4 w-4 text-neon-aqua" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Full message history per lead</p>
-                      <p className="text-sm text-muted-foreground">Never lose context on any conversation</p>
-                    </div>
-                  </li>
-                </ul>
-              </motion.div>
-              <motion.div 
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="order-1 lg:order-2"
-              >
-                <div className="relative">
-                  <div className="absolute -inset-4 bg-gradient-to-r from-neon-aqua/10 to-electric-blue/10 rounded-3xl blur-xl" />
-                  <div className="relative glass rounded-2xl p-6 border border-silver-frost/30 shadow-xl">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 pb-3 border-b border-silver-frost/20">
-                        <MessageCircle className="h-5 w-5 text-neon-aqua" />
-                        <span className="font-medium">Message Center</span>
-                      </div>
-                      <div className="flex items-center gap-3 bg-background/60 rounded-lg p-3">
-                        <Mail className="h-5 w-5 text-electric-blue" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">Email sent to John D.</p>
-                          <p className="text-xs text-muted-foreground">2 min ago</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 bg-background/60 rounded-lg p-3">
-                        <SiWhatsapp className="h-5 w-5 text-green-500" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">WhatsApp to Maria S.</p>
-                          <p className="text-xs text-muted-foreground">15 min ago</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 bg-background/60 rounded-lg p-3">
-                        <Smartphone className="h-5 w-5 text-royal-purple" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">SMS reminder to Team</p>
-                          <p className="text-xs text-muted-foreground">1 hour ago</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 5: BUILT FOR AGENTS & TEAMS */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-luxury-indigo/5">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            {/* Left: For Everyone */}
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              data-testid="section-solo-agents"
-            >
-              <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
-                For solo agents, small teams, and <span className="gradient-text-purple">growing agencies</span>
-              </h2>
-              <ul className="space-y-6">
-                <li className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-electric-blue/20 to-royal-purple/10 flex items-center justify-center flex-shrink-0">
-                    <Rocket className="h-6 w-6 text-electric-blue" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">Solo Agents</p>
-                    <p className="text-muted-foreground">Get a personal AI assistant for every listing. Work faster, close more.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-royal-purple/20 to-sunset-gold/10 flex items-center justify-center flex-shrink-0">
-                    <Users className="h-6 w-6 text-royal-purple" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">Teams</p>
-                    <p className="text-muted-foreground">Share leads, notes, and automations in one workspace. Stay aligned.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sunset-gold/20 to-neon-aqua/10 flex items-center justify-center flex-shrink-0">
-                    <Building2 className="h-6 w-6 text-sunset-gold" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">Agencies</p>
-                    <p className="text-muted-foreground">Manage up to 10+ agents with roles, reporting, and lead distribution.</p>
-                  </div>
-                </li>
-              </ul>
-            </motion.div>
-
-            {/* Right: Enterprise Card */}
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative" 
-              data-testid="card-enterprise"
-            >
-              <div className="absolute -inset-2 bg-gradient-to-r from-royal-purple/20 to-sunset-gold/20 rounded-3xl blur-xl" />
-              <div className="relative futuristic-card p-8 border-2 border-royal-purple/30">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-royal-purple/20 rounded-full mb-6">
-                  <Building2 className="h-4 w-4 text-royal-purple" />
-                  <span className="text-sm font-semibold text-royal-purple">For Teams & Brokerages</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-6">Agency Features</h3>
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-neon-aqua" />
-                    <span>Lead routing and assignment rules</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-neon-aqua" />
-                    <span>Multi-agent activity reports</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-neon-aqua" />
-                    <span>White-label PDFs and branding</span>
-                  </li>
-                  <li className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-neon-aqua" />
-                    <span>Priority support</span>
-                  </li>
-                </ul>
-                <Link href="/demo">
-                  <Button className="w-full neon-button py-6 text-lg group" data-testid="button-agency-demo">
-                    <Calendar className="mr-2 h-5 w-5" />
-                    Book an Agency Demo
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6: GLOBAL MAP / INTERNATIONAL with World Map Background */}
-      <section className="relative py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* World map silhouette background */}
-        <div className="absolute inset-0 opacity-5">
-          <svg viewBox="0 0 1000 500" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
-            <ellipse cx="500" cy="250" rx="450" ry="200" fill="url(#worldGlow)" />
-            <defs>
-              <radialGradient id="worldGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="hsl(var(--royal-purple))" />
-                <stop offset="100%" stopColor="transparent" />
-              </radialGradient>
-            </defs>
-          </svg>
-        </div>
-        
-        <div className="relative max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              From Milan to Miami: <span className="gradient-text-purple">One Platform</span> for Global Real Estate
-            </h2>
-            <p className="text-xl text-muted-foreground mb-16 max-w-2xl mx-auto">
-              PropertyPilot AI is already used by agents in multiple countries. We&apos;re ready for your market.
-            </p>
-          </motion.div>
-
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8" 
-            data-testid="section-global-markets"
-          >
-            <motion.div variants={fadeInUp} className="futuristic-card p-6 text-center hover-lift">
-              <div className="text-5xl mb-4">🇺🇸</div>
-              <h3 className="font-bold text-lg mb-2">US & Canada</h3>
-              <p className="text-sm text-muted-foreground">MLS & Zillow-style listings</p>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="futuristic-card p-6 text-center hover-lift">
-              <div className="text-5xl mb-4">🇮🇹</div>
-              <h3 className="font-bold text-lg mb-2">Italy</h3>
-              <p className="text-sm text-muted-foreground">Immobiliare.it, Casa.it, Idealista</p>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="futuristic-card p-6 text-center hover-lift">
-              <div className="text-5xl mb-4">🇪🇸 🇵🇹</div>
-              <h3 className="font-bold text-lg mb-2">Spain & Portugal</h3>
-              <p className="text-sm text-muted-foreground">International buyers & investors</p>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="futuristic-card p-6 text-center hover-lift">
-              <div className="text-5xl mb-4">🌍</div>
-              <h3 className="font-bold text-lg mb-2">Dubai, France, UK, LATAM</h3>
-              <p className="text-sm text-muted-foreground">12+ languages for your listings</p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* SECTION 7: PRICING PREVIEW with Enhanced UI */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-luxury-indigo/5" id="pricing-preview">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              Simple, <span className="gradient-text-purple">Transparent Pricing</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Choose the plan that fits your business
-            </p>
-          </motion.div>
-
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {/* Starter */}
-            <motion.div 
-              variants={fadeInUp}
-              className="futuristic-card p-6 hover-lift border border-silver-frost/30" 
-              data-testid="card-pricing-starter"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Rocket className="h-5 w-5 text-electric-blue" />
-                <h3 className="font-bold text-lg">Starter</h3>
-              </div>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">€97</span>
-                <span className="text-muted-foreground">/mo</span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-6">AI listing tools for solo agents</p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Link href="/auth/signup">
-                <Button className="w-full py-5" variant="outline" data-testid="button-starter-signup">
-                  Start Free
+                <Button 
+                  size="lg" 
+                  className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] relative overflow-hidden group transition-all active:scale-95"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Inizia Gratis
+                    <ArrowRight className="ml-3 h-6 w-6" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#06b6d4] to-[#9333ea] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 rounded-lg bg-[#06b6d4]/30 blur-2xl animate-pulse"></div>
                 </Button>
               </Link>
-            </motion.div>
-
-            {/* Pro - Recommended with MOST POPULAR badge */}
-            <motion.div 
-              variants={fadeInUp}
-              className="futuristic-card p-6 border-2 border-sunset-gold/50 hover-lift relative bg-gradient-to-b from-sunset-gold/5 to-transparent" 
-              data-testid="card-pricing-pro"
-            >
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span className="px-4 py-1.5 bg-gradient-to-r from-sunset-gold to-royal-purple text-white text-xs font-bold rounded-full shadow-lg shadow-sunset-gold/25 flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-white" />
-                  MOST POPULAR
-                </span>
-              </div>
-              <div className="flex items-center gap-2 mb-4 mt-2">
-                <Crown className="h-5 w-5 text-sunset-gold" />
-                <h3 className="font-bold text-lg">Pro</h3>
-              </div>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">€297</span>
-                <span className="text-muted-foreground">/mo</span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-6">CRM, automations & AI tools</p>
-              <Link href="/pricing#pro">
-                <Button className="w-full neon-button py-5" data-testid="button-pro-details">
-                  See Pro Details
+              <Link href="/dashboard">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="text-xl px-12 py-7 border-white/20 text-white/90 hover:bg-white/5 backdrop-blur-md transition-all active:scale-95 hover:border-white/30 hover:shadow-[0_0_20px_rgba(147,51,234,0.2)]"
+                >
+                  Vedi Demo
+                  <Play className="ml-3 h-6 w-6" />
                 </Button>
               </Link>
-            </motion.div>
+            </div>
 
-            {/* Agency */}
-            <motion.div 
-              variants={fadeInUp}
-              className="futuristic-card p-6 hover-lift border border-silver-frost/30" 
-              data-testid="card-pricing-agency"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Building2 className="h-5 w-5 text-royal-purple" />
-                <h3 className="font-bold text-lg">Agency</h3>
+            {/* Trusted By Section */}
+            <div className="mt-20 fade-on-scroll">
+              <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">Compatibile con i principali portali</p>
+              <div className="flex items-center justify-center gap-8 flex-wrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+                <div className="text-2xl font-bold text-gray-400">Idealista</div>
+                <div className="text-2xl font-bold text-gray-400">Immobiliare.it</div>
+                <div className="text-2xl font-bold text-gray-400">Zillow</div>
+                <div className="text-2xl font-bold text-gray-400">MLS</div>
               </div>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">€497</span>
-                <span className="text-muted-foreground">/mo</span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-6">For teams up to 10 agents</p>
-              <Link href="/demo">
-                <Button className="w-full py-5" variant="outline" data-testid="button-agency-demo-pricing">
-                  Book Demo
-                </Button>
-              </Link>
-            </motion.div>
+            </div>
 
-            {/* Agency Boost */}
-            <motion.div 
-              variants={fadeInUp}
-              className="futuristic-card p-6 hover-lift bg-gradient-to-br from-sunset-gold/10 to-transparent border border-sunset-gold/20" 
-              data-testid="card-pricing-boost"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="h-5 w-5 text-sunset-gold" />
-                <h3 className="font-bold text-lg">Agency Boost</h3>
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
+              <div className="text-center">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">24/7</div>
+                <div className="text-sm text-gray-400 mt-2">Automazione</div>
               </div>
-              <div className="mb-4">
-                <span className="text-3xl font-bold">€2,497</span>
-                <span className="text-muted-foreground"> one-time</span>
+              <div className="text-center">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">1000+</div>
+                <div className="text-sm text-gray-400 mt-2">Annunci/Giorno</div>
               </div>
-              <p className="text-sm text-muted-foreground mb-6">Done-for-you setup package</p>
-              <Link href="/demo">
-                <Button className="w-full bg-gradient-to-r from-sunset-gold to-royal-purple text-white hover:opacity-90 py-5" data-testid="button-boost-details">
-                  Learn More
-                </Button>
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-8"
-          >
-            <Link href="/pricing">
-              <Button variant="link" className="text-royal-purple hover:text-electric-blue" data-testid="link-full-pricing">
-                View full pricing details
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Link>
-          </motion.div>
+              <div className="text-center">
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">80%</div>
+                <div className="text-sm text-gray-400 mt-2">Conversion Rate</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* SECTION 8: HOW IT WORKS */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              Get Started in <span className="gradient-text-purple">3 Simple Steps</span>
+      {/* Interactive Search Hook */}
+      <InteractiveSearchHook />
+
+      {/* Why PropertyPilot AI Section - Diamond Polish */}
+      <section id="features" className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808] relative">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16 fade-on-scroll">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              Why PropertyPilot AI?
             </h2>
-          </motion.div>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              La piattaforma AI completa per agenti immobiliari che vogliono scalare
+            </p>
+          </div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-8"
-          >
-            <motion.div variants={fadeInUp} className="text-center" data-testid="step-1">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-electric-blue/30 to-royal-purple/20 flex items-center justify-center shadow-glow-aqua">
-                <span className="text-2xl font-bold text-electric-blue">1</span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Create Your Account</h3>
-              <p className="text-muted-foreground">Start free, no credit card required</p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="text-center" data-testid="step-2">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-royal-purple/30 to-sunset-gold/20 flex items-center justify-center shadow-glow-purple">
-                <span className="text-2xl font-bold text-royal-purple">2</span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Connect Your Leads & Listings</h3>
-              <p className="text-muted-foreground">Import or paste your existing content</p>
-            </motion.div>
-
-            <motion.div variants={fadeInUp} className="text-center" data-testid="step-3">
-              <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-sunset-gold/30 to-neon-aqua/20 flex items-center justify-center shadow-glow-gold">
-                <span className="text-2xl font-bold text-sunset-gold">3</span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Let AI Do the Heavy Lifting</h3>
-              <p className="text-muted-foreground">Listings, follow-ups, and CRM in one place</p>
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mt-12"
-          >
-            <Link href="/auth/signup">
-              <Button size="lg" className="neon-button text-lg px-8 py-6 group" data-testid="button-start-2-min">
-                Start Free in 2 Minutes
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-          </motion.div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: FileText,
+                title: "AI Listing Engine",
+                description: "Genera annunci professionali in secondi con stili personalizzati (Luxury, Investment, Standard Pro). Multi-lingua e ottimizzato per Zillow, Idealista, Immobiliare.",
+                benefit: "Risparmia 5 ore a settimana su scrittura annunci",
+              },
+              {
+                icon: BarChart3,
+                title: "CRM AI Intelligence",
+                description: "Lead Scoring automatico, follow-up AI multi-canale (WhatsApp, Email, SMS). Categorizza lead HOT/WARM/COLD e suggerisce azioni prioritarie.",
+                benefit: "Aumenta conversioni del 40% con prioritizzazione AI",
+              },
+              {
+                icon: Globe,
+                title: "Global Reach",
+                description: "Operiamo su USA (Zillow, MLS), Italia (Idealista, Immobiliare), Spagna (Idealista.es). Terminologia localizzata e formati di mercato.",
+                benefit: "Espandi il tuo business in 3 continenti",
+              },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className="glass-card fade-on-scroll border-white/10"
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <CardHeader>
+                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/20 to-[#9333ea]/10 flex items-center justify-center mb-4 border border-[#9333ea]/30 backdrop-blur-md">
+                    <feature.icon className="h-8 w-8 text-[#9333ea]" />
+                  </div>
+                  <CardTitle className="text-2xl text-white">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 mb-4">{feature.description}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm">
+                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* SECTION 9: TESTIMONIALS with Enhanced Design + 4th Testimonial */}
-      <section className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-luxury-indigo/5">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              Loved by Agents <span className="gradient-text-purple">Worldwide</span>
+      {/* Il Motore di Ricerca che non dorme mai - Bento Grid with Border Beam */}
+      <section className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#050505] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#9333ea]/10 via-transparent to-[#06b6d4]/10"></div>
+        <div className="container mx-auto max-w-7xl relative z-10">
+          <div className="text-center mb-16 fade-on-scroll">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              Il Motore di Ricerca che non dorme mai
             </h2>
-          </motion.div>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Disponibile <span className="text-[#06b6d4] font-bold">ESCLUSIVAMENTE</span> nel piano AGENCY
+            </p>
+            <div className="mt-4 inline-block px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
+              <span className="text-sm text-[#06b6d4] font-semibold">Risparmia 20 ore di telefonate a settimana</span>
+            </div>
+          </div>
 
-          <motion.div 
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {/* US Testimonial */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="testimonial-us"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-electric-blue/10 to-royal-purple/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-6 h-full rounded-2xl border border-silver-frost/30">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-sunset-gold fill-sunset-gold" />
+          {/* Bento Grid with Border Beam */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 fade-on-scroll">
+            {/* Step 1: Scansione Globale */}
+            <Card className="glass-card border-white/10 hover:border-[#9333ea]/30">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#9333ea]/10 flex items-center justify-center mb-4 border border-[#9333ea]/30">
+                  <Radar className="h-8 w-8 text-[#9333ea] animate-pulse" />
+                </div>
+                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 1</div>
+                <CardTitle className="text-xl text-white">Scansione Globale</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-400 text-sm mb-4">
+                  L'AI scansiona automaticamente Idealista, Immobiliare, Zillow e MLS 24/7, trovando migliaia di annunci ogni giorno.
+                </p>
+                {/* Progress Bar Animation */}
+                <div className="w-full h-2 bg-[#9333ea]/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-[#9333ea] to-[#06b6d4] rounded-full animate-progress"></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Scansione in corso...</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 2: Filtrazione IA */}
+            <Card className="glass-card border-white/10 hover:border-[#06b6d4]/30">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#06b6d4]/10 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
+                  <Filter className="h-8 w-8 text-[#06b6d4] animate-pulse" />
+                </div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 2</div>
+                <CardTitle className="text-xl text-white">Filtrazione IA</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-400 text-sm mb-4">
+                  Ogni annuncio riceve un Lead Score AI (0-100). Solo i "TOP DEAL" (80+) vengono selezionati per le chiamate.
+                </p>
+                {/* Score Animation */}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-[#06b6d4]/20 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-[#06b6d4] to-[#9333ea] rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                  <span className="text-xs font-bold text-[#06b6d4]">85/100</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">TOP DEAL rilevato</p>
+              </CardContent>
+            </Card>
+
+            {/* Step 3: Chiamata Automatica */}
+            <Card className="glass-card border-white/10 hover:border-[#9333ea]/30">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#06b6d4]/20 flex items-center justify-center mb-4 border border-[#9333ea]/30">
+                  <PhoneCall className="h-8 w-8 text-[#06b6d4] animate-pulse" />
+                </div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 3</div>
+                <CardTitle className="text-xl text-white">Chiamata Automatica</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-400 text-sm mb-4">
+                  Voice AI (Bland AI) chiama i proprietari, gestisce obiezioni e propone appuntamenti in modo naturale e persuasivo.
+                </p>
+                {/* Sound Wave Animation */}
+                <div className="flex items-end justify-center gap-1 h-8">
+                  {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                    <div
+                      key={i}
+                      className="w-1 bg-gradient-to-t from-[#06b6d4] to-[#9333ea] rounded-full animate-soundwave"
+                      style={{
+                        height: `${20 + Math.random() * 30}%`,
+                        animationDelay: `${i * 0.1}s`,
+                      }}
+                    ></div>
                   ))}
                 </div>
-                <p className="text-base mb-6 leading-relaxed">
-                  &quot;PropertyPilot AI transformed how I write listings. I save hours every week and my clients love the professional descriptions.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-electric-blue/30 to-royal-purple/20 flex items-center justify-center">
-                    <span className="text-lg">🇺🇸</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm">Sarah M.</p>
-                    <p className="text-xs text-muted-foreground">Realtor, Miami FL</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+                <p className="text-xs text-gray-500 mt-2">Chiamata in corso...</p>
+              </CardContent>
+            </Card>
 
-            {/* Italian Testimonial */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="testimonial-it"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-royal-purple/10 to-sunset-gold/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-6 h-full rounded-2xl border border-silver-frost/30">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-sunset-gold fill-sunset-gold" />
-                  ))}
+            {/* Step 4: Appuntamento in Agenda */}
+            <Card className="glass-card border-white/10 hover:border-[#06b6d4]/30">
+              <CardHeader>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#9333ea]/20 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
+                  <CalendarCheck className="h-8 w-8 text-[#9333ea] animate-pulse" />
                 </div>
-                <p className="text-base mb-6 leading-relaxed">
-                  &quot;Finalmente un tool che capisce il mercato italiano! I titoli e le descrizioni sono perfetti per Immobiliare.it e Idealista.&quot;
+                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 4</div>
+                <CardTitle className="text-xl text-white">Appuntamento in Agenda</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-400 text-sm mb-4">
+                  L'appuntamento viene automaticamente aggiunto al tuo Google Calendar e ricevi una notifica email con tutti i dettagli.
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-royal-purple/30 to-sunset-gold/20 flex items-center justify-center">
-                    <span className="text-lg">🇮🇹</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm">Marco R.</p>
-                    <p className="text-xs text-muted-foreground">Agente, Milano</p>
+                {/* Calendar Check Animation */}
+                <div className="flex items-center justify-center">
+                  <div className="relative">
+                    <Calendar className="h-8 w-8 text-[#06b6d4]" />
+                    <CheckCircle2 className="h-5 w-5 text-green-400 absolute -top-1 -right-1 animate-bounce" />
                   </div>
                 </div>
-              </div>
-            </motion.div>
-
-            {/* Spanish Testimonial */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="testimonial-es"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-neon-aqua/10 to-electric-blue/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-6 h-full rounded-2xl border border-silver-frost/30">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-sunset-gold fill-sunset-gold" />
-                  ))}
-                </div>
-                <p className="text-base mb-6 leading-relaxed">
-                  &quot;The multi-language feature is incredible. I work with international buyers and PropertyPilot AI makes it seamless.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-aqua/30 to-electric-blue/20 flex items-center justify-center">
-                    <span className="text-lg">🇪🇸</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm">Elena G.</p>
-                    <p className="text-xs text-muted-foreground">Agent, Barcelona</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* 4th Testimonial - US Agent */}
-            <motion.div 
-              variants={fadeInUp}
-              className="relative group" 
-              data-testid="testimonial-us-2"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-sunset-gold/10 to-royal-purple/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative futuristic-card p-6 h-full rounded-2xl border border-silver-frost/30">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-sunset-gold fill-sunset-gold" />
-                  ))}
-                </div>
-                <p className="text-base mb-6 leading-relaxed">
-                  &quot;The CRM pipeline changed how I manage leads. AI scoring tells me exactly who to call first. My close rate went up 30%.&quot;
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sunset-gold/30 to-royal-purple/20 flex items-center justify-center">
-                    <span className="text-lg">🇺🇸</span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm">James T.</p>
-                    <p className="text-xs text-muted-foreground">Broker, Austin TX</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
+                <p className="text-xs text-gray-500 mt-2">Appuntamento confermato</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* SECTION 10: FINAL CTA with Enhanced Design & Trust Badges */}
-      <section className="relative py-28 md:py-36 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-royal-purple/5 to-background" />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--royal-purple)/0.2),transparent_60%)]" />
+      {/* Il tuo nuovo Martedì mattina */}
+      <section className="py-24 px-4 bg-[#050505] relative">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-16 fade-on-scroll">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              Il tuo nuovo Martedì mattina
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Immagina di svegliarti con il lavoro già fatto
+            </p>
+          </div>
+
+          <div className="space-y-8 fade-on-scroll">
+            {[
+              { time: "Ore 08:00", title: "L'IA ha già analizzato 500 annunci", description: "Mentre dormivi, il sistema ha scansionato Idealista, Immobiliare, Zillow e MLS. Ogni annuncio è stato analizzato e classificato con un Lead Score AI." },
+              { time: "Ore 08:30", title: "3 proprietari hanno confermato la visita", description: "Voice AI ha chiamato i proprietari dei TOP DEAL (score 80+). Tre hanno già confermato la disponibilità per una visita questa settimana." },
+              { time: "Ore 09:00", title: "Ti svegli e apri l'agenda già piena", description: "Apri PropertyPilot AI e trovi 3 appuntamenti già in calendario, con tutti i dettagli dell'immobile, contatti del proprietario e note AI." },
+            ].map((item, idx) => (
+              <Card 
+                key={idx}
+                className="glass-card border-white/10 hover:border-[#9333ea]/30"
+                style={{ animationDelay: `${idx * 150}ms` }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/20 to-[#06b6d4]/20 flex items-center justify-center border border-[#9333ea]/30">
+                        <Clock className="h-8 w-8 text-[#06b6d4]" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-[#9333ea] mb-2">{item.time}</div>
+                      <h3 className="text-2xl font-bold text-white mb-3">{item.title}</h3>
+                      <p className="text-gray-400">{item.description}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="relative max-w-4xl mx-auto text-center"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-            Ready to upgrade your real estate business with <span className="gradient-text-purple">AI</span>?
-          </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Join thousands of agents already using PropertyPilot AI to close more deals.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Link href="/auth/signup">
-              <Button size="lg" className="text-xl px-12 py-8 bg-gradient-to-r from-royal-purple via-electric-blue to-neon-aqua text-white shadow-xl shadow-royal-purple/30 hover:shadow-royal-purple/50 hover:scale-105 transition-all duration-300 group" data-testid="button-final-cta">
-                Start Free Now
-                <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-1 transition-transform" />
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808]">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16 fade-on-scroll">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              Loved by Agents Worldwide
+            </h2>
+            <p className="text-xl text-gray-400">
+              Migliaia di agenti immobiliari si fidano di PropertyPilot AI
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Marco Rossi",
+                role: "Agente Immobiliare, Milano",
+                content: "PropertyPilot AI ha triplicato i miei affari. Il Lead Scoring AI mi dice esattamente su quali lead concentrarmi.",
+                rating: 5,
+              },
+              {
+                name: "Sarah Johnson",
+                role: "Real Estate Agent, Miami",
+                content: "La funzione di generazione annunci è incredibile. Creo listing professionali in 30 secondi invece di ore.",
+                rating: 5,
+              },
+              {
+                name: "Carlos Garcia",
+                role: "Agente, Barcelona",
+                content: "Il CRM AI è un game-changer. I follow-up automatici mi fanno risparmiare 10 ore a settimana.",
+                rating: 5,
+              },
+            ].map((testimonial, idx) => (
+              <Card 
+                key={idx} 
+                className="glass-card border-white/10 hover:border-[#9333ea]/30 fade-on-scroll"
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-1 mb-4">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-300 mb-4 italic">"{testimonial.content}"</p>
+                  <div>
+                    <p className="text-white font-semibold">{testimonial.name}</p>
+                    <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories Section */}
+      <SuccessStories />
+
+      {/* Aria - Your AI Success Partner Section */}
+      <section className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#050505] relative">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16 fade-on-scroll">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#9333ea]/10 border border-[#9333ea]/30 mb-6 backdrop-blur-md">
+              <Sparkles className="h-4 w-4 text-[#9333ea]" />
+              <span className="text-sm font-medium text-[#9333ea]">Disponibile in tutti i piani</span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+              Aria - Your AI Success Partner
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Il tuo coach personale, sempre disponibile. Onboarding, strategia, motivazione: tutto in una chat.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 fade-on-scroll">
+            {[
+              {
+                icon: Clock,
+                title: "Mentoring 24/7",
+                description: "Mai più solo nelle trattative. Aria ti guida passo dopo passo, anche quando il cliente fa obiezioni difficili.",
+                benefit: "Riduci lo stress e aumenta la sicurezza",
+              },
+              {
+                icon: Zap,
+                title: "Onboarding Istantaneo",
+                description: "Impara a dominare PropertyPilot in 5 minuti parlando con Aria. Nessun tutorial lungo, solo conversazione naturale.",
+                benefit: "Diventa produttivo da subito",
+              },
+              {
+                icon: Heart,
+                title: "Supporto Psicologico",
+                description: "L'alleata che ti motiva a chiudere quel mandato quando la sfida si fa dura. Aria conosce la psicologia delle vendite.",
+                benefit: "Mantieni alta la motivazione",
+              },
+            ].map((feature, idx) => (
+              <Card
+                key={idx}
+                className="glass-card border-white/10 hover:border-[#9333ea]/30 fade-on-scroll"
+                style={{ animationDelay: `${idx * 100}ms` }}
+              >
+                <CardHeader>
+                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/20 to-[#06b6d4]/20 flex items-center justify-center mb-4 border border-[#9333ea]/30">
+                    <feature.icon className="h-8 w-8 text-[#9333ea]" />
+                  </div>
+                  <CardTitle className="text-2xl text-white">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-400 mb-4">{feature.description}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm">
+                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12 fade-on-scroll">
+            <p className="text-lg text-gray-300 mb-6">
+              Aria è sempre disponibile. Clicca sulla bolla in basso a destra per iniziare.
+            </p>
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-lg">
+              <MessageCircle className="h-5 w-5 text-[#9333ea]" />
+              <span className="text-sm text-white/90">Disponibile anche nel piano FREE</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Table - Elite - Diamond Polish */}
+      <section id="pricing" className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808] relative">
+        <div className="container mx-auto max-w-7xl">
+          <div className="text-center mb-16 fade-on-scroll">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+              Prezzi
+            </h2>
+            <p className="text-xl text-gray-400 font-light">
+              Confronta i piani e scegli quello perfetto per il tuo business
+            </p>
+          </div>
+
+          {/* Pricing Table - Responsive */}
+          <div className="overflow-x-auto fade-on-scroll scrollbar-thin scrollbar-thumb-purple-500/30 scrollbar-track-transparent">
+            <div className="min-w-[1000px] md:min-w-0">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 text-gray-400 font-semibold text-sm">Funzionalità</th>
+                    <th className="text-center p-4">
+                      <div className="glass-card border-white/10 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-white mb-1">FREE</div>
+                        <div className="text-3xl font-extrabold text-white mb-2">
+                          {formatCurrency(0, selectedCurrency)}
+                        </div>
+                        <div className="text-sm text-gray-400 font-light">/mese</div>
+                      </div>
+                    </th>
+                    <th className="text-center p-4">
+                      <div className="glass-card border-white/10 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-white mb-1">STARTER</div>
+                        <div className="text-3xl font-extrabold text-white mb-2">
+                          {formatCurrency(convertCurrency(197, 'EUR', selectedCurrency), selectedCurrency)}
+                        </div>
+                        <div className="text-sm text-gray-400 font-light">/mese</div>
+                      </div>
+                    </th>
+                    <th className="text-center p-4">
+                      <div className="glass-card border-white/10 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-white mb-1">PRO</div>
+                        <div className="text-3xl font-extrabold text-white mb-2">
+                          {formatCurrency(convertCurrency(497, 'EUR', selectedCurrency), selectedCurrency)}
+                        </div>
+                        <div className="text-sm text-gray-400 font-light">/mese</div>
+                      </div>
+                    </th>
+                    <th className="text-center p-4 relative">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-[#9333ea] to-[#06b6d4] text-white text-xs font-bold rounded-full z-10 backdrop-blur-md border border-white/20">
+                        BEST VALUE
+                      </div>
+                      <div className="glass-card border-2 border-[#9333ea]/50 rounded-lg p-4 shadow-[0_0_30px_rgba(147,51,234,0.3)] relative">
+                        <div className="text-2xl font-bold text-white mb-1">AGENCY</div>
+                        <div className="text-xs text-[#06b6d4] mb-1 font-semibold">Omnichannel Domination Suite</div>
+                        <div className="text-3xl font-extrabold text-white mb-2">
+                          {formatCurrency(convertCurrency(897, 'EUR', selectedCurrency), selectedCurrency)}
+                        </div>
+                        <div className="text-sm text-gray-400 font-light">/mese</div>
+                        <div className="text-xs text-[#06b6d4] mt-1 font-semibold">+ Modulo Commerciale & Arbitraggio Esteso</div>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { feature: "Annunci al mese", free: "5", starter: "50", pro: "200", agency: "Illimitati" },
+                    { feature: "Generazione Annunci AI", free: "✓", starter: "✓", pro: "✓", agency: "✓" },
+                    { feature: "Stili AI (Luxury, Investment, Pro)", free: "—", starter: "✓", pro: "✓", agency: "✓" },
+                    { feature: "Multi-lingua (IT, EN, ES)", free: "—", starter: "✓", pro: "✓", agency: "✓" },
+                    { feature: "PDF Professionali", free: "—", starter: "✓", pro: "✓", agency: "✓" },
+                    { feature: "CRM Completo", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Pipeline Kanban", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Lead Scoring AI Base", free: "—", starter: "✓", pro: "✓ Avanzato", agency: "✓ Avanzato" },
+                    { feature: "Smart Briefing Multi-Categoria", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Virtual Staging 3D", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Follow-up AI Multi-canale", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Automazioni AI", free: "—", starter: "—", pro: "20", agency: "Illimitate" },
+                    { feature: "Smart Lead Capture Forms", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "White-label PDF", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Agency Assistant AI", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Multi-utente", free: "—", starter: "—", pro: "—", agency: "Fino a 10 agenti" },
+                    { feature: "Ruoli e Permessi", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Distribuzione Lead Automatica", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Report Attività Team", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Integrazione Multi-sede", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "🥽 Aura VR: Cinematic Virtual Tour Generation", free: "—", starter: "—", pro: <span className="text-gray-400">Visualizzatore</span>, agency: <span className="font-bold text-[#06b6d4]">✓ Illimitati</span> },
+                    { feature: "AI Voice Calling (Bland AI)", free: "—", starter: "—", pro: "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ Illimitato</span> },
+                    { feature: "AI Smart Messaging (SMS/WhatsApp AI)", free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ ESCLUSIVO</span> },
+                    { feature: "Manual Override: Accesso diretto dati proprietario", free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ ESCLUSIVO</span> },
+                    { feature: "Libertà d'intervento umano", free: "—", starter: "—", pro: "✓", agency: "✓" },
+                    { feature: "Auto-Prospecting 24/7", free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ Attivo</span> },
+                    { feature: "Scraping Intelligente", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Dashboard War Room", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Google Calendar Integration", free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ ESCLUSIVO</span> },
+                    { feature: "Notifiche Email Automatiche", free: "—", starter: "—", pro: "—", agency: "✓" },
+                    { feature: "Supporto", free: "Community", starter: "Email", pro: "Prioritario", agency: "Dedicato 24/7" },
+                  ].map((row, idx) => (
+                    <tr key={idx} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                      <td className="p-4 text-gray-300 font-medium text-sm">{row.feature}</td>
+                      <td className="p-4 text-center">
+                        <span className={row.free === "✓" ? "text-green-400" : row.free === "—" ? "text-gray-600/50" : "text-gray-300 font-light"}>
+                          {row.free}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center">
+                        <span className={row.starter === "✓" ? "text-green-400" : row.starter === "—" ? "text-gray-600/50" : "text-gray-300 font-light"}>
+                          {row.starter}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center">
+                        <span className={row.pro === "✓" ? "text-green-400" : row.pro === "—" ? "text-gray-600/50" : "text-gray-300 font-light"}>
+                          {row.pro}
+                        </span>
+                      </td>
+                      <td className="p-4 text-center bg-[#9333ea]/5">
+                        <span className={typeof row.agency === "string" && row.agency === "✓" ? "text-green-400" : typeof row.agency === "string" && row.agency === "—" ? "text-gray-600/50" : "text-gray-300 font-light"}>
+                          {row.agency}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="grid md:grid-cols-4 gap-6 mt-12 fade-on-scroll">
+            <Link href="/auth/signup" className="w-full">
+              <Button variant="outline" className="w-full border-white/20 text-white/90 hover:bg-white/5 backdrop-blur-md transition-all active:scale-95 hover:border-white/30">
+                Inizia Gratis
               </Button>
             </Link>
-            <Link href="/demo">
-              <Button size="lg" variant="outline" className="text-xl px-12 py-8 border-2 border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10" data-testid="button-final-demo">
-                <Play className="mr-2 h-5 w-5" />
-                See a Demo
+            <Link href="/auth/signup?plan=starter" className="w-full">
+              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
+                Scegli Starter
+              </Button>
+            </Link>
+            <Link href="/auth/signup?plan=pro" className="w-full">
+              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
+                Scegli Pro
+              </Button>
+            </Link>
+            <Link href="/auth/signup?plan=agency" className="w-full">
+              <Button className="w-full bg-gradient-to-r from-[#06b6d4] to-[#06b6d4]/90 hover:from-[#06b6d4] hover:to-[#06b6d4] text-black font-bold border-0 shadow-[0_0_30px_rgba(6,182,212,0.5)] hover:shadow-[0_0_40px_rgba(6,182,212,0.7)] transition-all active:scale-95">
+                Scegli Agency
               </Button>
             </Link>
           </div>
-
-          {/* Trust Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-neon-aqua" />
-              <span>No credit card required</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-neon-aqua" />
-              <span>Cancel anytime</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-sunset-gold" />
-              <span>Trusted by agents in 12+ countries</span>
-            </div>
-          </div>
-        </motion.div>
+        </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-silver-frost/20 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <Link href="/" className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-xl overflow-hidden">
-                  <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-                </div>
-                <span className="text-xl font-bold gradient-text-purple">PropertyPilot AI</span>
+      {/* CTA Section */}
+      <section className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808]">
+        <div className="container mx-auto max-w-4xl text-center fade-on-scroll">
+          <Card className="glass-card border-white/10 backdrop-blur-md">
+            <CardHeader>
+              <CardTitle className="text-4xl md:text-5xl mb-4 text-white">
+                Pronto a moltiplicare i tuoi affari?
+              </CardTitle>
+              <CardDescription className="text-xl text-gray-300">
+                Unisciti a centinaia di agenti che già usano PropertyPilot AI
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/auth/signup">
+                <Button 
+                  size="lg" 
+                  className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] transition-all active:scale-95"
+                >
+                  Get Started Gratis
+                  <ArrowRight className="ml-3 h-6 w-6" />
+                </Button>
               </Link>
-              <p className="text-muted-foreground max-w-sm">
-                The AI-powered operating system for real estate agencies. Write better listings, manage leads, and close more deals.
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 px-4 bg-[#050505] border-t border-white/10">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <PropertyPilotLogo className="h-6 w-6" />
+                <span className="text-xl font-bold text-white">PropertyPilot AI</span>
+              </div>
+              <p className="text-gray-400 text-sm font-light">
+                Il tuo Agente Immobiliare AI che lavora 24/7
               </p>
             </div>
-            
             <div>
-              <h4 className="font-bold mb-4">Product</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><Link href="/pricing" className="hover:text-foreground transition-colors" data-testid="footer-link-pricing">Pricing</Link></li>
-                <li><Link href="/demo" className="hover:text-foreground transition-colors" data-testid="footer-link-demo">Demo</Link></li>
-                <li><Link href="/#features" className="hover:text-foreground transition-colors" data-testid="footer-link-features">Features</Link></li>
+              <h3 className="text-white font-semibold mb-4">Prodotto</h3>
+              <ul className="space-y-2 text-gray-400 text-sm font-light">
+                <li><Link href="/pricing" className="hover:text-[#9333ea] transition-colors">Pricing</Link></li>
+                <li><Link href="/dashboard" className="hover:text-[#9333ea] transition-colors">Dashboard</Link></li>
+                <li><Link href="/features" className="hover:text-[#9333ea] transition-colors">Features</Link></li>
               </ul>
             </div>
-            
             <div>
-              <h4 className="font-bold mb-4">Get Started</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><Link href="/auth/signup" className="hover:text-foreground transition-colors" data-testid="footer-link-signup">Sign Up</Link></li>
-                <li><Link href="/auth/login" className="hover:text-foreground transition-colors" data-testid="footer-link-login">Login</Link></li>
+              <h3 className="text-white font-semibold mb-4">Azienda</h3>
+              <ul className="space-y-2 text-gray-400 text-sm font-light">
+                <li><Link href="/about" className="hover:text-purple-400 transition-colors">Chi Siamo</Link></li>
+                <li><Link href="/contact" className="hover:text-purple-400 transition-colors">Contatti</Link></li>
+                <li><Link href="/blog" className="hover:text-purple-400 transition-colors">Blog</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold mb-4">Supporto</h3>
+              <ul className="space-y-2 text-gray-400 text-sm font-light">
+                <li><Link href="/privacy" className="hover:text-purple-400 transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="hover:text-purple-400 transition-colors">Terms of Service</Link></li>
+                <li><Link href="/refund" className="hover:text-purple-400 transition-colors">Refund Policy</Link></li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-silver-frost/20 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} PropertyPilot AI. All rights reserved.
+          <div className="border-t border-purple-500/20 pt-8 text-center">
+            <p className="text-gray-400 text-sm font-light">
+              &copy; {new Date().getFullYear()} PropertyPilot AI. Tutti i diritti riservati.
             </p>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>Made with AI in the USA & Europe</span>
-            </div>
           </div>
         </div>
       </footer>
+
+      {/* Aria Coach - Floating AI Assistant */}
+      <AriaCoach />
+
+      <style jsx>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fade-in-up 0.6s ease-out forwards;
+        }
+        .fade-on-scroll {
+          opacity: 0;
+        }
+        @keyframes gradient {
+          0%, 100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        .animate-shimmer {
+          animation: shimmer 3s linear infinite;
+        }
+        @keyframes shine {
+          0% {
+            transform: translateX(-100%) skewX(-12deg);
+          }
+          100% {
+            transform: translateX(200%) skewX(-12deg);
+          }
+        }
+        .animate-shine {
+          animation: shine 2s infinite;
+        }
+        @keyframes progress {
+          0% {
+            width: 0%;
+          }
+          100% {
+            width: 100%;
+          }
+        }
+        .animate-progress {
+          animation: progress 2s ease-in-out infinite;
+        }
+        @keyframes soundwave {
+          0%, 100% {
+            height: 20%;
+          }
+          50% {
+            height: 100%;
+          }
+        }
+        .animate-soundwave {
+          animation: soundwave 1s ease-in-out infinite;
+        }
+        @keyframes border-beam {
+          0% {
+            border-image-source: linear-gradient(90deg, transparent, transparent);
+          }
+          50% {
+            border-image-source: linear-gradient(90deg, rgba(168, 85, 247, 0.5), rgba(6, 182, 212, 0.5));
+          }
+          100% {
+            border-image-source: linear-gradient(90deg, transparent, transparent);
+          }
+        }
+        .border-beam {
+          position: relative;
+        }
+        .border-beam::before {
+          content: '';
+          position: absolute;
+          inset: -2px;
+          border-radius: inherit;
+          padding: 2px;
+          background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), rgba(6, 182, 212, 0.5), transparent);
+          background-size: 200% 100%;
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          animation: border-beam 3s linear infinite;
+        }
+        .agency-glow::after {
+          content: '';
+          position: absolute;
+          inset: -20px;
+          background: radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent 70%);
+          filter: blur(20px);
+          z-index: -1;
+          animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.5;
+          }
+          50% {
+            opacity: 0.8;
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { scoreRealEstateLead, LeadScoreResult } from '@/lib/ai/leadScoring';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
 import { getAICacheService } from '@/lib/cache/ai-cache';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
 const LEAD_SCORE_RATE_LIMIT_PER_MINUTE = 10;
 
@@ -15,6 +16,7 @@ const leadScoreRequestSchema = z.object({
   messaggioLead: z.string().min(20, 'Il messaggio deve contenere almeno 20 caratteri').max(5000),
   tipoImmobile: z.string().min(1, 'Il tipo di immobile è obbligatorio').max(200),
   mercato: z.enum(['italia', 'usa']).default('italia'),
+  lead_id: z.string().uuid('ID lead non valido').optional(), // Opzionale: se presente, aggiorna il database
 });
 
 export type LeadScoreRequest = z.infer<typeof leadScoreRequestSchema>;
@@ -34,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { nomeLead, budget, tempistiche, messaggioLead, tipoImmobile, mercato } = validationResult.data;
+    const { nomeLead, budget, tempistiche, messaggioLead, tipoImmobile, mercato, lead_id } = validationResult.data;
 
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -43,6 +45,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Non autenticato' },
         { status: 401 }
+      );
+    }
+
+    // STEP 0: Check PRO or AGENCY subscription (CRITICAL SECURITY CHECK)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.'
+        },
+        { status: 403 }
       );
     }
 
@@ -90,11 +105,33 @@ export async function POST(request: NextRequest) {
         
         await logGeneration(user.id, clientIp);
         
+        // AUTO-UPDATE DATABASE: Anche per i risultati in cache, aggiorna il database se lead_id è presente
+        if (lead_id) {
+          try {
+            const cachedResultData = cachedResult as LeadScoreResult;
+            const { error: updateError } = await supabase
+              .from('leads')
+              .update({ 
+                lead_score: cachedResultData.leadScore,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', lead_id)
+              .eq('user_id', user.id);
+
+            if (!updateError) {
+              console.log(`[LEAD SCORE API] Automatically updated lead ${lead_id} with cached score ${cachedResultData.leadScore}`);
+            }
+          } catch (dbError) {
+            console.error('[LEAD SCORE API] Database update error (cached):', dbError);
+          }
+        }
+        
         return NextResponse.json({
           success: true,
           data: cachedResult as LeadScoreResult,
           cached: true,
           processingTimeMs: Date.now() - startTime,
+          databaseUpdated: !!lead_id,
         });
       }
     } catch (cacheError) {
@@ -149,6 +186,32 @@ export async function POST(request: NextRequest) {
 
     await logGeneration(user.id, clientIp);
 
+    // AUTO-UPDATE DATABASE: Se lead_id è presente, aggiorna il database automaticamente
+    if (lead_id) {
+      try {
+        const { error: updateError } = await supabase
+          .from('leads')
+          .update({ 
+            lead_score: result.leadScore,
+            // Nota: Il campo 'categoria' non esiste ancora nella tabella leads.
+            // Per ora aggiorniamo solo lead_score. Il campo categoria può essere aggiunto in seguito.
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', lead_id)
+          .eq('user_id', user.id); // Sicurezza: verifica che il lead appartenga all'utente
+
+        if (updateError) {
+          console.error('[LEAD SCORE API] Error updating lead in database:', updateError);
+          // Non blocchiamo la risposta, lo score è stato calcolato correttamente
+        } else {
+          console.log(`[LEAD SCORE API] Automatically updated lead ${lead_id} with score ${result.leadScore}`);
+        }
+      } catch (dbError) {
+        console.error('[LEAD SCORE API] Database update error:', dbError);
+        // Non blocchiamo la risposta, lo score è stato calcolato correttamente
+      }
+    }
+
     const processingTimeMs = Date.now() - startTime;
     console.log(`[LEAD SCORE API] Successfully analyzed lead in ${processingTimeMs}ms`);
 
@@ -157,6 +220,7 @@ export async function POST(request: NextRequest) {
       data: result,
       cached: false,
       processingTimeMs,
+      databaseUpdated: !!lead_id,
     });
 
   } catch (error: any) {
