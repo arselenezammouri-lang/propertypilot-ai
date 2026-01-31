@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { logger } from '@/lib/utils/safe-logger';
 
 // Schema validazione per creazione filtro
 const createFilterSchema = z.object({
@@ -87,7 +88,7 @@ export async function GET(request: NextRequest) {
     const { data: filters, error } = await query;
 
     if (error) {
-      console.error('[PROSPECTING FILTERS] Error fetching filters:', error);
+      logger.error('[PROSPECTING FILTERS] Error fetching filters', error);
       return NextResponse.json(
         { success: false, error: 'Errore nel recupero dei filtri' },
         { status: 500 }
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING FILTERS] GET Error:', error);
+    logger.error('[PROSPECTING FILTERS] GET Error', error);
     return NextResponse.json(
       {
         success: false,
@@ -165,7 +166,7 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (countError) {
-      console.error('[PROSPECTING FILTERS] Error counting filters:', countError);
+      logger.error('[PROSPECTING FILTERS] Error counting filters', countError);
       return NextResponse.json(
         { success: false, error: 'Errore nella verifica del limite filtri' },
         { status: 500 }
@@ -197,17 +198,16 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('[PROSPECTING FILTERS] Error creating filter:', insertError);
+      logger.error('[PROSPECTING FILTERS] Error creating filter', insertError);
       return NextResponse.json(
         { success: false, error: 'Errore nella creazione del filtro' },
         { status: 500 }
       );
     }
 
-    // Log senza user.id esposto (solo in sviluppo)
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[PROSPECTING FILTERS] Created filter ${newFilter.id}`);
-    }
+    logger.info('[PROSPECTING FILTERS] Created filter', {
+      filterId: newFilter.id,
+    });
 
     return NextResponse.json(
       {
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error: any) {
-    console.error('[PROSPECTING FILTERS] POST Error:', error);
+    logger.error('[PROSPECTING FILTERS] POST Error', error);
     return NextResponse.json(
       {
         success: false,
@@ -305,17 +305,16 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('[PROSPECTING FILTERS] Error updating filter:', updateError);
+      logger.error('[PROSPECTING FILTERS] Error updating filter', updateError);
       return NextResponse.json(
         { success: false, error: 'Errore nell\'aggiornamento del filtro' },
         { status: 500 }
       );
     }
 
-    // Log senza user.id esposto (solo in sviluppo)
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[PROSPECTING FILTERS] Updated filter ${id}`);
-    }
+    logger.info('[PROSPECTING FILTERS] Updated filter', {
+      filterId: id,
+    });
 
     return NextResponse.json({
       success: true,
@@ -324,7 +323,7 @@ export async function PATCH(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING FILTERS] PATCH Error:', error);
+    logger.error('[PROSPECTING FILTERS] PATCH Error', error);
     return NextResponse.json(
       {
         success: false,
@@ -398,17 +397,16 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (deleteError) {
-      console.error('[PROSPECTING FILTERS] Error deleting filter:', deleteError);
+      logger.error('[PROSPECTING FILTERS] Error deleting filter', deleteError);
       return NextResponse.json(
         { success: false, error: 'Errore nell\'eliminazione del filtro' },
         { status: 500 }
       );
     }
 
-    // Log senza user.id esposto (solo in sviluppo)
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`[PROSPECTING FILTERS] Deleted filter ${id}`);
-    }
+    logger.info('[PROSPECTING FILTERS] Deleted filter', {
+      filterId: id,
+    });
 
     return NextResponse.json({
       success: true,
@@ -416,7 +414,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING FILTERS] DELETE Error:', error);
+    logger.error('[PROSPECTING FILTERS] DELETE Error', error);
     return NextResponse.json(
       {
         success: false,

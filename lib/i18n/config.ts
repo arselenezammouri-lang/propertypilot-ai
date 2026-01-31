@@ -1,11 +1,11 @@
 /**
  * Internationalization Configuration
- * Supporto per: Italiano, Inglese, Spagnolo, Francese, Tedesco
+ * Supporto per: Italiano, Inglese, Spagnolo, Francese, Tedesco, Arabo
  */
 
-export type Locale = 'it' | 'en' | 'es' | 'fr' | 'de';
+export type Locale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'ar';
 
-export const locales: Locale[] = ['it', 'en', 'es', 'fr', 'de'];
+export const locales: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'ar'];
 
 export const defaultLocale: Locale = 'it';
 
@@ -15,6 +15,7 @@ export const localeNames: Record<Locale, string> = {
   es: 'Español',
   fr: 'Français',
   de: 'Deutsch',
+  ar: 'العربية',
 };
 
 export const localeFlags: Record<Locale, string> = {
@@ -23,6 +24,7 @@ export const localeFlags: Record<Locale, string> = {
   es: '🇪🇸',
   fr: '🇫🇷',
   de: '🇩🇪',
+  ar: '🇦🇪',
 };
 
 // Traduzioni chiave per Aria
@@ -51,6 +53,11 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     welcome: "Hallo! Ich bin Aria, dein AI Success Partner. Heute gehört dir der Markt!",
     analyzing: "Ich analysiere die Immobilie...",
     territory_analysis: "Gebietsanalyse abgeschlossen",
+  },
+  ar: {
+    welcome: "مرحباً! أنا آريا، شريكك الذكي للنجاح. السوق اليوم لك!",
+    analyzing: "أنا أحلل العقار...",
+    territory_analysis: "اكتمل تحليل المنطقة",
   },
 };
 

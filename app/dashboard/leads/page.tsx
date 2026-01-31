@@ -81,6 +81,7 @@ import {
   Kanban,
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
+import { ProFeaturePaywall } from "@/components/demo-modal";
 
 const statusConfig: Record<LeadStatus, { label: string; color: string; bgColor: string }> = {
   new: { label: "Nuovo", color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
@@ -133,6 +134,8 @@ export default function LeadsPage() {
   
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
+  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
 
   const fetchLeads = async () => {
     try {
@@ -144,6 +147,17 @@ export default function LeadsPage() {
       
       const response = await fetch(`/api/leads?${params.toString()}`);
       const data = await response.json();
+      
+      // If 403, update user plan to free and show paywall
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data.success) {
         setLeads(data.data);
@@ -177,6 +191,29 @@ export default function LeadsPage() {
     return () => clearTimeout(debounce);
   }, [searchQuery]);
 
+  // Load user subscription plan
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        const response = await fetch('/api/user/subscription');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
+          setUserPlan(plan);
+        }
+      } catch (error) {
+        console.error('Error fetching subscription:', error);
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+    
+    fetchUserPlan();
+  }, []);
+
+  const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
+
   const handleRefresh = () => {
     setRefreshing(true);
     fetchLeads();
@@ -201,6 +238,17 @@ export default function LeadsPage() {
       });
       
       const data = await response.json();
+      
+      // If 403, update user plan to free and show paywall
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data.success) {
         toast({
@@ -318,6 +366,17 @@ export default function LeadsPage() {
       
       const data = await response.json();
       
+      // If 403, update user plan to free and show paywall
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       if (data.success) {
         toast({
           title: "Stato aggiornato",
@@ -347,6 +406,17 @@ export default function LeadsPage() {
     try {
       const response = await fetch(`/api/leads/${leadId}`);
       const data = await response.json();
+      
+      // If 403, update user plan to free and show paywall
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data.success) {
         setSelectedLead(data.data);
@@ -382,6 +452,17 @@ export default function LeadsPage() {
       });
       
       const data = await response.json();
+      
+      // If 403, update user plan to free and show paywall
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
       
       if (data.success) {
         toast({
@@ -503,6 +584,11 @@ export default function LeadsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ProFeaturePaywall
+          title="Lead Manager + AI"
+          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il CRM completo con pipeline, automazioni e AI."
+          isLocked={isLocked && !isLoadingPlan}
+        >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
             <CardContent className="p-4 text-center">
@@ -772,6 +858,7 @@ export default function LeadsPage() {
             )}
           </CardContent>
         </Card>
+        </ProFeaturePaywall>
       </main>
 
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>

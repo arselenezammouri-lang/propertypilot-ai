@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -27,6 +27,15 @@ export function LocaleCurrencySelector({
 }: LocaleCurrencySelectorProps) {
   const [locale, setLocale] = useState<Locale>(currentLocale);
   const [currency, setCurrency] = useState<Currency>(currentCurrency);
+
+  // Sync state with props
+  useEffect(() => {
+    setLocale(currentLocale);
+  }, [currentLocale]);
+
+  useEffect(() => {
+    setCurrency(currentCurrency);
+  }, [currentCurrency]);
 
   const handleLocaleChange = (newLocale: Locale) => {
     setLocale(newLocale);

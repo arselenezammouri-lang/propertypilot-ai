@@ -22,7 +22,7 @@ export function DemoModal() {
   return (
     <>
       {/* Fixed Button - Bottom Right - Responsive positioning */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-fade-in-up">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-fade-in-up" suppressHydrationWarning>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button
@@ -189,7 +189,7 @@ export function ProFeaturePaywall({
 export function DashboardProBanner() {
   return (
     <div className="futuristic-card p-6 md:p-8 border-2 border-sunset-gold shadow-glow-gold bg-gradient-to-r from-sunset-gold/10 via-background to-royal-purple/10 mb-6" data-testid="banner-dashboard-pro">
-      <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+      <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sunset-gold via-royal-purple to-sunset-gold flex items-center justify-center shadow-glow-gold flex-shrink-0">
             <Sparkles className="h-7 w-7 text-white" />
@@ -200,21 +200,83 @@ export function DashboardProBanner() {
                 CONSIGLIATO
               </span>
             </div>
-            <h3 className="text-xl font-bold gradient-text-gold">Passa al Piano Pro</h3>
+            <h3 className="text-xl font-bold gradient-text-gold">Scegli il Piano Perfetto per Te</h3>
             <p className="text-sm text-muted-foreground">
-              Sblocca CRM, Automazioni, Communication Hub e molto altro
+              Sblocca funzionalità avanzate e scala il tuo business immobiliare
             </p>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="text-center sm:text-right">
-            <p className="text-2xl font-black gradient-text-gold">€297</p>
-            <p className="text-xs text-muted-foreground">/mese</p>
+        
+        {/* Piani disponibili */}
+        <div className="grid sm:grid-cols-3 gap-4">
+          {/* Starter Plan */}
+          <div className="futuristic-card p-4 border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 hover:border-blue-500/50 transition-all">
+            <div className="text-center mb-3">
+              <h4 className="text-lg font-bold text-blue-400 mb-1">Starter</h4>
+              <p className="text-2xl font-black text-blue-300">€197</p>
+              <p className="text-xs text-muted-foreground">/mese</p>
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1 mb-4">
+              <li>• 50 annunci/mese</li>
+              <li>• AI Listing Engine</li>
+              <li>• Lead Score Base</li>
+            </ul>
+            <Link href="/pricing?plan=starter" className="block">
+              <Button variant="outline" className="w-full border-blue-500/50 text-blue-400 hover:bg-blue-500/10 text-sm py-2" size="sm">
+                Scegli Starter
+              </Button>
+            </Link>
           </div>
+
+          {/* Pro Plan - Consigliato */}
+          <div className="futuristic-card p-4 border-2 border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-pink-500/10 hover:border-purple-500/70 transition-all relative">
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-sunset-gold text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              POPOLARE
+            </span>
+            <div className="text-center mb-3 mt-2">
+              <h4 className="text-lg font-bold gradient-text-purple mb-1">Pro</h4>
+              <p className="text-2xl font-black gradient-text-purple">€497</p>
+              <p className="text-xs text-muted-foreground">/mese</p>
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1 mb-4">
+              <li>• 200 annunci/mese</li>
+              <li>• CRM + Pipeline</li>
+              <li>• Virtual Staging 3D</li>
+              <li>• AI Voice Calling</li>
+            </ul>
+            <Link href="/pricing?plan=pro" className="block">
+              <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white text-sm py-2" size="sm">
+                Scegli Pro
+              </Button>
+            </Link>
+          </div>
+
+          {/* Agency Plan */}
+          <div className="futuristic-card p-4 border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5 hover:border-amber-500/50 transition-all">
+            <div className="text-center mb-3">
+              <h4 className="text-lg font-bold text-amber-400 mb-1">Agency</h4>
+              <p className="text-2xl font-black text-amber-300">€897</p>
+              <p className="text-xs text-muted-foreground">/mese</p>
+            </div>
+            <ul className="text-xs text-muted-foreground space-y-1 mb-4">
+              <li>• Annunci illimitati</li>
+              <li>• Team fino a 10 agenti</li>
+              <li>• Voice AI Illimitato</li>
+              <li>• Multi-utente</li>
+            </ul>
+            <Link href="/pricing?plan=agency" className="block">
+              <Button variant="outline" className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10 text-sm py-2" size="sm">
+                Scegli Agency
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <div className="text-center pt-2">
           <Link href="/pricing">
-            <Button className="neon-button px-8 py-6 shadow-glow-gold" size="lg" data-testid="button-upgrade-pro">
-              Aggiorna a Pro
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button variant="ghost" className="text-sm text-muted-foreground hover:text-foreground" size="sm">
+              Confronta tutti i piani
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </div>

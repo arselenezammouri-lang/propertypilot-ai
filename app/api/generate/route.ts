@@ -128,11 +128,9 @@ export async function POST(request: NextRequest) {
     let fromCache = false;
 
     if (cachedResponse) {
-      console.log('[GENERATE] Using cached response');
       generatedContent = cachedResponse;
       fromCache = true;
     } else {
-      console.log('[GENERATE] Generating new AI content', { style, market });
       const [professionalResponse, shortResponse, titlesResponse, englishResponse] = await Promise.all([
         generateProfessionalListing(propertyDescription, style, market),
         generateShortListing(propertyDescription, style, market),
@@ -199,7 +197,7 @@ function buildPropertyDescription(data: any): string {
 }
 
 // AI Listing Engine 2.0: Market-specific terminology dictionaries
-function getMarketTerminology(market: 'usa' | 'italy'): {
+function getMarketTerminology(market: 'usa' | 'italy' | 'middle-east'): {
   location: string;
   size: string;
   features: string;
@@ -216,6 +214,15 @@ function getMarketTerminology(market: 'usa' | 'italy'): {
       investment: ['ROI', 'CAP rate', 'cash flow', 'appreciation potential', 'up-and-coming area', 'tax benefits', 'rental yield', 'capital gains'],
       standard: ['great location', 'move-in ready', 'well-maintained', 'spacious', 'bright', 'updated', 'convenient'],
     };
+  } else if (market === 'middle-east') {
+    return {
+      location: 'موقع ممتاز',
+      size: 'متر مربع',
+      features: 'مميزات',
+      highEnd: ['تشطيبات فاخرة', 'تقنيات ذكية', 'غرفة نوم رئيسية', 'دولاب ملابس', 'تصميم عصري', 'رخام', 'أجهزة ستانلس ستيل', 'أرضيات فاخرة', 'إطلالة خلابة'],
+      investment: ['عائد الاستثمار', 'نسبة العائد', 'تدفق نقدي', 'إمكانية التقدير', 'منطقة متنامية', 'مزايا ضريبية', 'عائد الإيجار', 'مكاسب رأسمالية'],
+      standard: ['موقع ممتاز', 'جاهز للسكن', 'صيانة ممتازة', 'واسع', 'مضيء', 'محدث', 'مريح'],
+    };
   } else {
     return {
       location: 'zona servitissima',
@@ -231,24 +238,34 @@ function getMarketTerminology(market: 'usa' | 'italy'): {
 async function generateProfessionalListing(
   propertyDescription: string, 
   style: 'luxury' | 'investment' | 'standard',
-  market: 'usa' | 'italy'
+  market: 'usa' | 'italy' | 'middle-east'
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
     const terminology = getMarketTerminology(market);
-    const language = market === 'usa' ? 'English' : 'Italian';
+    const language = market === 'usa' ? 'English' : market === 'middle-east' ? 'Arabic' : 'Italian';
     
     let stylePrompt = '';
     if (style === 'luxury') {
-      stylePrompt = market === 'usa'
-        ? `LUXURY STYLE - Write with sophisticated, emotional language. Focus on:
+      if (market === 'usa') {
+        stylePrompt = `LUXURY STYLE - Write with sophisticated, emotional language. Focus on:
 - High-end finishes (granite, hardwood, premium materials)
 - Smart home technology and automation
 - Exclusive lifestyle and prestigious location
 - Master suite, walk-in closets, designer details
 - Curb appeal and architectural elegance
 - Luxury amenities and premium features
-Use terms: ${terminology.highEnd.join(', ')}`
-        : `STILE LUXURY - Scrivi con linguaggio sofisticato ed emozionale. Focus su:
+Use terms: ${terminology.highEnd.join(', ')}`;
+      } else if (market === 'middle-east') {
+        stylePrompt = `STYLE LUXURY - اكتب بلغة عربية راقية وعاطفية. ركز على:
+- تشطيبات فاخرة (رخام، أرضيات فاخرة، مواد عالية الجودة)
+- تقنيات المنزل الذكي والأتمتة
+- نمط حياة حصري وموقع متميز
+- غرفة نوم رئيسية، دولاب ملابس، تفاصيل مصممة
+- جاذبية معمارية وأناقة
+- وسائل رفاهية فاخرة ومميزات ممتازة
+استخدم المصطلحات: ${terminology.highEnd.join(', ')}`;
+      } else {
+        stylePrompt = `STILE LUXURY - Scrivi con linguaggio sofisticato ed emozionale. Focus su:
 - Finiture di pregio (pavimenti pregiati, design contemporaneo)
 - Domotica avanzata e tecnologia smart home
 - Lifestyle esclusivo e zona prestigiosa
@@ -256,17 +273,30 @@ Use terms: ${terminology.highEnd.join(', ')}`
 - Classe energetica alta e dettagli di design
 - Caratteristiche premium ed esclusività
 Usa termini: ${terminology.highEnd.join(', ')}`;
+      }
     } else if (style === 'investment') {
-      stylePrompt = market === 'usa'
-        ? `INVESTMENT STYLE - Write with data-focused, analytical language. Focus on:
+      if (market === 'usa') {
+        stylePrompt = `INVESTMENT STYLE - Write with data-focused, analytical language. Focus on:
 - ROI (Return on Investment) and CAP rate
 - Cash flow potential and rental yield
 - Appreciation potential and growth area
 - Tax benefits and investment advantages
 - Up-and-coming neighborhood trends
 - Numbers, percentages, and financial metrics
-Use terms: ${terminology.investment.join(', ')}`
-        : `STILE INVESTMENT - Scrivi con linguaggio orientato ai dati e analitico. Focus su:
+Use terms: ${terminology.investment.join(', ')}`;
+      } else if (market === 'middle-east') {
+        stylePrompt = `STYLE INVESTMENT - اكتب بلغة تحليلية تركز على البيانات. ركز على:
+- عائد الاستثمار (ROI) ونسبة العائد
+- إمكانية التدفق النقدي وعائد الإيجار
+- إمكانية التقدير والمنطقة النامية
+- مزايا الاستثمار (0% ضرائب في الإمارات)
+- اتجاهات الحي والمنطقة
+- الأرقام والنسب والمقاييس المالية
+- ROI المتوقع: 7-10% في دبي/الدوحة
+- معاملات سريعة وسوق سائل
+Use terms: ${terminology.investment.join(', ')}`;
+      } else {
+        stylePrompt = `STILE INVESTMENT - Scrivi con linguaggio orientato ai dati e analitico. Focus su:
 - ROI (Rendimento dell'investimento) e rendimento
 - Potenziale di redditività e cash flow
 - Potenziale di rivalutazione e zona in crescita
@@ -274,22 +304,33 @@ Use terms: ${terminology.investment.join(', ')}`
 - Trend della zona e sviluppo urbano
 - Numeri, percentuali e metriche finanziarie
 Usa termini: ${terminology.investment.join(', ')}`;
+      }
     } else {
-      stylePrompt = market === 'usa'
-        ? `STANDARD PRO STYLE - Write optimized for real estate portals (Zillow, Realtor.com, MLS). Focus on:
+      if (market === 'usa') {
+        stylePrompt = `STANDARD PRO STYLE - Write optimized for real estate portals (Zillow, Realtor.com, MLS). Focus on:
 - High-traffic SEO keywords (location, property type, key features)
 - Clear, professional language for maximum search visibility
 - Move-in ready, well-maintained, great location
 - Standard real estate terminology
 - Portal-optimized format with key highlights
-Use terms: ${terminology.standard.join(', ')}`
-        : `STILE STANDARD PRO - Scrivi ottimizzato per portali immobiliari (Idealista, Immobiliare.it, Casa.it). Focus su:
+Use terms: ${terminology.standard.join(', ')}`;
+      } else if (market === 'middle-east') {
+        stylePrompt = `STYLE STANDARD PRO - اكتب محسّنًا لمواقع العقارات (Property Finder, Bayut, Dubizzle). ركز على:
+- كلمات مفتاحية SEO عالية الحركة (الموقع، نوع العقار، المميزات الرئيسية)
+- لغة واضحة ومهنية لأقصى قدر من الرؤية
+- جاهز للسكن، صيانة ممتازة، موقع ممتاز
+- المصطلحات العقارية القياسية
+- تنسيق محسّن للمواقع مع النقاط الرئيسية
+Use terms: ${terminology.standard.join(', ')}`;
+      } else {
+        stylePrompt = `STILE STANDARD PRO - Scrivi ottimizzato per portali immobiliari (Idealista, Immobiliare.it, Casa.it). Focus su:
 - Keywords SEO ad alto traffico (località, tipo immobile, caratteristiche chiave)
 - Linguaggio chiaro e professionale per massima visibilità
 - Pronto all'uso, ristrutturato, zona servitissima
 - Terminologia immobiliare standard
 - Formato ottimizzato per portali con punti chiave
 Usa termini: ${terminology.standard.join(', ')}`;
+      }
     }
 
     const completion = await openai.chat.completions.create({
@@ -327,12 +368,14 @@ GENERAL RULES:
 async function generateShortListing(
   propertyDescription: string,
   style: 'luxury' | 'investment' | 'standard',
-  market: 'usa' | 'italy'
+  market: 'usa' | 'italy' | 'middle-east'
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
-    const language = market === 'usa' ? 'English' : 'Italian';
+    const language = market === 'usa' ? 'English' : market === 'middle-east' ? 'Arabic' : 'Italian';
     const portalExamples = market === 'usa' 
       ? 'portals like Zillow, Realtor.com, and MLS'
+      : market === 'middle-east'
+      ? 'مواقع مثل Property Finder و Bayut و Dubizzle'
       : 'portali come Subito.it, Idealista e Immobiliare.it';
     
     const completion = await openai.chat.completions.create({
@@ -367,7 +410,7 @@ RULES:
 async function generateTitles(
   propertyDescription: string,
   style: 'luxury' | 'investment' | 'standard',
-  market: 'usa' | 'italy'
+  market: 'usa' | 'italy' | 'middle-east'
 ): Promise<string[]> {
   return withRetryAndTimeout(async () => {
     const language = market === 'usa' ? 'English' : 'Italian';
@@ -437,7 +480,7 @@ CRITICAL RULES FOR HIGH CTR:
 async function generateEnglishTranslation(
   propertyDescription: string,
   style: 'luxury' | 'investment' | 'standard',
-  market: 'usa' | 'italy'
+  market: 'usa' | 'italy' | 'middle-east'
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
     // If market is USA, the listing is already in English context

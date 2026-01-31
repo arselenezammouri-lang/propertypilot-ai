@@ -67,14 +67,14 @@ export async function requireActiveSubscription(
     // CONTROLLO CRITICO: Deve esistere stripe_subscription_id
     // Questo conferma che il pagamento è stato processato da Stripe
     if (!subscription.stripe_subscription_id) {
-      // Log senza user.id esposto in produzione
+      // Log dettagliato solo in sviluppo, senza esporre dati sensibili in produzione
       if (process.env.NODE_ENV === 'development') {
-        console.warn('[SUBSCRIPTION CHECK] User has paid plan but no stripe_subscription_id');
+        console.warn('[SUBSCRIPTION CHECK] User has paid plan but no stripe_subscription_id:', {
+          userId,
+          planType,
+          priceId: subscription.price_id,
+        });
       }
-        userId,
-        planType,
-        priceId: subscription.price_id
-      });
       return {
         allowed: false,
         planType: planType,

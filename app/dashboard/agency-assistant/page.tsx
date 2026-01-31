@@ -8,6 +8,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
+import { ProFeaturePaywall } from "@/components/demo-modal";
+import { createClient } from "@/lib/supabase/client";
 import { 
   Home, 
   ArrowLeft,
@@ -100,6 +102,8 @@ export default function AgencyAssistantPage() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -126,6 +130,12 @@ export default function AgencyAssistantPage() {
       });
 
       const result = await response.json();
+
+      // If 403, update user plan to free and show error
+      if (response.status === 403) {
+        setUserPlan('free');
+        throw new Error(result.message || result.error || "L'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.");
+      }
 
       if (!response.ok) {
         throw new Error(result.error || result.message || "Errore nella risposta");
@@ -224,6 +234,11 @@ export default function AgencyAssistantPage() {
       </header>
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
+        <ProFeaturePaywall
+          title="Agency Assistant AI"
+          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'assistente AI completo."
+          isLocked={isLocked && !isLoadingPlan}
+        >
         <div className="mb-6 animate-fade-in-up">
           <div className="futuristic-card p-6 border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5">
             <div className="flex items-start gap-4">
@@ -399,6 +414,7 @@ export default function AgencyAssistantPage() {
             </p>
           </div>
         </div>
+        </ProFeaturePaywall>
       </main>
     </div>
   );

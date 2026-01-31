@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Inter_Tight } from "next/font/google";
+// import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 
-const interTight = Inter_Tight({ 
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter-tight",
-});
+// const interTight = Inter_Tight({ 
+//   subsets: ["latin"],
+//   display: "swap",
+//   variable: "--font-inter-tight",
+// });
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
 const APP_NAME = 'PropertyPilot AI';
@@ -132,7 +132,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className={interTight.variable}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
@@ -143,10 +143,10 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={interTight.className}>
+      <body className={`font-sans bg-[#050505] text-white`}>
         <Providers>
           <ThemeProvider
-            defaultTheme="light"
+            defaultTheme="dark"
             storageKey="propertypilot-theme"
           >
             {children}

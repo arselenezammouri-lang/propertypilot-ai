@@ -10,22 +10,12 @@ import {
 } from '@/lib/utils/rate-limit';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
-import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { apiWrapper } from '@/lib/utils/api-wrapper';
+import { logger } from '@/lib/utils/safe-logger';
 
-export async function POST(request: NextRequest) {
-  try {
-    // STEP 1: Authentication
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    // STEP 2: Rate limiting - User (10/min)
+export const POST = apiWrapper(
+  async (request: NextRequest, { user, supabase, body }) => {
+    // STEP 1: Rate limiting - User (10/min)
     const userRateLimit = await checkUserRateLimit(user.id);
     if (!userRateLimit.allowed) {
       return NextResponse.json(
@@ -38,7 +28,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // STEP 3: Rate limiting - IP (20/min)
+    // STEP 2: Rate limiting - IP (20/min)
     const clientIp = getClientIp(request);
     if (clientIp) {
       const ipRateLimit = await checkIpRateLimit(clientIp);
@@ -53,9 +43,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // STEP 4: Parse input (ScrapedListing or PropertyInput)
-    const body = await request.json();
-
+    // STEP 3: Parse input (ScrapedListing or PropertyInput)
     if (!body || typeof body !== 'object') {
       return NextResponse.json(
         { error: 'Invalid input data' },
@@ -63,7 +51,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // STEP 5: Check subscription limits
+    // STEP 4: Check subscription limits
     const { data: subscription } = await supabase
       .from('subscriptions')
       .select('status, generations_count')
@@ -87,16 +75,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // STEP 6: Generate comprehensive AI content
-    console.log('[COMPREHENSIVE AI] Starting generation...');
+    // STEP 5: Generate comprehensive AI content
     const startTime = Date.now();
+    logger.debug('[COMPREHENSIVE AI] Starting generation...', {
+      userId: user.id,
+    });
     
     const generatedContent = await generateComprehensiveContent(body);
     
     const duration = Date.now() - startTime;
-    console.log('[COMPREHENSIVE AI] Generation completed in', duration, 'ms');
+    logger.info('[COMPREHENSIVE AI] Generation completed', {
+      durationMs: duration,
+      userId: user.id,
+    });
 
-    // STEP 7: Log generation and increment counter
+    // STEP 6: Log generation and increment counter
     await logGeneration(user.id, clientIp);
     await incrementGenerationCount(user.id);
 
@@ -108,36 +101,9 @@ export async function POST(request: NextRequest) {
         generatedAt: new Date().toISOString(),
       },
     });
-
-  } catch (error: any) {
-    console.error('[COMPREHENSIVE AI API] Error:', error);
-    
-    // Check if it's an OpenAI quota error
-    if (isOpenAIQuotaError(error)) {
-      const formattedError = formatErrorResponse(error);
-      return NextResponse.json(
-        formattedError,
-        { status: 503 }
-      );
-    }
-
-    // Handle OpenAI rate limit
-    if (error.code === 'rate_limit_exceeded') {
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          message: 'Troppe richieste AI. Riprova tra qualche secondo.',
-          suggestion: 'Attendi 10-15 secondi prima di riprovare.'
-        },
-        { status: 429 }
-      );
-    }
-
-    // Generic error handling
-    const formattedError = formatErrorResponse(error, 'Generazione AI');
-    return NextResponse.json(
-      formattedError,
-      { status: 500 }
-    );
+  },
+  {
+    method: 'POST',
+    requireSubscription: true,
   }
-}
+);

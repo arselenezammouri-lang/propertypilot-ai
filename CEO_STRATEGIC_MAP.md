@@ -29,7 +29,7 @@
 - ✅ **Aria AI Brain** - Assistente virtuale contestuale
 
 #### **3. Business Model**
-- ✅ **Pricing Strategy:** Starter €197, Pro €497, Agency €897
+- ✅ **Pricing Strategy:** Starter €197/mese, Pro €497/mese, Agency €897/mese
 - ✅ **Stripe Integration:** Checkout, Webhooks, Subscriptions
 - ✅ **Agency Boost:** €2,497 una tantum (done-for-you setup)
 - ✅ **Revenue Model:** MRR + One-time (Agency Boost)
@@ -131,9 +131,9 @@
 ### **Fase 1: First 10 Customers (Mese 1)**
 - **Target:** 10 clienti paganti
 - **Mix:** 5 Pro (€497) + 3 Agency (€897) + 2 Starter (€197)
-- **MRR:** €4,970 + €2,691 + €394 = **€8,055/mese**
+- **MRR:** €2,485 + €2,691 + €394 = **€5,570/mese**
 - **Agency Boost:** 1-2 vendite = €2,497-€4,994
-- **Revenue Totale:** €10,552 - €13,049/mese
+- **Revenue Totale:** €8,067 - €10,564/mese
 
 **Strategia:**
 - Focus su **qualità > quantità**
@@ -157,6 +157,9 @@
 - **Target:** 400-500 clienti
 - **Mix Ottimale:** 30% Starter, 45% Pro, 25% Agency
 - **MRR:** €96,450 - €120,562/mese
+  - Starter (30%): 120-150 clienti × €197 = €23,640 - €29,550
+  - Pro (45%): 180-225 clienti × €497 = €89,460 - €111,825
+  - Agency (25%): 100-125 clienti × €897 = €89,700 - €112,125
 - **Agency Boost:** 15-25/mese = €37,455 - €62,425
 - **Revenue Totale:** €133,905 - €182,987/mese
 
@@ -317,7 +320,7 @@
 
 ### **SUCCESS METRICS (30 giorni):**
 - ✅ 10 clienti paganti
-- ✅ €8k-€13k MRR
+- ✅ €5.5k-€8k MRR
 - ✅ NPS > 40
 - ✅ Churn < 10%
 - ✅ 3 case studies

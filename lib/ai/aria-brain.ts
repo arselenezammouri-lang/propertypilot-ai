@@ -50,6 +50,7 @@ export const ARIA_SYSTEM_PROMPT = `Sei Aria, l'AI Success Partner di PropertyPil
 - Mostra il potenziale inespresso: "Immagina se potessi usare lo Sniper per vedere i ribassi in tempo reale..."
 - Spiega il ROI e il risparmio tempo: "Il piano Pro a €497/mese ti fa risparmiare 20+ ore settimanali con Smart Briefing e Virtual Staging 3D. Una sola vendita extra al mese copre l'investimento."
 - Enfatizza il valore élite: "Il piano Agency a €897/mese con Voice Agent AI significa chiamate automatiche 24/7 mentre dormi. Risparmi 40+ ore settimanali e moltiplichi i mandati."
+- **PER UTENTI MEDIO ORIENTE (Dubai/Doha/UAE):** Quando vendi l'Agency Plan, enfatizza sempre i vantaggi fiscali: "Il piano Agency a €897/mese (3,300 AED) ti dà Aura VR, Voice Agent AI illimitato e Omnichannel Domination Suite. In Medio Oriente, con 0% tasse su redditi da affitti e plusvalenze, ogni euro investito in automazione diventa ROI netto. Nessuna tassa significa che il tuo investimento si ripaga ancora più velocemente. Scalabilità senza limiti fiscali."
 - Sii gentile ma convincente: non essere pushy, ma mostra il valore reale e il risparmio tempo
 
 **QUANDO L'UTENTE È PRO/AGENCY:**
@@ -63,6 +64,7 @@ export const ARIA_SYSTEM_PROMPT = `Sei Aria, l'AI Success Partner di PropertyPil
 - Motivazione: "Capisco che questa trattativa è difficile, ma ricorda: hai il Virtual Staging che può cambiare tutto. Mostra al cliente la visione, non solo la realtà attuale."
 - Upgrade Starter→Pro: "Stai ancora facendo tutto manualmente? Con il Pro a €497/mese, hai Smart Briefing Multi-Categoria e Virtual Staging 3D che ti fanno risparmiare 20+ ore settimanali. Il tempo risparmiato vale molto più dell'investimento."
 - Upgrade Pro→Agency: "Vuoi scalare senza limiti? L'Agency a €897/mese ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? L'Omnichannel Domination Suite completa: Voice Agent AI illimitato, Smart Messaging AI, e Manual Override. Non è solo automazione - è libertà totale di scegliere come raggiungere il proprietario. Hai sempre il controllo."
+- **Upgrade Pro→Agency (Medio Oriente):** "Vuoi scalare senza limiti? L'Agency a €897/mese (3,300 AED) ti dà Aura VR, Voice Agent AI illimitato e Omnichannel Domination Suite. In Medio Oriente, con 0% tasse su redditi da affitti e plusvalenze, ogni euro investito in automazione diventa ROI netto. Nessuna tassa significa che il tuo investimento si ripaga ancora più velocemente. Scalabilità senza limiti fiscali - questo è il vero vantaggio competitivo del mercato UAE/Qatar."
 - Affitti: "Questo affitto a 800€/mese su un valore d'acquisto di 120k rende l'8% annuo. Ottimo per studenti o giovani professionisti. Contratto transitorio consigliato."
 - Commerciale: "Questo locale ha canna fumaria e vetrina su strada principale. Categoria C3. Ideale per Food & Beverage. Zona ad alto passaggio pedonale."
 - Aiuto generico: "Per risposte dettagliate, ti consiglio di consultare la sezione Documenti (/docs) dove troverai guide complete su tutte le funzionalità. Posso anche aiutarti con domande specifiche su PropertyPilot!"
@@ -91,12 +93,14 @@ export const ARIA_SYSTEM_PROMPT = `Sei Aria, l'AI Success Partner di PropertyPil
   - Smart Briefing → /docs/smart-briefing/briefing-guide
   - X-Ray → /docs/xray/xray-guide
 
-**BENVENUTO MEMBRI FONDATORI:**
-- Se l'utente ha piano PRO o AGENCY, dà il benvenuto come "Membro Fondatore del Network Globale PropertyPilot"
+**BENVENUTO PREMIUM NETWORK MEMBERS:**
+- Se l'utente ha piano PRO, dà il benvenuto come "Premium Network Member del Network Globale PropertyPilot"
+- Se l'utente ha piano AGENCY, dà il benvenuto come "Agency Intelligence Active del Network Globale PropertyPilot"
 - Esempi:
-  - "Benvenuto nel Network Globale PropertyPilot, [Nome]! Come Membro Fondatore, hai accesso a tutte le funzionalità avanzate. Il sistema sta già lavorando per te 24/7."
-  - "Sei parte dell'élite che sta trasformando il settore immobiliare. Grazie per essere un Membro Fondatore!"
-- Usa un tono esclusivo e gratificante per i membri fondatori
+  - "Benvenuto nel Network Globale PropertyPilot, [Nome]! Come Premium Network Member, hai accesso a tutte le funzionalità avanzate. Il sistema sta già lavorando per te 24/7."
+  - "Benvenuto nel Network Globale PropertyPilot, [Nome]! Come Agency Intelligence Active, hai accesso a tutte le funzionalità avanzate. Il sistema sta già lavorando per te 24/7."
+  - "Sei parte dell'élite che sta trasformando il settore immobiliare. Grazie per essere parte del Network!"
+- Usa un tono esclusivo e gratificante per i membri premium
 
 **REGOLE D'ORO:**
 - Mai essere negativa o critica
@@ -356,33 +360,112 @@ export function getLocaleConfig(locale: SupportedLocale, location?: string): Loc
         'USA Sun Belt: rendimenti 8-12% annui con crescita demografica. Opportunità di scalabilità rapida.',
       ],
     },
+    
+    // Medio Oriente - Focus su 0% tasse e ROI elevato
+    ar: {
+      region: 'Medio Oriente - Emirati Arabi / Qatar',
+      focus: [
+        '0% tasse su redditi da affitti e plusvalenze (UAE/Qatar)',
+        'ROI elevato 7-10% annui',
+        'Transazioni veloci e mercato liquido',
+        'Investimenti in valuta stabile (AED/USD)',
+        'Mercato del lusso Dubai/Qatar',
+      ],
+      taxes: [
+        '0% Income Tax - nessuna tassa sul reddito da affitti (UAE/Qatar)',
+        '0% Capital Gains Tax - nessuna tassa su plusvalenze',
+        '0% Property Tax - nessuna tassa annuale sugli immobili',
+        'Solo spese di registrazione e commissioni (circa 2-4% del valore)',
+        'Dubai: Freehold per stranieri, nessuna restrizione',
+        'Qatar: Investimenti diretti con permessi semplificati',
+      ],
+      marketDynamics: [
+        'Mercato ultra-liquido con transazioni veloci (settimane, non mesi)',
+        'ROI netto 7-10% annui (senza tasse)',
+        'Alta domanda da expat e investitori internazionali',
+        'Mercato del lusso in forte crescita (Dubai Marina, Palm Jumeirah, Doha West Bay)',
+        'Valuta stabile (AED agganciata a USD)',
+        'Infrastrutture di classe mondiale',
+      ],
+      investmentStrategy: [
+        'Focus su Dubai Marina, Palm Jumeirah, Downtown Dubai per lusso premium',
+        'Doha West Bay, The Pearl per investimenti Qatar',
+        'ROI target: 7-10% annui netti (senza tasse)',
+        'Transazioni veloci: contratti in settimane, non mesi',
+        'Considera appartamenti premium per expat e turismo',
+        'Valuta investimenti in valuta USD per stabilità',
+        'Mercato in crescita costante con infrastrutture in espansione',
+      ],
+      examples: [
+        'Dubai: Appartamento 2BR a Dubai Marina da 1.5M AED (408k USD) con affitto 120k AED/anno (32.7k USD) = ROI 8% annuo NETTO (0% tasse). Transazione in 2-3 settimane.',
+        'Qatar: Villa a Doha West Bay da 2M QAR (549k USD) con affitto 180k QAR/anno (49.4k USD) = ROI 9% annuo NETTO (0% tasse). Mercato del lusso in forte crescita.',
+        'Dubai Palm Jumeirah: Proprietà premium con ROI 7-10% annui, nessuna tassa, transazioni veloci. Investimento ideale per portafoglio internazionale.',
+      ],
+    },
   };
 
   return configs[detectedLocale] || configs.en;
 }
 
-export function getUpgradeSuggestions(userPlan: 'free' | 'starter' | 'pro' | 'agency'): string[] {
+export function getUpgradeSuggestions(
+  userPlan: 'free' | 'starter' | 'pro' | 'agency',
+  userLocation?: string
+): string[] {
+  // Rileva se l'utente è in Medio Oriente
+  const isMiddleEast = userLocation && /\b(dubai|doha|qatar|uae|emirates|abu dhabi|sharjah|ajman)\b/i.test(userLocation);
+  
   if (userPlan === 'free') {
-    return [
+    const baseSuggestions = [
       "Con il piano Starter a €197/mese, hai l'AI Listing Engine completo e Lead Score Base. Inizia a scalare subito.",
       "Il piano Pro a €497/mese ti dà Smart Briefing Multi-Categoria, Virtual Staging 3D e AI Voice Calling (30 chiamate/mese). Testa il potere dell'automazione e risparmia 20+ ore settimanali.",
-      "Il piano Agency a €897/mese ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? Plus Omnichannel Domination Suite completa. Libertà totale di scelta.",
     ];
+    
+    if (isMiddleEast) {
+      baseSuggestions.push(
+        "Il piano Agency a €897/mese (3,300 AED) ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. In Medio Oriente, con 0% tasse su redditi da affitti e plusvalenze, ogni euro investito in automazione diventa ROI netto. Nessuna tassa significa che il tuo investimento si ripaga ancora più velocemente. Plus Omnichannel Domination Suite completa. Libertà totale di scelta."
+      );
+    } else {
+      baseSuggestions.push(
+        "Il piano Agency a €897/mese ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? Plus Omnichannel Domination Suite completa. Libertà totale di scelta."
+      );
+    }
+    
+    return baseSuggestions;
   }
+  
   if (userPlan === 'starter') {
-    return [
+    const baseSuggestions = [
       "Passa al Pro a €497/mese: Smart Briefing Multi-Categoria, Virtual Staging 3D e AI Voice Calling (30 chiamate/mese) ti fanno risparmiare 20+ ore settimanali. Testa il potere dell'automazione prima di scalare.",
       "Il Virtual Staging 3D trasforma ogni immobile. Mostra al cliente la visione, non solo la realtà. Disponibile nel piano Pro insieme all'AI Voice Calling per testare l'automazione.",
-      "Il piano Agency a €897/mese ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? Plus Omnichannel Domination Suite completa. Non è solo automazione - è libertà totale.",
     ];
+    
+    if (isMiddleEast) {
+      baseSuggestions.push(
+        "Il piano Agency a €897/mese (3,300 AED) ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. In Medio Oriente, con 0% tasse su redditi da affitti e plusvalenze, ogni euro investito in automazione diventa ROI netto. Nessuna tassa significa che il tuo investimento si ripaga ancora più velocemente. Plus Omnichannel Domination Suite completa. Non è solo automazione - è libertà totale con vantaggio fiscale."
+      );
+    } else {
+      baseSuggestions.push(
+        "Il piano Agency a €897/mese ti dà Aura VR: trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? Plus Omnichannel Domination Suite completa. Non è solo automazione - è libertà totale."
+      );
+    }
+    
+    return baseSuggestions;
   }
+  
   if (userPlan === 'pro') {
-    return [
+    const baseSuggestions = [
       "Passa all'Agency a €897/mese: Aura VR trasforma un video dello smartphone in un tour VR immersivo. Perché mandare foto statiche quando puoi mandare un link VR che fa sentire il cliente già dentro casa? Plus Omnichannel Domination Suite completa. Hai sempre il controllo totale.",
       "Con l'Agency non è solo automazione - è libertà totale. Aura VR per tour immersivi, Voice Agent AI illimitato, e tutto il resto. Risparmi 40+ ore settimanali mantenendo il controllo quando serve.",
       "Il piano Agency è pensato per team fino a 10 agenti. Omnichannel Domination Suite: automazione quando vuoi, intervento umano quando preferisci. Scalabilità senza limiti.",
     ];
+    
+    if (isMiddleEast) {
+      baseSuggestions[0] = "Passa all'Agency a €897/mese (3,300 AED): Aura VR trasforma un video dello smartphone in un tour VR immersivo. In Medio Oriente, con 0% tasse su redditi da affitti e plusvalenze, ogni euro investito in automazione diventa ROI netto. Nessuna tassa significa che il tuo investimento si ripaga ancora più velocemente. Plus Omnichannel Domination Suite completa. Hai sempre il controllo totale - e zero tasse."
+    }
+    
+    return baseSuggestions;
   }
+  
   return [];
 }
 

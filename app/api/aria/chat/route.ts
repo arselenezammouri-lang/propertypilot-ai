@@ -36,15 +36,20 @@ export async function POST(request: NextRequest) {
     // Recupera profilo utente per contesto
     const { data: profile } = await supabase
       .from('profiles')
-      .select('full_name, subscription_plan')
+      .select('full_name, subscription_plan, location, city, country')
       .eq('id', user.id)
       .single();
+
+    // Costruisci location string da profilo o context
+    const userLocation = context?.userLocation || 
+      (profile?.location || profile?.city || profile?.country || undefined);
 
     const ariaContext = {
       userName: profile?.full_name || context?.userName,
       userPlan: (profile?.subscription_plan || context?.userPlan || 'free') as 'free' | 'starter' | 'pro' | 'agency',
       currentPage: context?.currentPage,
       recentActivity: context?.recentActivity,
+      userLocation,
     };
 
     // Costruisci prompt per Aria

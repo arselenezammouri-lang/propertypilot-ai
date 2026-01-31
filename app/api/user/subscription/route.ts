@@ -75,6 +75,8 @@ export async function GET(request: NextRequest) {
 
     if (PAID_STATUSES.includes(subscription.status) && subscription.stripe_subscription_id) {
       try {
+        // Check if Stripe is configured (will be checked by requireStripe, but we catch the error)
+        
         const stripe = requireStripe();
         const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripe_subscription_id);
         

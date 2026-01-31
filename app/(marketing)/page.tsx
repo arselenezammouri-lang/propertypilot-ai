@@ -231,7 +231,7 @@ export default function MarketingLandingPage() {
                 <CardTitle className="text-2xl">PRO</CardTitle>
                 <CardDescription>Per agenti immobiliari</CardDescription>
                 <div className="mt-4">
-                  <span className="text-5xl font-bold">€297</span>
+                  <span className="text-5xl font-bold">€497</span>
                   <span className="text-muted-foreground">/mese</span>
                 </div>
               </CardHeader>
@@ -278,7 +278,7 @@ export default function MarketingLandingPage() {
                 </div>
                 <CardDescription>Per agenzie e team</CardDescription>
                 <div className="mt-4">
-                  <span className="text-5xl font-bold">€597</span>
+                  <span className="text-5xl font-bold">€897</span>
                   <span className="text-muted-foreground">/mese</span>
                 </div>
               </CardHeader>

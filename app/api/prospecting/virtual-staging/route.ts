@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 
 const virtualStagingSchema = z.object({
@@ -20,6 +21,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Non autenticato' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Virtual Staging is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Il Virtual Staging 3D è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 

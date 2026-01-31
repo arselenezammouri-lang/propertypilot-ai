@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
-import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -103,13 +103,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // SECURITY: Check active subscription
-    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
+    // SECURITY: Check PRO or AGENCY subscription (Agency Assistant AI is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
     if (!subscriptionCheck.allowed) {
       return NextResponse.json(
         { 
-          error: subscriptionCheck.error || 'Abbonamento richiesto',
-          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'L\'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.'
         },
         { status: 403 }
       );

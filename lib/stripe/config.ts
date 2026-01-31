@@ -8,10 +8,11 @@ export function requireStripe(): Stripe {
   }
   
   if (!stripeInstance) {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+    const stripeKey = process.env.STRIPE_SECRET_KEY || process.env.TESTING_STRIPE_SECRET_KEY;
+    if (!stripeKey) {
+      throw new Error('STRIPE_SECRET_KEY or TESTING_STRIPE_SECRET_KEY environment variable is not set');
     }
-    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    stripeInstance = new Stripe(stripeKey, {
       apiVersion: '2024-12-18.acacia' as any,
       typescript: true,
     });

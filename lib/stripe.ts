@@ -4,21 +4,19 @@
  */
 
 import Stripe from 'stripe';
+import { requireStripe } from './stripe/config';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is not set');
+// Lazy initialization - Stripe viene inizializzato solo quando necessario
+function getStripe(): Stripe {
+  return requireStripe();
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-11-20.acacia',
-  typescript: true,
-});
-
 // Price IDs per i piani (da configurare in Stripe Dashboard)
+// Allineato con lib/stripe/config.ts per coerenza
 export const STRIPE_PRICE_IDS = {
-  STARTER: process.env.STRIPE_PRICE_ID_STARTER || 'price_starter',
-  PRO: process.env.STRIPE_PRICE_ID_PRO || 'price_pro',
-  AGENCY: process.env.STRIPE_PRICE_ID_AGENCY || 'price_agency',
+  STARTER: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || process.env.STRIPE_PRICE_ID_STARTER || null,
+  PRO: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || process.env.STRIPE_PRICE_ID_PRO || null,
+  AGENCY: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID || process.env.STRIPE_PRICE_ID_AGENCY || null,
 } as const;
 
 // Mapping piano → Price ID
@@ -68,6 +66,7 @@ export async function createCheckoutSession(
     sessionParams.customer_email = metadata?.email;
   }
 
+  const stripe = getStripe();
   return await stripe.checkout.sessions.create(sessionParams);
 }
 
@@ -79,6 +78,8 @@ export async function getOrCreateCustomer(
   email: string,
   name?: string
 ): Promise<Stripe.Customer> {
+  const stripe = getStripe();
+  
   // Cerca customer esistente
   const customers = await stripe.customers.list({
     email,
@@ -105,6 +106,7 @@ export async function getOrCreateCustomer(
 export async function cancelSubscription(
   subscriptionId: string
 ): Promise<Stripe.Subscription> {
+  const stripe = getStripe();
   return await stripe.subscriptions.cancel(subscriptionId);
 }
 
@@ -115,6 +117,7 @@ export async function updateSubscription(
   subscriptionId: string,
   newPriceId: string
 ): Promise<Stripe.Subscription> {
+  const stripe = getStripe();
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   
   return await stripe.subscriptions.update(subscriptionId, {

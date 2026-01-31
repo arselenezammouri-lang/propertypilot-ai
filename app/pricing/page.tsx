@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { 
   CheckCircle, 
@@ -25,7 +26,7 @@ const plans = [
     id: "starter",
     name: "Starter",
     tagline: "AI listing tools for solo agents",
-    price: 97,
+    price: 197,
     period: "/ mese",
     icon: Rocket,
     gradient: "from-electric-blue to-royal-purple",
@@ -44,7 +45,7 @@ const plans = [
     id: "pro",
     name: "Pro",
     tagline: "CRM, automations & AI tools",
-    price: 297,
+    price: 497,
     period: "/ mese",
     icon: Crown,
     gradient: "from-sunset-gold via-royal-purple to-sunset-gold",
@@ -63,7 +64,7 @@ const plans = [
     id: "agency",
     name: "Agency",
     tagline: "For teams up to 10 agents",
-    price: 497,
+    price: 897,
     period: "/ mese",
     icon: Building2,
     gradient: "from-neon-aqua via-electric-blue to-royal-purple",
@@ -151,13 +152,27 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 export default function PricingPage() {
   const router = useRouter();
 
-  const handlePlanClick = (planId: string, isSubscription: boolean) => {
+  const handlePlanClick = async (planId: string, isSubscription: boolean) => {
     console.log(`Plan selected: ${planId}, isSubscription: ${isSubscription}`);
     
-    if (planId === "boost") {
-      window.location.href = `/auth/signup?package=boost`;
+    // Check if user is logged in
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      // User is logged in, redirect to Stripe checkout
+      if (planId === "boost") {
+        window.location.href = `/api/stripe/checkout?package=boost`;
+      } else {
+        window.location.href = `/api/stripe/checkout?plan=${planId}`;
+      }
     } else {
-      window.location.href = `/auth/signup?plan=${planId}`;
+      // User is not logged in, redirect to signup
+      if (planId === "boost") {
+        window.location.href = `/auth/signup?package=boost`;
+      } else {
+        window.location.href = `/auth/signup?plan=${planId}`;
+      }
     }
   };
 

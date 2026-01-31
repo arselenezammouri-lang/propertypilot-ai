@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,6 +40,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import Link from 'next/link';
+import { ProFeaturePaywall } from '@/components/demo-modal';
 
 interface StructuralAudit {
   titolo: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };
@@ -124,6 +125,8 @@ export default function AuditorPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
+  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
 
   const copyToClipboard = async (text: string, section: string) => {
     await navigator.clipboard.writeText(text);
@@ -182,6 +185,18 @@ export default function AuditorPage() {
       }
 
       if (!response.ok) {
+        // If 403, update user plan to free and show paywall
+        if (response.status === 403) {
+          setUserPlan('free');
+          toast({
+            variant: 'destructive',
+            title: 'Piano Premium richiesto',
+            description: result.message || result.error || 'L\'Audit Immobiliare AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+            duration: 8000,
+          });
+          return;
+        }
+        
         const errorMessage = result.message || result.error || 'Errore durante l\'analisi';
         toast({
           variant: 'destructive',
@@ -257,6 +272,29 @@ export default function AuditorPage() {
     </Button>
   );
 
+  // Load user subscription plan
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        const response = await fetch('/api/user/subscription');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
+          setUserPlan(plan);
+        }
+      } catch (error) {
+        console.error('Error fetching subscription:', error);
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+    
+    fetchUserPlan();
+  }, []);
+
+  const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-indigo-950 to-purple-950">
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
@@ -284,17 +322,22 @@ export default function AuditorPage() {
           </p>
         </div>
 
-        <Card className="mb-8 bg-gradient-to-br from-slate-900/90 to-slate-800/90 border-blue-500/30 shadow-2xl shadow-blue-500/10" data-testid="card-input">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-white">
-              <FileText className="h-6 w-6 text-blue-400" />
-              Analizza il tuo Annuncio
-            </CardTitle>
-            <CardDescription className="text-blue-200/60">
-              Incolla il testo o inserisci l'URL per ricevere un audit completo
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <ProFeaturePaywall
+          title="Audit Immobiliare AI"
+          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'audit completo."
+          isLocked={isLocked && !isLoadingPlan}
+        >
+          <Card className="mb-8 bg-gradient-to-br from-slate-900/90 to-slate-800/90 border-blue-500/30 shadow-2xl shadow-blue-500/10" data-testid="card-input">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-white">
+                <FileText className="h-6 w-6 text-blue-400" />
+                Analizza il tuo Annuncio
+              </CardTitle>
+              <CardDescription className="text-blue-200/60">
+                Incolla il testo o inserisci l'URL per ricevere un audit completo
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label className="text-blue-200">Mercato di riferimento</Label>
@@ -412,6 +455,7 @@ export default function AuditorPage() {
             </Button>
           </CardContent>
         </Card>
+        </ProFeaturePaywall>
 
         {auditResult && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

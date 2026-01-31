@@ -32,7 +32,7 @@ export function AIVirtualStaging({ listing }: AIVirtualStagingProps) {
     
     // Salva nel DB che è stato generato
     try {
-      await fetch('/api/prospecting/virtual-staging', {
+      const response = await fetch('/api/prospecting/virtual-staging', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -40,6 +40,20 @@ export function AIVirtualStaging({ listing }: AIVirtualStagingProps) {
           generated: true,
         }),
       });
+      
+      // If 403, show error message
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 403) {
+          toast({
+            title: "Piano Premium richiesto",
+            description: data.message || data.error || "Il Virtual Staging 3D è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+            variant: "destructive",
+          });
+          setIsGenerating(false);
+          return;
+        }
+      }
     } catch (error) {
       // Gestione errori elegante con messaggio fallback
       toast({

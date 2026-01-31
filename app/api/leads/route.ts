@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { insertLeadSchema, updateLeadSchema, leadFiltersSchema } from '@/lib/validations/lead';
 
 export async function GET(request: NextRequest) {
@@ -88,6 +89,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check PRO or AGENCY subscription (Lead Manager is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     
     const validatedInput = insertLeadSchema.safeParse(body);
@@ -143,6 +157,19 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json(
         { error: 'Non autorizzato' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Lead Manager is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 
@@ -204,6 +231,19 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { error: 'Non autorizzato' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Lead Manager is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 

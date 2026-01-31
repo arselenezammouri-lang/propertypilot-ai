@@ -45,7 +45,7 @@ export default function ReferralPage() {
         setStats({
           friendsInvited: referrals.length,
           discountsEarned: referrals.length * 20, // 20% per referral
-          potentialEarnings: referrals.length * 119.4, // 20% di €597
+          potentialEarnings: referrals.length * 179.4, // 20% di €897
         });
       }
     } catch (error) {

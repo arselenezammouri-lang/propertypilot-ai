@@ -8,6 +8,7 @@ import {
   getDefaultObjectionHandlers,
   analyzeCallOutcome,
 } from '@/lib/ai/voice-agent';
+import { logger } from '@/lib/utils/safe-logger';
 
 const callRequestSchema = z.object({
   listing_id: z.string().uuid('ID listing non valido'),
@@ -126,10 +127,9 @@ export async function POST(request: NextRequest) {
         webhook_url: callbackWebhook,
       });
 
-      // Log senza dati sensibili (solo per debugging in sviluppo)
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[PROSPECTING CALL] Call initiated for listing ${listing_id}`);
-      }
+      logger.info('[PROSPECTING CALL] Call initiated', {
+        listingId: listing_id,
+      });
 
       // Aggiorna status listing a 'called' (sarà aggiornato a 'appointment_set' dal webhook se l'appuntamento viene fissato)
       await supabase
@@ -152,11 +152,7 @@ export async function POST(request: NextRequest) {
       });
 
     } catch (callError: any) {
-      // Log error senza dati sensibili
-      console.error('[PROSPECTING CALL] Error creating call:', {
-        message: callError.message,
-        status: callError.status || callError.statusCode,
-      });
+      logger.error('[PROSPECTING CALL] Error creating call', callError);
 
       return NextResponse.json(
         {
@@ -169,11 +165,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error: any) {
-    // Log error senza dati sensibili
-    console.error('[PROSPECTING CALL] Unexpected error:', {
-      message: error.message,
-      name: error.name,
-    });
+    logger.error('[PROSPECTING CALL] Unexpected error', error);
     return NextResponse.json(
       {
         success: false,
@@ -232,11 +224,7 @@ export async function GET(request: NextRequest) {
       });
 
     } catch (statusError: any) {
-      // Log error senza dati sensibili
-      console.error('[PROSPECTING CALL] Error fetching call status:', {
-        message: statusError.message,
-        status: statusError.status || statusError.statusCode,
-      });
+      logger.error('[PROSPECTING CALL] Error fetching call status', statusError);
       return NextResponse.json(
         {
           success: false,
@@ -248,11 +236,7 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error: any) {
-    // Log error senza dati sensibili
-    console.error('[PROSPECTING CALL] GET Error:', {
-      message: error.message,
-      name: error.name,
-    });
+    logger.error('[PROSPECTING CALL] GET Error', error);
     return NextResponse.json(
       {
         success: false,

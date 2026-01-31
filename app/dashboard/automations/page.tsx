@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { ProFeaturePaywall } from "@/components/demo-modal";
 import { 
   Settings, 
   Plus, 
@@ -97,6 +98,8 @@ export default function AutomationsPage() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [executingId, setExecutingId] = useState<string | null>(null);
   const [resultDialog, setResultDialog] = useState<{ open: boolean; result: string | null }>({ open: false, result: null });
+  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
     type: "followup",
@@ -114,8 +117,32 @@ export default function AutomationsPage() {
     repeat_interval: "once",
   });
 
+  // Load user subscription plan
+  useEffect(() => {
+    const fetchUserPlan = async () => {
+      try {
+        const response = await fetch('/api/user/subscription');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
+          setUserPlan(plan);
+        }
+      } catch (error) {
+        console.error('Error fetching subscription:', error);
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+    
+    fetchUserPlan();
+  }, []);
+
+  const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
+
   const { data: automationsData, isLoading } = useQuery<{ automations: Automation[] }>({
     queryKey: ["/api/automations"],
+    enabled: !isLocked, // Only fetch if not locked
   });
 
   const automations: Automation[] = automationsData?.automations || [];
@@ -128,6 +155,13 @@ export default function AutomationsPage() {
         body: JSON.stringify(data),
       });
       const result = await response.json();
+      
+      // If 403, update user plan to free and show error
+      if (response.status === 403) {
+        setUserPlan('free');
+        throw new Error(result.message || result.error || "Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.");
+      }
+      
       if (!response.ok) throw new Error(result.error);
       return result;
     },
@@ -627,6 +661,11 @@ export default function AutomationsPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <ProFeaturePaywall
+          title="Automazioni AI"
+          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare le automazioni complete."
+          isLocked={isLocked && !isLoadingPlan}
+        >
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
           {AUTOMATION_TYPES.map((type) => {
             const count = automations.filter(a => a.type === type.id).length;
@@ -758,6 +797,7 @@ export default function AutomationsPage() {
             )}
           </CardContent>
         </Card>
+        </ProFeaturePaywall>
       </main>
 
       <Dialog open={resultDialog.open} onOpenChange={(open) => setResultDialog({ open, result: null })}>

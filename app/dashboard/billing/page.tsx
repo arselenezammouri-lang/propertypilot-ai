@@ -132,7 +132,11 @@ export default function BillingPage() {
       if (!response.ok) throw new Error(result.message || result.error);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
+      // Salva il piano in localStorage per mostrare il messaggio corretto dopo il checkout
+      if (variables === 'agency') {
+        localStorage.setItem('upgradedPlan', 'agency');
+      }
       if (data.url) {
         window.location.href = data.url;
       }
@@ -368,7 +372,7 @@ export default function BillingPage() {
                   ) : (
                     <Rocket className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Starter €97
+                  Passa a Starter €197
                 </Button>
                 <Button
                   onClick={() => checkoutMutation.mutate('pro')}
@@ -381,7 +385,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Pro €297
+                  Passa a Pro €497
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -396,7 +400,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Agency €597
+                  Passa a Agency €897
                 </Button>
               </>
             )}
@@ -414,7 +418,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Pro €297
+                  Upgrade a Pro €497
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -429,7 +433,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €597
+                  Upgrade a Agency €897
                 </Button>
               </>
             )}
@@ -447,7 +451,7 @@ export default function BillingPage() {
                   ) : (
                     <Crown className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €597
+                  Upgrade a Agency €897
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </>
@@ -527,7 +531,7 @@ export default function BillingPage() {
                   <p className="text-sm text-muted-foreground font-medium mb-4">Per iniziare</p>
                   
                   <div className="mb-6">
-                    <span className="text-4xl font-black gradient-text-purple">€97</span>
+                    <span className="text-4xl font-black gradient-text-purple">€197</span>
                     <span className="text-lg text-muted-foreground">/mese</span>
                   </div>
                   
@@ -576,7 +580,7 @@ export default function BillingPage() {
                 <p className="text-sm text-muted-foreground font-medium mb-4">Per professionisti</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-gold">€297</span>
+                  <span className="text-4xl font-black gradient-text-gold">€497</span>
                   <span className="text-lg text-muted-foreground">/mese</span>
                 </div>
                 
@@ -618,7 +622,7 @@ export default function BillingPage() {
                 <p className="text-sm text-muted-foreground font-medium mb-4">Per team</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-purple">€597</span>
+                  <span className="text-4xl font-black gradient-text-purple">€897</span>
                   <span className="text-lg text-gray-100">/mese</span>
                 </div>
                 

@@ -4,6 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { logger } from '@/lib/utils/safe-logger';
 
 interface Props {
   children: ReactNode;
@@ -31,10 +32,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error per debugging (senza dati sensibili)
-    console.error('[ERROR BOUNDARY] Caught error:', {
-      message: error.message,
-      stack: error.stack?.substring(0, 200), // Solo primi 200 caratteri
+    // Log error usando logger sicuro (senza dati sensibili)
+    logger.error('[ERROR BOUNDARY] React component error', error, {
       componentStack: errorInfo.componentStack?.substring(0, 200),
     });
 

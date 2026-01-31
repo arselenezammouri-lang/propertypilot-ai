@@ -6,11 +6,31 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    // Try to get user with retry logic (cookie might not be synced immediately after signup)
+    let user = null;
+    let userError = null;
+    
+    // First attempt
+    const { data: { user: firstAttemptUser }, error: firstAttemptError } = await supabase.auth.getUser();
+    
+    if (firstAttemptUser) {
+      user = firstAttemptUser;
+    } else if (firstAttemptError) {
+      // If first attempt fails, wait a bit and retry (cookie sync delay)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const { data: { user: retryUser }, error: retryError } = await supabase.auth.getUser();
+      user = retryUser;
+      userError = retryError;
+    }
     
     if (userError || !user) {
+      console.error('[SETUP USER] Auth error:', userError);
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { 
+          error: 'Unauthorized',
+          message: 'Session not found. Please try refreshing the page.',
+          details: userError?.message || 'User session not available'
+        },
         { status: 401 }
       );
     }

@@ -284,6 +284,7 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
       userId,
       subscriptionId: subscription.id,
       planType,
+      message: planType === 'agency' ? 'Agency Intelligence Active - Accesso Premium Confermato' : 'Subscription activated',
     });
   } catch (error) {
     console.error('[WEBHOOK ERROR] handleSubscriptionCheckout failed:', error);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { auditListing, AuditOptions, AuditResult } from '@/lib/ai/auditListing';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
@@ -49,6 +50,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Non autenticato' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Audit Immobiliare AI is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'L\'Audit Immobiliare AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 

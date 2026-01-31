@@ -78,6 +78,7 @@ import {
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
 import { InvestmentAnalysisModal } from "@/components/investment-analysis-modal";
 import { AIVirtualStaging } from "@/components/ai-virtual-staging";
+import { ProFeaturePaywall } from "@/components/demo-modal";
 import { AIXRayVision } from "@/components/ai-xray-vision";
 import { TerritoryCommander } from "@/components/territory-commander";
 import { PremiumInvestorReport } from "@/components/premium-investor-report";
@@ -234,15 +235,26 @@ export default function ProspectingPage() {
   };
 
   const fetchStats = async () => {
+    // Only fetch stats for PRO/AGENCY users
+    if (userPlan !== 'pro' && userPlan !== 'agency') {
+      return;
+    }
+    
     try {
       const response = await fetch('/api/prospecting/stats');
       const data = await response.json();
 
       if (data.success) {
         setStats(data.data);
+      } else if (response.status === 403) {
+        // 403 is expected for FREE users, silently ignore
+        console.log('[PROSPECTING] Stats not available for current plan');
       }
     } catch (error) {
+      // Only log if it's not a 403 (expected for FREE users)
+      if (error instanceof Error && !error.message.includes('403')) {
       console.error('Error fetching stats:', error);
+      }
     }
   };
 
@@ -255,19 +267,32 @@ export default function ProspectingPage() {
         const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
         setUserPlan(plan);
 
-        // Calcola chiamate rimanenti per piano PRO (30/mese)
+        // Calcola chiamate rimanenti per piano PRO (30/mese) - solo se PRO/AGENCY
         if (plan === 'pro') {
           const now = new Date();
           const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
           
           // Conta chiamate effettuate questo mese
+          try {
           const callsResponse = await fetch(`/api/prospecting/stats?month_start=${monthStart.toISOString()}`);
           const callsData = await callsResponse.json();
           const callsUsed = callsData.success ? (callsData.data?.calls_this_month || 0) : 0;
           
           setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
+          } catch (statsError) {
+            // Ignore stats errors for subscription fetch
+            console.log('[SUBSCRIPTION] Stats not available, setting default');
+            setVoiceCallsRemaining(30);
+          }
         } else if (plan === 'agency') {
           setVoiceCallsRemaining(-1); // Illimitato
+        } else {
+          setVoiceCallsRemaining(0); // FREE/STARTER non hanno chiamate
+        }
+        
+        // After setting plan, fetch stats if PRO/AGENCY
+        if (plan === 'pro' || plan === 'agency') {
+          fetchStats();
         }
       }
     } catch (error) {
@@ -288,18 +313,22 @@ export default function ProspectingPage() {
   useEffect(() => {
     fetchListings();
     fetchFilters();
-    fetchStats();
+    // Fetch subscription first - it will call fetchStats() if needed
     fetchUserSubscription();
   }, [statusFilter, platformFilter]);
 
-  // Auto-refresh stats ogni 30 secondi
+  // Auto-refresh stats ogni 30 secondi (solo per PRO/AGENCY)
   useEffect(() => {
+    if (userPlan !== 'pro' && userPlan !== 'agency') {
+      return;
+    }
+    
     const interval = setInterval(() => {
       fetchStats();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [userPlan]);
 
   useEffect(() => {
     const debounce = setTimeout(() => {
@@ -318,6 +347,17 @@ export default function ProspectingPage() {
       });
 
       const data = await response.json();
+
+      // If 403, update user plan and show error
+      if (response.status === 403) {
+        setUserPlan('free');
+        toast({
+          title: "Piano Premium richiesto",
+          description: data.message || data.error || "Il Voice AI Prospecting è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       if (data.success) {
         toast({
@@ -1307,7 +1347,13 @@ export default function ProspectingPage() {
               )}
 
               {/* AI Virtual Staging */}
+              <ProFeaturePaywall
+                title="Virtual Staging 3D"
+                description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il Virtual Staging professionale 3D."
+                isLocked={userPlan !== 'pro' && userPlan !== 'agency'}
+              >
               <AIVirtualStaging listing={selectedListing} />
+              </ProFeaturePaywall>
 
               {/* GAP DI MERCATO */}
               {calculateMarketGap(selectedListing) && calculateMarketGap(selectedListing)! > 0 && (

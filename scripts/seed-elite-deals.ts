@@ -33,7 +33,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
   },
 });
 
-// ELITE DEALS - 10 immobili ultra-realistici
+// ELITE DEALS - 10+ immobili ultra-realistici
 const eliteDeals = [
   // MILANO (4 immobili)
   {
@@ -220,7 +220,35 @@ const eliteDeals = [
     - Potential appreciation: $450,000+`,
     imageUrl: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&h=800&fit=crop',
   },
-  
+
+  // DUBAI (1 immobile - Middle East ultra luxury)
+  {
+    title: 'Royal Penthouse - Dubai Marina',
+    location: 'Dubai Marina, Dubai (UAE)',
+    price: 12000000, // AED
+    surface: 520,
+    rooms: 5,
+    marketGap: 18.0,
+    leadScore: 97,
+    source_url: 'https://www.bayut.com/property/elite-dubai-001/',
+    source_platform: 'bayut',
+    owner_name: 'Sheikh Al Maktoum',
+    phone_number: '+971 50 123 4567',
+    description: `Royal Penthouse ultra-luxury di 520 mq all'ultimo piano di una torre iconica in Dubai Marina.
+    Vista panoramica a 270° sul Golfo Arabico e skyline di Dubai. Interni firmati da studio internazionale,
+    finiture in marmo italiano, legni pregiati e dettagli in oro. Infinity pool privata sul rooftop,
+    ascensore privato, suite master con spa, sala cinema, cigar lounge e sky bar.
+
+    **INVESTMENT ANALYSIS (AED):**
+    - Prezzo attuale: 12.000.000 د.إ
+    - Media penthouse comparabili: 14.600.000 د.إ
+    - Market Gap: -18% (ULTRA LUXURY OPPORTUNITY)
+    - CAP Rate stimato: 5.0% (affitto mensile 50.000 د.إ)
+    - ROI potenziale: 40% in 4 anni
+    - Potenziale plusvalenza: 3.000.000+ د.إ`,
+    imageUrl: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1200&h=800&fit=crop',
+  },
+
   // MADRID (3 immobili)
   {
     title: 'Piso de Lujo en Salamanca con Terraza - Barrio de Salamanca',

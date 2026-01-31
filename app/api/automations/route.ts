@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { checkUserRateLimit } from '@/lib/utils/rate-limit';
 import type { Automation, InsertAutomation, AutomationType, AutomationRepeatInterval } from '@/lib/types/database.types';
 
@@ -79,6 +80,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Check PRO or AGENCY subscription (Automazioni AI is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const type = searchParams.get('type');
@@ -126,6 +140,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Non autorizzato. Effettua il login.' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Automazioni AI is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 
@@ -227,6 +254,19 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { error: 'Non autorizzato. Effettua il login.' },
         { status: 401 }
+      );
+    }
+
+    // Check PRO or AGENCY subscription (Automazioni AI is a premium feature)
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: subscriptionCheck.error || 'Piano Premium richiesto',
+          message: subscriptionCheck.error || 'Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+        },
+        { status: 403 }
       );
     }
 

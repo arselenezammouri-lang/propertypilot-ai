@@ -6,6 +6,7 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { logger } from '@/lib/utils/safe-logger';
 
 const LEAD_SCORE_RATE_LIMIT_PER_MINUTE = 10;
 
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
       const cachedResult = await cacheService.get(cacheContent, cachePromptType);
       
       if (cachedResult) {
-        console.log(`[LEAD SCORE API] Cache hit`);
+        logger.debug('[LEAD SCORE API] Cache hit', { userId: user.id });
         
         await logGeneration(user.id, clientIp);
         
@@ -119,10 +120,13 @@ export async function POST(request: NextRequest) {
               .eq('user_id', user.id);
 
             if (!updateError) {
-              console.log(`[LEAD SCORE API] Automatically updated lead ${lead_id} with cached score ${cachedResultData.leadScore}`);
+              logger.info('[LEAD SCORE API] Automatically updated lead with cached score', {
+                leadId: lead_id,
+                score: cachedResultData.leadScore,
+              });
             }
           } catch (dbError) {
-            console.error('[LEAD SCORE API] Database update error (cached):', dbError);
+            logger.error('[LEAD SCORE API] Database update error (cached)', dbError);
           }
         }
         
@@ -135,11 +139,13 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (cacheError) {
-      console.warn('[LEAD SCORE API] Cache read error:', cacheError);
+      logger.warn('[LEAD SCORE API] Cache read error', undefined, { error: cacheError });
     }
 
-    console.log(`[LEAD SCORE API] Analyzing lead for user ${user.id}`);
-    console.log(`[LEAD SCORE API] Market: ${mercato}, Type: ${tipoImmobile}`);
+    logger.debug('[LEAD SCORE API] Analyzing lead', {
+      market: mercato,
+      propertyType: tipoImmobile,
+    });
 
     let result: LeadScoreResult;
 
@@ -153,7 +159,7 @@ export async function POST(request: NextRequest) {
         mercato,
       });
     } catch (aiError: any) {
-      console.error('[LEAD SCORE API] AI generation error:', aiError);
+      logger.error('[LEAD SCORE API] AI generation error', aiError);
       
       if (isOpenAIQuotaError(aiError)) {
         return NextResponse.json(
@@ -179,9 +185,9 @@ export async function POST(request: NextRequest) {
     try {
       const cacheService = getAICacheService();
       await cacheService.set(cacheContent, cachePromptType, result, 24 * 60 * 60);
-      console.log(`[LEAD SCORE API] Cached result`);
+      logger.debug('[LEAD SCORE API] Cached result');
     } catch (cacheError) {
-      console.warn('[LEAD SCORE API] Cache write error:', cacheError);
+      logger.warn('[LEAD SCORE API] Cache write error', undefined, { error: cacheError });
     }
 
     await logGeneration(user.id, clientIp);
@@ -201,19 +207,24 @@ export async function POST(request: NextRequest) {
           .eq('user_id', user.id); // Sicurezza: verifica che il lead appartenga all'utente
 
         if (updateError) {
-          console.error('[LEAD SCORE API] Error updating lead in database:', updateError);
+          logger.error('[LEAD SCORE API] Error updating lead in database', updateError);
           // Non blocchiamo la risposta, lo score è stato calcolato correttamente
         } else {
-          console.log(`[LEAD SCORE API] Automatically updated lead ${lead_id} with score ${result.leadScore}`);
+          logger.info('[LEAD SCORE API] Automatically updated lead with score', {
+            leadId: lead_id,
+            score: result.leadScore,
+          });
         }
       } catch (dbError) {
-        console.error('[LEAD SCORE API] Database update error:', dbError);
+        logger.error('[LEAD SCORE API] Database update error', dbError);
         // Non blocchiamo la risposta, lo score è stato calcolato correttamente
       }
     }
 
     const processingTimeMs = Date.now() - startTime;
-    console.log(`[LEAD SCORE API] Successfully analyzed lead in ${processingTimeMs}ms`);
+    logger.info('[LEAD SCORE API] Successfully analyzed lead', {
+      processingTimeMs,
+    });
 
     return NextResponse.json({
       success: true,
@@ -224,7 +235,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[LEAD SCORE API] Unexpected error:', error);
+    logger.error('[LEAD SCORE API] Unexpected error', error);
     
     return NextResponse.json(
       {

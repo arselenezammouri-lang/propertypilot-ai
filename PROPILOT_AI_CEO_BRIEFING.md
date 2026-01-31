@@ -29,31 +29,31 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 
 ### **Piani di Abbonamento Ricorrenti (MRR):**
 
-1. **STARTER - €97/mese**
+1. **STARTER - €197/mese**
    - Target: Agenti singoli, part-time
-   - Funzionalità: Strumenti AI base per annunci
+   - Funzionalità: AI Listing Engine completo, Lead Score Base AI, Generazione Annunci AI professionale
    - Limiti: 50 annunci/mese
 
-2. **PRO - €297/mese** ⭐ (Piano Consigliato)
+2. **PRO - €497/mese** ⭐ (Piano Consigliato)
    - Target: Agenti full-time, piccole agenzie
-   - Funzionalità: CRM completo + AI avanzato + Voice AI
-   - Limiti: 200 annunci/mese, 10 filtri prospecting, 500 chiamate/giorno
+   - Funzionalità: Tutto Starter + CRM completo + Virtual Staging 3D + Lead Scoring AI avanzato + Follow-up AI Multi-canale + Automazioni AI (20/mese) + AI Voice Calling (30 chiamate/mese) + Aura VR Visualizzatore
+   - Limiti: 200 annunci/mese, 30 chiamate Voice AI/mese, Aura VR solo visualizzazione
 
-3. **AGENCY - €497/mese**
+3. **AGENCY - €897/mese**
    - Target: Agenzie con team (fino a 10 agenti)
-   - Funzionalità: Tutto Pro + Multi-utente + Priorità
-   - Limiti: Illimitati annunci, 50 filtri prospecting, 2000 chiamate/giorno
+   - Funzionalità: Tutto Pro + Aura VR Generazione Illimitata + Voice AI Illimitato + Omnichannel Domination Suite + Google Calendar Sync + Auto-Prospecting 24/7 + Multi-utente
+   - Limiti: Annunci illimitati, Voice AI illimitato, Aura VR generazione illimitata, Team fino a 10 agenti
 
 4. **AGENCY BOOST - €2.497 una tantum**
    - Target: Agenzie che vogliono setup completo "done-for-you"
    - Deliverable: Setup CRM, onboarding, formazione, supporto dedicato
 
 ### **Proiezione Revenue:**
-- **100 clienti PRO** = €29.700/mese
-- **50 clienti AGENCY** = €24.850/mese
-- **10 clienti STARTER** = €970/mese
+- **100 clienti PRO** = €49.700/mese
+- **50 clienti AGENCY** = €44.850/mese
+- **10 clienti STARTER** = €1.970/mese
 - **5 Agency Boost/mese** = €12.485/mese
-- **TOTALE:** €68.005/mese MRR (target €100k con scaling)
+- **TOTALE:** €109.005/mese MRR (target €100k raggiunto con scaling)
 
 ---
 
@@ -118,7 +118,7 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 
 ---
 
-### **3. REAL ESTATE PROSPECTING ENGINE** ⭐⭐⭐ (Nuovo - In Sviluppo)
+### **3. REAL ESTATE PROSPECTING ENGINE** ⭐⭐⭐
 **Valore:** Trova automaticamente nuovi immobili da vendere chiamando proprietari.
 
 **Cosa Fa:**
@@ -128,16 +128,18 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 4. **Voice AI Chiama:** Bland AI chiama automaticamente il proprietario
 5. **Gestione Obiezioni:** L'AI risponde a "non voglio agenzie", "non ho tempo", etc.
 6. **Fissa Appuntamenti:** Se il proprietario accetta, status → 'appointment_set'
+7. **Google Calendar Sync:** Appuntamenti sincronizzati automaticamente
 
 **File:** 
 - Database: `supabase-prospecting-migration.sql`
 - API Filtri: `/app/api/prospecting/filters/route.ts`
 - Voice AI: `/lib/ai/voice-agent.ts`
 - API Chiamate: `/app/api/prospecting/call/route.ts`
+- Dashboard: `/app/dashboard/prospecting/page.tsx`
 
 **ROI:** Un agente trova **10-20 nuovi immobili/mese** senza cercare manualmente. Ogni immobile = potenziale commissione €5.000-€50.000.
 
-**Stato:** Database ✅, API ✅, Voice AI ✅ | **MANCA:** Dashboard UI, Scraping Automatico
+**Stato:** Database ✅, API ✅, Voice AI ✅, Dashboard UI ✅ | **MANCA:** Scraping Automatico (cron job)
 
 ---
 
@@ -198,7 +200,27 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 
 ---
 
-### **8. AGENCY ASSISTANT AI** ⭐
+### **8. AURA VR TRIPLE-VIEW** ⭐⭐⭐
+**Valore:** Trasforma un video dello smartphone in un tour VR immersivo con 3 prospettive uniche.
+
+**Cosa Fa:**
+- **Drone Mode:** Vista aerea/satellite dell'immobile
+- **Cinematic Walk:** Percorso fluido tra stanze con transizioni cinematografiche
+- **360° Panorama:** Visualizzazione immersiva totale
+- **Generazione Automatica:** Da video smartphone a tour VR professionale
+- **Condivisione Link:** Link unico per clienti, condivisibile su WhatsApp/Email
+
+**File:** `/components/aura-vr-generator.tsx`
+
+**Disponibilità:**
+- **Pro:** Solo visualizzazione tour VR esistenti
+- **Agency:** Generazione illimitata di tour VR
+
+**ROI:** Un agente Agency può generare tour VR professionali in 5 minuti invece di pagare €500-€1.000 per servizi esterni. Aumenta engagement clienti del 300% rispetto a foto statiche.
+
+---
+
+### **9. AGENCY ASSISTANT AI** ⭐
 **Valore:** Chatbot AI che risponde a domande su immobili, lead, processi.
 
 **Cosa Fa:**
@@ -294,28 +316,22 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
    - Limiti per piano ✅
    - Protezione subscription ✅
 
-### **❌ MANCANTE (Per MVP Completo):**
+### **🔄 IN SVILUPPO / MIGLIORAMENTI:**
 
-1. **Dashboard Prospecting UI** (Priorità ALTA)
-   - Pagina `/dashboard/prospecting`
-   - Lista annunci trovati
-   - Filtri e ricerca
-   - Dettaglio annuncio
-   - Gestione filtri
+1. **Scraping Automatico** (Priorità ALTA)
+   - Endpoint `/api/prospecting/scrape` ✅
+   - **MANCA:** Cron job per esecuzione automatica basata su filtri
+   - Estrazione contatti AI ✅
 
-2. **Scraping Automatico** (Priorità ALTA)
-   - Endpoint `/api/prospecting/scrape`
-   - Cron job per esecuzione automatica
-   - Estrazione contatti AI
+2. **Notifiche Email** (Priorità MEDIA)
+   - Integrazione servizio email (Resend) - da implementare
+   - Template notifica appuntamento - da implementare
+   - Trigger in webhook - da implementare
 
-3. **Notifiche Email** (Priorità MEDIA)
-   - Integrazione servizio email (Resend)
-   - Template notifica appuntamento
-   - Trigger in webhook
-
-4. **API Endpoint Listing** (Priorità MEDIA)
-   - GET `/api/prospecting/listings`
-   - PATCH `/api/prospecting/listings/[id]`
+3. **Miglioramenti Dashboard Prospecting** (Priorità BASSA)
+   - Filtri avanzati e ricerca migliorata
+   - Analytics e metriche di performance
+   - Export dati per analisi
 
 ---
 
@@ -362,7 +378,8 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 - **Tempo risparmiato:** 15-20 ore/settimana
 - **Aumento conversioni:** +30-40% (lead scoring + follow-up AI)
 - **Nuovi immobili trovati:** 10-20/mese (prospecting automatico)
-- **ROI:** €297/mese Pro → Risparmia 60 ore/mese = €1.500+ valore tempo
+- **ROI:** €497/mese Pro → Risparmia 60 ore/mese = €1.500+ valore tempo
+- **Aura VR (Agency):** Risparmia €500-€1.000 per tour VR esterni, genera tour professionali in 5 minuti
 
 ### **Per Noi (SaaS):**
 - **CAC (Customer Acquisition Cost):** Target < €200
@@ -432,7 +449,7 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
    - `requireProOrAgencySubscription()` - Per funzionalità premium
 
 2. **Stripe Config:** `/lib/stripe/config.ts`
-   - Piani: Starter €97, Pro €297, Agency €497
+   - Piani: Starter €197, Pro €497, Agency €897
    - Price IDs in variabili ambiente
 
 3. **Database Types:** `/lib/types/database.types.ts`
@@ -500,13 +517,18 @@ Gli agenti immobiliari perdono **15-20 ore/settimana** in:
 - ✅ **Scalabilità** (database ottimizzato, cache intelligente)
 
 **Manca solo:**
-- 🔄 Dashboard UI per Prospecting (2-3 giorni sviluppo)
-- 🔄 Scraping automatico (2-3 giorni sviluppo)
-- 🔄 Notifiche email (1 giorno sviluppo)
+- 🔄 Scraping automatico con cron job (2-3 giorni sviluppo)
+- 🔄 Notifiche email per appuntamenti (1 giorno sviluppo)
 
-**Totale per MVP Completo:** 5-7 giorni di sviluppo.
+**Totale per MVP Completo:** 3-4 giorni di sviluppo.
 
 **Valore Prodotto:** €100k/mese MRR è raggiungibile con 200-300 clienti attivi (mix PRO + AGENCY).
+
+**Mix Target per €100k MRR:**
+- 100 clienti PRO (€497) = €49.700/mese
+- 60 clienti AGENCY (€897) = €53.820/mese
+- 40 clienti STARTER (€197) = €7.880/mese
+- **TOTALE:** €111.400/mese MRR ✅
 
 ---
 
