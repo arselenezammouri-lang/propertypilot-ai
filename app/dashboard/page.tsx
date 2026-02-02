@@ -471,7 +471,7 @@ export default async function DashboardPage() {
               ) : (
                 <Link href="/dashboard/billing">
                   <Button className="w-full bg-gradient-to-r from-royal-purple to-pink-500 hover:opacity-90 text-white font-bold">
-                    {currentPlan !== "agency" ? "Scegli Agency" : "Upgrade a Agency"}
+                    Scegli Agency
                   </Button>
                 </Link>
               )}

@@ -5,6 +5,7 @@
 
 import { BaseScraper } from './base-scraper';
 import type { CheerioAPI } from 'cheerio';
+import type { ScraperResult } from './types';
 
 export interface SearchCriteria {
   location?: string; // e.g. "Milano", "Roma"
@@ -23,6 +24,17 @@ export interface SearchResult {
 }
 
 export class IdealistaSearchScraper extends BaseScraper {
+  /**
+   * Implements abstract scrape method from BaseScraper
+   * This scraper is designed for search results, not individual listings
+   */
+  async scrape(_url: string): Promise<ScraperResult> {
+    return {
+      success: false,
+      error: 'IdealistaSearchScraper is designed for search results. Use IdealistaScraper for individual listings.',
+    };
+  }
+
   /**
    * Builds Idealista search URL from criteria
    */

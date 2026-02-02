@@ -104,6 +104,9 @@ export default function AgencyAssistantPage() {
   const { toast } = useToast();
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  
+  // Agency Assistant AI is only for PRO and AGENCY plans
+  const isLocked = userPlan === 'free' || userPlan === 'starter';
 
   useEffect(() => {
     if (scrollRef.current) {

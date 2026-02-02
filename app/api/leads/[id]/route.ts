@@ -4,9 +4,10 @@ import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: leadId } = await params;
     const supabase = await createClient();
     
     const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -30,8 +31,6 @@ export async function GET(
         { status: 403 }
       );
     }
-
-    const leadId = params.id;
 
     const { data: lead, error: leadError } = await supabase
       .from('leads')

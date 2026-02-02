@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);

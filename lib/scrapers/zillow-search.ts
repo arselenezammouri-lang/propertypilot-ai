@@ -5,6 +5,7 @@
 
 import { BaseScraper } from './base-scraper';
 import type { CheerioAPI } from 'cheerio';
+import type { ScraperResult } from './types';
 
 export interface ZillowSearchCriteria {
   city?: string; // e.g. "Miami", "New York", "Los Angeles"
@@ -24,6 +25,17 @@ export interface ZillowSearchResult {
 }
 
 export class ZillowSearchScraper extends BaseScraper {
+  /**
+   * Implements abstract scrape method from BaseScraper
+   * This scraper is designed for search results, not individual listings
+   */
+  async scrape(_url: string): Promise<ScraperResult> {
+    return {
+      success: false,
+      error: 'ZillowSearchScraper is designed for search results. Use ZillowScraper for individual listings.',
+    };
+  }
+
   /**
    * Builds Zillow search URL from criteria
    */

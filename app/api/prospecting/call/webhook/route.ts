@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
         // Recupera user_id dal listing
         const { data: listingData } = await supabaseAdmin
           .from('external_listings')
-          .select('user_id, title, location, price, source_url, owner_name, phone_number, ai_summary')
+          .select('user_id, title, location, price, source_url, owner_name, phone_number, email, ai_summary')
           .eq('id', listingId)
           .single();
 

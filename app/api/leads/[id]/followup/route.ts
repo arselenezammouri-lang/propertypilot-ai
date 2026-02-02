@@ -58,7 +58,7 @@ function getCategoriaFromScore(score: number): 'hot' | 'warm' | 'cold' {
 
 // Recupera property details se property_url match saved_listings
 async function getPropertyDetails(
-  supabase: ReturnType<typeof createClient>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   propertyUrl: string | null
 ): Promise<PropertyDetails> {
   if (!propertyUrl) {
@@ -369,7 +369,7 @@ async function generateFollowUpMessages(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const startTime = Date.now();
 
@@ -397,7 +397,7 @@ export async function POST(
       );
     }
 
-    const leadId = params.id;
+    const { id: leadId } = await params;
     const body = await request.json();
     const validationResult = followupRequestSchema.safeParse(body);
 

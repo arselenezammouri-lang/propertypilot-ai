@@ -114,7 +114,7 @@ export function generateSmartBriefing(
   }
 
   // Determina se ha vantaggio reale
-  const hasRealAdvantage = advantages.length > 0 || (price && price < 200000);
+  const hasRealAdvantage = advantages.length > 0 || (price !== null && price < 200000);
 
   // Genera riassunto per cliente
   const summaryForClient = generateClientSummary(

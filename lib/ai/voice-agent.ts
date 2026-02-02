@@ -178,6 +178,7 @@ function getGreeting(locale: SupportedLocale, ownerName?: string): string {
     fr: (name) => name ? `Bonjour ${name}` : 'Bonjour',
     de: (name) => name ? `Guten Tag ${name}` : 'Guten Tag',
     pt: (name) => name ? `Bom dia ${name}` : 'Bom dia',
+    ar: (name) => name ? `مرحباً ${name}` : 'مرحباً',
   };
   return greetings[locale](ownerName);
 }
@@ -190,6 +191,7 @@ function getPropertyRef(locale: SupportedLocale, propertyTitle?: string, locatio
     fr: (title, loc) => title ? title : `le bien immobilier à ${loc || 'cette adresse'}`,
     de: (title, loc) => title ? title : `die Immobilie in ${loc || 'dieser Adresse'}`,
     pt: (title, loc) => title ? title : `o imóvel em ${loc || 'este endereço'}`,
+    ar: (title, loc) => title ? title : `العقار في ${loc || 'هذا العنوان'}`,
   };
   return refs[locale](propertyTitle, location);
 }
@@ -202,6 +204,7 @@ function getGapText(locale: SupportedLocale, marketGap: number): string {
     fr: ` Nous avons analysé le marché et remarqué que votre bien a un potentiel inexploité significatif.`,
     de: ` Wir haben den Markt analysiert und festgestellt, dass Ihre Immobilie ein erhebliches ungenutztes Potenzial hat.`,
     pt: ` Analisamos o mercado e notamos que sua propriedade tem um potencial significativo não aproveitado.`,
+    ar: ` قمنا بتحليل السوق ولاحظنا أن عقارك يتمتع بإمكانات كبيرة غير مستغلة.`,
   };
   return texts[locale];
 }
@@ -214,6 +217,7 @@ function getIntro(locale: SupportedLocale): string {
     fr: 'j\'appelle de PropertyPilot AI. Nous avons remarqué votre annonce pour',
     de: 'rufe an von PropertyPilot AI. Wir haben Ihr Inserat für',
     pt: 'ligo da PropertyPilot AI. Notamos seu anúncio de',
+    ar: 'أتصل من PropertyPilot AI. لاحظنا إعلانك عن',
   };
   return intros[locale];
 }
@@ -226,6 +230,7 @@ function getPitchText(locale: SupportedLocale): string {
     fr: 'Nous savons que votre bien a un potentiel inexploité et nous avons déjà des clients investisseurs prêts pour une transaction rapide. Seriez-vous disponible pour une visite rapide pour discuter d\'un mandat exclusif?',
     de: 'Wir wissen, dass Ihre Immobilie ungenutztes Potenzial hat und wir haben bereits Investoren-Kunden bereit für eine schnelle Transaktion. Wären Sie für eine kurze Besichtigung verfügbar, um über ein Exklusivmandat zu sprechen?',
     pt: 'Sabemos que sua propriedade tem potencial não aproveitado e já temos clientes investidores prontos para uma transação rápida. Estaria disponível para uma visita rápida para discutir um mandato exclusivo?',
+    ar: 'نعلم أن عقارك يتمتع بإمكانات غير مستغلة ولدينا بالفعل عملاء مستثمرون جاهزون لمعاملة سريعة. هل ستكون متاحًا لزيارة سريعة لمناقشة التفويض الحصري؟',
   };
   return pitches[locale];
 }
@@ -405,6 +410,32 @@ function getObjectionHandlersForLocale(locale: SupportedLocale): BlandAIObjectio
       {
         interrupt: 'ligue mais tarde|ligue depois',
         response: 'Certamente. Que horário você prefere que eu ligue? Anoto e ligo no momento mais conveniente.',
+      },
+    ],
+    ar: [
+      {
+        interrupt: 'غير مهتم|لا أريد|لا شكراً',
+        response: 'أفهم تماماً. نحن لسنا وكالة تقليدية - نعمل فقط كوسطاء لربط أصحاب العقارات بالمشترين المؤهلين. لا نطلب حصرية أو عمولات من البائع. هل ستكون متاحاً لزيارة بسيطة؟',
+      },
+      {
+        interrupt: 'لا وقت لدي|مشغول',
+        response: 'أفهم، الوقت ثمين. الزيارة ستستغرق فقط 15-20 دقيقة ويمكننا جدولتها في الوقت الأنسب لك. متى ستكون أكثر توفراً؟',
+      },
+      {
+        interrupt: 'السعر منخفض جداً|لا يستحق',
+        response: 'أفهم مخاوفك بشأن السعر. عميلنا جاد ويمكنه تقديم عرض تنافسي. يمكننا مناقشة ذلك خلال الزيارة - هل ستكون متاحاً للقاء؟',
+      },
+      {
+        interrupt: 'تم البيع بالفعل|لم يعد متاحاً',
+        response: 'آه، أفهم. شكراً على المعلومات. إذا كان لديك عقارات أخرى متاحة في المستقبل، سنكون سعداء بالتعاون. أتمنى لك يوماً سعيداً!',
+      },
+      {
+        interrupt: 'لست المالك|رقم خاطئ',
+        response: 'أعتذر عن الإزعاج. هل يمكنك إخباري كيف يمكنني الاتصال بالمالك؟',
+      },
+      {
+        interrupt: 'اتصل لاحقاً',
+        response: 'بالتأكيد. في أي وقت تفضل أن أتصل بك؟ سأدون ذلك وأتصل في الوقت الأنسب.',
       },
     ],
   };

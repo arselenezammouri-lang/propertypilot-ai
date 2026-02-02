@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (cacheError) {
-      logger.warn('[LEAD SCORE API] Cache read error', undefined, { error: cacheError });
+      logger.warn('[LEAD SCORE API] Cache read error', { error: cacheError });
     }
 
     logger.debug('[LEAD SCORE API] Analyzing lead', {
@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
       await cacheService.set(cacheContent, cachePromptType, result, 24 * 60 * 60);
       logger.debug('[LEAD SCORE API] Cached result');
     } catch (cacheError) {
-      logger.warn('[LEAD SCORE API] Cache write error', undefined, { error: cacheError });
+      logger.warn('[LEAD SCORE API] Cache write error', { error: cacheError });
     }
 
     await logGeneration(user.id, clientIp);

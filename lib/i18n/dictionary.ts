@@ -283,7 +283,7 @@ export interface TranslationDictionary {
   };
 }
 
-export const translations: Record<SupportedLocale, TranslationDictionary> = {
+export const translations: Record<SupportedLocale, Partial<TranslationDictionary>> = {
   it: {
     dashboard: {
       title: 'Dashboard',
@@ -391,6 +391,7 @@ export const translations: Record<SupportedLocale, TranslationDictionary> = {
         title: 'Il Motore di Ricerca che non dorme mai',
         subtitle: 'Disponibile',
         exclusive: 'ESCLUSIVAMENTE',
+        exclusiveInPlan: 'nel piano AGENCY',
         benefit: 'Risparmia 20 ore di telefonate a settimana',
         step1: {
           title: 'Scansione Globale',
@@ -1973,7 +1974,14 @@ export const translations: Record<SupportedLocale, TranslationDictionary> = {
  * Get translation for a specific locale
  */
 export function getTranslation(locale: SupportedLocale): TranslationDictionary {
-  return translations[locale] || translations.en;
+  const baseTranslation = translations.en as TranslationDictionary;
+  const localeTranslation = translations[locale] || {};
+  
+  // Deep merge with English as fallback for missing translations
+  return {
+    ...baseTranslation,
+    ...localeTranslation
+  } as TranslationDictionary;
 }
 
 /**

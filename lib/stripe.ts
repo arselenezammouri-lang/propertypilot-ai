@@ -20,7 +20,7 @@ export const STRIPE_PRICE_IDS = {
 } as const;
 
 // Mapping piano → Price ID
-export const PLAN_TO_PRICE_ID: Record<string, string> = {
+export const PLAN_TO_PRICE_ID: Record<string, string | null> = {
   STARTER: STRIPE_PRICE_IDS.STARTER,
   PRO: STRIPE_PRICE_IDS.PRO,
   AGENCY: STRIPE_PRICE_IDS.AGENCY,

@@ -12,9 +12,10 @@ const updateListingSchema = z.object({
  */
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: listingId } = await params;
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -36,7 +37,6 @@ export async function PATCH(
     }
 
     const { status } = validationResult.data;
-    const listingId = params.id;
 
     // Verifica che il listing appartenga all'utente (con timeout)
     const fetchPromise = supabase

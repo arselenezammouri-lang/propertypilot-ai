@@ -105,10 +105,10 @@ export function generateRenovationQuote(defects: ImageDefect[]): RenovationQuote
       category: d.category,
       description: d.description,
       cost: d.estimatedCost || 0,
-      priority: d.severity === 'high' ? 'high' : d.severity === 'medium' ? 'medium' : 'low',
+      priority: (d.severity === 'high' ? 'high' : d.severity === 'medium' ? 'medium' : 'low') as 'high' | 'medium' | 'low',
     }))
     .sort((a, b) => {
-      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      const priorityOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
 
