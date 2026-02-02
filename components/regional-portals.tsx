@@ -1,6 +1,6 @@
 'use client';
 
-import { useGeoConfig } from '@/hooks/use-geo-config';
+import { useGeo } from '@/contexts/geo-context';
 import { ExternalLink, Globe, TrendingUp } from 'lucide-react';
 
 interface PortalInfo {
@@ -24,7 +24,7 @@ const PORTAL_DATA: Record<string, PortalInfo> = {
 };
 
 export function RegionalPortals() {
-  const { primaryPortals, secondaryPortals, region, config, isLoading } = useGeoConfig();
+  const { primaryPortals, secondaryPortals, region, config, isLoading } = useGeo();
 
   if (isLoading) {
     return (

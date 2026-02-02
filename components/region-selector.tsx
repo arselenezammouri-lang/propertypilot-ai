@@ -1,6 +1,6 @@
 'use client';
 
-import { useGeoConfig } from '@/hooks/use-geo-config';
+import { useGeo } from '@/contexts/geo-context';
 import { Region } from '@/lib/geo/geo-detection';
 import { Globe, DollarSign, Euro, Building2 } from 'lucide-react';
 import {
@@ -19,7 +19,7 @@ const REGION_OPTIONS: { value: Region; label: string; flag: string; icon: React.
 ];
 
 export function RegionSelector() {
-  const { region, setRegion, config, isLoading } = useGeoConfig();
+  const { region, setRegion, config, isLoading } = useGeo();
 
   if (isLoading) {
     return (
