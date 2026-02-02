@@ -4,11 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { RegionSelector } from "@/components/region-selector";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
 import { Dashboard3DStats } from "@/components/dashboard-3d-stats";
 import { MorningBriefingBox } from "@/components/morning-briefing-box";
 import { SniperStats } from "@/components/sniper-stats";
+import { RegionalPortals } from "@/components/regional-portals";
 import { GlobalLiveFeed } from "@/components/global-live-feed";
 import { DashboardHelpButton } from "@/components/dashboard-help-button";
 import { DashboardPlanFeatures } from "@/components/dashboard-plan-features";
@@ -106,6 +108,7 @@ export default async function DashboardPage() {
             </Link>
             
             <nav className="flex items-center space-x-2 md:space-x-4">
+              <RegionSelector />
               <ThemeToggle />
               <Link href="/dashboard/listings" className="hidden md:inline-flex">
                 <Button variant="ghost" size="sm" className="hover:text-royal-purple transition-colors" data-testid="button-generate">
@@ -209,6 +212,13 @@ export default async function DashboardPage() {
         {(currentPlan === "pro" || currentPlan === "agency") && (
           <MorningBriefingBox />
         )}
+
+        {/* 🌍 REGIONAL PORTALS - Geo-Aware */}
+        <div className="mb-10 md:mb-14">
+          <DashboardClientWrapper>
+            <RegionalPortals />
+          </DashboardClientWrapper>
+        </div>
 
         {/* 🌍 GLOBAL LIVE FEED */}
         {(currentPlan === "pro" || currentPlan === "agency") && (

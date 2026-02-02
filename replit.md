@@ -20,7 +20,14 @@ Preferred communication style: Italian language, simple and everyday language
 **AI Integration**: OpenAI GPT API.
 **Hosting**: Optimized for Vercel.
 
-**UI/UX Decisions**: Futuristic color palette (Luxury Indigo, Royal Purple, Electric Blue, Neon Aqua, Sunset Gold), custom gradients, enhanced UI elements, glassmorphism cards, neon buttons, and animations. Intuitive dashboards with organized results and visual cues.
+**UI/UX Decisions**: Silicon Valley Elite design with absolute black (#000000) background, Inter font, subtle borders (border-white/[0.08]), glassmorphism cards, neon buttons, and premium animations. Diamond badge with gold shimmer animation. Intuitive dashboards with organized results and visual cues.
+
+**Global Engine (Geo-Detection)**:
+- Auto-detects user region (USA, Europe, Middle East) from browser timezone
+- Adapts currency display ($, €, AED), measurement units (sqft/m²), and portal priority
+- RegionSelector component in dashboard header for manual override
+- RegionalPortals component shows priority real estate portals by region
+- Files: lib/geo/geo-detection.ts, hooks/use-geo-config.ts, components/region-selector.tsx, components/regional-portals.tsx
 
 **Key Features**:
 - **AI Content Generation**: Creates professional listings, titles, and translations.

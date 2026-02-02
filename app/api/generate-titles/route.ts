@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
+import { rateLimiter } from '@/lib/utils/rate-limiter-memory';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 
@@ -308,6 +309,22 @@ export async function POST(request: NextRequest) {
     }
 
     const clientIp = getClientIp(request);
+    
+    // In-memory rate limiting (fast, first line of defense)
+    const memoryRateCheck = rateLimiter.check(user.id, 'ai-generation');
+    if (!memoryRateCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: 'Rate limit exceeded',
+          message: memoryRateCheck.message,
+          retryAfter: memoryRateCheck.resetIn
+        },
+        { 
+          status: 429,
+          headers: { 'Retry-After': String(memoryRateCheck.resetIn) }
+        }
+      );
+    }
     
     if (clientIp) {
       const ipLimitResult = await checkIpRateLimit(clientIp);

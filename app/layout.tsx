@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-// import { Inter_Tight } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 
-// const interTight = Inter_Tight({ 
-//   subsets: ["latin"],
-//   display: "swap",
-//   variable: "--font-inter-tight",
-// });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
 const APP_NAME = 'PropertyPilot AI';
@@ -143,7 +143,7 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={`font-sans bg-[#050505] text-white`}>
+      <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
         <Providers>
           <ThemeProvider
             defaultTheme="dark"
