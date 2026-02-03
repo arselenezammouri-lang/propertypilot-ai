@@ -7,11 +7,12 @@ import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const requestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   tipoImmobile: z.enum(['appartamento', 'casa', 'villa', 'attico', 'loft', 'bilocale', 'trilocale', 'monolocale', 'rustico', 'casale', 'palazzo', 'locale_commerciale', 'ufficio', 'terreno', 'garage', 'box']),
   zona: z.string().min(2, 'Inserisci la zona/località').max(100),
   caratteristiche: z.string().min(10, 'Descrivi almeno le caratteristiche principali').max(2000),
   puntiForzaList: z.string().max(1000).optional(),
-  targetAcquirente: z.enum(['famiglie', 'giovani_coppie', 'investitori', 'studenti', 'professionisti', 'pensionati', 'luxury', 'stranieri']),
+  targetCliente: z.enum(['famiglie', 'giovani_coppie', 'investitori', 'studenti', 'professionisti', 'pensionati', 'luxury', 'stranieri', 'turisti', 'aziende']),
   fasciaPrezzo: z.string().max(50).optional(),
   tono: z.enum(['professionale', 'emotivo', 'luxury']),
   portaleTarget: z.enum(['generico', 'immobiliare', 'idealista', 'casa', 'subito', 'zillow']).optional().default('generico'),
@@ -76,7 +77,15 @@ const TARGET_DESCRIPTIONS: Record<string, string> = {
   professionisti: 'professionisti, smart working, connettività, zona servita',
   pensionati: 'pensionati, tranquillità, servizi vicini, accessibilità',
   luxury: 'clientela luxury, esclusività, materiali pregiati, privacy',
-  stranieri: 'acquirenti internazionali, lifestyle italiano, investimento estero',
+  stranieri: 'clienti internazionali, lifestyle italiano, investimento estero',
+  turisti: 'turisti e vacanzieri, posizione strategica, servizi turistici, comfort',
+  aziende: 'aziende e corporate, spazi professionali, rappresentanza, accessibilità',
+};
+
+const TRANSAZIONE_LABELS: Record<string, { tipo: string; azione: string; cliente: string }> = {
+  vendita: { tipo: 'in Vendita', azione: 'comprarlo', cliente: 'acquirente' },
+  affitto: { tipo: 'in Affitto', azione: 'affittarlo', cliente: 'affittuario' },
+  affitto_breve: { tipo: 'in Affitto Breve', azione: 'prenotarlo', cliente: 'ospite' },
 };
 
 const PORTALE_GUIDELINES: Record<string, string> = {
@@ -94,7 +103,8 @@ async function generateProfessionale(openai: OpenAI, data: RequestData): Promise
 IMMOBILE: ${data.tipoImmobile} a ${data.zona}
 CARATTERISTICHE: ${data.caratteristiche}
 ${data.puntiForzaList ? `PUNTI DI FORZA: ${data.puntiForzaList}` : ''}
-TARGET: ${TARGET_DESCRIPTIONS[data.targetAcquirente]}
+TIPO ANNUNCIO: ${TRANSAZIONE_LABELS[data.tipoTransazione || 'vendita'].tipo}
+TARGET: ${TARGET_DESCRIPTIONS[data.targetCliente]}
 ${data.fasciaPrezzo ? `FASCIA PREZZO: ${data.fasciaPrezzo}` : ''}
 PORTALE: ${PORTALE_GUIDELINES[data.portaleTarget || 'generico']}
 
@@ -135,7 +145,8 @@ async function generateEmotivo(openai: OpenAI, data: RequestData): Promise<CopyV
 IMMOBILE: ${data.tipoImmobile} a ${data.zona}
 CARATTERISTICHE: ${data.caratteristiche}
 ${data.puntiForzaList ? `PUNTI DI FORZA: ${data.puntiForzaList}` : ''}
-TARGET: ${TARGET_DESCRIPTIONS[data.targetAcquirente]}
+TIPO ANNUNCIO: ${TRANSAZIONE_LABELS[data.tipoTransazione || 'vendita'].tipo}
+TARGET: ${TARGET_DESCRIPTIONS[data.targetCliente]}
 ${data.fasciaPrezzo ? `FASCIA PREZZO: ${data.fasciaPrezzo}` : ''}
 
 GENERA un annuncio EMOTIVO/COINVOLGENTE con:
@@ -177,7 +188,8 @@ async function generateBreve(openai: OpenAI, data: RequestData): Promise<CopyVar
 IMMOBILE: ${data.tipoImmobile} a ${data.zona}
 CARATTERISTICHE: ${data.caratteristiche}
 ${data.puntiForzaList ? `PUNTI DI FORZA: ${data.puntiForzaList}` : ''}
-TARGET: ${TARGET_DESCRIPTIONS[data.targetAcquirente]}
+TIPO ANNUNCIO: ${TRANSAZIONE_LABELS[data.tipoTransazione || 'vendita'].tipo}
+TARGET: ${TARGET_DESCRIPTIONS[data.targetCliente]}
 
 GENERA un annuncio BREVE per portali con:
 1. TITOLO: max 60 caratteri, diretto e accattivante
@@ -218,7 +230,8 @@ async function generateSEO(openai: OpenAI, data: RequestData): Promise<CopyVaria
 IMMOBILE: ${data.tipoImmobile} a ${data.zona}
 CARATTERISTICHE: ${data.caratteristiche}
 ${data.puntiForzaList ? `PUNTI DI FORZA: ${data.puntiForzaList}` : ''}
-TARGET: ${TARGET_DESCRIPTIONS[data.targetAcquirente]}
+TIPO ANNUNCIO: ${TRANSAZIONE_LABELS[data.tipoTransazione || 'vendita'].tipo}
+TARGET: ${TARGET_DESCRIPTIONS[data.targetCliente]}
 ${data.fasciaPrezzo ? `FASCIA PREZZO: ${data.fasciaPrezzo}` : ''}
 
 GENERA un annuncio SEO-OTTIMIZZATO con:
@@ -305,7 +318,8 @@ async function generateConsiglioEsperto(openai: OpenAI, data: RequestData): Prom
 
 IMMOBILE: ${data.tipoImmobile} a ${data.zona}
 CARATTERISTICHE: ${data.caratteristiche}
-TARGET: ${TARGET_DESCRIPTIONS[data.targetAcquirente]}
+TIPO ANNUNCIO: ${TRANSAZIONE_LABELS[data.tipoTransazione || 'vendita'].tipo}
+TARGET: ${TARGET_DESCRIPTIONS[data.targetCliente]}
 TONO SCELTO: ${data.tono}
 
 Fornisci UN consiglio esperto in 2-3 frasi su:
@@ -381,7 +395,7 @@ export async function POST(request: NextRequest) {
 
   const data = validationResult.data;
   
-  const cacheKey = `${data.tipoImmobile}:${data.zona}:${data.caratteristiche}:${data.targetAcquirente}:${data.tono}:${data.portaleTarget}`;
+  const cacheKey = `${data.tipoTransazione}:${data.tipoImmobile}:${data.zona}:${data.caratteristiche}:${data.targetCliente}:${data.tono}:${data.portaleTarget}`;
   const cachePromptType = 'perfect-copy';
 
   try {

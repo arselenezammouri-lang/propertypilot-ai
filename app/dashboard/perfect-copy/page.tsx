@@ -51,6 +51,12 @@ interface PerfectCopyResult {
   portaleAdattamento?: string;
 }
 
+const TIPO_TRANSAZIONE = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
+
 const TIPI_IMMOBILE = [
   { value: 'appartamento', label: 'Appartamento' },
   { value: 'casa', label: 'Casa Indipendente' },
@@ -69,15 +75,17 @@ const TIPI_IMMOBILE = [
   { value: 'garage', label: 'Garage/Box' },
 ];
 
-const TARGET_ACQUIRENTE = [
+const TARGET_CLIENTE = [
   { value: 'famiglie', label: 'Famiglie', icon: '👨‍👩‍👧‍👦' },
   { value: 'giovani_coppie', label: 'Giovani Coppie', icon: '💑' },
   { value: 'investitori', label: 'Investitori', icon: '📈' },
-  { value: 'studenti', label: 'Studenti', icon: '🎓' },
-  { value: 'professionisti', label: 'Professionisti', icon: '💼' },
+  { value: 'studenti', label: 'Studenti / Universitari', icon: '🎓' },
+  { value: 'professionisti', label: 'Professionisti / Lavoratori', icon: '💼' },
   { value: 'pensionati', label: 'Pensionati', icon: '🏖️' },
   { value: 'luxury', label: 'Clientela Luxury', icon: '💎' },
-  { value: 'stranieri', label: 'Acquirenti Stranieri', icon: '🌍' },
+  { value: 'stranieri', label: 'Clienti Stranieri', icon: '🌍' },
+  { value: 'turisti', label: 'Turisti / Vacanzieri', icon: '✈️' },
+  { value: 'aziende', label: 'Aziende / Corporate', icon: '🏢' },
 ];
 
 const TONI = [
@@ -103,21 +111,22 @@ export default function PerfectCopyPage() {
   const [activeTab, setActiveTab] = useState('professionale');
 
   const [formData, setFormData] = useState({
+    tipoTransazione: 'vendita',
     tipoImmobile: '',
     zona: '',
     caratteristiche: '',
     puntiForzaList: '',
-    targetAcquirente: '',
+    targetCliente: '',
     fasciaPrezzo: '',
     tono: 'professionale',
     portaleTarget: 'generico',
   });
 
   const handleSubmit = async () => {
-    if (!formData.tipoImmobile || !formData.zona || !formData.caratteristiche || !formData.targetAcquirente) {
+    if (!formData.tipoImmobile || !formData.zona || !formData.caratteristiche || !formData.targetCliente) {
       toast({
         title: 'Campi obbligatori',
-        description: 'Compila tipo immobile, zona, caratteristiche e target acquirente.',
+        description: 'Compila tipo immobile, zona, caratteristiche e target cliente.',
         variant: 'destructive',
       });
       return;
@@ -432,6 +441,28 @@ export default function PerfectCopyPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
+                    <Gem className="h-4 w-4 text-amber-500" />
+                    Tipo Annuncio *
+                  </Label>
+                  <Select
+                    value={formData.tipoTransazione}
+                    onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
+                  >
+                    <SelectTrigger data-testid="select-tipo-transazione">
+                      <SelectValue placeholder="Vendita o Affitto?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIPO_TRANSAZIONE.map((tipo) => (
+                        <SelectItem key={tipo.value} value={tipo.value}>
+                          {tipo.icon} {tipo.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-amber-500" />
                     Tipo Immobile *
                   </Label>
@@ -496,17 +527,17 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-amber-500" />
-                    Target Acquirente *
+                    Target Cliente *
                   </Label>
                   <Select
-                    value={formData.targetAcquirente}
-                    onValueChange={(value) => setFormData({ ...formData, targetAcquirente: value })}
+                    value={formData.targetCliente}
+                    onValueChange={(value) => setFormData({ ...formData, targetCliente: value })}
                   >
                     <SelectTrigger data-testid="select-target">
                       <SelectValue placeholder="Seleziona target" />
                     </SelectTrigger>
                     <SelectContent>
-                      {TARGET_ACQUIRENTE.map((target) => (
+                      {TARGET_CLIENTE.map((target) => (
                         <SelectItem key={target.value} value={target.value}>
                           {target.icon} {target.label}
                         </SelectItem>
