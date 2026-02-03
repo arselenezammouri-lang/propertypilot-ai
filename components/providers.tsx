@@ -1,9 +1,10 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, lazy, Suspense } from 'react';
 import { GeoProvider } from '@/contexts/geo-context';
-import { PWAInstallPrompt } from '@/components/pwa-install-prompt';
+
+const PWAInstallPrompt = lazy(() => import('@/components/pwa-install-prompt').then(mod => ({ default: mod.PWAInstallPrompt })));
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -31,7 +32,9 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <GeoProvider>
         {children}
-        <PWAInstallPrompt />
+        <Suspense fallback={null}>
+          <PWAInstallPrompt />
+        </Suspense>
       </GeoProvider>
     </QueryClientProvider>
   );
