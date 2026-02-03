@@ -26,6 +26,9 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   keywords: [
+    "AI Real Estate Operating System",
+    "Zillow Voice AI automation",
+    "Idealista Prospecting AI",
     "real estate AI",
     "property listing generator",
     "real estate CRM",
@@ -40,6 +43,16 @@ export const metadata: Metadata = {
     "real estate agents tools",
     "immobiliare AI",
     "Idealista",
+    "AI real estate agent",
+    "automated property descriptions",
+    "real estate lead scoring",
+    "AI property valuation",
+    "real estate voice AI",
+    "property AI assistant",
+    "Casa.it AI",
+    "Subito.it automation",
+    "Redfin AI tools",
+    "Realtor.com automation",
   ],
   authors: [{ name: APP_NAME, url: APP_URL }],
   creator: APP_NAME,
@@ -136,6 +149,12 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="PropertyPilot" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#000000" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

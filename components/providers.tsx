@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
 import { GeoProvider } from '@/contexts/geo-context';
+import { PWAInstallPrompt } from '@/components/pwa-install-prompt';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -30,6 +31,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <GeoProvider>
         {children}
+        <PWAInstallPrompt />
       </GeoProvider>
     </QueryClientProvider>
   );
