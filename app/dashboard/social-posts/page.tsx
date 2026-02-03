@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Home, 
@@ -36,6 +37,12 @@ import { useTheme } from "next-themes";
 type Tono = "professionale" | "emotivo" | "luxury";
 type Lunghezza = "breve" | "standard" | "lunga";
 
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
+
 interface SocialPostResponse {
   instagramPost: string;
   facebookPost: string;
@@ -44,6 +51,7 @@ interface SocialPostResponse {
 }
 
 interface FormData {
+  tipoTransazione: string;
   titolo: string;
   descrizione: string;
   prezzo: string;
@@ -106,6 +114,7 @@ export default function SocialPostsPage() {
   const { theme, setTheme } = useTheme();
   
   const [formData, setFormData] = useState<FormData>({
+    tipoTransazione: "vendita",
     titolo: "",
     descrizione: "",
     prezzo: "",
@@ -267,6 +276,28 @@ export default function SocialPostsPage() {
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
+                    <div>
+                      <Label>Tipo Annuncio</Label>
+                      <Select
+                        value={formData.tipoTransazione}
+                        onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
+                      >
+                        <SelectTrigger className="mt-1.5" data-testid="select-tipo-transazione">
+                          <SelectValue placeholder="Seleziona tipo transazione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <span className="flex items-center gap-2">
+                                <span>{option.icon}</span>
+                                <span>{option.label}</span>
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div>
                       <Label htmlFor="titolo">Titolo *</Label>
                       <Input

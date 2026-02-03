@@ -54,6 +54,7 @@ interface TitlesResponse {
 }
 
 interface FormData {
+  tipoTransazione: string;
   tipoImmobile: TipoImmobile;
   localita: string;
   prezzo: string;
@@ -62,6 +63,12 @@ interface FormData {
   puntiChiave: string;
   tono: Tono;
 }
+
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
 
 const TIPO_IMMOBILE_OPTIONS = [
   { value: "appartamento" as TipoImmobile, label: "Appartamento" },
@@ -141,6 +148,7 @@ export default function TitlesPage() {
   const { theme, setTheme } = useTheme();
   
   const [formData, setFormData] = useState<FormData>({
+    tipoTransazione: "vendita",
     tipoImmobile: "appartamento",
     localita: "",
     prezzo: "",
@@ -328,6 +336,28 @@ export default function TitlesPage() {
               </CardHeader>
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label>Tipo Annuncio</Label>
+                    <Select
+                      value={formData.tipoTransazione}
+                      onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
+                    >
+                      <SelectTrigger data-testid="select-tipo-transazione">
+                        <SelectValue placeholder="Seleziona tipo transazione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            <span className="flex items-center gap-2">
+                              <span>{option.icon}</span>
+                              <span>{option.label}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="tipoImmobile">Tipo Immobile *</Label>

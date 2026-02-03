@@ -44,11 +44,18 @@ interface RefineListingResult {
 }
 
 interface FormData {
+  tipoTransazione: string;
   originalText: string;
   propertyType: string;
   location: string;
   tone: "professional" | "emotional" | "luxury" | "seo";
 }
+
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
 
 const REFINE_TABS = [
   { id: "professional", label: "Professional", icon: Briefcase, description: "Autorevole e credibile", gradient: "from-blue-500 to-indigo-500" },
@@ -65,6 +72,7 @@ export default function RefineListingPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
+    tipoTransazione: "vendita",
     originalText: "",
     propertyType: "",
     location: "",
@@ -359,6 +367,28 @@ export default function RefineListingPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label>Tipo Annuncio</Label>
+              <Select
+                value={formData.tipoTransazione}
+                onValueChange={(value) => handleInputChange("tipoTransazione", value)}
+              >
+                <SelectTrigger data-testid="select-tipo-transazione">
+                  <SelectValue placeholder="Seleziona tipo transazione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <span className="flex items-center gap-2">
+                        <span>{option.icon}</span>
+                        <span>{option.label}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="originalText">Testo Annuncio Originale *</Label>
               <Textarea

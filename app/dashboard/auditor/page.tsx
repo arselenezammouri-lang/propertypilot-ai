@@ -114,6 +114,12 @@ const MERCATI = [
   { value: 'usa', label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
 ];
 
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
+
 export default function AuditorPage() {
   const { toast } = useToast();
   const [inputMode, setInputMode] = useState<'text' | 'url'>('text');
@@ -122,6 +128,7 @@ export default function AuditorPage() {
   const [imageUrl, setImageUrl] = useState('');
   const [mercato, setMercato] = useState<'italia' | 'usa'>('italia');
   const [obiettivo, setObiettivo] = useState<'seo' | 'vendita' | 'luxury' | 'social'>('vendita');
+  const [tipoTransazione, setTipoTransazione] = useState<'vendita' | 'affitto' | 'affitto_breve'>('vendita');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
@@ -163,6 +170,7 @@ export default function AuditorPage() {
         imageUrl: imageUrl || undefined,
         mercato,
         obiettivo,
+        tipoTransazione,
       };
 
       const response = await fetch('/api/audit-listing', {
@@ -338,6 +346,25 @@ export default function AuditorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+            <div className="space-y-3 mb-6">
+                <Label className="text-blue-200">Tipo Annuncio</Label>
+                <Select value={tipoTransazione} onValueChange={(v) => setTipoTransazione(v as 'vendita' | 'affitto' | 'affitto_breve')}>
+                  <SelectTrigger className="bg-slate-800/50 border-blue-500/30 text-white" data-testid="select-tipo-transazione">
+                    <SelectValue placeholder="Seleziona tipo transazione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <span>{option.icon}</span>
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label className="text-blue-200">Mercato di riferimento</Label>

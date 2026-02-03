@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
 const LANGUAGES = [
@@ -23,6 +24,12 @@ const LANGUAGES = [
   { code: 'nl', name: 'Nederlands', flag: '🇳🇱', country: 'Paesi Bassi' },
   { code: 'pl', name: 'Polski', flag: '🇵🇱', country: 'Polonia' },
   { code: 'tr', name: 'Türkçe', flag: '🇹🇷', country: 'Turchia' },
+];
+
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
 ];
 
 const TONES = [
@@ -49,6 +56,7 @@ interface TranslationResult {
 }
 
 export default function TranslatePage() {
+  const [tipoTransazione, setTipoTransazione] = useState('vendita');
   const [titolo, setTitolo] = useState('');
   const [descrizione, setDescrizione] = useState('');
   const [caratteristiche, setCaratteristiche] = useState('');
@@ -86,6 +94,7 @@ export default function TranslatePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          tipoTransazione,
           titolo,
           descrizione,
           caratteristiche: caratteristiche || undefined,
@@ -187,6 +196,28 @@ export default function TranslatePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Tipo Annuncio</Label>
+                  <Select
+                    value={tipoTransazione}
+                    onValueChange={(value) => setTipoTransazione(value)}
+                  >
+                    <SelectTrigger className="bg-white dark:bg-slate-900" data-testid="select-tipo-transazione">
+                      <SelectValue placeholder="Seleziona tipo transazione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          <span className="flex items-center gap-2">
+                            <span>{option.icon}</span>
+                            <span>{option.label}</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="titolo">Titolo annuncio *</Label>
                   <Input

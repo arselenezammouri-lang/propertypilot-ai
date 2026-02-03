@@ -39,6 +39,7 @@ interface HashtagResult {
 }
 
 interface FormData {
+  tipoTransazione: string;
   propertyType: string;
   location: string;
   strengths: string;
@@ -46,6 +47,12 @@ interface FormData {
   tone: "professionale" | "emozionale" | "luxury" | "virale";
   market: "italy" | "usa";
 }
+
+const TIPO_TRANSAZIONE_OPTIONS = [
+  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
+  { value: 'affitto', label: 'Affitto', icon: '🔑' },
+  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+];
 
 const HASHTAG_TABS = [
   { id: "virali", label: "Virali", icon: TrendingUp, description: "15 hashtag ad alto reach", color: "from-pink-500 to-rose-500" },
@@ -62,6 +69,7 @@ export default function HashtagsPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
+    tipoTransazione: "vendita",
     propertyType: "",
     location: "",
     strengths: "",
@@ -296,6 +304,28 @@ export default function HashtagsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label>Tipo Annuncio</Label>
+              <Select
+                value={formData.tipoTransazione}
+                onValueChange={(value) => handleInputChange("tipoTransazione", value)}
+              >
+                <SelectTrigger data-testid="select-tipo-transazione">
+                  <SelectValue placeholder="Seleziona tipo transazione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <span className="flex items-center gap-2">
+                        <span>{option.icon}</span>
+                        <span>{option.label}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="propertyType">Tipo di Immobile *</Label>
               <Input
