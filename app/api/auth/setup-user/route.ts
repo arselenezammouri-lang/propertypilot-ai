@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
+import { getResendClient } from '@/lib/resend-client';
+import { emailTemplates } from '@/lib/email-templates';
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,6 +74,24 @@ export async function POST(request: NextRequest) {
 
       if (subscriptionError) {
         console.error('[SETUP USER] Subscription creation error:', subscriptionError);
+      }
+    }
+
+    if (!existingProfile) {
+      try {
+        const { client, fromEmail } = await getResendClient();
+        const userName = fullName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Agente';
+        const emailContent = emailTemplates.welcome(userName);
+        
+        await client.emails.send({
+          from: fromEmail,
+          to: user.email!,
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+        console.log('[SETUP USER] Welcome email sent to:', user.email);
+      } catch (emailError) {
+        console.error('[SETUP USER] Welcome email error:', emailError);
       }
     }
 

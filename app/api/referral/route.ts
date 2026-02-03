@@ -91,13 +91,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Hai già utilizzato un codice referral' }, { status: 400 });
     }
 
-    await supabase
+    const BONUS_CREDITS = 10;
+    
+    const { error: updateUserError } = await supabase
       .from('profiles')
       .update({ referred_by: referrer.id })
       .eq('id', user.id);
 
-    const BONUS_CREDITS = 10;
-    await supabase
+    if (updateUserError) {
+      console.error('Error updating referred user:', updateUserError);
+      return NextResponse.json({ error: 'Errore nella registrazione' }, { status: 500 });
+    }
+
+    const { error: updateReferrerError } = await supabase
       .from('profiles')
       .update({ 
         referral_bonus_credits: (referrer.referral_bonus_credits || 0) + BONUS_CREDITS,
@@ -105,9 +111,18 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', referrer.id);
 
+    if (updateReferrerError) {
+      console.error('Error updating referrer bonus:', updateReferrerError);
+      await supabase
+        .from('profiles')
+        .update({ referred_by: null })
+        .eq('id', user.id);
+      return NextResponse.json({ error: 'Errore nel bonus referral' }, { status: 500 });
+    }
+
     return NextResponse.json({ 
       success: true, 
-      message: 'Referral registrato con successo!' 
+      message: 'Referral registrato con successo! +10 crediti AI per il tuo amico!' 
     });
   } catch (error) {
     console.error('Error processing referral:', error);

@@ -1,4 +1,5 @@
 import { supabaseService } from '@/lib/supabase/service';
+import { STRIPE_PLANS } from '@/lib/stripe/config';
 
 interface RateLimitResult {
   allowed: boolean;
@@ -122,12 +123,12 @@ export async function logGeneration(userId: string, ipAddress: string | null): P
  * Increment generation count for subscription tracking
  * Uses atomic increment RPC to avoid race conditions
  * Uses service role client to bypass RLS
+ * Also triggers upgrade nudge email at 50% usage
  */
 export async function incrementGenerationCount(userId: string): Promise<void> {
   const supabase = supabaseService;
   
   try {
-    // Atomic increment using RPC function
     const { data, error } = await supabase.rpc('increment_generation_count', {
       p_user_id: userId
     });
@@ -136,9 +137,61 @@ export async function incrementGenerationCount(userId: string): Promise<void> {
       console.error('Failed to increment generation count via RPC:', error);
       throw error;
     }
+
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('generations_count, status')
+      .eq('user_id', userId)
+      .single();
+
+    if (subscription) {
+      const plan = subscription.status || 'free';
+      const planConfig = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS];
+      const limit = planConfig?.limits?.listingsPerMonth || 5;
+      const currentUsage = subscription.generations_count || 0;
+      
+      const halfLimit = Math.floor(limit * 0.5);
+      if (limit > 0 && plan !== 'agency' && currentUsage >= halfLimit && currentUsage < halfLimit + 3) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('upgrade_email_sent')
+          .eq('id', userId)
+          .single();
+
+        if (!(profile as any)?.upgrade_email_sent) {
+          try {
+            const { getResendClient } = await import('@/lib/resend-client');
+            const { emailTemplates } = await import('@/lib/email-templates');
+            
+            const { data: userData } = await supabase.auth.admin.getUserById(userId);
+            
+            if (userData?.user?.email) {
+              const { client, fromEmail } = await getResendClient();
+              const userName = userData.user.email.split('@')[0];
+              const emailContent = emailTemplates.upgradeNudge(userName, currentUsage, limit);
+              
+              await client.emails.send({
+                from: fromEmail,
+                to: userData.user.email,
+                subject: emailContent.subject,
+                html: emailContent.html,
+              });
+              
+              await supabase
+                .from('profiles')
+                .update({ upgrade_email_sent: true })
+                .eq('id', userId);
+              
+              console.log('[RATE LIMIT] Upgrade nudge email sent to:', userData.user.email);
+            }
+          } catch (emailErr) {
+            console.error('[RATE LIMIT] Upgrade nudge email error:', emailErr);
+          }
+        }
+      }
+    }
   } catch (error) {
     console.error('Failed to increment generation count:', error);
-    // Don't throw - count update failure shouldn't block generation
   }
 }
 

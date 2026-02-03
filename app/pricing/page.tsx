@@ -294,11 +294,15 @@ export default function PricingPage() {
                 
                 {/* Elite Badge for Agency Boost */}
                 {(plan as any).isElite && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <span className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-bold bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] text-black rounded-full shadow-[0_0_20px_rgba(255,215,0,0.5)] animate-pulse">
-                      <Gift className="h-4 w-4" />
-                      OFFERTA ÉLITE
-                    </span>
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 z-20">
+                    <div className="relative">
+                      <span className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-extrabold uppercase tracking-wider bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] text-black rounded-full shadow-[0_0_30px_rgba(255,215,0,0.6),0_0_60px_rgba(255,215,0,0.3)] animate-pulse border-2 border-[#FFD700]/50">
+                        <Gift className="h-5 w-5 animate-bounce" />
+                        OFFERTA ÉLITE
+                        <Sparkles className="h-5 w-5 animate-spin" style={{ animationDuration: '3s' }} />
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-full blur-md opacity-50 -z-10 animate-pulse" />
+                    </div>
                   </div>
                 )}
 
