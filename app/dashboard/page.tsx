@@ -15,6 +15,8 @@ import { GlobalLiveFeed } from "@/components/global-live-feed";
 import { DashboardHelpButton } from "@/components/dashboard-help-button";
 import { DashboardPlanFeatures } from "@/components/dashboard-plan-features";
 import { AriaCoach } from "@/components/aria-coach";
+import { ReferralSection } from "@/components/referral-section";
+import { ProfitDashboard } from "@/components/profit-dashboard";
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
 import { 
@@ -206,6 +208,14 @@ export default async function DashboardPage() {
           {(currentPlan === "pro" || currentPlan === "agency") && (
             <Dashboard3DStats />
           )}
+        </div>
+
+        {/* 💰 PROFIT DASHBOARD - ROI Tracking */}
+        <div className="mb-10 md:mb-14">
+          <div className="grid md:grid-cols-2 gap-6">
+            <ProfitDashboard />
+            <ReferralSection />
+          </div>
         </div>
 
         {/* 🌅 AI MORNING INTEL BRIEFING */}

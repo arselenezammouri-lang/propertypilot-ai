@@ -86,9 +86,9 @@ const plans = [
     price: 2497,
     period: "una tantum",
     icon: Sparkles,
-    gradient: "from-sunset-gold to-orange-500",
-    borderColor: "border-orange-500/50",
-    bgClass: "bg-gradient-to-b from-orange-500/10 via-orange-500/5 to-background",
+    gradient: "from-[#FFD700] via-[#FFA500] to-[#FFD700]",
+    borderColor: "border-[#FFD700]",
+    bgClass: "bg-gradient-to-b from-[#FFD700]/15 via-[#FFA500]/10 to-background",
     includes: [
       "Setup completo \"done-for-you\"",
       "Implementazione e onboarding guidato",
@@ -97,6 +97,7 @@ const plans = [
     cta: "Acquista Agency Boost",
     popular: false,
     isSubscription: false,
+    isElite: true,
   },
 ];
 
@@ -275,6 +276,8 @@ export default function PricingPage() {
                 className={`relative rounded-3xl p-6 lg:p-8 transition-all duration-500 hover:-translate-y-2 border-2 ${plan.borderColor} ${plan.bgClass} ${
                   plan.popular 
                     ? 'shadow-[0_0_40px_rgba(255,193,7,0.2)] md:scale-105 z-10' 
+                    : (plan as any).isElite
+                    ? 'shadow-[0_0_50px_rgba(255,215,0,0.3)] ring-2 ring-[#FFD700]/50'
                     : 'shadow-lg hover:shadow-xl'
                 }`}
                 data-testid={`card-pricing-${plan.id}`}
@@ -285,6 +288,16 @@ export default function PricingPage() {
                     <span className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold bg-gradient-to-r from-sunset-gold via-royal-purple to-sunset-gold text-white rounded-full shadow-lg">
                       <Star className="h-4 w-4 fill-white" />
                       Consigliato
+                    </span>
+                  </div>
+                )}
+                
+                {/* Elite Badge for Agency Boost */}
+                {(plan as any).isElite && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <span className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-bold bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] text-black rounded-full shadow-[0_0_20px_rgba(255,215,0,0.5)] animate-pulse">
+                      <Gift className="h-4 w-4" />
+                      OFFERTA ÉLITE
                     </span>
                   </div>
                 )}
