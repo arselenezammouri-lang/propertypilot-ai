@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { PendingCheckoutBanner } from "./pending-checkout-banner";
 import { OnboardingWizard } from "./onboarding-wizard";
 import { AriaLimitModal } from "./aria-limit-modal";
+import { TierPreviewToggle, PreviewTier } from "./tier-preview-toggle";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 
 interface DashboardClientWrapperProps {
@@ -64,10 +65,25 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
     }
   }, [isNearLimit, hasReachedLimit, currentUsage, limit, plan, toast]);
 
+  const handleTierPreview = (tier: PreviewTier) => {
+    if (typeof window !== 'undefined') {
+      if (tier === 'real') {
+        localStorage.removeItem('preview_tier');
+      } else {
+        localStorage.setItem('preview_tier', tier);
+      }
+      window.dispatchEvent(new CustomEvent('tier-preview-change', { detail: tier }));
+    }
+  };
+
   return (
     <>
       <OnboardingWizard />
       <PendingCheckoutBanner />
+      <TierPreviewToggle 
+        currentRealTier={plan}
+        onTierChange={handleTierPreview}
+      />
       <AriaLimitModal 
         isOpen={showLimitModal}
         onClose={() => setShowLimitModal(false)}

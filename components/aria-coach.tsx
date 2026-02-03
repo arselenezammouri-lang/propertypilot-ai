@@ -364,34 +364,41 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       : null;
     
     return (
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          onClick={() => {
-            if (userPlan === "free" && limitReached) {
-              toast({
-                title: "Limite giornaliero raggiunto",
-                description: "Hai utilizzato 1 ora di Aria oggi. Sblocca un piano per usare Aria illimitata!",
-                variant: "default",
-              });
-              window.location.href = "/dashboard/billing";
-              return;
-            }
-            setIsOpen(true);
-          }}
-          className="h-16 w-16 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white shadow-2xl shadow-purple-500/50 hover:scale-110 transition-all relative group"
-        >
-          <MessageCircle className="h-7 w-7" />
-          <div className="absolute inset-0 rounded-full bg-cyan-400/30 blur-xl animate-pulse group-hover:animate-none"></div>
-          <Badge className={`absolute -top-2 -right-2 ${limitReached ? "bg-red-500" : "bg-green-500"} text-white border-2 border-background`}>
-            {limitReached ? (
-              <span className="text-xs">⏰</span>
-            ) : userPlan === "free" && remainingMinutes !== null ? (
-              <span className="text-xs">{remainingMinutes}m</span>
-            ) : (
-              <Sparkles className="h-3 w-3" />
-            )}
-          </Badge>
-        </Button>
+      <div className="fixed bottom-24 right-6 z-40">
+        <div className="relative group">
+          <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-cyan-500 to-purple-600 rounded-full blur-lg opacity-60 group-hover:opacity-100 animate-pulse transition-opacity" />
+          <Button
+            onClick={() => {
+              if (userPlan === "free" && limitReached) {
+                toast({
+                  title: "Limite giornaliero raggiunto",
+                  description: "Hai utilizzato 1 ora di Aria oggi. Sblocca un piano per usare Aria illimitata!",
+                  variant: "default",
+                });
+                window.location.href = "/dashboard/billing";
+                return;
+              }
+              setIsOpen(true);
+            }}
+            className="relative h-16 w-16 rounded-full bg-gradient-to-br from-purple-600 via-purple-500 to-cyan-500 hover:from-purple-500 hover:via-cyan-500 hover:to-purple-600 text-white shadow-[0_0_30px_rgba(139,92,246,0.5)] hover:shadow-[0_0_50px_rgba(139,92,246,0.7)] hover:scale-110 transition-all duration-300 border-2 border-white/20"
+          >
+            <MessageCircle className="h-7 w-7 drop-shadow-lg" />
+            <Badge className={`absolute -top-1 -right-1 ${limitReached ? "bg-red-500" : "bg-gradient-to-r from-green-400 to-emerald-500"} text-white border-2 border-black shadow-lg`}>
+              {limitReached ? (
+                <span className="text-xs">⏰</span>
+              ) : userPlan === "free" && remainingMinutes !== null ? (
+                <span className="text-xs font-bold">{remainingMinutes}m</span>
+              ) : (
+                <Sparkles className="h-3 w-3" />
+              )}
+            </Badge>
+          </Button>
+          <div className="absolute -left-24 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-black/90 text-white text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 whitespace-nowrap shadow-xl">
+              Chiedi ad Aria 💬
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
