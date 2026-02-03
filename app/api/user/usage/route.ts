@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { supabaseService } from '@/lib/supabase/service';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 
 export async function GET(request: NextRequest) {
@@ -14,18 +15,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const { data: subscription, error: subError } = await supabase
+    let subscription = null;
+    
+    const { data: subData, error: subError } = await supabaseService
       .from('subscriptions')
       .select('status, generations_count')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (subError && subError.code !== 'PGRST116') {
-      console.error('Error fetching subscription:', subError);
-      return NextResponse.json(
-        { error: 'Errore nel recupero dei dati' },
-        { status: 500 }
-      );
+    if (subError) {
+      if (subError.code === '42703') {
+        console.warn('Subscriptions table schema mismatch, using defaults');
+      } else {
+        console.error('Error fetching subscription:', subError);
+      }
+    } else {
+      subscription = subData;
+    }
+
+    if (!subscription) {
+      const { data: newSub, error: createError } = await supabaseService
+        .from('subscriptions')
+        .insert({ user_id: user.id, status: 'free', generations_count: 0 })
+        .select('status, generations_count')
+        .single();
+      
+      if (!createError) {
+        subscription = newSub;
+      }
     }
 
     const plan = subscription?.status || 'free';

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { supabaseService } from '@/lib/supabase/service';
 import { nanoid } from 'nanoid';
 
 export async function GET(request: NextRequest) {
@@ -11,15 +12,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await supabaseService
       .from('profiles')
       .select('referral_code, referral_bonus_credits, total_referrals')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (profileError && profileError.code !== 'PGRST116') {
+    if (profileError && profileError.code !== 'PGRST116' && profileError.code !== '42703') {
       console.error('Error fetching profile:', profileError);
       return NextResponse.json({ error: 'Errore nel recupero dati' }, { status: 500 });
+    }
+    
+    if (profileError?.code === '42703') {
+      console.warn('Profile table missing referral columns, returning defaults');
+      return NextResponse.json({
+        referralCode: null,
+        referralLink: null,
+        bonusCredits: 0,
+        totalReferrals: 0,
+        setupRequired: true,
+      });
     }
 
     let referralCode = profile?.referral_code;
@@ -27,7 +39,7 @@ export async function GET(request: NextRequest) {
     if (!referralCode) {
       referralCode = nanoid(8).toUpperCase();
       
-      const { error: updateError } = await supabase
+      const { error: updateError } = await supabaseService
         .from('profiles')
         .update({ referral_code: referralCode })
         .eq('id', user.id);
