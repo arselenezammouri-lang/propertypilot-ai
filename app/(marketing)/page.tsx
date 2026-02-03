@@ -238,7 +238,7 @@ export default function MarketingLandingPage() {
               },
               {
                 name: "Agency Boost",
-                price: "€2.497",
+                price: "€2497",
                 period: "una tantum",
                 description: "Scala in 7 giorni",
                 badge: "PREMIUM",
