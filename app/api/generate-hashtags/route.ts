@@ -8,6 +8,7 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const requestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   propertyType: z.string().min(3, 'Inserisci il tipo di immobile').max(100),
   location: z.string().min(2, 'Inserisci la località').max(150),
   strengths: z.string().min(10, 'Descrivi i punti di forza').max(500),
@@ -17,6 +18,21 @@ const requestSchema = z.object({
 });
 
 type RequestData = z.infer<typeof requestSchema>;
+
+const TRANSAZIONE_HASHTAGS: Record<string, { label: string; hashtags: string[] }> = {
+  vendita: {
+    label: 'Vendita',
+    hashtags: ['#casainvendita', '#vendesi', '#immobile', '#investimento', '#nuovacasa', '#comprare', '#realestate'],
+  },
+  affitto: {
+    label: 'Affitto',
+    hashtags: ['#affitto', '#affittasi', '#inaffitto', '#cercasicasa', '#rentals', '#appartamento', '#stanze'],
+  },
+  affitto_breve: {
+    label: 'Affitto Breve',
+    hashtags: ['#airbnb', '#vacanze', '#shortterm', '#holiday', '#turistico', '#booking', '#travel', '#soggiorno'],
+  },
+};
 
 interface HashtagResult {
   virali: string[];
@@ -40,9 +56,13 @@ async function generateViralHashtags(openai: OpenAI, data: RequestData): Promise
   const marketContext = data.market === 'usa' 
     ? 'per il mercato USA, usando hashtag in inglese popolari su Instagram/TikTok americano'
     : 'per il mercato italiano, mix italiano/inglese per massimo reach';
+  
+  const transazione = TRANSAZIONE_HASHTAGS[data.tipoTransazione || 'vendita'];
 
   const prompt = `Sei un esperto di social media marketing immobiliare. Genera 15 HASHTAG VIRALI ${marketContext}:
 
+TIPO ANNUNCIO: ${transazione.label}
+HASHTAG SPECIFICI DA INCLUDERE: ${transazione.hashtags.join(', ')}
 IMMOBILE: ${data.propertyType}
 LOCALITÀ: ${data.location}
 PREZZO: ${data.price}

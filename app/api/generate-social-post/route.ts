@@ -9,6 +9,7 @@ import { z } from 'zod';
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
 const SocialPostRequestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   titolo: z.string().min(5, 'Il titolo deve avere almeno 5 caratteri'),
   descrizione: z.string().min(20, 'La descrizione deve avere almeno 20 caratteri'),
   prezzo: z.string().optional(),
@@ -21,6 +22,27 @@ const SocialPostRequestSchema = z.object({
 });
 
 type SocialPostRequest = z.infer<typeof SocialPostRequestSchema>;
+
+const TRANSAZIONE_SOCIAL: Record<string, { label: string; hook: string; cta: string; hashtags: string[] }> = {
+  vendita: {
+    label: '🏷️ IN VENDITA',
+    hook: 'La casa dei tuoi sogni ti aspetta!',
+    cta: 'Contattami per una visita esclusiva 🔑',
+    hashtags: ['#casainvendita', '#vendesi', '#investimento', '#nuovacasa', '#comprare'],
+  },
+  affitto: {
+    label: '🔑 IN AFFITTO',
+    hook: 'Il tuo nuovo appartamento è qui!',
+    cta: 'Scrivimi per prenotare una visita 📞',
+    hashtags: ['#affitto', '#affittasi', '#cercasicasa', '#appartamento', '#inaffitto'],
+  },
+  affitto_breve: {
+    label: '🏖️ AFFITTO TURISTICO',
+    hook: 'La tua vacanza da sogno inizia qui!',
+    cta: 'Prenota ora il tuo soggiorno ✨',
+    hashtags: ['#vacanze', '#airbnb', '#holiday', '#travel', '#booking', '#soggiorno'],
+  },
+};
 
 interface SocialPostResponse {
   instagramPost: string;
@@ -47,7 +69,14 @@ const LENGTH_CONFIGS = {
 };
 
 function buildPropertyContext(data: SocialPostRequest): string {
-  const parts = [`Titolo: ${data.titolo}`, `Descrizione: ${data.descrizione}`];
+  const transazione = TRANSAZIONE_SOCIAL[data.tipoTransazione || 'vendita'];
+  const parts = [
+    `TIPO ANNUNCIO: ${transazione.label}`,
+    `HOOK SUGGERITO: ${transazione.hook}`,
+    `CTA SUGGERITA: ${transazione.cta}`,
+    `Titolo: ${data.titolo}`,
+    `Descrizione: ${data.descrizione}`,
+  ];
   
   if (data.prezzo) parts.push(`Prezzo: ${data.prezzo}`);
   if (data.superficie) parts.push(`Superficie: ${data.superficie}`);
@@ -137,8 +166,11 @@ Regole per Facebook:
 
 async function generateHashtags(
   propertyContext: string,
-  tone: string
+  tone: string,
+  tipoTransazione: string
 ): Promise<string[]> {
+  const transazione = TRANSAZIONE_SOCIAL[tipoTransazione || 'vendita'];
+  
   return withRetryAndTimeout(async () => {
     const luxuryExtra = tone === 'luxury' 
       ? 'Includi hashtag per mercato luxury: #luxuryrealestate #luxuryhomes #premiumproperties' 
@@ -152,10 +184,14 @@ async function generateHashtags(
           content: `Sei un esperto di SEO e hashtag per social media immobiliari.
 Genera hashtag ottimizzati per massimizzare la visibilità.
 
+TIPO ANNUNCIO: ${transazione.label}
+HASHTAG OBBLIGATORI DA INCLUDERE: ${transazione.hashtags.join(' ')}
+
 Regole:
 - Genera esattamente 15 hashtag
 - Mix di hashtag popolari e di nicchia
-- Includi hashtag locali italiani (#immobiliare #caseinvendita #realestateitaly)
+- Includi gli hashtag obbligatori per questo tipo di annuncio
+- Includi hashtag locali italiani (#immobiliare #realestateitaly)
 - Includi hashtag specifici per tipo di immobile
 - Formato: un hashtag per riga, senza altri testi
 ${luxuryExtra}`,
@@ -305,7 +341,7 @@ export async function POST(request: NextRequest) {
     const [instagramPost, facebookPost, hashtags, tiktokScript] = await Promise.all([
       generateInstagramPost(propertyContext, tonePrompt, lengthConfig.igWords),
       generateFacebookPost(propertyContext, tonePrompt, lengthConfig.fbWords),
-      generateHashtags(propertyContext, data.tono),
+      generateHashtags(propertyContext, data.tono, data.tipoTransazione || 'vendita'),
       generateTikTokScript(propertyContext, tonePrompt, lengthConfig.tiktokSeconds),
     ]);
 

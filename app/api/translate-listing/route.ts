@@ -24,6 +24,7 @@ const SUPPORTED_LANGUAGES = [
 const languageCodes = SUPPORTED_LANGUAGES.map(l => l.code) as [string, ...string[]];
 
 const translateRequestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   titolo: z.string().min(5, 'Il titolo deve avere almeno 5 caratteri').max(200),
   descrizione: z.string().min(20, 'La descrizione deve avere almeno 20 caratteri').max(5000),
   caratteristiche: z.string().max(1000).optional(),
@@ -32,6 +33,21 @@ const translateRequestSchema = z.object({
 });
 
 type TranslateRequest = z.infer<typeof translateRequestSchema>;
+
+const TRANSAZIONE_TRANSLATE: Record<string, { label: string; context: string }> = {
+  vendita: {
+    label: 'For Sale',
+    context: 'Annuncio di vendita immobiliare. Focus su: investimento, proprietà, valore, acquisto, patrimonio.',
+  },
+  affitto: {
+    label: 'For Rent',
+    context: 'Annuncio di affitto a lungo termine. Focus su: canone mensile, contratto, garanzie, inquilino, disponibilità.',
+  },
+  affitto_breve: {
+    label: 'Short-Term Rental / Holiday Let',
+    context: 'Annuncio per affitto turistico/vacanza. Focus su: soggiorno, notti, esperienza, check-in, attrazioni vicine.',
+  },
+};
 
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -62,9 +78,11 @@ async function translateTitle(
   openai: OpenAI,
   titolo: string,
   linguaTarget: string,
-  tono: string
+  tono: string,
+  tipoTransazione: string
 ): Promise<string> {
   const langInfo = getLanguageInfo(linguaTarget);
+  const transazione = TRANSAZIONE_TRANSLATE[tipoTransazione || 'vendita'];
   const toneInstruction = tono === 'luxury' 
     ? 'Usa un linguaggio esclusivo, sofisticato e prestigioso, tipico del mercato immobiliare di lusso.'
     : 'Usa un linguaggio professionale, chiaro e accattivante per il mercato immobiliare.';
@@ -77,6 +95,8 @@ async function translateTitle(
           role: 'system',
           content: `Sei un traduttore esperto specializzato nel settore immobiliare internazionale. 
 Traduci i titoli degli annunci immobiliari in ${langInfo?.name} (${langInfo?.country}).
+TIPO ANNUNCIO: ${transazione.label}
+CONTESTO: ${transazione.context}
 ${toneInstruction}
 NON tradurre letteralmente - adatta il titolo alle convenzioni del mercato immobiliare locale.
 Rispondi SOLO con il titolo tradotto, senza spiegazioni.`
@@ -325,13 +345,15 @@ export async function POST(request: NextRequest) {
 
     const langInfo = getLanguageInfo(linguaTarget);
 
+    const tipoTransazione = validationResult.data.tipoTransazione || 'vendita';
+    
     const [
       titoloTradotto,
       descrizioneTradotta,
       vocabolario,
       noteCulturali
     ] = await Promise.all([
-      translateTitle(openai, titolo, linguaTarget, tono),
+      translateTitle(openai, titolo, linguaTarget, tono, tipoTransazione),
       translateDescription(openai, descrizione, caratteristiche || '', linguaTarget, tono),
       generateVocabularyAdaptation(openai, linguaTarget),
       generateCulturalNotes(openai, linguaTarget, tono),

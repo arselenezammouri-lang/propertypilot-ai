@@ -30,11 +30,15 @@ Preferred communication style: Italian language, simple and everyday language
 - Files: lib/geo/geo-detection.ts, hooks/use-geo-config.ts, components/region-selector.tsx, components/regional-portals.tsx
 
 **Key Features**:
+- **AI Content Generation with Transaction-Specific Context**: All AI endpoints now differentiate content based on transaction type (tipoTransazione):
+  - **Vendita**: Focus on ROI, investment solidity, construction quality, cadastral details. Keywords: acquista, investi, patrimonio
+  - **Affitto**: Focus on guarantees, tenant services, contract terms, service proximity. Keywords: affitta, canone, contratto
+  - **Affitto Breve**: Focus on tourist experience, easy check-in, attractions, reviews. Keywords: soggiorno, vacanza, experience
 - **AI Content Generation**: Creates professional listings, titles, and translations.
 - **Subscription Tiers**: Four premium plans:
-  - **Starter** (€97/mese): Titoli A/B AI, Descrizioni AI, Analisi Annuncio AI, Hashtag AI, PDF professionali, Chatbot AI assistente. Esclusioni: No CRM, No pipeline, No automazioni, No SMS/WhatsApp
-  - **Pro** (€297/mese, Consigliato): Tutto di Starter + CRM completo, Pipeline Kanban, Lead Scoring AI, Lead Enrichment AI, Communication Hub (Email/SMS/WhatsApp), 20 automazioni AI, Smart Lead Capture Forms, White-label PDF, Agency Assistant AI
-  - **Agency** (€497/mese): Tutto di Pro + 10 utenti inclusi, Ruoli (Admin/Agent), Distribuzione lead automatica, Report attività team, Integrazione multi-sede, Supporto prioritario dedicato
+  - **Starter** (€197/mese): Titoli A/B AI, Descrizioni AI, Analisi Annuncio AI, Hashtag AI, PDF professionali, Chatbot AI assistente. Esclusioni: No CRM, No pipeline, No automazioni, No SMS/WhatsApp
+  - **Pro** (€497/mese, Consigliato): Tutto di Starter + CRM completo, Pipeline Kanban, Lead Scoring AI, Lead Enrichment AI, Communication Hub (Email/SMS/WhatsApp), 20 automazioni AI, Smart Lead Capture Forms, White-label PDF, Agency Assistant AI
+  - **Agency** (€897/mese): Tutto di Pro + 10 utenti inclusi, Ruoli (Admin/Agent), Distribuzione lead automatica, Report attività team, Integrazione multi-sede, Supporto prioritario dedicato
   - **Agency Boost** (€2.497 una tantum): Pacchetto "Scala in 7 giorni" - Setup completo CRM + automazioni, 10 moduli acquisizione lead, 3 script follow-up personalizzati, 1 ora formazione video, Implementazione personalizzata, Consulenza 1:1, Branding e processi custom
 - **User Management**: Profiles, subscriptions, and saved listings.
 - **Web Scraping**: Imports listings from major Italian and US real estate portals using a modular `BaseScraper` and `Factory Pattern`.

@@ -8,6 +8,7 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
 const requestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   originalText: z.string().min(50, 'Il testo originale deve avere almeno 50 caratteri').max(3000),
   propertyType: z.string().min(3, 'Inserisci il tipo di immobile').max(100),
   location: z.string().min(2, 'Inserisci la località').max(150),
@@ -15,6 +16,24 @@ const requestSchema = z.object({
 });
 
 type RequestData = z.infer<typeof requestSchema>;
+
+const TRANSAZIONE_REFINE: Record<string, { label: string; focus: string; cta: string }> = {
+  vendita: {
+    label: 'in Vendita',
+    focus: 'Enfatizza ROI, solidità costruttiva, potenziale di rivalutazione, dettagli catastali, posizione strategica per valore futuro.',
+    cta: 'Prenota subito una visita per scoprire la tua futura casa',
+  },
+  affitto: {
+    label: 'in Affitto',
+    focus: 'Enfatizza garanzie contrattuali, vicinanza a servizi e trasporti, ideale per il target inquilino, canone competitivo, cosa è incluso.',
+    cta: 'Contattaci oggi per prenotare una visita e bloccare questo appartamento',
+  },
+  affitto_breve: {
+    label: 'in Affitto Breve',
+    focus: 'Enfatizza esperienza turistica, check-in semplice, vicinanza attrazioni, comfort e servizi per vacanzieri, recensioni positive.',
+    cta: 'Prenota ora il tuo soggiorno indimenticabile',
+  },
+};
 
 interface RefinedListing {
   titolo: string;
@@ -63,7 +82,13 @@ const TONE_PROMPTS: Record<string, string> = {
 };
 
 async function generateProfessionalVersion(openai: OpenAI, data: RequestData): Promise<RefinedListing> {
+  const transazione = TRANSAZIONE_REFINE[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter immobiliare senior. Migliora questo annuncio con stile PROFESSIONAL PERFECTED.
+
+TIPO ANNUNCIO: ${transazione.label}
+FOCUS SPECIFICO: ${transazione.focus}
+CTA CONSIGLIATA: ${transazione.cta}
 
 ANNUNCIO ORIGINALE:
 ${data.originalText}
@@ -99,7 +124,13 @@ GENERA un annuncio migliorato in JSON:
 }
 
 async function generateEmotionalVersion(openai: OpenAI, data: RequestData): Promise<RefinedListing> {
+  const transazione = TRANSAZIONE_REFINE[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter specializzato in emotional marketing immobiliare. Migliora questo annuncio con stile EMOTIONAL UPGRADE.
+
+TIPO ANNUNCIO: ${transazione.label}
+FOCUS SPECIFICO: ${transazione.focus}
+CTA CONSIGLIATA: ${transazione.cta}
 
 ANNUNCIO ORIGINALE:
 ${data.originalText}
@@ -135,7 +166,13 @@ GENERA un annuncio emozionale migliorato in JSON:
 }
 
 async function generateLuxuryVersion(openai: OpenAI, data: RequestData): Promise<RefinedListing> {
+  const transazione = TRANSAZIONE_REFINE[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter di ultra-lusso per immobili high-end. Migliora questo annuncio con stile LUXURY UPGRADE.
+
+TIPO ANNUNCIO: ${transazione.label}
+FOCUS SPECIFICO: ${transazione.focus}
+CTA CONSIGLIATA: ${transazione.cta}
 
 ANNUNCIO ORIGINALE:
 ${data.originalText}
@@ -171,7 +208,13 @@ GENERA un annuncio luxury migliorato in JSON:
 }
 
 async function generateSeoVersion(openai: OpenAI, data: RequestData): Promise<RefinedListing> {
+  const transazione = TRANSAZIONE_REFINE[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un SEO specialist e copywriter immobiliare. Migliora questo annuncio con stile SEO BOOSTED.
+
+TIPO ANNUNCIO: ${transazione.label}
+FOCUS SPECIFICO: ${transazione.focus}
+CTA CONSIGLIATA: ${transazione.cta}
 
 ANNUNCIO ORIGINALE:
 ${data.originalText}

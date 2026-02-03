@@ -10,6 +10,7 @@ import { z } from 'zod';
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
 const TitlesRequestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   tipoImmobile: z.enum(['casa', 'appartamento', 'villa', 'locale', 'terreno', 'ufficio']),
   localita: z.string().min(2, 'La località deve avere almeno 2 caratteri'),
   prezzo: z.string().optional(),
@@ -20,6 +21,24 @@ const TitlesRequestSchema = z.object({
 });
 
 type TitlesRequest = z.infer<typeof TitlesRequestSchema>;
+
+const TRANSAZIONE_PROMPTS: Record<string, { label: string; focus: string; keywords: string[] }> = {
+  vendita: {
+    label: 'in Vendita',
+    focus: 'ROI, solidità dell\'investimento, valore catastale, potenziale di rivalutazione, qualità costruttiva',
+    keywords: ['acquista', 'investi', 'tuo per sempre', 'proprietà', 'patrimonio', 'valore'],
+  },
+  affitto: {
+    label: 'in Affitto',
+    focus: 'garanzie contrattuali, target inquilini ideali, vicinanza servizi e trasporti, rapporto qualità-canone',
+    keywords: ['affitta', 'canone', 'contratto', 'incluso', 'spese', 'disponibile da'],
+  },
+  affitto_breve: {
+    label: 'in Affitto Breve / Turistico',
+    focus: 'esperienza turistica, check-in facile, posizione strategica attrazioni, comfort vacanza, recensioni',
+    keywords: ['soggiorno', 'vacanza', 'experience', 'self check-in', 'vicino a', 'perfetto per'],
+  },
+};
 
 interface TitlesResponse {
   titoli: string[];
@@ -53,13 +72,17 @@ const PROPERTY_TYPE_LABELS: Record<string, string> = {
 };
 
 function buildPropertyContext(data: TitlesRequest): string {
+  const transazione = TRANSAZIONE_PROMPTS[data.tipoTransazione || 'vendita'];
   const parts = [
-    `Tipo: ${PROPERTY_TYPE_LABELS[data.tipoImmobile]}`,
+    `Tipo Transazione: ${transazione.label}`,
+    `Tipo Immobile: ${PROPERTY_TYPE_LABELS[data.tipoImmobile]}`,
     `Località: ${data.localita}`,
     `Punti chiave: ${data.puntiChiave}`,
+    `FOCUS SPECIFICO: ${transazione.focus}`,
+    `KEYWORDS DA USARE: ${transazione.keywords.join(', ')}`,
   ];
   
-  if (data.prezzo) parts.push(`Prezzo: ${data.prezzo}`);
+  if (data.prezzo) parts.push(`Prezzo/Canone: ${data.prezzo}`);
   if (data.superficie) parts.push(`Superficie: ${data.superficie}`);
   if (data.camere) parts.push(`Camere: ${data.camere}`);
   
@@ -70,8 +93,11 @@ async function generateMainTitles(
   propertyContext: string,
   tonePrompt: string,
   propertyType: string,
-  location: string
+  location: string,
+  tipoTransazione: string
 ): Promise<string[]> {
+  const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
+  
   return withRetryAndTimeout(async () => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -81,11 +107,16 @@ async function generateMainTitles(
           content: `Sei un esperto copywriter immobiliare specializzato in titoli ad alto CTR (Click-Through Rate).
 Il tuo obiettivo è creare titoli che massimizzano i click sugli annunci immobiliari.
 
+TIPO DI ANNUNCIO: ${transazione.label}
+FOCUS: ${transazione.focus}
+USA QUESTE KEYWORDS: ${transazione.keywords.join(', ')}
+
 ${tonePrompt}
 
 Regole per titoli ad alto CTR:
 - Massimo 60-80 caratteri per titolo (ottimale per portali immobiliari)
 - Includi sempre la località e il tipo di immobile
+- IMPORTANTE: Adatta il linguaggio al tipo di transazione (${transazione.label})
 - Usa numeri quando possibile (es. "3 camere", "120 mq")
 - Crea curiosità senza essere fuorviante
 - Evita titoli generici o banali
@@ -115,8 +146,11 @@ Genera esattamente 10 titoli, uno per riga, senza numerazione o altri testi.`,
 async function generateClickbaitTitles(
   propertyContext: string,
   propertyType: string,
-  location: string
+  location: string,
+  tipoTransazione: string
 ): Promise<string[]> {
+  const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
+  
   return withRetryAndTimeout(async () => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -125,11 +159,15 @@ async function generateClickbaitTitles(
           role: 'system',
           content: `Sei un esperto di viral marketing immobiliare. Crea titoli "clickbait soft" che attirano click senza essere spam.
 
+TIPO DI ANNUNCIO: ${transazione.label}
+FOCUS: ${transazione.focus}
+
 Regole per clickbait soft:
 - Crea curiosità genuina ("Ecco perché...", "Il segreto di...", "Non crederai...")
-- Usa domande retoriche ("Cerchi la casa perfetta?", "E se ti dicessi che...")
+- Usa domande retoriche adatte al tipo di transazione
 - Mantieni la promessa nel titolo (niente false aspettative)
 - Aggiungi urgenza soft ("Opportunità rara", "Solo per pochi", "Prima visione")
+- Adatta il linguaggio a ${transazione.label}
 - Massimo 70 caratteri
 - Scrivi in italiano
 
@@ -156,8 +194,11 @@ Genera esattamente 3 titoli clickbait, uno per riga, senza numerazione.`,
 async function generateLuxuryTitles(
   propertyContext: string,
   propertyType: string,
-  location: string
+  location: string,
+  tipoTransazione: string
 ): Promise<string[]> {
+  const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
+  
   return withRetryAndTimeout(async () => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -166,9 +207,13 @@ async function generateLuxuryTitles(
           role: 'system',
           content: `Sei un copywriter per immobili di lusso e clienti alto-spendenti.
 
+TIPO DI ANNUNCIO: ${transazione.label}
+FOCUS: ${transazione.focus}
+
 Regole per titoli luxury:
 - Evoca esclusività e prestigio
 - Usa parole chiave luxury: "Esclusivo", "Prestigioso", "Di pregio", "Raro", "Unico"
+- Adatta il messaggio al tipo di transazione (${transazione.label})
 - Suggerisci uno stile di vita raffinato
 - Evita riferimenti al prezzo (il lusso non si discute)
 - Target: clienti facoltosi, investitori, VIP
@@ -198,8 +243,12 @@ Genera esattamente 3 titoli luxury, uno per riga, senza numerazione.`,
 async function generateSEOTitles(
   propertyContext: string,
   propertyType: string,
-  location: string
+  location: string,
+  tipoTransazione: string
 ): Promise<string[]> {
+  const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
+  const keywordAction = tipoTransazione === 'affitto' ? 'in affitto' : tipoTransazione === 'affitto_breve' ? 'affitto breve' : 'in vendita';
+  
   return withRetryAndTimeout(async () => {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -208,10 +257,13 @@ async function generateSEOTitles(
           role: 'system',
           content: `Sei un esperto SEO per portali immobiliari italiani (Immobiliare.it, Idealista, Casa.it).
 
+TIPO DI ANNUNCIO: ${transazione.label}
+FOCUS SEO: ${transazione.focus}
+
 Regole per titoli SEO-optimized:
-- Includi keyword primarie: "${propertyType} in vendita ${location}"
+- Includi keyword primarie: "${propertyType} ${keywordAction} ${location}"
 - Struttura: [Tipo] + [Caratteristica principale] + [Località]
-- Usa long-tail keywords naturali
+- Usa long-tail keywords per ${transazione.label}
 - Ottimizza per ricerche locali
 - Massimo 60 caratteri (ottimale per Google)
 - Evita keyword stuffing
@@ -377,11 +429,12 @@ export async function POST(request: NextRequest) {
 
     console.log('[TITLES] Generating new AI titles');
     
+    const tipoTrans = data.tipoTransazione || 'vendita';
     const [titoli, clickbait, luxury, seo] = await Promise.all([
-      generateMainTitles(propertyContext, tonePrompt, propertyTypeLabel, data.localita),
-      generateClickbaitTitles(propertyContext, propertyTypeLabel, data.localita),
-      generateLuxuryTitles(propertyContext, propertyTypeLabel, data.localita),
-      generateSEOTitles(propertyContext, propertyTypeLabel, data.localita),
+      generateMainTitles(propertyContext, tonePrompt, propertyTypeLabel, data.localita, tipoTrans),
+      generateClickbaitTitles(propertyContext, propertyTypeLabel, data.localita, tipoTrans),
+      generateLuxuryTitles(propertyContext, propertyTypeLabel, data.localita, tipoTrans),
+      generateSEOTitles(propertyContext, propertyTypeLabel, data.localita, tipoTrans),
     ]);
 
     const allTitles = [...titoli, ...clickbait, ...luxury, ...seo];

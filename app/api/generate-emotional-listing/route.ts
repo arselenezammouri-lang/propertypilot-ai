@@ -7,16 +7,35 @@ import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 
 const requestSchema = z.object({
+  tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   propertyType: z.string().min(3, 'Inserisci il tipo di immobile').max(100),
   location: z.string().min(2, 'Inserisci la località').max(150),
   features: z.string().min(10, 'Descrivi le caratteristiche').max(800),
   strengths: z.string().min(10, 'Descrivi i punti di forza').max(500),
   price: z.string().min(1, 'Inserisci il prezzo').max(50),
-  targetBuyer: z.enum(['famiglie', 'giovani', 'investitori', 'luxury']),
+  targetBuyer: z.enum(['famiglie', 'giovani', 'investitori', 'luxury', 'turisti']),
   tone: z.enum(['emozionale', 'luxury', 'caldo']),
 });
 
 type RequestData = z.infer<typeof requestSchema>;
+
+const TRANSAZIONE_EMOTIONAL: Record<string, { label: string; emotion: string; narrative: string }> = {
+  vendita: {
+    label: 'in Vendita',
+    emotion: 'senso di possesso, radici, investimento emotivo, il sogno di una vita, patrimonio da tramandare',
+    narrative: 'Racconta la storia di chi sta per scrivere un nuovo capitolo della propria vita, mettendo radici in un luogo che diventerà il cuore della famiglia.',
+  },
+  affitto: {
+    label: 'in Affitto',
+    emotion: 'libertà, flessibilità, nuova avventura, casa pronta ad accoglierti, zero pensieri',
+    narrative: 'Racconta la comodità di vivere senza vincoli, in uno spazio che ti aspetta già perfetto, pronto per le tue storie quotidiane.',
+  },
+  affitto_breve: {
+    label: 'in Affitto Breve / Turistico',
+    emotion: 'esperienza indimenticabile, vacanza da sogno, scoperta, relax totale, momenti magici',
+    narrative: 'Trasporta il lettore in una vacanza perfetta: sveglie con vista, colazioni al sole, serate romantiche, avventure da ricordare.',
+  },
+};
 
 interface EmotionalListing {
   titolo: string;
@@ -40,6 +59,7 @@ const TARGET_CONTEXT: Record<string, string> = {
   giovani: 'giovani professionisti e coppie, focus su lifestyle moderno, aperitivi sul terrazzo, connessione, design contemporaneo',
   investitori: 'investitori immobiliari, focus su potenziale, rendimento, qualità costruttiva, valore nel tempo',
   luxury: 'clientela HNWI, focus su esclusività assoluta, prestigio, materiali pregiati, privacy, lifestyle élite',
+  turisti: 'turisti e viaggiatori, focus su esperienza vacanza, attrazioni vicine, comfort, check-in facile, recensioni top',
 };
 
 const TONE_CONTEXT: Record<string, string> = {
@@ -49,7 +69,13 @@ const TONE_CONTEXT: Record<string, string> = {
 };
 
 async function generateStorytellingVersion(openai: OpenAI, data: RequestData): Promise<EmotionalListing> {
+  const transazione = TRANSAZIONE_EMOTIONAL[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter di lusso specializzato in real estate storytelling. Crea una descrizione EMOTIONAL STORYTELLING per:
+
+TIPO ANNUNCIO: ${transazione.label}
+EMOZIONI DA EVOCARE: ${transazione.emotion}
+STILE NARRATIVO: ${transazione.narrative}
 
 IMMOBILE: ${data.propertyType}
 LOCALITÀ: ${data.location}
@@ -93,7 +119,13 @@ GENERA in JSON:
 }
 
 async function generateLuxuryVersion(openai: OpenAI, data: RequestData): Promise<EmotionalListing> {
+  const transazione = TRANSAZIONE_EMOTIONAL[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter di ultra-lusso per immobili high-end. Crea una descrizione LUXURY EMOTIONAL per:
+
+TIPO ANNUNCIO: ${transazione.label}
+EMOZIONI DA EVOCARE: ${transazione.emotion}
+STILE NARRATIVO: ${transazione.narrative}
 
 IMMOBILE: ${data.propertyType}
 LOCALITÀ: ${data.location}
@@ -137,7 +169,13 @@ GENERA in JSON:
 }
 
 async function generateFamilyWarmVersion(openai: OpenAI, data: RequestData): Promise<EmotionalListing> {
+  const transazione = TRANSAZIONE_EMOTIONAL[data.tipoTransazione || 'vendita'];
+  
   const prompt = `Sei un copywriter specializzato in comunicazione per famiglie. Crea una descrizione FAMILY WARM per:
+
+TIPO ANNUNCIO: ${transazione.label}
+EMOZIONI DA EVOCARE: ${transazione.emotion}
+STILE NARRATIVO: ${transazione.narrative}
 
 IMMOBILE: ${data.propertyType}
 LOCALITÀ: ${data.location}
