@@ -32,10 +32,37 @@ interface Message {
 interface AriaCoachProps {
   userName?: string;
   userPlan?: "free" | "starter" | "pro" | "agency";
-  userLocation?: string; // Location dell'utente per personalizzazione regionale
+  userLocation?: string;
+}
+
+function getEffectivePlan(realPlan: string): "free" | "starter" | "pro" | "agency" {
+  if (typeof window === 'undefined') return realPlan as any;
+  const previewTier = localStorage.getItem('preview_tier');
+  if (previewTier && previewTier !== 'real') {
+    return previewTier as "free" | "starter" | "pro" | "agency";
+  }
+  return realPlan as "free" | "starter" | "pro" | "agency";
 }
 
 export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoachProps) {
+  const [effectivePlan, setEffectivePlan] = useState<"free" | "starter" | "pro" | "agency">(userPlan);
+  
+  useEffect(() => {
+    setEffectivePlan(getEffectivePlan(userPlan));
+    
+    const handleTierChange = (e: CustomEvent) => {
+      const newTier = e.detail;
+      if (newTier === 'real') {
+        setEffectivePlan(userPlan);
+      } else {
+        setEffectivePlan(newTier as "free" | "starter" | "pro" | "agency");
+      }
+      setMessages([]);
+    };
+    
+    window.addEventListener('tier-preview-change', handleTierChange as EventListener);
+    return () => window.removeEventListener('tier-preview-change', handleTierChange as EventListener);
+  }, [userPlan]);
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -55,25 +82,25 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
   
   // Carica utilizzo giornaliero all'avvio
   useEffect(() => {
-    if (userPlan === "free" && typeof window !== "undefined") {
+    if (effectivePlan === "free" && typeof window !== "undefined") {
       const today = new Date().toDateString();
       const stored = localStorage.getItem(`aria_usage_${today}`);
       const usage = stored ? parseInt(stored, 10) : 0;
       setDailyUsageSeconds(usage);
     }
-  }, [userPlan]);
+  }, [effectivePlan]);
   
   // Controlla limite giornaliero per FREE (non causa re-render)
   const checkDailyLimit = useCallback(() => {
-    if (userPlan === "free") {
+    if (effectivePlan === "free") {
       return dailyUsageSeconds >= FREE_DAILY_LIMIT_SECONDS;
     }
     return false;
-  }, [userPlan, dailyUsageSeconds]);
+  }, [effectivePlan, dailyUsageSeconds]);
   
   // Aggiorna utilizzo giornaliero
   const updateDailyUsage = useCallback((seconds: number) => {
-    if (userPlan === "free" && typeof window !== "undefined") {
+    if (effectivePlan === "free" && typeof window !== "undefined") {
       const today = new Date().toDateString();
       const stored = localStorage.getItem(`aria_usage_${today}`);
       const currentUsage = stored ? parseInt(stored, 10) : 0;
@@ -81,11 +108,11 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       localStorage.setItem(`aria_usage_${today}`, newUsage.toString());
       setDailyUsageSeconds(newUsage);
     }
-  }, [userPlan]);
+  }, [effectivePlan]);
   
   // Inizia tracking sessione quando Aria si apre
   useEffect(() => {
-    if (isOpen && userPlan === "free" && !sessionStartTime) {
+    if (isOpen && effectivePlan === "free" && !sessionStartTime) {
       setSessionStartTime(Date.now());
     }
     if (!isOpen && sessionStartTime) {
@@ -93,7 +120,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       updateDailyUsage(sessionDuration);
       setSessionStartTime(null);
     }
-  }, [isOpen, userPlan, sessionStartTime, updateDailyUsage]);
+  }, [isOpen, effectivePlan, sessionStartTime, updateDailyUsage]);
 
   // Inizializza Speech Recognition
   useEffect(() => {
@@ -182,7 +209,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
         welcomeContent += `Ho appena finito di scansionare ${locationHint}: **ho trovato ${dealsCount} immobili con un Market Gap superiore al 15%**. 💎\n\n`;
         
         // Se ci sono deal d'oro (lead_score > 90) e l'utente non è Agency, suggerisci upgrade
-        if (dealsCount > 0 && userPlan !== 'agency') {
+        if (dealsCount > 0 && effectivePlan !== 'agency') {
           welcomeContent += `🚨 **ATTENZIONE: Questi sono affari d'oro che potrebbero chiudersi in 48 ore!** 💎\n\n`;
           welcomeContent += `Con il piano **Agency a €897/mese**, hai:\n`;
           welcomeContent += `- **Voice Agent AI Illimitato**: Chiamate automatiche 24/7 mentre dormi\n`;
@@ -190,20 +217,22 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           welcomeContent += `- **Manual Override**: Accesso diretto ai dati proprietario per chiamate umane quando preferisci\n`;
           welcomeContent += `- **Omnichannel Domination Suite**: SMS/WhatsApp AI, Google Calendar Sync, Auto-Prospecting 24/7\n\n`;
           welcomeContent += `**ROI**: Una sola vendita extra al mese copre l'investimento. Con ${dealsCount} deal d'oro pronti, è il momento perfetto per scalare. Vuoi che ti mostri come funziona? 🚀\n\n`;
+        } else if (effectivePlan === 'agency') {
+          welcomeContent += `Questi sono affari d'oro che potrebbero chiudersi in 48 ore se agisci subito. Vuoi che ti prepari il pitch per chiamare i proprietari? 📞\n\n`;
         } else {
           welcomeContent += `Questi sono affari d'oro che potrebbero chiudersi in 48 ore se agisci subito. Vuoi che ti prepari il pitch per chiamare i proprietari? 📞\n\n`;
         }
         
         // Messaggio speciale per Premium Network Members (PRO/AGENCY)
-        if (userPlan === 'pro' || userPlan === 'agency') {
-          const memberTitle = userPlan === 'agency' ? 'Agency Intelligence Active' : 'Premium Network Member';
+        if (effectivePlan === 'pro' || effectivePlan === 'agency') {
+          const memberTitle = effectivePlan === 'agency' ? 'Membro Fondatore Agency Intelligence' : 'Premium Network Member';
           welcomeContent += `✨ **Benvenuto nel Network Globale PropertyPilot!** Come ${memberTitle}, hai accesso a tutte le funzionalità avanzate. Il sistema sta già lavorando per te 24/7. 🌍\n\n`;
         }
         
         welcomeContent += `Posso anche guidarti nell'uso di PropertyPilot, suggerirti strategie di vendita, o aiutarti a trovare ciò che cerchi. Dimmi pure!`;
         
         // Aggiungi info limite per piano FREE
-        if (userPlan === "free") {
+        if (effectivePlan === "free") {
           const remainingMinutes = Math.max(0, Math.floor((FREE_DAILY_LIMIT_SECONDS - dailyUsageSeconds) / 60));
           welcomeContent += `\n\n⏰ **Piano Free**: Hai ${remainingMinutes} minuti rimanenti oggi (limite: 1 ora/giorno). [Sblocca Aria Illimitata](/dashboard/billing)`;
         }
@@ -219,7 +248,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       
       generateStrategicMessage();
     }
-  }, [isOpen, userName, userPlan]);
+  }, [isOpen, userName, effectivePlan]);
 
   // Auto-scroll ai nuovi messaggi
   useEffect(() => {
@@ -250,7 +279,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     if (!inputValue.trim() || isLoading) return;
 
     // Controlla limite giornaliero per piano FREE
-    if (userPlan === "free") {
+    if (effectivePlan === "free") {
       const limitReached = checkDailyLimit();
       if (limitReached) {
         toast({
@@ -284,7 +313,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     setIsLoading(true);
 
     try {
-      // Chiama API per generare risposta di Aria
+      // Chiama API per generare risposta di Aria con effectivePlan (rispetta tier preview)
       const response = await fetch("/api/aria/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -292,7 +321,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
             message: userMessage.content,
             context: {
               userName,
-              userPlan,
+              userPlan: effectivePlan, // Usa effectivePlan per rispettare tier preview
               currentPage: pathname,
               recentActivity: messages.slice(-3).map((m) => m.content),
               userLocation,
@@ -322,9 +351,9 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
         }, 2000);
       }
 
-      // Se utente Free/Starter, occasionalmente suggerisci upgrade
-      if ((userPlan === "free" || userPlan === "starter") && Math.random() < 0.3) {
-        const suggestions = getUpgradeSuggestions(userPlan, userLocation);
+      // Se utente Free/Starter (rispettando tier preview), occasionalmente suggerisci upgrade
+      if ((effectivePlan === "free" || effectivePlan === "starter") && Math.random() < 0.3) {
+        const suggestions = getUpgradeSuggestions(effectivePlan, userLocation);
         if (suggestions.length > 0) {
           setTimeout(() => {
             const upgradeSuggestion: Message = {
@@ -358,8 +387,8 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
   // Nessun useEffect qui - checkDailyLimit viene chiamato solo quando necessario
 
   if (!isOpen) {
-    const limitReached = userPlan === "free" ? checkDailyLimit() : false;
-    const remainingMinutes = userPlan === "free" 
+    const limitReached = effectivePlan === "free" ? checkDailyLimit() : false;
+    const remainingMinutes = effectivePlan === "free" 
       ? Math.max(0, Math.floor((FREE_DAILY_LIMIT_SECONDS - dailyUsageSeconds) / 60))
       : null;
     
@@ -369,7 +398,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-cyan-500 to-purple-600 rounded-full blur-lg opacity-60 group-hover:opacity-100 animate-pulse transition-opacity" />
           <Button
             onClick={() => {
-              if (userPlan === "free" && limitReached) {
+              if (effectivePlan === "free" && limitReached) {
                 toast({
                   title: "Limite giornaliero raggiunto",
                   description: "Hai utilizzato 1 ora di Aria oggi. Sblocca un piano per usare Aria illimitata!",
@@ -386,7 +415,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
             <Badge className={`absolute -top-1 -right-1 ${limitReached ? "bg-red-500" : "bg-gradient-to-r from-green-400 to-emerald-500"} text-white border-2 border-black shadow-lg`}>
               {limitReached ? (
                 <span className="text-xs">⏰</span>
-              ) : userPlan === "free" && remainingMinutes !== null ? (
+              ) : effectivePlan === "free" && remainingMinutes !== null ? (
                 <span className="text-xs font-bold">{remainingMinutes}m</span>
               ) : (
                 <Sparkles className="h-3 w-3" />
@@ -415,7 +444,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
               <div>
                 <CardTitle className="text-lg text-white">Aria</CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  {userPlan === "free" ? (
+                  {effectivePlan === "free" ? (
                     <>
                       {dailyUsageSeconds >= FREE_DAILY_LIMIT_SECONDS ? (
                         <span className="text-red-400">Limite raggiunto - Upgrade richiesto</span>
@@ -425,6 +454,8 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                         </span>
                       )}
                     </>
+                  ) : effectivePlan === "agency" ? (
+                    "Membro Fondatore - Accesso Illimitato ✨"
                   ) : (
                     "Your AI Success Partner"
                   )}
