@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false, // Disattiviamo temporaneamente per evitare doppi render durante i test
+  reactStrictMode: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
@@ -9,7 +9,17 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
-  // In Next 14 non serve disabilitare turbo, Webpack è il default.
+  headers: async () => [
+    {
+      source: '/:path((?!_next/static|_next/image|favicon|logo|manifest).*)',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'no-cache, must-revalidate',
+        },
+      ],
+    },
+  ],
 };
 
 export default nextConfig;
