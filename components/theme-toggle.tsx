@@ -6,18 +6,28 @@ import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <Button
       variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="relative overflow-hidden group"
+      size="sm"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="relative overflow-hidden group gap-2 border border-white/[0.08] hover:border-white/20 transition-all"
       data-testid="button-theme-toggle"
       aria-label="Toggle theme"
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all duration-300 dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all duration-300 dark:rotate-0 dark:scale-100" />
+      {isDark ? (
+        <>
+          <Moon className="h-4 w-4 text-purple-400" />
+          <span className="text-xs font-medium hidden sm:inline">Ombra</span>
+        </>
+      ) : (
+        <>
+          <Sun className="h-4 w-4 text-yellow-400" />
+          <span className="text-xs font-medium hidden sm:inline">Luce</span>
+        </>
+      )}
     </Button>
   );
 }

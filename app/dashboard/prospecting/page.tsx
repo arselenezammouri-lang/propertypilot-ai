@@ -906,7 +906,7 @@ export default function ProspectingPage() {
                               key={listing.id} 
                               className={`${
                                 isEliteDeal 
-                                  ? 'bg-gradient-to-r from-purple-500/20 via-cyan-500/20 to-purple-500/20 border-l-4 border-purple-500 shadow-lg shadow-purple-500/20' 
+                                  ? 'bg-gradient-to-r from-purple-500/20 via-cyan-500/10 to-purple-500/20 border-2 border-purple-500/60 animate-neon-pulse shadow-lg shadow-purple-500/30 rounded-lg' 
                                   : isGoldLead 
                                   ? 'bg-amber-50 dark:bg-amber-950/20 border-l-4 border-amber-500' 
                                   : ''

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { RegionSelector } from "@/components/region-selector";
+import { LanguageSelector } from "@/components/language-selector";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
 import dynamic from "next/dynamic";
@@ -151,7 +152,8 @@ export default async function DashboardPage() {
               </div>
             </Link>
             
-            <nav className="flex items-center space-x-2 md:space-x-4">
+            <nav className="flex items-center space-x-1.5 md:space-x-3">
+              <LanguageSelector />
               <RegionSelector />
               <ThemeToggle />
               <Link href="/dashboard/listings" className="hidden md:inline-flex">

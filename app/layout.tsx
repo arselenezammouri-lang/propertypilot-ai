@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import "../styles/design-system.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -7,12 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
-
-const inter = Inter({ 
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
 const APP_NAME = 'PropertyPilot AI';
@@ -173,7 +168,7 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={`${inter.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
         <Providers>
           <ThemeProvider
             defaultTheme="dark"
