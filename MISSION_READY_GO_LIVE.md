@@ -124,4 +124,27 @@
 
 ---
 
+## Link Supporto & Risorse
+
+| Risorsa | Link |
+|---------|------|
+| Dashboard Stripe | https://dashboard.stripe.com |
+| Dashboard Supabase | https://supabase.com/dashboard |
+| Console OpenAI | https://platform.openai.com |
+| Replit Support | https://replit.com/support |
+| Health Check Live | https://propertypilot-ai.replit.app/api/health |
+| Documentazione API | https://propertypilot-ai.replit.app/docs |
+| Compliance & Privacy | https://propertypilot-ai.replit.app/compliance |
+
+---
+
+## Contatti Emergenza
+
+- **Problemi Pagamenti**: Dashboard Stripe > Payments > Logs
+- **Problemi Autenticazione**: Dashboard Supabase > Authentication > Users
+- **Problemi AI**: Console OpenAI > Usage > Logs
+- **Problemi Server**: Replit > Deployments > Logs
+
+---
+
 ## STATO FINALE: PRONTO PER LA PRIMA AD GLOBALE
