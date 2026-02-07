@@ -372,7 +372,7 @@ export function TerritoryCommander({
                               ? 'border-green-500/50 text-green-400'
                               : gap.potential === 'medium'
                               ? 'border-yellow-500/50 text-yellow-400'
-                              : 'border-gray-500/50 text-gray-400'
+                              : 'border-white/10 text-white/40'
                           }`}
                         >
                           {gap.potential === 'high' ? 'Alto' : gap.potential === 'medium' ? 'Medio' : 'Basso'}

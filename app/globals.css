@@ -80,8 +80,8 @@
     --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 15%;                  /* Bordi sottili visibili */
-    --input: 0 0% 15%;
+    --border: 0 0% 100% / 0.1;            /* Vetro scuro: bianco al 10% */
+    --input: 0 0% 100% / 0.1;
     --ring: var(--royal-purple);
     --gold: var(--sunset-gold);
     

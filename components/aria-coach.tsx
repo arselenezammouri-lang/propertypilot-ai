@@ -246,13 +246,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           "la tua zona di mercato";
 
         // Usa traduzioni per il messaggio di benvenuto
-        let welcomeContent = welcomeText
-          .replace("[Nome]", userName || "Capo")
-          .replace("Capo", userName || "Capo");
-        welcomeContent += '\n\n';
-        
-        // Hook strategico principale
-        welcomeContent += `Ho appena finito di scansionare ${locationHintFromTranslations}: **ho trovato ${dealsCount} immobili con un Market Gap superiore al 15%**. 💎\n\n`;
+        let welcomeContent = `L'armata è pronta, ${userName || "Capo"}. Ho scansionato il mondo e i **${dealsCount} deal d'oro di Miami e Milano** ti aspettano. Da quale città iniziamo l'invasione? 🌍💎\n\n`;
         
         // Se ci sono deal d'oro (lead_score > 90) e l'utente non è Agency, suggerisci upgrade
         if (dealsCount > 0 && effectivePlan !== 'agency') {

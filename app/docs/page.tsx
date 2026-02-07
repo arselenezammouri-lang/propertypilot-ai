@@ -285,7 +285,7 @@ export default function DocumentationPage() {
                     <Link
                       key={article.id}
                       href={`/docs/${article.slug}`}
-                      className="block p-3 rounded-lg bg-[#111111] border border-gray-800 hover:border-purple-500/50 transition-colors group"
+                      className="block p-3 rounded-lg bg-white/[0.03] border border-white/10 hover:border-purple-500/50 transition-colors group"
                     >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex-1">

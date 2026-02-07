@@ -192,7 +192,7 @@ Vorremmo anche discutere un'opportunità di mandato esclusivo per accelerare la 
 
           {/* Actions */}
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)} className="border-gray-800">
+            <Button variant="outline" onClick={() => onOpenChange(false)} className="border-white/10">
               Chiudi
             </Button>
             {listing.phone_number && onCall && (

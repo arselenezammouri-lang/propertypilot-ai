@@ -385,9 +385,9 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
           return (
             <Card 
               key={feature.id}
-              className={`relative overflow-hidden border-2 transition-all ${
+              className={`relative overflow-hidden border transition-all ${
                 locked 
-                  ? "border-gray-800 bg-gray-900/50 opacity-60" 
+                  ? "border-white/[0.06] bg-white/[0.02] opacity-60" 
                   : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
               }`}
             >
@@ -431,7 +431,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                   <Link href="/dashboard/billing">
                     <Button 
                       variant="outline" 
-                      className="w-full border-gray-700 text-gray-500 hover:border-gray-600"
+                      className="w-full border-white/[0.08] text-white/30 hover:border-white/20"
                       size="sm"
                       disabled
                     >
@@ -460,18 +460,18 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
             {lockedFeatures.slice(0, 6).map((feature) => (
               <Card 
                 key={feature.id}
-                className="border-2 border-gray-800 bg-gray-900/30 opacity-70"
+                className="border border-white/[0.06] bg-white/[0.02] opacity-70"
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center">
-                      <div className="text-gray-600">{feature.icon}</div>
+                    <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center">
+                      <div className="text-white/30">{feature.icon}</div>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-500">{feature.name}</h4>
-                      <p className="text-xs text-gray-600 mt-1">{feature.description}</p>
+                      <h4 className="text-sm font-medium text-white/40">{feature.name}</h4>
+                      <p className="text-xs text-white/25 mt-1">{feature.description}</p>
                     </div>
-                    <Lock className="h-4 w-4 text-gray-600" />
+                    <Lock className="h-4 w-4 text-white/25" />
                   </div>
                 </CardContent>
               </Card>

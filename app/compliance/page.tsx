@@ -198,7 +198,7 @@ export default function CompliancePage() {
                         </Button>
                       </>
                     ) : (
-                      <Badge variant="outline" className="border-gray-500/50 text-gray-400">
+                      <Badge variant="outline" className="border-white/10 text-white/40">
                         In arrivo
                       </Badge>
                     )}

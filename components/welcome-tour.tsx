@@ -170,7 +170,7 @@ export function WelcomeTour() {
                       ? "bg-green-500/10 border-green-500/30"
                       : idx === currentStep
                       ? "bg-purple-500/10 border-purple-500/30"
-                      : "bg-gray-500/10 border-gray-500/20"
+                      : "bg-white/[0.04] border-white/10"
                   }`}
                 >
                   {idx < currentStep ? (
@@ -196,7 +196,7 @@ export function WelcomeTour() {
         ) : (
           <div className="space-y-6 py-6 text-center">
             <div className="flex justify-center">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/30 to-cyan-500/30 flex items-center justify-center border-4 border-purple-400/50">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500/30 to-cyan-500/30 flex items-center justify-center border border-purple-400/30">
                 <Gift className="h-12 w-12 text-purple-400" />
               </div>
             </div>
