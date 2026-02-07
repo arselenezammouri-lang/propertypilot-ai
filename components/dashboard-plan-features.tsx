@@ -27,7 +27,14 @@ import {
   BarChart3,
   Rocket,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  MousePointerClick,
+  Hash,
+  Heart,
+  User,
+  Building2,
+  Radar,
+  Map
 } from "lucide-react";
 // import { STRIPE_PLANS } from "@/lib/stripe/config"; // Not used currently
 
@@ -103,6 +110,46 @@ const ALL_FEATURES: Feature[] = [
     href: "/dashboard/translate",
     availableIn: ["starter", "pro", "agency"],
   },
+  {
+    id: "social-posts",
+    name: "Post Social AI",
+    description: "Genera post per Instagram, Facebook e TikTok",
+    icon: <Share2 className="h-6 w-6" />,
+    href: "/dashboard/social-posts",
+    availableIn: ["starter", "pro", "agency"],
+  },
+  {
+    id: "titles",
+    name: "Titoli A/B ad Alto CTR",
+    description: "19 titoli ottimizzati: clickbait, luxury, SEO",
+    icon: <MousePointerClick className="h-6 w-6" />,
+    href: "/dashboard/titles",
+    availableIn: ["starter", "pro", "agency"],
+  },
+  {
+    id: "hashtags",
+    name: "Hashtag AI Generator",
+    description: "50+ hashtag ottimizzati per massimizzare il reach social",
+    icon: <Hash className="h-6 w-6" />,
+    href: "/dashboard/hashtags",
+    availableIn: ["starter", "pro", "agency"],
+  },
+  {
+    id: "emotional-listing",
+    name: "Emotional Listing AI",
+    description: "Descrizioni emozionali che toccano il cuore degli acquirenti",
+    icon: <Heart className="h-6 w-6" />,
+    href: "/dashboard/emotional-listing",
+    availableIn: ["starter", "pro", "agency"],
+  },
+  {
+    id: "refine-listing",
+    name: "Perfect Again AI",
+    description: "Raffina e migliora i tuoi annunci esistenti con l'AI",
+    icon: <Sparkles className="h-6 w-6" />,
+    href: "/dashboard/refine-listing",
+    availableIn: ["starter", "pro", "agency"],
+  },
   
   // PRO Features (include STARTER + new)
   {
@@ -111,6 +158,38 @@ const ALL_FEATURES: Feature[] = [
     description: "Audit completo: struttura, SEO, emozioni, red flags e versione ottimizzata",
     icon: <Award className="h-6 w-6" />,
     href: "/dashboard/auditor",
+    availableIn: ["pro", "agency"],
+  },
+  {
+    id: "agent-bio",
+    name: "Agent BIO AI Creator",
+    description: "5 bio professionali: Pro, Emotiva, Luxury, Social, Website SEO",
+    icon: <User className="h-6 w-6" />,
+    href: "/dashboard/agent-bio",
+    availableIn: ["pro", "agency"],
+  },
+  {
+    id: "followup-emails",
+    name: "Follow-Up Email AI",
+    description: "6 email professionali per convertire i tuoi lead immobiliari",
+    icon: <Mail className="h-6 w-6" />,
+    href: "/dashboard/followup-emails",
+    availableIn: ["pro", "agency"],
+  },
+  {
+    id: "video-scripts",
+    name: "Video Scripts AI",
+    description: "Script video professionali con timestamp e indicazioni visive",
+    icon: <Video className="h-6 w-6" />,
+    href: "/dashboard/video-scripts",
+    availableIn: ["pro", "agency"],
+  },
+  {
+    id: "agency-branding",
+    name: "Agency Branding",
+    description: "Personalizza il branding della tua agenzia",
+    icon: <Building2 className="h-6 w-6" />,
+    href: "/dashboard/agency-branding",
     availableIn: ["pro", "agency"],
   },
   {
@@ -177,6 +256,22 @@ const ALL_FEATURES: Feature[] = [
     description: "Generazione illimitata di tour virtuali cinematografici",
     icon: <Video className="h-6 w-6" />,
     href: "/dashboard/prospecting",
+    availableIn: ["agency"],
+  },
+  {
+    id: "prospecting",
+    name: "War Room Prospecting",
+    description: "Dashboard intelligence per deal immobiliari con AI",
+    icon: <Radar className="h-6 w-6" />,
+    href: "/dashboard/prospecting",
+    availableIn: ["agency"],
+  },
+  {
+    id: "map",
+    name: "Mappa Territorio AI",
+    description: "Visualizza immobili e opportunità sulla mappa",
+    icon: <Map className="h-6 w-6" />,
+    href: "/dashboard/map",
     availableIn: ["agency"],
   },
 ];

@@ -444,9 +444,8 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     return (
       <div className="fixed bottom-6 right-6 z-[9999]">
         <div className="relative group">
-          {/* Elite Command Center HUD - floating orb */}
-          <div className="absolute -inset-1 bg-cyan-500/40 rounded-lg blur-md opacity-70 group-hover:opacity-100 transition-opacity rotate-45 scale-75" />
-          <Button
+          {/* Aria AI glow */}
+          <button
             onClick={() => {
               if (effectivePlan === "free" && limitReached) {
                 toast({
@@ -459,16 +458,16 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
               }
               setIsOpen(true);
             }}
-            className="relative h-14 w-14 rounded-lg bg-[#0a0f14] border-2 border-cyan-400/60 text-cyan-400 hover:border-cyan-300 hover:bg-[#0d1419] hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+            className="aria-coach-trigger"
           >
-            <MessageCircle className="h-6 w-6" />
-            <Badge className={`absolute -top-1.5 -right-1.5 h-5 min-w-5 px-1 ${limitReached ? "bg-red-500 border-cyan-900" : "bg-cyan-500/90 text-cyan-950 border-cyan-300"} border font-mono text-[10px]`}>
-              {limitReached ? "⏰" : effectivePlan === "free" && remainingMinutes !== null ? `${remainingMinutes}m` : "●"}
+            <Sparkles className="h-6 w-6" />
+            <Badge className={`absolute -top-1.5 -right-1.5 h-5 min-w-5 px-1 ${limitReached ? "bg-red-500 border-red-400" : "bg-gradient-to-r from-purple-500 to-cyan-500 text-white border-purple-300"} border font-mono text-[10px]`}>
+              {limitReached ? "⏰" : effectivePlan === "free" && remainingMinutes !== null ? `${remainingMinutes}m` : "✦"}
             </Badge>
-          </Button>
-          <div className="absolute -left-28 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-[#0a0f14] text-cyan-400 text-[10px] font-mono px-2 py-1.5 border border-cyan-500/50 whitespace-nowrap shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-              [ ARIA COMMAND ]
+          </button>
+          <div className="absolute -left-20 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-black/90 text-white text-[11px] font-medium px-3 py-1.5 rounded-lg border border-purple-500/30 whitespace-nowrap shadow-[0_0_20px_rgba(147,51,234,0.2)]">
+              Aria AI
             </div>
           </div>
         </div>

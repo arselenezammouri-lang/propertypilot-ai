@@ -917,9 +917,9 @@ export default function ProspectingPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="truncate">{listing.title}</span>
                                     {isEliteDeal && (
-                                      <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
+                                      <span className="diamond-soldi-badge">
                                         💎 SOLDI
-                                      </Badge>
+                                      </span>
                                     )}
                                     {isGoldLead && !isEliteDeal && (
                                       <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">

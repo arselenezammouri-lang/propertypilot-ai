@@ -99,10 +99,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: APP_URL,
   },
-  verification: {
-    // google: 'your-google-verification-code', // Aggiungi dopo Google Search Console setup
-    // yandex: 'your-yandex-verification-code',
-  },
 };
 
 export const viewport = {
