@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { nanoid } from 'nanoid';
 
@@ -19,12 +20,12 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (profileError && profileError.code !== 'PGRST116' && profileError.code !== '42703') {
-      console.error('Error fetching profile:', profileError);
+      logger.error('Error fetching profile', profileError, { endpoint: '/api/referral' });
       return NextResponse.json({ error: 'Errore nel recupero dati' }, { status: 500 });
     }
     
     if (profileError?.code === '42703') {
-      console.warn('Profile table missing referral columns, returning defaults');
+      logger.warn('Profile table missing referral columns, returning defaults', { endpoint: '/api/referral' });
       return NextResponse.json({
         referralCode: null,
         referralLink: null,

@@ -6,6 +6,7 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/r
 import { rateLimiter } from '@/lib/utils/rate-limiter-memory';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
@@ -423,11 +424,11 @@ export async function POST(request: NextRequest) {
     
     const cachedResponse = await aiCache.get(cacheKey, 'titles');
     if (cachedResponse) {
-      console.log('[TITLES] Returning cached response');
+      logger.debug('[TITLES] Returning cached response');
       return NextResponse.json(cachedResponse);
     }
 
-    console.log('[TITLES] Generating new AI titles');
+    logger.debug('[TITLES] Generating new AI titles');
     
     const tipoTrans = data.tipoTransazione || 'vendita';
     const [titoli, clickbait, luxury, seo] = await Promise.all([
@@ -453,7 +454,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error: any) {
-    console.error('[TITLES] Error:', error);
+    logger.error('[TITLES] Error', error as Error, { component: 'generate-titles' });
 
     if (error.status === 429 || error.code === 'rate_limit_exceeded') {
       return NextResponse.json(

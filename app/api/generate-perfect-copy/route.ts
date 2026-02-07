@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { logger } from '@/lib/utils/safe-logger';
 
 const requestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
@@ -403,11 +404,11 @@ export async function POST(request: NextRequest) {
     const cachedResult = await cacheService.get(cacheKey, cachePromptType);
     
     if (cachedResult) {
-      console.log('[Perfect Copy] Cache hit');
+      logger.debug('[Perfect Copy] Cache hit');
       return NextResponse.json(cachedResult);
     }
   } catch (cacheError) {
-    console.warn('[Perfect Copy] Cache read error:', cacheError);
+    logger.warn('[Perfect Copy] Cache read error', { error: cacheError });
   }
 
   const openaiApiKey = process.env.OPENAI_API_KEY;
@@ -448,15 +449,15 @@ export async function POST(request: NextRequest) {
     try {
       const cacheService = getAICacheService();
       await cacheService.set(cacheKey, cachePromptType, result, 24 * 60 * 60 * 1000);
-      console.log('[Perfect Copy] Cached result');
+      logger.debug('[Perfect Copy] Cached result');
     } catch (cacheError) {
-      console.warn('[Perfect Copy] Cache write error:', cacheError);
+      logger.warn('[Perfect Copy] Cache write error', { error: cacheError });
     }
 
     return NextResponse.json(result);
 
   } catch (error: unknown) {
-    console.error('[Perfect Copy] Generation error:', error);
+    logger.error('[Perfect Copy] Generation error', error as Error, { component: 'generate-perfect-copy' });
     
     if (error instanceof Error) {
       if (error.message.includes('timeout') || error.message.includes('Timeout')) {

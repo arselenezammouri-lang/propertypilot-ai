@@ -17,6 +17,8 @@ interface LocaleCurrencySelectorProps {
   currentCurrency?: Currency;
   onLocaleChange?: (locale: Locale) => void;
   onCurrencyChange?: (currency: Currency) => void;
+  /** Limit language options (e.g. ["it","en","es"] for IT/EN/ES only) */
+  localesFilter?: Locale[];
 }
 
 export function LocaleCurrencySelector({
@@ -24,7 +26,9 @@ export function LocaleCurrencySelector({
   currentCurrency = 'EUR',
   onLocaleChange,
   onCurrencyChange,
+  localesFilter,
 }: LocaleCurrencySelectorProps) {
+  const displayLocales = localesFilter && localesFilter.length > 0 ? localesFilter : locales;
   const [locale, setLocale] = useState<Locale>(currentLocale);
   const [currency, setCurrency] = useState<Currency>(currentCurrency);
 
@@ -75,7 +79,7 @@ export function LocaleCurrencySelector({
           </div>
         </SelectTrigger>
         <SelectContent className="bg-[#0a0a0a] border-purple-500/30">
-          {locales.map((loc) => (
+          {displayLocales.map((loc) => (
             <SelectItem
               key={loc}
               value={loc}

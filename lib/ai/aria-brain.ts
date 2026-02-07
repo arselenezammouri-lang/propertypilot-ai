@@ -117,7 +117,8 @@ Rispondi nella lingua preferita dall'utente. Se non specificata, usa italiano.`;
  */
 export function buildAriaPrompt(
   userMessage: string,
-  context: AriaContext
+  context: AriaContext,
+  locale: SupportedLocale = 'it'
 ): string {
   let contextInfo = `\n\n**CONTESTO ATTUALE:**\n`;
   
@@ -147,7 +148,12 @@ export function buildAriaPrompt(
     contextInfo += `Usa questa conoscenza per consigli mirati alla regione dell'utente.\n`;
   }
 
-  return `${ARIA_SYSTEM_PROMPT}${contextInfo}\n\n**MESSAGGIO DELL'UTENTE:**\n${userMessage}\n\n**LA TUA RISPOSTA (breve, motivante, concreta, adattata alla regione se rilevante):**`;
+  // Aggiungi istruzione sulla lingua nel prompt
+  const localeInstruction = locale !== 'it' 
+    ? `\n\n**IMPORTANTE - LINGUA:** L'utente preferisce comunicare in ${locale.toUpperCase()}. Rispondi SEMPRE nella lingua ${locale.toUpperCase()}. Non usare mai italiano se l'utente ha scelto un'altra lingua.`
+    : '';
+  
+  return `${ARIA_SYSTEM_PROMPT}${contextInfo}${localeInstruction}\n\n**MESSAGGIO DELL'UTENTE:**\n${userMessage}\n\n**LA TUA RISPOSTA (breve, motivante, concreta, adattata alla regione se rilevante, nella lingua ${locale.toUpperCase()}):**`;
 }
 
 /**

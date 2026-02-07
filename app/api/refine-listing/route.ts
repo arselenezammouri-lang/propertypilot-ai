@@ -6,6 +6,8 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { getUserLocale, getErrorMessage } from '@/lib/i18n/api-locale';
+import { logger } from '@/lib/utils/safe-logger';
 
 const requestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
@@ -385,7 +387,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Refine listing generation error:', error);
+    logger.error('Refine listing generation error', error, { endpoint: '/api/refine-listing' });
     
     if (error instanceof Error) {
       if (error.message.includes('timeout') || error.message.includes('Timeout')) {
@@ -402,8 +404,11 @@ export async function POST(request: NextRequest) {
       }
     }
     
+    // Ottieni lingua per messaggio errore
+    const errorLocale = await getUserLocale(request, user?.id, supabase);
+    
     return NextResponse.json(
-      { error: 'Errore nel raffinamento dell\'annuncio. Riprova.' },
+      { error: getErrorMessage(errorLocale, 'internalError') },
       { status: 500 }
     );
   }

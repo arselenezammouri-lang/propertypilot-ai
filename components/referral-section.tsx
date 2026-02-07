@@ -19,6 +19,9 @@ export function ReferralSection() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentLocale(getBrowserLocale());
+    }
     fetchReferralData();
   }, []);
 
@@ -59,8 +62,9 @@ export function ReferralSection() {
 
   const shareOnWhatsApp = () => {
     if (!referralData?.referralLink) return;
+    const messageText = referralMessages[currentLocale] || referralMessages['it'];
     const message = encodeURIComponent(
-      `Scopri PropertyPilot AI - la piattaforma che sta rivoluzionando il real estate italiano con l'intelligenza artificiale! Usa il mio link per iscriverti: ${referralData.referralLink}`
+      `${messageText} ${referralData.referralLink}`
     );
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };

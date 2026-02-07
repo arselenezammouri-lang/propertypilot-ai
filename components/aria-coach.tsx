@@ -20,6 +20,9 @@ import {
 import { buildAriaPrompt, getUpgradeSuggestions } from "@/lib/ai/aria-brain";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getBrowserLocale, getSpeechRecognitionLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
+import { Locale } from "@/lib/i18n/config";
+import { ariaTranslations } from "@/lib/i18n/config";
 
 interface Message {
   id: string;
@@ -46,6 +49,35 @@ function getEffectivePlan(realPlan: string): "free" | "starter" | "pro" | "agenc
 
 export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoachProps) {
   const [effectivePlan, setEffectivePlan] = useState<"free" | "starter" | "pro" | "agency">(userPlan);
+  const [currentLocale, setCurrentLocale] = useState<Locale>(() => {
+    if (typeof window !== 'undefined') {
+      return getBrowserLocale();
+    }
+    return 'it';
+  });
+  
+  // Rileva e aggiorna la lingua quando cambia
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    const detectedLocale = getBrowserLocale();
+    setCurrentLocale(detectedLocale);
+    
+    // Ascolta cambiamenti di locale da localStorage
+    const handleLocaleChange = () => {
+      const newLocale = getBrowserLocale();
+      setCurrentLocale(newLocale);
+    };
+    
+    window.addEventListener('storage', handleLocaleChange);
+    // Custom event per cambiamenti di locale nella stessa tab
+    window.addEventListener('locale-change', handleLocaleChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleLocaleChange);
+      window.removeEventListener('locale-change', handleLocaleChange);
+    };
+  }, []);
   
   useEffect(() => {
     setEffectivePlan(getEffectivePlan(userPlan));
@@ -122,14 +154,14 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     }
   }, [isOpen, effectivePlan, sessionStartTime, updateDailyUsage]);
 
-  // Inizializza Speech Recognition
+  // Inizializza Speech Recognition con lingua corretta
   useEffect(() => {
     if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
-      recognitionInstance.lang = "it-IT";
+      recognitionInstance.lang = getSpeechRecognitionLocale(currentLocale);
 
       recognitionInstance.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
@@ -139,9 +171,10 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
 
       recognitionInstance.onerror = () => {
         setIsListening(false);
+        const translations = ariaTranslations[currentLocale];
         toast({
-          title: "Errore",
-          description: "Impossibile accedere al microfono. Usa la tastiera.",
+          title: translations?.error || "Errore",
+          description: translations?.microphoneError || "Impossibile accedere al microfono. Usa la tastiera.",
           variant: "destructive",
         });
       };
@@ -152,7 +185,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
 
       setRecognition(recognitionInstance);
     }
-  }, [toast]);
+  }, [toast, currentLocale]);
 
   // Messaggio di benvenuto strategico e d'impatto
   useEffect(() => {
@@ -196,17 +229,30 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
         }
         return null;
       };
-      
-      // Messaggio strategico d'impatto
+
+      // Messaggio strategico d'impatto - Usa traduzioni i18n
       const generateStrategicMessage = async () => {
         const topDealsCount = await fetchTopDeals();
-        const dealsCount = topDealsCount !== null ? topDealsCount : Math.floor(Math.random() * 5) + 2; // 2-6 se non disponibile
-        const locationHint = userName ? 'la tua zona' : 'la zona monitorata';
-        
-        let welcomeContent = `Ciao${userName ? ` ${userName}` : " Capo"}! Sono **Aria**, il tuo AI Success Partner. 🔥\n\n`;
+        const dealsCount =
+          topDealsCount !== null ? topDealsCount : Math.floor(Math.random() * 5) + 2; // 2-6 se non disponibile
+
+        const translations = ariaTranslations[currentLocale];
+        const welcomeText = translations?.welcome || ariaTranslations["it"].welcome;
+
+        // Alcune lingue potrebbero non avere ancora la chiave `locationHint`.
+        // In quel caso usiamo un fallback sicuro per evitare ReferenceError.
+        const locationHintFromTranslations =
+          (translations as any)?.locationHint ?? (ariaTranslations as any)?.it?.locationHint ??
+          "la tua zona di mercato";
+
+        // Usa traduzioni per il messaggio di benvenuto
+        let welcomeContent = welcomeText
+          .replace("[Nome]", userName || "Capo")
+          .replace("Capo", userName || "Capo");
+        welcomeContent += '\n\n';
         
         // Hook strategico principale
-        welcomeContent += `Ho appena finito di scansionare ${locationHint}: **ho trovato ${dealsCount} immobili con un Market Gap superiore al 15%**. 💎\n\n`;
+        welcomeContent += `Ho appena finito di scansionare ${locationHintFromTranslations}: **ho trovato ${dealsCount} immobili con un Market Gap superiore al 15%**. 💎\n\n`;
         
         // Se ci sono deal d'oro (lead_score > 90) e l'utente non è Agency, suggerisci upgrade
         if (dealsCount > 0 && effectivePlan !== 'agency') {
@@ -313,18 +359,20 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     setIsLoading(true);
 
     try {
-      // Chiama API per generare risposta di Aria con effectivePlan (rispetta tier preview)
+      // Chiama API per generare risposta di Aria con effectivePlan (rispetta tier preview) e lingua
       const response = await fetch("/api/aria/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             message: userMessage.content,
+            locale: localeToSupportedLocale(currentLocale), // Passa la lingua all'API
             context: {
               userName,
               userPlan: effectivePlan, // Usa effectivePlan per rispettare tier preview
               currentPage: pathname,
               recentActivity: messages.slice(-3).map((m) => m.content),
               userLocation,
+              locale: localeToSupportedLocale(currentLocale), // Aggiungi anche al context
             },
           }),
       });
@@ -367,9 +415,10 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
         }
       }
     } catch (error: any) {
+      const translations = ariaTranslations[currentLocale];
       toast({
-        title: "Ricalibrazione",
-        description: "Aria sta ricalibrando le connessioni. Riprova tra qualche istante.",
+        title: translations?.error || "Errore",
+        description: translations?.recalibrating || "Aria sta ricalibrando le connessioni. Riprova tra qualche istante.",
         variant: "default",
       });
     } finally {
@@ -393,9 +442,10 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       : null;
     
     return (
-      <div className="fixed bottom-24 right-6 z-40">
+      <div className="fixed bottom-6 right-6 z-[9999]">
         <div className="relative group">
-          <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-cyan-500 to-purple-600 rounded-full blur-lg opacity-60 group-hover:opacity-100 animate-pulse transition-opacity" />
+          {/* Elite Command Center HUD - floating orb */}
+          <div className="absolute -inset-1 bg-cyan-500/40 rounded-lg blur-md opacity-70 group-hover:opacity-100 transition-opacity rotate-45 scale-75" />
           <Button
             onClick={() => {
               if (effectivePlan === "free" && limitReached) {
@@ -409,22 +459,16 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
               }
               setIsOpen(true);
             }}
-            className="relative h-16 w-16 rounded-full bg-gradient-to-br from-purple-600 via-purple-500 to-cyan-500 hover:from-purple-500 hover:via-cyan-500 hover:to-purple-600 text-white shadow-[0_0_30px_rgba(139,92,246,0.5)] hover:shadow-[0_0_50px_rgba(139,92,246,0.7)] hover:scale-110 transition-all duration-300 border-2 border-white/20"
+            className="relative h-14 w-14 rounded-lg bg-[#0a0f14] border-2 border-cyan-400/60 text-cyan-400 hover:border-cyan-300 hover:bg-[#0d1419] hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] transition-all duration-300 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
           >
-            <MessageCircle className="h-7 w-7 drop-shadow-lg" />
-            <Badge className={`absolute -top-1 -right-1 ${limitReached ? "bg-red-500" : "bg-gradient-to-r from-green-400 to-emerald-500"} text-white border-2 border-black shadow-lg`}>
-              {limitReached ? (
-                <span className="text-xs">⏰</span>
-              ) : effectivePlan === "free" && remainingMinutes !== null ? (
-                <span className="text-xs font-bold">{remainingMinutes}m</span>
-              ) : (
-                <Sparkles className="h-3 w-3" />
-              )}
+            <MessageCircle className="h-6 w-6" />
+            <Badge className={`absolute -top-1.5 -right-1.5 h-5 min-w-5 px-1 ${limitReached ? "bg-red-500 border-cyan-900" : "bg-cyan-500/90 text-cyan-950 border-cyan-300"} border font-mono text-[10px]`}>
+              {limitReached ? "⏰" : effectivePlan === "free" && remainingMinutes !== null ? `${remainingMinutes}m` : "●"}
             </Badge>
           </Button>
-          <div className="absolute -left-24 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <div className="bg-black/90 text-white text-xs px-3 py-1.5 rounded-lg border border-purple-500/30 whitespace-nowrap shadow-xl">
-              Chiedi ad Aria 💬
+          <div className="absolute -left-28 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="bg-[#0a0f14] text-cyan-400 text-[10px] font-mono px-2 py-1.5 border border-cyan-500/50 whitespace-nowrap shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+              [ ARIA COMMAND ]
             </div>
           </div>
         </div>
@@ -433,17 +477,19 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)]">
-      <Card className="border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] via-purple-900/20 to-cyan-900/20 backdrop-blur-xl shadow-2xl">
-        <CardHeader className="pb-3">
+    <div className="fixed bottom-6 right-6 z-[9999] w-[400px] max-w-[calc(100vw-2rem)]">
+      <Card className="border-2 border-cyan-500/40 bg-[#0a0f14]/95 backdrop-blur-xl shadow-[0_0_40px_rgba(34,211,238,0.15),inset_0_1px_0_rgba(34,211,238,0.1)] overflow-hidden">
+        {/* HUD scan-line overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(34,211,238,0.1)_2px,rgba(34,211,238,0.1)_4px)]" />
+        <CardHeader className="pb-3 border-b border-cyan-500/20 bg-[#050a0f]/80">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/30 to-cyan-500/30 flex items-center justify-center border-2 border-purple-400/50">
-                <Sparkles className="h-5 w-5 text-purple-400" />
+              <div className="w-10 h-10 rounded flex items-center justify-center border border-cyan-400/50 bg-cyan-500/10">
+                <Sparkles className="h-5 w-5 text-cyan-400" />
               </div>
               <div>
-                <CardTitle className="text-lg text-white">Aria</CardTitle>
-                <p className="text-xs text-muted-foreground">
+                <CardTitle className="text-base font-mono text-cyan-400 tracking-wider">[ ARIA HUD ]</CardTitle>
+                <p className="text-[10px] font-mono text-cyan-500/80">
                   {effectivePlan === "free" ? (
                     <>
                       {dailyUsageSeconds >= FREE_DAILY_LIMIT_SECONDS ? (
@@ -455,29 +501,30 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                       )}
                     </>
                   ) : effectivePlan === "agency" ? (
-                    "Membro Fondatore - Accesso Illimitato ✨"
+                    "COMMAND ONLINE • ILLIMITATO"
                   ) : (
-                    "Your AI Success Partner"
+                    "COMMAND CENTER • GUIDA VERSO I SOLDI"
                   )}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] font-mono text-cyan-500/60 mr-1 hidden sm:inline">SYS</span>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="h-8 w-8 text-gray-400 hover:text-white"
+                className="h-7 w-7 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
               >
-                {isMinimized ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                {isMinimized ? <Maximize2 className="h-3.5 w-3.5" /> : <Minimize2 className="h-3.5 w-3.5" />}
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(false)}
-                className="h-8 w-8 text-gray-400 hover:text-white"
+                className="h-7 w-7 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
@@ -486,17 +533,17 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
         {!isMinimized && (
           <CardContent className="p-0">
             {/* Messages */}
-            <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-[#111111]/50">
+            <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-[#050a0f]/60 border-t border-cyan-500/10">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
+                    className={`max-w-[80%] rounded p-3 font-mono text-sm ${
                       message.role === "user"
-                        ? "bg-gradient-to-r from-purple-500 to-purple-600 text-white"
-                        : "bg-[#1a1a1a] border border-purple-500/30 text-gray-200"
+                        ? "bg-cyan-500/20 border border-cyan-400/40 text-cyan-100"
+                        : "bg-[#0a0f14] border border-cyan-500/20 text-cyan-100/90"
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -505,13 +552,13 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                         href={message.docLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-2 inline-flex items-center gap-1 text-xs text-purple-400 hover:text-purple-300 underline"
+                        className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 underline"
                       >
                         📖 Apri guida dettagliata
                       </a>
                     )}
                     <p className="text-xs opacity-60 mt-1">
-                      {message.timestamp.toLocaleTimeString("it-IT", {
+                      {message.timestamp.toLocaleTimeString(getSpeechRecognitionLocale(currentLocale).replace('-', '_'), {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -521,8 +568,8 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-[#1a1a1a] border border-purple-500/30 rounded-lg p-3">
-                    <Loader2 className="h-4 w-4 animate-spin text-purple-400" />
+                  <div className="bg-[#0a0f14] border border-cyan-500/30 rounded p-3">
+                    <Loader2 className="h-4 w-4 animate-spin text-cyan-400" />
                   </div>
                 </div>
               )}
@@ -530,13 +577,15 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-purple-500/20 bg-[#0a0a0a]">
+            <div className="p-4 border-t border-cyan-500/20 bg-[#050a0f]">
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={isListening ? stopListening : startListening}
-                  className={`h-9 w-9 ${isListening ? "bg-red-500/20 text-red-400" : "text-gray-400 hover:text-white"}`}
+                  className={`h-9 w-9 ${isListening ? "bg-red-500/20 text-red-400 border-red-500/40" : "text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"}`}
+                  aria-label={isListening ? "Stop listening" : "Start voice input"}
+                  aria-pressed={isListening}
                 >
                   {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
@@ -546,13 +595,16 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Scrivi o parla con Aria..."
-                  className="flex-1 bg-[#111111] border-purple-500/30 text-white placeholder:text-gray-500"
+                  className="flex-1 bg-[#0a0f14] border-cyan-500/30 text-cyan-100 placeholder:text-cyan-600/60"
                   disabled={isLoading}
+                  aria-label="Chat input with Aria AI assistant"
+                  aria-describedby="aria-input-hint"
                 />
                 <Button
                   onClick={handleSend}
                   disabled={!inputValue.trim() || isLoading}
-                  className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
+                  className="bg-cyan-500/30 border border-cyan-400/50 text-cyan-300 hover:bg-cyan-500/50 hover:border-cyan-400"
+                  aria-label="Send message to Aria"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

@@ -4,6 +4,7 @@ import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import type { Lead, LeadEnrichmentResult } from '@/lib/types/database.types';
+import { logger } from '@/lib/utils/safe-logger';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
     const cachedResult = await cacheService.get(cacheKey, 'lead_enrich');
 
     if (cachedResult) {
-      console.log(`[LEAD ENRICH] Cache HIT for lead ${lead_id}`);
+      logger.debug('[LEAD ENRICH] Cache HIT', { leadId: lead_id });
       return NextResponse.json({
         success: true,
         data: cachedResult,
@@ -184,13 +185,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.log(`[LEAD ENRICH] Starting AI enrichment for lead ${lead_id}...`);
+    logger.debug('[LEAD ENRICH] Starting AI enrichment', { leadId: lead_id });
     const enrichmentResult = await enrichLeadWithAI(lead);
 
     await cacheService.set(cacheKey, 'lead_enrich', enrichmentResult, 24 * 60 * 60);
 
     const duration = Date.now() - startTime;
-    console.log(`[LEAD ENRICH] Enrichment completed in ${duration}ms`);
+    logger.debug('[LEAD ENRICH] Enrichment completed', { duration, leadId: lead_id });
 
     return NextResponse.json({
       success: true,
@@ -200,7 +201,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[LEAD ENRICH] Error:', error);
+    logger.error('[LEAD ENRICH] Error', error as Error, { component: 'lead-enrich' });
     
     if (error.status === 429 || error.message?.includes('quota')) {
       return NextResponse.json(
@@ -272,7 +273,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('[LEAD ENRICH] GET Error:', error);
+    logger.error('[LEAD ENRICH] GET Error', error as Error, { component: 'lead-enrich' });
     return NextResponse.json(
       { error: 'Errore nel recupero dei dati di arricchimento' },
       { status: 500 }

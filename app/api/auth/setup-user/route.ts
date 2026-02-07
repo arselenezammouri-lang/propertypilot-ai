@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
 import { getResendClient } from '@/lib/resend-client';
 import { emailTemplates } from '@/lib/email-templates';
+import { logger } from '@/lib/utils/safe-logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
     
     if (userError || !user) {
-      console.error('[SETUP USER] Auth error:', userError);
+      logger.error('Auth error in setup-user', userError, { endpoint: '/api/auth/setup-user' });
       return NextResponse.json(
         { 
           error: 'Unauthorized',
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
         });
 
       if (profileError) {
-        console.error('[SETUP USER] Profile creation error:', profileError);
+        logger.error('Profile creation error', profileError, { endpoint: '/api/auth/setup-user' });
       }
     }
 
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
         });
 
       if (subscriptionError) {
-        console.error('[SETUP USER] Subscription creation error:', subscriptionError);
+        logger.error('Subscription creation error', subscriptionError, { endpoint: '/api/auth/setup-user' });
       }
     }
 
@@ -89,9 +90,9 @@ export async function POST(request: NextRequest) {
           subject: emailContent.subject,
           html: emailContent.html,
         });
-        console.log('[SETUP USER] Welcome email sent to:', user.email);
+        logger.debug('Welcome email sent', { endpoint: '/api/auth/setup-user' });
       } catch (emailError) {
-        console.error('[SETUP USER] Welcome email error:', emailError);
+        logger.error('Welcome email error', emailError, { endpoint: '/api/auth/setup-user' });
       }
     }
 
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[SETUP USER API] Error:', error);
+    logger.error('Setup user API error', error, { endpoint: '/api/auth/setup-user' });
     
     return NextResponse.json(
       { 

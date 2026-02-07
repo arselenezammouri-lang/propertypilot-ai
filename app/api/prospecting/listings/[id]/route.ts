@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const updateListingSchema = z.object({
   status: z.enum(['new', 'analyzed', 'called', 'in_negotiation', 'mandate_taken', 'appointment_set', 'rejected', 'converted']).optional(),
@@ -56,7 +57,7 @@ export async function PATCH(
       existingListing = (result as any)?.data;
       fetchError = (result as any)?.error;
     } catch (error: any) {
-      console.error('[UPDATE LISTING] Database timeout or error:', error);
+      logger.error('Database timeout or error', error, { endpoint: '/api/prospecting/listings/[id]' });
       return NextResponse.json(
         { success: false, error: 'Il database è temporaneamente non disponibile. Riprova tra qualche istante.' },
         { status: 503 }
@@ -105,7 +106,7 @@ export async function PATCH(
       .eq('user_id', user.id);
 
     if (updateError) {
-      console.error('[UPDATE LISTING] Error:', updateError);
+      logger.error('Error updating listing', updateError, { endpoint: '/api/prospecting/listings/[id]', listingId });
       return NextResponse.json(
         { success: false, error: 'Errore nell\'aggiornamento' },
         { status: 500 }
@@ -118,7 +119,7 @@ export async function PATCH(
     });
 
   } catch (error: any) {
-    console.error('[UPDATE LISTING] Unexpected error:', error);
+    logger.error('Unexpected error in update listing', error, { endpoint: '/api/prospecting/listings/[id]' });
     return NextResponse.json(
       { success: false, error: 'Errore interno del server' },
       { status: 500 }

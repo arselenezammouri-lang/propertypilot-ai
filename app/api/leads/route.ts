@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating lead:', error);
+      logger.error('Error creating lead', error, { endpoint: '/api/leads' });
       return NextResponse.json(
         { error: 'Errore nella creazione del lead' },
         { status: 500 }
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: lead }, { status: 201 });
   } catch (error) {
-    console.error('Lead create error:', error);
+    logger.error('Lead create error', error, { endpoint: '/api/leads' });
     return NextResponse.json(
       { error: 'Errore nella creazione del lead' },
       { status: 500 }

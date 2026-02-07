@@ -6,6 +6,7 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 const aiCache = getAICacheService();
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
       );
     }
 
-    console.log('[ANALYZE-LINK] Scraping URL:', url);
+    logger.debug('[ANALYZE-LINK] Scraping URL', { url });
     const scrapeResult = await scraper.scrape(url);
 
     if (!scrapeResult.success || !scrapeResult.data) {
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     }
 
     const scrapedData = scrapeResult.data;
-    console.log('[ANALYZE-LINK] Scraped data:', {
+    logger.debug('[ANALYZE-LINK] Scraped data', {
       title: scrapedData.title,
       price: scrapedData.price,
       location: scrapedData.location,
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
 
     const descriptionForCache = scrapedData.description_raw?.trim() || scrapedData.title || '';
     if (!descriptionForCache) {
-      console.error('[ANALYZE-LINK] No content available for analysis');
+      logger.error('[ANALYZE-LINK] No content available for analysis', new Error('No content'), { url });
       return NextResponse.json(
         { success: false, error: 'L\'annuncio non contiene abbastanza contenuto per l\'analisi.' },
         { status: 422 }
@@ -133,11 +134,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     let fromCache = false;
 
     if (cachedAnalysis) {
-      console.log('[ANALYZE-LINK] Using cached analysis');
+      logger.debug('[ANALYZE-LINK] Using cached analysis');
       analysis = cachedAnalysis;
       fromCache = true;
     } else {
-      console.log('[ANALYZE-LINK] Generating AI analysis');
+      logger.debug('[ANALYZE-LINK] Generating AI analysis');
       analysis = await generateListingAnalysis(scrapedData);
       await aiCache.set(cacheKey, 'analyze_listing', analysis);
     }
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     });
 
   } catch (error: any) {
-    console.error('[ANALYZE-LINK] Error:', error);
+    logger.error('[ANALYZE-LINK] Error', error as Error, { component: 'analyze-link' });
     
     if (error.code === 'insufficient_quota') {
       return NextResponse.json(
@@ -263,7 +264,7 @@ Rispondi SOLO con il JSON, senza testo aggiuntivo.`,
         improvements: parsed.improvements || [],
       };
     } catch (e) {
-      console.error('[ANALYZE-LINK] Failed to parse quality analysis:', e);
+      logger.error('[ANALYZE-LINK] Failed to parse quality analysis', e as Error);
       return {
         qualityScore: 50,
         strengths: ['Analisi non disponibile'],
@@ -327,7 +328,7 @@ Rispondi SOLO con il JSON.`,
         titles: Array.isArray(parsed.titles) ? parsed.titles.slice(0, 5) : ['Titolo non disponibile'],
       };
     } catch (e) {
-      console.error('[ANALYZE-LINK] Failed to parse rewritten content:', e);
+      logger.error('[ANALYZE-LINK] Failed to parse rewritten content', e as Error);
       return {
         professional: 'Contenuto non disponibile',
         short: 'Contenuto non disponibile',

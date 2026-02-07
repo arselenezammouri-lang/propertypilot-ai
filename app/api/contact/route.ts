@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome troppo corto").max(100),
@@ -66,12 +67,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = contactSchema.parse(body);
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('[Contact Form] New submission:', {
-        timestamp: new Date().toISOString(),
-        messageLength: validatedData.message.length
-      });
-    }
+    logger.debug('[Contact Form] New submission', {
+      timestamp: new Date().toISOString(),
+      messageLength: validatedData.message.length
+    });
 
     return NextResponse.json({
       success: true,
@@ -90,7 +89,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('[Contact Form] Error:', error);
+    logger.error('[Contact Form] Error', error as Error, { component: 'contact' });
     return NextResponse.json(
       { success: false, error: "Errore interno del server" },
       { status: 500 }

@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { logger } from '@/lib/utils/safe-logger';
 
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant']),
@@ -232,7 +233,7 @@ export async function POST(request: NextRequest) {
     }
 
     const duration = Date.now() - startTime;
-    console.log(`[Chatbot] Response generated in ${duration}ms for user ${user.id}`);
+    logger.debug(`[Chatbot] Response generated in ${duration}ms`, { userId: user.id, duration });
 
     const result: ChatbotResponse = {
       message: assistantMessage,
@@ -243,7 +244,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('Agency chatbot error:', error);
+    logger.error('Agency chatbot error', error as Error, { component: 'agency-chatbot' });
     
     if (error instanceof Error) {
       if (error.message.includes('timeout') || error.message.includes('Timeout')) {

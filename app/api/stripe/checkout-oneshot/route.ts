@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe, getOneTimePackage, STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
+import { logger } from '@/lib/utils/safe-logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
         });
 
       if (upsertError) {
-        console.error('Failed to update subscription with customer ID:', upsertError);
+        logger.error('Failed to update subscription with customer ID', upsertError, { userId: user.id });
       }
     }
 
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log('[CHECKOUT ONE-SHOT] Session created:', {
+    logger.debug('[CHECKOUT ONE-SHOT] Session created', {
       sessionId: session.id,
       userId: user.id,
       packageId: selectedPackage.id,
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Stripe one-shot checkout error:', error);
+    logger.error('Stripe one-shot checkout error', error as Error, { component: 'checkout-oneshot' });
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
       { status: 500 }

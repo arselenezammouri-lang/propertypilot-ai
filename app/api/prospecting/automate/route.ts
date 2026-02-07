@@ -7,6 +7,7 @@ import { ZillowSearchScraper, type ZillowSearchCriteria } from '@/lib/scrapers/z
 import { scorePropertyListing } from '@/lib/ai/property-scoring';
 import { createHash } from 'crypto';
 import type { ScrapedListing } from '@/lib/scrapers/types';
+import { logger } from '@/lib/utils/safe-logger';
 
 /**
  * POST /api/prospecting/automate
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
     const { data: filters, error: filtersError } = await filtersQuery;
 
     if (filtersError) {
-      console.error('[PROSPECTING AUTOMATE] Error fetching filters:', filtersError);
+      logger.error('Error fetching filters', filtersError, { endpoint: '/api/prospecting/automate' });
       return NextResponse.json(
         {
           success: false,
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
           source_platforms?: string[];
         };
 
-        console.log(`[PROSPECTING AUTOMATE] Processing filter ${filter.id}: ${filter.name}`);
+        logger.debug('Processing filter', { filterId: filter.id, filterName: filter.name, endpoint: '/api/prospecting/automate' });
 
         // Supporto per Idealista e Zillow (implementati)
         const platforms = criteria.source_platforms || ['idealista'];
@@ -117,17 +118,17 @@ export async function POST(request: NextRequest) {
               rooms_max: criteria.rooms_max,
             };
 
-            console.log(`[PROSPECTING AUTOMATE] Searching Idealista with criteria:`, searchCriteria);
+            logger.debug('Searching Idealista', { criteria: searchCriteria, endpoint: '/api/prospecting/automate' });
             
             // Cerca listing URLs
             const searchResult = await searchScraper.searchListings(searchCriteria, 3); // Max 3 pagine
             
             if (!searchResult.success || !searchResult.urls || searchResult.urls.length === 0) {
-              console.warn(`[PROSPECTING AUTOMATE] No listings found for filter ${filter.name} on ${platform}`);
+              logger.warn('No listings found', { filterName: filter.name, platform, endpoint: '/api/prospecting/automate' });
               continue;
             }
 
-            console.log(`[PROSPECTING AUTOMATE] Found ${searchResult.urls.length} listing URLs from ${platform}`);
+            logger.debug('Found listing URLs', { count: searchResult.urls.length, platform, endpoint: '/api/prospecting/automate' });
 
             // Per ogni URL trovato, usa lo scraper normale per ottenere i dettagli
             const listingScraper = ScraperFactory.getScraper(searchResult.urls[0]);
@@ -158,9 +159,9 @@ export async function POST(request: NextRequest) {
                       propertyType: scrapeResult.data.propertyType,
                     });
                     leadScore = scoringResult.leadScore;
-                    console.log(`[PROSPECTING AUTOMATE] Scored listing: ${scoringResult.leadScore}/100 - ${scoringResult.reasoning}`);
+                    logger.debug('Scored listing', { leadScore: scoringResult.leadScore, endpoint: '/api/prospecting/automate' });
                   } catch (scoringError: any) {
-                    console.error(`[PROSPECTING AUTOMATE] Error scoring listing:`, scoringError.message);
+                    logger.error('Error scoring listing', scoringError, { endpoint: '/api/prospecting/automate' });
                     // Continue without score
                   }
 
@@ -184,12 +185,12 @@ export async function POST(request: NextRequest) {
                   await new Promise(resolve => setTimeout(resolve, 1000)); // 1 secondo
                 }
               } catch (urlError: any) {
-                console.error(`[PROSPECTING AUTOMATE] Error processing URL ${listingUrl}:`, urlError.message);
+                logger.error('Error processing URL', urlError, { endpoint: '/api/prospecting/automate', listingUrl });
                 // Continue with next URL
               }
             }
 
-            console.log(`[PROSPECTING AUTOMATE] Processed ${processedCount} listings from ${platform} for filter ${filter.name}`);
+            logger.debug('Processed listings', { count: processedCount, platform, filterName: filter.name, endpoint: '/api/prospecting/automate' });
 
           } else if (platform === 'zillow') {
             // Usa ZillowSearchScraper per mercato USA
@@ -209,17 +210,17 @@ export async function POST(request: NextRequest) {
               bedrooms_min: criteria.rooms_min,
             };
 
-            console.log(`[PROSPECTING AUTOMATE] Searching Zillow with criteria:`, zillowCriteria);
+            logger.debug('Searching Zillow', { criteria: zillowCriteria, endpoint: '/api/prospecting/automate' });
             
             // Cerca listing URLs
             const searchResult = await searchScraper.searchListings(zillowCriteria, 3); // Max 3 pagine
             
             if (!searchResult.success || !searchResult.urls || searchResult.urls.length === 0) {
-              console.warn(`[PROSPECTING AUTOMATE] No listings found for filter ${filter.name} on ${platform}`);
+              logger.warn('No listings found', { filterName: filter.name, platform, endpoint: '/api/prospecting/automate' });
               continue;
             }
 
-            console.log(`[PROSPECTING AUTOMATE] Found ${searchResult.urls.length} listing URLs from ${platform}`);
+            logger.debug('Found listing URLs', { count: searchResult.urls.length, platform, endpoint: '/api/prospecting/automate' });
 
             // Per ogni URL trovato, usa lo scraper normale per ottenere i dettagli
             const listingScraper = ScraperFactory.getScraper(searchResult.urls[0]);
@@ -250,9 +251,9 @@ export async function POST(request: NextRequest) {
                       propertyType: scrapeResult.data.propertyType,
                     });
                     leadScore = scoringResult.leadScore;
-                    console.log(`[PROSPECTING AUTOMATE] Scored listing: ${scoringResult.leadScore}/100 - ${scoringResult.reasoning}`);
+                    logger.debug('Scored listing', { leadScore: scoringResult.leadScore, endpoint: '/api/prospecting/automate' });
                   } catch (scoringError: any) {
-                    console.error(`[PROSPECTING AUTOMATE] Error scoring listing:`, scoringError.message);
+                    logger.error('Error scoring listing', scoringError, { endpoint: '/api/prospecting/automate' });
                     // Continue without score
                   }
 
@@ -276,12 +277,12 @@ export async function POST(request: NextRequest) {
                   await new Promise(resolve => setTimeout(resolve, 2000)); // 2 secondi per Zillow
                 }
               } catch (urlError: any) {
-                console.error(`[PROSPECTING AUTOMATE] Error processing URL ${listingUrl}:`, urlError.message);
+                logger.error('Error processing URL', urlError, { endpoint: '/api/prospecting/automate', listingUrl });
                 // Continue with next URL
               }
             }
 
-            console.log(`[PROSPECTING AUTOMATE] Processed ${processedCount} listings from ${platform} for filter ${filter.name}`);
+            logger.debug('Processed listings', { count: processedCount, platform, filterName: filter.name, endpoint: '/api/prospecting/automate' });
 
           } else {
             // Altre piattaforme non ancora implementate
@@ -316,7 +317,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING AUTOMATE] Unexpected error:', error);
+    logger.error('Unexpected error in automate', error, { endpoint: '/api/prospecting/automate' });
     return NextResponse.json(
       {
         success: false,
@@ -383,7 +384,7 @@ async function saveListing(
     return { added: true, listingId: newListing.id };
 
   } catch (error: any) {
-    console.error('[SAVE LISTING] Error:', error);
+    logger.error('Error saving listing', error, { endpoint: '/api/prospecting/automate' });
     throw error;
   }
 }

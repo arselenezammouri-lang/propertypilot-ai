@@ -7,6 +7,7 @@ import { ModernTemplate } from '@/lib/pdf/templates/modern-template';
 import { LuxuryTemplate } from '@/lib/pdf/templates/luxury-template';
 import sharp from 'sharp';
 import { Pool } from '@neondatabase/serverless';
+import { logger } from '@/lib/utils/safe-logger';
 
 const ALLOWED_IMAGE_DOMAINS = [
   'immobiliare.it',
@@ -40,14 +41,14 @@ function isAllowedImageUrl(urlString: string): boolean {
     const url = new URL(urlString);
     
     if (!['http:', 'https:'].includes(url.protocol)) {
-      console.warn('[PDF] Invalid protocol:', url.protocol);
+      logger.warn('[PDF] Invalid protocol', { protocol: url.protocol });
       return false;
     }
     
     const hostname = url.hostname.toLowerCase();
     for (const pattern of BLOCKED_IP_PATTERNS) {
       if (pattern.test(hostname)) {
-        console.warn('[PDF] Blocked IP pattern:', hostname);
+        logger.warn('[PDF] Blocked IP pattern', { hostname });
         return false;
       }
     }
@@ -57,12 +58,12 @@ function isAllowedImageUrl(urlString: string): boolean {
     );
     
     if (!isAllowed) {
-      console.warn('[PDF] Domain not in allowlist:', hostname);
+      logger.warn('[PDF] Domain not in allowlist', { hostname });
     }
     
     return isAllowed;
   } catch {
-    console.warn('[PDF] Invalid URL:', urlString);
+    logger.warn('[PDF] Invalid URL', { url: urlString });
     return false;
   }
 }
@@ -70,11 +71,11 @@ function isAllowedImageUrl(urlString: string): boolean {
 async function optimizeImage(imageUrl: string): Promise<string | null> {
   try {
     if (!isAllowedImageUrl(imageUrl)) {
-      console.error('[PDF] URL not allowed for security reasons:', imageUrl.substring(0, 50));
+      logger.error('[PDF] URL not allowed for security reasons', new Error('URL blocked'), { url: imageUrl.substring(0, 50) });
       return null;
     }
     
-    console.log('[PDF] Optimizing image:', imageUrl.substring(0, 50) + '...');
+    logger.debug('[PDF] Optimizing image', { url: imageUrl.substring(0, 50) });
     
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
@@ -90,26 +91,26 @@ async function optimizeImage(imageUrl: string): Promise<string | null> {
     clearTimeout(timeout);
     
     if (!response.ok) {
-      console.error('[PDF] Failed to fetch image:', response.status);
+      logger.error('[PDF] Failed to fetch image', new Error(`HTTP ${response.status}`), { status: response.status });
       return null;
     }
     
     const contentType = response.headers.get('content-type');
     if (!contentType?.startsWith('image/')) {
-      console.error('[PDF] Invalid content type:', contentType);
+      logger.error('[PDF] Invalid content type', new Error('Invalid content type'), { contentType });
       return null;
     }
     
     const contentLength = response.headers.get('content-length');
     if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
-      console.error('[PDF] Image too large:', contentLength);
+      logger.error('[PDF] Image too large', new Error('Image exceeds size limit'), { contentLength });
       return null;
     }
     
     const imageBuffer = await response.arrayBuffer();
     
     if (imageBuffer.byteLength > 10 * 1024 * 1024) {
-      console.error('[PDF] Image buffer too large:', imageBuffer.byteLength);
+      logger.error('[PDF] Image buffer too large', new Error('Buffer exceeds size limit'), { size: imageBuffer.byteLength });
       return null;
     }
     
@@ -119,13 +120,13 @@ async function optimizeImage(imageUrl: string): Promise<string | null> {
       .toBuffer();
     
     const base64 = `data:image/jpeg;base64,${optimizedBuffer.toString('base64')}`;
-    console.log('[PDF] Image optimized successfully');
+    logger.debug('[PDF] Image optimized successfully');
     return base64;
   } catch (error: any) {
     if (error.name === 'AbortError') {
-      console.error('[PDF] Image fetch timeout');
+      logger.error('[PDF] Image fetch timeout', new Error('Timeout'));
     } else {
-      console.error('[PDF] Image optimization error:', error);
+      logger.error('[PDF] Image optimization error', error as Error);
     }
     return null;
   }
@@ -156,7 +157,7 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !user) {
-      console.error('[PDF] Authentication failed');
+      logger.error('[PDF] Authentication failed', authError || new Error('No user'));
       return NextResponse.json(
         { success: false, error: 'Devi effettuare il login per generare PDF.' },
         { status: 401 }
@@ -168,7 +169,7 @@ export async function POST(request: NextRequest) {
     const validationResult = GeneratePdfRequestSchema.safeParse(body);
     
     if (!validationResult.success) {
-      console.error('[PDF] Validation failed:', validationResult.error.errors);
+      logger.warn('[PDF] Validation failed', { errors: validationResult.error.errors });
       return NextResponse.json(
         { 
           success: false, 
@@ -180,23 +181,23 @@ export async function POST(request: NextRequest) {
     }
 
     const data = validationResult.data;
-    console.log('[PDF] Generating PDF with template:', data.template);
+    logger.debug('[PDF] Generating PDF with template', { template: data.template });
 
     let optimizedImages: string[] = [];
     if (data.images && data.images.length > 0) {
-      console.log('[PDF] Processing', data.images.length, 'images...');
+      logger.debug('[PDF] Processing images', { count: data.images.length });
       
       const imagePromises = data.images.slice(0, 6).map(url => optimizeImage(url));
       const results = await Promise.all(imagePromises);
       optimizedImages = results.filter((img): img is string => img !== null);
       
-      console.log('[PDF] Optimized', optimizedImages.length, 'images successfully');
+      logger.debug('[PDF] Optimized images successfully', { count: optimizedImages.length });
     }
 
     let agencyBranding: AgencyBrandingData | null = null;
     
     if (data.brandingMode === 'agency') {
-      console.log('[PDF] Loading agency branding...');
+      logger.debug('[PDF] Loading agency branding');
       try {
         const pool = new Pool({ connectionString: process.env.DATABASE_URL });
         const brandingResult = await pool.query(
@@ -218,18 +219,18 @@ export async function POST(request: NextRequest) {
             contact_email: row.contact_email,
             website_url: row.website_url,
           };
-          console.log('[PDF] Agency branding loaded:', agencyBranding.agency_name);
+          logger.debug('[PDF] Agency branding loaded', { agencyName: agencyBranding.agency_name });
         } else {
-          console.log('[PDF] No agency branding found, using default');
+          logger.debug('[PDF] No agency branding found, using default');
         }
       } catch (error) {
-        console.error('[PDF] Error loading agency branding:', error);
+        logger.error('[PDF] Error loading agency branding', error as Error);
       }
     }
     
     const TemplateComponent = data.template === 'luxury' ? LuxuryTemplate : ModernTemplate;
     
-    console.log('[PDF] Rendering PDF...');
+    logger.debug('[PDF] Rendering PDF');
     const pdfBuffer = await renderToBuffer(
       TemplateComponent({ data, optimizedImages, agencyBranding })
     );
@@ -239,7 +240,7 @@ export async function POST(request: NextRequest) {
     const fileName = `${brandPrefix}_${data.title.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 30)}_${Date.now()}.pdf`;
     
     const duration = Date.now() - startTime;
-    console.log('[PDF] Generated successfully in', duration, 'ms');
+    logger.debug('[PDF] Generated successfully', { duration });
 
     const result: PdfGenerationResult = {
       success: true,
@@ -251,7 +252,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error: any) {
     const duration = Date.now() - startTime;
-    console.error('[PDF] Generation error after', duration, 'ms:', error);
+    logger.error('[PDF] Generation error', error as Error, { duration });
     
     return NextResponse.json(
       { 

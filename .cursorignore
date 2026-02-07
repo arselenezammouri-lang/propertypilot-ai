@@ -1,5 +1,3 @@
-node_modules/
-.next/
-.git/
-attached_assets/
-victory-vendor/
+node_modules
+    .next
+    .git

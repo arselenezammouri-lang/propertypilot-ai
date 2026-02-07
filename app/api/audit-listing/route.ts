@@ -7,6 +7,7 @@ import { auditListing, AuditOptions, AuditResult } from '@/lib/ai/auditListing';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, isOpenAIQuotaError, ScraperBlockedError } from '@/lib/errors/api-errors';
 import { getAICacheService } from '@/lib/cache/ai-cache';
+import { logger } from '@/lib/utils/safe-logger';
 
 const AUDIT_RATE_LIMIT_PER_MINUTE = 10;
 
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
     let sourceUrl: string | null = null;
 
     if (url) {
-      console.log(`[AUDIT API] Processing URL: ${url}`);
+      logger.debug('[AUDIT API] Processing URL', { url });
       
       try {
         const urlObj = new URL(url);
@@ -159,9 +160,9 @@ export async function POST(request: NextRequest) {
         listingText += `\n${data.description_raw || ''}`;
         sourceUrl = url;
 
-        console.log(`[AUDIT API] Successfully extracted ${listingText.length} characters from URL`);
+        logger.debug('[AUDIT API] Successfully extracted content from URL', { length: listingText.length });
       } catch (error: any) {
-        console.error('[AUDIT API] Scraping error:', error);
+        logger.error('[AUDIT API] Scraping error', error as Error, { url });
         
         const errorString = error.message?.toLowerCase() || '';
         if (errorString.includes('403') || errorString.includes('forbidden')) {
@@ -188,7 +189,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       listingText = text!.trim();
-      console.log(`[AUDIT API] Processing direct text input: ${listingText.length} characters`);
+      logger.debug('[AUDIT API] Processing direct text input', { length: listingText.length });
     }
 
     if (listingText.length < 50) {
@@ -205,7 +206,7 @@ export async function POST(request: NextRequest) {
     try {
       const cachedResult = await cacheService.get(cacheKey, cachePromptType);
       if (cachedResult) {
-        console.log('[AUDIT API] Cache HIT - returning cached result');
+        logger.debug('[AUDIT API] Cache HIT - returning cached result');
         
         const duration = Date.now() - startTime;
         return NextResponse.json({
@@ -224,10 +225,10 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (cacheError) {
-      console.warn('[AUDIT API] Cache read error:', cacheError);
+      logger.warn('[AUDIT API] Cache read error', { error: cacheError });
     }
 
-    console.log(`[AUDIT API] Starting AI audit analysis (${mercato}, ${obiettivo})...`);
+    logger.debug('[AUDIT API] Starting AI audit analysis', { mercato, obiettivo });
     
     const auditOptions: AuditOptions = {
       mercato,
@@ -238,13 +239,13 @@ export async function POST(request: NextRequest) {
     const auditResult = await auditListing(listingText, auditOptions);
     
     const duration = Date.now() - startTime;
-    console.log(`[AUDIT API] Audit completed successfully in ${duration}ms`);
+    logger.debug('[AUDIT API] Audit completed successfully', { duration });
 
     try {
       await cacheService.set(cacheKey, cachePromptType, auditResult, 24 * 60 * 60);
-      console.log('[AUDIT API] Result cached for 24h');
+      logger.debug('[AUDIT API] Result cached for 24h');
     } catch (cacheError) {
-      console.warn('[AUDIT API] Cache write error:', cacheError);
+      logger.warn('[AUDIT API] Cache write error', { error: cacheError });
     }
 
     await logGeneration(user.id, clientIp);
@@ -265,7 +266,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[AUDIT API] Unexpected error:', error);
+    logger.error('[AUDIT API] Unexpected error', error as Error, { component: 'audit-listing' });
     
     if (isOpenAIQuotaError(error)) {
       const formattedError = formatErrorResponse(error);

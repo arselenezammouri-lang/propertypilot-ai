@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/server';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { getUserLocale, getErrorMessage, SupportedLocale } from '@/lib/i18n/api-locale';
+import { logger } from '@/lib/utils/safe-logger';
 
 const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
@@ -262,9 +264,12 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
+    // Ottieni lingua utente
+    const userLocale = await getUserLocale(request, user?.id, supabase);
+
     if (userError || !user) {
       return NextResponse.json(
-        { error: 'Non autorizzato. Effettua il login per continuare.' },
+        { error: getErrorMessage(userLocale, 'unauthorized') },
         { status: 401 }
       );
     }
@@ -274,8 +279,8 @@ export async function POST(request: NextRequest) {
     if (!subscriptionCheck.allowed) {
       return NextResponse.json(
         { 
-          error: subscriptionCheck.error || 'Abbonamento richiesto',
-          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
+          error: subscriptionCheck.error || getErrorMessage(userLocale, 'subscriptionRequired'),
+          message: subscriptionCheck.error || getErrorMessage(userLocale, 'subscriptionRequired')
         },
         { status: 403 }
       );
@@ -290,7 +295,7 @@ export async function POST(request: NextRequest) {
     if (!checkRateLimit(rateLimitKey)) {
       return NextResponse.json(
         { 
-          error: 'Troppe richieste. Riprova tra un minuto.',
+          error: getErrorMessage(userLocale, 'rateLimit'),
           code: 'RATE_LIMIT_EXCEEDED'
         },
         { status: 429 }
@@ -304,7 +309,7 @@ export async function POST(request: NextRequest) {
       const errors = validationResult.error.errors.map(e => e.message).join(', ');
       return NextResponse.json(
         { 
-          error: `Dati non validi: ${errors}`,
+          error: `${getErrorMessage(userLocale, 'invalidData')}: ${errors}`,
           code: 'VALIDATION_ERROR'
         },
         { status: 400 }
@@ -326,7 +331,7 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (cacheError) {
-      console.warn('Cache read error (continuing without cache):', cacheError);
+      logger.warn('Cache read error (continuing without cache)', { endpoint: '/api/translate-listing' });
     }
 
     if (!process.env.OPENAI_API_KEY) {
@@ -383,19 +388,30 @@ export async function POST(request: NextRequest) {
       const cacheService = getAICacheService();
       await cacheService.set(cacheContent, cachePromptType, result);
     } catch (cacheError) {
-      console.warn('Cache write error (result still returned):', cacheError);
+      logger.warn('Cache write error (result still returned)', { endpoint: '/api/translate-listing' });
     }
 
     return NextResponse.json(result);
 
   } catch (error) {
-    console.error('Translation error:', error);
+    logger.error('Translation error', error, { endpoint: '/api/translate-listing' });
     
     if (error instanceof Error) {
+      // Ottieni lingua per messaggi errore
+      const errorLocale = await getUserLocale(request, undefined, supabase);
+      
       if (error.message.includes('timeout') || error.message.includes('TIMEOUT')) {
+        const timeoutMessages: Record<SupportedLocale, string> = {
+          it: 'La traduzione sta richiedendo troppo tempo. Riprova con un testo più breve.',
+          en: 'Translation is taking too long. Please try with a shorter text.',
+          es: 'La traducción está tardando demasiado. Intenta con un texto más corto.',
+          fr: 'La traduction prend trop de temps. Veuillez réessayer avec un texte plus court.',
+          de: 'Die Übersetzung dauert zu lange. Bitte versuchen Sie es mit einem kürzeren Text.',
+          ar: 'الترجمة تستغرق وقتاً طويلاً. يرجى المحاولة بنص أقصر.',
+        };
         return NextResponse.json(
           { 
-            error: 'La traduzione sta richiedendo troppo tempo. Riprova con un testo più breve.',
+            error: timeoutMessages[errorLocale] || timeoutMessages['it'],
             code: 'TIMEOUT_ERROR'
           },
           { status: 504 }
@@ -403,9 +419,17 @@ export async function POST(request: NextRequest) {
       }
       
       if (error.message.includes('rate limit') || error.message.includes('429')) {
+        const rateLimitMessages: Record<SupportedLocale, string> = {
+          it: 'Servizio AI temporaneamente sovraccarico. Riprova tra qualche minuto.',
+          en: 'AI service temporarily overloaded. Please try again in a few minutes.',
+          es: 'Servicio AI temporalmente sobrecargado. Intenta de nuevo en unos minutos.',
+          fr: 'Service IA temporairement surchargé. Veuillez réessayer dans quelques minutes.',
+          de: 'KI-Service vorübergehend überlastet. Bitte versuchen Sie es in ein paar Minuten erneut.',
+          ar: 'الخدمة الذكية مثقلة مؤقتاً. يرجى المحاولة مرة أخرى بعد بضع دقائق.',
+        };
         return NextResponse.json(
           { 
-            error: 'Servizio AI temporaneamente sovraccarico. Riprova tra qualche minuto.',
+            error: rateLimitMessages[errorLocale] || rateLimitMessages['it'],
             code: 'OPENAI_RATE_LIMIT'
           },
           { status: 429 }
@@ -413,9 +437,17 @@ export async function POST(request: NextRequest) {
       }
 
       if (error.message.includes('quota') || error.message.includes('billing')) {
+        const quotaMessages: Record<SupportedLocale, string> = {
+          it: 'Quota AI esaurita. Contatta il supporto.',
+          en: 'AI quota exhausted. Please contact support.',
+          es: 'Cuota AI agotada. Contacta con soporte.',
+          fr: 'Quota IA épuisée. Veuillez contacter le support.',
+          de: 'KI-Quote erschöpft. Bitte kontaktieren Sie den Support.',
+          ar: 'تم استنفاد حصة الذكاء الاصطناعي. يرجى الاتصال بالدعم.',
+        };
         return NextResponse.json(
           { 
-            error: 'Quota AI esaurita. Contatta il supporto.',
+            error: quotaMessages[errorLocale] || quotaMessages['it'],
             code: 'OPENAI_QUOTA_ERROR'
           },
           { status: 503 }
@@ -423,9 +455,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const errorLocale = await getUserLocale(request, undefined, supabase);
     return NextResponse.json(
       { 
-        error: 'Errore durante la traduzione. Riprova più tardi.',
+        error: getErrorMessage(errorLocale, 'internalError'),
         code: 'INTERNAL_ERROR'
       },
       { status: 500 }

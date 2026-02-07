@@ -1,16 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false, // Disattiviamo temporaneamente per evitare doppi render durante i test
   images: {
-    domains: [],
+    formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: '**.supabase.co' },
+      { protocol: 'https', hostname: '**.replit.dev' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
   },
-  env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.startsWith('eyJ') 
-      ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY 
-      : process.env.SUPABASE_ANON_KEY),
-  },
+  // In Next 14 non serve disabilitare turbo, Webpack è il default.
 };
 
 export default nextConfig;

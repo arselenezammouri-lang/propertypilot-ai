@@ -5,6 +5,7 @@ import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
@@ -332,11 +333,11 @@ export async function POST(request: NextRequest) {
     
     const cachedResponse = await aiCache.get(cacheKey, 'social_post');
     if (cachedResponse) {
-      console.log('[SOCIAL POST] Returning cached response');
+      logger.debug('[SOCIAL POST] Returning cached response');
       return NextResponse.json(cachedResponse);
     }
 
-    console.log('[SOCIAL POST] Generating new AI content');
+    logger.debug('[SOCIAL POST] Generating new AI content');
     
     const [instagramPost, facebookPost, hashtags, tiktokScript] = await Promise.all([
       generateInstagramPost(propertyContext, tonePrompt, lengthConfig.igWords),
@@ -357,7 +358,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error: any) {
-    console.error('[SOCIAL POST] Error:', error);
+    logger.error('[SOCIAL POST] Error', error as Error, { component: 'generate-social-post' });
 
     if (error.status === 429 || error.code === 'rate_limit_exceeded') {
       return NextResponse.json(

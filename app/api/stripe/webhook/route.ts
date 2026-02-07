@@ -3,6 +3,7 @@ import { requireStripe, getPlanByPriceId, STRIPE_PLANS, getOneTimePackage } from
 import { createClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
 import Stripe from 'stripe';
+import { logger } from '@/lib/utils/safe-logger';
 
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for webhook processing');
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
     const stripe = requireStripe();
     
     if (!process.env.STRIPE_WEBHOOK_SECRET) {
-      console.error('[WEBHOOK ERROR] STRIPE_WEBHOOK_SECRET not configured');
+      logger.error('STRIPE_WEBHOOK_SECRET not configured', undefined, { endpoint: '/api/stripe/webhook' });
       return NextResponse.json(
         { error: 'Webhook secret not configured' },
         { status: 500 }
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
-    console.error('Webhook signature verification failed:', error);
+    logger.error('Webhook signature verification failed', error, { endpoint: '/api/stripe/webhook' });
     return NextResponse.json(
       { error: 'Invalid signature' },
       { status: 400 }
@@ -78,12 +79,12 @@ export async function POST(request: NextRequest) {
       }
 
       default:
-        console.log(`Unhandled event type: ${event.type}`);
+        logger.debug('Unhandled event type', { eventType: event.type, endpoint: '/api/stripe/webhook' });
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error('Webhook handler error:', error);
+    logger.error('Webhook handler error', error, { endpoint: '/api/stripe/webhook' });
     return NextResponse.json(
       { error: 'Webhook handler failed' },
       { status: 500 }
@@ -95,19 +96,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.userId;
   const paymentType = session.metadata?.paymentType;
 
-  console.log('[WEBHOOK] Checkout completed:', {
+  logger.stripeEvent('checkout.session.completed', {
     sessionId: session.id,
-    userId,
-    paymentType,
     mode: session.mode,
-    customerId: session.customer,
-    metadata: session.metadata,
+    paymentType,
   });
 
   if (!userId) {
-    console.error('[WEBHOOK ERROR] Missing userId in session metadata', {
+    logger.error('Missing userId in session metadata', undefined, { 
+      endpoint: '/api/stripe/webhook',
       sessionId: session.id,
-      metadata: session.metadata,
     });
     throw new Error('Missing userId in checkout session');
   }
@@ -117,7 +115,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   } else if (session.mode === 'subscription' && session.subscription) {
     await handleSubscriptionCheckout(session, userId);
   } else {
-    console.log('[WEBHOOK] Unhandled checkout mode:', session.mode);
+    logger.debug('Unhandled checkout mode', { mode: session.mode, endpoint: '/api/stripe/webhook' });
   }
 }
 
@@ -125,26 +123,26 @@ async function handleOneShotPayment(session: Stripe.Checkout.Session, userId: st
   const packageId = session.metadata?.packageId;
   const packageName = session.metadata?.packageName;
 
-  console.log('[WEBHOOK ONE-SHOT] Processing payment:', {
+  logger.stripeEvent('one-shot.payment.processing', {
     sessionId: session.id,
-    userId,
     packageId,
     packageName,
     paymentStatus: session.payment_status,
   });
 
   if (session.payment_status !== 'paid') {
-    console.log('[WEBHOOK ONE-SHOT] Payment not yet completed, skipping:', {
+    logger.debug('Payment not yet completed, skipping', { 
       sessionId: session.id,
       paymentStatus: session.payment_status,
+      endpoint: '/api/stripe/webhook',
     });
     return;
   }
 
   if (!packageId) {
-    console.error('[WEBHOOK ERROR] Missing packageId in one-shot payment', {
+    logger.error('Missing packageId in one-shot payment', undefined, {
+      endpoint: '/api/stripe/webhook',
       sessionId: session.id,
-      metadata: session.metadata,
     });
     throw new Error('Missing packageId in one-shot checkout session');
   }
@@ -156,9 +154,10 @@ async function handleOneShotPayment(session: Stripe.Checkout.Session, userId: st
     .maybeSingle();
 
   if (existingPurchase) {
-    console.log('[WEBHOOK ONE-SHOT] Purchase already recorded, skipping duplicate:', {
+    logger.debug('Purchase already recorded, skipping duplicate', {
       sessionId: session.id,
       purchaseId: existingPurchase.id,
+      endpoint: '/api/stripe/webhook',
     });
     return;
   }
@@ -189,28 +188,27 @@ async function handleOneShotPayment(session: Stripe.Checkout.Session, userId: st
 
     if (error) {
       if (error.code === '23505') {
-        console.log('[WEBHOOK ONE-SHOT] Duplicate purchase detected (unique constraint):', {
+        logger.debug('Duplicate purchase detected (unique constraint)', {
           sessionId: session.id,
+          endpoint: '/api/stripe/webhook',
         });
         return;
       }
-      console.error('[WEBHOOK ERROR] Failed to record purchase:', {
-        userId,
+      logger.error('Failed to record purchase', error, {
+        endpoint: '/api/stripe/webhook',
         packageId,
-        error,
       });
       throw error;
     }
 
-    console.log('[WEBHOOK SUCCESS] One-shot purchase recorded:', {
+    logger.stripeEvent('one-shot.purchase.recorded', {
       purchaseId: data?.id,
-      userId,
       packageId,
       amount: stripeAmount,
       currency: stripeCurrency,
     });
   } catch (error) {
-    console.error('[WEBHOOK ERROR] handleOneShotPayment failed:', error);
+    logger.error('handleOneShotPayment failed', error, { endpoint: '/api/stripe/webhook' });
     throw error;
   }
 }
@@ -227,10 +225,10 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
     const detectedPlan = getPlanByPriceId(priceId);
 
     if (!detectedPlan) {
-      console.error('[WEBHOOK ERROR] Unrecognized price_id in checkout:', {
+      logger.error('Unrecognized price_id in checkout', undefined, {
+        endpoint: '/api/stripe/webhook',
         priceId,
         sessionId: session.id,
-        userId,
         subscriptionId: subscription.id,
       });
       throw new Error(`Unrecognized price_id: ${priceId}. This price is not configured in the system.`);
@@ -258,17 +256,16 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
       .select();
 
     if (error) {
-      console.error('[WEBHOOK ERROR] Failed to update subscription in Supabase:', {
-        userId,
+      logger.error('Failed to update subscription in Supabase', error, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
-        error,
       });
       throw error;
     }
 
     if (!data || data.length === 0) {
-      console.error('[WEBHOOK ERROR] No subscription found to update:', {
-        userId,
+      logger.error('No subscription found to update', undefined, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
       });
       throw new Error(`No subscription found for user ${userId}`);
@@ -280,29 +277,29 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
       .update({ subscription_plan: planType })
       .eq('id', userId);
 
-    console.log('[WEBHOOK SUCCESS] Subscription updated:', {
-      userId,
-      subscriptionId: subscription.id,
+    logger.stripeEvent('subscription.checkout.completed', {
       planType,
       message: planType === 'agency' ? 'Agency Intelligence Active - Accesso Premium Confermato' : 'Subscription activated',
     });
   } catch (error) {
-    console.error('[WEBHOOK ERROR] handleSubscriptionCheckout failed:', error);
+    logger.error('handleSubscriptionCheckout failed', error, { endpoint: '/api/stripe/webhook' });
     throw error;
   }
 }
 
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
-  console.log('[WEBHOOK] Subscription update:', {
+  logger.stripeEvent('subscription.update', {
     subscriptionId: subscription.id,
     status: subscription.status,
-    metadata: subscription.metadata,
   });
 
   let userId = subscription.metadata?.userId;
 
   if (!userId) {
-    console.log('[WEBHOOK] Missing userId in metadata, falling back to database lookup');
+    logger.debug('Missing userId in metadata, falling back to database lookup', { 
+      endpoint: '/api/stripe/webhook',
+      subscriptionId: subscription.id,
+    });
     const { data: existingSubscription, error: lookupError } = await supabaseAdmin
       .from('subscriptions')
       .select('user_id')
@@ -310,9 +307,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       .single();
 
     if (lookupError || !existingSubscription) {
-      console.error('[WEBHOOK ERROR] Cannot find user for subscription:', {
+      logger.error('Cannot find user for subscription', lookupError, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
-        error: lookupError,
       });
       throw new Error(`User not found for subscription ${subscription.id}`);
     }
@@ -331,10 +328,10 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       planType = detectedPlan as SubscriptionStatus;
     } else {
       // Price ID not recognized: log error but don't crash (safer for updates)
-      console.error('[WEBHOOK ERROR] Unrecognized price_id in subscription update:', {
+      logger.error('Unrecognized price_id in subscription update', undefined, {
+        endpoint: '/api/stripe/webhook',
         priceId,
         subscriptionId: subscription.id,
-        userId,
       });
       // Keep 'free' as safe default for unrecognized prices
       planType = 'free';
@@ -363,18 +360,17 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       .select();
 
     if (error) {
-      console.error('[WEBHOOK ERROR] Failed to update subscription:', {
+      logger.error('Failed to update subscription', error, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
-        userId,
-        error,
       });
       throw error;
     }
 
     if (!data || data.length === 0) {
-      console.error('[WEBHOOK ERROR] No subscription found to update:', {
+      logger.error('No subscription found to update', undefined, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
-        userId,
       });
       throw new Error(`No subscription found for subscription ID ${subscription.id}`);
     }
@@ -385,22 +381,20 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
       .update({ subscription_plan: isActive ? planType : 'free' })
       .eq('id', userId);
 
-    console.log('[WEBHOOK SUCCESS] Subscription updated:', {
+    logger.stripeEvent('subscription.update.success', {
       subscriptionId: subscription.id,
-      userId,
       planType: isActive ? planType : 'free',
       resetCount: shouldResetCount,
     });
   } catch (error) {
-    console.error('[WEBHOOK ERROR] handleSubscriptionUpdate failed:', error);
+    logger.error('handleSubscriptionUpdate failed', error, { endpoint: '/api/stripe/webhook' });
     throw error;
   }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  console.log('[WEBHOOK] Subscription deleted:', {
+  logger.stripeEvent('subscription.deleted', {
     subscriptionId: subscription.id,
-    metadata: subscription.metadata,
   });
 
   try {
@@ -419,15 +413,16 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       .select();
 
     if (error) {
-      console.error('[WEBHOOK ERROR] Failed to delete subscription:', {
+      logger.error('Failed to delete subscription', error, {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
-        error,
       });
       throw error;
     }
 
     if (!data || data.length === 0) {
-      console.warn('[WEBHOOK WARNING] No subscription found to delete (may have been already deleted):', {
+      logger.warn('No subscription found to delete (may have been already deleted)', {
+        endpoint: '/api/stripe/webhook',
         subscriptionId: subscription.id,
       });
     } else {
@@ -445,12 +440,12 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
           .eq('id', subData.user_id);
       }
 
-      console.log('[WEBHOOK SUCCESS] Subscription deleted:', {
+      logger.stripeEvent('subscription.deleted.success', {
         subscriptionId: subscription.id,
       });
     }
   } catch (error) {
-    console.error('[WEBHOOK ERROR] handleSubscriptionDeleted failed:', error);
+    logger.error('handleSubscriptionDeleted failed', error, { endpoint: '/api/stripe/webhook' });
     throw error;
   }
 }

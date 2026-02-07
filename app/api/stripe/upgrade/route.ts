@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe, STRIPE_PLANS, PlanType, getPlanByPriceId } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/utils/safe-logger';
 
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -104,7 +105,12 @@ export async function POST(request: NextRequest) {
     const isUpgrade = PLAN_ORDER[planType as PlanType] > PLAN_ORDER[currentPlan];
     const isDowngrade = PLAN_ORDER[planType as PlanType] < PLAN_ORDER[currentPlan];
 
-    console.log(`[UPGRADE] User ${user.id} changing from ${currentPlan} to ${planType} (${isUpgrade ? 'UPGRADE' : isDowngrade ? 'DOWNGRADE' : 'SAME'})`);
+    logger.debug('[UPGRADE] User changing plan', {
+      userId: user.id,
+      from: currentPlan,
+      to: planType,
+      type: isUpgrade ? 'UPGRADE' : isDowngrade ? 'DOWNGRADE' : 'SAME',
+    });
 
     const updatedSubscription = await stripe.subscriptions.update(subscription.stripe_subscription_id, {
       items: [
@@ -127,10 +133,10 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (updateError) {
-      console.error('[UPGRADE] Failed to update database:', updateError);
+      logger.error('[UPGRADE] Failed to update database', updateError, { userId: user.id });
     }
 
-    console.log(`[UPGRADE SUCCESS] User ${user.id} upgraded to ${planType}`);
+    logger.debug('[UPGRADE SUCCESS] User upgraded', { userId: user.id, plan: planType });
 
     return NextResponse.json({
       success: true,
@@ -145,7 +151,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[UPGRADE ERROR]:', error);
+    logger.error('[UPGRADE ERROR]', error as Error, { component: 'stripe-upgrade', userId: user.id });
     return NextResponse.json(
       { error: error.message || 'Failed to upgrade subscription' },
       { status: 500 }

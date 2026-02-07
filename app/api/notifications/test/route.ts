@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail } from '@/lib/utils/email';
 import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
 
 const testNotificationSchema = z.object({
   email: z.boolean().optional(),
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     // WhatsApp: in produzione usare API WhatsApp Business
     // Per ora loggiamo solo
     if (whatsapp) {
-      console.log('[TEST NOTIFICATION] WhatsApp message:', testMessage);
+      logger.debug('[TEST NOTIFICATION] WhatsApp message', { message: testMessage });
       // TODO: Integrare con WhatsApp Business API
     }
 
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[TEST NOTIFICATION] Error:', error);
+    logger.error('[TEST NOTIFICATION] Error', error as Error, { component: 'test-notification' });
     return NextResponse.json(
       { success: false, error: 'Errore interno del server' },
       { status: 500 }

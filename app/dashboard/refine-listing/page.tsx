@@ -487,12 +487,15 @@ export default function RefineListingPage() {
 
           {isLoading && (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-16">
-                <Loader2 className="h-12 w-12 text-violet-500 animate-spin mb-4" />
-                <h3 className="text-lg font-medium mb-2">Raffinamento in corso...</h3>
-                <p className="text-sm text-muted-foreground">
-                  L'AI sta analizzando e migliorando il tuo annuncio
-                </p>
+              <CardContent className="py-16 space-y-6">
+                <div className="flex items-center justify-center mb-6">
+                  <Loader2 className="h-12 w-12 text-violet-500 animate-spin" />
+                </div>
+                <div className="space-y-3 max-w-md mx-auto">
+                  <div className="h-4 bg-card/50 rounded w-full animate-pulse" />
+                  <div className="h-4 bg-card/30 rounded w-5/6 mx-auto animate-pulse" />
+                  <div className="h-4 bg-card/30 rounded w-4/6 mx-auto animate-pulse" />
+                </div>
               </CardContent>
             </Card>
           )}

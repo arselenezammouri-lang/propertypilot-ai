@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
       throw execError;
     }
   } catch (error: any) {
-    console.error('Automation execute error:', error);
+    logger.error('Automation execute error', error, { endpoint: '/api/automations/execute' });
     return NextResponse.json(
       { error: error.message || 'Errore nell\'esecuzione dell\'automazione.' },
       { status: 500 }

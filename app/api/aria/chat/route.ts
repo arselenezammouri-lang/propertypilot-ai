@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { buildAriaPrompt } from '@/lib/ai/aria-brain';
 import OpenAI from 'openai';
+import { z } from 'zod';
+import { logger } from '@/lib/utils/safe-logger';
+
+const ariaChatRequestSchema = z.object({
+  message: z.string().min(1, 'Message is required').max(5000, 'Message too long'),
+  context: z.object({
+    locale: z.string().optional(),
+    userLocation: z.string().optional(),
+  }).optional(),
+  locale: z.string().optional(),
+});
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,14 +35,20 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { message, context } = body;
+    const validation = ariaChatRequestSchema.safeParse(body);
 
-    if (!message || typeof message !== 'string') {
+    if (!validation.success) {
+      logger.warn('Invalid aria chat request', { errors: validation.error.errors, endpoint: '/api/aria/chat' });
       return NextResponse.json(
-        { success: false, error: 'Messaggio non valido' },
+        { success: false, error: 'Invalid request', details: validation.error.errors },
         { status: 400 }
       );
     }
+
+    const { message, context, locale } = validation.data;
+
+    // Usa la lingua passata o rileva da context, default 'it'
+    const userLocale = locale || context?.locale || 'it';
 
     // Recupera profilo utente per contesto
     const { data: profile } = await supabase
@@ -50,10 +67,11 @@ export async function POST(request: NextRequest) {
       currentPage: context?.currentPage,
       recentActivity: context?.recentActivity,
       userLocation,
+      locale: userLocale, // Aggiungi locale al context
     };
 
-    // Costruisci prompt per Aria
-    const prompt = buildAriaPrompt(message, ariaContext);
+    // Costruisci prompt per Aria con lingua
+    const prompt = buildAriaPrompt(message, ariaContext, userLocale);
 
     // Chiama OpenAI
     const completion = await openai.chat.completions.create({
@@ -72,7 +90,17 @@ export async function POST(request: NextRequest) {
       max_tokens: 300,
     });
 
-    const response = completion.choices[0]?.message?.content || "Scusa, non ho capito. Puoi riformulare?";
+    // Messaggi fallback tradotti
+    const fallbackMessages: Record<string, string> = {
+      it: "Scusa, non ho capito. Puoi riformulare?",
+      en: "Sorry, I didn't understand. Can you rephrase?",
+      es: "Lo siento, no entendí. ¿Puedes reformular?",
+      fr: "Désolé, je n'ai pas compris. Pouvez-vous reformuler?",
+      de: "Entschuldigung, ich habe es nicht verstanden. Können Sie es umformulieren?",
+      ar: "عذراً، لم أفهم. هل يمكنك إعادة الصياغة؟",
+    };
+    
+    const response = completion.choices[0]?.message?.content || (fallbackMessages[userLocale] || fallbackMessages['it']);
 
     // Estrai link a documentazione se presente
     let docLink: string | null = null;

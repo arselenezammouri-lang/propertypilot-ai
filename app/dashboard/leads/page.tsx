@@ -81,7 +81,11 @@ import {
   Kanban,
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
-import { ProFeaturePaywall } from "@/components/demo-modal";
+import dynamic from "next/dynamic";
+
+const ProFeaturePaywall = dynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
+  ssr: false,
+});
 
 const statusConfig: Record<LeadStatus, { label: string; color: string; bgColor: string }> = {
   new: { label: "Nuovo", color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
@@ -550,8 +554,9 @@ export default function LeadsPage() {
             
             <nav className="flex items-center space-x-2 md:space-x-4">
               <ThemeToggle />
-              <Link href="/dashboard/leads/pipeline">
+              <Link href="/dashboard/leads/pipeline" aria-label="Switch to pipeline view">
                 <Button
+                  aria-label="Switch to pipeline view"
                   variant="outline"
                   size="sm"
                   className="border-violet-500/50 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-950/30"
@@ -572,6 +577,7 @@ export default function LeadsPage() {
               </Button>
               <Button
                 onClick={() => setIsAddModalOpen(true)}
+                aria-label="Add new lead"
                 className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
                 data-testid="button-add-lead"
               >
@@ -815,7 +821,12 @@ export default function LeadsPage() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0" data-testid={`button-actions-${lead.id}`}>
+                              <Button 
+                                variant="ghost" 
+                                className="h-8 w-8 p-0" 
+                                data-testid={`button-actions-${lead.id}`}
+                                aria-label={`Actions for lead ${lead.id}`}
+                              >
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>

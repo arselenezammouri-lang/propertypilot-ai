@@ -396,23 +396,25 @@ export default function PipelinePage() {
                       )}
 
                       <div className="flex items-center gap-2 pt-2 border-t border-slate-700/50">
-                        <Link href={`/dashboard/leads?selected=${lead.id}`} className="flex-1">
+                        <Link href={`/dashboard/leads?selected=${lead.id}`} className="flex-1" aria-label={`Open lead ${lead.id}`}>
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             className="w-full text-xs text-slate-400 hover:text-white hover:bg-slate-800"
                             data-testid={`button-open-lead-${lead.id}`}
+                            aria-label={`Open lead ${lead.id} in table view`}
                           >
                             <ExternalLink className="h-3 w-3 mr-1" />
                             Apri Lead
                           </Button>
                         </Link>
-                        <Link href={`/dashboard/leads/${lead.id}`}>
+                        <Link href={`/dashboard/leads/${lead.id}`} aria-label={`View AI insights for lead ${lead.id}`}>
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             className="text-xs text-violet-400 hover:text-violet-300 hover:bg-violet-500/10"
                             data-testid={`button-ai-insights-${lead.id}`}
+                            aria-label={`View AI insights for lead ${lead.id}`}
                           >
                             <Sparkles className="h-3 w-3" />
                           </Button>

@@ -1,115 +1,53 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import Stripe from 'stripe';
+import { createClient } from '@/lib/supabase/server';
 
-interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
-  timestamp: string;
-  version: string;
-  uptime: number;
-  checks: {
-    database: { status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number; error?: string };
-    openai: { status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number };
-    stripe: { status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number };
-  };
-  message?: string;
-}
-
-const startTime = Date.now();
-
-async function checkDatabase(): Promise<{ status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number; error?: string }> {
-  const databaseUrl = process.env.DATABASE_URL;
-  
-  if (!databaseUrl) {
-    return { status: 'unconfigured', error: 'Missing DATABASE_URL' };
-  }
-
-  const start = Date.now();
-  try {
-    const { Pool } = await import('@neondatabase/serverless');
-    const pool = new Pool({ connectionString: databaseUrl });
-    
-    const result = await pool.query('SELECT 1 as ping');
-    await pool.end();
-    
-    if (result.rows[0]?.ping === 1) {
-      return { status: 'ok', latencyMs: Date.now() - start };
-    }
-    return { status: 'error', error: 'Unexpected query result' };
-  } catch (err) {
-    return { status: 'error', error: err instanceof Error ? err.message : 'Unknown error' };
-  }
-}
-
-async function checkOpenAI(): Promise<{ status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number }> {
-  if (!process.env.OPENAI_API_KEY) {
-    return { status: 'unconfigured' };
-  }
-
-  const start = Date.now();
-  try {
-    const openai = new OpenAI({ 
-      apiKey: process.env.OPENAI_API_KEY,
-      timeout: 5000,
-    });
-    
-    await openai.models.retrieve('gpt-4o-mini');
-    return { status: 'ok', latencyMs: Date.now() - start };
-  } catch {
-    return { status: 'error' };
-  }
-}
-
-async function checkStripe(): Promise<{ status: 'ok' | 'error' | 'unconfigured'; latencyMs?: number }> {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return { status: 'unconfigured' };
-  }
-
-  const start = Date.now();
-  try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2024-12-18.acacia' as any,
-      timeout: 5000,
-    });
-    
-    await stripe.balance.retrieve();
-    return { status: 'ok', latencyMs: Date.now() - start };
-  } catch {
-    return { status: 'error' };
-  }
-}
-
+/**
+ * GET /api/health
+ * Health check endpoint for monitoring
+ */
 export async function GET() {
-  const [dbCheck, openaiCheck, stripeCheck] = await Promise.all([
-    checkDatabase(),
-    checkOpenAI(),
-    checkStripe(),
-  ]);
+  const startTime = Date.now();
+  const checks: Record<string, { status: 'ok' | 'error'; message?: string; latency?: number }> = {};
 
-  const health: HealthStatus = {
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '1.0.0',
-    uptime: Math.floor((Date.now() - startTime) / 1000),
-    checks: {
-      database: dbCheck,
-      openai: openaiCheck,
-      stripe: stripeCheck,
-    },
-  };
-
-  if (dbCheck.status === 'error') {
-    health.status = 'unhealthy';
-    health.message = `Database connection failed: ${dbCheck.error || 'Unknown error'}`;
-  } else if (openaiCheck.status === 'error' || stripeCheck.status === 'error') {
-    health.status = 'degraded';
-    health.message = 'Some services unavailable';
-  } else if (dbCheck.status === 'unconfigured' || openaiCheck.status === 'unconfigured' || stripeCheck.status === 'unconfigured') {
-    health.status = 'degraded';
-    health.message = 'Some services not configured';
+  // Check Supabase connection
+  try {
+    const supabase = await createClient();
+    const supabaseStart = Date.now();
+    const { error } = await supabase.from('profiles').select('id').limit(1);
+    const supabaseLatency = Date.now() - supabaseStart;
+    
+    if (error) {
+      checks.supabase = { status: 'error', message: error.message, latency: supabaseLatency };
+    } else {
+      checks.supabase = { status: 'ok', latency: supabaseLatency };
+    }
+  } catch (error: any) {
+    checks.supabase = { status: 'error', message: error.message };
   }
 
-  const statusCode = health.status === 'healthy' ? 200 : health.status === 'degraded' ? 200 : 503;
+  // Check environment variables
+  const requiredEnvVars = [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'SUPABASE_SERVICE_ROLE_KEY',
+  ];
+  
+  const missingEnvVars = requiredEnvVars.filter(key => !process.env[key]);
+  if (missingEnvVars.length > 0) {
+    checks.environment = { status: 'error', message: `Missing: ${missingEnvVars.join(', ')}` };
+  } else {
+    checks.environment = { status: 'ok' };
+  }
 
-  return NextResponse.json(health, { status: statusCode });
+  const totalLatency = Date.now() - startTime;
+  const allHealthy = Object.values(checks).every(check => check.status === 'ok');
+
+  return NextResponse.json({
+    status: allHealthy ? 'healthy' : 'degraded',
+    timestamp: new Date().toISOString(),
+    checks,
+    latency: totalLatency,
+  }, {
+    status: allHealthy ? 200 : 503,
+  });
 }

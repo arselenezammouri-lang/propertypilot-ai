@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "../styles/design-system.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
+import { PerformanceMonitor } from "@/components/performance-monitor";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -97,6 +99,12 @@ export const metadata: Metadata = {
     },
   },
   verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
+  alternates: {
+    canonical: APP_URL,
+  },
+  verification: {
     // google: 'your-google-verification-code', // Aggiungi dopo Google Search Console setup
     // yandex: 'your-yandex-verification-code',
   },
@@ -165,12 +173,14 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
+      <body className={`${inter.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
         <Providers>
           <ThemeProvider
             defaultTheme="dark"
             storageKey="propertypilot-theme"
+            suppressHydrationWarning
           >
+            <PerformanceMonitor />
             {children}
             <Toaster />
             <DemoModal />

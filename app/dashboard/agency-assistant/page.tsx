@@ -225,8 +225,8 @@ export default function AgencyAssistantPage() {
                 <span className="text-sm font-medium text-blue-600 dark:text-blue-400">AI Attivo</span>
               </span>
               <ThemeToggle />
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all" data-testid="button-back-dashboard">
+              <Link href="/dashboard" aria-label="Go back to dashboard">
+                <Button variant="outline" size="sm" className="border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all" data-testid="button-back-dashboard" aria-label="Go back to dashboard">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -404,6 +404,7 @@ export default function AgencyAssistantPage() {
                 disabled={!inputValue.trim() || chatMutation.isPending}
                 className="h-12 px-6 bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 hover:opacity-90 transition-all"
                 data-testid="button-send-message"
+                aria-label="Send message"
               >
                 {chatMutation.isPending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -412,7 +413,7 @@ export default function AgencyAssistantPage() {
                 )}
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p id="chat-input-hint" className="text-xs text-muted-foreground mt-2 text-center">
               Premi Invio per inviare • L'assistente conosce tutte le funzionalità di PropertyPilot AI
             </p>
           </div>

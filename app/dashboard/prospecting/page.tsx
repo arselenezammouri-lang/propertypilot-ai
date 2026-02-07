@@ -77,15 +77,44 @@ import {
   Send,
 } from "lucide-react";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
-import { InvestmentAnalysisModal } from "@/components/investment-analysis-modal";
-import { AIVirtualStaging } from "@/components/ai-virtual-staging";
-import { ProFeaturePaywall } from "@/components/demo-modal";
-import { AIXRayVision } from "@/components/ai-xray-vision";
-import { TerritoryCommander } from "@/components/territory-commander";
-import { PremiumInvestorReport } from "@/components/premium-investor-report";
-import { PriceDropSniperModal } from "@/components/price-drop-sniper-modal";
-import { CompetitorRadar } from "@/components/competitor-radar";
-import { GlobalLiveFeed } from "@/components/global-live-feed";
+import dynamic from "next/dynamic";
+
+// Lazy load heavy components
+const InvestmentAnalysisModal = dynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
+  ssr: false,
+});
+
+const AIVirtualStaging = dynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
+  ssr: false,
+});
+
+const ProFeaturePaywall = dynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
+  ssr: false,
+});
+
+const AIXRayVision = dynamic(() => import("@/components/ai-xray-vision").then(mod => ({ default: mod.AIXRayVision })), {
+  ssr: false,
+});
+
+const TerritoryCommander = dynamic(() => import("@/components/territory-commander").then(mod => ({ default: mod.TerritoryCommander })), {
+  ssr: false,
+});
+const PremiumInvestorReport = dynamic(() => import("@/components/premium-investor-report").then(mod => ({ default: mod.PremiumInvestorReport })), {
+  ssr: false,
+});
+
+const PriceDropSniperModal = dynamic(() => import("@/components/price-drop-sniper-modal").then(mod => ({ default: mod.PriceDropSniperModal })), {
+  ssr: false,
+});
+
+const CompetitorRadar = dynamic(() => import("@/components/competitor-radar").then(mod => ({ default: mod.CompetitorRadar })), {
+  ssr: false,
+});
+
+const GlobalLiveFeed = dynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
+  ssr: false,
+});
+
 import { suggestNextAction } from "@/lib/ai/next-action-suggestion";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

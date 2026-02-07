@@ -20,10 +20,22 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { AIVirtualStaging } from "@/components/ai-virtual-staging";
-import { WhatsAppSenderModal } from "@/components/whatsapp-sender-modal";
+import dynamic from "next/dynamic";
+
+// Lazy load heavy components
+const AIVirtualStaging = dynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
+  ssr: false,
+});
+
+const WhatsAppSenderModal = dynamic(() => import("@/components/whatsapp-sender-modal").then(mod => ({ default: mod.WhatsAppSenderModal })), {
+  ssr: false,
+});
+
 import { analyzeUrgency } from "@/lib/ai/urgency-analysis";
-import { PredatorLiveBadge } from "@/components/predator-live-badge";
+
+const PredatorLiveBadge = dynamic(() => import("@/components/predator-live-badge").then(mod => ({ default: mod.PredatorLiveBadge })), {
+  ssr: false,
+});
 
 interface ExternalListing {
   id: string;

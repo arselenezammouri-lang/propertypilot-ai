@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +13,31 @@ import {
 } from "@/components/ui/dialog";
 import { Calendar, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
+import { getBrowserLocale } from "@/lib/i18n/browser-locale";
+import { Locale } from "@/lib/i18n/config";
+
+// Traduzioni messaggi WhatsApp
+const whatsappMessages: Record<Locale, string> = {
+  it: "Ciao! Vorrei prenotare una demo di PropertyPilot AI.",
+  en: "Hi! I'd like to book a PropertyPilot AI demo.",
+  es: "¡Hola! Me gustaría reservar una demo de PropertyPilot AI.",
+  fr: "Bonjour! Je voudrais réserver une démo de PropertyPilot AI.",
+  de: "Hallo! Ich möchte eine PropertyPilot AI Demo buchen.",
+  ar: "مرحباً! أود حجز عرض توضيحي لـ PropertyPilot AI.",
+};
 
 export function DemoModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentLocale, setCurrentLocale] = useState<Locale>('it');
   const whatsappNumber = "+393401234567";
-  const whatsappMessage = encodeURIComponent("Ciao! Vorrei prenotare una demo di PropertyPilot AI.");
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentLocale(getBrowserLocale());
+    }
+  }, []);
+  
+  const whatsappMessage = encodeURIComponent(whatsappMessages[currentLocale] || whatsappMessages['it']);
 
   return (
     <>
@@ -29,6 +49,7 @@ export function DemoModal() {
               className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
               size="lg"
               data-testid="button-demo-modal-trigger"
+              aria-label="Open demo booking modal"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-sunset-gold via-royal-purple to-electric-blue opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative flex items-center">
@@ -38,15 +59,15 @@ export function DemoModal() {
             </Button>
           </DialogTrigger>
           
-          <DialogContent className="sm:max-w-lg border-2 border-sunset-gold/30 bg-background/95 backdrop-blur-xl shadow-glow-gold">
+          <DialogContent className="sm:max-w-lg border-2 border-sunset-gold/30 bg-background/95 backdrop-blur-xl shadow-glow-gold" aria-labelledby="demo-modal-title" aria-describedby="demo-modal-description">
             <DialogHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-sunset-gold via-royal-purple to-electric-blue flex items-center justify-center mb-4 shadow-glow-gold">
+              <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-sunset-gold via-royal-purple to-electric-blue flex items-center justify-center mb-4 shadow-glow-gold" aria-hidden="true">
                 <Calendar className="h-8 w-8 text-white" />
               </div>
-              <DialogTitle className="text-2xl md:text-3xl font-bold">
+              <DialogTitle id="demo-modal-title" className="text-2xl md:text-3xl font-bold">
                 <span className="gradient-text-gold">Prenota una Demo</span>
               </DialogTitle>
-              <DialogDescription className="text-base text-muted-foreground">
+              <DialogDescription id="demo-modal-description" className="text-base text-muted-foreground">
                 30 minuti gratuiti con un nostro esperto per scoprire PropertyPilot AI
               </DialogDescription>
             </DialogHeader>
@@ -69,8 +90,8 @@ export function DemoModal() {
 
               {/* CTA Buttons */}
               <div className="space-y-3 pt-4">
-                <Link href="/demo" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full neon-button text-lg py-6 shadow-glow-gold" size="lg" data-testid="button-go-to-demo">
+                <Link href="/demo" onClick={() => setIsOpen(false)} aria-label="Go to demo booking page">
+                  <Button className="w-full neon-button text-lg py-6 shadow-glow-gold" size="lg" data-testid="button-go-to-demo" aria-label="Choose date and time for demo">
                     Scegli Data e Ora
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -81,8 +102,9 @@ export function DemoModal() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
+                  aria-label="Contact us on WhatsApp"
                 >
-                  <Button variant="outline" className="w-full py-6 border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 font-bold" size="lg" data-testid="button-whatsapp-modal">
+                  <Button variant="outline" className="w-full py-6 border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 font-bold" size="lg" data-testid="button-whatsapp-modal" aria-label="Contact us on WhatsApp">
                     <SiWhatsapp className="mr-2 h-5 w-5" />
                     Contattaci su WhatsApp
                   </Button>

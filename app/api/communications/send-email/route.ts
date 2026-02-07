@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import type { InsertCommunicationLog } from '@/lib/types/database.types';
+import { logger } from '@/lib/utils/safe-logger';
 
 const sendEmailSchema = z.object({
   lead_id: z.string().uuid(),
@@ -63,17 +64,14 @@ export async function POST(request: NextRequest) {
       if (emailResult.success) {
         emailSent = true;
         emailMessageId = emailResult.messageId;
-        // Log senza email esposta (solo in sviluppo)
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[SEND EMAIL] Email sent successfully, messageId: ${emailMessageId}`);
-        }
+        logger.debug('[SEND EMAIL] Email sent successfully', { messageId: emailMessageId });
       } else {
         emailError = emailResult.error;
-        console.error(`[SEND EMAIL] Failed to send email to ${lead.email}:`, emailError);
+        logger.error('[SEND EMAIL] Failed to send email', new Error(emailError || 'Unknown error'), { leadId: lead.id });
       }
     } catch (error: any) {
       emailError = error.message || 'Unknown error';
-      console.error('[SEND EMAIL] Error sending email:', error);
+      logger.error('[SEND EMAIL] Error sending email', error as Error, { leadId });
     }
 
     const status = emailSent ? 'sent' : 'failed';
@@ -103,7 +101,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (logError) {
-      console.error('Error logging email:', logError);
+      logger.error('Error logging email', logError, { leadId });
       return NextResponse.json({ error: 'Errore nel salvataggio del log' }, { status: 500 });
     }
 
@@ -121,7 +119,7 @@ export async function POST(request: NextRequest) {
       message: `Email inviata a ${lead.email}`,
     });
   } catch (error) {
-    console.error('Error in POST /api/communications/send-email:', error);
+    logger.error('Error in POST /api/communications/send-email', error as Error, { component: 'send-email' });
     return NextResponse.json({ error: 'Errore interno del server' }, { status: 500 });
   }
 }

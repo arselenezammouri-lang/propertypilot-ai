@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,16 +7,58 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { RegionSelector } from "@/components/region-selector";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
-import { Dashboard3DStats } from "@/components/dashboard-3d-stats";
-import { MorningBriefingBox } from "@/components/morning-briefing-box";
-import { SniperStats } from "@/components/sniper-stats";
-import { RegionalPortals } from "@/components/regional-portals";
-import { GlobalLiveFeed } from "@/components/global-live-feed";
-import { DashboardHelpButton } from "@/components/dashboard-help-button";
-import { DashboardPlanFeatures } from "@/components/dashboard-plan-features";
-import { AriaCoach } from "@/components/aria-coach";
-import { ReferralSection } from "@/components/referral-section";
-import { ProfitDashboard } from "@/components/profit-dashboard";
+import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react";
+
+// Lazy load heavy components
+const Dashboard3DStats = dynamic(() => import("@/components/dashboard-3d-stats").then(mod => ({ default: mod.Dashboard3DStats })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const MorningBriefingBox = dynamic(() => import("@/components/morning-briefing-box").then(mod => ({ default: mod.MorningBriefingBox })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const SniperStats = dynamic(() => import("@/components/sniper-stats").then(mod => ({ default: mod.SniperStats })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const RegionalPortals = dynamic(() => import("@/components/regional-portals").then(mod => ({ default: mod.RegionalPortals })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const GlobalLiveFeed = dynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const DashboardHelpButton = dynamic(() => import("@/components/dashboard-help-button").then(mod => ({ default: mod.DashboardHelpButton })), {
+  ssr: false,
+});
+
+const DashboardPlanFeatures = dynamic(() => import("@/components/dashboard-plan-features").then(mod => ({ default: mod.DashboardPlanFeatures })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const AriaCoach = dynamic(() => import("@/components/aria-coach").then(mod => ({ default: mod.AriaCoach })), {
+  loading: () => <div className="fixed bottom-4 right-4 w-16 h-16 rounded-full bg-card/50 animate-pulse" />,
+  ssr: false,
+});
+
+const ReferralSection = dynamic(() => import("@/components/referral-section").then(mod => ({ default: mod.ReferralSection })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const ProfitDashboard = dynamic(() => import("@/components/profit-dashboard").then(mod => ({ default: mod.ProfitDashboard })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
 import { 
@@ -676,24 +718,24 @@ export default async function DashboardPage() {
                 Email, WhatsApp, SMS con AI - Pipeline, automazioni, form capture
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Link href="/dashboard/leads">
-                  <Button className="w-full text-sm py-4 bg-gradient-to-r from-emerald-500 via-indigo-500 to-violet-500 hover:from-emerald-400 hover:via-indigo-400 hover:to-violet-400 text-white font-bold" data-testid="button-start-crm">
+                <Link href="/dashboard/leads" aria-label="Go to Leads table">
+                  <Button className="w-full text-sm py-4 bg-gradient-to-r from-emerald-500 via-indigo-500 to-violet-500 hover:from-emerald-400 hover:via-indigo-400 hover:to-violet-400 text-white font-bold" data-testid="button-start-crm" aria-label="Open Leads table view">
                     <Users className="mr-1.5 h-4 w-4" />
                     Tabella
                   </Button>
                 </Link>
-                <Link href="/dashboard/leads/pipeline">
-                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-violet-500/50 text-violet-400 hover:bg-violet-500/10 font-bold" data-testid="button-start-pipeline">
+                <Link href="/dashboard/leads/pipeline" aria-label="Go to Leads pipeline">
+                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-violet-500/50 text-violet-400 hover:bg-violet-500/10 font-bold" data-testid="button-start-pipeline" aria-label="Open Leads pipeline view">
                     Pipeline
                   </Button>
                 </Link>
-                <Link href="/dashboard/crm/automations">
-                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-amber-500/50 text-amber-400 hover:bg-amber-500/10 font-bold" data-testid="button-crm-automations">
+                <Link href="/dashboard/crm/automations" aria-label="Go to CRM automations">
+                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-amber-500/50 text-amber-400 hover:bg-amber-500/10 font-bold" data-testid="button-crm-automations" aria-label="Open CRM automations">
                     ⚡ Automazioni
                   </Button>
                 </Link>
-                <Link href="/dashboard/crm/settings">
-                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-fuchsia-500/50 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold" data-testid="button-crm-settings">
+                <Link href="/dashboard/crm/settings" aria-label="Go to CRM API settings">
+                  <Button variant="outline" className="w-full text-sm py-4 border-2 border-fuchsia-500/50 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold" data-testid="button-crm-settings" aria-label="Open CRM API settings">
                     🔑 API
                   </Button>
                 </Link>

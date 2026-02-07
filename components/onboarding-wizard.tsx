@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Home, FileText, Rocket, ArrowRight, ArrowLeft, CheckCircle, Building2, Key, PartyPopper } from 'lucide-react';
+import { Sparkles, Home, FileText, Rocket, ArrowRight, ArrowLeft, CheckCircle, Building2, Key, PartyPopper, Zap } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 interface OnboardingWizardProps {
   onComplete?: () => void;
@@ -50,6 +51,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -75,7 +77,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         setIsOpen(true);
       }
     } catch (error) {
-      console.error('Error checking onboarding status:', error);
+      // Silently fail - onboarding is not critical
     } finally {
       setIsLoading(false);
     }
@@ -93,7 +95,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           .eq('id', user.id);
       }
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      // Silently fail - onboarding completion is not critical
     }
     
     setIsOpen(false);
@@ -104,7 +106,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     if (currentStep < ONBOARDING_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Last step: redirect to listings page for quick win
       completeOnboarding();
+      router.push('/dashboard/listings?onboarding=true');
     }
   };
 
@@ -197,8 +201,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             >
               {isLastStep ? (
                 <>
-                  Inizia Ora!
-                  <Rocket className="ml-2 h-4 w-4" />
+                  Crea il Primo Annuncio
+                  <Zap className="ml-2 h-4 w-4" />
                 </>
               ) : (
                 <>

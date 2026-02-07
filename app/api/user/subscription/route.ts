@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error('[GET SUBSCRIPTION] Error:', error);
+      logger.error('[GET SUBSCRIPTION] Error', error, { userId: user.id });
       return NextResponse.json(
         { error: 'Failed to fetch subscription' },
         { status: 500 }
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
         .single();
 
       if (insertError) {
-        console.error('[CREATE SUBSCRIPTION] Error:', insertError);
+        logger.error('[CREATE SUBSCRIPTION] Error', insertError, { userId: user.id });
         return NextResponse.json(
           { error: 'Failed to create subscription' },
           { status: 500 }
@@ -83,7 +84,11 @@ export async function GET(request: NextRequest) {
         const isActive = stripeSubscription.status === 'active' || stripeSubscription.status === 'trialing';
         
         if (!isActive) {
-          console.log(`[SUBSCRIPTION SYNC] User ${user.id} has ${subscription.status} in DB but Stripe status is ${stripeSubscription.status}. Downgrading to free.`);
+          logger.debug('[SUBSCRIPTION SYNC] Downgrading inactive subscription', {
+            userId: user.id,
+            dbStatus: subscription.status,
+            stripeStatus: stripeSubscription.status,
+          });
           
           const { error: updateError } = await supabaseAdmin
             .from('subscriptions')
@@ -94,7 +99,7 @@ export async function GET(request: NextRequest) {
             .eq('user_id', user.id);
 
           if (updateError) {
-            console.error('[SUBSCRIPTION SYNC] Failed to downgrade:', updateError);
+            logger.error('[SUBSCRIPTION SYNC] Failed to downgrade', updateError, { userId: user.id });
           }
 
           return NextResponse.json({
@@ -121,7 +126,10 @@ export async function GET(request: NextRequest) {
         });
       } catch (stripeError: any) {
         if (stripeError.code === 'resource_missing') {
-          console.log(`[SUBSCRIPTION SYNC] User ${user.id} has stripe_subscription_id ${subscription.stripe_subscription_id} but it doesn't exist in Stripe. Downgrading to free.`);
+          logger.debug('[SUBSCRIPTION SYNC] Cleaning invalid subscription', {
+            userId: user.id,
+            stripeSubscriptionId: subscription.stripe_subscription_id,
+          });
           
           const { error: updateError } = await supabaseAdmin
             .from('subscriptions')
@@ -134,7 +142,7 @@ export async function GET(request: NextRequest) {
             .eq('user_id', user.id);
 
           if (updateError) {
-            console.error('[SUBSCRIPTION SYNC] Failed to clean up invalid subscription:', updateError);
+            logger.error('[SUBSCRIPTION SYNC] Failed to clean up invalid subscription', updateError, { userId: user.id });
           }
 
           return NextResponse.json({
@@ -150,7 +158,7 @@ export async function GET(request: NextRequest) {
           });
         }
         
-        console.error('[SUBSCRIPTION VERIFY] Stripe error:', stripeError.message);
+        logger.error('[SUBSCRIPTION VERIFY] Stripe error', stripeError as Error, { userId: user.id });
         return NextResponse.json({
           success: true,
           data: {
@@ -164,7 +172,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (PAID_STATUSES.includes(subscription.status) && !subscription.stripe_subscription_id) {
-      console.log(`[SUBSCRIPTION SYNC] User ${user.id} has ${subscription.status} status but NO stripe_subscription_id. Downgrading to free.`);
+      logger.debug('[SUBSCRIPTION SYNC] Downgrading orphan subscription', {
+        userId: user.id,
+        status: subscription.status,
+      });
       
       const { error: updateError } = await supabaseAdmin
         .from('subscriptions')
@@ -175,7 +186,7 @@ export async function GET(request: NextRequest) {
         .eq('user_id', user.id);
 
       if (updateError) {
-        console.error('[SUBSCRIPTION SYNC] Failed to downgrade orphan subscription:', updateError);
+        logger.error('[SUBSCRIPTION SYNC] Failed to downgrade orphan subscription', updateError, { userId: user.id });
       }
 
       return NextResponse.json({
@@ -200,7 +211,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[USER SUBSCRIPTION API] Error:', error);
+    logger.error('[USER SUBSCRIPTION API] Error', error as Error, { component: 'user-subscription' });
     
     return NextResponse.json(
       { 

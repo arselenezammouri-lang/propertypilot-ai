@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/utils/safe-logger';
 import { analyzeCallOutcome } from '@/lib/ai/voice-agent';
 import { sendEmail, generateAppointmentNotificationEmail } from '@/lib/utils/email';
 import { createGoogleCalendarEvent, generateAppointmentCalendarEvent } from '@/lib/calendar/google';
@@ -40,10 +41,11 @@ export async function POST(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     let listingIdFromQuery = searchParams.get('listing_id');
 
-    console.log('[PROSPECTING CALL WEBHOOK] Received callback:', {
+    logger.debug('Prospecting call webhook received', {
       call_id,
       status,
       has_transcript: !!transcript,
+      endpoint: '/api/prospecting/call/webhook',
     });
 
     // Verifica che la chiamata sia completata
@@ -77,7 +79,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (!listingId) {
-      console.warn('[PROSPECTING CALL WEBHOOK] Could not find listing for call:', call_id);
+      logger.warn('Could not find listing for call', {
+        call_id,
+        endpoint: '/api/prospecting/call/webhook',
+      });
       return NextResponse.json({
         success: true,
         message: 'Listing not found, but webhook received',
@@ -124,14 +129,21 @@ export async function POST(request: NextRequest) {
       .eq('id', listingId);
 
     if (updateError) {
-      console.error('[PROSPECTING CALL WEBHOOK] Error updating listing:', updateError);
+      logger.error('Error updating listing', updateError, {
+        endpoint: '/api/prospecting/call/webhook',
+        listingId,
+      });
       return NextResponse.json(
         { success: false, error: 'Error updating listing' },
         { status: 500 }
       );
     }
 
-    console.log(`[PROSPECTING CALL WEBHOOK] Updated listing ${listingId} to status: ${newStatus}`);
+    logger.debug('Updated listing status', {
+      listingId,
+      newStatus,
+      endpoint: '/api/prospecting/call/webhook',
+    });
 
     // Se l'appuntamento è stato fissato, invia notifica email all'agente
     if (newStatus === 'appointment_set') {
@@ -183,11 +195,12 @@ export async function POST(request: NextRequest) {
 
             if (emailResult.success) {
               // Log senza email esposta (solo in sviluppo)
-              if (process.env.NODE_ENV === 'development') {
-                console.log(`[PROSPECTING CALL WEBHOOK] Notification email sent`);
-              }
+              logger.debug('Notification email sent', { endpoint: '/api/prospecting/call/webhook' });
             } else {
-              console.warn(`[PROSPECTING CALL WEBHOOK] Failed to send notification email: ${emailResult.error}`);
+              logger.warn('Failed to send notification email', {
+                endpoint: '/api/prospecting/call/webhook',
+                error: emailResult.error,
+              });
             }
           }
 
@@ -203,23 +216,37 @@ export async function POST(request: NextRequest) {
             );
             const calendarResult = await createGoogleCalendarEvent(calendarEvent);
             if (calendarResult.success) {
-              console.log(`[PROSPECTING CALL WEBHOOK] ✅ Calendar event created: ${calendarResult.eventUrl}`);
-              console.log(`[PROSPECTING CALL WEBHOOK] Event ID: ${calendarResult.eventId}`);
+              logger.debug('Calendar event created', {
+                eventUrl: calendarResult.eventUrl,
+                eventId: calendarResult.eventId,
+                endpoint: '/api/prospecting/call/webhook',
+              });
             } else {
-              console.warn(`[PROSPECTING CALL WEBHOOK] ⚠️ Failed to create calendar event: ${calendarResult.error}`);
+              logger.warn('Failed to create calendar event', {
+                endpoint: '/api/prospecting/call/webhook',
+                error: calendarResult.error,
+              });
             }
           } catch (calendarError: any) {
-            console.error('[PROSPECTING CALL WEBHOOK] ❌ Error creating calendar event:', calendarError);
+            logger.error('Error creating calendar event', calendarError, {
+              endpoint: '/api/prospecting/call/webhook',
+            });
             // Non-blocking error - calendar sync è opzionale ma non dovrebbe bloccare il webhook
           }
 
           if (!userEmail) {
-            console.warn(`[PROSPECTING CALL WEBHOOK] User email not found for user_id ${listingData.user_id}`);
+            logger.warn('User email not found', {
+              endpoint: '/api/prospecting/call/webhook',
+              userId: listingData.user_id,
+            });
           }
         }
       } catch (emailError: any) {
         // Non bloccare il webhook se l'email fallisce
-        console.error('[PROSPECTING CALL WEBHOOK] Error sending notification email:', emailError);
+        logger.error('Error sending notification email', emailError, {
+          endpoint: '/api/prospecting/call/webhook',
+          listingId,
+        });
       }
     }
 
@@ -231,7 +258,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING CALL WEBHOOK] Error:', error);
+    logger.error('Prospecting call webhook error', error, {
+      endpoint: '/api/prospecting/call/webhook',
+    });
     
     // Ritorna sempre 200 per evitare retry infiniti da Bland AI
     return NextResponse.json({

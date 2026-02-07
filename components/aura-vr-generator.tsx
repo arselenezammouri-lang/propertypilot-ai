@@ -132,9 +132,18 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
   const handleShareWhatsApp = () => {
     if (!vrLink) return;
 
-    const message = encodeURIComponent(
-      `🏠 Ciao! Ho preparato un tour VR immersivo per te:\n\n${vrLink}\n\nApri il link sul tuo smartphone per esplorare l'immobile in realtà virtuale! 🥽`
-    );
+    // Traduzioni messaggio WhatsApp VR
+    const vrMessages: Record<string, string> = {
+      it: `🏠 Ciao! Ho preparato un tour VR immersivo per te:\n\n${vrLink}\n\nApri il link sul tuo smartphone per esplorare l'immobile in realtà virtuale! 🥽`,
+      en: `🏠 Hi! I've prepared an immersive VR tour for you:\n\n${vrLink}\n\nOpen the link on your smartphone to explore the property in virtual reality! 🥽`,
+      es: `🏠 ¡Hola! He preparado un tour VR inmersivo para ti:\n\n${vrLink}\n\n¡Abre el enlace en tu smartphone para explorar la propiedad en realidad virtual! 🥽`,
+      fr: `🏠 Bonjour! J'ai préparé une visite VR immersive pour vous:\n\n${vrLink}\n\nOuvrez le lien sur votre smartphone pour explorer la propriété en réalité virtuelle! 🥽`,
+      de: `🏠 Hallo! Ich habe eine immersive VR-Tour für dich vorbereitet:\n\n${vrLink}\n\nÖffne den Link auf deinem Smartphone, um die Immobilie in Virtual Reality zu erkunden! 🥽`,
+      ar: `🏠 مرحباً! لقد أعددت جولة VR غامرة لك:\n\n${vrLink}\n\nافتح الرابط على هاتفك الذكي لاستكشاف العقار في الواقع الافتراضي! 🥽`,
+    };
+
+    const detectedLocale = detectLocaleFromLocation(userLocation || '') || 'it';
+    const message = encodeURIComponent(vrMessages[detectedLocale] || vrMessages['it']);
     const whatsappUrl = `https://wa.me/?text=${message}`;
     window.open(whatsappUrl, "_blank");
   };

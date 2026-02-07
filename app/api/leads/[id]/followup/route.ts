@@ -7,6 +7,8 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import type { Lead } from '@/lib/types/database.types';
+import { getUserLocale, SupportedLocale } from '@/lib/i18n/api-locale';
+import { logger } from '@/lib/utils/safe-logger';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -85,7 +87,7 @@ async function getPropertyDetails(
       };
     }
   } catch (error) {
-    console.warn('[FOLLOWUP] Error fetching property details:', error);
+    logger.warn('Error fetching property details', { endpoint: '/api/leads/[id]/followup' });
   }
 
   // Se non match, ritorna solo URL
@@ -158,7 +160,8 @@ function buildEmailPrompt(
   lead: Lead,
   property: PropertyDetails,
   categoria: 'hot' | 'warm' | 'cold',
-  tone: FollowupTone
+  tone: FollowupTone,
+  locale: SupportedLocale = 'it'
 ): string {
   const categoriaStrategy = CATEGORIA_STRATEGIES[categoria];
   const toneDesc = TONE_DESCRIPTIONS[tone];
@@ -176,7 +179,9 @@ Titolo: ${property.title}`;
     propertyInfo = `\n\nLINK IMMOBILE DI INTERESSE:\n${property.url}`;
   }
 
-  return `Sei un copywriter immobiliare professionale italiano. Genera un'EMAIL professionale di 150-200 parole.
+  // Traduzioni prompt email per lingua
+  const emailTemplates: Record<SupportedLocale, string> = {
+    it: `Sei un copywriter immobiliare professionale italiano. Genera un'EMAIL professionale di 150-200 parole.
 
 LEAD:
 Nome: ${lead.nome}
@@ -203,7 +208,150 @@ Rispondi SOLO in JSON valido:
   "body": "Corpo email (150-200 parole)",
   "cta": "Call-to-action chiara",
   "ps": "Post scriptum opzionale per urgenza/scarsità"
-}`;
+}`,
+    en: `You are a professional real estate copywriter. Generate a professional EMAIL of 150-200 words.
+
+LEAD:
+Name: ${lead.nome}
+Email: ${lead.email || 'N/A'}
+Original message: ${lead.messaggio || 'No specific message'}
+Score: ${lead.lead_score} - Category: ${categoria.toUpperCase()}${propertyInfo}
+
+RULES:
+- Professional email of 150-200 words
+- Formal but accessible
+- Focus on property details (if available)
+- Clear and convincing CTA
+- Tone: ${toneDesc}
+- Category strategy: ${categoriaStrategy}
+- DO NOT use placeholder [Name] - use directly "${lead.nome}"
+
+For HOT: Subject with urgency, immediate visit proposal, mention scarcity
+For WARM: Informative subject, add extra details, weekend proposal
+For COLD: Educational subject, invite qualification, soft CTA
+
+Respond ONLY in valid JSON:
+{
+  "subject": "Email subject (max 60 characters)",
+  "body": "Email body (150-200 words)",
+  "cta": "Clear call-to-action",
+  "ps": "Optional postscript for urgency/scarcity"
+}`,
+    es: `Eres un redactor inmobiliario profesional. Genera un CORREO ELECTRÓNICO profesional de 150-200 palabras.
+
+LEAD:
+Nombre: ${lead.nome}
+Email: ${lead.email || 'N/A'}
+Mensaje original: ${lead.messaggio || 'Sin mensaje específico'}
+Puntuación: ${lead.lead_score} - Categoría: ${categoria.toUpperCase()}${propertyInfo}
+
+REGLAS:
+- Correo profesional de 150-200 palabras
+- Formal pero accesible
+- Enfoque en detalles de la propiedad (si están disponibles)
+- CTA clara y convincente
+- Tono: ${toneDesc}
+- Estrategia categoría: ${categoriaStrategy}
+- NO uses placeholder [Nombre] - usa directamente "${lead.nome}"
+
+Para HOT: Asunto con urgencia, propuesta de visita inmediata, menciona escasez
+Para WARM: Asunto informativo, agrega detalles extra, propuesta de fin de semana
+Para COLD: Asunto educativo, invita a calificación, CTA suave
+
+Responde SOLO en JSON válido:
+{
+  "subject": "Asunto del correo (máx 60 caracteres)",
+  "body": "Cuerpo del correo (150-200 palabras)",
+  "cta": "Llamada a la acción clara",
+  "ps": "Postdata opcional para urgencia/escasez"
+}`,
+    fr: `Vous êtes un rédacteur immobilier professionnel. Générez un EMAIL professionnel de 150-200 mots.
+
+LEAD:
+Nom: ${lead.nome}
+Email: ${lead.email || 'N/A'}
+Message original: ${lead.messaggio || 'Aucun message spécifique'}
+Score: ${lead.lead_score} - Catégorie: ${categoria.toUpperCase()}${propertyInfo}
+
+RÈGLES:
+- Email professionnel de 150-200 mots
+- Formel mais accessible
+- Focus sur les détails de la propriété (si disponibles)
+- CTA claire et convaincante
+- Ton: ${toneDesc}
+- Stratégie catégorie: ${categoriaStrategy}
+- N'utilisez PAS de placeholder [Nom] - utilisez directement "${lead.nome}"
+
+Pour HOT: Objet avec urgence, proposition de visite immédiate, mentionnez la rareté
+Pour WARM: Objet informatif, ajoutez des détails supplémentaires, proposition de week-end
+Pour COLD: Objet éducatif, invitez à la qualification, CTA douce
+
+Répondez UNIQUEMENT en JSON valide:
+{
+  "subject": "Objet de l'email (max 60 caractères)",
+  "body": "Corps de l'email (150-200 mots)",
+  "cta": "Appel à l'action clair",
+  "ps": "Post-scriptum optionnel pour urgence/rareté"
+}`,
+    de: `Du bist ein professioneller Immobilien-Copywriter. Generiere eine professionelle E-MAIL von 150-200 Wörtern.
+
+LEAD:
+Name: ${lead.nome}
+Email: ${lead.email || 'N/A'}
+Ursprüngliche Nachricht: ${lead.messaggio || 'Keine spezifische Nachricht'}
+Punktzahl: ${lead.lead_score} - Kategorie: ${categoria.toUpperCase()}${propertyInfo}
+
+REGELN:
+- Professionelle E-Mail von 150-200 Wörtern
+- Formal aber zugänglich
+- Fokus auf Immobiliendetails (falls verfügbar)
+- Klarer und überzeugender CTA
+- Ton: ${toneDesc}
+- Kategorienstrategie: ${categoriaStrategy}
+- Verwende KEINEN Platzhalter [Name] - verwende direkt "${lead.nome}"
+
+Für HOT: Betreff mit Dringlichkeit, sofortiger Besichtigungsvorschlag, erwähne Knappheit
+Für WARM: Informative Betreffzeile, füge zusätzliche Details hinzu, Wochenendvorschlag
+Für COLD: Pädagogischer Betreff, lade zur Qualifizierung ein, sanfter CTA
+
+Antworte NUR in gültigem JSON:
+{
+  "subject": "E-Mail-Betreff (max 60 Zeichen)",
+  "body": "E-Mail-Text (150-200 Wörter)",
+  "cta": "Klarer Call-to-Action",
+  "ps": "Optionales Postskriptum für Dringlichkeit/Knappheit"
+}`,
+    ar: `أنت كاتب إعلانات عقارية محترف. أنشئ بريد إلكتروني احترافي من 150-200 كلمة.
+
+LEAD:
+الاسم: ${lead.nome}
+البريد الإلكتروني: ${lead.email || 'N/A'}
+الرسالة الأصلية: ${lead.messaggio || 'لا توجد رسالة محددة'}
+النقاط: ${lead.lead_score} - الفئة: ${categoria.toUpperCase()}${propertyInfo}
+
+القواعد:
+- بريد إلكتروني احترافي من 150-200 كلمة
+- رسمي لكن سهل الوصول
+- التركيز على تفاصيل العقار (إن كانت متاحة)
+- دعوة واضحة ومقنعة للعمل
+- النبرة: ${toneDesc}
+- استراتيجية الفئة: ${categoriaStrategy}
+- لا تستخدم placeholder [الاسم] - استخدم مباشرة "${lead.nome}"
+
+للـ HOT: موضوع مع إلحاح، اقتراح زيارة فورية، اذكر الندرة
+للـ WARM: موضوع إعلامي، أضف تفاصيل إضافية، اقتراح نهاية الأسبوع
+للـ COLD: موضوع تعليمي، ادع إلى التأهيل، دعوة ناعمة للعمل
+
+أجب فقط بصيغة JSON صالحة:
+{
+  "subject": "موضوع البريد الإلكتروني (حد أقصى 60 حرفاً)",
+  "body": "نص البريد الإلكتروني (150-200 كلمة)",
+  "cta": "دعوة واضحة للعمل",
+  "ps": "ملاحظة اختيارية للإلحاح/الندرة"
+}`,
+  };
+
+  return emailTemplates[locale] || emailTemplates['it'];
 }
 
 // Genera prompt per SMS
@@ -211,7 +359,8 @@ function buildSMSPrompt(
   lead: Lead,
   property: PropertyDetails,
   categoria: 'hot' | 'warm' | 'cold',
-  tone: FollowupTone
+  tone: FollowupTone,
+  locale: SupportedLocale = 'it'
 ): string {
   const categoriaStrategy = CATEGORIA_STRATEGIES[categoria];
   const toneDesc = TONE_DESCRIPTIONS[tone];
@@ -225,7 +374,9 @@ function buildSMSPrompt(
     propertyInfo = `\nLink: ${property.url}`;
   }
 
-  return `Sei un agente immobiliare esperto italiano. Genera un SMS di MASSIMO 160 caratteri (CONTA OGNI CARATTERE!).
+  // Traduzioni prompt SMS per lingua
+  const smsTemplates: Record<SupportedLocale, string> = {
+    it: `Sei un agente immobiliare esperto italiano. Genera un SMS di MASSIMO 160 caratteri (CONTA OGNI CARATTERE!).
 
 LEAD:
 Nome: ${lead.nome}
@@ -248,7 +399,130 @@ Per COLD: "Ciao ${lead.nome}, possiamo parlarne al telefono? Ti chiamo?"
 Rispondi SOLO in JSON valido:
 {
   "message": "SMS di max 160 caratteri (conta ogni carattere!)"
-}`;
+}`,
+    en: `You are an experienced real estate agent. Generate an SMS of MAXIMUM 160 characters (COUNT EVERY CHARACTER!).
+
+LEAD:
+Name: ${lead.nome}
+Message: ${lead.messaggio || 'No specific message'}
+Score: ${lead.lead_score} - Category: ${categoria.toUpperCase()}${propertyInfo}
+
+RULES:
+- MAXIMUM 160 total characters (count every character, including space!)
+- Concise and direct
+- Only essential information
+- Short and clear CTA
+- NO placeholder [Name] - use directly "${lead.nome}"
+- Tone: ${toneDesc}
+- Category strategy: ${categoriaStrategy}
+
+For HOT: "Hi ${lead.nome}, available this afternoon for a visit? Other interested parties."
+For WARM: "Hi ${lead.nome}, available this weekend? I have other similar properties."
+For COLD: "Hi ${lead.nome}, can we talk about it on the phone? I'll call you?"
+
+Respond ONLY in valid JSON:
+{
+  "message": "SMS of max 160 characters (count every character!)"
+}`,
+    es: `Eres un agente inmobiliario experimentado. Genera un SMS de MÁXIMO 160 caracteres (¡CUENTA CADA CARÁCTER!).
+
+LEAD:
+Nombre: ${lead.nome}
+Mensaje: ${lead.messaggio || 'Sin mensaje específico'}
+Puntuación: ${lead.lead_score} - Categoría: ${categoria.toUpperCase()}${propertyInfo}
+
+REGLAS:
+- MÁXIMO 160 caracteres totales (¡cuenta cada carácter, incluido el espacio!)
+- Conciso y directo
+- Solo información esencial
+- CTA breve y clara
+- NO uses placeholder [Nombre] - usa directamente "${lead.nome}"
+- Tono: ${toneDesc}
+- Estrategia categoría: ${categoriaStrategy}
+
+Para HOT: "Hola ${lead.nome}, ¿disponible esta tarde para visita? Otros interesados."
+Para WARM: "Hola ${lead.nome}, ¿disponible este fin de semana? Tengo otras propiedades similares."
+Para COLD: "Hola ${lead.nome}, ¿podemos hablar por teléfono? Te llamo?"
+
+Responde SOLO en JSON válido:
+{
+  "message": "SMS de máx 160 caracteres (¡cuenta cada carácter!)"
+}`,
+    fr: `Vous êtes un agent immobilier expérimenté. Générez un SMS de MAXIMUM 160 caractères (COMPTEZ CHAQUE CARACTÈRE!).
+
+LEAD:
+Nom: ${lead.nome}
+Message: ${lead.messaggio || 'Aucun message spécifique'}
+Score: ${lead.lead_score} - Catégorie: ${categoria.toUpperCase()}${propertyInfo}
+
+RÈGLES:
+- MAXIMUM 160 caractères au total (comptez chaque caractère, y compris l'espace!)
+- Concis et direct
+- Seulement les informations essentielles
+- CTA courte et claire
+- PAS de placeholder [Nom] - utilisez directement "${lead.nome}"
+- Ton: ${toneDesc}
+- Stratégie catégorie: ${categoriaStrategy}
+
+Pour HOT: "Bonjour ${lead.nome}, disponible cet après-midi pour une visite? Autres intéressés."
+Pour WARM: "Bonjour ${lead.nome}, disponible ce week-end? J'ai d'autres propriétés similaires."
+Pour COLD: "Bonjour ${lead.nome}, pouvons-nous en parler au téléphone? Je vous appelle?"
+
+Répondez UNIQUEMENT en JSON valide:
+{
+  "message": "SMS de max 160 caractères (comptez chaque caractère!)"
+}`,
+    de: `Du bist ein erfahrener Immobilienmakler. Generiere eine SMS von MAXIMAL 160 Zeichen (ZÄHLE JEDES ZEICHEN!).
+
+LEAD:
+Name: ${lead.nome}
+Nachricht: ${lead.messaggio || 'Keine spezifische Nachricht'}
+Punktzahl: ${lead.lead_score} - Kategorie: ${categoria.toUpperCase()}${propertyInfo}
+
+REGELN:
+- MAXIMAL 160 Zeichen insgesamt (zähle jedes Zeichen, einschließlich Leerzeichen!)
+- Prägnant und direkt
+- Nur wesentliche Informationen
+- Kurzer und klarer CTA
+- KEIN Platzhalter [Name] - verwende direkt "${lead.nome}"
+- Ton: ${toneDesc}
+- Kategorienstrategie: ${categoriaStrategy}
+
+Für HOT: "Hallo ${lead.nome}, heute Nachmittag für eine Besichtigung verfügbar? Andere Interessenten."
+Für WARM: "Hallo ${lead.nome}, dieses Wochenende verfügbar? Ich habe andere ähnliche Immobilien."
+Für COLD: "Hallo ${lead.nome}, können wir am Telefon darüber sprechen? Ich rufe dich an?"
+
+Antworte NUR in gültigem JSON:
+{
+  "message": "SMS von max 160 Zeichen (zähle jedes Zeichen!)"
+}`,
+    ar: `أنت وكيل عقاري خبير. أنشئ رسالة SMS بحد أقصى 160 حرفاً (عد كل حرف!).
+
+LEAD:
+الاسم: ${lead.nome}
+الرسالة: ${lead.messaggio || 'لا توجد رسالة محددة'}
+النقاط: ${lead.lead_score} - الفئة: ${categoria.toUpperCase()}${propertyInfo}
+
+القواعد:
+- حد أقصى 160 حرفاً إجمالي (عد كل حرف، بما في ذلك المسافة!)
+- موجز ومباشر
+- معلومات أساسية فقط
+- دعوة قصيرة وواضحة للعمل
+- لا تستخدم placeholder [الاسم] - استخدم مباشرة "${lead.nome}"
+- النبرة: ${toneDesc}
+- استراتيجية الفئة: ${categoriaStrategy}
+
+للـ HOT: "مرحباً ${lead.nome}، متاح هذا المساء للزيارة؟ مهتمون آخرون."
+للـ WARM: "مرحباً ${lead.nome}، متاح نهاية الأسبوع؟ لدي عقارات مشابهة أخرى."
+للـ COLD: "مرحباً ${lead.nome}، هل يمكننا التحدث عبر الهاتف؟ سأتصل بك؟"
+
+أجب فقط بصيغة JSON صالحة:
+{
+  "message": "SMS بحد أقصى 160 حرفاً (عد كل حرف!)"
+}`,
+  };
+
+  return smsTemplates[locale] || smsTemplates['it'];
 }
 
 // Genera messaggi per tutti e 3 i canali
@@ -256,7 +530,8 @@ async function generateFollowUpMessages(
   lead: Lead,
   property: PropertyDetails,
   categoria: 'hot' | 'warm' | 'cold',
-  tone: FollowupTone
+  tone: FollowupTone,
+  locale: SupportedLocale = 'it'
 ): Promise<FollowUpMessages> {
   const [whatsappResponse, emailResponse, smsResponse] = await Promise.all([
     withRetryAndTimeout(
@@ -267,9 +542,9 @@ async function generateFollowUpMessages(
             messages: [
               {
                 role: 'system',
-                content: 'Sei un agente immobiliare esperto italiano. Generi messaggi WhatsApp professionali e conversazionali.',
+                content: SYSTEM_PROMPTS[locale]?.whatsapp || SYSTEM_PROMPTS['it'].whatsapp,
               },
-              { role: 'user', content: buildWhatsAppPrompt(lead, property, categoria, tone) },
+              { role: 'user', content: buildWhatsAppPrompt(lead, property, categoria, tone, locale) },
             ],
             temperature: 0.7,
             max_tokens: 300,
@@ -289,9 +564,9 @@ async function generateFollowUpMessages(
             messages: [
               {
                 role: 'system',
-                content: 'Sei un copywriter immobiliare professionale italiano. Generi email persuasive e professionali.',
+                content: SYSTEM_PROMPTS[locale]?.email || SYSTEM_PROMPTS['it'].email,
               },
-              { role: 'user', content: buildEmailPrompt(lead, property, categoria, tone) },
+              { role: 'user', content: buildEmailPrompt(lead, property, categoria, tone, locale) },
             ],
             temperature: 0.7,
             max_tokens: 800,
@@ -311,9 +586,9 @@ async function generateFollowUpMessages(
             messages: [
               {
                 role: 'system',
-                content: 'Sei un agente immobiliare esperto italiano. Generi SMS concisi di massimo 160 caratteri.',
+                content: SYSTEM_PROMPTS[locale]?.sms || SYSTEM_PROMPTS['it'].sms,
               },
-              { role: 'user', content: buildSMSPrompt(lead, property, categoria, tone) },
+              { role: 'user', content: buildSMSPrompt(lead, property, categoria, tone, locale) },
             ],
             temperature: 0.7,
             max_tokens: 100,
@@ -470,7 +745,7 @@ export async function POST(
     const cachedResult = await cacheService.get(cacheKey, 'followup_messages') as FollowUpMessages | null;
 
     if (cachedResult) {
-      console.log('[FOLLOWUP API] Cache hit');
+      logger.debug('Follow-up API cache hit', { leadId, categoria, tone });
       await logGeneration(user.id, clientIp);
 
       return NextResponse.json({
@@ -481,23 +756,23 @@ export async function POST(
       });
     }
 
-    console.log(`[FOLLOWUP API] Generating messages for lead ${leadId}, categoria: ${categoria}, tone: ${tone}`);
+    logger.debug('Generating follow-up messages', { leadId, categoria, tone });
 
     // Genera messaggi
-    const messages = await generateFollowUpMessages(lead as Lead, property, categoria, tone);
+    const messages = await generateFollowUpMessages(lead as Lead, property, categoria, tone, userLocale);
 
     // Salva in cache (24 ore)
     try {
       await cacheService.set(cacheKey, 'followup_messages', messages, 24 * 60 * 60);
-      console.log('[FOLLOWUP API] Cached result');
+      logger.debug('Follow-up messages cached', { leadId });
     } catch (cacheError) {
-      console.warn('[FOLLOWUP API] Cache write error:', cacheError);
+      logger.warn('Cache write error', { endpoint: '/api/leads/[id]/followup' });
     }
 
     await logGeneration(user.id, clientIp);
 
     const processingTimeMs = Date.now() - startTime;
-    console.log(`[FOLLOWUP API] Successfully generated messages in ${processingTimeMs}ms`);
+    logger.debug('Follow-up messages generated', { leadId, processingTimeMs });
 
     return NextResponse.json({
       success: true,
@@ -507,7 +782,7 @@ export async function POST(
     });
 
   } catch (error: any) {
-    console.error('[FOLLOWUP API] Unexpected error:', error);
+    logger.error('Follow-up API unexpected error', error, { endpoint: '/api/leads/[id]/followup' });
 
     if (error.message?.includes('timeout') || error.code === 'ETIMEDOUT') {
       return NextResponse.json(

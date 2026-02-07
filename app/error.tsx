@@ -10,6 +10,7 @@ import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { logger } from '@/lib/utils/safe-logger';
+// import { captureException } from '@/lib/monitoring/sentry'; // DISABLED for launch
 
 export default function Error({
   error,
@@ -23,11 +24,14 @@ export default function Error({
     logger.error('[GLOBAL ERROR] Unhandled route error', error, {
       digest: error.digest,
     });
+
+    // Sentry disabled for launch
+    // captureException(error, { component: 'GlobalError', digest: error.digest });
   }, [error]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-background">
-      <Card className="max-w-md w-full border-red-500/30 bg-red-500/5">
+    <div className="flex items-center justify-center min-h-screen p-4 diamond-force-black diamond-force-white-text">
+      <Card className="max-w-md w-full border-red-500/30 bg-red-500/5 diamond-card">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-400">
             <AlertCircle className="h-5 w-5" />

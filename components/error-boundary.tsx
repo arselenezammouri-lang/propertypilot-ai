@@ -5,6 +5,7 @@ import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { logger } from '@/lib/utils/safe-logger';
+import { captureException } from '@/lib/monitoring/sentry';
 
 interface Props {
   children: ReactNode;
@@ -34,6 +35,12 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error usando logger sicuro (senza dati sensibili)
     logger.error('[ERROR BOUNDARY] React component error', error, {
+      componentStack: errorInfo.componentStack?.substring(0, 200),
+    });
+
+    // Send to Sentry
+    captureException(error, {
+      component: 'ErrorBoundary',
       componentStack: errorInfo.componentStack?.substring(0, 200),
     });
 

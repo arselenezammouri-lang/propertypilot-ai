@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe, getPlanByPriceId } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('[SYNC] Starting sync for user:', user.id, user.email);
+    logger.debug('[SYNC] Starting sync for user', { userId: user.id, email: user.email });
 
     const stripe = requireStripe();
 
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (customers.data.length === 0) {
-      console.log('[SYNC] No Stripe customer found for email:', user.email);
+      logger.debug('[SYNC] No Stripe customer found', { email: user.email });
       
       const { data: existingSub } = await supabaseAdmin
         .from('subscriptions')
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
             user_id: user.id,
             status: 'free',
           });
-        console.log('[SYNC] Created free subscription for user');
+        logger.debug('[SYNC] Created free subscription for user', { userId: user.id });
       }
 
       return NextResponse.json({ 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const customer = customers.data[0];
-    console.log('[SYNC] Found Stripe customer:', customer.id);
+    logger.debug('[SYNC] Found Stripe customer', { customerId: customer.id, userId: user.id });
 
     const subscriptions = await stripe.subscriptions.list({
       customer: customer.id,
@@ -96,10 +97,11 @@ export async function POST(request: NextRequest) {
       periodStart = new Date((subscription as any).current_period_start * 1000).toISOString();
       periodEnd = new Date((subscription as any).current_period_end * 1000).toISOString();
 
-      console.log('[SYNC] Found active subscription:', {
+      logger.debug('[SYNC] Found active subscription', {
         subscriptionId: subscription.id,
         priceId,
         plan,
+        userId: user.id,
       });
     }
 
@@ -116,7 +118,7 @@ export async function POST(request: NextRequest) {
           id: user.id,
           full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
         });
-      console.log('[SYNC] Created profile for user');
+      logger.debug('[SYNC] Created profile for user', { userId: user.id });
     }
 
     const { error: upsertError } = await supabaseAdmin
@@ -137,11 +139,11 @@ export async function POST(request: NextRequest) {
       });
 
     if (upsertError) {
-      console.error('[SYNC ERROR] Failed to upsert subscription:', upsertError);
+      logger.error('[SYNC ERROR] Failed to upsert subscription', upsertError, { userId: user.id });
       return NextResponse.json({ error: 'Failed to sync subscription' }, { status: 500 });
     }
 
-    console.log('[SYNC SUCCESS] Synced subscription for user:', {
+    logger.debug('[SYNC SUCCESS] Synced subscription for user', {
       userId: user.id,
       plan,
       stripeSubscriptionId,
@@ -156,7 +158,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[SYNC ERROR]:', error);
+    logger.error('[SYNC ERROR]', error as Error, { component: 'stripe-sync', userId: user.id });
     return NextResponse.json(
       { error: error.message || 'Failed to sync subscription' },
       { status: 500 }

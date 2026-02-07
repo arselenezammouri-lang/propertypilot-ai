@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 
@@ -25,9 +26,9 @@ export async function GET(request: NextRequest) {
 
     if (subError) {
       if (subError.code === '42703') {
-        console.warn('Subscriptions table schema mismatch, using defaults');
+        logger.warn('Subscriptions table schema mismatch, using defaults', { endpoint: '/api/user/usage' });
       } else {
-        console.error('Error fetching subscription:', subError);
+        logger.error('Error fetching subscription', subError, { endpoint: '/api/user/usage' });
       }
     } else {
       subscription = subData;
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
       percentageUsed,
     });
   } catch (error) {
-    console.error('Error in usage endpoint:', error);
+    logger.error('Error in usage endpoint', error, { endpoint: '/api/user/usage' });
     return NextResponse.json(
       { error: 'Errore interno del server' },
       { status: 500 }

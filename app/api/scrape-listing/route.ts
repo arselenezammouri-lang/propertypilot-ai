@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, ScraperBlockedError, isScraperBlockedError } from '@/lib/errors/api-errors';
+import { logger } from '@/lib/utils/safe-logger';
 
 // Rate limiting for scraping: 10 requests per minute per user
 const SCRAPER_RATE_LIMIT_PER_MINUTE = 10;
@@ -101,17 +102,17 @@ export async function POST(request: NextRequest) {
     }
 
     // STEP 7: Perform scraping
-    console.log('[SCRAPER] Starting scrape for URL:', url);
+    logger.debug('[SCRAPER] Starting scrape for URL', { url });
     const startTime = Date.now();
     
     const result = await scraper.scrape(url);
     
     const duration = Date.now() - startTime;
-    console.log('[SCRAPER] Scraping completed in', duration, 'ms');
+    logger.debug('[SCRAPER] Scraping completed', { duration, url });
 
     // STEP 8: Handle scraping result
     if (!result.success || !result.data) {
-      console.error('[SCRAPER] Scraping failed:', result.error);
+      logger.error('[SCRAPER] Scraping failed', new Error(result.error || 'Unknown error'), { url });
       
       // Check if it's a 403 blocked error
       const errorString = result.error?.toLowerCase() || '';
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[SCRAPER API] Unexpected error:', error);
+    logger.error('[SCRAPER API] Unexpected error', error as Error, { component: 'scrape-listing' });
     
     // Handle specific error types
     if (error.code === 'ETIMEDOUT' || error.code === 'ECONNABORTED') {

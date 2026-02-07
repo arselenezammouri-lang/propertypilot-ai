@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { cachedSupabaseQuery } from '@/lib/utils/cache-edge';
+import { logger } from '@/lib/utils/safe-logger';
 
 /**
  * GET /api/prospecting/listings
@@ -98,7 +99,7 @@ export async function GET(request: NextRequest) {
     const { data: listings, error, count } = result;
 
     if (error) {
-      console.error('[PROSPECTING LISTINGS] Error fetching listings:', error);
+      logger.error('Error fetching listings', error, { endpoint: '/api/prospecting/listings' });
       return NextResponse.json(
         {
           success: false,
@@ -121,7 +122,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[PROSPECTING LISTINGS] Unexpected error:', error);
+    logger.error('Unexpected error in listings', error, { endpoint: '/api/prospecting/listings' });
     return NextResponse.json(
       {
         success: false,

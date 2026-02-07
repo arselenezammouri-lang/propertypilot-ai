@@ -264,12 +264,23 @@ export default function AnalyzePage() {
         )}
 
         {isLoading && (
-          <div className="futuristic-card p-12 text-center animate-fade-in-up" data-testid="card-loading">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-ai-aurora rounded-3xl flex items-center justify-center animate-pulse shadow-glow-purple">
-              <Loader2 className="h-10 w-10 text-white animate-spin" />
+          <div className="futuristic-card p-12 animate-fade-in-up" data-testid="card-loading">
+            <div className="space-y-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-ai-aurora rounded-2xl flex items-center justify-center animate-pulse shadow-glow-purple">
+                  <Loader2 className="h-8 w-8 text-white animate-spin" />
+                </div>
+                <div className="flex-1">
+                  <div className="h-6 bg-card/50 rounded-lg w-48 mb-2 animate-pulse" />
+                  <div className="h-4 bg-card/30 rounded-lg w-64 animate-pulse" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-4 bg-card/30 rounded w-full animate-pulse" />
+                <div className="h-4 bg-card/30 rounded w-5/6 animate-pulse" />
+                <div className="h-4 bg-card/30 rounded w-4/6 animate-pulse" />
+              </div>
             </div>
-            <h3 className="text-2xl font-bold mb-2 gradient-text-purple">Analisi in corso...</h3>
-            <p className="text-muted-foreground">Sto estraendo i dati e generando l'analisi AI</p>
           </div>
         )}
 
