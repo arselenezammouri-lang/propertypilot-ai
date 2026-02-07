@@ -3,8 +3,6 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
 import type { 
-
-export const dynamic = 'force-dynamic';
   AutomationRule,
   AutomationCondition,
   AutomationConditionGroup,
@@ -13,6 +11,8 @@ export const dynamic = 'force-dynamic';
   AutomationTriggerType,
   Lead
 } from '@/lib/types/database.types';
+
+export const dynamic = 'force-dynamic';
 
 const executeRequestSchema = z.object({
   trigger_type: z.enum(['new_lead', 'score_updated', 'status_changed', 'priority_changed', 'market_changed']),

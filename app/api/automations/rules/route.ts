@@ -3,8 +3,6 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
 import type { 
-
-export const dynamic = 'force-dynamic';
   AutomationRule, 
   InsertAutomationRule, 
   UpdateAutomationRule,
@@ -12,6 +10,8 @@ export const dynamic = 'force-dynamic';
   AutomationConditionGroup,
   AutomationActionGroup
 } from '@/lib/types/database.types';
+
+export const dynamic = 'force-dynamic';
 
 const conditionSchema = z.object({
   field: z.string(),
