@@ -8,6 +8,8 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/r
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 const aiCache = getAICacheService();
 

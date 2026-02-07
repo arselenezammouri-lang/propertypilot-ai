@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/prospecting/stats
  * Recupera statistiche per la dashboard (chiamate oggi, appuntamenti questa settimana)

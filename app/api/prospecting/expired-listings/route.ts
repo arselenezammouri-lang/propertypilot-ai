@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { generateSmartBriefing } from '@/lib/ai/smart-briefing';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/prospecting/expired-listings
  * Restituisce immobili rimossi o fermi da 120+ giorni

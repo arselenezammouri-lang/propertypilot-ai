@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/safe-logger';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const trackEventSchema = z.object({
   event: z.string().min(1).max(100),
   properties: z.record(z.any()).optional(),

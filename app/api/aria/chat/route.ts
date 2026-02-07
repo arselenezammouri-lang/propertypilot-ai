@@ -5,6 +5,8 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const ariaChatRequestSchema = z.object({
   message: z.string().min(1, 'Message is required').max(5000, 'Message too long'),
   context: z.object({

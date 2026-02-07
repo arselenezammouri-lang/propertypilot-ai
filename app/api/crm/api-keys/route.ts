@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { randomBytes } from 'crypto';
 import type { UserApiKey, InsertUserApiKey, UpdateUserApiKey } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 function generateApiKey(): string {
   return `pk_live_${randomBytes(32).toString('hex')}`;
 }

@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { requireStripe, getOneTimePackage, STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();

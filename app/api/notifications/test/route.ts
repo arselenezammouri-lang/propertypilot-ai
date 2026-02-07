@@ -4,6 +4,8 @@ import { sendEmail } from '@/lib/utils/email';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const testNotificationSchema = z.object({
   email: z.boolean().optional(),
   whatsapp: z.boolean().optional(),

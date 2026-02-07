@@ -9,6 +9,8 @@ import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { getUserLocale, getErrorMessage } from '@/lib/i18n/api-locale';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   originalText: z.string().min(50, 'Il testo originale deve avere almeno 50 caratteri').max(3000),

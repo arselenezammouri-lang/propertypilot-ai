@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const notificationSettingsSchema = z.object({
   morning_briefing_enabled: z.boolean(),
   morning_briefing_email: z.boolean(),

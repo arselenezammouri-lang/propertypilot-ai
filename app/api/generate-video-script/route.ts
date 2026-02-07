@@ -7,6 +7,8 @@ import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   type: z.string().min(5, 'Inserisci il tipo di immobile').max(100),
   location: z.string().min(2, 'Inserisci la località').max(150),

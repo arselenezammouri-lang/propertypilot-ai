@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import type { CommunicationTemplate, InsertCommunicationTemplate, UpdateCommunicationTemplate } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 const MAX_TEMPLATES_PER_USER = 50;
 
 const insertTemplateSchema = z.object({

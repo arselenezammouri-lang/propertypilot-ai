@@ -13,6 +13,8 @@ import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors
 import { apiWrapper } from '@/lib/utils/api-wrapper';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 export const POST = apiWrapper(
   async (request: NextRequest, { user, supabase, body }) => {
     // STEP 1: Rate limiting - User (10/min)

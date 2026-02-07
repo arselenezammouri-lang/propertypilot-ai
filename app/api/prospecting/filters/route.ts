@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 // Schema validazione per creazione filtro
 const createFilterSchema = z.object({
   name: z.string().min(1, 'Il nome del filtro è obbligatorio').max(200, 'Il nome non può superare 200 caratteri'),

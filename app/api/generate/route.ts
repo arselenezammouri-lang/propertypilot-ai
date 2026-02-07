@@ -14,6 +14,8 @@ import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import OpenAI from 'openai';
 
+export const dynamic = 'force-dynamic';
+
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
 const aiCache = getAICacheService();

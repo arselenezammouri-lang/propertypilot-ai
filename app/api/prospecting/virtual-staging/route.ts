@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const virtualStagingSchema = z.object({
   listing_id: z.string().uuid(),
   generated: z.boolean(),

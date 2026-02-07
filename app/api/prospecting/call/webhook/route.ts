@@ -5,6 +5,8 @@ import { analyzeCallOutcome } from '@/lib/ai/voice-agent';
 import { sendEmail, generateAppointmentNotificationEmail } from '@/lib/utils/email';
 import { createGoogleCalendarEvent, generateAppointmentCalendarEvent } from '@/lib/calendar/google';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/prospecting/call/webhook
  * Webhook endpoint per ricevere callback da Bland AI quando una chiamata è completata

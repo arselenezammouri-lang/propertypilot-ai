@@ -10,6 +10,8 @@ import type { Lead } from '@/lib/types/database.types';
 import { getUserLocale, SupportedLocale } from '@/lib/i18n/api-locale';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });

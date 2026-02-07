@@ -4,6 +4,8 @@ import { requireStripe, STRIPE_PLANS, PlanType, getPlanByPriceId } from '@/lib/s
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const supabaseAdmin = createAdminClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,

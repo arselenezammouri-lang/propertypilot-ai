@@ -5,6 +5,8 @@ import { supabaseService } from '@/lib/supabase/service';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import type { Automation, FollowupPayload, ReminderPayload, WeeklyContentPayload } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 async function generateFollowupEmail(payload: FollowupPayload): Promise<string> {

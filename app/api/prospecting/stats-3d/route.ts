@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/prospecting/stats-3d
  * Restituisce statistiche su progetti 3D generati e WhatsApp

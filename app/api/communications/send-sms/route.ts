@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import type { InsertCommunicationLog } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 const sendSMSSchema = z.object({
   lead_id: z.string().uuid(),
   message: z.string().min(1).max(160),

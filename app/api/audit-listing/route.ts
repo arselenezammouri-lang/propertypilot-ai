@@ -9,6 +9,8 @@ import { formatErrorResponse, isOpenAIQuotaError, ScraperBlockedError } from '@/
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const AUDIT_RATE_LIMIT_PER_MINUTE = 10;
 
 const auditRequestSchema = z.object({

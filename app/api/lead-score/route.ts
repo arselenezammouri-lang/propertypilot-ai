@@ -8,6 +8,8 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const LEAD_SCORE_RATE_LIMIT_PER_MINUTE = 10;
 
 const leadScoreRequestSchema = z.object({

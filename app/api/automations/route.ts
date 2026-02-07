@@ -5,6 +5,8 @@ import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { checkUserRateLimit } from '@/lib/utils/rate-limit';
 import type { Automation, InsertAutomation, AutomationType, AutomationRepeatInterval } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 const followupPayloadSchema = z.object({
   client_name: z.string().min(1).max(100),
   client_email: z.string().email(),

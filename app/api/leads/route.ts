@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { insertLeadSchema, updateLeadSchema, leadFiltersSchema } from '@/lib/validations/lead';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();

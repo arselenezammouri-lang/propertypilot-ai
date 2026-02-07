@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+
 const FOUNDER_USER_ID = '84cae443-bedb-4cfd-9c88-bcc2ba817ed2';
 const FOUNDER_EMAIL = 'arselenezammouri@gmail.com';
 

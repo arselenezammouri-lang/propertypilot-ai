@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import type { Lead, CommunicationChannel, CommunicationTone } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });

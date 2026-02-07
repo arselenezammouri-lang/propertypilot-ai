@@ -7,6 +7,8 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const messageSchema = z.object({
   role: z.enum(['user', 'assistant']),
   content: z.string().min(1).max(4000),

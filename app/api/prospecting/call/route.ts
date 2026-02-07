@@ -10,6 +10,8 @@ import {
 } from '@/lib/ai/voice-agent';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const callRequestSchema = z.object({
   listing_id: z.string().uuid('ID listing non valido'),
   webhook_url: z.string().url().optional(), // URL opzionale per callback

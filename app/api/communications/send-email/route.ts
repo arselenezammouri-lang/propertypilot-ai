@@ -4,6 +4,8 @@ import { z } from 'zod';
 import type { InsertCommunicationLog } from '@/lib/types/database.types';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const sendEmailSchema = z.object({
   lead_id: z.string().uuid(),
   subject: z.string().min(1).max(200),

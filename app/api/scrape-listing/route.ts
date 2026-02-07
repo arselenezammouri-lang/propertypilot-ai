@@ -5,6 +5,8 @@ import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from
 import { formatErrorResponse, ScraperBlockedError, isScraperBlockedError } from '@/lib/errors/api-errors';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 // Rate limiting for scraping: 10 requests per minute per user
 const SCRAPER_RATE_LIMIT_PER_MINUTE = 10;
 

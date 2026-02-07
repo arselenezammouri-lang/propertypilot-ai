@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
 import type { 
+
+export const dynamic = 'force-dynamic';
   AutomationRule, 
   InsertAutomationRule, 
   UpdateAutomationRule,

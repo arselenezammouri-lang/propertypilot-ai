@@ -7,6 +7,8 @@ import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   leadName: z.string().min(2, 'Inserisci il nome del lead').max(100),
   agentName: z.string().min(2, 'Inserisci il nome dell\'agente').max(100),

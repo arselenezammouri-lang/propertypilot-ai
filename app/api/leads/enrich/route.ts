@@ -6,6 +6,8 @@ import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import type { Lead, LeadEnrichmentResult } from '@/lib/types/database.types';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
 async function enrichLeadWithAI(lead: Lead): Promise<LeadEnrichmentResult> {

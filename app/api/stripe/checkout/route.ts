@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { createCheckoutSession, getOrCreateCustomer, PLAN_TO_PRICE_ID } from '@/lib/stripe';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const checkoutSchema = z.object({
   plan: z.enum(['STARTER', 'PRO', 'AGENCY']),
 });

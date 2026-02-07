@@ -9,6 +9,8 @@ import sharp from 'sharp';
 import { Pool } from '@neondatabase/serverless';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const ALLOWED_IMAGE_DOMAINS = [
   'immobiliare.it',
   'idealista.it',

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const contactSchema = z.object({
   name: z.string().min(2, "Nome troppo corto").max(100),
   email: z.string().email("Email non valida"),

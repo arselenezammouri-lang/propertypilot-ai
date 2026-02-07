@@ -4,6 +4,8 @@ import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { nanoid } from 'nanoid';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();

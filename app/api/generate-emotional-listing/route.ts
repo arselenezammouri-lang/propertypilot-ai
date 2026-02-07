@@ -6,6 +6,8 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   propertyType: z.string().min(3, 'Inserisci il tipo di immobile').max(100),

@@ -9,6 +9,8 @@ import { createHash } from 'crypto';
 import type { ScrapedListing } from '@/lib/scrapers/types';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/prospecting/automate
  * Automation Bridge: Esegue scraping automatico basato su filtri attivi

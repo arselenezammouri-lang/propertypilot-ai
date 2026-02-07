@@ -7,6 +7,8 @@ import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
 
 const SocialPostRequestSchema = z.object({

@@ -4,6 +4,8 @@ import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { cachedSupabaseQuery } from '@/lib/utils/cache-edge';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/prospecting/listings
  * Lista annunci external_listings con filtri e paginazione

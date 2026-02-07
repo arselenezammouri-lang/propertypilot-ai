@@ -5,6 +5,8 @@ import type { SubscriptionStatus } from '@/lib/types/database.types';
 import Stripe from 'stripe';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for webhook processing');
 }

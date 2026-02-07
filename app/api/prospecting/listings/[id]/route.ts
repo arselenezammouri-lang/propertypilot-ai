@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const updateListingSchema = z.object({
   status: z.enum(['new', 'analyzed', 'called', 'in_negotiation', 'mandate_taken', 'appointment_set', 'rejected', 'converted']).optional(),
 });

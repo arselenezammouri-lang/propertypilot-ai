@@ -8,6 +8,8 @@ import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { getUserLocale, getErrorMessage, SupportedLocale } from '@/lib/i18n/api-locale';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
   { code: 'fr', name: 'Français', flag: '🇫🇷', country: 'Francia' },

@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { Pool } from '@neondatabase/serverless';
 
+export const dynamic = 'force-dynamic';
+
 const brandingSchema = z.object({
   agency_name: z.string().min(2, 'Nome agenzia obbligatorio').max(255),
   logo_url: z.string().url().nullable().optional(),

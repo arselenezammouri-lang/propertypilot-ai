@@ -7,6 +7,8 @@ import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 const requestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
   tipoImmobile: z.enum(['appartamento', 'casa', 'villa', 'attico', 'loft', 'bilocale', 'trilocale', 'monolocale', 'rustico', 'casale', 'palazzo', 'locale_commerciale', 'ufficio', 'terreno', 'garage', 'box']),

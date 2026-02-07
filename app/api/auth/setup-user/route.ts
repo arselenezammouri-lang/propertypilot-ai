@@ -5,6 +5,8 @@ import { getResendClient } from '@/lib/resend-client';
 import { emailTemplates } from '@/lib/email-templates';
 import { logger } from '@/lib/utils/safe-logger';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
