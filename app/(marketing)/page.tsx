@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LanguageSelector } from "@/components/language-selector";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Sparkles,
   Globe,
@@ -25,7 +27,7 @@ export const dynamic = 'force-dynamic';
 
 export default function MarketingLandingPage() {
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden diamond-force-black font-sans">
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.15),transparent_50%)]" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(59,130,246,0.1),transparent_50%)]" />
       
@@ -39,8 +41,10 @@ export default function MarketingLandingPage() {
               PropertyPilot AI
             </span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/auth/login" className="text-white/70 hover:text-white transition-colors">
+          <div className="flex items-center gap-3">
+            <LanguageSelector />
+            <ThemeToggle />
+            <Link href="/auth/login" className="text-white/70 hover:text-white transition-colors text-sm">
               Accedi
             </Link>
             <Button className="bg-gradient-to-r from-royal-purple to-electric-blue hover:opacity-90 text-white border-0" asChild>
