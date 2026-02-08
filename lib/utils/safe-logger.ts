@@ -6,10 +6,7 @@
  * - Log dettagliati solo in development
  * - Log sanitizzati in produzione
  * - Formato strutturato per monitoring
- * - Integrazione Sentry per error tracking
  */
-
-import { captureException, captureMessage } from '@/lib/monitoring/sentry';
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
@@ -98,7 +95,7 @@ class SafeLogger {
   }
 
   /**
-   * Log error - sempre sanitizzato + Sentry integration
+   * Log error - sempre sanitizzato
    */
   error(message: string, error?: any, context?: LogContext): void {
     let errorData: any = null;
@@ -114,7 +111,7 @@ class SafeLogger {
         };
       } else if (typeof error === 'object') {
         errorData = this.sanitize(error);
-        // Create Error instance for Sentry
+        // Create Error instance for logging
         errorInstance = new Error(message);
       } else {
         errorData = String(error);
@@ -128,13 +125,6 @@ class SafeLogger {
     const formatted = this.formatMessage('error', message, fullContext);
     console.error(formatted);
 
-    // Send to Sentry if error instance exists
-    if (errorInstance) {
-      captureException(errorInstance, {
-        message,
-        ...this.sanitize(context || {}),
-      });
-    }
   }
 
   /**

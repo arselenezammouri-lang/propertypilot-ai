@@ -10,7 +10,6 @@ import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { logger } from '@/lib/utils/safe-logger';
-// import { captureException } from '@/lib/monitoring/sentry'; // DISABLED for launch
 
 export default function Error({
   error,
@@ -25,8 +24,6 @@ export default function Error({
       digest: error.digest,
     });
 
-    // Sentry disabled for launch
-    // captureException(error, { component: 'GlobalError', digest: error.digest });
   }, [error]);
 
   return (
