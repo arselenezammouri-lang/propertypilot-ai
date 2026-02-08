@@ -33,6 +33,8 @@ const WhatsAppSenderModal = dynamic(() => import("@/components/whatsapp-sender-m
 
 import { analyzeUrgency } from "@/lib/ai/urgency-analysis";
 
+export const dynamic = 'force-dynamic';
+
 const PredatorLiveBadge = dynamic(() => import("@/components/predator-live-badge").then(mod => ({ default: mod.PredatorLiveBadge })), {
   ssr: false,
 });

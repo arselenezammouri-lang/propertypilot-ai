@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 interface AgencyBranding {
   id: number;
   user_id: string;

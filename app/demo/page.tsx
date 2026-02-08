@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 
+export const dynamic = 'force-dynamic';
+
 const valuePoints = [
   {
     icon: Sparkles,

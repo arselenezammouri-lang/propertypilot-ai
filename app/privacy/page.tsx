@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Shield, Lock, Eye, Database, Globe, UserCheck, Mail } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Privacy Policy | PropertyPilot AI",
   description: "Informativa sulla privacy e protezione dei dati personali di PropertyPilot AI. Scopri come trattiamo i tuoi dati.",

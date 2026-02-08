@@ -29,6 +29,8 @@ import {
   RefreshCw
 } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';

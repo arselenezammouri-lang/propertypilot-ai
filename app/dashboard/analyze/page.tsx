@@ -30,6 +30,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
+export const dynamic = 'force-dynamic';
+
 interface ScrapedData {
   title: string;
   price: string;

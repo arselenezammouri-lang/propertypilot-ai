@@ -43,6 +43,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
 
+export const dynamic = 'force-dynamic';
+
 const pdfFormSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
   description: z.string().min(10, "La descrizione deve avere almeno 10 caratteri"),

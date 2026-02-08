@@ -9,6 +9,8 @@ import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, 
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 
+export const dynamic = 'force-dynamic';
+
 interface WorkspaceModule {
   id: string;
   name: string;

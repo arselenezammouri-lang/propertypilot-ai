@@ -123,6 +123,8 @@ import { GlobalStatsTicker } from "@/components/global-stats-ticker";
 import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 
+export const dynamic = 'force-dynamic';
+
 interface ExternalListing {
   id: string;
   title: string;

@@ -36,6 +36,8 @@ import {
   Shield
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 interface LeadFactor {
   nome: string;
   punteggio: number;

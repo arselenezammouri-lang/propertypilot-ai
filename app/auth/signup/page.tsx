@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 function SignupClient() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

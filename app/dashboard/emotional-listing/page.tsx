@@ -26,6 +26,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 interface EmotionalListing {
   titolo: string;
   aperturaEmozionale: string;

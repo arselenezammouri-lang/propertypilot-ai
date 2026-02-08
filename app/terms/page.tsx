@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, FileText, Scale, Shield, AlertTriangle, CheckCircle } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Termini e Condizioni | PropertyPilot AI",
   description: "Leggi i termini e le condizioni d'uso di PropertyPilot AI, la piattaforma AI per professionisti immobiliari.",

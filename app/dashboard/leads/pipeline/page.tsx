@@ -20,6 +20,8 @@ import {
   LayoutGrid
 } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 interface Lead {
   id: string;
   nome: string;

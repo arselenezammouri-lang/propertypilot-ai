@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+export const dynamic = 'force-dynamic';
+
 const plans = [
   {
     id: "starter",

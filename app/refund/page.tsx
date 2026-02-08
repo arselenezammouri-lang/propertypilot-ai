@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, RefreshCw, Clock, CheckCircle, AlertTriangle, Mail, CreditCard, XCircle } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Politica di Rimborso | PropertyPilot AI",
   description: "Informazioni sulla politica di rimborso e cancellazione abbonamenti di PropertyPilot AI.",

@@ -42,6 +42,8 @@ import {
 import Link from 'next/link';
 import { ProFeaturePaywall } from '@/components/demo-modal';
 
+export const dynamic = 'force-dynamic';
+
 interface StructuralAudit {
   titolo: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };
   apertura: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };

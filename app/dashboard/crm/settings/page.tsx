@@ -36,6 +36,8 @@ import {
 import Link from 'next/link';
 import type { UserApiKey, InsertUserApiKey, LeadMarket } from '@/lib/types/database.types';
 
+export const dynamic = 'force-dynamic';
+
 interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
   api_key: string;
 }

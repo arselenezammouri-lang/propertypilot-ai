@@ -11,6 +11,8 @@ import { Check, Sparkles, Loader2, ShoppingBag, ArrowRight, Rocket } from 'lucid
 import { useToast } from '@/hooks/use-toast';
 import { STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
 
+export const dynamic = 'force-dynamic';
+
 interface Purchase {
   id: string;
   package_id: string;
