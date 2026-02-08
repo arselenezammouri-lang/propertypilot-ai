@@ -77,44 +77,7 @@ import {
   Send,
 } from "lucide-react";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
-import dynamic from "next/dynamic";
-
-// Lazy load heavy components
-const InvestmentAnalysisModal = dynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
-  ssr: false,
-});
-
-const AIVirtualStaging = dynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
-  ssr: false,
-});
-
-const ProFeaturePaywall = dynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
-  ssr: false,
-});
-
-const AIXRayVision = dynamic(() => import("@/components/ai-xray-vision").then(mod => ({ default: mod.AIXRayVision })), {
-  ssr: false,
-});
-
-const TerritoryCommander = dynamic(() => import("@/components/territory-commander").then(mod => ({ default: mod.TerritoryCommander })), {
-  ssr: false,
-});
-const PremiumInvestorReport = dynamic(() => import("@/components/premium-investor-report").then(mod => ({ default: mod.PremiumInvestorReport })), {
-  ssr: false,
-});
-
-const PriceDropSniperModal = dynamic(() => import("@/components/price-drop-sniper-modal").then(mod => ({ default: mod.PriceDropSniperModal })), {
-  ssr: false,
-});
-
-const CompetitorRadar = dynamic(() => import("@/components/competitor-radar").then(mod => ({ default: mod.CompetitorRadar })), {
-  ssr: false,
-});
-
-const GlobalLiveFeed = dynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
-  ssr: false,
-});
-
+import NextDynamic from "next/dynamic";
 import { suggestNextAction } from "@/lib/ai/next-action-suggestion";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -124,6 +87,42 @@ import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 
 export const dynamic = 'force-dynamic';
+
+// Lazy load heavy components
+const InvestmentAnalysisModal = NextDynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
+  ssr: false,
+});
+
+const AIVirtualStaging = NextDynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
+  ssr: false,
+});
+
+const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
+  ssr: false,
+});
+
+const AIXRayVision = NextDynamic(() => import("@/components/ai-xray-vision").then(mod => ({ default: mod.AIXRayVision })), {
+  ssr: false,
+});
+
+const TerritoryCommander = NextDynamic(() => import("@/components/territory-commander").then(mod => ({ default: mod.TerritoryCommander })), {
+  ssr: false,
+});
+const PremiumInvestorReport = NextDynamic(() => import("@/components/premium-investor-report").then(mod => ({ default: mod.PremiumInvestorReport })), {
+  ssr: false,
+});
+
+const PriceDropSniperModal = NextDynamic(() => import("@/components/price-drop-sniper-modal").then(mod => ({ default: mod.PriceDropSniperModal })), {
+  ssr: false,
+});
+
+const CompetitorRadar = NextDynamic(() => import("@/components/competitor-radar").then(mod => ({ default: mod.CompetitorRadar })), {
+  ssr: false,
+});
+
+const GlobalLiveFeed = NextDynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
+  ssr: false,
+});
 
 interface ExternalListing {
   id: string;

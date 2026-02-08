@@ -20,22 +20,21 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import dynamic from "next/dynamic";
-
-// Lazy load heavy components
-const AIVirtualStaging = dynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
-  ssr: false,
-});
-
-const WhatsAppSenderModal = dynamic(() => import("@/components/whatsapp-sender-modal").then(mod => ({ default: mod.WhatsAppSenderModal })), {
-  ssr: false,
-});
-
+import NextDynamic from "next/dynamic";
 import { analyzeUrgency } from "@/lib/ai/urgency-analysis";
 
 export const dynamic = 'force-dynamic';
 
-const PredatorLiveBadge = dynamic(() => import("@/components/predator-live-badge").then(mod => ({ default: mod.PredatorLiveBadge })), {
+// Lazy load heavy components
+const AIVirtualStaging = NextDynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
+  ssr: false,
+});
+
+const WhatsAppSenderModal = NextDynamic(() => import("@/components/whatsapp-sender-modal").then(mod => ({ default: mod.WhatsAppSenderModal })), {
+  ssr: false,
+});
+
+const PredatorLiveBadge = NextDynamic(() => import("@/components/predator-live-badge").then(mod => ({ default: mod.PredatorLiveBadge })), {
   ssr: false,
 });
 

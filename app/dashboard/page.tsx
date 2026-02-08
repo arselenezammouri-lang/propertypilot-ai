@@ -8,58 +8,8 @@ import { RegionSelector } from "@/components/region-selector";
 import { LanguageSelector } from "@/components/language-selector";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
-import dynamic from "next/dynamic";
+import NextDynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
-
-// Lazy load heavy components
-const Dashboard3DStats = dynamic(() => import("@/components/dashboard-3d-stats").then(mod => ({ default: mod.Dashboard3DStats })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const MorningBriefingBox = dynamic(() => import("@/components/morning-briefing-box").then(mod => ({ default: mod.MorningBriefingBox })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const SniperStats = dynamic(() => import("@/components/sniper-stats").then(mod => ({ default: mod.SniperStats })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const RegionalPortals = dynamic(() => import("@/components/regional-portals").then(mod => ({ default: mod.RegionalPortals })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const GlobalLiveFeed = dynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const DashboardHelpButton = dynamic(() => import("@/components/dashboard-help-button").then(mod => ({ default: mod.DashboardHelpButton })), {
-  ssr: false,
-});
-
-const DashboardPlanFeatures = dynamic(() => import("@/components/dashboard-plan-features").then(mod => ({ default: mod.DashboardPlanFeatures })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const AriaCoach = dynamic(() => import("@/components/aria-coach").then(mod => ({ default: mod.AriaCoach })), {
-  loading: () => <div className="fixed bottom-4 right-4 w-16 h-16 rounded-full bg-card/50 animate-pulse" />,
-  ssr: false,
-});
-
-const ReferralSection = dynamic(() => import("@/components/referral-section").then(mod => ({ default: mod.ReferralSection })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const ProfitDashboard = dynamic(() => import("@/components/profit-dashboard").then(mod => ({ default: mod.ProfitDashboard })), {
-  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
 import { 
@@ -92,6 +42,56 @@ import {
 } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
+
+// Lazy load heavy components
+const Dashboard3DStats = NextDynamic(() => import("@/components/dashboard-3d-stats").then(mod => ({ default: mod.Dashboard3DStats })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const MorningBriefingBox = NextDynamic(() => import("@/components/morning-briefing-box").then(mod => ({ default: mod.MorningBriefingBox })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const SniperStats = NextDynamic(() => import("@/components/sniper-stats").then(mod => ({ default: mod.SniperStats })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const RegionalPortals = NextDynamic(() => import("@/components/regional-portals").then(mod => ({ default: mod.RegionalPortals })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const GlobalLiveFeed = NextDynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const DashboardHelpButton = NextDynamic(() => import("@/components/dashboard-help-button").then(mod => ({ default: mod.DashboardHelpButton })), {
+  ssr: false,
+});
+
+const DashboardPlanFeatures = NextDynamic(() => import("@/components/dashboard-plan-features").then(mod => ({ default: mod.DashboardPlanFeatures })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const AriaCoach = NextDynamic(() => import("@/components/aria-coach").then(mod => ({ default: mod.AriaCoach })), {
+  loading: () => <div className="fixed bottom-4 right-4 w-16 h-16 rounded-full bg-card/50 animate-pulse" />,
+  ssr: false,
+});
+
+const ReferralSection = NextDynamic(() => import("@/components/referral-section").then(mod => ({ default: mod.ReferralSection })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
+const ProfitDashboard = NextDynamic(() => import("@/components/profit-dashboard").then(mod => ({ default: mod.ProfitDashboard })), {
+  loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
+  ssr: false,
+});
 
 export default async function DashboardPage() {
   const supabase = await createClient();
