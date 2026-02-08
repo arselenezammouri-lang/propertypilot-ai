@@ -9,6 +9,8 @@ import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 
+export const dynamic = 'force-dynamic';
+
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
 const APP_NAME = 'PropertyPilot AI';
 const APP_DESCRIPTION = 'The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups. Built for agents and teams in the US, Europe, and beyond.';
