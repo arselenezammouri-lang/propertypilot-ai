@@ -10,8 +10,6 @@ import { STRIPE_PLANS, STRIPE_ONE_TIME_PACKAGES, PlanType } from '@/lib/stripe/c
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 
-export const dynamic = 'force-dynamic';
-
 const FREE_PLAN_CONFIG = {
   name: 'Free',
   price: 0,

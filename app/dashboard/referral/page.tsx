@@ -9,8 +9,6 @@ import { Gift, Share2, Users, Percent, TrendingUp, Copy, Check, MessageCircle } 
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 
-export const dynamic = 'force-dynamic';
-
 export default function ReferralPage() {
   const { toast } = useToast();
   const [referralCode, setReferralCode] = useState<string>("");

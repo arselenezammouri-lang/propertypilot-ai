@@ -83,8 +83,6 @@ import {
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
 import NextDynamic from "next/dynamic";
 
-export const dynamic = 'force-dynamic';
-
 const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
   ssr: false,
 });

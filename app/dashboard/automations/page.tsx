@@ -37,8 +37,6 @@ import {
 import Link from "next/link";
 import type { Automation } from "@/lib/types/database.types";
 
-export const dynamic = 'force-dynamic';
-
 const AUTOMATION_TYPES = [
   { 
     id: "followup", 

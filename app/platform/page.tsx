@@ -58,8 +58,6 @@ import { Menu, X } from "lucide-react";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Locale, defaultLocale } from "@/lib/i18n/config";
 
-export const dynamic = 'force-dynamic';
-
 export default function PlatformPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>("EUR"); // Default EUR

@@ -86,8 +86,6 @@ import { GlobalStatsTicker } from "@/components/global-stats-ticker";
 import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 
-export const dynamic = 'force-dynamic';
-
 // Lazy load heavy components
 const InvestmentAnalysisModal = NextDynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
   ssr: false,

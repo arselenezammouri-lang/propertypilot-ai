@@ -11,8 +11,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
-export const dynamic = 'force-dynamic';
-
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
   { code: 'fr', name: 'Français', flag: '🇫🇷', country: 'Francia' },

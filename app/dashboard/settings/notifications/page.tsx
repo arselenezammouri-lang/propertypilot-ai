@@ -18,8 +18,6 @@ import {
   Loader2,
 } from "lucide-react";
 
-export const dynamic = 'force-dynamic';
-
 interface NotificationSettings {
   morning_briefing_enabled: boolean;
   morning_briefing_email: boolean;

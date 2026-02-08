@@ -13,8 +13,6 @@ import { it } from 'date-fns/locale';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-export const dynamic = 'force-dynamic';
-
 export default function ListingsPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();

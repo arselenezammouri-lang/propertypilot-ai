@@ -39,8 +39,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const dynamic = 'force-dynamic';
-
 type Tono = "professionale" | "emotivo" | "luxury";
 type TipoImmobile = "casa" | "appartamento" | "villa" | "locale" | "terreno" | "ufficio";
 

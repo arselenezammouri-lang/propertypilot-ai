@@ -9,8 +9,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
-export const dynamic = 'force-dynamic';
-
 export default function CompliancePage() {
   const router = useRouter();
   const { toast } = useToast();

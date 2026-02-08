@@ -7,8 +7,6 @@ import { ArrowLeft, Book } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const dynamic = 'force-dynamic';
-
 // Mock content - in produzione: CMS o file markdown
 const docContent: Record<string, { title: string; content: string }> = {
   'getting-started/welcome': {

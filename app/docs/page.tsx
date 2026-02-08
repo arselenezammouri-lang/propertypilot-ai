@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
-
 interface DocSection {
   id: string;
   title: string;

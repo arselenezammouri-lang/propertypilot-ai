@@ -46,8 +46,6 @@ import type {
   AutomationLog
 } from '@/lib/types/database.types';
 
-export const dynamic = 'force-dynamic';
-
 const TRIGGER_LABELS: Record<AutomationTriggerType, { label: string; description: string; icon: string }> = {
   new_lead: { label: 'Nuovo Lead', description: 'Quando arriva un nuovo lead', icon: '🆕' },
   score_updated: { label: 'Score Aggiornato', description: 'Quando il lead score cambia', icon: '📊' },

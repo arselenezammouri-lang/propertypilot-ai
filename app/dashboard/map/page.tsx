@@ -23,8 +23,6 @@ import {
 import NextDynamic from "next/dynamic";
 import { analyzeUrgency } from "@/lib/ai/urgency-analysis";
 
-export const dynamic = 'force-dynamic';
-
 // Lazy load heavy components
 const AIVirtualStaging = NextDynamic(() => import("@/components/ai-virtual-staging").then(mod => ({ default: mod.AIVirtualStaging })), {
   ssr: false,

@@ -34,8 +34,6 @@ import { SiTiktok } from "react-icons/si";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
-export const dynamic = 'force-dynamic';
-
 type Tono = "professionale" | "emotivo" | "luxury";
 type Lunghezza = "breve" | "standard" | "lunga";
 

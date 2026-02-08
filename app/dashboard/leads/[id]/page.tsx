@@ -17,8 +17,6 @@ import { useToast } from '@/hooks/use-toast';
 import type { Lead, LeadEnrichmentResult, LeadNote } from '@/lib/types/database.types';
 import CommunicationsHub from './CommunicationsHub';
 
-export const dynamic = 'force-dynamic';
-
 const statusLabels: Record<string, string> = {
   new: 'Nuovo',
   contacted: 'Contattato',

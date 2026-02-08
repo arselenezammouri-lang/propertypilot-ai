@@ -26,8 +26,6 @@ import {
 import { ScrapedListing } from '@/lib/scrapers/types';
 import { GeneratedContent } from '@/lib/ai/generateListingContent';
 
-export const dynamic = 'force-dynamic';
-
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();

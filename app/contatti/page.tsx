@@ -23,8 +23,6 @@ import {
 } from "lucide-react";
 import { SiWhatsapp, SiLinkedin, SiX } from "react-icons/si";
 
-export const dynamic = 'force-dynamic';
-
 export default function ContattiPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
