@@ -166,7 +166,7 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
+      <body suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
         <Providers>
           <ThemeProvider
             defaultTheme="dark"
