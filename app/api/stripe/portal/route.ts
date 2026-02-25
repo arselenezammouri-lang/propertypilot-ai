@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe } from '@/lib/stripe/config';
+import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
+  const origin = request.nextUrl.origin;
   try {
     const supabase = await createClient();
     
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const returnUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000'}/dashboard/billing`;
+    const returnUrl = `${origin}/dashboard/billing`;
 
     const stripe = requireStripe();
     const portalSession = await stripe.billingPortal.sessions.create({
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[STRIPE PORTAL] Error:', error);
+    logger.error('[STRIPE PORTAL] Error', error as Error, { component: 'stripe-portal' });
     
     return NextResponse.json(
       { 

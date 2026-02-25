@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
 
   return [
     {

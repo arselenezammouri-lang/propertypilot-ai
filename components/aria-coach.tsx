@@ -289,7 +289,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     // Controlla limite giornaliero per piano FREE
     if (effectivePlan === "free") {
       const limitReached = checkDailyLimit();
-        if (limitReached) {
+      if (limitReached) {
         const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
         toast({
           title: t.limitReachedTitle,

@@ -161,9 +161,9 @@ export default function PricingPage() {
     if (user) {
       // User is logged in, redirect to Stripe checkout
       if (planId === "boost") {
-        window.location.href = `/api/stripe/checkout?package=boost`;
+        window.location.href = `/api/stripe/checkout-oneshot?package=boost`;
       } else {
-        window.location.href = `/api/stripe/checkout?plan=${planId}`;
+        window.location.href = `/api/stripe/checkout?plan=${planId.toUpperCase()}`;
       }
     } else {
       // User is not logged in, redirect to signup

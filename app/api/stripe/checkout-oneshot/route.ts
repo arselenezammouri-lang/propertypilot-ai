@@ -74,8 +74,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const successUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?boost=success`;
-    const cancelUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/billing?canceled=true`;
+    const origin = request.nextUrl.origin;
+    const successUrl = `${origin}/dashboard?boost=success`;
+    const cancelUrl = `${origin}/dashboard/billing?canceled=true`;
 
     const hasPriceId = selectedPackage.priceId;
     
@@ -137,7 +138,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const pkg = request.nextUrl.searchParams.get('package');
+  if (pkg && (pkg === 'boost' || pkg === 'agency_boost')) {
+    const result = await createOneShotSession(request, pkg);
+    if ('redirect' in result) return NextResponse.redirect(new URL(result.redirect, request.url));
+    if (result.url) return NextResponse.redirect(result.url);
+  }
   const packages = [{
     id: STRIPE_ONE_TIME_PACKAGES.boost.id,
     name: STRIPE_ONE_TIME_PACKAGES.boost.name,
@@ -145,6 +152,41 @@ export async function GET() {
     tagline: STRIPE_ONE_TIME_PACKAGES.boost.tagline,
     features: STRIPE_ONE_TIME_PACKAGES.boost.features,
   }];
-
   return NextResponse.json({ packages });
+}
+
+async function createOneShotSession(request: NextRequest, packageId: string): Promise<{ url?: string; redirect?: string }> {
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) return { redirect: '/auth/login?redirect=' + encodeURIComponent('/api/stripe/checkout-oneshot?package=' + packageId) };
+    const selectedPackage = getOneTimePackage(packageId);
+    if (!selectedPackage) return { redirect: '/pricing' };
+    const { data: subscription } = await supabase.from('subscriptions').select('stripe_customer_id').eq('user_id', user.id).maybeSingle();
+    let customerId = subscription?.stripe_customer_id;
+    const stripe = requireStripe();
+    if (!customerId) {
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', user.id).single();
+      const customer = await stripe.customers.create({ email: user.email, name: profile?.full_name, metadata: { userId: user.id } });
+      customerId = customer.id;
+      await supabase.from('subscriptions').upsert({ user_id: user.id, stripe_customer_id: customerId, status: 'free' }, { onConflict: 'user_id' });
+    }
+    const origin = request.nextUrl.origin;
+    const lineItems = selectedPackage.priceId
+      ? [{ price: selectedPackage.priceId, quantity: 1 }]
+      : [{ price_data: { currency: 'eur', product_data: { name: selectedPackage.name, description: selectedPackage.tagline }, unit_amount: selectedPackage.price * 100 }, quantity: 1 }];
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      success_url: `${origin}/dashboard?boost=success`,
+      cancel_url: `${origin}/dashboard/billing?canceled=true`,
+      metadata: { userId: user.id, packageId: selectedPackage.id, packageName: selectedPackage.name, packagePrice: String(selectedPackage.price), paymentType: 'one_shot' },
+      invoice_creation: { enabled: true },
+    });
+    return { url: session.url ?? undefined };
+  } catch {
+    return { redirect: '/pricing' };
+  }
 }

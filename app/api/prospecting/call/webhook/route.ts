@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
             userEmail = authUser?.user?.email;
           }
 
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot.ai';
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl?.origin || 'https://propertypilot-ai.vercel.app';
           const dashboardUrl = `${baseUrl}/dashboard/prospecting`;
 
           // Send email notification

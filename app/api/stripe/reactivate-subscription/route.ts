@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireStripe } from '@/lib/stripe/config';
+import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       .eq('user_id', user.id);
 
     if (updateError) {
-      console.error('[REACTIVATE SUB] DB update error:', updateError);
+      logger.error('[REACTIVATE SUB] DB update error', updateError as Error, { userId: user.id });
     }
 
     return NextResponse.json({
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('[REACTIVATE SUBSCRIPTION] Error:', error);
+    logger.error('[REACTIVATE SUBSCRIPTION] Error', error as Error, { component: 'reactivate-subscription' });
     
     return NextResponse.json(
       { 

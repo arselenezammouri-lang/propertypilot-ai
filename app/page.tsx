@@ -237,7 +237,7 @@ export default function PlatformPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className={`relative pt-24 sm:pt-32 md:pt-40 pb-24 px-4 overflow-hidden`}
+        className={`relative pt-24 sm:pt-32 md:pt-40 pb-24 px-4`}
       >
         <div className="container mx-auto max-w-7xl relative z-10">
           <div className="text-center mb-12">
@@ -249,15 +249,14 @@ export default function PlatformPage() {
             </div>
             
             {/* Gigantic Title with Metallic AI Reflection */}
-            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold mb-6 leading-[1.1]">
-              <span className="bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#9333ea] bg-clip-text text-transparent">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold mb-6 leading-[1.15] pb-2">
+              <span className="bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#9333ea] bg-clip-text text-transparent block pb-1">
                 {t.landing.hero.titlePart1}
               </span>
-              <br />
-              <span className="bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent animate-gradient">
+              <span className="bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent animate-gradient block pb-1">
                 {t.landing.hero.titlePart2}{" "}
               </span>
-              <span className="relative inline-block">
+              <span className="relative inline-block pb-1">
                 <span className="bg-gradient-to-r from-[#06b6d4] via-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent bg-[length:200%_100%] animate-shimmer">
                   {t.landing.hero.titleAI}
                 </span>
@@ -357,7 +356,7 @@ export default function PlatformPage() {
       >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 fade-on-scroll">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent pb-2">
               {t.landing.features.title}
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
@@ -420,7 +419,7 @@ export default function PlatformPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#9333ea]/10 via-transparent to-[#06b6d4]/10"></div>
         <div className="container mx-auto max-w-7xl relative z-10">
           <div className="text-center mb-16 fade-on-scroll">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#06b6d4] via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent pb-2">
               {t.landing.searchEngine.title}
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
@@ -545,7 +544,7 @@ export default function PlatformPage() {
       >
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-16 fade-on-scroll">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent pb-2">
               {t.landing.tuesdayMorning.title}
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
@@ -594,7 +593,7 @@ export default function PlatformPage() {
       >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 fade-on-scroll">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent pb-2">
               {t.landing.testimonials.title}
             </h2>
             <p className="text-xl text-gray-400">
@@ -663,7 +662,7 @@ export default function PlatformPage() {
               <Sparkles className="h-4 w-4 text-[#9333ea]" />
               <span className="text-sm font-medium text-[#9333ea]">{t.landing.aria.badge}</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#9333ea] via-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent pb-2">
               {t.landing.aria.title}
             </h2>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
@@ -736,7 +735,7 @@ export default function PlatformPage() {
       >
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-16 fade-on-scroll">
-            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from:white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+            <h2 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent pb-2">
               {t.landing.pricing.title}
             </h2>
             <p className="text-xl text-gray-400 font-light">
@@ -783,7 +782,7 @@ export default function PlatformPage() {
                         {t.landing.pricing.bestValue}
                       </div>
                       <div className="glass-card border-2 border-[#9333ea]/50 rounded-lg p-4 shadow-[0_0_30px_rgba(147,51,234,0.3)] relative">
-                        <div className="text-2xl font-bold text:white mb-1">AGENCY</div>
+                        <div className="text-2xl font-bold text-white mb-1">AGENCY</div>
                         <div className="text-xs text-[#06b6d4] mb-1 font-semibold">{t.landing.pricing.agencySubtitle}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(897, "EUR", selectedCurrency), selectedCurrency)}
@@ -860,17 +859,17 @@ export default function PlatformPage() {
           {/* CTA Buttons */}
           <div className="grid md:grid-cols-4 gap-6 mt-12 fade-on-scroll">
             <Link href="/auth/signup" className="w-full">
-              <Button variant="outline" className="w-full border-white/20 text-white/90 hover:bg:white/5 backdrop-blur-md transition-all active:scale-95 hover:border-white/30">
+              <Button variant="outline" className="w-full border-white/20 text-white/90 hover:bg-white/5 backdrop-blur-md transition-all active:scale-95 hover:border-white/30">
                 {t.landing.pricing.cta.startFree}
               </Button>
             </Link>
             <Link href="/auth/signup?plan=starter" className="w-full">
-              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text:white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
+              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
                 {t.landing.pricing.cta.chooseStarter}
               </Button>
             </Link>
             <Link href="/auth/signup?plan=pro" className="w-full">
-              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text:white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
+              <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_15px_rgba(147,51,234,0.4)] hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] transition-all active:scale-95">
                 {t.landing.pricing.cta.choosePro}
               </Button>
             </Link>

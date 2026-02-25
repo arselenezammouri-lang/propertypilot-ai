@@ -1,3 +1,5 @@
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
+
 export const emailTemplates = {
   welcome: (userName: string) => ({
     subject: "🏠 Benvenuto in PropertyPilot AI - Il Tuo Copilota Immobiliare",
@@ -32,7 +34,7 @@ export const emailTemplates = {
         </ul>
       </div>
       
-      <a href="https://propertypilot.ai/dashboard" style="display:inline-block;background:linear-gradient(135deg,#9333ea 0%,#06b6d4 100%);color:#fff;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
+      <a href="${APP_URL}/dashboard" style="display:inline-block;background:linear-gradient(135deg,#9333ea 0%,#06b6d4 100%);color:#fff;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
         Vai alla Dashboard →
       </a>
       
@@ -91,7 +93,7 @@ export const emailTemplates = {
         <p style="color:#71717a;font-size:12px;margin:8px 0 0;">basato su ore risparmiate e lead convertiti</p>
       </div>
       
-      <a href="https://propertypilot.ai/dashboard/billing" style="display:inline-block;background:linear-gradient(135deg,#f59e0b 0%,#9333ea 100%);color:#fff;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
+      <a href="${APP_URL}/dashboard/billing" style="display:inline-block;background:linear-gradient(135deg,#f59e0b 0%,#9333ea 100%);color:#fff;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
         Passa a PRO - €497/mese →
       </a>
     </div>
@@ -153,7 +155,7 @@ export const emailTemplates = {
         <p style="color:#71717a;font-size:12px;margin:12px 0 0;font-style:italic;">— Giulia M., RE/MAX Milano</p>
       </div>
       
-      <a href="https://propertypilot.ai/dashboard" style="display:inline-block;background:linear-gradient(135deg,#ffd700 0%,#ff6b00 100%);color:#000;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
+      <a href="${APP_URL}/dashboard" style="display:inline-block;background:linear-gradient(135deg,#ffd700 0%,#ff6b00 100%);color:#000;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:700;font-size:16px;">
         Crea il Tuo Annuncio Vincente →
       </a>
     </div>

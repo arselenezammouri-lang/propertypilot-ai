@@ -12,7 +12,7 @@ import { LocaleProvider } from "@/lib/i18n/locale-context";
 
 export const dynamic = 'force-dynamic';
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilotai.replit.app';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
 const APP_NAME = 'PropertyPilot AI';
 const APP_DESCRIPTION = 'The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups. Built for agents and teams in the US, Europe, and beyond.';
 const SUPPORT_EMAIL = 'support@propertypilotai.com';

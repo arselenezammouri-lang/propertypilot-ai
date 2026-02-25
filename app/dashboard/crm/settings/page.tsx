@@ -142,7 +142,7 @@ export default function CRMSettingsPage() {
   };
 
   const getEmbedCode = (apiKey: string) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://yourapp.replit.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
     return `<!-- PropertyPilot AI Lead Capture Form -->
 <div id="propertypilot-lead-form"></div>
 <script>

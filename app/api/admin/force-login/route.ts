@@ -51,8 +51,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Genera magic link per login
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 
-      'https://6e654fc4-30bf-4598-8519-3d3a94ef0cab-00-2iz1mwnl39tyd.spock.replit.dev';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
 
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',

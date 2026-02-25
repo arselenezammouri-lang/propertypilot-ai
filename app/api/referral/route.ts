@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot.ai';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
     const referralLink = `${appUrl}/auth/signup?ref=${referralCode}`;
 
     return NextResponse.json({

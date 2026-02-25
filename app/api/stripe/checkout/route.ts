@@ -9,6 +9,41 @@ const checkoutSchema = z.object({
   plan: z.enum(['STARTER', 'PRO', 'AGENCY']),
 });
 
+const VALID_PLANS = ['STARTER', 'PRO', 'AGENCY'] as const;
+
+async function createSessionForPlan(request: NextRequest, plan: 'STARTER' | 'PRO' | 'AGENCY') {
+  const supabase = await createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) return { redirect: '/auth/login?redirect=' + encodeURIComponent(request.nextUrl.pathname + '?plan=' + plan) };
+  const { data: profile } = await supabase.from('profiles').select('email, full_name, stripe_customer_id').eq('id', user.id).single();
+  if (!profile) return { redirect: '/auth/signup?plan=' + plan };
+  const customer = await getOrCreateCustomer(user.id, profile.email || user.email || '', profile.full_name || undefined);
+  if (!profile.stripe_customer_id) {
+    await supabase.from('profiles').update({ stripe_customer_id: customer.id }).eq('id', user.id);
+  }
+  const priceId = PLAN_TO_PRICE_ID[plan];
+  if (!priceId) return { redirect: '/pricing' };
+  const session = await createCheckoutSession(
+    customer.id,
+    priceId,
+    user.id,
+    `${request.nextUrl.origin}/dashboard?success=true`,
+    `${request.nextUrl.origin}/dashboard?canceled=true`,
+    { plan, email: profile.email || user.email || '', paymentType: 'subscription' }
+  );
+  return { url: session.url };
+}
+
+export async function GET(request: NextRequest) {
+  const plan = request.nextUrl.searchParams.get('plan')?.toUpperCase();
+  if (!plan || !VALID_PLANS.includes(plan as any)) {
+    return NextResponse.redirect(new URL('/pricing', request.url));
+  }
+  const result = await createSessionForPlan(request, plan as 'STARTER' | 'PRO' | 'AGENCY');
+  if ('redirect' in result) return NextResponse.redirect(new URL(result.redirect, request.url));
+  return NextResponse.redirect(result.url!);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -82,7 +117,8 @@ export async function POST(request: NextRequest) {
       url: session.url,
     });
   } catch (error) {
-    console.error('[STRIPE CHECKOUT] Error:', error);
+    const { logger } = await import('@/lib/utils/safe-logger');
+    logger.error('[STRIPE CHECKOUT] Error', error as Error, { component: 'stripe-checkout' });
     
     if (error instanceof z.ZodError) {
       return NextResponse.json(
