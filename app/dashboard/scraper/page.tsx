@@ -80,8 +80,6 @@ export default function ScraperPage() {
         const errorMessage = result.message || result.error || 'Errore durante lo scraping';
         const suggestion = result.suggestion;
         
-        console.log('[SCRAPER UI] Error response:', { errorMessage, suggestion });
-        
         toast({
           title: 'Errore',
           description: suggestion ? `${errorMessage}\n\n💡 ${suggestion}` : errorMessage,
@@ -147,8 +145,6 @@ export default function ScraperPage() {
         // Don't throw Error - preserve result payload with message/suggestion
         const errorMessage = result.message || result.error || 'Errore durante la generazione AI';
         const suggestion = result.suggestion;
-        
-        console.log('[AI GENERATION] Error response:', { errorMessage, suggestion });
         
         toast({
           title: 'Errore AI',

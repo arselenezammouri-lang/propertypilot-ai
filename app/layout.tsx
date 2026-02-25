@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
+import { LocaleProvider } from "@/lib/i18n/locale-context";
 
 export const dynamic = 'force-dynamic';
 
@@ -166,18 +167,20 @@ export default function RootLayout({
         />
         <link rel="canonical" href={APP_URL} />
       </head>
-      <body suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} font-sans diamond-force-black diamond-force-white-text antialiased`} suppressHydrationWarning>
+      <body suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} font-sans diamond-force-black diamond-force-white-text antialiased`}>
         <Providers>
-          <ThemeProvider
-            defaultTheme="dark"
-            storageKey="propertypilot-theme"
-            suppressHydrationWarning
-          >
-            <PerformanceMonitor />
-            {children}
-            <Toaster />
-            <DemoModal />
-          </ThemeProvider>
+          <LocaleProvider>
+            <ThemeProvider
+              defaultTheme="dark"
+              storageKey="propertypilot-theme"
+              suppressHydrationWarning
+            >
+              <PerformanceMonitor />
+              {children}
+              <Toaster />
+              <DemoModal />
+            </ThemeProvider>
+          </LocaleProvider>
         </Providers>
       </body>
     </html>

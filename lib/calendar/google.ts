@@ -120,10 +120,6 @@ export async function createGoogleCalendarEvent(
     const createdEvent = response.data;
 
     if (createdEvent.id && createdEvent.htmlLink) {
-      console.log('[GOOGLE CALENDAR] Event created successfully:', {
-        eventId: createdEvent.id,
-        eventUrl: createdEvent.htmlLink,
-      });
 
       return {
         success: true,

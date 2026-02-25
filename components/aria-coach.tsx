@@ -20,9 +20,10 @@ import {
 import { buildAriaPrompt, getUpgradeSuggestions } from "@/lib/ai/aria-brain";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { getBrowserLocale, getSpeechRecognitionLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
+import { getSpeechRecognitionLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
 import { Locale } from "@/lib/i18n/config";
 import { ariaTranslations } from "@/lib/i18n/config";
+import { useLocale } from "@/hooks/use-locale";
 
 interface Message {
   id: string;
@@ -49,35 +50,7 @@ function getEffectivePlan(realPlan: string): "free" | "starter" | "pro" | "agenc
 
 export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoachProps) {
   const [effectivePlan, setEffectivePlan] = useState<"free" | "starter" | "pro" | "agency">(userPlan);
-  const [currentLocale, setCurrentLocale] = useState<Locale>(() => {
-    if (typeof window !== 'undefined') {
-      return getBrowserLocale();
-    }
-    return 'it';
-  });
-  
-  // Rileva e aggiorna la lingua quando cambia
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const detectedLocale = getBrowserLocale();
-    setCurrentLocale(detectedLocale);
-    
-    // Ascolta cambiamenti di locale da localStorage
-    const handleLocaleChange = () => {
-      const newLocale = getBrowserLocale();
-      setCurrentLocale(newLocale);
-    };
-    
-    window.addEventListener('storage', handleLocaleChange);
-    // Custom event per cambiamenti di locale nella stessa tab
-    window.addEventListener('locale-change', handleLocaleChange);
-    
-    return () => {
-      window.removeEventListener('storage', handleLocaleChange);
-      window.removeEventListener('locale-change', handleLocaleChange);
-    };
-  }, []);
+  const currentLocale = useLocale();
   
   useEffect(() => {
     setEffectivePlan(getEffectivePlan(userPlan));
@@ -245,36 +218,30 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           (translations as any)?.locationHint ?? (ariaTranslations as any)?.it?.locationHint ??
           "la tua zona di mercato";
 
-        // Usa traduzioni per il messaggio di benvenuto
-        let welcomeContent = `L'armata è pronta, ${userName || "Capo"}. Ho scansionato il mondo e i **${dealsCount} deal d'oro di Miami e Milano** ti aspettano. Da quale città iniziamo l'invasione? 🌍💎\n\n`;
+        const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
+        const name = userName || (currentLocale === 'it' ? 'Capo' : currentLocale === 'es' ? 'Jefe' : currentLocale === 'fr' ? 'Chef' : currentLocale === 'de' ? 'Boss' : currentLocale === 'ar' ? 'رئيس' : 'Boss');
+        let welcomeContent = (t.welcomeIntro || ariaTranslations['en'].welcomeIntro!)
+          .replace('{name}', name)
+          .replace('{count}', String(dealsCount));
         
-        // Se ci sono deal d'oro (lead_score > 90) e l'utente non è Agency, suggerisci upgrade
         if (dealsCount > 0 && effectivePlan !== 'agency') {
-          welcomeContent += `🚨 **ATTENZIONE: Questi sono affari d'oro che potrebbero chiudersi in 48 ore!** 💎\n\n`;
-          welcomeContent += `Con il piano **Agency a €897/mese**, hai:\n`;
-          welcomeContent += `- **Voice Agent AI Illimitato**: Chiamate automatiche 24/7 mentre dormi\n`;
-          welcomeContent += `- **Aura VR**: Trasforma video smartphone in tour VR immersivi (illimitati)\n`;
-          welcomeContent += `- **Manual Override**: Accesso diretto ai dati proprietario per chiamate umane quando preferisci\n`;
-          welcomeContent += `- **Omnichannel Domination Suite**: SMS/WhatsApp AI, Google Calendar Sync, Auto-Prospecting 24/7\n\n`;
-          welcomeContent += `**ROI**: Una sola vendita extra al mese copre l'investimento. Con ${dealsCount} deal d'oro pronti, è il momento perfetto per scalare. Vuoi che ti mostri come funziona? 🚀\n\n`;
-        } else if (effectivePlan === 'agency') {
-          welcomeContent += `Questi sono affari d'oro che potrebbero chiudersi in 48 ore se agisci subito. Vuoi che ti prepari il pitch per chiamare i proprietari? 📞\n\n`;
+          welcomeContent += t.attentionDeals || ariaTranslations['en'].attentionDeals!;
+          welcomeContent += (t.agencyFeatures || ariaTranslations['en'].agencyFeatures!).replace('{count}', String(dealsCount));
         } else {
-          welcomeContent += `Questi sono affari d'oro che potrebbero chiudersi in 48 ore se agisci subito. Vuoi che ti prepari il pitch per chiamare i proprietari? 📞\n\n`;
+          welcomeContent += t.simpleDeals || ariaTranslations['en'].simpleDeals!;
         }
         
-        // Messaggio speciale per Premium Network Members (PRO/AGENCY)
         if (effectivePlan === 'pro' || effectivePlan === 'agency') {
-          const memberTitle = effectivePlan === 'agency' ? 'Membro Fondatore Agency Intelligence' : 'Premium Network Member';
-          welcomeContent += `✨ **Benvenuto nel Network Globale PropertyPilot!** Come ${memberTitle}, hai accesso a tutte le funzionalità avanzate. Il sistema sta già lavorando per te 24/7. 🌍\n\n`;
+          const memberTitle = effectivePlan === 'agency' ? (t.memberAgency || t.memberPremium) : t.memberPremium;
+          welcomeContent += (t.premiumWelcome || ariaTranslations['en'].premiumWelcome!).replace('{memberTitle}', memberTitle);
         }
         
-        welcomeContent += `Posso anche guidarti nell'uso di PropertyPilot, suggerirti strategie di vendita, o aiutarti a trovare ciò che cerchi. Dimmi pure!`;
+        welcomeContent += t.canAlsoHelp || ariaTranslations['en'].canAlsoHelp!;
         
-        // Aggiungi info limite per piano FREE
         if (effectivePlan === "free") {
           const remainingMinutes = Math.max(0, Math.floor((FREE_DAILY_LIMIT_SECONDS - dailyUsageSeconds) / 60));
-          welcomeContent += `\n\n⏰ **Piano Free**: Hai ${remainingMinutes} minuti rimanenti oggi (limite: 1 ora/giorno). [Sblocca Aria Illimitata](/dashboard/billing)`;
+          const freeLine = (t.freePlanRemaining || ariaTranslations['en'].freePlanRemaining!).replace('{minutes}', String(remainingMinutes));
+          welcomeContent += `\n\n⏰ ` + freeLine;
         }
         
         const welcomeMessage: Message = {
@@ -288,7 +255,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       
       generateStrategicMessage();
     }
-  }, [isOpen, userName, effectivePlan]);
+  }, [isOpen, userName, effectivePlan, currentLocale, dailyUsageSeconds]);
 
   // Auto-scroll ai nuovi messaggi
   useEffect(() => {
@@ -296,10 +263,11 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
   }, [messages]);
 
   const startListening = () => {
+    const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
     if (!recognition) {
       toast({
-        title: "Microfono non disponibile",
-        description: "Usa la tastiera per scrivere il tuo messaggio.",
+        title: t.micUnavailableTitle,
+        description: t.micUnavailableDesc,
       });
       return;
     }
@@ -321,18 +289,18 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
     // Controlla limite giornaliero per piano FREE
     if (effectivePlan === "free") {
       const limitReached = checkDailyLimit();
-      if (limitReached) {
+        if (limitReached) {
+        const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
         toast({
-          title: "Limite giornaliero raggiunto",
-          description: "Hai utilizzato 1 ora di Aria oggi. Sblocca un piano per usare Aria illimitata!",
+          title: t.limitReachedTitle,
+          description: t.limitReachedDesc,
           variant: "default",
         });
         
-        // Mostra messaggio di upgrade
         const upgradeMessage: Message = {
           id: Date.now().toString(),
           role: "aria",
-          content: `⏰ **Limite giornaliero raggiunto**\n\nHai utilizzato 1 ora di Aria oggi con il piano Free.\n\n🚀 **Sblocca Aria Illimitata** con un abbonamento:\n- **Starter** (€197/mese): Aria illimitata + 50 annunci/mese\n- **Pro** (€497/mese): Aria illimitata + 200 annunci/mese + CRM\n- **Agency** (€897/mese): Aria illimitata + annunci illimitati + Team\n\n[Vai a Scegli Piano](/dashboard/billing)`,
+          content: t.upgradeMessage,
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, upgradeMessage]);
@@ -442,9 +410,10 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           <button
             onClick={() => {
               if (effectivePlan === "free" && limitReached) {
+                const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
                 toast({
-                  title: "Limite giornaliero raggiunto",
-                  description: "Hai utilizzato 1 ora di Aria oggi. Sblocca un piano per usare Aria illimitata!",
+                  title: t.limitReachedTitle,
+                  description: t.limitReachedDesc,
                   variant: "default",
                 });
                 window.location.href = "/dashboard/billing";
@@ -486,17 +455,17 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                   {effectivePlan === "free" ? (
                     <>
                       {dailyUsageSeconds >= FREE_DAILY_LIMIT_SECONDS ? (
-                        <span className="text-red-400">Limite raggiunto - Upgrade richiesto</span>
+                        <span className="text-red-400">{(ariaTranslations[currentLocale] || ariaTranslations['en']).limitReachedBadge}</span>
                       ) : (
                         <span className="text-yellow-400">
-                          {Math.floor((FREE_DAILY_LIMIT_SECONDS - dailyUsageSeconds) / 60)}m rimanenti oggi
+                          {Math.floor((FREE_DAILY_LIMIT_SECONDS - dailyUsageSeconds) / 60)}m {(ariaTranslations[currentLocale] || ariaTranslations['en']).remainingToday}
                         </span>
                       )}
                     </>
                   ) : effectivePlan === "agency" ? (
-                    "COMMAND ONLINE • ILLIMITATO"
+                    (ariaTranslations[currentLocale] || ariaTranslations['en']).commandUnlimited
                   ) : (
-                    "COMMAND CENTER • GUIDA VERSO I SOLDI"
+                    (ariaTranslations[currentLocale] || ariaTranslations['en']).commandCenter
                   )}
                 </p>
               </div>
@@ -547,11 +516,11 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                         rel="noopener noreferrer"
                         className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 underline"
                       >
-                        📖 Apri guida dettagliata
+                        📖 {(ariaTranslations[currentLocale] || ariaTranslations['en']).openGuide}
                       </a>
                     )}
                     <p className="text-xs opacity-60 mt-1">
-                      {message.timestamp.toLocaleTimeString(getSpeechRecognitionLocale(currentLocale).replace('-', '_'), {
+                      {message.timestamp.toLocaleTimeString(getSpeechRecognitionLocale(currentLocale), {
                         hour: "2-digit",
                         minute: "2-digit",
                       })}
@@ -587,7 +556,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Scrivi o parla con Aria..."
+                  placeholder={(ariaTranslations[currentLocale] || ariaTranslations['en']).inputPlaceholder}
                   className="flex-1 bg-[#0a0f14] border-cyan-500/30 text-cyan-100 placeholder:text-cyan-600/60"
                   disabled={isLoading}
                   aria-label="Chat input with Aria AI assistant"
@@ -604,7 +573,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
               </div>
               {isListening && (
                 <p className="text-xs text-red-400 mt-2 text-center animate-pulse">
-                  🎤 In ascolto...
+                  🎤 {(ariaTranslations[currentLocale] || ariaTranslations['en']).listening}
                 </p>
               )}
             </div>

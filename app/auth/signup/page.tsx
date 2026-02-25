@@ -54,7 +54,6 @@ function SignupClient() {
     }
 
     try {
-      console.log('[SIGNUP] Attempting signup with email:', trimmedEmail);
       const { data, error } = await supabase.auth.signUp({
         email: trimmedEmail,
         password: trimmedPassword,
@@ -82,18 +81,10 @@ function SignupClient() {
           });
 
           if (setupResponse.ok) {
-            const setupData = await setupResponse.json();
-            console.log('User setup completed:', setupData);
             setupSuccess = true;
           } else {
-            const errorData = await setupResponse.json().catch(() => ({}));
-            console.error('User setup API error:', errorData);
-            
             // If 401, try creating profile directly via client (fallback)
             if (setupResponse.status === 401) {
-              console.log('[SIGNUP] Attempting client-side profile creation as fallback...');
-              
-              // Try to create profile directly using client Supabase (if RLS allows)
               const { error: profileError } = await supabase
                 .from('profiles')
                 .insert({
@@ -104,22 +95,12 @@ function SignupClient() {
                 .single();
               
               if (!profileError) {
-                console.log('[SIGNUP] Profile created via client fallback');
                 setupSuccess = true;
-              } else {
-                console.error('[SIGNUP] Client-side profile creation also failed:', profileError);
-                // Profile might be created via database trigger, so we continue anyway
               }
             }
           }
-        } catch (setupError: any) {
-          console.error('User setup error:', setupError);
+        } catch {
           // Don't block signup - profile might be created via database trigger or retry later
-        }
-        
-        // If setup didn't succeed, show warning but don't block
-        if (!setupSuccess) {
-          console.warn('[SIGNUP] Profile setup may not have completed. User can retry from dashboard.');
         }
       }
 
@@ -136,8 +117,6 @@ function SignupClient() {
       router.push("/dashboard");
       router.refresh();
     } catch (error: any) {
-      console.error('Signup error:', error);
-      
       // Handle rate limit error with user-friendly message
       const errorMessage = error.message || '';
       const isRateLimit = errorMessage.toLowerCase().includes('rate limit') || 

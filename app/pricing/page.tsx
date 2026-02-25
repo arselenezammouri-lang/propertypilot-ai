@@ -154,8 +154,6 @@ export default function PricingPage() {
   const router = useRouter();
 
   const handlePlanClick = async (planId: string, isSubscription: boolean) => {
-    console.log(`Plan selected: ${planId}, isSubscription: ${isSubscription}`);
-    
     // Check if user is logged in
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();

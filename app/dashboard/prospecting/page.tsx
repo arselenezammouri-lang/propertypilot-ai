@@ -277,7 +277,7 @@ export default function ProspectingPage() {
         setStats(data.data);
       } else if (response.status === 403) {
         // 403 is expected for FREE users, silently ignore
-        console.log('[PROSPECTING] Stats not available for current plan');
+        // Stats not available for current plan - expected for free users
       }
     } catch (error) {
       // Only log if it's not a 403 (expected for FREE users)
@@ -310,7 +310,7 @@ export default function ProspectingPage() {
           setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
           } catch (statsError) {
             // Ignore stats errors for subscription fetch
-            console.log('[SUBSCRIPTION] Stats not available, setting default');
+            // Stats fetch failed - use default value
             setVoiceCallsRemaining(30);
           }
         } else if (plan === 'agency') {

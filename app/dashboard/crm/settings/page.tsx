@@ -159,8 +159,8 @@ export default function CRMSettingsPage() {
       messaggio: 'Messaggio',
       submit: 'Invia Richiesta'
     },
-    onSuccess: function(response) {
-      console.log('Lead catturato:', response.lead_id);
+    onSuccess: function(_response) {
+      // Lead captured successfully
     },
     onError: function(error) {
       console.error('Errore:', error);

@@ -48,57 +48,33 @@ import {
   Heart,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { InteractiveSearchHook } from "@/components/interactive-search-hook";
 import { SuccessStories } from "@/components/success-stories";
-import { AriaCoach } from "@/components/aria-coach";
+
+const AriaCoach = dynamic(() => import("@/components/aria-coach").then((m) => ({ default: m.AriaCoach })), {
+  ssr: false,
+  loading: () => null,
+});
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency";
 import { Menu, X } from "lucide-react";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { Locale, defaultLocale } from "@/lib/i18n/config";
+import { Locale } from "@/lib/i18n/config";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 
 export default function PlatformPage() {
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>("EUR"); // Default EUR
-  const [currentLocale, setCurrentLocale] = useState<Locale>(defaultLocale);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundwaveHeights, setSoundwaveHeights] = useState<number[]>([20, 25, 30, 35, 30, 25, 20]); // Default values for SSR
   const heroRef = useRef<HTMLDivElement>(null);
-  
+
+  // Use global locale context — single source of truth for the entire SaaS
+  const { locale: currentLocale, currency: selectedCurrency, setLocale: handleLocaleChange, setCurrency: handleCurrencyChange } = useLocaleContext();
+
   // Get translations
   const t = getTranslation(currentLocale as SupportedLocale);
-
-  // Carica valuta e locale da localStorage al mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const savedCurrency = localStorage.getItem("propertypilot_currency") as Currency;
-    // Default a EUR se non c'è valuta salvata
-    if (savedCurrency && ["USD", "EUR", "GBP"].includes(savedCurrency)) {
-      setSelectedCurrency(savedCurrency);
-    } else {
-      setSelectedCurrency("EUR"); // Default EUR
-      localStorage.setItem("propertypilot_currency", "EUR");
-    }
-    
-    const savedLocale = localStorage.getItem("propertypilot_locale") as Locale;
-    if (savedLocale && ["it", "en", "es", "fr", "de", "ar"].includes(savedLocale)) {
-      setCurrentLocale(savedLocale);
-    }
-  }, []);
-  
-  // Update document direction for RTL languages
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
-      document.documentElement.lang = currentLocale;
-    }
-  }, [currentLocale]);
-  
-  const handleLocaleChange = (newLocale: Locale) => {
-    setCurrentLocale(newLocale);
-  };
 
   // Chiudi menu mobile quando si clicca fuori
   useEffect(() => {
@@ -118,8 +94,7 @@ export default function PlatformPage() {
   useEffect(() => {
     setIsVisible(true);
     
-    // Generate random heights for soundwave animation (client-side only)
-    setSoundwaveHeights([1, 2, 3, 4, 5, 6, 7].map(() => 20 + Math.random() * 30));
+    // Soundwave: use stable heights to avoid Hydration mismatch (no random on mount)
     
     // Smooth Scroll
     document.documentElement.style.scrollBehavior = "smooth";
@@ -144,7 +119,7 @@ export default function PlatformPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif] ${currentLocale === "ar" ? "rtl" : "ltr"}`}>
+    <div className={`min-h-screen bg-[#000000] text-white relative overflow-hidden font-sans ${currentLocale === "ar" ? "rtl" : "ltr"}`}>
       {/* Mesh Gradient Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
@@ -166,13 +141,12 @@ export default function PlatformPage() {
           <div className="hidden lg:flex items-center space-x-4">
             <span className="text-sm text-gray-400">{t.landing.nav.tagline}</span>
             
-            {/* Language Selector (IT, EN, ES) + Currency + Theme Toggle */}
+            {/* Language Selector - 7 lingue (IT, EN, ES, FR, DE, AR, PT) + Currency + Theme Toggle */}
             <LocaleCurrencySelector 
               currentLocale={currentLocale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
-              onCurrencyChange={setSelectedCurrency}
-              localesFilter={["it", "en", "es"]}
+              onCurrencyChange={handleCurrencyChange}
             />
             <ThemeToggle />
             
@@ -210,8 +184,7 @@ export default function PlatformPage() {
               currentLocale={currentLocale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
-              onCurrencyChange={setSelectedCurrency}
-              localesFilter={["it", "en", "es"]}
+              onCurrencyChange={handleCurrencyChange}
             />
             <Button
               variant="ghost"
@@ -380,7 +353,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808] relative"
+        className="py-24 px-4 bg-gradient-to-b from-[#000000] to-[#080808] relative"
       >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 fade-on-scroll">
@@ -442,7 +415,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#050505] relative overflow-hidden"
+        className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#000000] relative overflow-hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#9333ea]/10 via-transparent to-[#06b6d4]/10"></div>
         <div className="container mx-auto max-w-7xl relative z-10">
@@ -568,7 +541,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-[#050505] relative"
+        className="py-24 px-4 bg-[#000000] relative"
       >
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-16 fade-on-scroll">
@@ -617,7 +590,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808]"
+        className="py-24 px-4 bg-gradient-to-b from-[#000000] to-[#080808]"
       >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 fade-on-scroll">
@@ -682,7 +655,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#050505] relative"
+        className="py-24 px-4 bg-gradient-to-b from-[#080808] to-[#000000] relative"
       >
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16 fade-on-scroll">
@@ -759,7 +732,7 @@ export default function PlatformPage() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808] relative"
+        className="py-24 px-4 bg-gradient-to-b from-[#000000] to-[#080808] relative"
       >
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-16 fade-on-scroll">
@@ -838,13 +811,13 @@ export default function PlatformPage() {
                     { feature: t.landing.pricing.features.forms, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.whiteLabel, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.assistant, free: "—", starter: "—", pro: "✓", agency: "✓" },
-                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: currentLocale === "en" ? "Up to 10 agents" : currentLocale === "es" ? "Hasta 10 agentes" : currentLocale === "fr" ? "Jusqu'à 10 agents" : currentLocale === "de" ? "Bis zu 10 Agenten" : currentLocale === "ar" ? "حتى 10 وكلاء" : "Fino a 10 agenti" },
+                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: currentLocale === "en" ? "Up to 10 agents" : currentLocale === "es" ? "Hasta 10 agentes" : currentLocale === "fr" ? "Jusqu'à 10 agents" : currentLocale === "de" ? "Bis zu 10 Agenten" : currentLocale === "ar" ? "حتى 10 وكلاء" : currentLocale === "pt" ? "Até 10 agentes" : "Fino a 10 agenti" },
                     { feature: t.landing.pricing.features.roles, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.distribution, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.reports, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.multiOffice, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.auraVR, free: "—", starter: "—", pro: <span className="text-gray-400">{t.landing.pricing.plans.viewer}</span>, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
-                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: currentLocale === "en" ? "30/month" : currentLocale === "es" ? "30/mes" : currentLocale === "fr" ? "30/mois" : currentLocale === "de" ? "30/Monat" : currentLocale === "ar" ? "30/شهر" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
+                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: currentLocale === "en" ? "30/month" : currentLocale === "es" ? "30/mes" : currentLocale === "fr" ? "30/mois" : currentLocale === "de" ? "30/Monat" : currentLocale === "ar" ? "30/شهر" : currentLocale === "pt" ? "30/mês" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
                     { feature: t.landing.pricing.features.messaging, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.manualOverride, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.humanOverride, free: "—", starter: "—", pro: "✓", agency: "✓" },
@@ -910,7 +883,7 @@ export default function PlatformPage() {
 
           {/* Agency Boost - Titanium Package - Gold animated border + pulsating glow */}
           <div className="mt-16 fade-on-scroll">
-            <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent relative overflow-hidden border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.4),0_0_100px_rgba(251,191,36,0.2)] hover:shadow-[0_0_70px_rgba(245,158,11,0.6),0_0_120px_rgba(251,191,36,0.3)] transition-all duration-500 hover:border-amber-400/80 ring-2 ring-amber-400/30 ring-offset-2 ring-offset-[#050505] agency-boost-card">
+            <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent relative overflow-hidden border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.4),0_0_100px_rgba(251,191,36,0.2)] hover:shadow-[0_0_70px_rgba(245,158,11,0.6),0_0_120px_rgba(251,191,36,0.3)] transition-all duration-500 hover:border-amber-400/80 ring-2 ring-amber-400/30 ring-offset-2 ring-offset-[#000000] agency-boost-card">
               <div className="absolute -top-3 right-4 px-4 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full z-10 backdrop-blur-md border border-white/20">
                 PREMIUM SERVICE
               </div>
@@ -974,7 +947,7 @@ export default function PlatformPage() {
       </motion.section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4 bg-gradient-to-b from-[#050505] to-[#080808]">
+      <section className="py-24 px-4 bg-gradient-to-b from-[#000000] to-[#080808]">
         <div className="container mx-auto max-w-4xl text-center fade-on-scroll">
           <Card className="glass-card border-white/10 backdrop-blur-md">
             <CardHeader>
@@ -1001,7 +974,7 @@ export default function PlatformPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-[#050505] border-t border-white/10">
+      <footer className="py-12 px-4 bg-[#000000] border-t border-white/10">
         <div className="container mx-auto max-w-6xl">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>

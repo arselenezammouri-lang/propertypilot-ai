@@ -10,6 +10,7 @@
     "dev": "next dev",
     "dev:turbo": "next dev",
     "build": "next build",
+    "build:memory": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",

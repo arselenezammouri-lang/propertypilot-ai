@@ -31,9 +31,11 @@ export function LocaleCurrencySelector({
   const displayLocales = localesFilter && localesFilter.length > 0 ? localesFilter : locales;
   const [locale, setLocale] = useState<Locale>(currentLocale);
   const [currency, setCurrency] = useState<Currency>(currentCurrency);
+  const [mounted, setMounted] = useState(false);
 
   // Sync state with props
   useEffect(() => {
+    setMounted(true);
     setLocale(currentLocale);
   }, [currentLocale]);
 
@@ -46,9 +48,9 @@ export function LocaleCurrencySelector({
     if (onLocaleChange) {
       onLocaleChange(newLocale);
     }
-    // Salva in localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('propertypilot_locale', newLocale);
+      window.dispatchEvent(new CustomEvent('locale-change', { detail: newLocale }));
     }
   };
 
@@ -62,6 +64,37 @@ export function LocaleCurrencySelector({
       localStorage.setItem('propertypilot_currency', newCurrency);
     }
   };
+
+  // Render stable placeholder until mounted
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-2" suppressHydrationWarning>
+        <Select value={currentLocale}>
+          <SelectTrigger className="w-[140px] h-9 bg-transparent border-purple-500/30 text-white" suppressHydrationWarning>
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-purple-400" />
+              <SelectValue suppressHydrationWarning>
+                <span className="flex items-center gap-1">
+                  <span>{localeFlags[currentLocale]}</span>
+                  <span className="hidden sm:inline">{localeNames[currentLocale]}</span>
+                </span>
+              </SelectValue>
+            </div>
+          </SelectTrigger>
+        </Select>
+        <Select value={currentCurrency}>
+          <SelectTrigger className="w-[100px] h-9 bg-transparent border-cyan-500/30 text-white" suppressHydrationWarning>
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-cyan-400" />
+              <SelectValue suppressHydrationWarning>
+                <span>{currencySymbols[currentCurrency]}</span>
+              </SelectValue>
+            </div>
+          </SelectTrigger>
+        </Select>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2">

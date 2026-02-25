@@ -51,6 +51,19 @@ export function convertCurrency(
 }
 
 /**
+ * Sanitize locale for Intl APIs (BCP 47: use hyphen, not underscore)
+ */
+function safeLocale(locale: string): string {
+  const normalized = locale.replace(/_/g, '-');
+  try {
+    new Intl.NumberFormat(normalized);
+    return normalized;
+  } catch {
+    return 'en-US';
+  }
+}
+
+/**
  * Formatta un importo nella valuta specificata
  */
 export function formatCurrency(
@@ -64,7 +77,7 @@ export function formatCurrency(
     GBP: 'GBP',
   };
 
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(safeLocale(locale), {
     style: 'currency',
     currency: currencyMap[currency],
     minimumFractionDigits: 0,

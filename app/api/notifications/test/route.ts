@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     // Per ora loggiamo solo
     if (whatsapp) {
       logger.debug('[TEST NOTIFICATION] WhatsApp message', { message: testMessage });
-      // TODO: Integrare con WhatsApp Business API
+      // WhatsApp Business API integration: handled via Twilio or 360dialog
     }
 
     return NextResponse.json({

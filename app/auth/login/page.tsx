@@ -29,10 +29,6 @@ function LoginClient() {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('[LOGIN] Form submitted');
-    console.log('[LOGIN] Email:', email);
-    console.log('[LOGIN] Password length:', password?.length);
-    
     setLoading(true);
 
     // Validazione esplicita dei campi
@@ -40,7 +36,6 @@ function LoginClient() {
     const trimmedPassword = password?.trim();
 
     if (!trimmedEmail || !trimmedPassword) {
-      console.log('[LOGIN] Validation failed - missing fields');
       toast({
         title: "Errore",
         description: "Per favore compila tutti i campi richiesti.",
@@ -59,7 +54,6 @@ function LoginClient() {
     }
 
     try {
-      console.log('[LOGIN] Attempting login with email:', trimmedEmail);
       const { data, error } = await supabase.auth.signInWithPassword({
         email: trimmedEmail,
         password: trimmedPassword,
@@ -67,23 +61,17 @@ function LoginClient() {
 
       if (error) throw error;
 
-      console.log('[LOGIN] Login successful, user:', data.user?.id);
-      
       if (data.user) {
         try {
-          console.log('[LOGIN] Calling setup-user API...');
-          const setupResponse = await fetch('/api/auth/setup-user', {
+          await fetch('/api/auth/setup-user', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({}),
           });
-          console.log('[LOGIN] Setup-user response:', setupResponse.status);
-        } catch (setupError) {
-          console.error('[LOGIN] User setup error:', setupError);
+        } catch {
+          // Non-critical: setup-user error doesn't block login
         }
       }
-
-      console.log('[LOGIN] Showing success toast and redirecting...');
       toast({
         title: "Bentornato! 🎉",
         description: selectedPlan || selectedPackage 
@@ -94,8 +82,6 @@ function LoginClient() {
       // Use window.location for more reliable redirect
       window.location.href = "/dashboard";
     } catch (error: any) {
-      console.error('Login error:', error);
-      
       // Handle rate limit error with user-friendly message
       const errorMessage = error.message || '';
       const isRateLimit = errorMessage.toLowerCase().includes('rate limit') || 

@@ -74,7 +74,7 @@ const config: Config = {
         'glow-gold': '0 0 30px hsl(var(--sunset-gold) / 0.3)',
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'Geist', 'Inter', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
       },
       animation: {

@@ -182,7 +182,7 @@ export async function incrementGenerationCount(userId: string): Promise<void> {
                 .update({ upgrade_email_sent: true })
                 .eq('id', userId);
               
-              console.log('[RATE LIMIT] Upgrade nudge email sent to:', userData.user.email);
+              // Upgrade nudge email sent
             }
           } catch (emailErr) {
             console.error('[RATE LIMIT] Upgrade nudge email error:', emailErr);

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Languages } from 'lucide-react';
 import {
   DropdownMenu,
@@ -9,8 +8,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { Locale } from '@/lib/i18n/config';
 
-type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
+type SupportedLocale = Locale;
 
 const LANGUAGE_OPTIONS: { value: SupportedLocale; label: string; flag: string }[] = [
   { value: 'it', label: 'Italiano', flag: '🇮🇹' },
@@ -23,19 +24,10 @@ const LANGUAGE_OPTIONS: { value: SupportedLocale; label: string; flag: string }[
 ];
 
 export function LanguageSelector() {
-  const [locale, setLocale] = useState<SupportedLocale>('it');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('propertypilot-locale') as SupportedLocale;
-    if (stored && LANGUAGE_OPTIONS.some(o => o.value === stored)) {
-      setLocale(stored);
-    }
-  }, []);
+  const { locale, setLocale } = useLocaleContext();
 
   const handleSelect = (value: SupportedLocale) => {
     setLocale(value);
-    localStorage.setItem('propertypilot-locale', value);
-    window.dispatchEvent(new CustomEvent('locale-change', { detail: value }));
   };
 
   const currentOption = LANGUAGE_OPTIONS.find(o => o.value === locale) || LANGUAGE_OPTIONS[0];
