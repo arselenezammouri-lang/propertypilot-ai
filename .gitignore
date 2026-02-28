@@ -4,3 +4,7 @@ node_modules/
 venv/
 *.log
 .env.local
+debug.log
+test-results/
+playwright-report/
+e2e-results.json

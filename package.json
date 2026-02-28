@@ -21,7 +21,8 @@
     "perf:api": "node scripts/performance/api-benchmark.js",
     "perf:load": "k6 run scripts/performance/load-test.js",
     "perf:all": "npm run perf:lighthouse && npm run perf:api",
-    "audit:prelaunch": "node scripts/pre-launch-audit.js"
+    "audit:prelaunch": "node scripts/pre-launch-audit.js",
+    "marketing:stats": "node scripts/marketing-stats.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
