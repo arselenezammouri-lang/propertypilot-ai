@@ -48,11 +48,11 @@ import {
   Heart,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import NextDynamic from "next/dynamic";
 import { InteractiveSearchHook } from "@/components/interactive-search-hook";
 import { SuccessStories } from "@/components/success-stories";
 
-const AriaCoach = dynamic(() => import("@/components/aria-coach").then((m) => ({ default: m.AriaCoach })), {
+const AriaCoach = NextDynamic(() => import("@/components/aria-coach").then((m) => ({ default: m.AriaCoach })), {
   ssr: false,
   loading: () => null,
 });
