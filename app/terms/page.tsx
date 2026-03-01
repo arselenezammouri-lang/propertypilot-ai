@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { ArrowLeft, FileText, Scale, Shield, AlertTriangle, CheckCircle } from "lucide-react";
+import { DiamondPageHeader } from "@/components/diamond-page-header";
+import { FileText, Scale, Shield, AlertTriangle, CheckCircle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -13,49 +13,26 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Torna alla Home</span>
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-white diamond-force-black">
+      <DiamondPageHeader />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="mb-10 animate-fade-in-up">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 bg-gradient-to-br from-royal-purple/20 to-electric-blue/10 rounded-2xl flex items-center justify-center">
-              <Scale className="h-7 w-7 text-royal-purple" />
+            <div className="w-14 h-14 rounded-2xl border border-[#9333ea]/50 bg-[#9333ea]/10 flex items-center justify-center">
+              <Scale className="h-7 w-7 text-[#9333ea]" />
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-extrabold" data-testid="heading-terms">
                 Termini e <span className="gradient-text-purple">Condizioni</span>
               </h1>
-              <p className="text-muted-foreground">Ultimo aggiornamento: Dicembre 2024</p>
+              <p className="text-white/60">Ultimo aggiornamento: Dicembre 2024</p>
             </div>
           </div>
         </div>
 
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <FileText className="h-5 w-5 text-electric-blue" />
               1. Accettazione dei Termini
@@ -70,7 +47,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Shield className="h-5 w-5 text-neon-aqua" />
               2. Descrizione del Servizio
@@ -88,7 +65,7 @@ export default function TermsPage() {
             </ul>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-sunset-gold" />
               3. Account Utente
@@ -107,7 +84,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">4. Piani e Pagamenti</h2>
             <p className="text-muted-foreground leading-relaxed">
               PropertyPilot AI offre diversi piani di abbonamento:
@@ -123,7 +100,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">5. Proprietà Intellettuale</h2>
             <p className="text-muted-foreground leading-relaxed">
               Tutti i contenuti generati dall'AI attraverso PropertyPilot AI sono di proprietà dell'utente 
@@ -135,7 +112,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-500" />
               6. Limitazioni di Responsabilità
@@ -151,7 +128,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">7. Uso Accettabile</h2>
             <p className="text-muted-foreground leading-relaxed">
               È vietato utilizzare PropertyPilot AI per:
@@ -165,7 +142,7 @@ export default function TermsPage() {
             </ul>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">8. Cancellazione e Sospensione</h2>
             <p className="text-muted-foreground leading-relaxed">
               Puoi cancellare il tuo account in qualsiasi momento dalla dashboard. PropertyPilot AI 
@@ -179,7 +156,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">9. Legge Applicabile</h2>
             <p className="text-muted-foreground leading-relaxed">
               Questi termini sono regolati dalle leggi italiane. Per qualsiasi controversia, 
@@ -187,7 +164,7 @@ export default function TermsPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">10. Contatti</h2>
             <p className="text-muted-foreground leading-relaxed">
               Per domande su questi termini, contattaci:

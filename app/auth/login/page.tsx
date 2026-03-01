@@ -202,6 +202,14 @@ function LoginClient() {
                     )}
                   </button>
                 </div>
+                <div className="flex justify-end">
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-xs text-[#9333ea] hover:text-[#a855f7] transition-colors"
+                  >
+                    Password dimenticata?
+                  </Link>
+                </div>
               </div>
 
               <Button 
@@ -224,10 +232,15 @@ function LoginClient() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border"></div>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    New to PropertyPilot AI?
-                  </span>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">
+                      New to PropertyPilot AI?
+                    </span>
+                  </div>
                 </div>
               </div>
 

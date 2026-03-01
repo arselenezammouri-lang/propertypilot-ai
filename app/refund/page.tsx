@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { ArrowLeft, RefreshCw, Clock, CheckCircle, AlertTriangle, Mail, CreditCard, XCircle } from "lucide-react";
+import { DiamondPageHeader } from "@/components/diamond-page-header";
+import { RefreshCw, Clock, CheckCircle, AlertTriangle, Mail, CreditCard, XCircle } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -13,49 +13,26 @@ export const metadata: Metadata = {
 
 export default function RefundPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Torna alla Home</span>
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#000000] text-white diamond-force-black">
+      <DiamondPageHeader />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="mb-10 animate-fade-in-up">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 bg-gradient-to-br from-sunset-gold/20 to-orange-500/10 rounded-2xl flex items-center justify-center">
-              <RefreshCw className="h-7 w-7 text-sunset-gold" />
+            <div className="w-14 h-14 rounded-2xl border border-[#fbbf24]/50 bg-[#fbbf24]/10 flex items-center justify-center">
+              <RefreshCw className="h-7 w-7 text-[#fbbf24]" />
             </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-extrabold" data-testid="heading-refund">
-                Politica di <span className="gradient-text-gold">Rimborso</span>
+                Politica di <span className="bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] bg-clip-text text-transparent">Rimborso</span>
               </h1>
-              <p className="text-muted-foreground">Ultimo aggiornamento: Dicembre 2024</p>
+              <p className="text-white/60">Ultimo aggiornamento: Dicembre 2024</p>
             </div>
           </div>
         </div>
 
         <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
-          <section className="futuristic-card p-6 md:p-8 border-2 border-neon-aqua/30">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl border border-white/[0.08]">
             <div className="flex items-start gap-4">
               <CheckCircle className="h-8 w-8 text-neon-aqua flex-shrink-0 mt-1" />
               <div>
@@ -69,7 +46,7 @@ export default function RefundPage() {
             </div>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Clock className="h-5 w-5 text-electric-blue" />
               1. Periodo di Prova e Rimborso
@@ -92,7 +69,7 @@ export default function RefundPage() {
             </div>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-sunset-gold" />
               2. Condizioni per il Rimborso
@@ -120,7 +97,7 @@ export default function RefundPage() {
             </ul>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <XCircle className="h-5 w-5 text-red-500" />
               3. Casi Non Rimborsabili
@@ -152,7 +129,7 @@ export default function RefundPage() {
             </ul>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">4. Cancellazione Abbonamento</h2>
             <p className="text-muted-foreground leading-relaxed">
               Puoi cancellare il tuo abbonamento in qualsiasi momento:
@@ -169,7 +146,7 @@ export default function RefundPage() {
             </p>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4">5. Processo di Rimborso</h2>
             <div className="space-y-4">
               <div className="flex items-start gap-4">
@@ -203,7 +180,7 @@ export default function RefundPage() {
             </div>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-orange-500" />
               6. Agency Boost - Politica Speciale
@@ -219,7 +196,7 @@ export default function RefundPage() {
             </ul>
           </section>
 
-          <section className="futuristic-card p-6 md:p-8 border-2 border-royal-purple/30">
+          <section className="diamond-card border border-white/[0.08] p-6 md:p-8 rounded-xl border-2 border-royal-purple/30">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Mail className="h-5 w-5 text-royal-purple" />
               7. Contattaci
