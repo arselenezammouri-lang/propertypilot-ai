@@ -325,19 +325,33 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       const response = await fetch("/api/aria/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userMessage.content,
-            locale: localeToSupportedLocale(currentLocale), // Passa la lingua all'API
-            context: {
-              userName,
-              userPlan: effectivePlan, // Usa effectivePlan per rispettare tier preview
-              currentPage: pathname,
-              recentActivity: messages.slice(-3).map((m) => m.content),
-              userLocation,
-              locale: localeToSupportedLocale(currentLocale), // Aggiungi anche al context
-            },
-          }),
+        body: JSON.stringify({
+          message: userMessage.content,
+          locale: localeToSupportedLocale(currentLocale),
+          context: {
+            userName,
+            userPlan: effectivePlan,
+            currentPage: pathname,
+            recentActivity: messages.slice(-3).map((m) => m.content),
+            userLocation,
+            locale: localeToSupportedLocale(currentLocale),
+          },
+        }),
       });
+
+      // 401: utente non autenticato - Aria è disponibile solo nella dashboard
+      if (response.status === 401) {
+        const t = ariaTranslations[currentLocale] || ariaTranslations["en"];
+        const signInMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: "aria",
+          content: (t as any).signInToChat ?? "Aria è il tuo coach AI nella dashboard. Accedi per iniziare la conversazione e ricevere consigli personalizzati!",
+          timestamp: new Date(),
+          docLink: "/auth/login",
+        };
+        setMessages((prev) => [...prev, signInMessage]);
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Errore nella risposta di Aria");
@@ -512,11 +526,13 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                     {message.docLink && (
                       <a
                         href={message.docLink}
-                        target="_blank"
+                        target={message.docLink.startsWith("/auth/") ? "_self" : "_blank"}
                         rel="noopener noreferrer"
                         className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 underline"
                       >
-                        📖 {(ariaTranslations[currentLocale] || ariaTranslations['en']).openGuide}
+                        {message.docLink.startsWith("/auth/")
+                          ? "🔐 " + ((ariaTranslations[currentLocale] || ariaTranslations["en"]) as any)?.signInCta ?? "Accedi"
+                          : "📖 " + (ariaTranslations[currentLocale] || ariaTranslations["en"]).openGuide}
                       </a>
                     )}
                     <p className="text-xs opacity-60 mt-1">

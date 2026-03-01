@@ -77,6 +77,7 @@ import {
   Send,
 } from "lucide-react";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
+import { maskPhone, maskName } from "@/lib/utils/pii-mask";
 import NextDynamic from "next/dynamic";
 import { suggestNextAction } from "@/lib/ai/next-action-suggestion";
 import { Progress } from "@/components/ui/progress";
@@ -1347,11 +1348,19 @@ export default function ProspectingPage() {
                   </div>
                 )}
                 {(selectedListing.owner_name || selectedListing.phone_number) && userPlan !== 'agency' && (
-                  <div>
+                  <div className="space-y-2">
                     <p className="text-sm font-medium text-muted-foreground">Dati Proprietario</p>
-                    <p className="text-sm text-amber-600 dark:text-amber-400">
-                      Disponibile solo con piano Agency. <Link href="/dashboard/billing" className="underline">Upgrade ora</Link>
-                    </p>
+                    <div className="text-sm">
+                      {selectedListing.owner_name && (
+                        <p className="text-amber-400/90 font-mono">Proprietario: {maskName(selectedListing.owner_name)}</p>
+                      )}
+                      {selectedListing.phone_number && (
+                        <p className="text-amber-400/90 font-mono mt-1">Telefono: {maskPhone(selectedListing.phone_number)}</p>
+                      )}
+                      <p className="text-amber-500/80 mt-2 text-xs">
+                        Sblocca i dati completi con piano Agency. <Link href="/dashboard/billing" className="underline hover:text-amber-400">Upgrade ora</Link>
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

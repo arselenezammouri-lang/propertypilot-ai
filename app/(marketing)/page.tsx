@@ -371,23 +371,29 @@ export default function PlatformPage() {
                 title: t.landing.features.aiListing.title,
                 description: t.landing.features.aiListing.description,
                 benefit: t.landing.features.aiListing.benefit,
+                cta: "/auth/signup",
+                ctaLabel: "Prova Gratis",
               },
               {
                 icon: BarChart3,
                 title: t.landing.features.crmAI.title,
                 description: t.landing.features.crmAI.description,
                 benefit: t.landing.features.crmAI.benefit,
+                cta: "/auth/signup?redirect=/dashboard/leads",
+                ctaLabel: "Vai al CRM",
               },
               {
                 icon: Globe,
                 title: t.landing.features.globalReach.title,
                 description: t.landing.features.globalReach.description,
                 benefit: t.landing.features.globalReach.benefit,
+                cta: "/auth/signup?redirect=/dashboard/prospecting",
+                ctaLabel: "Scopri Prospecting",
               },
             ].map((feature, idx) => (
               <Card 
                 key={idx} 
-                className="glass-card fade-on-scroll border-white/10"
+                className="glass-card fade-on-scroll border-white/10 hover:border-[#9333ea]/30 transition-colors"
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
                 <CardHeader>
@@ -398,9 +404,15 @@ export default function PlatformPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm">
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm mb-4">
                     <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
                   </div>
+                  <Link href={feature.cta}>
+                    <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#06b6d4] hover:opacity-90 text-white border-0">
+                      {feature.ctaLabel}
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
@@ -530,6 +542,14 @@ export default function PlatformPage() {
                 <p className="text-xs text-gray-500 mt-2">{t.landing.searchEngine.step4.status}</p>
               </CardContent>
             </Card>
+          </div>
+          <div className="mt-12 text-center fade-on-scroll">
+            <Link href="/auth/signup?redirect=/dashboard/prospecting">
+              <Button size="lg" className="bg-gradient-to-r from-[#06b6d4] to-[#9333ea] hover:opacity-90 text-white border-0 px-10 py-6 text-lg">
+                Avvia il ciclo Scraper → Voice AI → CRM
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </div>
       </motion.section>
