@@ -255,11 +255,12 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
       
       generateStrategicMessage();
     }
-  }, [isOpen, userName, effectivePlan, currentLocale, dailyUsageSeconds]);
+  }, [isOpen, messages.length, userName, effectivePlan, currentLocale, dailyUsageSeconds]);
 
   // Auto-scroll ai nuovi messaggi
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- scroll when messages change
   }, [messages]);
 
   const startListening = () => {
@@ -531,7 +532,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                         className="mt-2 inline-flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 underline"
                       >
                         {message.docLink.startsWith("/auth/")
-                          ? "🔐 " + ((ariaTranslations[currentLocale] || ariaTranslations["en"]) as any)?.signInCta ?? "Accedi"
+                          ? "🔐 " + (((ariaTranslations[currentLocale] || ariaTranslations["en"]) as any)?.signInCta ?? "Accedi")
                           : "📖 " + (ariaTranslations[currentLocale] || ariaTranslations["en"]).openGuide}
                       </a>
                     )}

@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       }
     } catch (error: any) {
       emailError = error.message || 'Unknown error';
-      logger.error('[SEND EMAIL] Error sending email', error as Error, { leadId });
+      logger.error('[SEND EMAIL] Error sending email', error as Error, { lead_id });
     }
 
     const status = emailSent ? 'sent' : 'failed';
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (logError) {
-      logger.error('Error logging email', logError, { leadId });
+      logger.error('Error logging email', logError, { lead_id });
       return NextResponse.json({ error: 'Errore nel salvataggio del log' }, { status: 500 });
     }
 

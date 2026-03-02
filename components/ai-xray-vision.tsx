@@ -158,6 +158,7 @@ export function AIXRayVision({
           <div ref={containerRef} className="relative w-full bg-[#111111] rounded-lg overflow-hidden border border-cyan-500/20">
             {imageUrl && (
               <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- dynamic URL, ref needed for scan */}
                 <img
                   ref={imageRef}
                   src={imageUrl}

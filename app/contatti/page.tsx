@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PropertyPilotLogo } from "@/components/logo";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Home, 
@@ -24,6 +28,8 @@ import {
 import { SiWhatsapp, SiLinkedin, SiX } from "react-icons/si";
 
 export default function ContattiPage() {
+  const { locale, currency, setLocale, setCurrency } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,16 +45,16 @@ export default function ContattiPage() {
     const newErrors: {name?: string; email?: string; message?: string} = {};
     
     if (formData.name.length < 2) {
-      newErrors.name = "Il nome deve avere almeno 2 caratteri";
+      newErrors.name = t.contact?.validation?.nameMin ?? "Name must be at least 2 characters";
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Inserisci un'email valida";
+      newErrors.email = t.contact?.validation?.emailInvalid ?? "Enter a valid email";
     }
     
     if (formData.message.length < 10) {
-      newErrors.message = "Il messaggio deve avere almeno 10 caratteri";
+      newErrors.message = t.contact?.validation?.messageMin ?? "Message must be at least 10 characters";
     }
     
     setErrors(newErrors);
@@ -60,8 +66,8 @@ export default function ContattiPage() {
     
     if (!validateForm()) {
       toast({
-        title: "Errore di validazione",
-        description: "Controlla i campi evidenziati.",
+        title: t.contact?.toast?.validationTitle ?? "Validation error",
+        description: t.contact?.validation?.checkFields ?? "Check the highlighted fields.",
         variant: "destructive"
       });
       return;
@@ -72,7 +78,10 @@ export default function ContattiPage() {
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept-Language": locale === 'en' ? 'en' : 'it',
+        },
         body: JSON.stringify(formData)
       });
 
@@ -80,22 +89,22 @@ export default function ContattiPage() {
       
       if (response.ok && data.success) {
         toast({
-          title: "Messaggio inviato!",
-          description: "Ti risponderemo entro 24 ore.",
+          title: t.contact?.toast?.successTitle ?? "Message sent!",
+          description: t.contact?.toast?.successDesc ?? "We'll get back to you within 24 hours.",
         });
         setFormData({ name: "", email: "", subject: "", message: "" });
         setErrors({});
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Impossibile inviare il messaggio. Riprova più tardi.",
+          title: t.contact?.toast?.errorTitle ?? "Error",
+          description: data.error || (t.contact?.toast?.errorDesc ?? "Unable to send message. Please try again."),
           variant: "destructive"
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Impossibile inviare il messaggio. Riprova più tardi.",
+        title: t.contact?.toast?.errorTitle ?? "Error",
+        description: t.contact?.toast?.errorDesc ?? "Unable to send message. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -109,9 +118,7 @@ export default function ContattiPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
+              <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
                 <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
@@ -119,11 +126,12 @@ export default function ContattiPage() {
             </Link>
             
             <nav className="flex items-center space-x-2 md:space-x-4">
+              <LocaleCurrencySelector currentLocale={locale} currentCurrency={currency} onLocaleChange={setLocale} onCurrencyChange={setCurrency} />
               <ThemeToggle />
               <Link href="/">
                 <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-home">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Home
+                  {t.contact?.home ?? 'Home'}
                 </Button>
               </Link>
             </nav>
@@ -134,10 +142,10 @@ export default function ContattiPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 animate-fade-in-up" data-testid="text-page-title">
-            <span className="gradient-text-purple">Contattaci</span>
+            <span className="gradient-text-purple">{t.contact?.title ?? 'Contact Us'}</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in-up delay-100">
-            Siamo qui per aiutarti. Contatta il nostro team per qualsiasi domanda.
+            {t.contact?.subtitle ?? "We're here to help. Contact our team for any questions."}
           </p>
         </div>
 
@@ -146,10 +154,10 @@ export default function ContattiPage() {
             <div className="futuristic-card p-8">
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                 <HeadphonesIcon className="h-7 w-7 text-royal-purple" />
-                Supporto Clienti
+                {t.contact?.support?.title ?? 'Customer Support'}
               </h2>
               <p className="text-muted-foreground mb-4">
-                Hai bisogno di assistenza tecnica o domande sul tuo account? Il nostro team di supporto è pronto ad aiutarti.
+                {t.contact?.support?.desc ?? 'Need technical assistance or questions about your account? Our support team is ready to help.'}
               </p>
               <a 
                 href="mailto:support@propertypilotai.com" 
@@ -164,10 +172,10 @@ export default function ContattiPage() {
             <div className="futuristic-card p-8">
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                 <Building2 className="h-7 w-7 text-electric-blue" />
-                Richieste Commerciali
+                {t.contact?.sales?.title ?? 'Sales Enquiries'}
               </h2>
               <p className="text-muted-foreground mb-4">
-                Interessato ai piani Business o Enterprise? Parliamo delle tue esigenze aziendali.
+                {t.contact?.sales?.desc ?? 'Interested in Business or Enterprise plans? Let\'s discuss your business needs.'}
               </p>
               <a 
                 href="mailto:sales@propertypilotai.com" 
@@ -182,15 +190,15 @@ export default function ContattiPage() {
             <div className="futuristic-card p-8 border-2 border-sunset-gold/30 bg-gradient-to-br from-sunset-gold/5 to-royal-purple/5">
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                 <Calendar className="h-7 w-7 text-sunset-gold" />
-                Vuoi una Demo?
+                {t.contact?.demo?.title ?? 'Want a Demo?'}
               </h2>
               <p className="text-muted-foreground mb-6">
-                Scopri come PropertyPilot AI può trasformare il tuo business immobiliare. Prenota una demo gratuita con il nostro team.
+                {t.contact?.demo?.desc ?? 'Discover how PropertyPilot AI can transform your real estate business. Book a free demo with our team.'}
               </p>
               <a href="mailto:sales@propertypilotai.com?subject=Richiesta Demo PropertyPilot AI">
                 <Button className="neon-button w-full group" data-testid="button-request-demo">
                   <Sparkles className="mr-2 h-5 w-5" />
-                  Prenota Demo Gratuita
+                  {t.contact?.demo?.cta ?? 'Book Free Demo'}
                 </Button>
               </a>
             </div>
@@ -230,16 +238,16 @@ export default function ContattiPage() {
             <div className="futuristic-card p-8">
               <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                 <MessageSquare className="h-7 w-7 text-neon-aqua" />
-                Inviaci un Messaggio
+                {t.contact?.form?.title ?? 'Send Us a Message'}
               </h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome *</Label>
+                  <Label htmlFor="name">{t.contact?.form?.name ?? 'Name'} *</Label>
                   <Input
                     id="name"
                     type="text"
-                    placeholder="Il tuo nome"
+                    placeholder={t.contact?.form?.namePlaceholder ?? 'Your name'}
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
@@ -251,11 +259,11 @@ export default function ContattiPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">{t.contact?.form?.email ?? 'Email'} *</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="la.tua@email.com"
+                    placeholder={t.contact?.form?.emailPlaceholder ?? 'your@email.com'}
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
@@ -266,11 +274,11 @@ export default function ContattiPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="subject">Oggetto</Label>
+                  <Label htmlFor="subject">{t.contact?.form?.subject ?? 'Subject'}</Label>
                   <Input
                     id="subject"
                     type="text"
-                    placeholder="Di cosa hai bisogno?"
+                    placeholder={t.contact?.form?.subjectPlaceholder ?? 'Message subject'}
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="border-silver-frost/30 focus:border-royal-purple"
@@ -279,10 +287,10 @@ export default function ContattiPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Messaggio * <span className="text-xs text-muted-foreground">(minimo 10 caratteri)</span></Label>
+                  <Label htmlFor="message">{t.contact?.form?.message ?? 'Message'} *</Label>
                   <Textarea
                     id="message"
-                    placeholder="Scrivi il tuo messaggio..."
+                    placeholder={t.contact?.form?.messagePlaceholder ?? 'Write your message here...'}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
@@ -309,7 +317,7 @@ export default function ContattiPage() {
                   ) : (
                     <>
                       <Send className="mr-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                      Invia Messaggio
+                      {t.contact?.form?.submit ?? 'Send Message'}
                     </>
                   )}
                 </Button>

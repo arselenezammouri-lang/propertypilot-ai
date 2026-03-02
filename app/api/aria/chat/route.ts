@@ -4,6 +4,12 @@ import { buildAriaPrompt } from '@/lib/ai/aria-brain';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
+import type { SupportedLocale } from '@/lib/i18n/dictionary';
+
+const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'es', 'fr', 'de', 'pt', 'ar'];
+function toSupportedLocale(s: string): SupportedLocale {
+  return (SUPPORTED_LOCALES.includes(s as SupportedLocale) ? s : 'it') as SupportedLocale;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +18,10 @@ const ariaChatRequestSchema = z.object({
   context: z.object({
     locale: z.string().optional(),
     userLocation: z.string().optional(),
+    userName: z.string().optional(),
+    userPlan: z.string().optional(),
+    currentPage: z.string().optional(),
+    recentActivity: z.union([z.string(), z.array(z.string())]).optional(),
   }).optional(),
   locale: z.string().optional(),
 });
@@ -50,7 +60,7 @@ export async function POST(request: NextRequest) {
     const { message, context, locale } = validation.data;
 
     // Usa la lingua passata o rileva da context, default 'it'
-    const userLocale = locale || context?.locale || 'it';
+    const userLocale = toSupportedLocale(locale || context?.locale || 'it');
 
     // Recupera profilo utente per contesto
     const { data: profile } = await supabase
@@ -63,13 +73,20 @@ export async function POST(request: NextRequest) {
     const userLocation = context?.userLocation || 
       (profile?.location || profile?.city || profile?.country || undefined);
 
+    const recentActivityRaw = context?.recentActivity;
+    const recentActivity: string[] | undefined = recentActivityRaw == null
+      ? undefined
+      : Array.isArray(recentActivityRaw)
+        ? recentActivityRaw
+        : [recentActivityRaw];
+
     const ariaContext = {
       userName: profile?.full_name || context?.userName,
       userPlan: (profile?.subscription_plan || context?.userPlan || 'free') as 'free' | 'starter' | 'pro' | 'agency',
       currentPage: context?.currentPage,
-      recentActivity: context?.recentActivity,
+      recentActivity,
       userLocation,
-      locale: userLocale, // Aggiungi locale al context
+      locale: userLocale,
     };
 
     // Costruisci prompt per Aria con lingua

@@ -255,6 +255,7 @@ export function LuxuryTemplate({ data, optimizedImages = [], agencyBranding }: L
         <View style={{ ...styles.header, borderBottomColor: accentColor }}>
           <View style={styles.headerBrand}>
             {agencyBranding?.logo_url ? (
+              // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt
               <Image src={agencyBranding.logo_url} style={{ width: 120, height: 40, objectFit: 'contain' }} />
             ) : (
               <Text style={{ ...styles.brandText, color: accentColor }}>{brandName}</Text>
@@ -265,6 +266,7 @@ export function LuxuryTemplate({ data, optimizedImages = [], agencyBranding }: L
 
         {heroImage && (
           <View style={styles.heroSection}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt */}
             <Image src={heroImage} style={styles.heroImage} />
             <View style={styles.exclusiveBadge}>
               <Text style={styles.exclusiveText}>Esclusiva</Text>
@@ -356,6 +358,7 @@ export function LuxuryTemplate({ data, optimizedImages = [], agencyBranding }: L
               <Text style={styles.sectionTitle}>Galleria Esclusiva</Text>
               <View style={styles.imagesGrid}>
                 {galleryImages.map((img, index) => (
+                  // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt
                   <Image key={index} src={img} style={styles.gridImage} />
                 ))}
               </View>

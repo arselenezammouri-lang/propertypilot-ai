@@ -10,6 +10,8 @@ import { AlertCircle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { logger } from '@/lib/utils/safe-logger';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { getTranslation, SupportedLocale } from '@/lib/i18n/dictionary';
 
 export default function Error({
   error,
@@ -18,6 +20,9 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const { locale } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
+
   useEffect(() => {
     // Log error usando logger sicuro
     logger.error('[GLOBAL ERROR] Unhandled route error', error, {
@@ -32,19 +37,19 @@ export default function Error({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-red-400">
             <AlertCircle className="h-5 w-5" />
-            Qualcosa è andato storto
+            {t.errors?.somethingWentWrong ?? 'Something went wrong'}
           </CardTitle>
           <CardDescription>
-            Si è verificato un errore imprevisto. Non ti preoccupare, i tuoi dati sono al sicuro.
+            {t.errors?.unexpectedError ?? 'An unexpected error occurred. Your data is safe.'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm text-muted-foreground">
-            {error.message || 'Errore sconosciuto'}
+            {error.message || (t.errors?.unknownError ?? 'Unknown error')}
           </div>
           {error.digest && (
             <div className="text-xs text-muted-foreground font-mono">
-              ID Errore: {error.digest}
+              {t.errors?.errorId ?? 'Error ID'}: {error.digest}
             </div>
           )}
           <div className="flex gap-2">
@@ -54,7 +59,7 @@ export default function Error({
               className="flex-1"
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Riprova
+              {t.errors?.tryAgain ?? 'Try again'}
             </Button>
             <Button
               onClick={() => window.location.href = '/'}
@@ -62,7 +67,7 @@ export default function Error({
               className="flex-1"
             >
               <Home className="h-4 w-4 mr-2" />
-              Torna alla Home
+              {t.errors?.backToHome ?? 'Back to Home'}
             </Button>
           </div>
         </CardContent>

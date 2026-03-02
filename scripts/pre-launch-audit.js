@@ -37,6 +37,7 @@ console.log('1️⃣  Verifica Logo e Branding...');
 const logoFiles = [
   'public/logo.png',
   'public/favicon.png',
+  'public/og-image.png',
   'components/logo.tsx',
 ];
 
@@ -58,7 +59,10 @@ const pagesToCheck = [
 pagesToCheck.forEach(page => {
   if (fs.existsSync(page)) {
     const content = fs.readFileSync(page, 'utf8');
-    if (content.includes('logo') || content.includes('Logo') || content.includes('PropertyPilotLogo')) {
+    const hasLogo = content.includes('logo') || content.includes('Logo') || content.includes('PropertyPilotLogo');
+    const hasHeaderWithLogo = (page.includes('dashboard') && content.includes('DashboardHeader')) ||
+      (page.includes('pricing') && content.includes('MarketingNavHeader'));
+    if (hasLogo || hasHeaderWithLogo) {
       addCheck('Logo', `Logo usato in ${page}`);
     } else {
       addWarning('Logo', `Logo non trovato in ${page}`);
@@ -144,12 +148,17 @@ const navigationFiles = [
   'components/navbar.tsx',
 ];
 
+// Dashboard usa DashboardHeader, marketing usa MarketingNavHeader (entrambi con logo)
+const hasDashboardNav = fs.existsSync('components/dashboard-header.tsx');
+const hasMarketingNav = fs.existsSync('components/marketing-nav-header.tsx');
+
 navigationFiles.forEach(file => {
   if (fs.existsSync(file)) {
     addCheck('Navigation', `File navigation trovato: ${file}`);
-  } else {
-    // Non è un issue se non esiste sidebar/navbar separato
-    if (file.includes('sidebar') || file.includes('navbar')) {
+  } else if (file.includes('sidebar') || file.includes('navbar')) {
+    if ((file.includes('navbar') && hasMarketingNav) || (file.includes('sidebar') && hasDashboardNav)) {
+      addCheck('Navigation', `Nav inline tramite ${file.includes('navbar') ? 'MarketingNavHeader' : 'DashboardHeader'}`);
+    } else {
       addWarning('Navigation', `File navigation non trovato: ${file} (potrebbe essere inline)`);
     }
   }
@@ -254,9 +263,10 @@ if (fs.existsSync(nextConfigFile)) {
   addWarning('Security', 'next.config.mjs non trovato');
 }
 
-// Verifica input validation
-const validationFile = 'lib/utils/validation.ts';
-if (fs.existsSync(validationFile)) {
+// Verifica input validation (validation.ts o input-validation.ts)
+const validationFiles = ['lib/utils/validation.ts', 'lib/utils/input-validation.ts'];
+const hasValidation = validationFiles.some(f => fs.existsSync(f));
+if (hasValidation) {
   addCheck('Security', 'Input validation utility presente');
 } else {
   addWarning('Security', 'Input validation utility non trovata');
@@ -328,6 +338,76 @@ if (fs.existsSync(apiDir)) {
   
   if (!hasConsoleLog) {
     addCheck('Console Logs', 'Nessun console.log trovato in API routes');
+  }
+}
+
+console.log('');
+
+// 11. Integration & Services
+console.log('1️⃣1️⃣  Verifica Integrazione Servizi...');
+
+// Login redirect
+const loginPage = 'app/auth/login/page.tsx';
+if (fs.existsSync(loginPage)) {
+  const loginContent = fs.readFileSync(loginPage, 'utf8');
+  if (loginContent.includes('redirectTo') && loginContent.includes('redirect')) {
+    addCheck('Integration', 'Login rispetta redirectTo dalla query');
+  } else {
+    addWarning('Integration', 'Login potrebbe non rispettare redirect dopo accesso route protetta');
+  }
+}
+
+// OG image for social
+if (fs.existsSync('public/og-image.png')) {
+  addCheck('Integration', 'og-image.png presente per social sharing');
+} else {
+  addWarning('Integration', 'og-image.png mancante - link social potrebbero non avere anteprima');
+}
+
+// API routes used by frontend
+const criticalApis = [
+  'app/api/contact/route.ts',
+  'app/api/stripe/checkout/route.ts',
+  'app/api/stripe/webhook/route.ts',
+  'app/api/auth/setup-user/route.ts',
+  'app/api/generate/route.ts',
+];
+criticalApis.forEach(api => {
+  if (fs.existsSync(api)) {
+    addCheck('Integration', `API critica presente: ${api.replace('app/api/', '').replace('/route.ts', '')}`);
+  } else {
+    addIssue('Integration', `API critica mancante: ${api}`);
+  }
+});
+
+// Checkout payload (planType vs plan)
+const checkoutRoute = 'app/api/stripe/checkout/route.ts';
+if (fs.existsSync(checkoutRoute)) {
+  const content = fs.readFileSync(checkoutRoute, 'utf8');
+  if (content.includes('planType') || content.includes('plan')) {
+    addCheck('Integration', 'Checkout API accetta plan/planType');
+  }
+}
+
+// Contact API i18n
+const contactRoute = 'app/api/contact/route.ts';
+if (fs.existsSync(contactRoute)) {
+  const content = fs.readFileSync(contactRoute, 'utf8');
+  if (content.includes('Accept-Language') || content.includes('getLocaleFromRequest')) {
+    addCheck('Integration', 'Contact API supporta i18n (Accept-Language)');
+  } else {
+    addWarning('Integration', 'Contact API messaggi solo in italiano');
+  }
+}
+
+// Settings link fix (notifications -> workspace)
+const notificationsPage = 'app/dashboard/settings/notifications/page.tsx';
+if (fs.existsSync(notificationsPage)) {
+  const content = fs.readFileSync(notificationsPage, 'utf8');
+  if (content.includes('/dashboard/settings/workspace')) {
+    addCheck('Integration', 'Link Indietro notifiche punta a settings/workspace');
+  } else if (content.includes('/dashboard/settings"')) {
+    addWarning('Integration', 'Link Indietro notifiche potrebbe puntare a /settings (404)');
   }
 }
 

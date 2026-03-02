@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
   const pkg = request.nextUrl.searchParams.get('package');
   if (pkg && (pkg === 'boost' || pkg === 'agency_boost')) {
     const result = await createOneShotSession(request, pkg);
-    if ('redirect' in result) return NextResponse.redirect(new URL(result.redirect, request.url));
+    if ('redirect' in result && result.redirect) return NextResponse.redirect(new URL(result.redirect, request.url));
     if (result.url) return NextResponse.redirect(result.url);
   }
   const packages = [{

@@ -406,8 +406,8 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Ottieni lingua per messaggio errore
-    const errorLocale = await getUserLocale(request, user?.id, supabase);
+    // Ottieni lingua per messaggio errore (user/supabase potrebbero non essere in scope in catch)
+    const errorLocale = await getUserLocale(request);
     
     return NextResponse.json(
       { error: getErrorMessage(errorLocale, 'internalError') },

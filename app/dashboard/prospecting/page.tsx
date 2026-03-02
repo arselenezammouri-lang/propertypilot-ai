@@ -343,8 +343,8 @@ export default function ProspectingPage() {
   useEffect(() => {
     fetchListings();
     fetchFilters();
-    // Fetch subscription first - it will call fetchStats() if needed
     fetchUserSubscription();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run when filters change only
   }, [statusFilter, platformFilter]);
 
   // Auto-refresh stats ogni 30 secondi (solo per PRO/AGENCY)
@@ -352,12 +352,11 @@ export default function ProspectingPage() {
     if (userPlan !== 'pro' && userPlan !== 'agency') {
       return;
     }
-    
     const interval = setInterval(() => {
       fetchStats();
     }, 30000);
-
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- interval when plan changes
   }, [userPlan]);
 
   useEffect(() => {
@@ -365,6 +364,7 @@ export default function ProspectingPage() {
       if (!loading) fetchListings();
     }, 300);
     return () => clearTimeout(debounce);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce on location only
   }, [locationSearch]);
 
   const handleCall = async (listingId: string) => {
@@ -731,11 +731,13 @@ export default function ProspectingPage() {
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <CardTitle className="text-lg">Filtri Attivi</CardTitle>
-                    <Link href="/dashboard/prospecting/filters">
-                      <Button variant="ghost" size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toast({ title: "Filtri", description: "Crea un filtro dalla barra di ricerca sopra. Funzionalità in arrivo.", duration: 4000 })}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
                   </div>
                   <ScrollArea className="h-[300px]">
                     <div className="space-y-3">

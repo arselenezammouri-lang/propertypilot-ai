@@ -3,12 +3,28 @@ const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['geist'],
   typescript: {
+    // Controllo tipi fuori dal build Next (npx tsc --noEmit)
     ignoreBuildErrors: true,
   },
   eslint: {
+    // Lint separato con npm run lint per ridurre carico nel build
     ignoreDuringBuilds: true,
   },
+  // Usiamo SWC come minifier ma disabilitiamo la minimizzazione webpack,
+  // così evitiamo Terser e riduciamo il carico di memoria.
   swcMinify: true,
+  // Riduce uso memoria in build (evita OOM)
+  productionBrowserSourceMaps: false,
+  webpack: (config) => {
+    if (config.optimization) {
+      config.optimization.minimize = false;
+    }
+    return config;
+  },
+  experimental: {
+    webpackBuildWorker: true,
+    cpus: 1,
+  },
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
@@ -19,12 +35,20 @@ const nextConfig = {
   },
   headers: async () => [
     {
+      source: '/:path*',
+      headers: [
+        { key: 'X-DNS-Prefetch-Control', value: 'on' },
+        { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+        { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-XSS-Protection', value: '1; mode=block' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      ],
+    },
+    {
       source: '/:path((?!_next/static|_next/image|favicon|logo|manifest).*)',
       headers: [
-        {
-          key: 'Cache-Control',
-          value: 'no-cache, must-revalidate',
-        },
+        { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
       ],
     },
   ],

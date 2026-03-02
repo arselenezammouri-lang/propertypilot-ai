@@ -399,8 +399,8 @@ export async function POST(request: NextRequest) {
     logger.error('Translation error', error, { endpoint: '/api/translate-listing' });
     
     if (error instanceof Error) {
-      // Ottieni lingua per messaggi errore
-      const errorLocale = await getUserLocale(request, undefined, supabase);
+      // Ottieni lingua per messaggi errore (supabase non in scope in catch)
+      const errorLocale = await getUserLocale(request);
       
       if (error.message.includes('timeout') || error.message.includes('TIMEOUT')) {
         const timeoutMessages: Record<SupportedLocale, string> = {
@@ -410,6 +410,7 @@ export async function POST(request: NextRequest) {
           fr: 'La traduction prend trop de temps. Veuillez réessayer avec un texte plus court.',
           de: 'Die Übersetzung dauert zu lange. Bitte versuchen Sie es mit einem kürzeren Text.',
           ar: 'الترجمة تستغرق وقتاً طويلاً. يرجى المحاولة بنص أقصر.',
+          pt: 'A tradução está demorando muito. Tente com um texto mais curto.',
         };
         return NextResponse.json(
           { 
@@ -428,6 +429,7 @@ export async function POST(request: NextRequest) {
           fr: 'Service IA temporairement surchargé. Veuillez réessayer dans quelques minutes.',
           de: 'KI-Service vorübergehend überlastet. Bitte versuchen Sie es in ein paar Minuten erneut.',
           ar: 'الخدمة الذكية مثقلة مؤقتاً. يرجى المحاولة مرة أخرى بعد بضع دقائق.',
+          pt: 'Serviço AI temporariamente sobrecarregado. Tente novamente em alguns minutos.',
         };
         return NextResponse.json(
           { 
@@ -446,6 +448,7 @@ export async function POST(request: NextRequest) {
           fr: 'Quota IA épuisée. Veuillez contacter le support.',
           de: 'KI-Quote erschöpft. Bitte kontaktieren Sie den Support.',
           ar: 'تم استنفاد حصة الذكاء الاصطناعي. يرجى الاتصال بالدعم.',
+          pt: 'Cota AI esgotada. Entre em contato com o suporte.',
         };
         return NextResponse.json(
           { 
@@ -457,7 +460,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const errorLocale = await getUserLocale(request, undefined, supabase);
+    const errorLocale = await getUserLocale(request);
     return NextResponse.json(
       { 
         error: getErrorMessage(errorLocale, 'internalError'),

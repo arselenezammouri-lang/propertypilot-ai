@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff } from "lucide-react";
 
 function SignupClient() {
@@ -21,6 +24,8 @@ function SignupClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const { locale, currency, setLocale, setCurrency } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
   const supabase = createClient();
   
   const selectedPlan = searchParams.get('plan');
@@ -37,8 +42,8 @@ function SignupClient() {
 
     if (!trimmedEmail || !trimmedPassword || !trimmedFullName) {
       toast({
-        title: "Errore",
-        description: "Per favore compila tutti i campi richiesti.",
+        title: t.auth.toast.error,
+        description: t.auth.toast.fillAllFields,
         variant: "destructive",
       });
       setLoading(false);
@@ -105,10 +110,10 @@ function SignupClient() {
       }
 
       toast({
-        title: "Account creato! 🎉",
+        title: t.auth.toast.accountCreated,
         description: selectedPlan || selectedPackage 
-          ? "Verrai reindirizzato per completare il pagamento." 
-          : "Benvenuto in PropertyPilot AI!",
+          ? t.auth.toast.redirectPayment 
+          : t.auth.toast.welcomePropertyPilot,
       });
 
       // Small delay before redirect to ensure cookies are set
@@ -124,10 +129,8 @@ function SignupClient() {
                          errorMessage.toLowerCase().includes('email rate limit');
       
       toast({
-        title: isRateLimit ? "Troppi tentativi" : "Errore",
-        description: isRateLimit 
-          ? "Abbiamo rilevato troppi tentativi. Per la tua sicurezza, riprova tra qualche minuto o usa un altro metodo."
-          : errorMessage || "Failed to create account",
+        title: isRateLimit ? t.auth.toast.tooManyAttempts : t.auth.toast.error,
+        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || "Failed to create account"),
         variant: "destructive",
       });
     } finally {
@@ -144,8 +147,9 @@ function SignupClient() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#9333ea]/10 rounded-full blur-3xl"></div>
       </div>
       
-      {/* Theme toggle - top right */}
-      <div className="absolute top-4 right-4">
+      {/* Language + Theme - top right */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LocaleCurrencySelector currentLocale={locale} currentCurrency={currency} onLocaleChange={setLocale} onCurrencyChange={setCurrency} />
         <ThemeToggle />
       </div>
 
@@ -156,7 +160,7 @@ function SignupClient() {
         data-testid="link-back-home"
       >
         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-        <span>Back to home</span>
+        <span>{t.auth.backToHome}</span>
       </Link>
 
       <div className="w-full max-w-md relative z-10 animate-fade-in-up">
@@ -177,17 +181,17 @@ function SignupClient() {
         <Card className="border border-white/10 shadow-2xl backdrop-blur-md bg-[#0a0a0a]/95 dark:bg-[#0a0a0a]/95">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
-              Create your account ✨
+              {t.auth.signup.title}
             </CardTitle>
             <CardDescription className="text-center text-base text-gray-300">
-              Start generating professional property listings with AI
+              {t.auth.signup.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} method="post" action="#" className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-sm font-medium text-white">
-                  Full Name
+                  {t.auth.signup.fullName}
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
@@ -208,7 +212,7 @@ function SignupClient() {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-white">
-                  Email address
+                  {t.auth.signup.email}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
@@ -229,7 +233,7 @@ function SignupClient() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-white">
-                  Password
+                  {t.auth.signup.password}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
@@ -261,27 +265,27 @@ function SignupClient() {
                 </div>
                 <p className="text-xs text-gray-400 flex items-center space-x-1">
                   <CheckCircle className="h-3 w-3" />
-                  <span>Must be at least 6 characters</span>
+                  <span>{t.auth.signup.minChars}</span>
                 </p>
               </div>
 
               <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-lg p-4 space-y-2">
                 <p className="text-sm font-medium flex items-center space-x-2">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  <span>Free plan includes:</span>
+                  <span>{t.auth.signup.freePlanIncludes}</span>
                 </p>
                 <ul className="text-xs text-muted-foreground space-y-1 ml-6">
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-                    <span>5 listings per month</span>
+                    <span>{t.auth.signup.listingsPerMonth}</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-                    <span>All AI features</span>
+                    <span>{t.auth.signup.allAIFeatures}</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
-                    <span>No credit card required</span>
+                    <span>{t.auth.signup.noCreditCard}</span>
                   </li>
                 </ul>
               </div>
@@ -295,12 +299,12 @@ function SignupClient() {
                 {loading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Creating account...</span>
+                    <span>{t.auth.signup.creatingAccount}</span>
                   </div>
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Create Free Account
+                    {t.auth.signup.createFreeAccount}
                   </>
                 )}
               </Button>
@@ -310,9 +314,9 @@ function SignupClient() {
                   <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">
-                    Already have an account?
-                  </span>
+                    <span className="bg-card px-2 text-muted-foreground">
+                      {t.auth.signup.alreadyHaveAccount}
+                    </span>
                 </div>
               </div>
 
@@ -324,16 +328,16 @@ function SignupClient() {
                     type="button"
                     data-testid="button-login-redirect"
                   >
-                    Accedi invece
+                    {t.auth.signup.signInInstead}
                   </Button>
                 </Link>
               </div>
 
               <p className="text-xs text-center text-muted-foreground">
-                By signing up, you agree to our{" "}
-                <a href="#" className="text-primary hover:underline">Terms of Service</a>
-                {" "}and{" "}
-                <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+                {t.auth.signup.termsAgreeBefore}
+                <Link href="/terms" className="text-primary hover:underline">{t.landing?.footer?.terms ?? 'Terms of Service'}</Link>
+                {t.auth.signup.termsAgreeAnd}
+                <Link href="/privacy" className="text-primary hover:underline">{t.landing?.footer?.privacy ?? 'Privacy Policy'}</Link>
               </p>
             </form>
           </CardContent>

@@ -186,6 +186,7 @@ export default function LeadsPage() {
 
   useEffect(() => {
     fetchLeads();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchLeads is stable, deps are filters
   }, [statusFilter, priorityFilter, marketFilter]);
 
   useEffect(() => {
@@ -193,6 +194,7 @@ export default function LeadsPage() {
       if (!loading) fetchLeads();
     }, 300);
     return () => clearTimeout(debounce);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce on search only
   }, [searchQuery]);
 
   // Load user subscription plan

@@ -70,6 +70,7 @@ export function GlobalLiveFeed() {
     }, Math.random() * 10000 + 10000); // 10-20 secondi
 
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- init and interval on mount only
   }, []);
 
   const generateInitialActivities = () => {

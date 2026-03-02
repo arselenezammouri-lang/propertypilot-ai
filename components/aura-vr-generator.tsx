@@ -142,7 +142,6 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
       ar: `🏠 مرحباً! لقد أعددت جولة VR غامرة لك:\n\n${vrLink}\n\nافتح الرابط على هاتفك الذكي لاستكشاف العقار في الواقع الافتراضي! 🥽`,
     };
 
-    const detectedLocale = detectLocaleFromLocation(userLocation || '') || 'it';
     const message = encodeURIComponent(vrMessages[detectedLocale] || vrMessages['it']);
     const whatsappUrl = `https://wa.me/?text=${message}`;
     window.open(whatsappUrl, "_blank");

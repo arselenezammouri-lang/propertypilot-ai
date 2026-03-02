@@ -3,15 +3,14 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { RegionSelector } from "@/components/region-selector";
-import { LanguageSelector } from "@/components/language-selector";
 import { DashboardProBanner } from "@/components/demo-modal";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
 import NextDynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
 import { 
   Home, 
   FileText, 
@@ -140,39 +139,7 @@ export default async function DashboardPage() {
         <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-[#06b6d4]/15 rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#9333ea]/10 rounded-full blur-3xl"></div>
       </div>
-      {/* FUTURISTIC DASHBOARD HEADER - Same style as Landing Page */}
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/5 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">Dashboard AI</p>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-1.5 md:space-x-3">
-              <LanguageSelector />
-              <RegionSelector />
-              <ThemeToggle />
-              <Link href="/dashboard/listings" className="hidden md:inline-flex">
-                <Button variant="ghost" size="sm" className="hover:text-royal-purple transition-colors" data-testid="button-generate">
-                  <Zap className="mr-2 h-4 w-4" />
-                  Genera
-                </Button>
-              </Link>
-              <form action="/auth/signout" method="post">
-                <Button type="submit" variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-signout">
-                  Esci
-                </Button>
-              </form>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader />
 
       {/* MAIN DASHBOARD CONTENT */}
       <main className="relative z-10 pt-24">
@@ -185,70 +152,7 @@ export default async function DashboardPage() {
 
           {/* STATS GRID - Premium Futuristic Cards */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-14">
-          {/* Current Plan Card - Royal Purple */}
-          <div className="futuristic-card p-8 md:p-10 relative overflow-hidden group hover-lift animate-fade-in-up" data-testid="card-current-plan">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-royal-purple/30 to-transparent rounded-bl-[5rem] opacity-50 group-hover:opacity-70 transition-opacity" />
-            <div className="flex items-start justify-between mb-6 relative">
-              <div>
-                <p className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-wider">Piano Attuale</p>
-                <h3 className="text-3xl md:text-4xl font-black capitalize gradient-text-purple flex items-center gap-2">
-                  {currentPlan}
-                  {currentPlan !== "free" && <Crown className="h-6 w-6 text-sunset-gold" />}
-                </h3>
-              </div>
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-royal-purple/30 to-royal-purple/10 rounded-2xl flex items-center justify-center shadow-glow-purple">
-                <CreditCard className="h-6 w-6 md:h-7 md:w-7 text-royal-purple" />
-              </div>
-            </div>
-            <p className="text-base text-muted-foreground font-medium relative">
-              {currentPlan === "free" && "5 annunci al mese"}
-              {currentPlan === "starter" && "50 annunci al mese"}
-              {currentPlan === "pro" && "200 annunci al mese"}
-              {currentPlan === "agency" && "Annunci illimitati"}
-            </p>
-          </div>
-
-          {/* Listings This Month Card - Electric Blue */}
-          <div className="futuristic-card p-8 md:p-10 relative overflow-hidden group hover-lift animate-fade-in-up delay-100" data-testid="card-listings-count">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-electric-blue/30 to-transparent rounded-bl-[5rem] opacity-50 group-hover:opacity-70 transition-opacity" />
-            <div className="flex items-start justify-between mb-6 relative">
-              <div>
-                <p className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-wider">Questo Mese</p>
-                <h3 className="text-3xl md:text-4xl font-black text-electric-blue">
-                  {limits.used}
-                  {limits.listings > 0 && (
-                    <span className="text-xl text-muted-foreground font-semibold">/{limits.listings}</span>
-                  )}
-                </h3>
-              </div>
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-electric-blue/30 to-electric-blue/10 rounded-2xl flex items-center justify-center shadow-glow-blue">
-                <BarChart3 className="h-6 w-6 md:h-7 md:w-7 text-electric-blue" />
-              </div>
-            </div>
-            <p className="text-base text-muted-foreground font-medium relative">
-              {limits.listings === -1 
-                ? "Annunci illimitati disponibili" 
-                : `${limits.listings - limits.used} annunci rimanenti`
-              }
-            </p>
-          </div>
-
-          {/* Saved Listings Card - Neon Aqua */}
-          <div className="futuristic-card p-8 md:p-10 relative overflow-hidden group hover-lift animate-fade-in-up delay-200" data-testid="card-saved-listings">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-neon-aqua/30 to-transparent rounded-bl-[5rem] opacity-50 group-hover:opacity-70 transition-opacity" />
-            <div className="flex items-start justify-between mb-6 relative">
-              <div>
-                <p className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-wider">Salvati</p>
-                <h3 className="text-3xl md:text-4xl font-black text-neon-aqua">0</h3>
-              </div>
-              <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-neon-aqua/30 to-neon-aqua/10 rounded-2xl flex items-center justify-center shadow-glow-aqua">
-                <Sparkles className="h-6 w-6 md:h-7 md:w-7 text-neon-aqua" />
-              </div>
-            </div>
-            <p className="text-base text-muted-foreground font-medium relative">
-              Nessun annuncio salvato
-            </p>
-          </div>
+          <DashboardStatsCards currentPlan={currentPlan} limits={limits} />
 
           {/* Progetti 3D Generati & WhatsApp Stats - Solo per PRO/AGENCY */}
           {(currentPlan === "pro" || currentPlan === "agency") && (

@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    logger.error('[SYNC ERROR]', error as Error, { component: 'stripe-sync', userId: user.id });
+    logger.error('[SYNC ERROR]', error as Error, { component: 'stripe-sync' });
     return NextResponse.json(
       { error: error.message || 'Failed to sync subscription' },
       { status: 500 }

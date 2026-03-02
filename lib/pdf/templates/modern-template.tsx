@@ -211,6 +211,7 @@ export function ModernTemplate({ data, optimizedImages = [], agencyBranding }: M
         <View style={{ ...styles.header, backgroundColor: primaryColor }}>
           <View style={styles.headerBrand}>
             {agencyBranding?.logo_url ? (
+              // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt
               <Image src={agencyBranding.logo_url} style={{ width: 120, height: 40, objectFit: 'contain' }} />
             ) : (
               <Text style={styles.brandText}>{brandName}</Text>
@@ -221,6 +222,7 @@ export function ModernTemplate({ data, optimizedImages = [], agencyBranding }: M
 
         {heroImage && (
           <View style={styles.heroSection}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt */}
             <Image src={heroImage} style={styles.heroImage} />
             <View style={styles.heroOverlay}>
               <Text style={styles.heroTitle}>{data.title}</Text>
@@ -308,6 +310,7 @@ export function ModernTemplate({ data, optimizedImages = [], agencyBranding }: M
               <Text style={styles.sectionTitle}>Galleria</Text>
               <View style={styles.imagesGrid}>
                 {galleryImages.map((img, index) => (
+                  // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf/renderer Image has no alt
                   <Image key={index} src={img} style={styles.gridImage} />
                 ))}
               </View>

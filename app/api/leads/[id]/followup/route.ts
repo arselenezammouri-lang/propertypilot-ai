@@ -7,7 +7,8 @@ import { getAICacheService } from '@/lib/cache/ai-cache';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import type { Lead } from '@/lib/types/database.types';
-import { getUserLocale, SupportedLocale } from '@/lib/i18n/api-locale';
+import { getUserLocale } from '@/lib/i18n/api-locale';
+import type { SupportedLocale } from '@/lib/i18n/dictionary';
 import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
@@ -108,6 +109,44 @@ const CATEGORIA_STRATEGIES: Record<'hot' | 'warm' | 'cold', string> = {
   hot: 'HOT LEAD (80-100): Alta urgenza, pronti all\'acquisto. Usa linguaggio diretto, crea urgenza ("Disponibile oggi pomeriggio?"), menziona scarsità ("Altri 3 interessati"), CTA immediato.',
   warm: 'WARM LEAD (50-79): Interessato ma ha bisogno di nurturing. Aggiungi valore ("Ho altri 2 immobili simili"), personalizza proposta, tempistica soft ("Questo weekend disponibile").',
   cold: 'COLD LEAD (0-49): Ricerca esplorativa, richiede qualificazione. Usa approccio educativo ("La zona è in forte crescita"), qualifica interesse ("Cosa cerchi esattamente?"), CTA soft.',
+};
+
+const SYSTEM_PROMPTS: Record<SupportedLocale, { whatsapp: string; email: string; sms: string }> = {
+  it: {
+    whatsapp: 'Sei un assistente AI che genera messaggi WhatsApp per follow-up immobiliare. Rispondi sempre in JSON valido.',
+    email: 'Sei un assistente AI che genera email professionali per follow-up immobiliare. Rispondi sempre in JSON valido.',
+    sms: 'Sei un assistente AI che genera SMS per follow-up immobiliare. Rispondi sempre in JSON valido.',
+  },
+  en: {
+    whatsapp: 'You are an AI assistant that generates WhatsApp messages for real estate follow-up. Always respond in valid JSON.',
+    email: 'You are an AI assistant that generates professional emails for real estate follow-up. Always respond in valid JSON.',
+    sms: 'You are an AI assistant that generates SMS for real estate follow-up. Always respond in valid JSON.',
+  },
+  es: {
+    whatsapp: 'Eres un asistente AI que genera mensajes WhatsApp para seguimiento inmobiliario. Responde siempre en JSON válido.',
+    email: 'Eres un asistente AI que genera emails profesionales para seguimiento inmobiliario. Responde siempre en JSON válido.',
+    sms: 'Eres un asistente AI que genera SMS para seguimiento inmobiliario. Responde siempre en JSON válido.',
+  },
+  fr: {
+    whatsapp: 'Vous êtes un assistant IA qui génère des messages WhatsApp pour le suivi immobilier. Répondez toujours en JSON valide.',
+    email: 'Vous êtes un assistant IA qui génère des emails professionnels pour le suivi immobilier. Répondez toujours en JSON valide.',
+    sms: 'Vous êtes un assistant IA qui génère des SMS pour le suivi immobilier. Répondez toujours en JSON valide.',
+  },
+  de: {
+    whatsapp: 'Du bist ein KI-Assistent, der WhatsApp-Nachrichten für Immobilien-Follow-up generiert. Antworte immer in gültigem JSON.',
+    email: 'Du bist ein KI-Assistent, der professionelle E-Mails für Immobilien-Follow-up generiert. Antworte immer in gültigem JSON.',
+    sms: 'Du bist ein KI-Assistent, der SMS für Immobilien-Follow-up generiert. Antworte immer in gültigem JSON.',
+  },
+  pt: {
+    whatsapp: 'Você é um assistente de IA que gera mensagens WhatsApp para follow-up imobiliário. Sempre responda em JSON válido.',
+    email: 'Você é um assistente de IA que gera emails profissionais para follow-up imobiliário. Sempre responda em JSON válido.',
+    sms: 'Você é um assistente de IA que gera SMS para follow-up imobiliário. Sempre responda em JSON válido.',
+  },
+  ar: {
+    whatsapp: 'أنت مساعد ذكاء اصطناعي يولد رسائل واتساب للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
+    email: 'أنت مساعد ذكاء اصطناعي يولد رسائل بريد إلكتروني للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
+    sms: 'أنت مساعد ذكاء اصطناعي يولد رسائل SMS للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
+  },
 };
 
 // Genera prompt per WhatsApp
@@ -351,6 +390,34 @@ LEAD:
   "cta": "دعوة واضحة للعمل",
   "ps": "ملاحظة اختيارية للإلحاح/الندرة"
 }`,
+    pt: `Você é um copywriter imobiliário profissional. Gere um EMAIL profissional de 150-200 palavras.
+
+LEAD:
+Nome: ${lead.nome}
+Email: ${lead.email || 'N/A'}
+Mensagem original: ${lead.messaggio || 'Nenhuma mensagem específica'}
+Score: ${lead.lead_score} - Categoria: ${categoria.toUpperCase()}${propertyInfo}
+
+REGRAS:
+- Email profissional de 150-200 palavras
+- Formal mas acessível
+- Foco nos detalhes do imóvel (se disponíveis)
+- CTA clara e convincente
+- Tom: ${toneDesc}
+- Estratégia categoria: ${categoriaStrategy}
+- NÃO use placeholder [Nome] - use diretamente "${lead.nome}"
+
+Para HOT: Assunto com urgência, proposta de visita imediata, mencione escassez
+Para WARM: Assunto informativo, adicione detalhes extras, proposta de fim de semana
+Para COLD: Assunto educativo, convide para qualificação, CTA suave
+
+Responda APENAS em JSON válido:
+{
+  "subject": "Assunto do email (max 60 caracteres)",
+  "body": "Corpo do email (150-200 palavras)",
+  "cta": "Chamada à ação clara",
+  "ps": "Pós-escrito opcional para urgência/escassez"
+}`,
   };
 
   return emailTemplates[locale] || emailTemplates['it'];
@@ -522,6 +589,30 @@ LEAD:
 {
   "message": "SMS بحد أقصى 160 حرفاً (عد كل حرف!)"
 }`,
+    pt: `Você é um agente imobiliário experiente. Gere um SMS de MÁXIMO 160 caracteres (CONTE CADA CARACTERE!).
+
+LEAD:
+Nome: ${lead.nome}
+Mensagem: ${lead.messaggio || 'Nenhuma mensagem específica'}
+Score: ${lead.lead_score} - Categoria: ${categoria.toUpperCase()}${propertyInfo}
+
+REGRAS:
+- MÁXIMO 160 caracteres totais (conte cada caractere, incluindo espaço!)
+- Conciso e direto
+- Apenas informações essenciais
+- CTA curta e clara
+- NÃO use placeholder [Nome] - use diretamente "${lead.nome}"
+- Tom: ${toneDesc}
+- Estratégia categoria: ${categoriaStrategy}
+
+Para HOT: "Olá ${lead.nome}, disponível esta tarde para visita? Outros interessados."
+Para WARM: "Olá ${lead.nome}, disponível este fim de semana? Tenho outros imóveis similares."
+Para COLD: "Olá ${lead.nome}, podemos conversar por telefone? Ligo para você?"
+
+Responda APENAS em JSON válido:
+{
+  "message": "SMS de máx 160 caracteres (conte cada caractere!)"
+}`,
   };
 
   return smsTemplates[locale] || smsTemplates['it'];
@@ -546,7 +637,7 @@ async function generateFollowUpMessages(
                 role: 'system',
                 content: SYSTEM_PROMPTS[locale]?.whatsapp || SYSTEM_PROMPTS['it'].whatsapp,
               },
-              { role: 'user', content: buildWhatsAppPrompt(lead, property, categoria, tone, locale) },
+              { role: 'user', content: buildWhatsAppPrompt(lead, property, categoria, tone) },
             ],
             temperature: 0.7,
             max_tokens: 300,
@@ -759,6 +850,8 @@ export async function POST(
     }
 
     logger.debug('Generating follow-up messages', { leadId, categoria, tone });
+
+    const userLocale = await getUserLocale(request, user.id, supabase);
 
     // Genera messaggi
     const messages = await generateFollowUpMessages(lead as Lead, property, categoria, tone, userLocale);

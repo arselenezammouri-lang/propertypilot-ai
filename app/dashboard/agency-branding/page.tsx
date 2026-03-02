@@ -403,9 +403,10 @@ export default function AgencyBrandingPage() {
                   style={{ backgroundColor: formData.primary_color }}
                 >
                   {formData.logo_url ? (
-                    <img 
-                      src={formData.logo_url} 
-                      alt="Logo" 
+                    // eslint-disable-next-line @next/next/no-img-element -- dynamic logo URL from form
+                    <img
+                      src={formData.logo_url}
+                      alt="Logo"
                       className="h-8 w-auto object-contain bg-white rounded p-1"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';

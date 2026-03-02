@@ -6,9 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Gift, Copy, Users, Sparkles, Share2, Check } from "lucide-react";
+import { getBrowserLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
+import { SupportedLocale } from "@/lib/i18n/dictionary";
+
+const referralMessages: Record<string, string> = {
+  it: "🏠 Invitami su PropertyPilot AI! Guadagna 10 crediti AI iscrivendoti con il mio link:",
+  en: "🏠 Join me on PropertyPilot AI! Get 10 AI credits by signing up with my link:",
+  es: "🏠 ¡Únete a mí en PropertyPilot AI! Obtén 10 créditos AI registrándote con mi enlace:",
+  fr: "🏠 Rejoins-moi sur PropertyPilot AI! Obtiens 10 crédits AI en t'inscrivant avec mon lien:",
+  de: "🏠 Komm zu mir auf PropertyPilot AI! Erhalte 10 AI-Credits mit meinem Anmeldelink:",
+  pt: "🏠 Junte-se a mim no PropertyPilot AI! Ganhe 10 créditos AI registrando-se com meu link:",
+  ar: "🏠 انضم إلي على PropertyPilot AI! احصل على 10 crédits AI بالتسجيل عبر رابطي:",
+};
 
 export function ReferralSection() {
   const { toast } = useToast();
+  const [currentLocale, setCurrentLocale] = useState<SupportedLocale>("it");
   const [referralData, setReferralData] = useState<{
     referralCode: string;
     referralLink: string;
@@ -19,8 +32,8 @@ export function ReferralSection() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCurrentLocale(getBrowserLocale());
+    if (typeof window !== "undefined") {
+      setCurrentLocale(localeToSupportedLocale(getBrowserLocale()));
     }
     fetchReferralData();
   }, []);

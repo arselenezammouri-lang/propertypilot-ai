@@ -21,7 +21,17 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
 
   useEffect(() => {
     const success = searchParams.get('success');
-    if (success === 'true') {
+    const boost = searchParams.get('boost');
+    const canceled = searchParams.get('canceled');
+
+    if (boost === 'success') {
+      toast({
+        title: '🎉 Agency Boost attivato!',
+        description: 'Setup "done-for-you" confermato. Il nostro team ti contatterà per l\'onboarding.',
+        duration: 8000,
+      });
+      window.history.replaceState({}, '', '/dashboard');
+    } else if (success === 'true') {
       const upgradedPlan = localStorage.getItem('upgradedPlan');
       if (upgradedPlan === 'agency') {
         toast({
@@ -37,6 +47,16 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
           duration: 5000,
         });
       }
+      window.history.replaceState({}, '', '/dashboard');
+    }
+
+    if (canceled === 'true') {
+      toast({
+        title: 'Checkout annullato',
+        description: 'Puoi riprovare quando vuoi dalla pagina Billing.',
+        variant: 'default',
+        duration: 4000,
+      });
       window.history.replaceState({}, '', '/dashboard');
     }
 

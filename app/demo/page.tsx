@@ -1,8 +1,13 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { PropertyPilotLogo } from "@/components/logo";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import {
   Calendar,
   CheckCircle,
@@ -25,38 +30,7 @@ import {
 } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 
-const valuePoints = [
-  {
-    icon: Sparkles,
-    title: "AI Generativa Avanzata",
-    description: "Crea annunci professionali, titoli A/B, descrizioni SEO e contenuti marketing in pochi secondi.",
-  },
-  {
-    icon: Users,
-    title: "CRM 4.0 Dinamico",
-    description: "Gestisci i tuoi lead con pipeline Kanban, lead scoring AI e enrichment automatico.",
-  },
-  {
-    icon: Zap,
-    title: "Automazioni Intelligenti",
-    description: "20+ automazioni AI per follow-up, email, WhatsApp e gestione lead senza sforzo.",
-  },
-  {
-    icon: BarChart3,
-    title: "Lead Scoring AI",
-    description: "Identifica i lead più caldi con punteggi 0-100 e prioritizza le tue attività.",
-  },
-  {
-    icon: Mail,
-    title: "Communication Hub",
-    description: "Email, SMS e WhatsApp integrati in un'unica dashboard con template AI.",
-  },
-  {
-    icon: Crown,
-    title: "Branding Personalizzato",
-    description: "PDF white-label, schede immobili professionali e materiali con il tuo brand.",
-  },
-];
+const valuePointIcons = [Sparkles, Users, Zap, BarChart3, Mail, Crown];
 
 const testimonials = [
   {
@@ -80,6 +54,8 @@ const testimonials = [
 ];
 
 export default function DemoPage() {
+  const { locale, currency, setLocale, setCurrency } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
   const calendlyUrl = "https://calendly.com/propertypilot-ai/demo";
   const whatsappNumber = "+393401234567";
   const whatsappMessage = encodeURIComponent("Ciao! Vorrei prenotare una demo di PropertyPilot AI.");
@@ -91,30 +67,29 @@ export default function DemoPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
+              <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110" />
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground">Prenota la tua Demo</p>
+                <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
               </div>
             </Link>
             
             <nav className="flex items-center space-x-2 md:space-x-4">
+              <LocaleCurrencySelector currentLocale={locale} currentCurrency={currency} onLocaleChange={setLocale} onCurrencyChange={setCurrency} />
               <ThemeToggle />
               <Link href="/pricing">
                 <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-pricing">
-                  Prezzi
+                  {t.demo?.nav?.pricing ?? t.landing?.nav?.pricing ?? 'Pricing'}
                 </Button>
               </Link>
               <Link href="/auth/login">
                 <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-login">
-                  Login
+                  {t.demo?.nav?.login ?? t.landing?.nav?.login ?? 'Login'}
                 </Button>
               </Link>
               <Link href="/auth/signup">
                 <Button size="sm" className="neon-button" data-testid="button-signup">
-                  Inizia Gratis
+                  {t.demo?.nav?.startFree ?? t.landing?.nav?.getStarted ?? 'Start Free'}
                   <Rocket className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -132,17 +107,15 @@ export default function DemoPage() {
           <div className="text-center mb-12 md:mb-16">
             <div className="inline-flex items-center space-x-2 ai-badge mb-6 animate-fade-in-up">
               <Calendar size={18} className="animate-pulse" />
-              <span className="text-sm font-bold">Prenota in 30 secondi</span>
+              <span className="text-sm font-bold">{t.demo?.hero?.badge ?? 'Book in 30 seconds'}</span>
             </div>
             
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fade-in-up delay-100" data-testid="text-demo-title">
-              Prenota una <span className="gradient-text-gold">Demo Gratuita</span>
+              {t.demo?.hero?.title ?? 'Book a Free Demo'}
             </h1>
             
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in-up delay-200">
-              Scopri come PropertyPilot AI può trasformare la tua agenzia immobiliare.
-              <br className="hidden md:inline" />
-              30 minuti con un nostro esperto per vedere la piattaforma in azione.
+              {t.demo?.hero?.subtitle ?? 'Discover how PropertyPilot AI can transform your real estate agency.'}
             </p>
           </div>
 
@@ -155,8 +128,8 @@ export default function DemoPage() {
                   <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold gradient-text-gold">Scegli Data e Ora</h2>
-                  <p className="text-sm text-muted-foreground">Demo gratuita di 30 minuti</p>
+                  <h2 className="text-xl font-bold gradient-text-gold">{t.demo?.calendly?.chooseDate ?? 'Choose Date & Time'}</h2>
+                  <p className="text-sm text-muted-foreground">{t.demo?.calendly?.demoFree ?? 'Free 30-minute demo'}</p>
                 </div>
               </div>
               
@@ -176,7 +149,7 @@ export default function DemoPage() {
               {/* Alternative Contact */}
               <div className="mt-6 pt-6 border-t border-border/50">
                 <p className="text-sm text-muted-foreground mb-4 text-center">
-                  Preferisci contattarci direttamente?
+                  {t.demo?.calendly?.preferContact ?? 'Prefer to contact us directly?'}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <a
@@ -186,13 +159,13 @@ export default function DemoPage() {
                   >
                     <Button className="w-full sm:w-auto bg-[#25D366] hover:bg-[#128C7E] text-white font-bold" data-testid="button-whatsapp">
                       <SiWhatsapp className="mr-2 h-5 w-5" />
-                      Scrivi su WhatsApp
+                      {t.demo?.calendly?.whatsapp ?? 'WhatsApp'}
                     </Button>
                   </a>
                   <Link href="/contatti">
                     <Button variant="outline" className="w-full sm:w-auto border-2" data-testid="button-contact">
                       <Mail className="mr-2 h-5 w-5" />
-                      Invia Email
+                      {t.demo?.calendly?.sendEmail ?? 'Send Email'}
                     </Button>
                   </Link>
                 </div>
@@ -203,15 +176,15 @@ export default function DemoPage() {
             <div className="space-y-6 animate-fade-in-up delay-400">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                  Cosa scoprirai nella <span className="gradient-text-purple">Demo</span>
+                  {t.demo?.valuePoints?.sectionTitle ?? 'What You\'ll Discover in the Demo'}
                 </h2>
                 <p className="text-muted-foreground">
-                  Una panoramica completa delle funzionalità che renderanno la tua agenzia più efficiente.
+                  {t.demo?.valuePoints?.sectionSubtitle ?? 'A complete overview of the features that will make your agency more efficient.'}
                 </p>
               </div>
               
               <div className="grid gap-4">
-                {valuePoints.map((point, index) => (
+                {(t.demo?.valuePointsList ?? []).map((point, index) => (
                   <div
                     key={index}
                     className="futuristic-card p-4 md:p-5 hover-lift border border-electric-blue/20 group"
@@ -219,7 +192,7 @@ export default function DemoPage() {
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-electric-blue/20 to-royal-purple/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                        <point.icon className="h-5 w-5 text-electric-blue" />
+                        {React.createElement(valuePointIcons[index] ?? Sparkles, { className: "h-5 w-5 text-electric-blue" })}
                       </div>
                       <div>
                         <h3 className="font-bold mb-1 group-hover:text-electric-blue transition-colors">
@@ -238,7 +211,7 @@ export default function DemoPage() {
               <div className="pt-6">
                 <a href="#calendly">
                   <Button className="neon-button w-full text-lg py-6 shadow-glow-gold" size="lg" data-testid="button-book-now">
-                    Prenota Ora la Tua Demo
+                    {t.demo?.valuePoints?.bookNow ?? 'Book Your Demo Now'}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
@@ -253,10 +226,10 @@ export default function DemoPage() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 animate-fade-in-up" data-testid="text-testimonials-title">
-              Cosa dicono i nostri <span className="gradient-text-purple">Clienti</span>
+              {t.demo?.testimonials?.title ?? 'What Our Customers Say'}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in-up delay-100">
-              Agenti e agenzie che hanno già trasformato il loro business con PropertyPilot AI
+              {t.demo?.testimonials?.subtitle ?? 'Agents and agencies who have transformed their business with PropertyPilot AI'}
             </p>
           </div>
 
@@ -354,19 +327,17 @@ export default function DemoPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
+              <PropertyPilotLogo className="w-10 h-10 flex-shrink-0" />
               <div>
                 <p className="font-bold gradient-text-purple">PropertyPilot AI</p>
                 <p className="text-xs text-muted-foreground">© 2024 Tutti i diritti riservati</p>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
-              <Link href="/pricing" className="hover:text-foreground transition-colors">Prezzi</Link>
-              <Link href="/contatti" className="hover:text-foreground transition-colors">Contatti</Link>
-              <Link href="/auth/login" className="hover:text-foreground transition-colors">Login</Link>
+              <Link href="/" className="hover:text-foreground transition-colors">{t.demo?.footer?.home ?? 'Home'}</Link>
+              <Link href="/pricing" className="hover:text-foreground transition-colors">{t.demo?.footer?.pricing ?? 'Pricing'}</Link>
+              <Link href="/contatti" className="hover:text-foreground transition-colors">{t.demo?.footer?.contact ?? 'Contact'}</Link>
+              <Link href="/auth/login" className="hover:text-foreground transition-colors">{t.demo?.footer?.login ?? 'Login'}</Link>
             </div>
           </div>
         </div>

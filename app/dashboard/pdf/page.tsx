@@ -697,6 +697,7 @@ export default function PdfGeneratorPage() {
                     <div className="grid grid-cols-3 gap-3">
                       {imageUrls.map((url, index) => (
                         <div key={index} className="relative group">
+                          {/* eslint-disable-next-line @next/next/no-img-element -- dynamic user-uploaded URLs */}
                           <img
                             src={url}
                             alt={`Immagine ${index + 1}`}

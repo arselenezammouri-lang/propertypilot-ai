@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    logger.error('[UPGRADE ERROR]', error as Error, { component: 'stripe-upgrade', userId: user.id });
+    logger.error('[UPGRADE ERROR]', error as Error, { component: 'stripe-upgrade' });
     return NextResponse.json(
       { error: error.message || 'Failed to upgrade subscription' },
       { status: 500 }

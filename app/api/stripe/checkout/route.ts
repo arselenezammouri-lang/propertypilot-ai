@@ -6,8 +6,9 @@ import { z } from 'zod';
 export const dynamic = 'force-dynamic';
 
 const checkoutSchema = z.object({
-  plan: z.enum(['STARTER', 'PRO', 'AGENCY']),
-});
+  plan: z.enum(['STARTER', 'PRO', 'AGENCY']).optional(),
+  planType: z.enum(['starter', 'pro', 'agency']).optional(),
+}).refine(d => d.plan || d.planType, { message: 'plan or planType required' });
 
 const VALID_PLANS = ['STARTER', 'PRO', 'AGENCY'] as const;
 
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/pricing', request.url));
   }
   const result = await createSessionForPlan(request, plan as 'STARTER' | 'PRO' | 'AGENCY');
-  if ('redirect' in result) return NextResponse.redirect(new URL(result.redirect, request.url));
+  if ('redirect' in result && result.redirect) return NextResponse.redirect(new URL(result.redirect, request.url));
   return NextResponse.redirect(result.url!);
 }
 
@@ -57,7 +58,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { plan } = checkoutSchema.parse(body);
+    const parsed = checkoutSchema.parse(body);
+    const planRaw = parsed.plan || (parsed.planType && parsed.planType.toUpperCase());
+    if (!planRaw || !VALID_PLANS.includes(planRaw as any)) {
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+    }
+    const plan = planRaw as 'STARTER' | 'PRO' | 'AGENCY';
 
     // Recupera profilo utente
     const { data: profile, error: profileError } = await supabase

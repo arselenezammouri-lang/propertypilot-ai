@@ -117,6 +117,7 @@ ROI POTENZIALE: ${roi}%
           {/* Immagine Immobile */}
           {imageUrl && (
             <div className="relative w-full h-64 rounded-lg overflow-hidden border border-purple-500/30">
+              {/* eslint-disable-next-line @next/next/no-img-element -- dynamic listing image URL */}
               <img
                 src={imageUrl}
                 alt={listing.title}

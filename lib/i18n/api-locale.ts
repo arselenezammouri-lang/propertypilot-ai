@@ -4,6 +4,7 @@
  */
 
 import { SupportedLocale } from './dictionary';
+export type { SupportedLocale };
 import { Locale } from './config';
 
 /**

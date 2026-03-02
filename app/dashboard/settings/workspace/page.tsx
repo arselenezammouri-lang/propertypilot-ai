@@ -28,6 +28,7 @@ export default function WorkspaceSettingsPage() {
 
   useEffect(() => {
     loadWorkspaceSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
   }, []);
 
   const loadWorkspaceSettings = async () => {

@@ -7,12 +7,72 @@ export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
 export interface TranslationDictionary {
   // Dashboard General
-  dashboard: {
-    title: string;
-    subtitle: string;
-    loading: string;
-    error: string;
-    success: string;
+    dashboard: {
+      title: string;
+      subtitle: string;
+      loading: string;
+      error: string;
+      success: string;
+      generate: string;
+      signOut: string;
+      currentPlan: string;
+      dashboardAI: string;
+      thisMonth: string;
+      saved: string;
+      noSavedListings: string;
+      planFree: string;
+      planStarter: string;
+      planPro: string;
+      planAgency: string;
+      remainingListings: string;
+      unlimitedAvailable: string;
+    };
+
+  // Auth (Login / Signup)
+  auth: {
+    backToHome: string;
+    login: {
+      title: string;
+      subtitle: string;
+      email: string;
+      password: string;
+      forgotPassword: string;
+      signIn: string;
+      signingIn: string;
+      newTo: string;
+      createFreeAccount: string;
+      secureNote: string;
+    };
+    signup: {
+      title: string;
+      subtitle: string;
+      fullName: string;
+      email: string;
+      password: string;
+      minChars: string;
+      freePlanIncludes: string;
+      listingsPerMonth: string;
+      allAIFeatures: string;
+      noCreditCard: string;
+      createFreeAccount: string;
+      creatingAccount: string;
+      alreadyHaveAccount: string;
+      signInInstead: string;
+      termsAgreeBefore: string;
+      termsAgreeAnd: string;
+    };
+    toast: {
+      error: string;
+      fillAllFields: string;
+      tooManyAttempts: string;
+      rateLimitMsg: string;
+      welcomeBack: string;
+      completePayment: string;
+      loginSuccess: string;
+      accountCreated: string;
+      redirectPayment: string;
+      welcomePropertyPilot: string;
+    };
   };
   
   // Aura VR Generator
@@ -55,6 +115,43 @@ export interface TranslationDictionary {
     };
   };
   
+  // Demo page
+  demo: {
+    nav: { pricing: string; login: string; startFree: string };
+    hero: { badge: string; title: string; subtitle: string };
+    calendly: { chooseDate: string; demoFree: string; preferContact: string; whatsapp: string; sendEmail: string };
+    valuePoints: { sectionTitle: string; sectionSubtitle: string; bookNow: string };
+    valuePointsList: Array<{ title: string; description: string }>;
+    testimonials: { title: string; subtitle: string };
+    footer: { home: string; pricing: string; contact: string; login: string };
+  };
+
+  // Contact page
+  contact: {
+    title: string;
+    subtitle: string;
+    support: { title: string; desc: string };
+    sales: { title: string; desc: string };
+    demo: { title: string; desc: string; cta: string };
+    form: { title: string; name: string; email: string; subject: string; message: string; namePlaceholder: string; emailPlaceholder: string; subjectPlaceholder: string; messagePlaceholder: string; submit: string };
+    validation: { nameMin: string; emailInvalid: string; messageMin: string; checkFields: string };
+    toast: { successTitle: string; successDesc: string; errorTitle: string; errorDesc: string; validationTitle: string };
+    home: string;
+  };
+
+  // Error / 404 pages
+  errors: {
+    somethingWentWrong: string;
+    unexpectedError: string;
+    unknownError: string;
+    errorId: string;
+    tryAgain: string;
+    backToHome: string;
+    pageNotFound: string;
+    pageNotFoundDesc: string;
+    dashboard: string;
+  };
+
   // Common Actions
   common: {
     copy: string;
@@ -280,6 +377,26 @@ export interface TranslationDictionary {
       refund: string;
       copyright: string;
     };
+    pricingPage: {
+      badge: string;
+      mainTitle: string;
+      mainTitle2: string;
+      subtitle: string;
+      trustCancel: string;
+      trustTrial: string;
+      trustSupport: string;
+      demo: string;
+      whyChoose: string;
+      whySubtitle: string;
+      faqTitle: string;
+      faqSubtitle: string;
+      ctaTitle: string;
+      ctaSubtitle: string;
+      ctaStartFree: string;
+      ctaWatchDemo: string;
+      features: Array<{ title: string; desc: string }>;
+      faqs: Array<{ question: string; answer: string }>;
+    };
   };
 }
 
@@ -291,6 +408,64 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
       loading: 'Caricamento...',
       error: 'Errore',
       success: 'Successo',
+      generate: 'Genera',
+      signOut: 'Esci',
+      currentPlan: 'Piano Attuale',
+      dashboardAI: 'Dashboard AI',
+      thisMonth: 'Questo Mese',
+      saved: 'Salvati',
+      noSavedListings: 'Nessun annuncio salvato',
+      planFree: '5 annunci al mese',
+      planStarter: '50 annunci al mese',
+      planPro: '200 annunci al mese',
+      planAgency: 'Annunci illimitati',
+      remainingListings: 'annunci rimanenti',
+      unlimitedAvailable: 'Annunci illimitati disponibili',
+    },
+    auth: {
+      backToHome: 'Torna alla Home',
+      login: {
+        title: 'Bentornato 👋',
+        subtitle: 'Accedi per continuare',
+        email: 'Email',
+        password: 'Password',
+        forgotPassword: 'Password dimenticata?',
+        signIn: 'Accedi',
+        signingIn: 'Accesso in corso...',
+        newTo: 'Nuovo su PropertyPilot AI?',
+        createFreeAccount: 'Crea un account gratuito',
+        secureNote: 'Login sicuro • I tuoi dati sono protetti con crittografia standard',
+      },
+      signup: {
+        title: 'Crea il tuo account ✨',
+        subtitle: 'Inizia a generare annunci professionali con l\'AI',
+        fullName: 'Nome completo',
+        email: 'Email',
+        password: 'Password',
+        minChars: 'Almeno 6 caratteri',
+        freePlanIncludes: 'Il piano gratuito include:',
+        listingsPerMonth: '5 annunci al mese',
+        allAIFeatures: 'Tutte le funzionalità AI',
+        noCreditCard: 'Nessuna carta richiesta',
+        createFreeAccount: 'Crea account gratuito',
+        creatingAccount: 'Creazione account...',
+        alreadyHaveAccount: 'Hai già un account?',
+        signInInstead: 'Accedi invece',
+        termsAgreeBefore: 'Registrandoti accetti i nostri ',
+        termsAgreeAnd: ' e ',
+      },
+      toast: {
+        error: 'Errore',
+        fillAllFields: 'Compila tutti i campi richiesti.',
+        tooManyAttempts: 'Troppi tentativi',
+        rateLimitMsg: 'Abbiamo rilevato troppi tentativi. Per la tua sicurezza, riprova tra qualche minuto.',
+        welcomeBack: 'Bentornato! 🎉',
+        completePayment: 'Completa il pagamento nella dashboard.',
+        loginSuccess: 'Accesso effettuato con successo.',
+        accountCreated: 'Account creato! 🎉',
+        redirectPayment: 'Verrai reindirizzato per completare il pagamento.',
+        welcomePropertyPilot: 'Benvenuto in PropertyPilot AI!',
+      },
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -329,6 +504,44 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         stats: 'Questa scansione attirerà il',
         action: 'di visite in più. Vuoi che la invii io ai tuoi lead caldi?',
       },
+    },
+    errors: {
+      somethingWentWrong: 'Qualcosa è andato storto',
+      unexpectedError: 'Si è verificato un errore imprevisto. Non ti preoccupare, i tuoi dati sono al sicuro.',
+      unknownError: 'Errore sconosciuto',
+      errorId: 'ID Errore',
+      tryAgain: 'Riprova',
+      backToHome: 'Torna alla Home',
+      pageNotFound: 'Pagina non trovata',
+      pageNotFoundDesc: 'La pagina che stai cercando non esiste o è stata spostata.',
+      dashboard: 'Dashboard',
+    },
+    demo: {
+      nav: { pricing: 'Prezzi', login: 'Login', startFree: 'Inizia Gratis' },
+      hero: { badge: 'Prenota in 30 secondi', title: 'Prenota una Demo Gratuita', subtitle: 'Scopri come PropertyPilot AI può trasformare la tua agenzia immobiliare. 30 minuti con un nostro esperto per vedere la piattaforma in azione.' },
+      calendly: { chooseDate: 'Scegli Data e Ora', demoFree: 'Demo gratuita di 30 minuti', preferContact: 'Preferisci contattarci direttamente?', whatsapp: 'Scrivi su WhatsApp', sendEmail: 'Invia Email' },
+      valuePoints: { sectionTitle: 'Cosa scoprirai nella Demo', sectionSubtitle: 'Una panoramica completa delle funzionalità che renderanno la tua agenzia più efficiente.', bookNow: 'Prenota Ora la Tua Demo' },
+      valuePointsList: [
+        { title: 'AI Generativa Avanzata', description: 'Crea annunci professionali, titoli A/B, descrizioni SEO e contenuti marketing in pochi secondi.' },
+        { title: 'CRM 4.0 Dinamico', description: 'Gestisci i tuoi lead con pipeline Kanban, lead scoring AI e enrichment automatico.' },
+        { title: 'Automazioni Intelligenti', description: '20+ automazioni AI per follow-up, email, WhatsApp e gestione lead senza sforzo.' },
+        { title: 'Lead Scoring AI', description: 'Identifica i lead più caldi con punteggi 0-100 e prioritizza le tue attività.' },
+        { title: 'Communication Hub', description: 'Email, SMS e WhatsApp integrati in un\'unica dashboard con template AI.' },
+        { title: 'Branding Personalizzato', description: 'PDF white-label, schede immobili professionali e materiali con il tuo brand.' },
+      ],
+      testimonials: { title: 'Cosa dicono i nostri Clienti', subtitle: 'Agenti e agenzie che hanno già trasformato il loro business con PropertyPilot AI' },
+      footer: { home: 'Home', pricing: 'Prezzi', contact: 'Contatti', login: 'Login' },
+    },
+    contact: {
+      title: 'Contattaci',
+      subtitle: 'Siamo qui per aiutarti. Contatta il nostro team per qualsiasi domanda.',
+      support: { title: 'Supporto Clienti', desc: 'Hai bisogno di assistenza tecnica o domande sul tuo account? Il nostro team di supporto è pronto ad aiutarti.' },
+      sales: { title: 'Richieste Commerciali', desc: 'Interessato ai piani Business o Enterprise? Parliamo delle tue esigenze aziendali.' },
+      demo: { title: 'Vuoi una Demo?', desc: 'Scopri come PropertyPilot AI può trasformare il tuo business immobiliare. Prenota una demo gratuita con il nostro team.', cta: 'Prenota Demo Gratuita' },
+      form: { title: 'Inviaci un Messaggio', name: 'Nome', email: 'Email', subject: 'Oggetto', message: 'Messaggio', namePlaceholder: 'Il tuo nome', emailPlaceholder: 'la.tua@email.com', subjectPlaceholder: 'Oggetto del messaggio', messagePlaceholder: 'Scrivi qui il tuo messaggio...', submit: 'Invia Messaggio' },
+      validation: { nameMin: 'Il nome deve avere almeno 2 caratteri', emailInvalid: "Inserisci un'email valida", messageMin: 'Il messaggio deve avere almeno 10 caratteri', checkFields: 'Controlla i campi evidenziati.' },
+      toast: { successTitle: 'Messaggio inviato!', successDesc: 'Ti risponderemo entro 24 ore.', errorTitle: 'Errore', errorDesc: 'Impossibile inviare il messaggio. Riprova più tardi.', validationTitle: 'Errore di validazione' },
+      home: 'Home',
     },
     common: {
       copy: 'Copia',
@@ -552,6 +765,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         refund: 'Refund Policy',
         copyright: 'Tutti i diritti riservati.',
       },
+      pricingPage: {
+        badge: 'Prezzi Trasparenti',
+        mainTitle: 'Scegli il Piano',
+        mainTitle2: 'Perfetto per Te',
+        subtitle: 'Piani pensati per ogni fase del tuo business immobiliare. Inizia gratis, scala quando sei pronto.',
+        trustCancel: 'Cancella quando vuoi',
+        trustTrial: 'Prova gratuita 7 giorni',
+        trustSupport: 'Supporto in italiano',
+        demo: 'Demo',
+        whyChoose: 'Perché Scegliere PropertyPilot AI?',
+        whySubtitle: 'Funzionalità premium per ogni professionista del real estate',
+        faqTitle: 'Domande Frequenti',
+        faqSubtitle: 'Tutto quello che devi sapere sui nostri piani',
+        ctaTitle: 'Pronto a Trasformare i Tuoi Annunci?',
+        ctaSubtitle: 'Inizia gratis oggi e scopri come l\'AI può elevare il tuo business immobiliare.',
+        ctaStartFree: 'Inizia Gratis',
+        ctaWatchDemo: 'Guarda la Demo',
+        features: [
+          { title: 'AI GPT-4 Premium', desc: 'Modelli AI più avanzati del mercato' },
+          { title: '100% Italiano', desc: 'Contenuti ottimizzati per il mercato italiano' },
+          { title: 'Generazione Istantanea', desc: 'Risultati in meno di 30 secondi' },
+          { title: 'Facile da Usare', desc: 'Nessuna competenza tecnica richiesta' },
+          { title: 'Annunci Professionali', desc: 'Qualità da agenzia di comunicazione' },
+          { title: 'Multi-Agenzia', desc: 'Gestisci più sedi con un solo account' },
+        ],
+        faqs: [
+          { question: "Posso cambiare piano in qualsiasi momento?", answer: "Sì, puoi effettuare l'upgrade o il downgrade del tuo piano in qualsiasi momento. Le modifiche saranno applicate al prossimo ciclo di fatturazione." },
+          { question: "C'è un periodo di prova gratuito?", answer: "Sì, offriamo 7 giorni di prova gratuita su tutti i piani a pagamento. Nessuna carta di credito richiesta per iniziare." },
+          { question: "Cosa succede se supero i limiti del mio piano?", answer: "Ti avviseremo quando ti avvicini ai limiti. Potrai facilmente fare upgrade al piano superiore per continuare a crescere." },
+          { question: "Come funziona il piano Agency?", answer: "Il piano Agency è pensato per team e multi-agenzie. Include annunci illimitati, tutte le funzionalità e supporto dedicato." },
+          { question: "Posso annullare l'abbonamento?", answer: "Sì, puoi annullare in qualsiasi momento dalla dashboard. L'accesso rimarrà attivo fino alla fine del periodo già pagato." },
+          { question: "Offrite supporto in italiano?", answer: "Assolutamente sì! Il nostro team di supporto è completamente italiano e disponibile via email e chat." },
+        ],
+      },
     },
   },
   
@@ -562,6 +809,64 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
       loading: 'Loading...',
       error: 'Error',
       success: 'Success',
+      generate: 'Generate',
+      signOut: 'Sign Out',
+      currentPlan: 'Current Plan',
+      dashboardAI: 'Dashboard AI',
+      thisMonth: 'This Month',
+      saved: 'Saved',
+      noSavedListings: 'No saved listings',
+      planFree: '5 listings per month',
+      planStarter: '50 listings per month',
+      planPro: '200 listings per month',
+      planAgency: 'Unlimited listings',
+      remainingListings: 'listings remaining',
+      unlimitedAvailable: 'Unlimited listings available',
+    },
+    auth: {
+      backToHome: 'Back to home',
+      login: {
+        title: 'Welcome back 👋',
+        subtitle: 'Sign in to your account to continue',
+        email: 'Email address',
+        password: 'Password',
+        forgotPassword: 'Forgot password?',
+        signIn: 'Sign In',
+        signingIn: 'Signing in...',
+        newTo: 'New to PropertyPilot AI?',
+        createFreeAccount: 'Create free account',
+        secureNote: 'Secure login • Your data is protected with industry-standard encryption',
+      },
+      signup: {
+        title: 'Create your account ✨',
+        subtitle: 'Start generating professional property listings with AI',
+        fullName: 'Full Name',
+        email: 'Email address',
+        password: 'Password',
+        minChars: 'Must be at least 6 characters',
+        freePlanIncludes: 'Free plan includes:',
+        listingsPerMonth: '5 listings per month',
+        allAIFeatures: 'All AI features',
+        noCreditCard: 'No credit card required',
+        createFreeAccount: 'Create Free Account',
+        creatingAccount: 'Creating account...',
+        alreadyHaveAccount: 'Already have an account?',
+        signInInstead: 'Sign in instead',
+        termsAgreeBefore: 'By signing up, you agree to our ',
+        termsAgreeAnd: ' and ',
+      },
+      toast: {
+        error: 'Error',
+        fillAllFields: 'Please fill in all required fields.',
+        tooManyAttempts: 'Too many attempts',
+        rateLimitMsg: 'We detected too many attempts. For your security, try again in a few minutes.',
+        welcomeBack: 'Welcome back! 🎉',
+        completePayment: 'Complete payment in the dashboard.',
+        loginSuccess: 'Successfully signed in.',
+        accountCreated: 'Account created! 🎉',
+        redirectPayment: 'You will be redirected to complete payment.',
+        welcomePropertyPilot: 'Welcome to PropertyPilot AI!',
+      },
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -600,6 +905,44 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         stats: 'This scan will attract',
         action: 'more visits. Would you like me to send it to your hot leads?',
       },
+    },
+    errors: {
+      somethingWentWrong: 'Something went wrong',
+      unexpectedError: 'An unexpected error occurred. Don\'t worry, your data is safe.',
+      unknownError: 'Unknown error',
+      errorId: 'Error ID',
+      tryAgain: 'Try again',
+      backToHome: 'Back to Home',
+      pageNotFound: 'Page not found',
+      pageNotFoundDesc: 'The page you are looking for does not exist or has been moved.',
+      dashboard: 'Dashboard',
+    },
+    demo: {
+      nav: { pricing: 'Pricing', login: 'Login', startFree: 'Start Free' },
+      hero: { badge: 'Book in 30 seconds', title: 'Book a Free Demo', subtitle: 'Discover how PropertyPilot AI can transform your real estate agency. 30 minutes with our expert to see the platform in action.' },
+      calendly: { chooseDate: 'Choose Date & Time', demoFree: 'Free 30-minute demo', preferContact: 'Prefer to contact us directly?', whatsapp: 'WhatsApp', sendEmail: 'Send Email' },
+      valuePoints: { sectionTitle: 'What You\'ll Discover in the Demo', sectionSubtitle: 'A complete overview of the features that will make your agency more efficient.', bookNow: 'Book Your Demo Now' },
+      valuePointsList: [
+        { title: 'Advanced Generative AI', description: 'Create professional listings, A/B titles, SEO descriptions and marketing content in seconds.' },
+        { title: 'Dynamic CRM 4.0', description: 'Manage your leads with Kanban pipeline, AI lead scoring and automatic enrichment.' },
+        { title: 'Smart Automations', description: '20+ AI automations for follow-up, email, WhatsApp and effortless lead management.' },
+        { title: 'AI Lead Scoring', description: 'Identify the hottest leads with 0-100 scores and prioritize your activities.' },
+        { title: 'Communication Hub', description: 'Email, SMS and WhatsApp integrated in one dashboard with AI templates.' },
+        { title: 'Custom Branding', description: 'White-label PDFs, professional property sheets and materials with your brand.' },
+      ],
+      testimonials: { title: 'What Our Customers Say', subtitle: 'Agents and agencies who have already transformed their business with PropertyPilot AI' },
+      footer: { home: 'Home', pricing: 'Pricing', contact: 'Contact', login: 'Login' },
+    },
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'We\'re here to help. Contact our team for any questions.',
+      support: { title: 'Customer Support', desc: 'Need technical assistance or questions about your account? Our support team is ready to help.' },
+      sales: { title: 'Sales Enquiries', desc: 'Interested in Business or Enterprise plans? Let\'s discuss your business needs.' },
+      demo: { title: 'Want a Demo?', desc: 'Discover how PropertyPilot AI can transform your real estate business. Book a free demo with our team.', cta: 'Book Free Demo' },
+      form: { title: 'Send Us a Message', name: 'Name', email: 'Email', subject: 'Subject', message: 'Message', namePlaceholder: 'Your name', emailPlaceholder: 'your@email.com', subjectPlaceholder: 'Message subject', messagePlaceholder: 'Write your message here...', submit: 'Send Message' },
+      validation: { nameMin: 'Name must be at least 2 characters', emailInvalid: 'Enter a valid email', messageMin: 'Message must be at least 10 characters', checkFields: 'Check the highlighted fields.' },
+      toast: { successTitle: 'Message sent!', successDesc: 'We\'ll get back to you within 24 hours.', errorTitle: 'Error', errorDesc: 'Unable to send message. Please try again.', validationTitle: 'Validation error' },
+      home: 'Home',
     },
     common: {
       copy: 'Copy',
@@ -822,6 +1165,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         terms: 'Terms of Service',
         refund: 'Refund Policy',
         copyright: 'All rights reserved.',
+      },
+      pricingPage: {
+        badge: 'Transparent Pricing',
+        mainTitle: 'Choose the',
+        mainTitle2: 'Perfect Plan for You',
+        subtitle: 'Plans designed for every stage of your real estate business. Start free, scale when ready.',
+        trustCancel: 'Cancel anytime',
+        trustTrial: '7-day free trial',
+        trustSupport: 'Support in your language',
+        demo: 'Demo',
+        whyChoose: 'Why Choose PropertyPilot AI?',
+        whySubtitle: 'Premium features for every real estate professional',
+        faqTitle: 'Frequently Asked Questions',
+        faqSubtitle: 'Everything you need to know about our plans',
+        ctaTitle: 'Ready to Transform Your Listings?',
+        ctaSubtitle: 'Start free today and discover how AI can elevate your real estate business.',
+        ctaStartFree: 'Start Free',
+        ctaWatchDemo: 'Watch Demo',
+        features: [
+          { title: 'AI GPT-4 Premium', desc: 'Most advanced AI models on the market' },
+          { title: '100% Localized', desc: 'Content optimized for your market' },
+          { title: 'Instant Generation', desc: 'Results in under 30 seconds' },
+          { title: 'Easy to Use', desc: 'No technical skills required' },
+          { title: 'Professional Listings', desc: 'Agency-level communication quality' },
+          { title: 'Multi-Agency', desc: 'Manage multiple offices with one account' },
+        ],
+        faqs: [
+          { question: "Can I change my plan at any time?", answer: "Yes, you can upgrade or downgrade your plan at any time. Changes will apply at the next billing cycle." },
+          { question: "Is there a free trial?", answer: "Yes, we offer a 7-day free trial on all paid plans. No credit card required to start." },
+          { question: "What happens if I exceed my plan limits?", answer: "We'll notify you when you approach limits. You can easily upgrade to a higher plan to keep growing." },
+          { question: "How does the Agency plan work?", answer: "The Agency plan is designed for teams and multi-agencies. It includes unlimited listings, all features, and dedicated support." },
+          { question: "Can I cancel my subscription?", answer: "Yes, you can cancel anytime from the dashboard. Access remains active until the end of your paid period." },
+          { question: "Do you offer support in my language?", answer: "Absolutely! Our support team is available via email and chat in your preferred language." },
+        ],
       },
     },
   },
@@ -1094,6 +1471,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         refund: 'Política de Reembolso',
         copyright: 'Todos los derechos reservados.',
       },
+      pricingPage: {
+        badge: 'Precios Transparentes',
+        mainTitle: 'Elige el Plan',
+        mainTitle2: 'Perfecto para Ti',
+        subtitle: 'Planes diseñados para cada etapa de tu negocio inmobiliario. Empieza gratis, escala cuando estés listo.',
+        trustCancel: 'Cancela cuando quieras',
+        trustTrial: 'Prueba gratuita 7 días',
+        trustSupport: 'Soporte en tu idioma',
+        demo: 'Demo',
+        whyChoose: '¿Por Qué Elegir PropertyPilot AI?',
+        whySubtitle: 'Funciones premium para cada profesional inmobiliario',
+        faqTitle: 'Preguntas Frecuentes',
+        faqSubtitle: 'Todo lo que necesitas saber sobre nuestros planes',
+        ctaTitle: '¿Listo para Transformar tus Anuncios?',
+        ctaSubtitle: 'Empieza gratis hoy y descubre cómo la IA puede elevar tu negocio inmobiliario.',
+        ctaStartFree: 'Empieza Gratis',
+        ctaWatchDemo: 'Ver Demo',
+        features: [
+          { title: 'IA GPT-4 Premium', desc: 'Modelos de IA más avanzados del mercado' },
+          { title: '100% Localizado', desc: 'Contenido optimizado para tu mercado' },
+          { title: 'Generación Instantánea', desc: 'Resultados en menos de 30 segundos' },
+          { title: 'Fácil de Usar', desc: 'Sin conocimientos técnicos requeridos' },
+          { title: 'Anuncios Profesionales', desc: 'Calidad de agencia de comunicación' },
+          { title: 'Multi-Agencia', desc: 'Gestiona varias oficinas con una sola cuenta' },
+        ],
+        faqs: [
+          { question: "¿Puedo cambiar de plan en cualquier momento?", answer: "Sí, puedes hacer upgrade o downgrade de tu plan cuando quieras. Los cambios se aplicarán en el próximo ciclo de facturación." },
+          { question: "¿Hay periodo de prueba gratuito?", answer: "Sí, ofrecemos 7 días de prueba gratuita en todos los planes de pago. No se requiere tarjeta de crédito para empezar." },
+          { question: "¿Qué pasa si supero los límites de mi plan?", answer: "Te avisaremos cuando te acerques a los límites. Podrás hacer upgrade fácilmente para seguir creciendo." },
+          { question: "¿Cómo funciona el plan Agency?", answer: "El plan Agency está pensado para equipos y multi-agencies. Incluye anuncios ilimitados, todas las funciones y soporte dedicado." },
+          { question: "¿Puedo cancelar mi suscripción?", answer: "Sí, puedes cancelar en cualquier momento desde el panel. El acceso permanece activo hasta el final del periodo ya pagado." },
+          { question: "¿Ofrecen soporte en mi idioma?", answer: "¡Por supuesto! Nuestro equipo de soporte está disponible por email y chat en tu idioma." },
+        ],
+      },
     },
   },
   
@@ -1364,6 +1775,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         terms: 'Conditions d\'Utilisation',
         refund: 'Politique de Remboursement',
         copyright: 'Tous droits réservés.',
+      },
+      pricingPage: {
+        badge: 'Tarifs Transparents',
+        mainTitle: 'Choisissez le Plan',
+        mainTitle2: 'Parfait pour Vous',
+        subtitle: 'Plans conçus pour chaque étape de votre activité immobilière. Commencez gratuitement, scalez quand vous êtes prêt.',
+        trustCancel: 'Annulez quand vous voulez',
+        trustTrial: 'Essai gratuit 7 jours',
+        trustSupport: 'Support dans votre langue',
+        demo: 'Démo',
+        whyChoose: 'Pourquoi Choisir PropertyPilot AI?',
+        whySubtitle: 'Fonctionnalités premium pour chaque professionnel immobilier',
+        faqTitle: 'Questions Fréquentes',
+        faqSubtitle: 'Tout ce que vous devez savoir sur nos offres',
+        ctaTitle: 'Prêt à Transformer vos Annonces?',
+        ctaSubtitle: 'Commencez gratuitement aujourd\'hui et découvrez comment l\'IA peut faire grandir votre activité immobilière.',
+        ctaStartFree: 'Commencer Gratuitement',
+        ctaWatchDemo: 'Voir la Démo',
+        features: [
+          { title: 'IA GPT-4 Premium', desc: 'Modèles IA les plus avancés du marché' },
+          { title: '100% Localisé', desc: 'Contenu optimisé pour votre marché' },
+          { title: 'Génération Instantanée', desc: 'Résultats en moins de 30 secondes' },
+          { title: 'Facile à Utiliser', desc: 'Aucune compétence technique requise' },
+          { title: 'Annonces Professionnelles', desc: 'Qualité d\'agence de communication' },
+          { title: 'Multi-Agence', desc: 'Gérez plusieurs bureaux avec un seul compte' },
+        ],
+        faqs: [
+          { question: "Puis-je changer de forfait à tout moment?", answer: "Oui, vous pouvez passer à un forfait supérieur ou inférieur à tout moment. Les modifications s'appliqueront au prochain cycle de facturation." },
+          { question: "Y a-t-il une période d'essai gratuite?", answer: "Oui, nous offrons 7 jours d'essai gratuit sur tous les forfaits payants. Aucune carte de crédit requise pour commencer." },
+          { question: "Que se passe-t-il si je dépasse les limites de mon forfait?", answer: "Nous vous avertirons lorsque vous vous approcherez des limites. Vous pourrez facilement passer à un forfait supérieur." },
+          { question: "Comment fonctionne le forfait Agency?", answer: "Le forfait Agency est conçu pour les équipes et multi-agences. Il inclut des annonces illimitées, toutes les fonctionnalités et un support dédié." },
+          { question: "Puis-je annuler mon abonnement?", answer: "Oui, vous pouvez annuler à tout moment depuis le tableau de bord. L'accès restera actif jusqu'à la fin de la période déjà payée." },
+          { question: "Offrez-vous un support dans ma langue?", answer: "Absolument! Notre équipe support est disponible par email et chat dans votre langue." },
+        ],
       },
     },
   },
@@ -1636,6 +2081,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         refund: 'Rückerstattungsrichtlinie',
         copyright: 'Alle Rechte vorbehalten.',
       },
+      pricingPage: {
+        badge: 'Transparente Preise',
+        mainTitle: 'Wähle den',
+        mainTitle2: 'Perfekten Plan für Dich',
+        subtitle: 'Pläne für jede Phase deines Immobiliengeschäfts. Starte kostenlos, skaliere wenn bereit.',
+        trustCancel: 'Jederzeit kündbar',
+        trustTrial: '7 Tage kostenlos testen',
+        trustSupport: 'Support in deiner Sprache',
+        demo: 'Demo',
+        whyChoose: 'Warum PropertyPilot AI?',
+        whySubtitle: 'Premium-Funktionen für jeden Immobilienprofi',
+        faqTitle: 'Häufig Gestellte Fragen',
+        faqSubtitle: 'Alles was Sie über unsere Pläne wissen müssen',
+        ctaTitle: 'Bereit, Ihre Anzeigen zu Transformieren?',
+        ctaSubtitle: 'Starten Sie heute kostenlos und entdecken Sie, wie KI Ihr Immobiliengeschäft voranbringen kann.',
+        ctaStartFree: 'Kostenlos Starten',
+        ctaWatchDemo: 'Demo Ansehen',
+        features: [
+          { title: 'KI GPT-4 Premium', desc: 'Fortschrittlichste KI-Modelle am Markt' },
+          { title: '100% Lokalisiert', desc: 'Inhalte optimiert für Ihren Markt' },
+          { title: 'Sofortige Generierung', desc: 'Ergebnisse in unter 30 Sekunden' },
+          { title: 'Einfach zu Benutzen', desc: 'Keine technischen Kenntnisse erforderlich' },
+          { title: 'Professionelle Anzeigen', desc: 'Qualität einer Kommunikationsagentur' },
+          { title: 'Multi-Agentur', desc: 'Mehrere Standorte mit einem Konto verwalten' },
+        ],
+        faqs: [
+          { question: "Kann ich meinen Plan jederzeit wechseln?", answer: "Ja, Sie können jederzeit upgraden oder downgraden. Änderungen gelten im nächsten Abrechnungszyklus." },
+          { question: "Gibt es eine kostenlose Testphase?", answer: "Ja, wir bieten 7 Tage kostenlose Testphase bei allen kostenpflichtigen Plänen. Keine Kreditkarte erforderlich." },
+          { question: "Was passiert, wenn ich meine Planlimits überschreite?", answer: "Wir benachrichtigen Sie, wenn Sie sich den Limits nähern. Sie können einfach auf einen höheren Plan upgraden." },
+          { question: "Wie funktioniert der Agency-Plan?", answer: "Der Agency-Plan ist für Teams und Multi-Agenturen. Er umfasst unbegrenzte Anzeigen, alle Funktionen und dedizierten Support." },
+          { question: "Kann ich mein Abo kündigen?", answer: "Ja, Sie können jederzeit im Dashboard kündigen. Der Zugang bleibt bis zum Ende des bezahlten Zeitraums aktiv." },
+          { question: "Bieten Sie Support in meiner Sprache?", answer: "Absolut! Unser Support-Team ist per E-Mail und Chat in Ihrer Sprache erreichbar." },
+        ],
+      },
     },
   },
   
@@ -1646,6 +2125,19 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
       loading: 'Carregando...',
       error: 'Erro',
       success: 'Sucesso',
+      generate: 'Gerar',
+      signOut: 'Sair',
+      currentPlan: 'Plano Atual',
+      dashboardAI: 'Dashboard AI',
+      thisMonth: 'Este Mês',
+      saved: 'Salvos',
+      noSavedListings: 'Nenhum anúncio salvo',
+      planFree: '5 anúncios por mês',
+      planStarter: '50 anúncios por mês',
+      planPro: '200 anúncios por mês',
+      planAgency: 'Anúncios ilimitados',
+      remainingListings: 'anúncios restantes',
+      unlimitedAvailable: 'Anúncios ilimitados disponíveis',
     },
     auraVR: {
       title: 'Gerador Aura VR',
@@ -1696,6 +2188,42 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
       edit: 'Editar',
       view: 'Visualizar',
     },
+    landing: {
+      pricingPage: {
+        badge: 'Preços Transparentes',
+        mainTitle: 'Escolha o Plano',
+        mainTitle2: 'Perfeito para Você',
+        subtitle: 'Planos pensados para cada fase do seu negócio imobiliário. Comece grátis, escale quando estiver pronto.',
+        trustCancel: 'Cancele quando quiser',
+        trustTrial: 'Teste grátis 7 dias',
+        trustSupport: 'Suporte no seu idioma',
+        demo: 'Demo',
+        whyChoose: 'Por Que Escolher PropertyPilot AI?',
+        whySubtitle: 'Recursos premium para cada profissional imobiliário',
+        faqTitle: 'Perguntas Frequentes',
+        faqSubtitle: 'Tudo que você precisa saber sobre nossos planos',
+        ctaTitle: 'Pronto para Transformar seus Anúncios?',
+        ctaSubtitle: 'Comece grátis hoje e descubra como a IA pode elevar seu negócio imobiliário.',
+        ctaStartFree: 'Começar Grátis',
+        ctaWatchDemo: 'Ver Demo',
+        features: [
+          { title: 'IA GPT-4 Premium', desc: 'Modelos de IA mais avançados do mercado' },
+          { title: '100% Localizado', desc: 'Conteúdo otimizado para seu mercado' },
+          { title: 'Geração Instantânea', desc: 'Resultados em menos de 30 segundos' },
+          { title: 'Fácil de Usar', desc: 'Nenhuma habilidade técnica necessária' },
+          { title: 'Anúncios Profissionais', desc: 'Qualidade de agência de comunicação' },
+          { title: 'Multi-Agência', desc: 'Gerencie vários escritórios com uma conta' },
+        ],
+        faqs: [
+          { question: "Posso mudar de plano a qualquer momento?", answer: "Sim, você pode fazer upgrade ou downgrade quando quiser. As alterações se aplicam no próximo ciclo de cobrança." },
+          { question: "Há período de teste gratuito?", answer: "Sim, oferecemos 7 dias de teste grátis em todos os planos pagos. Nenhum cartão necessário para começar." },
+          { question: "O que acontece se eu ultrapassar os limites?", answer: "Te avisaremos quando você se aproximar. Você pode facilmente fazer upgrade para continuar crescendo." },
+          { question: "Como funciona o plano Agency?", answer: "O plano Agency é para equipes e multi-agências. Inclui anúncios ilimitados, todos os recursos e suporte dedicado." },
+          { question: "Posso cancelar minha assinatura?", answer: "Sim, você pode cancelar a qualquer momento no painel. O acesso permanece até o fim do período já pago." },
+          { question: "Oferecem suporte no meu idioma?", answer: "Com certeza! Nosso suporte está disponível por email e chat no seu idioma." },
+        ],
+      },
+    },
   },
   
   ar: {
@@ -1705,6 +2233,19 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
       loading: 'جاري التحميل...',
       error: 'خطأ',
       success: 'نجاح',
+      generate: 'إنشاء',
+      signOut: 'خروج',
+      currentPlan: 'الخطة الحالية',
+      dashboardAI: 'لوحة التحكم',
+      thisMonth: 'هذا الشهر',
+      saved: 'المحفوظة',
+      noSavedListings: 'لا إعلانات محفوظة',
+      planFree: '5 إعلانات شهرياً',
+      planStarter: '50 إعلان شهرياً',
+      planPro: '200 إعلان شهرياً',
+      planAgency: 'إعلانات غير محدودة',
+      remainingListings: 'إعلانات متبقية',
+      unlimitedAvailable: 'إعلانات غير محدودة متاحة',
     },
     auraVR: {
       title: 'مولد Aura VR',
@@ -1965,6 +2506,40 @@ export const translations: Record<SupportedLocale, Partial<TranslationDictionary
         terms: 'شروط الخدمة',
         refund: 'سياسة الاسترداد',
         copyright: 'جميع الحقوق محفوظة.',
+      },
+      pricingPage: {
+        badge: 'أسعار شفافة',
+        mainTitle: 'اختر الخطة',
+        mainTitle2: 'المثالية لك',
+        subtitle: 'خطط مصممة لكل مرحلة من مراحل عملك العقاري. ابدأ مجاناً، وسّع عندما تكون جاهزاً.',
+        trustCancel: 'إلغاء في أي وقت',
+        trustTrial: 'تجربة مجانية 7 أيام',
+        trustSupport: 'دعم بلغتك',
+        demo: 'عرض توضيحي',
+        whyChoose: 'لماذا PropertyPilot AI?',
+        whySubtitle: 'ميزات ممتازة لكل محترف عقاري',
+        faqTitle: 'الأسئلة الشائعة',
+        faqSubtitle: 'كل ما تحتاج معرفته عن خططنا',
+        ctaTitle: 'مستعد لتحويل إعلاناتك?',
+        ctaSubtitle: 'ابدأ مجاناً اليوم واكتشف كيف يمكن للذكاء الاصطناعي رفع أعمالك العقارية.',
+        ctaStartFree: 'ابدأ مجاناً',
+        ctaWatchDemo: 'شاهد العرض',
+        features: [
+          { title: 'ذكاء اصطناعي GPT-4 ممتاز', desc: 'أحدث نماذج الذكاء الاصطناعي في السوق' },
+          { title: '100% محلي', desc: 'محتوى محسن لسوقك' },
+          { title: 'إنشاء فوري', desc: 'نتائج في أقل من 30 ثانية' },
+          { title: 'سهل الاستخدام', desc: 'لا توجد مهارات تقنية مطلوبة' },
+          { title: 'إعلانات احترافية', desc: 'جودة وكالة اتصالات' },
+          { title: 'متعدد الوكالات', desc: 'إدارة مكاتب متعددة بحساب واحد' },
+        ],
+        faqs: [
+          { question: "هل يمكنني تغيير خطتي في أي وقت?", answer: "نعم، يمكنك الترقية أو التخفيض متى شئت. التغييرات ستُطبق في دورة الفوترة التالية." },
+          { question: "هل هناك فترة تجريبية مجانية?", answer: "نعم، نقدم 7 أيام تجربة مجانية لجميع الخطط المدفوعة. لا حاجة لبطاقة ائتمان للبدء." },
+          { question: "ماذا يحدث إذا تجاوزت حدود خطتي?", answer: "سننبهك عند الاقتراب من الحدود. يمكنك بسهولة الترقية للمتابعة." },
+          { question: "كيف يعمل plan Agency?", answer: "خطة Agency مصممة للفرق والوكالات المتعددة. تشمل إعلانات غير محدودة وكل الميزات ودعم مخصص." },
+          { question: "هل يمكنني إلغاء اشتراكي?", answer: "نعم، يمكنك الإلغاء في أي وقت من لوحة التحكم. سيبقى الوصول نشطاً حتى نهاية الفترة المدفوعة." },
+          { question: "هل تقدمون دعماً بلغتي?", answer: "بالتأكيد! فريق الدعم متاح عبر البريد وال chat بلغتك." },
+        ],
       },
     },
   },

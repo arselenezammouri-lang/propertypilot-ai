@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Home, ArrowLeft, Sparkles, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 function LoginClient() {
@@ -20,10 +23,13 @@ function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
+  const { locale, currency, setLocale, setCurrency } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
   const supabase = createClient();
   
   const selectedPlan = searchParams.get('plan');
   const selectedPackage = searchParams.get('package');
+  const redirectTo = searchParams.get('redirectTo') || searchParams.get('redirect');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,8 +43,8 @@ function LoginClient() {
 
     if (!trimmedEmail || !trimmedPassword) {
       toast({
-        title: "Errore",
-        description: "Per favore compila tutti i campi richiesti.",
+        title: t.auth.toast.error,
+        description: t.auth.toast.fillAllFields,
         variant: "destructive",
       });
       setLoading(false);
@@ -73,14 +79,17 @@ function LoginClient() {
         }
       }
       toast({
-        title: "Bentornato! 🎉",
+        title: t.auth.toast.welcomeBack,
         description: selectedPlan || selectedPackage 
-          ? "Completa il pagamento nella dashboard." 
-          : "Accesso effettuato con successo.",
+          ? t.auth.toast.completePayment 
+          : t.auth.toast.loginSuccess,
       });
 
-      // Use window.location for more reliable redirect
-      window.location.href = "/dashboard";
+      // Respect redirect from middleware (e.g. after protected route access)
+      const target = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+        ? redirectTo
+        : "/dashboard";
+      window.location.href = target;
     } catch (error: any) {
       // Handle rate limit error with user-friendly message
       const errorMessage = error.message || '';
@@ -89,10 +98,8 @@ function LoginClient() {
                          errorMessage.toLowerCase().includes('email rate limit');
       
       toast({
-        title: isRateLimit ? "Troppi tentativi" : "Errore",
-        description: isRateLimit 
-          ? "Abbiamo rilevato troppi tentativi. Per la tua sicurezza, riprova tra qualche minuto o usa un altro metodo."
-          : errorMessage || "Invalid email or password",
+        title: isRateLimit ? t.auth.toast.tooManyAttempts : t.auth.toast.error,
+        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || "Invalid email or password"),
         variant: "destructive",
       });
     } finally {
@@ -109,8 +116,9 @@ function LoginClient() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#9333ea]/10 rounded-full blur-3xl"></div>
       </div>
       
-      {/* Theme toggle - top right */}
-      <div className="absolute top-4 right-4">
+      {/* Language + Theme - top right */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LocaleCurrencySelector currentLocale={locale} currentCurrency={currency} onLocaleChange={setLocale} onCurrencyChange={setCurrency} />
         <ThemeToggle />
       </div>
 
@@ -121,7 +129,7 @@ function LoginClient() {
         data-testid="link-back-home"
       >
         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-        <span>Back to home</span>
+        <span>{t.auth.backToHome}</span>
       </Link>
 
       <div className="w-full max-w-md relative z-10 animate-fade-in-up">
@@ -142,17 +150,17 @@ function LoginClient() {
         <Card className="border border-white/10 shadow-2xl backdrop-blur-md bg-[#0a0a0a]/95 dark:bg-[#0a0a0a]/95">
           <CardHeader className="space-y-1 pb-6">
             <CardTitle className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
-              Welcome back 👋
+              {t.auth.login.title}
             </CardTitle>
             <CardDescription className="text-center text-base text-gray-300">
-              Sign in to your account to continue
+              {t.auth.login.subtitle}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} method="post" action="#" className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-white">
-                  Email address
+                  {t.auth.login.email}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
@@ -173,7 +181,7 @@ function LoginClient() {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium text-white">
-                  Password
+                  {t.auth.login.password}
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
@@ -207,7 +215,7 @@ function LoginClient() {
                     href="/auth/forgot-password"
                     className="text-xs text-[#9333ea] hover:text-[#a855f7] transition-colors"
                   >
-                    Password dimenticata?
+                    {t.auth.login.forgotPassword}
                   </Link>
                 </div>
               </div>
@@ -221,10 +229,10 @@ function LoginClient() {
                 {loading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Signing in...</span>
+                    <span>{t.auth.login.signingIn}</span>
                   </div>
                 ) : (
-                  "Sign In"
+                  <span>{t.auth.login.signIn}</span>
                 )}
               </Button>
 
@@ -232,15 +240,10 @@ function LoginClient() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border"></div>
                 </div>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border"></div>
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      New to PropertyPilot AI?
-                    </span>
-                  </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    {t.auth.login.newTo}
+                  </span>
                 </div>
               </div>
 
@@ -253,7 +256,7 @@ function LoginClient() {
                     data-testid="button-signup-redirect"
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Crea un account gratuito
+                    {t.auth.login.createFreeAccount}
                   </Button>
                 </Link>
               </div>
@@ -263,7 +266,7 @@ function LoginClient() {
 
         {/* Trust indicator */}
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Secure login • Your data is protected with industry-standard encryption
+          {t.auth.login.secureNote}
         </p>
       </div>
     </div>

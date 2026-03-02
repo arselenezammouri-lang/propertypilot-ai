@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { createClient } from '@/lib/supabase/server';
 import { supabaseService } from '@/lib/supabase/service';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
+import { logger } from '@/lib/utils/safe-logger';
 import type { Automation, FollowupPayload, ReminderPayload, WeeklyContentPayload } from '@/lib/types/database.types';
 
 export const dynamic = 'force-dynamic';

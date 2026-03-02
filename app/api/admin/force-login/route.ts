@@ -9,12 +9,10 @@ const FOUNDER_EMAIL = 'arselenezammouri@gmail.com';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
-  
-  // Accetta sia SESSION_SECRET che LANCIO_IMPERO_2026
+
   const validSecrets = [
     process.env.SESSION_SECRET,
-    'LANCIO_IMPERO_2026',
-    'propertypilot-admin-2024'
+    process.env.ADMIN_FORCE_LOGIN_SECRET,
   ].filter(Boolean);
   
   if (!secret || !validSecrets.includes(secret)) {

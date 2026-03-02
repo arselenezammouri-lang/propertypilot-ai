@@ -79,6 +79,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
   useEffect(() => {
     fetchLogs();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch on lead change only
   }, [lead.id]);
 
   const fetchLogs = async () => {

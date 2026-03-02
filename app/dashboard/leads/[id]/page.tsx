@@ -111,6 +111,7 @@ export default function LeadDetailPage() {
 
   useEffect(() => {
     fetchLeadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- fetch on leadId change only
   }, [leadId]);
 
   const fetchLeadData = async () => {

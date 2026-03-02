@@ -9,6 +9,7 @@ import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export const dynamic = 'force-dynamic';
 
@@ -173,10 +174,11 @@ export default function RootLayout({
             <ThemeProvider
               defaultTheme="dark"
               storageKey="propertypilot-theme"
-              suppressHydrationWarning
             >
               <PerformanceMonitor />
-              {children}
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
               <Toaster />
               <DemoModal />
             </ThemeProvider>

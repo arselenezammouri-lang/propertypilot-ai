@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { MarketingNavHeader } from "@/components/marketing-nav-header";
 import { 
   CheckCircle, 
   ArrowRight,
@@ -20,6 +20,8 @@ import {
   Gift
 } from "lucide-react";
 import { useState } from "react";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 
 const plans = [
   {
@@ -101,31 +103,13 @@ const plans = [
   },
 ];
 
-const faqs = [
-  {
-    question: "Posso cambiare piano in qualsiasi momento?",
-    answer: "Sì, puoi effettuare l'upgrade o il downgrade del tuo piano in qualsiasi momento. Le modifiche saranno applicate al prossimo ciclo di fatturazione."
-  },
-  {
-    question: "C'è un periodo di prova gratuito?",
-    answer: "Sì, offriamo 7 giorni di prova gratuita su tutti i piani a pagamento. Nessuna carta di credito richiesta per iniziare."
-  },
-  {
-    question: "Cosa succede se supero i limiti del mio piano?",
-    answer: "Ti avviseremo quando ti avvicini ai limiti. Potrai facilmente fare upgrade al piano superiore per continuare a crescere."
-  },
-  {
-    question: "Come funziona il piano Agency?",
-    answer: "Il piano Agency è pensato per team e multi-agenzie. Include annunci illimitati, tutte le funzionalità e supporto dedicato."
-  },
-  {
-    question: "Posso annullare l'abbonamento?",
-    answer: "Sì, puoi annullare in qualsiasi momento dalla dashboard. L'accesso rimarrà attivo fino alla fine del periodo già pagato."
-  },
-  {
-    question: "Offrite supporto in italiano?",
-    answer: "Assolutamente sì! Il nostro team di supporto è completamente italiano e disponibile via email e chat."
-  },
+const defaultFaqs = [
+  { question: "Posso cambiare piano in qualsiasi momento?", answer: "Sì, puoi effettuare l'upgrade o il downgrade del tuo piano in qualsiasi momento. Le modifiche saranno applicate al prossimo ciclo di fatturazione." },
+  { question: "C'è un periodo di prova gratuito?", answer: "Sì, offriamo 7 giorni di prova gratuita su tutti i piani a pagamento. Nessuna carta di credito richiesta per iniziare." },
+  { question: "Cosa succede se supero i limiti del mio piano?", answer: "Ti avviseremo quando ti avvicini ai limiti. Potrai facilmente fare upgrade al piano superiore per continuare a crescere." },
+  { question: "Come funziona il piano Agency?", answer: "Il piano Agency è pensato per team e multi-agenzie. Include annunci illimitati, tutte le funzionalità e supporto dedicato." },
+  { question: "Posso annullare l'abbonamento?", answer: "Sì, puoi annullare in qualsiasi momento dalla dashboard. L'accesso rimarrà attivo fino alla fine del periodo già pagato." },
+  { question: "Offrite supporto in italiano?", answer: "Assolutamente sì! Il nostro team di supporto è completamente italiano e disponibile via email e chat." },
 ];
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
@@ -152,6 +136,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 export default function PricingPage() {
   const router = useRouter();
+  const { locale: currentLocale } = useLocaleContext();
 
   const handlePlanClick = async (planId: string, isSubscription: boolean) => {
     // Check if user is logged in
@@ -175,54 +160,12 @@ export default function PricingPage() {
     }
   };
 
+  const t = getTranslation(currentLocale as SupportedLocale);
+  const pp = t.landing?.pricingPage;
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <img src="/logo.png" alt="PropertyPilot AI" className="w-full h-full object-cover" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/demo">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-sunset-gold transition-colors" data-testid="button-demo">
-                  Demo
-                </Button>
-              </Link>
-              <Link href="/#features">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-features">
-                  Funzionalità
-                </Button>
-              </Link>
-              <Link href="/contatti">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-contatti">
-                  Contatti
-                </Button>
-              </Link>
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-royal-purple transition-colors" data-testid="button-login">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button size="sm" className="neon-button" data-testid="button-signup">
-                  Inizia Gratis
-                  <Rocket className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <MarketingNavHeader />
 
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -232,33 +175,31 @@ export default function PricingPage() {
         <div className="relative max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center space-x-2 ai-badge mb-6 animate-fade-in-up">
             <Sparkles size={18} className="animate-pulse" />
-            <span className="text-sm font-bold">Prezzi Trasparenti</span>
+            <span className="text-sm font-bold">{pp?.badge ?? "Prezzi Trasparenti"}</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fade-in-up delay-100" data-testid="text-pricing-title">
-            <span className="gradient-text-purple">Scegli il Piano</span>
+            <span className="gradient-text-purple">{pp?.mainTitle ?? "Scegli il Piano"}</span>
             <br />
-            <span className="text-foreground">Perfetto per Te</span>
+            <span className="text-foreground">{pp?.mainTitle2 ?? "Perfetto per Te"}</span>
           </h1>
           
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto animate-fade-in-up delay-200">
-            Piani pensati per ogni fase del tuo business immobiliare.
-            <br className="hidden md:inline" />
-            Inizia gratis, scala quando sei pronto.
+            {pp?.subtitle ?? "Piani pensati per ogni fase del tuo business immobiliare. Inizia gratis, scala quando sei pronto."}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground animate-fade-in-up delay-300">
             <div className="flex items-center gap-2" data-testid="trust-cancel">
               <Shield className="h-5 w-5 text-neon-aqua" />
-              <span>Cancella quando vuoi</span>
+              <span>{pp?.trustCancel ?? "Cancella quando vuoi"}</span>
             </div>
             <div className="flex items-center gap-2" data-testid="trust-trial">
               <Clock className="h-5 w-5 text-electric-blue" />
-              <span>Prova gratuita 7 giorni</span>
+              <span>{pp?.trustTrial ?? "Prova gratuita 7 giorni"}</span>
             </div>
             <div className="flex items-center gap-2" data-testid="trust-support">
               <Headphones className="h-5 w-5 text-royal-purple" />
-              <span>Supporto in italiano</span>
+              <span>{pp?.trustSupport ?? "Supporto in italiano"}</span>
             </div>
           </div>
         </div>
@@ -371,36 +312,40 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              <span className="gradient-text-purple">Perché Scegliere PropertyPilot AI?</span>
+              <span className="gradient-text-purple">{pp?.whyChoose ?? "Perché Scegliere PropertyPilot AI?"}</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Funzionalità premium per ogni professionista del real estate
+              {pp?.whySubtitle ?? "Funzionalità premium per ogni professionista del real estate"}
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[
-              { icon: Sparkles, title: "AI GPT-4 Premium", desc: "Modelli AI più avanzati del mercato" },
-              { icon: Shield, title: "100% Italiano", desc: "Contenuti ottimizzati per il mercato italiano" },
-              { icon: Clock, title: "Generazione Istantanea", desc: "Risultati in meno di 30 secondi" },
-              { icon: Rocket, title: "Facile da Usare", desc: "Nessuna competenza tecnica richiesta" },
-              { icon: Crown, title: "Annunci Professionali", desc: "Qualità da agenzia di comunicazione" },
-              { icon: Building2, title: "Multi-Agenzia", desc: "Gestisci più sedi con un solo account" },
-            ].map((feature, index) => (
+            {((pp?.features ?? [
+              { title: "AI GPT-4 Premium", desc: "Modelli AI più avanzati del mercato" },
+              { title: "100% Italiano", desc: "Contenuti ottimizzati per il mercato italiano" },
+              { title: "Generazione Istantanea", desc: "Risultati in meno di 30 secondi" },
+              { title: "Facile da Usare", desc: "Nessuna competenza tecnica richiesta" },
+              { title: "Annunci Professionali", desc: "Qualità da agenzia di comunicazione" },
+              { title: "Multi-Agenzia", desc: "Gestisci più sedi con un solo account" },
+            ]) as { title: string; desc: string }[]).map((feat, index) => {
+              const icons = [Sparkles, Shield, Clock, Rocket, Crown, Building2];
+              const Icon = icons[index] ?? Sparkles;
+              return (
               <div 
                 key={index} 
                 className="flex items-start gap-4 p-6 rounded-2xl bg-background/50 border border-silver-frost/20 hover:border-royal-purple/30 transition-colors"
-                data-testid={`feature-${feature.title.toLowerCase().replace(/\s/g, '-')}`}
+                data-testid={`feature-${feat.title.toLowerCase().replace(/\s/g, '-')}`}
               >
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-royal-purple/20 to-electric-blue/10 flex items-center justify-center flex-shrink-0">
-                  <feature.icon className="h-6 w-6 text-royal-purple" />
+                  <Icon className="h-6 w-6 text-royal-purple" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-1">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.desc}</p>
+                  <h3 className="font-bold text-lg mb-1">{feat.title}</h3>
+                  <p className="text-sm text-muted-foreground">{feat.desc}</p>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -410,15 +355,15 @@ export default function PricingPage() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">
-              <span className="gradient-text-purple">Domande Frequenti</span>
+              <span className="gradient-text-purple">{pp?.faqTitle ?? "Domande Frequenti"}</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Tutto quello che devi sapere sui nostri piani
+              {pp?.faqSubtitle ?? "Tutto quello che devi sapere sui nostri piani"}
             </p>
           </div>
 
           <div className="bg-background rounded-2xl border border-silver-frost/20 p-6 md:p-8">
-            {faqs.map((faq, index) => (
+            {(pp?.faqs ?? defaultFaqs).map((faq, index) => (
               <FAQItem key={index} question={faq.question} answer={faq.answer} />
             ))}
           </div>
@@ -430,21 +375,21 @@ export default function PricingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="p-8 md:p-12 rounded-3xl bg-gradient-to-br from-royal-purple/10 via-background to-sunset-gold/10 border border-silver-frost/20">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
-              Pronto a <span className="gradient-text-gold">Trasformare</span> i Tuoi Annunci?
+              {pp?.ctaTitle ?? "Pronto a Trasformare i Tuoi Annunci?"}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Inizia gratis oggi e scopri come l'AI può elevare il tuo business immobiliare.
+              {pp?.ctaSubtitle ?? "Inizia gratis oggi e scopri come l'AI può elevare il tuo business immobiliare."}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth/signup">
                 <Button size="lg" className="neon-button text-lg py-6 px-8" data-testid="button-cta-signup">
-                  Inizia Gratis
+                  {pp?.ctaStartFree ?? "Inizia Gratis"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               <Link href="/demo">
                 <Button size="lg" variant="outline" className="text-lg py-6 px-8 border-2" data-testid="button-cta-demo">
-                  Guarda la Demo
+                  {pp?.ctaWatchDemo ?? "Guarda la Demo"}
                 </Button>
               </Link>
             </div>
