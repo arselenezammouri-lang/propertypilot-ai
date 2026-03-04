@@ -4,14 +4,13 @@
  */
 
 if (typeof window !== 'undefined') {
-  // Core Web Vitals
-  import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB, onINP }) => {
-    onCLS(metric => trackWebVital('CLS', metric));
-    onFID(metric => trackWebVital('FID', metric));
-    onFCP(metric => trackWebVital('FCP', metric));
-    onLCP(metric => trackWebVital('LCP', metric));
-    onTTFB(metric => trackWebVital('TTFB', metric));
-    onINP(metric => trackWebVital('INP', metric));
+  // Core Web Vitals (FID è deprecato nelle versioni recenti di web-vitals)
+  import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
+    onCLS((metric: any) => trackWebVital('CLS', metric));
+    onFCP((metric: any) => trackWebVital('FCP', metric));
+    onLCP((metric: any) => trackWebVital('LCP', metric));
+    onTTFB((metric: any) => trackWebVital('TTFB', metric));
+    onINP((metric: any) => trackWebVital('INP', metric));
   }).catch(() => {
     // web-vitals not available, skip
   });

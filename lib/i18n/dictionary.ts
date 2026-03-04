@@ -400,7 +400,12 @@ export interface TranslationDictionary {
   };
 }
 
-export const translations: Record<SupportedLocale, Partial<TranslationDictionary>> = {
+// Allow per-lingua dictionaries to omit or partially define nested keys
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+export const translations: Record<SupportedLocale, DeepPartial<TranslationDictionary>> = {
   it: {
     dashboard: {
       title: 'Dashboard',

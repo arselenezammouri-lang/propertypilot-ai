@@ -108,6 +108,15 @@ export const errorMessages: Record<SupportedLocale, Record<string, string>> = {
     subscriptionRequired: 'اشتراك مطلوب',
     invalidData: 'بيانات غير صالحة',
   },
+  pt: {
+    unauthorized: 'Não autorizado',
+    notFound: 'Não encontrado',
+    invalidRequest: 'Pedido inválido',
+    internalError: 'Erro interno do servidor',
+    rateLimit: 'Muitas solicitações. Tente novamente em um minuto.',
+    subscriptionRequired: 'Assinatura necessária',
+    invalidData: 'Dados inválidos',
+  },
 };
 
 /**
