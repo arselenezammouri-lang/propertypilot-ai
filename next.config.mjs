@@ -10,17 +10,9 @@ const nextConfig = {
     // Lint separato con npm run lint per ridurre carico nel build
     ignoreDuringBuilds: true,
   },
-  // Usiamo SWC come minifier ma disabilitiamo la minimizzazione webpack,
-  // così evitiamo Terser e riduciamo il carico di memoria.
   swcMinify: true,
   // Riduce uso memoria in build (evita OOM)
   productionBrowserSourceMaps: false,
-  webpack: (config) => {
-    if (config.optimization) {
-      config.optimization.minimize = false;
-    }
-    return config;
-  },
   experimental: {
     webpackBuildWorker: true,
     cpus: 1,
