@@ -26,6 +26,18 @@ export interface TranslationDictionary {
       planAgency: string;
       remainingListings: string;
       unlimitedAvailable: string;
+      chooseYourPlan: string;
+      activeBadge: string;
+      yourCurrentPlan: string;
+      forBeginners: string;
+      forProfs: string;
+      forTeam: string;
+      freePrice: string;
+      choosePlan: string;
+      startFree: string;
+      upgradeToStarter: string;
+      upgradeToPro: string;
+      upgradeToAgency: string;
     };
 
   // Auth (Login / Signup)
@@ -426,6 +438,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       planAgency: 'Annunci illimitati',
       remainingListings: 'annunci rimanenti',
       unlimitedAvailable: 'Annunci illimitati disponibili',
+      chooseYourPlan: 'Scegli il Tuo Piano',
+      activeBadge: 'Attivo',
+      yourCurrentPlan: 'Il tuo piano attuale',
+      forBeginners: 'Per iniziare',
+      forProfs: 'Per professionisti',
+      forTeam: 'Per team',
+      freePrice: 'Gratis',
+      choosePlan: 'Scegli Piano',
+      startFree: 'Inizia Gratis',
+      upgradeToStarter: 'Upgrade a Starter',
+      upgradeToPro: 'Upgrade a Pro',
+      upgradeToAgency: 'Upgrade a Agency',
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -827,6 +851,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       planAgency: 'Unlimited listings',
       remainingListings: 'listings remaining',
       unlimitedAvailable: 'Unlimited listings available',
+      chooseYourPlan: 'Choose Your Plan',
+      activeBadge: 'Active',
+      yourCurrentPlan: 'Your current plan',
+      forBeginners: 'To get started',
+      forProfs: 'For professionals',
+      forTeam: 'For teams',
+      freePrice: 'Free',
+      choosePlan: 'Choose Plan',
+      startFree: 'Start Free',
+      upgradeToStarter: 'Upgrade to Starter',
+      upgradeToPro: 'Upgrade to Pro',
+      upgradeToAgency: 'Upgrade to Agency',
     },
     auth: {
       backToHome: 'Back to home',
@@ -1215,6 +1251,29 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Cargando...',
       error: 'Error',
       success: 'Éxito',
+      currentPlan: 'Plan Actual',
+      dashboardAI: 'Dashboard IA',
+      thisMonth: 'Este Mes',
+      saved: 'Guardados',
+      noSavedListings: 'Ningún anuncio guardado',
+      planFree: '5 anuncios al mes',
+      planStarter: '50 anuncios al mes',
+      planPro: '200 anuncios al mes',
+      planAgency: 'Anuncios ilimitados',
+      remainingListings: 'anuncios restantes',
+      unlimitedAvailable: 'Anuncios ilimitados disponibles',
+      chooseYourPlan: 'Elige tu Plan',
+      activeBadge: 'Activo',
+      yourCurrentPlan: 'Tu plan actual',
+      forBeginners: 'Para empezar',
+      forProfs: 'Para profesionales',
+      forTeam: 'Para equipos',
+      freePrice: 'Gratis',
+      choosePlan: 'Elegir Plan',
+      startFree: 'Empezar Gratis',
+      upgradeToStarter: 'Pasar a Starter',
+      upgradeToPro: 'Pasar a Pro',
+      upgradeToAgency: 'Pasar a Agency',
     },
     auraVR: {
       title: 'Generador Aura VR',
@@ -1520,6 +1579,29 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Chargement...',
       error: 'Erreur',
       success: 'Succès',
+      currentPlan: 'Plan Actuel',
+      dashboardAI: 'Dashboard IA',
+      thisMonth: 'Ce Mois-ci',
+      saved: 'Enregistrés',
+      noSavedListings: 'Aucune annonce enregistrée',
+      planFree: '5 annonces par mois',
+      planStarter: '50 annonces par mois',
+      planPro: '200 annonces par mois',
+      planAgency: 'Annonces illimitées',
+      remainingListings: 'annonces restantes',
+      unlimitedAvailable: 'Annonces illimitées disponibles',
+      chooseYourPlan: 'Choisissez Votre Plan',
+      activeBadge: 'Actif',
+      yourCurrentPlan: 'Votre plan actuel',
+      forBeginners: 'Pour commencer',
+      forProfs: 'Pour les professionnels',
+      forTeam: 'Pour les équipes',
+      freePrice: 'Gratuit',
+      choosePlan: 'Choisir le Plan',
+      startFree: 'Commencer Gratuit',
+      upgradeToStarter: 'Passer à Starter',
+      upgradeToPro: 'Passer à Pro',
+      upgradeToAgency: 'Passer à Agency',
     },
     auraVR: {
       title: 'Générateur Aura VR',
@@ -1825,6 +1907,29 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Lädt...',
       error: 'Fehler',
       success: 'Erfolg',
+      currentPlan: 'Aktueller Plan',
+      dashboardAI: 'Dashboard KI',
+      thisMonth: 'Dieser Monat',
+      saved: 'Gespeichert',
+      noSavedListings: 'Keine gespeicherten Anzeigen',
+      planFree: '5 Anzeigen pro Monat',
+      planStarter: '50 Anzeigen pro Monat',
+      planPro: '200 Anzeigen pro Monat',
+      planAgency: 'Unbegrenzte Anzeigen',
+      remainingListings: 'Anzeigen verbleibend',
+      unlimitedAvailable: 'Unbegrenzte Anzeigen verfügbar',
+      chooseYourPlan: 'Wählen Sie Ihren Plan',
+      activeBadge: 'Aktiv',
+      yourCurrentPlan: 'Ihr aktueller Plan',
+      forBeginners: 'Zum Einstieg',
+      forProfs: 'Für Profis',
+      forTeam: 'Für Teams',
+      freePrice: 'Kostenlos',
+      choosePlan: 'Plan wählen',
+      startFree: 'Kostenlos starten',
+      upgradeToStarter: 'Auf Starter upgraden',
+      upgradeToPro: 'Auf Pro upgraden',
+      upgradeToAgency: 'Auf Agency upgraden',
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -2143,6 +2248,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       planAgency: 'Anúncios ilimitados',
       remainingListings: 'anúncios restantes',
       unlimitedAvailable: 'Anúncios ilimitados disponíveis',
+      chooseYourPlan: 'Escolha o Seu Plano',
+      activeBadge: 'Ativo',
+      yourCurrentPlan: 'O seu plano atual',
+      forBeginners: 'Para começar',
+      forProfs: 'Para profissionais',
+      forTeam: 'Para equipas',
+      freePrice: 'Grátis',
+      choosePlan: 'Escolher Plano',
+      startFree: 'Começar Grátis',
+      upgradeToStarter: 'Mudar para Starter',
+      upgradeToPro: 'Mudar para Pro',
+      upgradeToAgency: 'Mudar para Agency',
     },
     auraVR: {
       title: 'Gerador Aura VR',
@@ -2251,6 +2368,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       planAgency: 'إعلانات غير محدودة',
       remainingListings: 'إعلانات متبقية',
       unlimitedAvailable: 'إعلانات غير محدودة متاحة',
+      chooseYourPlan: 'اختر خطتك',
+      activeBadge: 'نشط',
+      yourCurrentPlan: 'خطتك الحالية',
+      forBeginners: 'للبدء',
+      forProfs: 'للمحترفين',
+      forTeam: 'للفرق',
+      freePrice: 'مجاني',
+      choosePlan: 'اختر الخطة',
+      startFree: 'ابدأ مجاناً',
+      upgradeToStarter: 'الترقية إلى Starter',
+      upgradeToPro: 'الترقية إلى Pro',
+      upgradeToAgency: 'الترقية إلى Agency',
     },
     auraVR: {
       title: 'مولد Aura VR',
@@ -2551,17 +2680,41 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
 };
 
 /**
- * Get translation for a specific locale
+ * Deep merge: locale object over base, but nested objects are merged (no whole-section replace).
+ * Evita "undefined" quando una lingua ha solo chiavi parziali (es. dashboard solo title/subtitle).
+ */
+function deepMerge<T extends object>(base: T, partial: DeepPartial<T>): T {
+  const out = { ...base };
+  for (const key of Object.keys(partial) as (keyof T)[]) {
+    const baseVal = (base as Record<string, unknown>)[key as string];
+    const partVal = (partial as Record<string, unknown>)[key as string];
+    if (partVal === undefined) continue;
+    if (
+      partVal !== null &&
+      typeof partVal === 'object' &&
+      !Array.isArray(partVal) &&
+      baseVal !== null &&
+      typeof baseVal === 'object' &&
+      !Array.isArray(baseVal)
+    ) {
+      (out as Record<string, unknown>)[key as string] = deepMerge(
+        baseVal as object,
+        partVal as object
+      );
+    } else {
+      (out as Record<string, unknown>)[key as string] = partVal;
+    }
+  }
+  return out;
+}
+
+/**
+ * Get translation for a specific locale. Deep merge so missing keys fall back to English.
  */
 export function getTranslation(locale: SupportedLocale): TranslationDictionary {
   const baseTranslation = translations.en as TranslationDictionary;
   const localeTranslation = translations[locale] || {};
-  
-  // Deep merge with English as fallback for missing translations
-  return {
-    ...baseTranslation,
-    ...localeTranslation
-  } as TranslationDictionary;
+  return deepMerge(baseTranslation, localeTranslation as DeepPartial<TranslationDictionary>) as TranslationDictionary;
 }
 
 /**
