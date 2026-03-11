@@ -76,6 +76,7 @@ export default function PredatorMapPage() {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
   const [showGhostListings, setShowGhostListings] = useState(false);
+  const [topDealsOnly, setTopDealsOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [callingListingId, setCallingListingId] = useState<string | null>(null);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
@@ -176,6 +177,11 @@ export default function PredatorMapPage() {
         // Calcola market gap
         const marketGap = calculateMarketGapForListing(listing);
 
+        // Applica filtro Top Deals se richiesto
+        if (topDealsOnly && !(marketGap && marketGap > 15)) {
+          continue;
+        }
+
         // Analizza urgenza
         const daysOnMarket = Math.floor(
           (new Date().getTime() - new Date(listing.created_at).getTime()) / (1000 * 60 * 60 * 24)
@@ -205,7 +211,7 @@ export default function PredatorMapPage() {
     if (listings.length > 0) {
       processMarkers();
     }
-  }, [listings, showGhostListings]);
+  }, [listings, showGhostListings, topDealsOnly]);
 
   const calculateMarketGapForListing = (listing: ExternalListing): number | null => {
     if (!listing.price || !listing.raw_data?.surface) return null;
@@ -286,6 +292,16 @@ export default function PredatorMapPage() {
               <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">{t.mapGhostListings}</span>
               <span className="text-xs sm:text-sm text-gray-300 sm:hidden">Ghost</span>
             </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={topDealsOnly}
+                onCheckedChange={setTopDealsOnly}
+              />
+              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">
+                {locale === "it" ? "Solo TOP DEAL" : "Top deals only"}
+              </span>
+              <span className="text-xs sm:text-sm text-gray-300 sm:hidden">TOP</span>
+            </div>
             <Button onClick={fetchListings} variant="outline" size="sm" className="w-full sm:w-auto">
               <Filter className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">{t.mapRefresh}</span>
@@ -325,7 +341,7 @@ export default function PredatorMapPage() {
           }}
         >
           {/* Legend - Responsive */}
-          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-40 bg-[#0a0a0a]/90 backdrop-blur-xl border border-purple-500/30 rounded-lg p-2 sm:p-4 max-w-[200px] sm:max-w-none">
+          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-40 bg-[#0a0a0a]/90 backdrop-blur-xl border border-purple-500/30 rounded-lg p-2 sm:p-4 max-w-[260px] sm:max-w-none">
             <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-3">{t.mapLegend}</h3>
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2">
@@ -345,6 +361,25 @@ export default function PredatorMapPage() {
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-gray-500 border-2 border-white"></div>
                 <span className="text-gray-300">{t.mapCold}</span>
+              </div>
+              {/* KPI sintetici */}
+              <div className="pt-2 mt-1 border-t border-purple-500/30 space-y-1">
+                <p className="text-[10px] text-gray-400 flex justify-between">
+                  <span>{locale === "it" ? "Immobili mappati" : "Mapped listings"}</span>
+                  <span className="font-semibold text-gray-100">{markers.length}</span>
+                </p>
+                <p className="text-[10px] text-gray-400 flex justify-between">
+                  <span>{locale === "it" ? "Top Deals" : "Top deals"}</span>
+                  <span className="font-semibold text-emerald-400">
+                    {markers.filter(m => m.marketGap && m.marketGap > 15).length}
+                  </span>
+                </p>
+                <p className="text-[10px] text-gray-400 flex justify-between">
+                  <span>{locale === "it" ? "Alta urgenza" : "High urgency"}</span>
+                  <span className="font-semibold text-red-400">
+                    {markers.filter(m => m.urgencyScore >= 70).length}
+                  </span>
+                </p>
               </div>
             </div>
           </div>
