@@ -87,6 +87,7 @@ import { AuraVRGenerator } from "@/components/aura-vr-generator";
 import { GlobalStatsTicker } from "@/components/global-stats-ticker";
 import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 // Lazy load heavy components
 const InvestmentAnalysisModal = NextDynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
@@ -194,6 +195,7 @@ export default function ProspectingPage() {
   const isItalian = locale === "it";
   const { toast } = useToast();
   const statusConfig = getStatusConfig(isItalian);
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
     heroTitle: isItalian ? "Arbitrage Command Center" : "Arbitrage Command Center",
@@ -343,16 +345,13 @@ export default function ProspectingPage() {
       if (data.success) {
         setListings(data.data || []);
       } else {
-        toast({
-          title: t.errorTitle,
-          description: data.error || t.loadError,
-          variant: "destructive",
-        });
+        throw new Error(data.error || t.loadError);
       }
-    } catch (error) {
+    } catch (error: any) {
+      const friendly = handleAPIError(error, t.loadError);
       toast({
         title: t.errorTitle,
-        description: t.connectionError,
+        description: friendly,
         variant: "destructive",
       });
     } finally {
