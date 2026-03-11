@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
@@ -125,6 +126,7 @@ export default function TranslatePage() {
   const [result, setResult] = useState<TranslationResult | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
   const handleTranslate = async () => {
     if (!titolo.trim() || titolo.length < 5) {
@@ -169,7 +171,8 @@ export default function TranslatePage() {
       });
     } catch (error) {
       console.error('Translation error:', error);
-      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: 'destructive' });
+      const friendly = handleAPIError(error, t.errorGeneric);
+      toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }

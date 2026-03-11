@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { 
   Home, 
   ArrowLeft, 
@@ -149,6 +150,7 @@ export default function TitlesPage() {
   const { theme, setTheme } = useTheme();
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
+  const { handleAPIError } = useAPIErrorHandler();
   const t = {
     generateError: isItalian ? "Errore nella generazione" : "Generation error",
     successTitle: isItalian ? "Titoli generati con successo!" : "Titles generated successfully!",
@@ -222,12 +224,13 @@ export default function TitlesPage() {
         body: JSON.stringify(data),
       });
       
+      const json = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || t.generateError);
+        throw new Error(json.error || t.generateError);
       }
       
-      return response.json() as Promise<TitlesResponse>;
+      return json as TitlesResponse;
     },
     onSuccess: (data) => {
       setResult(data);
@@ -237,9 +240,10 @@ export default function TitlesPage() {
       });
     },
     onError: (error: Error) => {
+      const friendly = handleAPIError(error, t.generateError);
       toast({
         title: t.errorTitle,
-        description: error.message,
+        description: friendly,
         variant: "destructive",
       });
     },
