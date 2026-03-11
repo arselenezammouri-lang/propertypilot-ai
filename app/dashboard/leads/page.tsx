@@ -86,6 +86,7 @@ import {
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
 import NextDynamic from "next/dynamic";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ListSkeleton } from "@/components/ui/skeleton-loaders";
 
 const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
   ssr: false,
@@ -764,8 +765,18 @@ export default function LeadsPage() {
         <Card>
           <CardContent className="p-0">
             {loading ? (
-              <div className="flex items-center justify-center py-20">
-                <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+              <div className="p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <div className="h-6 w-40 bg-emerald-500/20 rounded-md" />
+                    <div className="h-4 w-64 bg-slate-700/60 rounded-md" />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="h-9 w-28 bg-slate-700/60 rounded-md" />
+                    <div className="h-9 w-28 bg-slate-700/60 rounded-md" />
+                  </div>
+                </div>
+                <ListSkeleton items={6} />
               </div>
             ) : leads.length === 0 ? (
               <EmptyState
