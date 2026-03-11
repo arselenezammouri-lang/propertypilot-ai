@@ -10,6 +10,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
+import { useToast } from "@/hooks/use-toast";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 type AutopilotRule = {
   id?: string;
@@ -26,10 +28,12 @@ type AutopilotRule = {
 
 export default function AutopilotPage() {
   const { locale } = useLocaleContext();
+  const { toast } = useToast();
   const [rule, setRule] = useState<AutopilotRule | null>(null);
   const [runs, setRuns] = useState<any[]>([]);
   const [actions, setActions] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
     it: {
@@ -52,6 +56,9 @@ export default function AutopilotPage() {
       recentActions: "Azioni recenti",
       noActions: "Nessuna azione registrata.",
       defaultRule: "Autopilot Mandati",
+      loadError: "Impossibile caricare la configurazione Autopilot.",
+      saveSuccess: "Regola Autopilot salvata",
+      saveError: "Errore nel salvataggio della regola Autopilot.",
     },
     en: {
       title: "Mandate Autopilot 24/7",
@@ -73,6 +80,9 @@ export default function AutopilotPage() {
       recentActions: "Recent actions",
       noActions: "No actions recorded.",
       defaultRule: "Mandate Autopilot",
+      loadError: "Unable to load Autopilot configuration.",
+      saveSuccess: "Autopilot rule saved",
+      saveError: "Error while saving Autopilot rule.",
     },
   }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
@@ -82,43 +92,55 @@ export default function AutopilotPage() {
 
   const loadData = async () => {
     const supabase = createClient();
+    try {
+      const { data: rules, error: rulesError } = await supabase
+        .from("prospecting_autopilot_rules")
+        .select("*")
+        .limit(1);
 
-    const { data: rules } = await supabase
-      .from("prospecting_autopilot_rules")
-      .select("*")
-      .limit(1);
+      if (rulesError) throw rulesError;
 
-    if (rules && rules.length > 0) {
-      setRule(rules[0] as AutopilotRule);
-    } else {
-      setRule({
-        name: t.defaultRule,
-        active: false,
-        city: null,
-        region: null,
-        portals: ["idealista", "immobiliare"],
-        min_price: null,
-        max_price: null,
-        run_hour_utc: 7,
-        daily_limit: 10,
+      if (rules && rules.length > 0) {
+        setRule(rules[0] as AutopilotRule);
+      } else {
+        setRule({
+          name: t.defaultRule,
+          active: false,
+          city: null,
+          region: null,
+          portals: ["idealista", "immobiliare"],
+          min_price: null,
+          max_price: null,
+          run_hour_utc: 7,
+          daily_limit: 10,
+        });
+      }
+
+      const { data: recentRuns, error: runsError } = await supabase
+        .from("autopilot_runs")
+        .select("*")
+        .order("run_at", { ascending: false })
+        .limit(10);
+
+      if (runsError) throw runsError;
+      setRuns(recentRuns ?? []);
+
+      const { data: recentActions, error: actionsError } = await supabase
+        .from("autopilot_actions")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (actionsError) throw actionsError;
+      setActions(recentActions ?? []);
+    } catch (error: any) {
+      const friendly = handleAPIError(error, t.loadError);
+      toast({
+        title: "Autopilot",
+        description: friendly,
+        variant: "destructive",
       });
     }
-
-    const { data: recentRuns } = await supabase
-      .from("autopilot_runs")
-      .select("*")
-      .order("run_at", { ascending: false })
-      .limit(10);
-
-    setRuns(recentRuns ?? []);
-
-    const { data: recentActions } = await supabase
-      .from("autopilot_actions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    setActions(recentActions ?? []);
   };
 
   const updateField = (patch: Partial<AutopilotRule>) => {
@@ -132,10 +154,11 @@ export default function AutopilotPage() {
 
     try {
       if (rule.id) {
-        await supabase
+        const { error } = await supabase
           .from("prospecting_autopilot_rules")
           .update(rule)
           .eq("id", rule.id);
+        if (error) throw error;
       } else {
         const { data, error } = await supabase
           .from("prospecting_autopilot_rules")
@@ -146,6 +169,17 @@ export default function AutopilotPage() {
         if (error) throw error;
         setRule(data as AutopilotRule);
       }
+      toast({
+        title: "Autopilot",
+        description: t.saveSuccess,
+      });
+    } catch (error: any) {
+      const friendly = handleAPIError(error, t.saveError);
+      toast({
+        title: "Autopilot",
+        description: friendly,
+        variant: "destructive",
+      });
     } finally {
       setSaving(false);
     }
