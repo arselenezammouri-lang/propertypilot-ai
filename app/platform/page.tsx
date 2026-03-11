@@ -163,7 +163,7 @@ export default function PlatformPage() {
             
             {/* Language Selector (IT, EN, ES) + Currency + Theme Toggle */}
             <LocaleCurrencySelector 
-              locale={locale}
+              currentLocale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
@@ -202,7 +202,7 @@ export default function PlatformPage() {
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <LocaleCurrencySelector 
-              locale={locale}
+              currentLocale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
