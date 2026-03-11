@@ -10,6 +10,7 @@ import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { CommandPalette } from "@/components/command-palette";
 
 export const dynamic = 'force-dynamic';
 
@@ -181,6 +182,7 @@ export default function RootLayout({
               </ErrorBoundary>
               <Toaster />
               <DemoModal />
+              <CommandPalette />
             </ThemeProvider>
           </LocaleProvider>
         </Providers>

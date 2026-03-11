@@ -3,12 +3,12 @@ const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['geist'],
   typescript: {
-    // Controllo tipi fuori dal build Next (npx tsc --noEmit)
-    ignoreBuildErrors: true,
+    // BUILD LOCK: ogni errore TS blocca il build (qualità Diamond)
+    ignoreBuildErrors: false,
   },
   eslint: {
-    // Lint separato con npm run lint per ridurre carico nel build
-    ignoreDuringBuilds: true,
+    // BUILD LOCK: lint in build per segnalare errori reali
+    ignoreDuringBuilds: false,
   },
   swcMinify: true,
   // Riduce uso memoria in build (evita OOM)

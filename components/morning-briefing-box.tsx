@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { BellRing, TrendingDown, Zap, Smartphone, ExternalLink, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 interface TopListing {
   id: string;
@@ -20,10 +23,47 @@ interface TopListing {
 }
 
 export function MorningBriefingBox() {
+  const { locale } = useLocaleContext();
   const [topListings, setTopListings] = useState<TopListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [partnerAgencies, setPartnerAgencies] = useState<number>(0);
   const { toast } = useToast();
+  const t = {
+    it: {
+      na: "N/A",
+      sent: "Notifica di prova inviata!",
+      sentDesc: "Controlla la tua email e WhatsApp",
+      error: "Errore",
+      sendError: "Impossibile inviare la notifica",
+      connectionError: "Errore di connessione",
+      title: "Il tuo Briefing di Oggi",
+      subtitle: "Top 3 opportunità con Market Gap più alto (ultime 24h)",
+      configure: "Configura",
+      priceDown: "Prezzo",
+      highUrgency: "Urgenza Alta",
+      target: "Target",
+      fomo: "Questi deal sono stati inviati anche a",
+      partnerAgencies: "agenzie partner nella tua zona. Affrettati!",
+      sendTest: "Invia Prova sul mio Cellulare",
+    },
+    en: {
+      na: "N/A",
+      sent: "Test notification sent!",
+      sentDesc: "Check your email and WhatsApp",
+      error: "Error",
+      sendError: "Unable to send notification",
+      connectionError: "Connection error",
+      title: "Your Briefing Today",
+      subtitle: "Top 3 opportunities with the highest market gap (last 24h)",
+      configure: "Configure",
+      priceDown: "Price",
+      highUrgency: "High Urgency",
+      target: "Target",
+      fomo: "These deals have also been sent to",
+      partnerAgencies: "partner agencies in your area. Move fast!",
+      sendTest: "Send Test to My Phone",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     fetchBriefing();
@@ -46,11 +86,8 @@ export function MorningBriefingBox() {
   };
 
   const formatPrice = (price: number | null) => {
-    if (!price) return "N/A";
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price);
+    if (!price) return t.na;
+    return formatCurrencyForLocale(price, locale as Locale);
   };
 
   const handleSendTest = async () => {
@@ -65,20 +102,20 @@ export function MorningBriefingBox() {
 
       if (data.success) {
         toast({
-          title: "Notifica di prova inviata!",
-          description: "Controlla la tua email e WhatsApp",
+          title: t.sent,
+          description: t.sentDesc,
         });
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Impossibile inviare la notifica",
+          title: t.error,
+          description: data.error || t.sendError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     }
@@ -109,16 +146,16 @@ export function MorningBriefingBox() {
               <BellRing className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <CardTitle className="text-xl">Il tuo Briefing di Oggi</CardTitle>
+              <CardTitle className="text-xl">{t.title}</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Top 3 opportunità con Market Gap più alto (ultime 24h)
+                {t.subtitle}
               </p>
             </div>
           </div>
           <Link href="/dashboard/settings/notifications">
             <Button variant="outline" size="sm" className="border-purple-500/50 text-purple-400">
               <Zap className="h-4 w-4 mr-2" />
-              Configura
+              {t.configure}
             </Button>
           </Link>
         </div>
@@ -141,18 +178,18 @@ export function MorningBriefingBox() {
                   {listing.market_gap && listing.market_gap > 0 && (
                     <Badge variant="outline" className="bg-green-50 dark:bg-green-950/30 border-green-300 text-green-700 dark:text-green-400">
                       <TrendingDown className="h-3 w-3 mr-1" />
-                      Prezzo -{listing.market_gap.toFixed(0)}%
+                      {t.priceDown} -{listing.market_gap.toFixed(0)}%
                     </Badge>
                   )}
                   {listing.urgency_score && listing.urgency_score >= 70 && (
                     <Badge variant="outline" className="bg-red-50 dark:bg-red-950/30 border-red-300 text-red-700 dark:text-red-400">
                       <Zap className="h-3 w-3 mr-1" />
-                      Urgenza Alta
+                      {t.highUrgency}
                     </Badge>
                   )}
                   {listing.target_audience && listing.target_audience.length > 0 && (
                     <Badge variant="outline" className="bg-blue-50 dark:bg-blue-950/30 border-blue-300 text-blue-700 dark:text-blue-400">
-                      Target {listing.target_audience[0]}
+                      {t.target} {listing.target_audience[0]}
                     </Badge>
                   )}
                 </div>
@@ -170,8 +207,8 @@ export function MorningBriefingBox() {
         {/* FOMO Indicator */}
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 text-center">
           <p className="text-sm font-semibold text-amber-400">
-            ⚡ Questi deal sono stati inviati anche a{" "}
-            <span className="text-amber-300">{partnerAgencies}</span> agenzie partner nella tua zona. Affrettati!
+            ⚡ {t.fomo}{" "}
+            <span className="text-amber-300">{partnerAgencies}</span> {t.partnerAgencies}
           </p>
         </div>
 
@@ -183,7 +220,7 @@ export function MorningBriefingBox() {
             className="w-full border-purple-500/50 text-purple-400 hover:bg-purple-500/10"
           >
             <Smartphone className="h-4 w-4 mr-2" />
-            Invia Prova sul mio Cellulare
+            {t.sendTest}
           </Button>
         </div>
       </CardContent>

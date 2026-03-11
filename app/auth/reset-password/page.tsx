@@ -9,10 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 function ResetPasswordClient() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,6 +26,29 @@ function ResetPasswordClient() {
   const { toast } = useToast();
   const supabase = createClient();
 
+  const t = {
+    backToLogin: isItalian ? "Torna al Login" : "Back to Login",
+    pageTitle: isItalian ? "Nuova password" : "New password",
+    pageDesc: isItalian
+      ? "Inserisci la nuova password per il tuo account."
+      : "Enter the new password for your account.",
+    passwordLabel: isItalian ? "Nuova password" : "New password",
+    passwordPlaceholder: isItalian ? "Minimo 8 caratteri" : "At least 8 characters",
+    confirmLabel: isItalian ? "Conferma password" : "Confirm password",
+    confirmPlaceholder: isItalian ? "Ripeti la password" : "Repeat the password",
+    updateIdle: isItalian ? "Aggiorna password" : "Update password",
+    updateLoading: isItalian ? "Aggiornamento..." : "Updating...",
+    successTitle: isItalian ? "Password aggiornata!" : "Password updated!",
+    redirecting: isItalian ? "Reindirizzamento al login..." : "Redirecting to login...",
+    errorTitle: isItalian ? "Errore" : "Error",
+    minLength: isItalian ? "La password deve avere almeno 8 caratteri." : "Password must be at least 8 characters.",
+    passwordMismatch: isItalian ? "Le password non coincidono." : "Passwords do not match.",
+    updatedTitle: isItalian ? "Password aggiornata" : "Password updated",
+    updatedDesc: isItalian
+      ? "Ora puoi accedere con la nuova password."
+      : "You can now sign in with your new password.",
+  };
+
   const hash = typeof window !== "undefined" ? window.location.hash : "";
 
   const handleReset = async (e: React.FormEvent) => {
@@ -31,11 +57,11 @@ function ResetPasswordClient() {
     const confirm = confirmPassword?.trim();
 
     if (!pwd || pwd.length < 8) {
-      toast({ title: "Errore", description: "La password deve avere almeno 8 caratteri.", variant: "destructive" });
+      toast({ title: t.errorTitle, description: t.minLength, variant: "destructive" });
       return;
     }
     if (pwd !== confirm) {
-      toast({ title: "Errore", description: "Le password non coincidono.", variant: "destructive" });
+      toast({ title: t.errorTitle, description: t.passwordMismatch, variant: "destructive" });
       return;
     }
 
@@ -44,11 +70,11 @@ function ResetPasswordClient() {
       const { error } = await supabase.auth.updateUser({ password: pwd });
       if (error) throw error;
       setSuccess(true);
-      toast({ title: "Password aggiornata", description: "Ora puoi accedere con la nuova password." });
+      toast({ title: t.updatedTitle, description: t.updatedDesc });
       setTimeout(() => router.replace("/auth/login"), 2000);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Si è verificato un errore.";
-      toast({ title: "Errore", description: msg, variant: "destructive" });
+      const msg = err instanceof Error ? err.message : (isItalian ? "Si è verificato un errore." : "An error occurred.");
+      toast({ title: t.errorTitle, description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -63,15 +89,15 @@ function ResetPasswordClient() {
         </div>
         <div className="absolute top-4 right-4"><ThemeToggle /></div>
         <Link href="/auth/login" className="absolute top-4 left-4 inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors">
-          <ArrowLeft className="h-4 w-4" /><span>Torna al Login</span>
+          <ArrowLeft className="h-4 w-4" /><span>{t.backToLogin}</span>
         </Link>
         <div className="w-full max-w-md relative z-10">
           <Card className="border border-white/10 bg-[#0a0a0a]/95 backdrop-blur-md">
             <CardContent className="pt-6">
               <div className="text-center py-4">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                <h2 className="text-xl font-bold text-white mb-2">Password aggiornata!</h2>
-                <p className="text-gray-400">Reindirizzamento al login...</p>
+                <h2 className="text-xl font-bold text-white mb-2">{t.successTitle}</h2>
+                <p className="text-gray-400">{t.redirecting}</p>
               </div>
             </CardContent>
           </Card>
@@ -88,27 +114,27 @@ function ResetPasswordClient() {
       </div>
       <div className="absolute top-4 right-4"><ThemeToggle /></div>
       <Link href="/auth/login" className="absolute top-4 left-4 inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors">
-        <ArrowLeft className="h-4 w-4" /><span>Torna al Login</span>
+        <ArrowLeft className="h-4 w-4" /><span>{t.backToLogin}</span>
       </Link>
       <div className="w-full max-w-md relative z-10">
         <Card className="border border-white/10 bg-[#0a0a0a]/95 backdrop-blur-md">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
-              Nuova password
+              {t.pageTitle}
             </CardTitle>
             <CardDescription className="text-center text-gray-300">
-              Inserisci la nuova password per il tuo account.
+              {t.pageDesc}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleReset} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white">Nuova password</Label>
+                <Label className="text-white">{t.passwordLabel}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Minimo 8 caratteri"
+                    placeholder={t.passwordPlaceholder}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -121,10 +147,10 @@ function ResetPasswordClient() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-white">Conferma password</Label>
+                <Label className="text-white">{t.confirmLabel}</Label>
                 <Input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Ripeti la password"
+                  placeholder={t.confirmPlaceholder}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -133,7 +159,7 @@ function ResetPasswordClient() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Aggiornamento..." : "Aggiorna password"}
+                {loading ? t.updateLoading : t.updateIdle}
               </Button>
             </form>
           </CardContent>

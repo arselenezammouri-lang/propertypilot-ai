@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,60 +52,133 @@ interface PerfectCopyResult {
   portaleAdattamento?: string;
 }
 
-const TIPO_TRANSAZIONE = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
-
-const TIPI_IMMOBILE = [
-  { value: 'appartamento', label: 'Appartamento' },
-  { value: 'casa', label: 'Casa Indipendente' },
-  { value: 'villa', label: 'Villa' },
-  { value: 'attico', label: 'Attico' },
-  { value: 'loft', label: 'Loft' },
-  { value: 'bilocale', label: 'Bilocale' },
-  { value: 'trilocale', label: 'Trilocale' },
-  { value: 'monolocale', label: 'Monolocale' },
-  { value: 'rustico', label: 'Rustico' },
-  { value: 'casale', label: 'Casale' },
-  { value: 'palazzo', label: 'Palazzo' },
-  { value: 'locale_commerciale', label: 'Locale Commerciale' },
-  { value: 'ufficio', label: 'Ufficio' },
-  { value: 'terreno', label: 'Terreno' },
-  { value: 'garage', label: 'Garage/Box' },
-];
-
-const TARGET_CLIENTE = [
-  { value: 'famiglie', label: 'Famiglie', icon: '👨‍👩‍👧‍👦' },
-  { value: 'giovani_coppie', label: 'Giovani Coppie', icon: '💑' },
-  { value: 'investitori', label: 'Investitori', icon: '📈' },
-  { value: 'studenti', label: 'Studenti / Universitari', icon: '🎓' },
-  { value: 'professionisti', label: 'Professionisti / Lavoratori', icon: '💼' },
-  { value: 'pensionati', label: 'Pensionati', icon: '🏖️' },
-  { value: 'luxury', label: 'Clientela Luxury', icon: '💎' },
-  { value: 'stranieri', label: 'Clienti Stranieri', icon: '🌍' },
-  { value: 'turisti', label: 'Turisti / Vacanzieri', icon: '✈️' },
-  { value: 'aziende', label: 'Aziende / Corporate', icon: '🏢' },
-];
-
-const TONI = [
-  { value: 'professionale', label: 'Professionale', description: 'Formale e informativo' },
-  { value: 'emotivo', label: 'Emotivo', description: 'Coinvolgente e aspirazionale' },
-  { value: 'luxury', label: 'Luxury', description: 'Esclusivo e prestigioso' },
-];
-
-const PORTALI = [
-  { value: 'generico', label: 'Generico (tutti i portali)' },
-  { value: 'immobiliare', label: 'Immobiliare.it' },
-  { value: 'idealista', label: 'Idealista.it' },
-  { value: 'casa', label: 'Casa.it' },
-  { value: 'subito', label: 'Subito.it' },
-  { value: 'zillow', label: 'Zillow.com (USA)' },
-];
 
 export default function PerfectCopyPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
   const { toast } = useToast();
+
+  const t = {
+    backToDashboard: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
+    heroTitle: isItalian ? 'Perfect Real Estate Copy 2.0' : 'Perfect Real Estate Copy 2.0',
+    heroBadge: isItalian ? '🚀 Power Feature' : '🚀 Power Feature',
+    heroSubtitle: isItalian
+      ? 'Genera 5 varianti professionali del tuo annuncio in un click'
+      : 'Generate 5 professional variants of your listing in one click',
+    formTitle: isItalian ? 'Dati Immobile' : 'Property Data',
+    formSubtitle: isItalian ? 'Inserisci i dettagli per generare annunci perfetti' : 'Enter details to generate perfect listings',
+    listingTypeLabel: isItalian ? 'Tipo Annuncio *' : 'Listing Type *',
+    selectListingType: isItalian ? 'Vendita o Affitto?' : 'Sale or Rental?',
+    propertyTypeLabel: isItalian ? 'Tipo Immobile *' : 'Property Type *',
+    selectPropertyType: isItalian ? 'Seleziona tipo' : 'Select type',
+    locationLabel: isItalian ? 'Zona/Località *' : 'Area/Location *',
+    locationPlaceholder: isItalian ? 'Es: Centro Storico, Milano' : 'e.g. Downtown, Miami',
+    featuresLabel: isItalian ? 'Caratteristiche Principali *' : 'Main Features *',
+    featuresPlaceholder: isItalian
+      ? 'Es: 120mq, 3 camere, 2 bagni, terrazzo, box auto, ristrutturato 2023...'
+      : 'e.g. 120sqm, 3 beds, 2 baths, terrace, parking, renovated 2023...',
+    strengthsLabel: isItalian ? 'Punti di Forza' : 'Key Strengths',
+    strengthsPlaceholder: isItalian
+      ? 'Es: Vista panoramica, silenzioso, luminoso, vicino metro...'
+      : 'e.g. Panoramic view, quiet, bright, near subway...',
+    targetLabel: isItalian ? 'Target Cliente *' : 'Target Client *',
+    selectTarget: isItalian ? 'Seleziona target' : 'Select target',
+    priceLabel: isItalian ? 'Fascia di Prezzo' : 'Price Range',
+    pricePlaceholder: isItalian ? 'Es: €350.000 - €400.000' : 'e.g. $350,000 - $400,000',
+    toneLabel: isItalian ? 'Tono Principale' : 'Main Tone',
+    portalLabel: isItalian ? 'Portale Target' : 'Target Portal',
+    variantsIncluded: isItalian ? '5 Varianti Premium Incluse' : '5 Premium Variants Included',
+    variantsDesc: isItalian ? 'Professionale, Emotivo, Breve, SEO e Luxury' : 'Professional, Emotional, Brief, SEO and Luxury',
+    generateIdle: isItalian ? 'Genera 5 Varianti' : 'Generate 5 Variants',
+    generateLoading: isItalian ? 'Generazione in corso...' : 'Generating...',
+    emptyTitle: isItalian ? 'Il tuo annuncio perfetto ti aspetta' : 'Your perfect listing awaits',
+    emptySubtitle: isItalian
+      ? 'Compila il form e genera automaticamente 5 varianti professionali: Professionale, Emotivo, Breve, SEO e Luxury.'
+      : 'Fill the form and automatically generate 5 professional variants: Professional, Emotional, Brief, SEO and Luxury.',
+    loadingTitle: isItalian ? 'Generazione AI in corso...' : 'AI Generation in progress...',
+    loadingSubtitle: isItalian ? 'Stiamo creando 5 varianti ottimizzate del tuo annuncio' : 'We are creating 5 optimized variants of your listing',
+    expertTip: isItalian ? "Consiglio dell'Esperto" : 'Expert Tip',
+    portalAdaptation: isItalian ? 'Adattamento portale:' : 'Portal adaptation:',
+    copyAll: isItalian ? 'Copia Tutto' : 'Copy All',
+    sectionTitle: isItalian ? 'Titolo' : 'Title',
+    sectionDesc: isItalian ? 'Descrizione Completa' : 'Full Description',
+    sectionHighlights: 'Highlights',
+    sectionWhy: isItalian ? 'Perché Comprarlo' : 'Why Buy It',
+    sectionCta: 'Call to Action',
+    sectionMeta: 'Meta Description SEO',
+    metaChars: isItalian ? 'caratteri' : 'characters',
+    tabPro: isItalian ? 'Pro' : 'Pro',
+    tabEmotivo: isItalian ? 'Emotivo' : 'Emotional',
+    tabBreve: isItalian ? 'Breve' : 'Brief',
+    tabSeo: 'SEO',
+    tabLuxury: 'Luxury',
+    // toasts
+    requiredFields: isItalian ? 'Campi obbligatori' : 'Required fields',
+    requiredFieldsDesc: isItalian
+      ? 'Compila tipo immobile, zona, caratteristiche e target cliente.'
+      : 'Fill in property type, location, features and target client.',
+    tooManyRequests: isItalian ? 'Troppe richieste. Riprova tra un minuto.' : 'Too many requests. Try again in a minute.',
+    errorGeneric: isItalian ? 'Errore durante la generazione' : 'Error during generation',
+    successTitle: isItalian ? '✨ Annunci generati!' : '✨ Listings generated!',
+    successDesc: isItalian ? 'Tutte le varianti sono pronte. Scegli quella perfetta per te.' : 'All variants are ready. Choose the perfect one for you.',
+    errorTitle: isItalian ? 'Errore' : 'Error',
+    copied: isItalian ? 'Copiato!' : 'Copied!',
+    copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
+    copyFailed: isItalian ? 'Impossibile copiare. Riprova.' : 'Unable to copy. Try again.',
+  };
+
+  const tipoTransazione = [
+    { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
+    { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
+    { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
+  ];
+
+  const tipiImmobile = [
+    { value: 'appartamento', label: isItalian ? 'Appartamento' : 'Apartment' },
+    { value: 'casa', label: isItalian ? 'Casa Indipendente' : 'Detached House' },
+    { value: 'villa', label: 'Villa' },
+    { value: 'attico', label: isItalian ? 'Attico' : 'Penthouse' },
+    { value: 'loft', label: 'Loft' },
+    { value: 'bilocale', label: isItalian ? 'Bilocale' : '1-Bedroom Apt' },
+    { value: 'trilocale', label: isItalian ? 'Trilocale' : '2-Bedroom Apt' },
+    { value: 'monolocale', label: isItalian ? 'Monolocale' : 'Studio' },
+    { value: 'rustico', label: isItalian ? 'Rustico' : 'Rustic' },
+    { value: 'casale', label: isItalian ? 'Casale' : 'Farmhouse' },
+    { value: 'palazzo', label: isItalian ? 'Palazzo' : 'Palace / Building' },
+    { value: 'locale_commerciale', label: isItalian ? 'Locale Commerciale' : 'Commercial Space' },
+    { value: 'ufficio', label: isItalian ? 'Ufficio' : 'Office' },
+    { value: 'terreno', label: isItalian ? 'Terreno' : 'Land' },
+    { value: 'garage', label: 'Garage/Box' },
+  ];
+
+  const targetCliente = [
+    { value: 'famiglie', label: isItalian ? 'Famiglie' : 'Families', icon: '👨‍👩‍👧‍👦' },
+    { value: 'giovani_coppie', label: isItalian ? 'Giovani Coppie' : 'Young Couples', icon: '💑' },
+    { value: 'investitori', label: isItalian ? 'Investitori' : 'Investors', icon: '📈' },
+    { value: 'studenti', label: isItalian ? 'Studenti / Universitari' : 'Students', icon: '🎓' },
+    { value: 'professionisti', label: isItalian ? 'Professionisti / Lavoratori' : 'Professionals', icon: '💼' },
+    { value: 'pensionati', label: isItalian ? 'Pensionati' : 'Retirees', icon: '🏖️' },
+    { value: 'luxury', label: isItalian ? 'Clientela Luxury' : 'Luxury Clients', icon: '💎' },
+    { value: 'stranieri', label: isItalian ? 'Clienti Stranieri' : 'Foreign Buyers', icon: '🌍' },
+    { value: 'turisti', label: isItalian ? 'Turisti / Vacanzieri' : 'Tourists / Vacationers', icon: '✈️' },
+    { value: 'aziende', label: isItalian ? 'Aziende / Corporate' : 'Companies / Corporate', icon: '🏢' },
+  ];
+
+  const toni = [
+    { value: 'professionale', label: isItalian ? 'Professionale' : 'Professional', description: isItalian ? 'Formale e informativo' : 'Formal and informative' },
+    { value: 'emotivo', label: isItalian ? 'Emotivo' : 'Emotional', description: isItalian ? 'Coinvolgente e aspirazionale' : 'Engaging and aspirational' },
+    { value: 'luxury', label: 'Luxury', description: isItalian ? 'Esclusivo e prestigioso' : 'Exclusive and prestigious' },
+  ];
+
+  const portali = [
+    { value: 'generico', label: isItalian ? 'Generico (tutti i portali)' : 'Generic (all portals)' },
+    { value: 'immobiliare', label: 'Immobiliare.it' },
+    { value: 'idealista', label: 'Idealista.it' },
+    { value: 'casa', label: 'Casa.it' },
+    { value: 'subito', label: 'Subito.it' },
+    { value: 'zillow', label: 'Zillow.com (USA)' },
+  ];
+
   const [isLoading, setIsLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [result, setResult] = useState<PerfectCopyResult | null>(null);
@@ -124,11 +198,7 @@ export default function PerfectCopyPage() {
 
   const handleSubmit = async () => {
     if (!formData.tipoImmobile || !formData.zona || !formData.caratteristiche || !formData.targetCliente) {
-      toast({
-        title: 'Campi obbligatori',
-        description: 'Compila tipo immobile, zona, caratteristiche e target cliente.',
-        variant: 'destructive',
-      });
+      toast({ title: t.requiredFields, description: t.requiredFieldsDesc, variant: 'destructive' });
       return;
     }
 
@@ -146,26 +216,18 @@ export default function PerfectCopyPage() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          throw new Error(data.error || 'Troppe richieste. Riprova tra un minuto.');
+          throw new Error(data.error || t.tooManyRequests);
         }
-        throw new Error(data.error || 'Errore durante la generazione');
+        throw new Error(data.error || t.errorGeneric);
       }
 
       setResult(data);
       setActiveTab('professionale');
-      
-      toast({
-        title: '✨ Annunci generati!',
-        description: 'Tutte le varianti sono pronte. Scegli quella perfetta per te.',
-      });
+      toast({ title: t.successTitle, description: t.successDesc });
 
     } catch (error) {
       console.error('Generation error:', error);
-      toast({
-        title: 'Errore',
-        description: error instanceof Error ? error.message : 'Errore durante la generazione',
-        variant: 'destructive',
-      });
+      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -175,17 +237,10 @@ export default function PerfectCopyPage() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
-      toast({
-        title: 'Copiato!',
-        description: 'Testo copiato negli appunti.',
-      });
+      toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: 'Errore',
-        description: 'Impossibile copiare. Riprova.',
-        variant: 'destructive',
-      });
+      toast({ title: t.errorTitle, description: t.copyFailed, variant: 'destructive' });
     }
   };
 
@@ -205,7 +260,7 @@ export default function PerfectCopyPage() {
           data-testid={`button-copy-full-${name}`}
         >
           {copiedField === `full-${name}` ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-          Copia Tutto
+          {t.copyAll}
         </Button>
       </div>
 
@@ -215,7 +270,7 @@ export default function PerfectCopyPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
               {icon}
-              Titolo
+              {t.sectionTitle}
             </CardTitle>
             <Button
               size="sm"
@@ -238,7 +293,7 @@ export default function PerfectCopyPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg flex items-center gap-2">
               <FileText className="h-5 w-5 text-blue-500" />
-              Descrizione Completa
+              {t.sectionDesc}
             </CardTitle>
             <Button
               size="sm"
@@ -262,7 +317,7 @@ export default function PerfectCopyPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-amber-500" />
-                Highlights
+                {t.sectionHighlights}
               </CardTitle>
               <Button
                 size="sm"
@@ -292,7 +347,7 @@ export default function PerfectCopyPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Target className="h-4 w-4 text-green-500" />
-                Perché Comprarlo
+                {t.sectionWhy}
               </CardTitle>
               <Button
                 size="sm"
@@ -324,7 +379,7 @@ export default function PerfectCopyPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Megaphone className="h-4 w-4 text-purple-500" />
-                Call to Action
+                {t.sectionCta}
               </CardTitle>
               <Button
                 size="sm"
@@ -347,7 +402,7 @@ export default function PerfectCopyPage() {
             <div className="flex items-center justify-between">
               <CardTitle className="text-base flex items-center gap-2">
                 <Search className="h-4 w-4 text-blue-500" />
-                Meta Description SEO
+                {t.sectionMeta}
                 <Badge variant="secondary" className="text-xs">Google</Badge>
               </CardTitle>
               <Button
@@ -363,7 +418,7 @@ export default function PerfectCopyPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">{variant.metaDescription}</p>
-            <p className="text-xs text-blue-500 mt-2">{variant.metaDescription.length}/155 caratteri</p>
+            <p className="text-xs text-blue-500 mt-2">{variant.metaDescription.length}/155 {t.metaChars}</p>
           </CardContent>
         </Card>
       </div>
@@ -402,7 +457,7 @@ export default function PerfectCopyPage() {
             data-testid="link-back-dashboard"
           >
             <ArrowLeft className="h-4 w-4" />
-            Torna alla Dashboard
+            {t.backToDashboard}
           </Link>
           
           <div className="flex items-center gap-4 mb-2">
@@ -412,14 +467,14 @@ export default function PerfectCopyPage() {
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                  Perfect Real Estate Copy 2.0
+                  {t.heroTitle}
                 </h1>
                 <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-                  🚀 Power Feature
+                  {t.heroBadge}
                 </Badge>
               </div>
               <p className="text-muted-foreground mt-1">
-                Genera 5 varianti professionali del tuo annuncio in un click
+                {t.heroSubtitle}
               </p>
             </div>
           </div>
@@ -432,27 +487,27 @@ export default function PerfectCopyPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-amber-500" />
-                  Dati Immobile
+                  {t.formTitle}
                 </CardTitle>
                 <CardDescription>
-                  Inserisci i dettagli per generare annunci perfetti
+                  {t.formSubtitle}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Gem className="h-4 w-4 text-amber-500" />
-                    Tipo Annuncio *
+                    {t.listingTypeLabel}
                   </Label>
                   <Select
                     value={formData.tipoTransazione}
                     onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
                   >
                     <SelectTrigger data-testid="select-tipo-transazione">
-                      <SelectValue placeholder="Vendita o Affitto?" />
+                      <SelectValue placeholder={t.selectListingType} />
                     </SelectTrigger>
                     <SelectContent>
-                      {TIPO_TRANSAZIONE.map((tipo) => (
+                      {tipoTransazione.map((tipo) => (
                         <SelectItem key={tipo.value} value={tipo.value}>
                           {tipo.icon} {tipo.label}
                         </SelectItem>
@@ -464,17 +519,17 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Building2 className="h-4 w-4 text-amber-500" />
-                    Tipo Immobile *
+                    {t.propertyTypeLabel}
                   </Label>
                   <Select
                     value={formData.tipoImmobile}
                     onValueChange={(value) => setFormData({ ...formData, tipoImmobile: value })}
                   >
                     <SelectTrigger data-testid="select-tipo-immobile">
-                      <SelectValue placeholder="Seleziona tipo" />
+                      <SelectValue placeholder={t.selectPropertyType} />
                     </SelectTrigger>
                     <SelectContent>
-                      {TIPI_IMMOBILE.map((tipo) => (
+                      {tipiImmobile.map((tipo) => (
                         <SelectItem key={tipo.value} value={tipo.value}>
                           {tipo.label}
                         </SelectItem>
@@ -486,10 +541,10 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-amber-500" />
-                    Zona/Località *
+                    {t.locationLabel}
                   </Label>
                   <Input
-                    placeholder="Es: Centro Storico, Milano"
+                    placeholder={t.locationPlaceholder}
                     value={formData.zona}
                     onChange={(e) => setFormData({ ...formData, zona: e.target.value })}
                     data-testid="input-zona"
@@ -499,10 +554,10 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-amber-500" />
-                    Caratteristiche Principali *
+                    {t.featuresLabel}
                   </Label>
                   <Textarea
-                    placeholder="Es: 120mq, 3 camere, 2 bagni, terrazzo, box auto, ristrutturato 2023..."
+                    placeholder={t.featuresPlaceholder}
                     value={formData.caratteristiche}
                     onChange={(e) => setFormData({ ...formData, caratteristiche: e.target.value })}
                     className="min-h-[100px]"
@@ -513,10 +568,10 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-amber-500" />
-                    Punti di Forza
+                    {t.strengthsLabel}
                   </Label>
                   <Textarea
-                    placeholder="Es: Vista panoramica, silenzioso, luminoso, vicino metro..."
+                    placeholder={t.strengthsPlaceholder}
                     value={formData.puntiForzaList}
                     onChange={(e) => setFormData({ ...formData, puntiForzaList: e.target.value })}
                     className="min-h-[80px]"
@@ -527,17 +582,17 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-amber-500" />
-                    Target Cliente *
+                    {t.targetLabel}
                   </Label>
                   <Select
                     value={formData.targetCliente}
                     onValueChange={(value) => setFormData({ ...formData, targetCliente: value })}
                   >
                     <SelectTrigger data-testid="select-target">
-                      <SelectValue placeholder="Seleziona target" />
+                      <SelectValue placeholder={t.selectTarget} />
                     </SelectTrigger>
                     <SelectContent>
-                      {TARGET_CLIENTE.map((target) => (
+                      {targetCliente.map((target) => (
                         <SelectItem key={target.value} value={target.value}>
                           {target.icon} {target.label}
                         </SelectItem>
@@ -549,10 +604,10 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Wallet className="h-4 w-4 text-amber-500" />
-                    Fascia di Prezzo
+                    {t.priceLabel}
                   </Label>
                   <Input
-                    placeholder="Es: €350.000 - €400.000"
+                    placeholder={t.pricePlaceholder}
                     value={formData.fasciaPrezzo}
                     onChange={(e) => setFormData({ ...formData, fasciaPrezzo: e.target.value })}
                     data-testid="input-prezzo"
@@ -562,7 +617,7 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Megaphone className="h-4 w-4 text-amber-500" />
-                    Tono Principale
+                    {t.toneLabel}
                   </Label>
                   <Select
                     value={formData.tono}
@@ -572,7 +627,7 @@ export default function PerfectCopyPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {TONI.map((tono) => (
+                      {toni.map((tono) => (
                         <SelectItem key={tono.value} value={tono.value}>
                           {tono.label} - {tono.description}
                         </SelectItem>
@@ -584,7 +639,7 @@ export default function PerfectCopyPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Target className="h-4 w-4 text-amber-500" />
-                    Portale Target
+                    {t.portalLabel}
                   </Label>
                   <Select
                     value={formData.portaleTarget}
@@ -594,7 +649,7 @@ export default function PerfectCopyPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {PORTALI.map((portale) => (
+                      {portali.map((portale) => (
                         <SelectItem key={portale.value} value={portale.value}>
                           {portale.label}
                         </SelectItem>
@@ -606,10 +661,10 @@ export default function PerfectCopyPage() {
                 <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
                   <div className="flex items-center gap-2">
                     <Crown className="h-4 w-4 text-amber-500" />
-                    <span className="font-medium text-amber-700 dark:text-amber-300">5 Varianti Premium Incluse</span>
+                    <span className="font-medium text-amber-700 dark:text-amber-300">{t.variantsIncluded}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Professionale, Emotivo, Breve, SEO e Luxury
+                    {t.variantsDesc}
                   </p>
                 </div>
 
@@ -623,12 +678,12 @@ export default function PerfectCopyPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Generazione in corso...
+                      {t.generateLoading}
                     </>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-5 w-5" />
-                      Genera 5 Varianti
+                      {t.generateIdle}
                     </>
                   )}
                 </Button>
@@ -642,18 +697,17 @@ export default function PerfectCopyPage() {
                 <CardContent className="py-16 text-center">
                   <Crown className="h-16 w-16 mx-auto text-amber-400 mb-4" />
                   <h3 className="text-xl font-semibold text-amber-700 dark:text-amber-300 mb-2">
-                    Il tuo annuncio perfetto ti aspetta
+                    {t.emptyTitle}
                   </h3>
                   <p className="text-muted-foreground max-w-md mx-auto">
-                    Compila il form e genera automaticamente 5 varianti professionali:
-                    Professionale, Emotivo, Breve, SEO e Luxury.
+                    {t.emptySubtitle}
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-6">
-                    <Badge variant="secondary">📋 Professionale</Badge>
-                    <Badge variant="secondary">💖 Emotivo</Badge>
-                    <Badge variant="secondary">⚡ Breve</Badge>
-                    <Badge variant="secondary">🔍 SEO</Badge>
-                    <Badge variant="secondary">💎 Luxury</Badge>
+                    <Badge variant="secondary">📋 {t.tabPro}</Badge>
+                    <Badge variant="secondary">💖 {t.tabEmotivo}</Badge>
+                    <Badge variant="secondary">⚡ {t.tabBreve}</Badge>
+                    <Badge variant="secondary">🔍 {t.tabSeo}</Badge>
+                    <Badge variant="secondary">💎 {t.tabLuxury}</Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -663,9 +717,9 @@ export default function PerfectCopyPage() {
               <Card className="border-amber-200 dark:border-amber-800/50">
                 <CardContent className="py-16 text-center">
                   <Loader2 className="h-16 w-16 mx-auto text-amber-500 animate-spin mb-4" />
-                  <h3 className="text-xl font-semibold mb-2">Generazione AI in corso...</h3>
+                  <h3 className="text-xl font-semibold mb-2">{t.loadingTitle}</h3>
                   <p className="text-muted-foreground">
-                    Stiamo creando 5 varianti ottimizzate del tuo annuncio
+                    {t.loadingSubtitle}
                   </p>
                   <div className="flex justify-center gap-2 mt-4">
                     <div className="h-2 w-2 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
@@ -683,7 +737,7 @@ export default function PerfectCopyPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <Lightbulb className="h-5 w-5 text-amber-500" />
-                        Consiglio dell'Esperto
+                        {t.expertTip}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -696,7 +750,7 @@ export default function PerfectCopyPage() {
                   <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                     <p className="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                       <Target className="h-4 w-4" />
-                      <strong>Adattamento portale:</strong> {result.portaleAdattamento}
+                      <strong>{t.portalAdaptation}</strong> {result.portaleAdattamento}
                     </p>
                   </div>
                 )}
@@ -705,23 +759,23 @@ export default function PerfectCopyPage() {
                   <TabsList className="grid w-full grid-cols-5 lg:grid-cols-5 h-auto p-1" data-testid="tabs-variants">
                     <TabsTrigger value="professionale" className="flex flex-col gap-1 py-2 data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/30">
                       <FileText className="h-4 w-4" />
-                      <span className="text-xs">Pro</span>
+                      <span className="text-xs">{t.tabPro}</span>
                     </TabsTrigger>
                     <TabsTrigger value="emotivo" className="flex flex-col gap-1 py-2 data-[state=active]:bg-rose-100 dark:data-[state=active]:bg-rose-900/30">
                       <Heart className="h-4 w-4" />
-                      <span className="text-xs">Emotivo</span>
+                      <span className="text-xs">{t.tabEmotivo}</span>
                     </TabsTrigger>
                     <TabsTrigger value="breve" className="flex flex-col gap-1 py-2 data-[state=active]:bg-emerald-100 dark:data-[state=active]:bg-emerald-900/30">
                       <Zap className="h-4 w-4" />
-                      <span className="text-xs">Breve</span>
+                      <span className="text-xs">{t.tabBreve}</span>
                     </TabsTrigger>
                     <TabsTrigger value="seo" className="flex flex-col gap-1 py-2 data-[state=active]:bg-cyan-100 dark:data-[state=active]:bg-cyan-900/30">
                       <Search className="h-4 w-4" />
-                      <span className="text-xs">SEO</span>
+                      <span className="text-xs">{t.tabSeo}</span>
                     </TabsTrigger>
                     <TabsTrigger value="luxury" className="flex flex-col gap-1 py-2 data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/30">
                       <Gem className="h-4 w-4" />
-                      <span className="text-xs">Luxury</span>
+                      <span className="text-xs">{t.tabLuxury}</span>
                     </TabsTrigger>
                   </TabsList>
 

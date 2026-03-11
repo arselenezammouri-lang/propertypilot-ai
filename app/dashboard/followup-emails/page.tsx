@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Mail, 
   Clock, 
@@ -59,22 +60,81 @@ interface FormData {
   tone: "professionale" | "amichevole" | "luxury";
 }
 
-const EMAIL_TYPES = [
-  { id: "immediateResponse", label: "Risposta Immediata", icon: Zap, description: "Entro 1 ora" },
-  { id: "followUp24h", label: "Follow-Up 24h", icon: Clock, description: "Dopo 24 ore" },
-  { id: "followUp72h", label: "Follow-Up 72h", icon: Clock, description: "Dopo 72 ore" },
-  { id: "appointmentScheduling", label: "Appuntamento", icon: Calendar, description: "Fissa visita" },
-  { id: "postVisit", label: "Post-Visita", icon: Eye, description: "Dopo la visita" },
-  { id: "luxuryLeadFollowUp", label: "Luxury Lead", icon: Crown, description: "Clienti VIP" },
-] as const;
-
 export default function FollowUpEmailsPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<FollowUpResult | null>(null);
   const [activeTab, setActiveTab] = useState("immediateResponse");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showLongVersion, setShowLongVersion] = useState(false);
+  const t = {
+    required: isItalian ? "Campo obbligatorio" : "Required field",
+    leadNameRequired: isItalian ? "Inserisci il nome del lead" : "Enter the lead name",
+    agentNameRequired: isItalian ? "Inserisci il nome dell'agente" : "Enter the agent name",
+    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
+    propertyTitleRequired: isItalian ? "Inserisci il titolo dell'immobile" : "Enter the property title",
+    propertyLocationRequired: isItalian ? "Inserisci la localita dell'immobile" : "Enter the property location",
+    propertyPriceRequired: isItalian ? "Inserisci il prezzo dell'immobile" : "Enter the property price",
+    reasonRequired: isItalian ? "Descrivi il motivo di interesse del lead (min 10 caratteri)" : "Describe the lead's reason of interest (min 10 characters)",
+    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
+    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
+    accessDenied: isItalian ? "Accesso negato" : "Access denied",
+    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
+    generateError: isItalian ? "Errore nella generazione" : "Generation error",
+    success: isItalian ? "Email generate con successo!" : "Emails generated successfully!",
+    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    ready6: isItalian ? "6 email pronte per l'uso" : "6 emails ready to use",
+    error: isItalian ? "Errore" : "Error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedText: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    subjectLabel: isItalian ? "Oggetto" : "Subject",
+    psLabel: "P.S.",
+    standardVersion: isItalian ? "Versione Standard" : "Standard Version",
+    longVersion: isItalian ? "Versione Lunga" : "Long Version",
+    copyEmail: isItalian ? "Copia Email" : "Copy Email",
+    emailTextLong: isItalian ? "Testo Email (Versione Lunga)" : "Email Text (Long Version)",
+    emailText: isItalian ? "Testo Email" : "Email Text",
+    shortVersion: isItalian ? "Versione Breve (WhatsApp/SMS)" : "Short Version (WhatsApp/SMS)",
+    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    pageSubtitle: isItalian ? "Genera 6 email professionali per convertire i tuoi lead immobiliari" : "Generate 6 professional emails to convert your real estate leads",
+    leadName: isItalian ? "Nome Lead *" : "Lead Name *",
+    agentName: isItalian ? "Nome Agente *" : "Agent Name *",
+    agencyName: isItalian ? "Nome Agenzia *" : "Agency Name *",
+    propertyTitle: isItalian ? "Titolo Immobile *" : "Property Title *",
+    propertyLocation: isItalian ? "Localita *" : "Location *",
+    propertyPrice: isItalian ? "Prezzo *" : "Price *",
+    reasonInterest: isItalian ? "Motivo di Interesse *" : "Reason of Interest *",
+    tone: isItalian ? "Tono delle Email" : "Email Tone",
+    generating: isItalian ? "Generazione in corso..." : "Generating...",
+    generate6: isItalian ? "Genera 6 Email Follow-Up" : "Generate 6 Follow-Up Emails",
+    noResultTitle: isItalian ? "Nessuna email generata" : "No emails generated yet",
+    readyTitle: isItalian ? "Pronto a generare le tue email" : "Ready to generate your emails",
+    readyDesc: isItalian ? 'Compila il form con i dati del lead e clicca "Genera" per creare 6 email professionali personalizzate.' : 'Fill in the form with the lead details and click "Generate" to create 6 personalized professional emails.',
+    generatingTitle: isItalian ? "Generazione in corso..." : "Generation in progress...",
+    generatingDesc: isItalian ? "Stiamo creando 6 email personalizzate per il tuo lead" : "We're creating 6 personalized emails for your lead",
+    convertTip: isItalian ? "Consiglio per Convertire questo Lead" : "Tip to Convert This Lead",
+    ctaLabel: isItalian ? "Invito all'azione" : "Call-to-Action",
+  };
+  const emailTypes = isItalian
+    ? [
+        { id: "immediateResponse", label: "Risposta Immediata", icon: Zap, description: "Entro 1 ora" },
+        { id: "followUp24h", label: "Follow-Up 24h", icon: Clock, description: "Dopo 24 ore" },
+        { id: "followUp72h", label: "Follow-Up 72h", icon: Clock, description: "Dopo 72 ore" },
+        { id: "appointmentScheduling", label: "Appuntamento", icon: Calendar, description: "Fissa visita" },
+        { id: "postVisit", label: "Post-Visita", icon: Eye, description: "Dopo la visita" },
+        { id: "luxuryLeadFollowUp", label: "Luxury Lead", icon: Crown, description: "Clienti VIP" },
+      ]
+    : [
+        { id: "immediateResponse", label: "Immediate Response", icon: Zap, description: "Within 1 hour" },
+        { id: "followUp24h", label: "24h Follow-Up", icon: Clock, description: "After 24 hours" },
+        { id: "followUp72h", label: "72h Follow-Up", icon: Clock, description: "After 72 hours" },
+        { id: "appointmentScheduling", label: "Appointment", icon: Calendar, description: "Book a visit" },
+        { id: "postVisit", label: "Post-Visit", icon: Eye, description: "After the visit" },
+        { id: "luxuryLeadFollowUp", label: "Luxury Lead", icon: Crown, description: "VIP clients" },
+      ];
 
   const [formData, setFormData] = useState<FormData>({
     leadName: "",
@@ -94,8 +154,8 @@ export default function FollowUpEmailsPage() {
   const handleSubmit = async () => {
     if (!formData.leadName.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome del lead",
+        title: t.required,
+        description: t.leadNameRequired,
         variant: "destructive",
       });
       return;
@@ -103,8 +163,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.agentName.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome dell'agente",
+        title: t.required,
+        description: t.agentNameRequired,
         variant: "destructive",
       });
       return;
@@ -112,8 +172,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.agencyName.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome dell'agenzia",
+        title: t.required,
+        description: t.agencyNameRequired,
         variant: "destructive",
       });
       return;
@@ -121,8 +181,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.propertyTitle.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il titolo dell'immobile",
+        title: t.required,
+        description: t.propertyTitleRequired,
         variant: "destructive",
       });
       return;
@@ -130,8 +190,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.propertyLocation.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci la località dell'immobile",
+        title: t.required,
+        description: t.propertyLocationRequired,
         variant: "destructive",
       });
       return;
@@ -139,8 +199,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.propertyPrice.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il prezzo dell'immobile",
+        title: t.required,
+        description: t.propertyPriceRequired,
         variant: "destructive",
       });
       return;
@@ -148,8 +208,8 @@ export default function FollowUpEmailsPage() {
 
     if (!formData.reasonOfInterest.trim() || formData.reasonOfInterest.length < 10) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Descrivi il motivo di interesse del lead (min 10 caratteri)",
+        title: t.required,
+        description: t.reasonRequired,
         variant: "destructive",
       });
       return;
@@ -170,33 +230,33 @@ export default function FollowUpEmailsPage() {
       if (!response.ok) {
         if (response.status === 429) {
           toast({
-            title: "Limite raggiunto",
-            description: data.message || "Troppi tentativi. Riprova tra un minuto.",
+            title: t.rateLimit,
+            description: data.message || t.rateLimitDesc,
             variant: "destructive",
           });
           return;
         }
         if (response.status === 401) {
           toast({
-            title: "Accesso negato",
-            description: "Devi effettuare il login per usare questa funzione.",
+            title: t.accessDenied,
+            description: t.loginRequired,
             variant: "destructive",
           });
           return;
         }
-        throw new Error(data.error || "Errore nella generazione");
+        throw new Error(data.error || t.generateError);
       }
 
       setResult(data);
       setActiveTab("immediateResponse");
       toast({
-        title: "Email generate con successo!",
-        description: data.cached ? "Risultato dalla cache (24h)" : "6 email pronte per l'uso",
+        title: t.success,
+        description: data.cached ? t.cacheResult : t.ready6,
       });
     } catch (error) {
       toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nella generazione",
+        title: t.error,
+        description: error instanceof Error ? error.message : t.generateError,
         variant: "destructive",
       });
     } finally {
@@ -209,14 +269,14 @@ export default function FollowUpEmailsPage() {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
       toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
+        title: t.copied,
+        description: t.copiedText,
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.error,
+        description: t.copyFailed,
         variant: "destructive",
       });
     }
@@ -224,12 +284,12 @@ export default function FollowUpEmailsPage() {
 
   const copyFullEmail = async (email: EmailVariant, emailType: string) => {
     const version = showLongVersion ? email.versioneLunga : email.testoEmail;
-    const fullText = `Oggetto: ${email.oggetto}\n\n${version}\n\n${email.cta}${email.ps ? `\n\nP.S. ${email.ps}` : ''}`;
+    const fullText = `${t.subjectLabel}: ${email.oggetto}\n\n${version}\n\n${email.cta}${email.ps ? `\n\n${t.psLabel} ${email.ps}` : ''}`;
     copyToClipboard(fullText, `full-${emailType}`);
   };
 
   const getEmailTypeInfo = (type: string) => {
-    return EMAIL_TYPES.find(t => t.id === type) || EMAIL_TYPES[0];
+    return emailTypes.find(t => t.id === type) || emailTypes[0];
   };
 
   const renderEmailCard = (email: EmailVariant, emailType: string) => {
@@ -255,7 +315,7 @@ export default function FollowUpEmailsPage() {
                 className="text-xs"
                 data-testid={`button-toggle-version-${emailType}`}
               >
-                {showLongVersion ? "Versione Standard" : "Versione Lunga"}
+                {showLongVersion ? t.standardVersion : t.longVersion}
               </Button>
               <Button
                 variant="default"
@@ -265,7 +325,7 @@ export default function FollowUpEmailsPage() {
                 data-testid={`button-copy-full-${emailType}`}
               >
                 {copiedField === `full-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                Copia Email
+                {t.copyEmail}
               </Button>
             </div>
           </div>
@@ -274,7 +334,7 @@ export default function FollowUpEmailsPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Mail className="h-3 w-3" /> Oggetto
+                <Mail className="h-3 w-3" /> {t.subjectLabel}
               </Label>
               <Button
                 variant="ghost"
@@ -294,7 +354,7 @@ export default function FollowUpEmailsPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">
-                {showLongVersion ? "Testo Email (Versione Lunga)" : "Testo Email"}
+                {showLongVersion ? t.emailTextLong : t.emailText}
               </Label>
               <Button
                 variant="ghost"
@@ -319,7 +379,7 @@ export default function FollowUpEmailsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium text-muted-foreground">Call-to-Action</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t.ctaLabel}</Label>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -336,30 +396,30 @@ export default function FollowUpEmailsPage() {
             </div>
 
             {email.ps && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium text-muted-foreground">P.S.</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => copyToClipboard(email.ps!, `ps-${emailType}`)}
-                    className="h-6 px-2"
-                    data-testid={`button-copy-ps-${emailType}`}
-                  >
-                    {copiedField === `ps-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                  </Button>
-                </div>
-                <p className="text-sm italic text-muted-foreground bg-muted/30 p-2 rounded">
-                  P.S. {email.ps}
-                </p>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium text-muted-foreground">{t.psLabel}</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(email.ps!, `ps-${emailType}`)}
+                  className="h-6 px-2"
+                  data-testid={`button-copy-ps-${emailType}`}
+                >
+                  {copiedField === `ps-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                </Button>
               </div>
+              <p className="text-sm italic text-muted-foreground bg-muted/30 p-2 rounded">
+                {t.psLabel} {email.ps}
+              </p>
+            </div>
             )}
           </div>
 
           <div className="space-y-2 pt-2 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <MessageSquare className="h-3 w-3" /> Versione Breve (WhatsApp/SMS)
+                <MessageSquare className="h-3 w-3" /> {t.shortVersion}
               </Label>
               <Button
                 variant="ghost"
@@ -385,7 +445,7 @@ export default function FollowUpEmailsPage() {
       <div className="mb-6">
         <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Torna alla Dashboard
+          {t.back}
         </Link>
       </div>
 
@@ -398,7 +458,7 @@ export default function FollowUpEmailsPage() {
             Follow-Up Email AI
           </h1>
           <p className="text-muted-foreground">
-            Genera 6 email professionali per convertire i tuoi lead immobiliari
+            {t.pageSubtitle}
           </p>
         </div>
         <Badge className="ml-auto bg-gradient-to-r from-red-500 to-orange-500 text-white border-0">
@@ -411,18 +471,18 @@ export default function FollowUpEmailsPage() {
           <CardHeader className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-orange-600" />
-              Dati del Lead
+              {isItalian ? "Dati del Lead" : "Lead Data"}
             </CardTitle>
             <CardDescription>
-              Inserisci le informazioni per generare email personalizzate
+              {isItalian ? "Inserisci le informazioni per generare email personalizzate" : "Enter the information to generate personalized emails"}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="leadName">Nome del Lead *</Label>
+              <Label htmlFor="leadName">{t.leadName}</Label>
               <Input
                 id="leadName"
-                placeholder="es. Marco Rossi"
+                placeholder={isItalian ? "es. Marco Rossi" : "e.g. John Smith"}
                 value={formData.leadName}
                 onChange={(e) => handleInputChange("leadName", e.target.value)}
                 data-testid="input-lead-name"
@@ -430,10 +490,10 @@ export default function FollowUpEmailsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="agentName">Nome Agente *</Label>
+              <Label htmlFor="agentName">{t.agentName}</Label>
               <Input
                 id="agentName"
-                placeholder="es. Anna Bianchi"
+                placeholder={isItalian ? "es. Anna Bianchi" : "e.g. Anna Brown"}
                 value={formData.agentName}
                 onChange={(e) => handleInputChange("agentName", e.target.value)}
                 data-testid="input-agent-name"
@@ -441,10 +501,10 @@ export default function FollowUpEmailsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="agencyName">Nome Agenzia *</Label>
+              <Label htmlFor="agencyName">{t.agencyName}</Label>
               <Input
                 id="agencyName"
-                placeholder="es. Immobiliare Milano"
+                placeholder={isItalian ? "es. Immobiliare Milano" : "e.g. Prime Realty"}
                 value={formData.agencyName}
                 onChange={(e) => handleInputChange("agencyName", e.target.value)}
                 data-testid="input-agency-name"
@@ -452,10 +512,10 @@ export default function FollowUpEmailsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="propertyTitle">Titolo Immobile *</Label>
+              <Label htmlFor="propertyTitle">{t.propertyTitle}</Label>
               <Input
                 id="propertyTitle"
-                placeholder="es. Attico con terrazzo panoramico"
+                placeholder={isItalian ? "es. Attico con terrazzo panoramico" : "e.g. Penthouse with panoramic terrace"}
                 value={formData.propertyTitle}
                 onChange={(e) => handleInputChange("propertyTitle", e.target.value)}
                 data-testid="input-property-title"
@@ -464,20 +524,20 @@ export default function FollowUpEmailsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="propertyLocation">Località *</Label>
+                <Label htmlFor="propertyLocation">{t.propertyLocation}</Label>
                 <Input
                   id="propertyLocation"
-                  placeholder="es. Milano Centro"
+                  placeholder={isItalian ? "es. Milano Centro" : "e.g. Downtown Miami"}
                   value={formData.propertyLocation}
                   onChange={(e) => handleInputChange("propertyLocation", e.target.value)}
                   data-testid="input-property-location"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="propertyPrice">Prezzo *</Label>
+                <Label htmlFor="propertyPrice">{t.propertyPrice}</Label>
                 <Input
                   id="propertyPrice"
-                  placeholder="es. €450.000"
+                  placeholder={isItalian ? "es. €450.000" : "e.g. $450,000"}
                   value={formData.propertyPrice}
                   onChange={(e) => handleInputChange("propertyPrice", e.target.value)}
                   data-testid="input-property-price"
@@ -486,10 +546,14 @@ export default function FollowUpEmailsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="reasonOfInterest">Motivo di Interesse *</Label>
+              <Label htmlFor="reasonOfInterest">{t.reasonInterest}</Label>
               <Textarea
                 id="reasonOfInterest"
-                placeholder="es. Il cliente cerca un attico in zona centrale per uso abitativo, ha visitato il portale e richiesto info..."
+                placeholder={
+                  isItalian
+                    ? "es. Il cliente cerca un attico in zona centrale per uso abitativo, ha visitato il portale e richiesto info..."
+                    : "e.g. The client is looking for a central penthouse for residential use, visited the portal and requested info..."
+                }
                 value={formData.reasonOfInterest}
                 onChange={(e) => handleInputChange("reasonOfInterest", e.target.value)}
                 rows={3}
@@ -498,7 +562,7 @@ export default function FollowUpEmailsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tone">Tono delle Email</Label>
+              <Label htmlFor="tone">{t.tone}</Label>
               <Select
                 value={formData.tone}
                 onValueChange={(value: "professionale" | "amichevole" | "luxury") => 
@@ -506,11 +570,11 @@ export default function FollowUpEmailsPage() {
                 }
               >
                 <SelectTrigger data-testid="select-tone">
-                  <SelectValue placeholder="Seleziona tono" />
+                  <SelectValue placeholder={isItalian ? "Seleziona tono" : "Select tone"} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="professionale">Professionale</SelectItem>
-                  <SelectItem value="amichevole">Amichevole</SelectItem>
+                  <SelectItem value="professionale">{isItalian ? "Professionale" : "Professional"}</SelectItem>
+                  <SelectItem value="amichevole">{isItalian ? "Amichevole" : "Friendly"}</SelectItem>
                   <SelectItem value="luxury">Luxury</SelectItem>
                 </SelectContent>
               </Select>
@@ -525,12 +589,12 @@ export default function FollowUpEmailsPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generazione in corso...
+                  {t.generating}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Genera 6 Email Follow-Up
+                  {t.generate6}
                 </>
               )}
             </Button>
@@ -543,11 +607,10 @@ export default function FollowUpEmailsPage() {
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <Mail className="h-16 w-16 text-muted-foreground/50 mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  Nessuna email generata
+                  {t.noResultTitle}
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  Compila il form con i dati del lead e clicca "Genera" per creare 
-                  6 email di follow-up professionali e personalizzate.
+                  {t.readyDesc}
                 </p>
               </CardContent>
             </Card>
@@ -557,9 +620,9 @@ export default function FollowUpEmailsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <Loader2 className="h-12 w-12 text-orange-500 animate-spin mb-4" />
-                <h3 className="text-lg font-medium mb-2">Generazione in corso...</h3>
+                <h3 className="text-lg font-medium mb-2">{t.generatingTitle}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Stiamo creando 6 email personalizzate per il tuo lead
+                  {t.generatingDesc}
                 </p>
               </CardContent>
             </Card>
@@ -574,7 +637,7 @@ export default function FollowUpEmailsPage() {
                       <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          Consiglio per Convertire questo Lead
+                          {t.convertTip}
                         </h4>
                         <p className="text-sm text-amber-700 dark:text-amber-300">
                           {result.consiglioConversione}
@@ -587,7 +650,7 @@ export default function FollowUpEmailsPage() {
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-3 lg:grid-cols-6 gap-1 h-auto p-1">
-                  {EMAIL_TYPES.map((type) => {
+                  {emailTypes.map((type) => {
                     const Icon = type.icon;
                     return (
                       <TabsTrigger

@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +69,8 @@ interface MapMarker {
 export default function PredatorMapPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale).dashboard;
   const [listings, setListings] = useState<ExternalListing[]>([]);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
@@ -110,15 +114,21 @@ export default function PredatorMapPage() {
   };
 
   const fetchListings = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/prospecting/listings?status=all');
-      const data = await response.json();
+      const [listingsRes, eliteRes] = await Promise.all([
+        fetch('/api/prospecting/listings?status=all'),
+        fetch('/api/prospecting/elite-deals'),
+      ]);
+      const listingsData = await listingsRes.json();
+      const eliteData = await eliteRes.json();
 
-      if (data.success) {
-        setListings(data.data || []);
-      }
+      const userListings = listingsData.success ? (listingsData.data || []) : [];
+      const eliteListings = (eliteRes.ok && eliteData.success && Array.isArray(eliteData.data)) ? eliteData.data : [];
+      setListings([...userListings, ...eliteListings]);
     } catch (error) {
       console.error('Error fetching listings:', error);
+      setListings([]);
     } finally {
       setLoading(false);
     }
@@ -201,21 +211,21 @@ export default function PredatorMapPage() {
 
       if (data.success) {
         toast({
-          title: "Chiamata avviata",
-          description: "La chiamata AI è stata avviata con successo",
+          title: t.mapCallLaunched,
+          description: locale === "it" ? "La chiamata AI è stata avviata con successo" : "AI call started successfully",
         });
         fetchListings();
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nell'avvio della chiamata",
+          title: locale === "it" ? "Errore" : "Error",
+          description: data.error || t.mapCallError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: locale === "it" ? "Errore" : "Error",
+        description: locale === "it" ? "Errore di connessione" : "Connection error",
         variant: "destructive",
       });
     } finally {
@@ -242,11 +252,11 @@ export default function PredatorMapPage() {
             <div>
               <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2">
                 <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
-                <span className="hidden sm:inline">Predator Command Map</span>
-                <span className="sm:hidden">Predator Map</span>
+                <span className="hidden sm:inline">{t.mapTitle}</span>
+                <span className="sm:hidden">{t.mapTitle.replace(' Command', '')}</span>
               </h1>
               <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">
-                Mappa tattica degli affari più urgenti
+                {t.mapSubtitle}
               </p>
             </div>
           </div>
@@ -256,13 +266,13 @@ export default function PredatorMapPage() {
                 checked={showGhostListings}
                 onCheckedChange={setShowGhostListings}
               />
-              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">Ghost Listings (&gt;90 giorni)</span>
+              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">{t.mapGhostListings}</span>
               <span className="text-xs sm:text-sm text-gray-300 sm:hidden">Ghost</span>
             </div>
             <Button onClick={fetchListings} variant="outline" size="sm" className="w-full sm:w-auto">
               <Filter className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Aggiorna</span>
-              <span className="sm:hidden">Refresh</span>
+              <span className="hidden sm:inline">{t.mapRefresh}</span>
+              <span className="sm:hidden">{t.mapRefresh}</span>
             </Button>
           </div>
         </div>
@@ -299,25 +309,25 @@ export default function PredatorMapPage() {
         >
           {/* Legend - Responsive */}
           <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-40 bg-[#0a0a0a]/90 backdrop-blur-xl border border-purple-500/30 rounded-lg p-2 sm:p-4 max-w-[200px] sm:max-w-none">
-            <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-3">Legenda</h3>
+            <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-3">{t.mapLegend}</h3>
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
-                <span className="text-gray-300">TOP DEAL (Arbitraggio &gt;15%)</span>
+                <span className="text-gray-300">{t.mapTopDeal}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white flex items-center justify-center">
                   <Zap className="h-2.5 w-2.5 text-white" />
                 </div>
-                <span className="text-gray-300">HIGH URGENCY (Urgenza &gt;70)</span>
+                <span className="text-gray-300">{t.mapHighUrgency}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-yellow-500 border-2 border-white"></div>
-                <span className="text-gray-300">WARM (Urgenza 30-70)</span>
+                <span className="text-gray-300">{t.mapWarm}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-gray-500 border-2 border-white"></div>
-                <span className="text-gray-300">COLD (Urgenza &lt;30)</span>
+                <span className="text-gray-300">{t.mapCold}</span>
               </div>
             </div>
           </div>
@@ -493,7 +503,7 @@ export default function PredatorMapPage() {
                   ) : (
                     <>
                       <Phone className="h-4 w-4 mr-2" />
-                      Lancia Chiamata Predator
+                      {t.mapLanciaChiamata}
                     </>
                   )}
                 </Button>

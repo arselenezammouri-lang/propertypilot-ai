@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,20 +56,102 @@ interface FormData {
   tone: "emozionale" | "luxury" | "caldo";
 }
 
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
-
-const LISTING_TABS = [
-  { id: "storytelling", label: "Storytelling", icon: BookOpen, description: "Narrativa immersiva", gradient: "from-rose-500 to-pink-500" },
-  { id: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e raffinato", gradient: "from-amber-500 to-yellow-500" },
-  { id: "familyWarm", label: "Family Warm", icon: Users, description: "Caldo e accogliente", gradient: "from-sky-500 to-blue-500" },
-] as const;
 
 export default function EmotionalListingPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const t = {
+    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    heroTitle: isItalian ? "Emotional Listing AI" : "Emotional Listing AI",
+    heroSubtitle: isItalian
+      ? "Descrizioni emozionali che toccano il cuore dei tuoi acquirenti"
+      : "Emotional descriptions that touch the heart of your buyers",
+    heroBadge: isItalian ? "💛 Emotional AI" : "💛 Emotional AI",
+    formTitle: isItalian ? "Dati Immobile" : "Property Data",
+    formSubtitle: isItalian
+      ? "Inserisci le informazioni per generare descrizioni emozionali"
+      : "Enter information to generate emotional descriptions",
+    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
+    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
+    propertyTypeLabel: isItalian ? "Tipo di Immobile *" : "Property Type *",
+    propertyTypePlaceholder: isItalian ? "es. Villa con giardino e piscina" : "e.g. Villa with garden and pool",
+    locationLabel: isItalian ? "Località *" : "Location *",
+    locationPlaceholder: isItalian ? "es. Lago di Como" : "e.g. Lake Como",
+    priceLabel: isItalian ? "Prezzo *" : "Price *",
+    pricePlaceholder: isItalian ? "es. €1.200.000" : "e.g. $1,200,000",
+    featuresLabel: isItalian ? "Caratteristiche *" : "Features *",
+    featuresPlaceholder: isItalian
+      ? "es. 5 camere, 3 bagni, giardino 2000mq, piscina infinity, vista lago..."
+      : "e.g. 5 bedrooms, 3 bathrooms, 2000sqm garden, infinity pool, lake view...",
+    strengthsLabel: isItalian ? "Punti di Forza *" : "Key Strengths *",
+    strengthsPlaceholder: isItalian
+      ? "es. Vista mozzafiato, privacy assoluta, finiture di pregio, domotica..."
+      : "e.g. Breathtaking view, total privacy, premium finishes, home automation...",
+    targetLabel: isItalian ? "Target" : "Target",
+    selectTarget: isItalian ? "Seleziona target" : "Select target",
+    toneLabel: isItalian ? "Tono" : "Tone",
+    selectTone: isItalian ? "Seleziona tono" : "Select tone",
+    generateIdle: isItalian ? "Genera 3 Versioni Emozionali" : "Generate 3 Emotional Versions",
+    generateLoading: isItalian ? "Generazione in corso..." : "Generating...",
+    emptyTitle: isItalian ? "Nessuna descrizione generata" : "No description generated",
+    emptySubtitle: isItalian
+      ? "Compila il form con i dati dell'immobile e clicca \"Genera\" per creare 3 descrizioni emozionali."
+      : "Fill the form with property data and click \"Generate\" to create 3 emotional descriptions.",
+    loadingTitle: isItalian ? "Generazione in corso..." : "Generating...",
+    loadingSubtitle: isItalian
+      ? "Stiamo creando descrizioni emozionali coinvolgenti"
+      : "We are creating engaging emotional descriptions",
+    creativeTip: isItalian ? "Consiglio Creativo" : "Creative Tip",
+    versionLabel: isItalian ? "Versione" : "Version",
+    copyAll: isItalian ? "Copia Tutto" : "Copy All",
+    sectionTitle: isItalian ? "Titolo" : "Title",
+    sectionApertura: isItalian ? "Apertura Emozionale" : "Emotional Opening",
+    sectionSensoriale: isItalian ? "Testo Sensoriale" : "Sensory Text",
+    sectionNarrativa: isItalian ? "Descrizione Narrativa" : "Narrative Description",
+    sectionImmagina: isItalian ? "🌟 Immagina Questo..." : "🌟 Imagine This...",
+    sectionCta: isItalian ? "🎯 CTA Emozionale" : "🎯 Emotional CTA",
+    // tabs
+    tabStorytelling: "Storytelling",
+    tabStorytDesc: isItalian ? "Narrativa immersiva" : "Immersive narrative",
+    tabLuxury: "Luxury",
+    tabLuxuryDesc: isItalian ? "Esclusivo e raffinato" : "Exclusive and refined",
+    tabFamilyWarm: isItalian ? "Family Warm" : "Family Warm",
+    tabFamilyWarmDesc: isItalian ? "Caldo e accogliente" : "Warm and welcoming",
+    // toasts
+    fieldRequired: isItalian ? "Campo obbligatorio" : "Required field",
+    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile (min 3 caratteri)" : "Enter property type (min 3 characters)",
+    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
+    featuresRequired: isItalian ? "Descrivi le caratteristiche (min 10 caratteri)" : "Describe features (min 10 characters)",
+    strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
+    priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
+    limitTitle: isItalian ? "Limite raggiunto" : "Limit reached",
+    limitDefault: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
+    accessDenied: isItalian ? "Accesso negato" : "Access denied",
+    accessDeniedDesc: isItalian ? "Devi effettuare il login per usare questa funzione." : "You must log in to use this feature.",
+    successTitle: isItalian ? "Descrizioni emozionali generate!" : "Emotional descriptions generated!",
+    successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    successDesc: isItalian ? "3 versioni emozionali pronte all'uso" : "3 emotional versions ready to use",
+    errorTitle: isItalian ? "Errore" : "Error",
+    errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+  };
+
+  const tipoTransazioneOptions = [
+    { value: "vendita", label: isItalian ? "Vendita" : "Sale", icon: "🏷️" },
+    { value: "affitto", label: isItalian ? "Affitto" : "Rental", icon: "🔑" },
+    { value: "affitto_breve", label: isItalian ? "Affitto Breve / Turistico" : "Short-Term / Vacation Rental", icon: "🏖️" },
+  ];
+
+  const listingTabs = [
+    { id: "storytelling", label: t.tabStorytelling, icon: BookOpen, description: t.tabStorytDesc, gradient: "from-rose-500 to-pink-500" },
+    { id: "luxury", label: t.tabLuxury, icon: Crown, description: t.tabLuxuryDesc, gradient: "from-amber-500 to-yellow-500" },
+    { id: "familyWarm", label: t.tabFamilyWarm, icon: Users, description: t.tabFamilyWarmDesc, gradient: "from-sky-500 to-blue-500" },
+  ] as const;
+
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<EmotionalListingResult | null>(null);
   const [activeTab, setActiveTab] = useState("storytelling");
@@ -91,47 +174,23 @@ export default function EmotionalListingPage() {
 
   const handleSubmit = async () => {
     if (!formData.propertyType.trim() || formData.propertyType.length < 3) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il tipo di immobile (min 3 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.propertyTypeRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.location.trim()) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci la località",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.locationRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.features.trim() || formData.features.length < 10) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Descrivi le caratteristiche (min 10 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.featuresRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.strengths.trim() || formData.strengths.length < 10) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Descrivi i punti di forza (min 10 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.strengthsRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.price.trim()) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il prezzo",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.priceRequired, variant: "destructive" });
       return;
     }
 
@@ -149,36 +208,21 @@ export default function EmotionalListingPage() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          toast({
-            title: "Limite raggiunto",
-            description: data.message || "Troppi tentativi. Riprova tra un minuto.",
-            variant: "destructive",
-          });
+          toast({ title: t.limitTitle, description: data.message || t.limitDefault, variant: "destructive" });
           return;
         }
         if (response.status === 401) {
-          toast({
-            title: "Accesso negato",
-            description: "Devi effettuare il login per usare questa funzione.",
-            variant: "destructive",
-          });
+          toast({ title: t.accessDenied, description: t.accessDeniedDesc, variant: "destructive" });
           return;
         }
-        throw new Error(data.error || "Errore nella generazione");
+        throw new Error(data.error || t.errorGeneric);
       }
 
       setResult(data);
       setActiveTab("storytelling");
-      toast({
-        title: "Descrizioni emozionali generate!",
-        description: data.cached ? "Risultato dalla cache (24h)" : "3 versioni emozionali pronte all'uso",
-      });
+      toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nella generazione",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -188,17 +232,10 @@ export default function EmotionalListingPage() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
-      toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
-      });
+      toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.copyFailed, variant: "destructive" });
     }
   };
 
@@ -215,7 +252,7 @@ export default function EmotionalListingPage() {
   };
 
   const renderListingCard = (listing: EmotionalListing, version: string) => {
-    const tabInfo = LISTING_TABS.find(t => t.id === version) || LISTING_TABS[0];
+    const tabInfo = listingTabs.find(tab => tab.id === version) || listingTabs[0];
     const Icon = tabInfo.icon;
     
     return (
@@ -224,7 +261,7 @@ export default function EmotionalListingPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg text-foreground">
               <Icon className="h-5 w-5" />
-              Versione {tabInfo.label}
+              {t.versionLabel} {tabInfo.label}
             </CardTitle>
             <Button
               onClick={() => copyFullListing(listing, version)}
@@ -232,7 +269,7 @@ export default function EmotionalListingPage() {
               data-testid={`button-copy-full-${version}`}
             >
               {copiedField === `full-${version}` ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
-              Copia Tutto
+              {t.copyAll}
             </Button>
           </div>
         </CardHeader>
@@ -240,7 +277,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Star className="h-3 w-3" /> Titolo
+                <Star className="h-3 w-3" /> {t.sectionTitle}
               </Label>
               <Button
                 variant="ghost"
@@ -260,7 +297,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Heart className="h-3 w-3" /> Apertura Emozionale
+                <Heart className="h-3 w-3" /> {t.sectionApertura}
               </Label>
               <Button
                 variant="ghost"
@@ -282,7 +319,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Sparkles className="h-3 w-3" /> Testo Sensoriale
+                <Sparkles className="h-3 w-3" /> {t.sectionSensoriale}
               </Label>
               <Button
                 variant="ghost"
@@ -302,7 +339,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <BookOpen className="h-3 w-3" /> Descrizione Narrativa
+                <BookOpen className="h-3 w-3" /> {t.sectionNarrativa}
               </Label>
               <Button
                 variant="ghost"
@@ -349,7 +386,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                🌟 Immagina Questo...
+                {t.sectionImmagina}
               </Label>
               <Button
                 variant="ghost"
@@ -374,7 +411,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                🎯 CTA Emozionale
+                {t.sectionCta}
               </Label>
               <Button
                 variant="ghost"
@@ -400,7 +437,7 @@ export default function EmotionalListingPage() {
       <div className="mb-6">
         <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Torna alla Dashboard
+          {t.backToDashboard}
         </Link>
       </div>
 
@@ -410,14 +447,14 @@ export default function EmotionalListingPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">
-            Emotional Listing AI
+            {t.heroTitle}
           </h1>
           <p className="text-muted-foreground">
-            Descrizioni emozionali che toccano il cuore dei tuoi acquirenti
+            {t.heroSubtitle}
           </p>
         </div>
         <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0">
-          💛 Emotional AI
+          {t.heroBadge}
         </Badge>
       </div>
 
@@ -426,24 +463,24 @@ export default function EmotionalListingPage() {
           <CardHeader className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-rose-600" />
-              Dati Immobile
+              {t.formTitle}
             </CardTitle>
             <CardDescription>
-              Inserisci le informazioni per generare descrizioni emozionali
+              {t.formSubtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label>Tipo Annuncio</Label>
+              <Label>{t.listingType}</Label>
               <Select
                 value={formData.tipoTransazione}
                 onValueChange={(value) => handleInputChange("tipoTransazione", value)}
               >
                 <SelectTrigger data-testid="select-tipo-transazione">
-                  <SelectValue placeholder="Seleziona tipo transazione" />
+                  <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                  {tipoTransazioneOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       <span className="flex items-center gap-2">
                         <span>{option.icon}</span>
@@ -456,10 +493,10 @@ export default function EmotionalListingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="propertyType">Tipo di Immobile *</Label>
+              <Label htmlFor="propertyType">{t.propertyTypeLabel}</Label>
               <Input
                 id="propertyType"
-                placeholder="es. Villa con giardino e piscina"
+                placeholder={t.propertyTypePlaceholder}
                 value={formData.propertyType}
                 onChange={(e) => handleInputChange("propertyType", e.target.value)}
                 data-testid="input-property-type"
@@ -468,20 +505,20 @@ export default function EmotionalListingPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="location">Località *</Label>
+                <Label htmlFor="location">{t.locationLabel}</Label>
                 <Input
                   id="location"
-                  placeholder="es. Lago di Como"
+                  placeholder={t.locationPlaceholder}
                   value={formData.location}
                   onChange={(e) => handleInputChange("location", e.target.value)}
                   data-testid="input-location"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">Prezzo *</Label>
+                <Label htmlFor="price">{t.priceLabel}</Label>
                 <Input
                   id="price"
-                  placeholder="es. €1.200.000"
+                  placeholder={t.pricePlaceholder}
                   value={formData.price}
                   onChange={(e) => handleInputChange("price", e.target.value)}
                   data-testid="input-price"
@@ -490,10 +527,10 @@ export default function EmotionalListingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="features">Caratteristiche *</Label>
+              <Label htmlFor="features">{t.featuresLabel}</Label>
               <Textarea
                 id="features"
-                placeholder="es. 5 camere, 3 bagni, giardino 2000mq, piscina infinity, vista lago..."
+                placeholder={t.featuresPlaceholder}
                 value={formData.features}
                 onChange={(e) => handleInputChange("features", e.target.value)}
                 rows={3}
@@ -502,10 +539,10 @@ export default function EmotionalListingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="strengths">Punti di Forza *</Label>
+              <Label htmlFor="strengths">{t.strengthsLabel}</Label>
               <Textarea
                 id="strengths"
-                placeholder="es. Vista mozzafiato, privacy assoluta, finiture di pregio, domotica..."
+                placeholder={t.strengthsPlaceholder}
                 value={formData.strengths}
                 onChange={(e) => handleInputChange("strengths", e.target.value)}
                 rows={2}
@@ -515,7 +552,7 @@ export default function EmotionalListingPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="targetBuyer">Target</Label>
+                <Label htmlFor="targetBuyer">{t.targetLabel}</Label>
                 <Select
                   value={formData.targetBuyer}
                   onValueChange={(value: FormData["targetBuyer"]) => 
@@ -523,7 +560,7 @@ export default function EmotionalListingPage() {
                   }
                 >
                   <SelectTrigger data-testid="select-target">
-                    <SelectValue placeholder="Seleziona target" />
+                    <SelectValue placeholder={t.selectTarget} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="famiglie">👨‍👩‍👧 Famiglie</SelectItem>
@@ -534,7 +571,7 @@ export default function EmotionalListingPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tone">Tono</Label>
+                <Label htmlFor="tone">{t.toneLabel}</Label>
                 <Select
                   value={formData.tone}
                   onValueChange={(value: FormData["tone"]) => 
@@ -542,7 +579,7 @@ export default function EmotionalListingPage() {
                   }
                 >
                   <SelectTrigger data-testid="select-tone">
-                    <SelectValue placeholder="Seleziona tono" />
+                    <SelectValue placeholder={t.selectTone} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="emozionale">💗 Emozionale</SelectItem>
@@ -562,12 +599,12 @@ export default function EmotionalListingPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generazione in corso...
+                  {t.generateLoading}
                 </>
               ) : (
                 <>
                   <Heart className="h-4 w-4 mr-2" />
-                  Genera 3 Versioni Emozionali
+                  {t.generateIdle}
                 </>
               )}
             </Button>
@@ -580,11 +617,10 @@ export default function EmotionalListingPage() {
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  Nessuna descrizione generata
+                  {t.emptyTitle}
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  Compila il form con i dati dell'immobile e clicca "Genera" per creare 
-                  3 descrizioni emozionali che toccano il cuore dei tuoi acquirenti.
+                  {t.emptySubtitle}
                 </p>
               </CardContent>
             </Card>
@@ -594,9 +630,9 @@ export default function EmotionalListingPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <Loader2 className="h-12 w-12 text-rose-500 animate-spin mb-4" />
-                <h3 className="text-lg font-medium mb-2">Generazione in corso...</h3>
+                <h3 className="text-lg font-medium mb-2">{t.loadingTitle}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Stiamo creando descrizioni emozionali coinvolgenti
+                  {t.loadingSubtitle}
                 </p>
               </CardContent>
             </Card>
@@ -611,7 +647,7 @@ export default function EmotionalListingPage() {
                       <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          Consiglio Creativo
+                          {t.creativeTip}
                         </h4>
                         <p className="text-sm text-amber-700 dark:text-amber-300">
                           {result.consiglioCreativo}
@@ -624,7 +660,7 @@ export default function EmotionalListingPage() {
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-3 gap-1 h-auto p-1">
-                  {LISTING_TABS.map((tab) => {
+                  {listingTabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
                       <TabsTrigger

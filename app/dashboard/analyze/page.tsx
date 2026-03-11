@@ -29,6 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 
 interface ScrapedData {
   title: string;
@@ -61,18 +62,70 @@ interface Analysis {
 }
 
 export default function AnalyzePage() {
+  const { locale } = useLocaleContext();
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const isItalian = locale === "it";
+  const t = {
+    enterUrl: isItalian ? "Inserisci un URL" : "Enter a URL",
+    pasteUrl: isItalian ? "Incolla il link dell'annuncio da analizzare" : "Paste the listing URL to analyze",
+    analysisError: isItalian ? "Errore durante l'analisi" : "Error during analysis",
+    analysisDone: isItalian ? "Analisi completata!" : "Analysis completed!",
+    fromCache: isItalian ? "Risultati dalla cache" : "Results from cache",
+    newAnalysis: isItalian ? "Nuova analisi generata" : "New analysis generated",
+    error: isItalian ? "Errore" : "Error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedToClipboard: (label: string) => isItalian ? `${label} copiato negli appunti` : `${label} copied to clipboard`,
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    back: isItalian ? "Dashboard" : "Dashboard",
+    headerSubtitle: isItalian ? "Analisi Automatica" : "Automatic Analysis",
+    heroTitleLead: isItalian ? "Analisi" : "Automatic",
+    heroTitleAccent: isItalian ? "Automatica" : "Link Analysis",
+    heroTitleTail: isItalian ? "da Link" : "",
+    heroSubtitle: isItalian
+      ? "Incolla un link e ottieni analisi, suggerimenti e riscrittura AI in secondi"
+      : "Paste a link and get analysis, suggestions, and AI rewriting in seconds",
+    urlPlaceholder: isItalian
+      ? "Incolla qui il link dell'annuncio (Immobiliare.it, Idealista, Casa.it, Subito.it, Zillow)"
+      : "Paste the listing URL here (Immobiliare.it, Idealista, Casa.it, Subito.it, Zillow)",
+    analyzing: isItalian ? "Analizzo..." : "Analyzing...",
+    analyze: isItalian ? "Analizza" : "Analyze",
+    qualityScore: isItalian ? "Punteggio Qualità" : "Quality Score",
+    seoScore: isItalian ? "Punteggio SEO" : "SEO Score",
+    outOf100: isItalian ? "su 100" : "out of 100",
+    idealBuyer: isItalian ? "Buyer Ideale" : "Ideal Buyer",
+    extractedData: isItalian ? "Dati Estratti" : "Extracted Data",
+    title: isItalian ? "Titolo" : "Title",
+    price: isItalian ? "Prezzo" : "Price",
+    location: isItalian ? "Località" : "Location",
+    surface: isItalian ? "Superficie" : "Area",
+    rooms: isItalian ? "Locali" : "Rooms",
+    type: isItalian ? "Tipo" : "Type",
+    notAvailable: isItalian ? "N/D" : "N/A",
+    analysis: isItalian ? "Analisi" : "Analysis",
+    improvements: isItalian ? "Miglioramenti" : "Improvements",
+    rewrite: isItalian ? "Riscrittura AI" : "AI Rewrite",
+    strengths: isItalian ? "Punti di Forza" : "Strengths",
+    weaknesses: isItalian ? "Punti Deboli" : "Weaknesses",
+    seoAnalysis: isItalian ? "Analisi SEO" : "SEO Analysis",
+    detectedKeywords: isItalian ? "Keywords rilevate:" : "Detected keywords:",
+    seoSuggestions: isItalian ? "Suggerimenti SEO:" : "SEO suggestions:",
+    improvementSuggestions: isItalian ? "Suggerimenti di Miglioramento" : "Improvement Suggestions",
+    professionalListing: isItalian ? "Annuncio Professionale (Riscritto)" : "Professional Listing (Rewritten)",
+    shortVersion: isItalian ? "Versione Breve (Max 50 parole)" : "Short Version (Max 50 words)",
+    catchyTitles: isItalian ? "5 Titoli Accattivanti" : "5 Catchy Titles",
+    copy: isItalian ? "Copia" : "Copy",
+  };
 
   const handleAnalyze = async () => {
     if (!url.trim()) {
       toast({
-        title: "Inserisci un URL",
-        description: "Incolla il link dell'annuncio da analizzare",
+        title: t.enterUrl,
+        description: t.pasteUrl,
         variant: "destructive",
       });
       return;
@@ -93,20 +146,20 @@ export default function AnalyzePage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || "Errore durante l'analisi");
+        throw new Error(data.error || t.analysisError);
       }
 
       setScrapedData(data.scrapedData);
       setAnalysis(data.analysis);
 
       toast({
-        title: "Analisi completata!",
-        description: data.fromCache ? "Risultati dalla cache" : "Nuova analisi generata",
+        title: t.analysisDone,
+        description: data.fromCache ? t.fromCache : t.newAnalysis,
       });
     } catch (err: any) {
       setError(err.message);
       toast({
-        title: "Errore",
+        title: t.error,
         description: err.message,
         variant: "destructive",
       });
@@ -120,8 +173,8 @@ export default function AnalyzePage() {
       if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         await navigator.clipboard.writeText(text);
         toast({
-          title: "Copiato!",
-          description: `${label} copiato negli appunti`,
+          title: t.copied,
+          description: t.copiedToClipboard(label),
         });
       } else {
         const textArea = document.createElement('textarea');
@@ -133,14 +186,14 @@ export default function AnalyzePage() {
         document.execCommand('copy');
         document.body.removeChild(textArea);
         toast({
-          title: "Copiato!",
-          description: `${label} copiato negli appunti`,
+          title: t.copied,
+          description: t.copiedToClipboard(label),
         });
       }
     } catch (err) {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.error,
+        description: t.copyFailed,
         variant: "destructive",
       });
     }
@@ -171,7 +224,7 @@ export default function AnalyzePage() {
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">Analisi Automatica</p>
+                <p className="text-xs text-muted-foreground font-medium">{t.headerSubtitle}</p>
               </div>
             </Link>
             
@@ -180,7 +233,7 @@ export default function AnalyzePage() {
               <Link href="/dashboard">
                 <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Dashboard
+                  {t.back}
                 </Button>
               </Link>
             </nav>
@@ -191,10 +244,10 @@ export default function AnalyzePage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-10 md:mb-14 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
-            Analisi <span className="gradient-text-purple">Automatica</span> da Link
+            {t.heroTitleLead} <span className="gradient-text-purple">{t.heroTitleAccent}</span>{t.heroTitleTail ? ` ${t.heroTitleTail}` : ""}
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground">
-            Incolla un link e ottieni analisi, suggerimenti e riscrittura AI in secondi
+            {t.heroSubtitle}
           </p>
         </div>
 
@@ -204,7 +257,7 @@ export default function AnalyzePage() {
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 type="url"
-                placeholder="Incolla qui il link dell'annuncio (Immobiliare.it, Idealista, Casa.it, Subito.it, Zillow)"
+                placeholder={t.urlPlaceholder}
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 className="pl-12 h-14 text-lg border-royal-purple/30 focus:border-royal-purple bg-background/50"
@@ -221,12 +274,12 @@ export default function AnalyzePage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Analizzo...
+                  {t.analyzing}
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-5 w-5" />
-                  Analizza
+                  {t.analyze}
                 </>
               )}
             </Button>
@@ -256,7 +309,7 @@ export default function AnalyzePage() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-6 w-6 text-red-500" />
               <div>
-                <h3 className="font-semibold text-red-500">Errore</h3>
+                <h3 className="font-semibold text-red-500">{t.error}</h3>
                 <p className="text-muted-foreground">{error}</p>
               </div>
             </div>
@@ -289,27 +342,27 @@ export default function AnalyzePage() {
             <div className="grid lg:grid-cols-3 gap-6">
               <div className={`futuristic-card p-8 text-center border ${getScoreBg(analysis.qualityScore)}`} data-testid="card-quality-score">
                 <Award className={`h-12 w-12 mx-auto mb-4 ${getScoreColor(analysis.qualityScore)}`} />
-                <p className="text-sm font-medium text-muted-foreground mb-2">Punteggio Qualità</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">{t.qualityScore}</p>
                 <p className={`text-6xl font-black ${getScoreColor(analysis.qualityScore)}`}>
                   {analysis.qualityScore}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">su 100</p>
+                <p className="text-sm text-muted-foreground mt-2">{t.outOf100}</p>
                 <Progress value={analysis.qualityScore} className="mt-4" />
               </div>
 
               <div className={`futuristic-card p-8 text-center border ${getScoreBg(analysis.seoAnalysis.score)}`} data-testid="card-seo-score">
                 <BarChart3 className={`h-12 w-12 mx-auto mb-4 ${getScoreColor(analysis.seoAnalysis.score)}`} />
-                <p className="text-sm font-medium text-muted-foreground mb-2">Punteggio SEO</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">{t.seoScore}</p>
                 <p className={`text-6xl font-black ${getScoreColor(analysis.seoAnalysis.score)}`}>
                   {analysis.seoAnalysis.score}
                 </p>
-                <p className="text-sm text-muted-foreground mt-2">su 100</p>
+                <p className="text-sm text-muted-foreground mt-2">{t.outOf100}</p>
                 <Progress value={analysis.seoAnalysis.score} className="mt-4" />
               </div>
 
               <div className="futuristic-card p-8 border-neon-aqua/30" data-testid="card-target-buyer">
                 <Target className="h-12 w-12 mx-auto mb-4 text-neon-aqua" />
-                <p className="text-sm font-medium text-muted-foreground mb-2">Buyer Ideale</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">{t.idealBuyer}</p>
                 <p className="text-lg font-semibold">{analysis.targetBuyer}</p>
               </div>
             </div>
@@ -317,32 +370,32 @@ export default function AnalyzePage() {
             <div className="futuristic-card p-6 border-silver-frost/30" data-testid="card-scraped-data">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                 <Link2 className="h-5 w-5 text-electric-blue" />
-                Dati Estratti
+                {t.extractedData}
               </h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Titolo</p>
-                  <p className="font-semibold">{scrapedData.title || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.title}</p>
+                  <p className="font-semibold">{scrapedData.title || t.notAvailable}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Prezzo</p>
-                  <p className="font-semibold text-sunset-gold">{scrapedData.price || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.price}</p>
+                  <p className="font-semibold text-sunset-gold">{scrapedData.price || t.notAvailable}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Località</p>
-                  <p className="font-semibold">{scrapedData.location || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.location}</p>
+                  <p className="font-semibold">{scrapedData.location || t.notAvailable}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Superficie</p>
-                  <p className="font-semibold">{scrapedData.surface || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.surface}</p>
+                  <p className="font-semibold">{scrapedData.surface || t.notAvailable}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Locali</p>
-                  <p className="font-semibold">{scrapedData.rooms || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.rooms}</p>
+                  <p className="font-semibold">{scrapedData.rooms || t.notAvailable}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Tipo</p>
-                  <p className="font-semibold">{scrapedData.propertyType || "N/D"}</p>
+                  <p className="text-sm text-muted-foreground">{t.type}</p>
+                  <p className="font-semibold">{scrapedData.propertyType || t.notAvailable}</p>
                 </div>
               </div>
             </div>
@@ -351,15 +404,15 @@ export default function AnalyzePage() {
               <TabsList className="grid w-full grid-cols-3 mb-6 h-14 bg-background/50 border border-silver-frost/30">
                 <TabsTrigger value="analysis" className="text-base data-[state=active]:bg-royal-purple data-[state=active]:text-white" data-testid="tab-analysis">
                   <Search className="mr-2 h-4 w-4" />
-                  Analisi
+                  {t.analysis}
                 </TabsTrigger>
                 <TabsTrigger value="improvements" className="text-base data-[state=active]:bg-electric-blue data-[state=active]:text-white" data-testid="tab-improvements">
                   <Lightbulb className="mr-2 h-4 w-4" />
-                  Miglioramenti
+                  {t.improvements}
                 </TabsTrigger>
                 <TabsTrigger value="rewrite" className="text-base data-[state=active]:bg-neon-aqua data-[state=active]:text-white" data-testid="tab-rewrite">
                   <FileEdit className="mr-2 h-4 w-4" />
-                  Riscrittura AI
+                  {t.rewrite}
                 </TabsTrigger>
               </TabsList>
 
@@ -368,7 +421,7 @@ export default function AnalyzePage() {
                   <div className="futuristic-card p-6 border-green-500/30">
                     <h4 className="font-bold text-green-500 mb-4 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5" />
-                      Punti di Forza ({analysis.strengths.length})
+                      {t.strengths} ({analysis.strengths.length})
                     </h4>
                     <ul className="space-y-2">
                       {analysis.strengths.map((strength, i) => (
@@ -383,7 +436,7 @@ export default function AnalyzePage() {
                   <div className="futuristic-card p-6 border-red-500/30">
                     <h4 className="font-bold text-red-500 mb-4 flex items-center gap-2">
                       <AlertTriangle className="h-5 w-5" />
-                      Punti Deboli ({analysis.weaknesses.length})
+                      {t.weaknesses} ({analysis.weaknesses.length})
                     </h4>
                     <ul className="space-y-2">
                       {analysis.weaknesses.map((weakness, i) => (
@@ -399,11 +452,11 @@ export default function AnalyzePage() {
                 <div className="futuristic-card p-6 border-electric-blue/30">
                   <h4 className="font-bold text-electric-blue mb-4 flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
-                    Analisi SEO
+                    {t.seoAnalysis}
                   </h4>
                   {analysis.seoAnalysis.keywords.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-sm text-muted-foreground mb-2">Keywords rilevate:</p>
+                      <p className="text-sm text-muted-foreground mb-2">{t.detectedKeywords}</p>
                       <div className="flex flex-wrap gap-2">
                         {analysis.seoAnalysis.keywords.map((keyword, i) => (
                           <Badge key={i} variant="secondary" className="bg-electric-blue/20 text-electric-blue border-electric-blue/30">
@@ -415,7 +468,7 @@ export default function AnalyzePage() {
                   )}
                   {analysis.seoAnalysis.suggestions.length > 0 && (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">Suggerimenti SEO:</p>
+                      <p className="text-sm text-muted-foreground mb-2">{t.seoSuggestions}</p>
                       <ul className="space-y-2">
                         {analysis.seoAnalysis.suggestions.map((suggestion, i) => (
                           <li key={i} className="flex items-start gap-2 text-sm">
@@ -433,7 +486,7 @@ export default function AnalyzePage() {
                 <div className="futuristic-card p-6 border-sunset-gold/30">
                   <h4 className="font-bold text-sunset-gold mb-4 flex items-center gap-2">
                     <Lightbulb className="h-5 w-5" />
-                    Suggerimenti di Miglioramento
+                    {t.improvementSuggestions}
                   </h4>
                   <ul className="space-y-3">
                     {analysis.improvements.map((improvement, i) => (
@@ -453,17 +506,17 @@ export default function AnalyzePage() {
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="font-bold text-neon-aqua flex items-center gap-2">
                       <FileEdit className="h-5 w-5" />
-                      Annuncio Professionale (Riscritto)
+                      {t.professionalListing}
                     </h4>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => copyToClipboard(analysis.rewrittenListing.professional, "Annuncio professionale")}
+                      onClick={() => copyToClipboard(analysis.rewrittenListing.professional, isItalian ? "Annuncio professionale" : "Professional listing")}
                       className="border-neon-aqua/30 hover:border-neon-aqua"
                       data-testid="button-copy-professional"
                     >
                       <Copy className="h-4 w-4 mr-2" />
-                      Copia
+                      {t.copy}
                     </Button>
                   </div>
                   <p className="whitespace-pre-line text-sm leading-relaxed">
@@ -475,17 +528,17 @@ export default function AnalyzePage() {
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="font-bold text-electric-blue flex items-center gap-2">
                       <Zap className="h-5 w-5" />
-                      Versione Breve (Max 50 parole)
+                      {t.shortVersion}
                     </h4>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => copyToClipboard(analysis.rewrittenListing.short, "Versione breve")}
+                      onClick={() => copyToClipboard(analysis.rewrittenListing.short, isItalian ? "Versione breve" : "Short version")}
                       className="border-electric-blue/30 hover:border-electric-blue"
                       data-testid="button-copy-short"
                     >
                       <Copy className="h-4 w-4 mr-2" />
-                      Copia
+                      {t.copy}
                     </Button>
                   </div>
                   <p className="text-sm leading-relaxed">
@@ -496,7 +549,7 @@ export default function AnalyzePage() {
                 <div className="futuristic-card p-6 border-royal-purple/30">
                   <h4 className="font-bold text-royal-purple mb-4 flex items-center gap-2">
                     <Sparkles className="h-5 w-5" />
-                    5 Titoli Accattivanti
+                    {t.catchyTitles}
                   </h4>
                   <div className="space-y-3">
                     {analysis.rewrittenListing.titles.map((title, i) => (
@@ -510,7 +563,7 @@ export default function AnalyzePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(title, `Titolo ${i + 1}`)}
+                          onClick={() => copyToClipboard(title, isItalian ? `Titolo ${i + 1}` : `Title ${i + 1}`)}
                           className="hover:bg-royal-purple/20"
                           data-testid={`button-copy-title-${i}`}
                         >

@@ -132,7 +132,8 @@ export async function POST(request: NextRequest) {
         price_id: newPriceId,
         updated_at: new Date().toISOString(),
       })
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .eq('stripe_subscription_id', subscription.stripe_subscription_id);
 
     if (updateError) {
       logger.error('[UPGRADE] Failed to update database', updateError, { userId: user.id });

@@ -56,48 +56,43 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency";
 import { Menu, X } from "lucide-react";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { Locale, defaultLocale } from "@/lib/i18n/config";
+import { Locale } from "@/lib/i18n/config";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 export default function PlatformPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency>("EUR"); // Default EUR
-  const [currentLocale, setCurrentLocale] = useState<Locale>(defaultLocale);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundwaveHeights, setSoundwaveHeights] = useState<number[]>([20, 25, 30, 35, 30, 25, 20]); // Default values for SSR
   const heroRef = useRef<HTMLDivElement>(null);
+  const { locale, setLocale } = useLocaleContext();
   
   // Get translations
-  const t = getTranslation(currentLocale as SupportedLocale);
+  const t = getTranslation(locale as SupportedLocale);
 
-  // Carica valuta e locale da localStorage al mount
+  // Carica valuta da localStorage al mount
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const savedCurrency = localStorage.getItem("propertypilot_currency") as Currency;
-    // Default a EUR se non c'è valuta salvata
     if (savedCurrency && ["USD", "EUR", "GBP"].includes(savedCurrency)) {
       setSelectedCurrency(savedCurrency);
     } else {
-      setSelectedCurrency("EUR"); // Default EUR
+      setSelectedCurrency("EUR");
       localStorage.setItem("propertypilot_currency", "EUR");
-    }
-    
-    const savedLocale = localStorage.getItem("propertypilot_locale") as Locale;
-    if (savedLocale && ["it", "en", "es", "fr", "de", "ar"].includes(savedLocale)) {
-      setCurrentLocale(savedLocale);
     }
   }, []);
   
   // Update document direction for RTL languages
   useEffect(() => {
     if (typeof document !== "undefined") {
-      document.documentElement.dir = currentLocale === "ar" ? "rtl" : "ltr";
-      document.documentElement.lang = currentLocale;
+      document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+      document.documentElement.lang = locale;
     }
-  }, [currentLocale]);
+  }, [locale]);
   
   const handleLocaleChange = (newLocale: Locale) => {
-    setCurrentLocale(newLocale);
+    setLocale(newLocale);
   };
 
   // Chiudi menu mobile quando si clicca fuori
@@ -144,7 +139,7 @@ export default function PlatformPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif] ${currentLocale === "ar" ? "rtl" : "ltr"}`}>
+    <div className={`min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif] ${locale === "ar" ? "rtl" : "ltr"}`}>
       {/* Mesh Gradient Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
@@ -168,7 +163,7 @@ export default function PlatformPage() {
             
             {/* Language Selector (IT, EN, ES) + Currency + Theme Toggle */}
             <LocaleCurrencySelector 
-              currentLocale={currentLocale}
+              locale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
@@ -207,7 +202,7 @@ export default function PlatformPage() {
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <LocaleCurrencySelector 
-              currentLocale={currentLocale}
+              locale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
@@ -321,7 +316,7 @@ export default function PlatformPage() {
                 >
                   <span className="relative z-10 flex items-center">
                     {t.landing.hero.ctaStart}
-                    <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                    <ArrowRight className={`${locale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#06b6d4] to-[#9333ea] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute inset-0 rounded-lg bg-[#06b6d4]/30 blur-2xl animate-pulse"></div>
@@ -335,7 +330,7 @@ export default function PlatformPage() {
                   aria-label={t.landing.hero.ctaDemo}
                 >
                   {t.landing.hero.ctaDemo}
-                  <Play className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <Play className={`${locale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
                 </Button>
               </Link>
             </div>
@@ -838,13 +833,13 @@ export default function PlatformPage() {
                     { feature: t.landing.pricing.features.forms, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.whiteLabel, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.assistant, free: "—", starter: "—", pro: "✓", agency: "✓" },
-                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: currentLocale === "en" ? "Up to 10 agents" : currentLocale === "es" ? "Hasta 10 agentes" : currentLocale === "fr" ? "Jusqu'à 10 agents" : currentLocale === "de" ? "Bis zu 10 Agenten" : currentLocale === "ar" ? "حتى 10 وكلاء" : "Fino a 10 agenti" },
+                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: locale === "en" ? "Up to 10 agents" : locale === "es" ? "Hasta 10 agentes" : locale === "fr" ? "Jusqu'à 10 agents" : locale === "de" ? "Bis zu 10 Agenten" : locale === "ar" ? "حتى 10 وكلاء" : "Fino a 10 agenti" },
                     { feature: t.landing.pricing.features.roles, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.distribution, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.reports, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.multiOffice, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.auraVR, free: "—", starter: "—", pro: <span className="text-gray-400">{t.landing.pricing.plans.viewer}</span>, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
-                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: currentLocale === "en" ? "30/month" : currentLocale === "es" ? "30/mes" : currentLocale === "fr" ? "30/mois" : currentLocale === "de" ? "30/Monat" : currentLocale === "ar" ? "30/شهر" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
+                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: locale === "en" ? "30/month" : locale === "es" ? "30/mes" : locale === "fr" ? "30/mois" : locale === "de" ? "30/Monat" : locale === "ar" ? "30/شهر" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
                     { feature: t.landing.pricing.features.messaging, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.manualOverride, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.humanOverride, free: "—", starter: "—", pro: "✓", agency: "✓" },
@@ -924,30 +919,30 @@ export default function PlatformPage() {
                     </span>
                   </div>
                   <p className="text-gray-300 mb-6 text-lg">
-                    {currentLocale === "en" 
+                    {locale === "en" 
                       ? "Done-for-you setup package with premium onboarding and dedicated support"
-                      : currentLocale === "es"
+                      : locale === "es"
                       ? 'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado'
-                      : currentLocale === "fr"
+                      : locale === "fr"
                       ? 'Package de configuration "done-for-you" avec intégration premium et support dédié'
-                      : currentLocale === "de"
+                      : locale === "de"
                       ? "Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support"
-                      : currentLocale === "ar"
+                      : locale === "ar"
                       ? "حزمة الإعداد الجاهزة مع الدعم المخصص"
                       : 'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato'}
                   </p>
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? 'Complete setup "done-for-you"' : currentLocale === "es" ? 'Configuración completa "done-for-you"' : currentLocale === "fr" ? 'Configuration complète "done-for-you"' : currentLocale === "de" ? 'Vollständige Einrichtung "done-for-you"' : currentLocale === "ar" ? "إعداد كامل جاهز" : 'Setup completo "done-for-you"'}</span>
+                      <span>{locale === "en" ? 'Complete setup "done-for-you"' : locale === "es" ? 'Configuración completa "done-for-you"' : locale === "fr" ? 'Configuration complète "done-for-you"' : locale === "de" ? 'Vollständige Einrichtung "done-for-you"' : locale === "ar" ? "إعداد كامل جاهز" : 'Setup completo "done-for-you"'}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Guided implementation and onboarding" : currentLocale === "es" ? "Implementación y incorporación guiada" : currentLocale === "fr" ? "Implémentation et intégration guidées" : currentLocale === "de" ? "Geführte Implementierung und Onboarding" : currentLocale === "ar" ? "تنفيذ وإعداد موجه" : "Implementazione e onboarding guidato"}</span>
+                      <span>{locale === "en" ? "Guided implementation and onboarding" : locale === "es" ? "Implementación y incorporación guiada" : locale === "fr" ? "Implémentation et intégration guidées" : locale === "de" ? "Geführte Implementierung und Onboarding" : locale === "ar" ? "تنفيذ وإعداد موجه" : "Implementazione e onboarding guidato"}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Premium support for launch" : currentLocale === "es" ? "Soporte premium para el lanzamiento" : currentLocale === "fr" ? "Support premium pour le lancement" : currentLocale === "de" ? "Premium-Support für den Start" : currentLocale === "ar" ? "دعم مميز للإطلاق" : "Supporto premium per il lancio"}</span>
+                      <span>{locale === "en" ? "Premium support for launch" : locale === "es" ? "Soporte premium para el lanzamiento" : locale === "fr" ? "Support premium pour le lancement" : locale === "de" ? "Premium-Support für den Start" : locale === "ar" ? "دعم مميز للإطلاق" : "Supporto premium per il lancio"}</span>
                     </li>
                   </ul>
                 </div>
@@ -957,12 +952,12 @@ export default function PlatformPage() {
                       {formatCurrency(convertCurrency(2497, "EUR", selectedCurrency), selectedCurrency)}
                     </div>
                     <div className="text-gray-400 font-light">
-                      {currentLocale === "en" ? "One-time payment" : currentLocale === "es" ? "Pago único" : currentLocale === "fr" ? "Paiement unique" : currentLocale === "de" ? "Einmalige Zahlung" : currentLocale === "ar" ? "دفعة واحدة" : "Pagamento una tantum"}
+                      {locale === "en" ? "One-time payment" : locale === "es" ? "Pago único" : locale === "fr" ? "Paiement unique" : locale === "de" ? "Einmalige Zahlung" : locale === "ar" ? "دفعة واحدة" : "Pagamento una tantum"}
                     </div>
                   </div>
                   <Link href="/api/stripe/checkout-oneshot?package=boost">
                     <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold border-0 shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all active:scale-95 py-6 text-lg">
-                      {currentLocale === "en" ? "Get Agency Boost" : currentLocale === "es" ? "Obtener Agency Boost" : currentLocale === "fr" ? "Obtenir Agency Boost" : currentLocale === "de" ? "Agency Boost erhalten" : currentLocale === "ar" ? "احصل على Agency Boost" : "Acquista Agency Boost"}
+                      {locale === "en" ? "Get Agency Boost" : locale === "es" ? "Obtener Agency Boost" : locale === "fr" ? "Obtenir Agency Boost" : locale === "de" ? "Agency Boost erhalten" : locale === "ar" ? "احصل على Agency Boost" : "Acquista Agency Boost"}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
@@ -992,7 +987,7 @@ export default function PlatformPage() {
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] transition-all active:scale-95"
                 >
                   {t.landing.cta.button}
-                  <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <ArrowRight className={`${locale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
                 </Button>
               </Link>
             </CardContent>

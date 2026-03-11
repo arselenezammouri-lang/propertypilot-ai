@@ -25,10 +25,70 @@ import {
 } from 'lucide-react';
 import { ScrapedListing } from '@/lib/scrapers/types';
 import { GeneratedContent } from '@/lib/ai/generateListingContent';
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
+
+  const t = {
+    pageTitle: isItalian ? "Analisi Annuncio AI" : "AI Listing Analysis",
+    pageDesc: isItalian ? "Importa annunci da portali immobiliari e genera contenuti professionali con AI" : "Import listings from real estate portals and generate professional content with AI",
+    urlCardTitle: isItalian ? "URL Annuncio" : "Listing URL",
+    urlCardDesc: isItalian ? "Supportati: Immobiliare.it, Idealista.it, Casa.it, Subito.it" : "Supported: Immobiliare.it, Idealista.it, Casa.it, Subito.it",
+    analyzing: isItalian ? "Analisi..." : "Analyzing...",
+    analyzeBtn: isItalian ? "Analizza Annuncio" : "Analyze Listing",
+    aiLoading: isItalian ? "Generazione contenuti AI in corso..." : "Generating AI content...",
+    aiLoadingDesc: isItalian ? "Stiamo creando descrizioni, titoli, email, video script e molto altro." : "We're creating descriptions, titles, emails, video scripts and much more.",
+    scrapedTitle: isItalian ? "Dati Estratti" : "Extracted Data",
+    surface: isItalian ? "Superficie" : "Surface",
+    rooms: isItalian ? "Locali" : "Rooms",
+    originalDesc: isItalian ? "Descrizione originale" : "Original description",
+    features: isItalian ? "Caratteristiche" : "Features",
+    moreFeatures: (n: number) => isItalian ? `+${n} altre` : `+${n} more`,
+    aiGeneratedTitle: isItalian ? "Contenuti AI Generati" : "Generated AI Content",
+    saving: isItalian ? "Salvataggio..." : "Saving...",
+    saveToLibrary: isItalian ? "Salva nella Libreria" : "Save to Library",
+    professionalTitle: isItalian ? "Descrizione Professionale" : "Professional Description",
+    professionalDesc: isItalian ? "150-200 parole, SEO ottimizzato" : "150-200 words, SEO optimized",
+    shortTitle: isItalian ? "Descrizione Breve" : "Short Description",
+    shortDesc: isItalian ? "Max 50 parole per portali" : "Max 50 words for portals",
+    emotionalTitle: isItalian ? "Descrizione Emozionale" : "Emotional Description",
+    emotionalDesc: isItalian ? "Storytelling e lifestyle" : "Storytelling and lifestyle",
+    titlesTitle: isItalian ? "Titoli Accattivanti" : "Catchy Titles",
+    titlesDesc: isItalian ? "5 varianti SEO-friendly" : "5 SEO-friendly variants",
+    videoScriptTitle: isItalian ? "Script Video (Reels/TikTok)" : "Video Script (Reels/TikTok)",
+    videoScriptDesc: isItalian ? "30-45 secondi per social media" : "30-45 seconds for social media",
+    emailTitle: isItalian ? "Email Follow-up" : "Follow-up Email",
+    emailDesc: isItalian ? "Template per potenziali acquirenti" : "Template for potential buyers",
+    strengthsTitle: isItalian ? "Punti di Forza" : "Strengths",
+    weaknessesTitle: isItalian ? "Punti di Debolezza" : "Weaknesses",
+    stagingTitle: isItalian ? "Suggerimenti Home Staging" : "Home Staging Tips",
+    portalTitle: isItalian ? "Descrizione per Portali" : "Portal Description",
+    portalDesc: isItalian ? "Ottimizzata per Immobiliare.it, Idealista" : "Optimized for Immobiliare.it, Idealista",
+    // toasts
+    urlRequired: isItalian ? "URL richiesto" : "URL required",
+    urlRequiredDesc: isItalian ? "Inserisci l'URL di un annuncio immobiliare." : "Enter the URL of a real estate listing.",
+    serverError: isItalian ? "Errore di comunicazione con il server. Riprova tra qualche secondo." : "Server communication error. Try again in a few seconds.",
+    scrapeError: isItalian ? "Errore durante lo scraping" : "Scraping error",
+    scrapeSuccess: isItalian ? "Scraping completato!" : "Scraping complete!",
+    scrapeSuccessDesc: isItalian ? "Dati estratti con successo. Generazione contenuti AI in corso..." : "Data extracted successfully. Generating AI content...",
+    networkError: isItalian ? "Impossibile connettersi al server." : "Cannot connect to the server.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    aiErrorTitle: isItalian ? "Errore AI" : "AI Error",
+    aiGenerationError: isItalian ? "Errore durante la generazione AI" : "AI generation error",
+    aiSuccess: isItalian ? "Contenuti AI generati!" : "AI content generated!",
+    aiSuccessDesc: isItalian ? "Tutti i contenuti sono stati creati con successo." : "All content has been created successfully.",
+    noData: isItalian ? "Nessun dato da salvare" : "No data to save",
+    noDataDesc: isItalian ? "Genera prima i contenuti AI." : "Generate AI content first.",
+    unnamedListing: isItalian ? "Annuncio senza titolo" : "Untitled listing",
+    saveError: isItalian ? "Errore durante il salvataggio" : "Save error",
+    saved: isItalian ? "Salvato!" : "Saved!",
+    savedDesc: isItalian ? "L'annuncio è stato salvato nella tua libreria." : "The listing has been saved to your library.",
+    saveGenericError: isItalian ? "Impossibile salvare l'annuncio." : "Cannot save the listing.",
+  };
   
   const [url, setUrl] = useState('');
   const [isScrapingLoading, setIsScrapingLoading] = useState(false);
@@ -42,8 +102,8 @@ export default function ScraperPage() {
   const handleScrape = async () => {
     if (!url.trim()) {
       toast({
-        title: 'URL richiesto',
-        description: 'Inserisci l\'URL di un annuncio immobiliare.',
+        title: t.urlRequired,
+        description: t.urlRequiredDesc,
         variant: 'destructive',
       });
       return;
@@ -67,8 +127,8 @@ export default function ScraperPage() {
       } catch (parseError) {
         console.error('[SCRAPER UI] Failed to parse response:', parseError);
         toast({
-          title: 'Errore',
-          description: 'Errore di comunicazione con il server. Riprova tra qualche secondo.',
+          title: t.errorTitle,
+          description: t.serverError,
           variant: 'destructive',
           duration: 8000,
         });
@@ -76,8 +136,7 @@ export default function ScraperPage() {
       }
 
       if (!response.ok) {
-        // Don't throw Error - preserve result payload with message/suggestion
-        const errorMessage = result.message || result.error || 'Errore durante lo scraping';
+        const errorMessage = result.message || result.error || t.scrapeError;
         const suggestion = result.suggestion;
         
         toast({
@@ -93,8 +152,8 @@ export default function ScraperPage() {
       setSourceUrl(result.meta.sourceUrl);
       
       toast({
-        title: 'Scraping completato!',
-        description: 'Dati estratti con successo. Generazione contenuti AI in corso...',
+        title: t.scrapeSuccess,
+        description: t.scrapeSuccessDesc,
         duration: 5000,
       });
 
@@ -106,8 +165,8 @@ export default function ScraperPage() {
       console.error('[SCRAPER UI] Error:', error);
       
       toast({
-        title: 'Errore',
-        description: error.message || 'Impossibile connettersi al server.',
+        title: t.errorTitle,
+        description: error.message || t.networkError,
         variant: 'destructive',
         duration: 8000,
       });
@@ -133,8 +192,8 @@ export default function ScraperPage() {
       } catch (parseError) {
         console.error('[AI GENERATION] Failed to parse response:', parseError);
         toast({
-          title: 'Errore AI',
-          description: 'Errore di comunicazione con il server. Riprova tra qualche secondo.',
+          title: t.aiErrorTitle,
+          description: t.serverError,
           variant: 'destructive',
           duration: 8000,
         });
@@ -142,12 +201,11 @@ export default function ScraperPage() {
       }
 
       if (!response.ok) {
-        // Don't throw Error - preserve result payload with message/suggestion
-        const errorMessage = result.message || result.error || 'Errore durante la generazione AI';
+        const errorMessage = result.message || result.error || t.aiGenerationError;
         const suggestion = result.suggestion;
         
         toast({
-          title: 'Errore AI',
+          title: t.aiErrorTitle,
           description: suggestion ? `${errorMessage}\n\n💡 ${suggestion}` : errorMessage,
           variant: 'destructive',
           duration: 8000,
@@ -158,18 +216,17 @@ export default function ScraperPage() {
       setGeneratedContent(result.data);
       
       toast({
-        title: 'Contenuti AI generati!',
-        description: 'Tutti i contenuti sono stati creati con successo.',
+        title: t.aiSuccess,
+        description: t.aiSuccessDesc,
         duration: 5000,
       });
 
     } catch (error: any) {
-      // Catch only for network/parsing errors
       console.error('[AI GENERATION] Error:', error);
       
       toast({
-        title: 'Errore AI',
-        description: error.message || 'Impossibile connettersi al server.',
+        title: t.aiErrorTitle,
+        description: error.message || t.networkError,
         variant: 'destructive',
         duration: 8000,
       });
@@ -181,8 +238,8 @@ export default function ScraperPage() {
   const handleSaveToLibrary = async () => {
     if (!scrapedData || !generatedContent) {
       toast({
-        title: 'Nessun dato da salvare',
-        description: 'Genera prima i contenuti AI.',
+        title: t.noData,
+        description: t.noDataDesc,
         variant: 'destructive',
       });
       return;
@@ -195,7 +252,7 @@ export default function ScraperPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: scrapedData.title || 'Annuncio senza titolo',
+          title: scrapedData.title || t.unnamedListing,
           property_data: scrapedData,
           generated_content: generatedContent,
           source_url: sourceUrl,
@@ -205,15 +262,14 @@ export default function ScraperPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || result.error || 'Errore durante il salvataggio');
+        throw new Error(result.message || result.error || t.saveError);
       }
 
       toast({
-        title: 'Salvato!',
-        description: 'L\'annuncio è stato salvato nella tua libreria.',
+        title: t.saved,
+        description: t.savedDesc,
       });
 
-      // Redirect to listings page
       setTimeout(() => {
         router.push('/dashboard/listings');
       }, 1500);
@@ -221,8 +277,8 @@ export default function ScraperPage() {
     } catch (error: any) {
       console.error('[SAVE] Error:', error);
       toast({
-        title: 'Errore',
-        description: error.message || 'Impossibile salvare l\'annuncio.',
+        title: t.errorTitle,
+        description: error.message || t.saveGenericError,
         variant: 'destructive',
       });
     } finally {
@@ -236,10 +292,10 @@ export default function ScraperPage() {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">
           <Sparkles className="inline-block mr-2 h-8 w-8 text-primary" />
-          Analisi Annuncio AI
+          {t.pageTitle}
         </h1>
         <p className="text-muted-foreground text-lg">
-          Importa annunci da portali immobiliari e genera contenuti professionali con AI
+          {t.pageDesc}
         </p>
       </div>
 
@@ -248,10 +304,10 @@ export default function ScraperPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Link2 className="h-5 w-5" />
-            URL Annuncio
+            {t.urlCardTitle}
           </CardTitle>
           <CardDescription>
-            Supportati: Immobiliare.it, Idealista.it, Casa.it, Subito.it
+            {t.urlCardDesc}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -273,12 +329,12 @@ export default function ScraperPage() {
               {isScrapingLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analisi...
+                  {t.analyzing}
                 </>
               ) : (
                 <>
                   <Search className="mr-2 h-4 w-4" />
-                  Analizza Annuncio
+                  {t.analyzeBtn}
                 </>
               )}
             </Button>
@@ -292,9 +348,9 @@ export default function ScraperPage() {
           <CardContent className="py-12">
             <div className="text-center">
               <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-              <h3 className="text-xl font-semibold mb-2">Generazione contenuti AI in corso...</h3>
+              <h3 className="text-xl font-semibold mb-2">{t.aiLoading}</h3>
               <p className="text-muted-foreground">
-                Stiamo creando descrizioni, titoli, email, video script e molto altro.
+                {t.aiLoadingDesc}
               </p>
             </div>
           </CardContent>
@@ -307,7 +363,7 @@ export default function ScraperPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-green-600" />
-              Dati Estratti
+              {t.scrapedTitle}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -329,13 +385,13 @@ export default function ScraperPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {scrapedData.surface && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Superficie</p>
+                      <p className="text-sm text-muted-foreground">{t.surface}</p>
                       <p className="font-medium" data-testid="text-surface">{scrapedData.surface}</p>
                     </div>
                   )}
                   {scrapedData.rooms && (
                     <div>
-                      <p className="text-sm text-muted-foreground">Locali</p>
+                      <p className="text-sm text-muted-foreground">{t.rooms}</p>
                       <p className="font-medium" data-testid="text-rooms">{scrapedData.rooms}</p>
                     </div>
                   )}
@@ -343,7 +399,7 @@ export default function ScraperPage() {
 
                 {scrapedData.description_raw && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Descrizione originale</p>
+                    <p className="text-sm text-muted-foreground mb-1">{t.originalDesc}</p>
                     <p className="text-sm line-clamp-4" data-testid="text-description-raw">
                       {scrapedData.description_raw}
                     </p>
@@ -355,7 +411,7 @@ export default function ScraperPage() {
               <div>
                 {scrapedData.features && scrapedData.features.length > 0 && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Caratteristiche</p>
+                    <p className="text-sm text-muted-foreground mb-2">{t.features}</p>
                     <div className="flex flex-wrap gap-2">
                       {scrapedData.features.slice(0, 6).map((feature, idx) => (
                         <Badge key={idx} variant="outline" className="text-xs" data-testid={`badge-feature-${idx}`}>
@@ -364,7 +420,7 @@ export default function ScraperPage() {
                       ))}
                       {scrapedData.features.length > 6 && (
                         <Badge variant="outline" className="text-xs">
-                          +{scrapedData.features.length - 6} altre
+                          {t.moreFeatures(scrapedData.features.length - 6)}
                         </Badge>
                       )}
                     </div>
@@ -380,7 +436,7 @@ export default function ScraperPage() {
       {generatedContent && (
         <>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Contenuti AI Generati</h2>
+            <h2 className="text-2xl font-bold">{t.aiGeneratedTitle}</h2>
             <Button 
               onClick={handleSaveToLibrary} 
               disabled={isSaving}
@@ -390,12 +446,12 @@ export default function ScraperPage() {
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Salvataggio...
+                  {t.saving}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  Salva nella Libreria
+                  {t.saveToLibrary}
                 </>
               )}
             </Button>
@@ -407,9 +463,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-blue-600" />
-                  Descrizione Professionale
+                  {t.professionalTitle}
                 </CardTitle>
-                <CardDescription>150-200 parole, SEO ottimizzato</CardDescription>
+                <CardDescription>{t.professionalDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap" data-testid="text-professional">
@@ -423,9 +479,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-green-600" />
-                  Descrizione Breve
+                  {t.shortTitle}
                 </CardTitle>
-                <CardDescription>Max 50 parole per portali</CardDescription>
+                <CardDescription>{t.shortDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm" data-testid="text-short">{generatedContent.short}</p>
@@ -437,9 +493,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-purple-600" />
-                  Descrizione Emozionale
+                  {t.emotionalTitle}
                 </CardTitle>
-                <CardDescription>Storytelling e lifestyle</CardDescription>
+                <CardDescription>{t.emotionalDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap" data-testid="text-emotional">
@@ -453,9 +509,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-orange-600" />
-                  Titoli Accattivanti
+                  {t.titlesTitle}
                 </CardTitle>
-                <CardDescription>5 varianti SEO-friendly</CardDescription>
+                <CardDescription>{t.titlesDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
@@ -474,9 +530,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Video className="h-5 w-5 text-red-600" />
-                  Script Video (Reels/TikTok)
+                  {t.videoScriptTitle}
                 </CardTitle>
-                <CardDescription>30-45 secondi per social media</CardDescription>
+                <CardDescription>{t.videoScriptDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap" data-testid="text-video-script">
@@ -490,9 +546,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mail className="h-5 w-5 text-blue-600" />
-                  Email Follow-up
+                  {t.emailTitle}
                 </CardTitle>
-                <CardDescription>Template per potenziali acquirenti</CardDescription>
+                <CardDescription>{t.emailDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap" data-testid="text-email">
@@ -506,7 +562,7 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-600" />
-                  Punti di Forza
+                  {t.strengthsTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -525,7 +581,7 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingDown className="h-5 w-5 text-orange-600" />
-                  Punti di Debolezza
+                  {t.weaknessesTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -545,7 +601,7 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Home className="h-5 w-5 text-indigo-600" />
-                  Suggerimenti Home Staging
+                  {t.stagingTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -565,9 +621,9 @@ export default function ScraperPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5 text-teal-600" />
-                  Descrizione per Portali
+                  {t.portalTitle}
                 </CardTitle>
-                <CardDescription>Ottimizzata per Immobiliare.it, Idealista</CardDescription>
+                <CardDescription>{t.portalDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 <p className="text-sm whitespace-pre-wrap" data-testid="text-portal">

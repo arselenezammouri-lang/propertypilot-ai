@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { createClient } from "@/lib/supabase/client";
 
 interface WorkspaceModule {
@@ -20,7 +21,55 @@ interface WorkspaceModule {
 }
 
 export default function WorkspaceSettingsPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const t = {
+    loading: isItalian ? "Caricamento impostazioni..." : "Loading settings...",
+    heroTitle: "Feature Control Center",
+    heroSubtitle: isItalian ? "Personalizza la tua dashboard attivando o disattivando i moduli" : "Customize your dashboard by enabling or disabling modules",
+    trialActive: isItalian ? "Trial Attivo" : "Trial Active",
+    trialDesc: (days: number) => isItalian
+      ? `Hai accesso a tutti i moduli per i prossimi ${days} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.`
+      : `You have access to all modules for the next ${days} days. After the trial, only the modules in your plan will be available.`,
+    howItWorks: isItalian ? "💡 Come funziona" : "💡 How it works",
+    howItWorksList: isItalian
+      ? [
+          "I moduli disattivati scompariranno dalla barra laterale della dashboard",
+          "Durante il trial, tutti i moduli sono disponibili",
+          "Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati",
+          "Le impostazioni vengono salvate automaticamente",
+        ]
+      : [
+          "Disabled modules will disappear from the dashboard sidebar",
+          "During the trial, all modules are available",
+          "After the trial, only modules included in your plan can be enabled",
+          "Settings are saved automatically",
+        ],
+    insufficientPlan: isItalian ? "Piano insufficiente" : "Insufficient plan",
+    insufficientPlanDesc: (plan: string) => isItalian
+      ? `Questo modulo richiede il piano ${plan}. Aggiorna il tuo account.`
+      : `This module requires the ${plan} plan. Upgrade your account.`,
+    moduleUpdated: isItalian ? "Modulo aggiornato" : "Module updated",
+    moduleEnabled: isItalian ? "attivato" : "enabled",
+    moduleDisabled: isItalian ? "disattivato" : "disabled",
+    errorTitle: isItalian ? "Errore" : "Error",
+    saveError: isItalian ? "Impossibile salvare le impostazioni." : "Unable to save settings.",
+    // module names
+    modules: {
+      scraper: { name: isItalian ? "Scraper Globale" : "Global Scraper", desc: isItalian ? "Scansione automatica di Idealista, Zillow, Immobiliare.it" : "Automatic scanning of Idealista, Zillow, Immobiliare.it" },
+      ai_voice: { name: "AI Voice Calling", desc: isItalian ? "Chiamate automatiche con Bland AI" : "Automatic calls with Bland AI" },
+      "3d_staging": { name: "3D Virtual Staging", desc: isItalian ? "Generazione visioni 3D post-ristrutturazione" : "3D visualization generation post-renovation" },
+      price_sniper: { name: "Price Drop Sniper", desc: isItalian ? "Rilevamento automatico ribassi di prezzo" : "Automatic price drop detection" },
+      commercial: { name: "Commercial Intelligence", desc: isItalian ? "Analisi immobili commerciali e Business Features" : "Commercial property analysis and Business Features" },
+      territory_map: { name: "Territory Commander", desc: isItalian ? "Mappa tattica e analisi territorio" : "Tactical map and territory analysis" },
+      smart_briefing: { name: "AI Smart Briefing", desc: isItalian ? "Riassunto automatico vantaggi/difetti/target" : "Automatic summary of pros/cons/target" },
+      xray_vision: { name: "AI X-Ray Vision", desc: isItalian ? "Analisi tecnica immagini per difetti/pregi" : "Technical image analysis for defects/features" },
+      competitor_radar: { name: "Competitor Radar", desc: isItalian ? "Rilevamento mandati in scadenza" : "Expiring mandate detection" },
+    } as Record<string, { name: string; desc: string }>,
+  };
+
   const [modules, setModules] = useState<WorkspaceModule[]>([]);
   const [isTrial, setIsTrial] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,89 +110,27 @@ export default function WorkspaceSettingsPage() {
         const enabledModules = workspace?.enabled_modules || [];
 
         // Definisci tutti i moduli
-        const allModules: WorkspaceModule[] = [
-          {
-            id: 'scraper',
-            name: 'Scraper Globale',
-            description: 'Scansione automatica di Idealista, Zillow, Immobiliare.it',
-            icon: <Zap className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('scraper') || (isTrial && !enabledModules.includes('scraper')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'ai_voice',
-            name: 'AI Voice Calling',
-            description: 'Chiamate automatiche con Bland AI',
-            icon: <Phone className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('ai_voice') || (isTrial && !enabledModules.includes('ai_voice')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: '3d_staging',
-            name: '3D Virtual Staging',
-            description: 'Generazione visioni 3D post-ristrutturazione',
-            icon: <Box className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('3d_staging') || (isTrial && !enabledModules.includes('3d_staging')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'price_sniper',
-            name: 'Price Drop Sniper',
-            description: 'Rilevamento automatico ribassi di prezzo',
-            icon: <Target className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('price_sniper') || (isTrial && !enabledModules.includes('price_sniper')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'commercial',
-            name: 'Commercial Intelligence',
-            description: 'Analisi immobili commerciali e Business Features',
-            icon: <Building2 className="h-5 w-5" />,
-            requiredPlan: 'AGENCY',
-            enabled: enabledModules.includes('commercial') || (isTrial && !enabledModules.includes('commercial')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'territory_map',
-            name: 'Territory Commander',
-            description: 'Mappa tattica e analisi territorio',
-            icon: <Map className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('territory_map') || (isTrial && !enabledModules.includes('territory_map')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'smart_briefing',
-            name: 'AI Smart Briefing',
-            description: 'Riassunto automatico vantaggi/difetti/target',
-            icon: <FileText className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('smart_briefing') || (isTrial && !enabledModules.includes('smart_briefing')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'xray_vision',
-            name: 'AI X-Ray Vision',
-            description: 'Analisi tecnica immagini per difetti/pregi',
-            icon: <Sparkles className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('xray_vision') || (isTrial && !enabledModules.includes('xray_vision')),
-            trialEnabled: isTrial,
-          },
-          {
-            id: 'competitor_radar',
-            name: 'Competitor Radar',
-            description: 'Rilevamento mandati in scadenza',
-            icon: <TrendingDown className="h-5 w-5" />,
-            requiredPlan: 'PRO',
-            enabled: enabledModules.includes('competitor_radar') || (isTrial && !enabledModules.includes('competitor_radar')),
-            trialEnabled: isTrial,
-          },
+        const moduleList = [
+          { id: 'scraper', icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'ai_voice', icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: '3d_staging', icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'price_sniper', icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'commercial', icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
+          { id: 'territory_map', icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'smart_briefing', icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'xray_vision', icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          { id: 'competitor_radar', icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
         ];
+
+        const allModules: WorkspaceModule[] = moduleList.map(m => ({
+          id: m.id,
+          name: t.modules[m.id]?.name || m.id,
+          description: t.modules[m.id]?.desc || '',
+          icon: m.icon,
+          requiredPlan: m.requiredPlan,
+          enabled: enabledModules.includes(m.id) || (isTrial && !enabledModules.includes(m.id)),
+          trialEnabled: isTrial,
+        }));
 
         setModules(allModules);
       }
@@ -177,11 +164,7 @@ export default function WorkspaceSettingsPage() {
         const requiredPlanIndex = planHierarchy.indexOf(workspaceModule.requiredPlan);
 
         if (userPlanIndex < requiredPlanIndex) {
-          toast({
-            title: "Piano insufficiente",
-            description: `Questo modulo richiede il piano ${workspaceModule.requiredPlan}. Aggiorna il tuo account.`,
-            variant: "destructive",
-          });
+          toast({ title: t.insufficientPlan, description: t.insufficientPlanDesc(workspaceModule.requiredPlan), variant: "destructive" });
           return;
         }
       }
@@ -216,17 +199,10 @@ export default function WorkspaceSettingsPage() {
 
       if (error) throw error;
 
-      toast({
-        title: "Modulo aggiornato",
-        description: `${workspaceModule.name} ${!workspaceModule.enabled ? 'attivato' : 'disattivato'}.`,
-      });
+      toast({ title: t.moduleUpdated, description: `${workspaceModule.name} ${!workspaceModule.enabled ? t.moduleEnabled : t.moduleDisabled}.` });
     } catch (error) {
       console.error('[WORKSPACE] Error saving:', error);
-      toast({
-        title: "Errore",
-        description: "Impossibile salvare le impostazioni.",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.saveError, variant: "destructive" });
       // Revert
       setModules((prev) =>
         prev.map((m) =>
@@ -243,7 +219,7 @@ export default function WorkspaceSettingsPage() {
       <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
         <div className="text-center">
           <Settings className="h-8 w-8 animate-spin text-purple-400 mx-auto mb-4" />
-          <p className="text-gray-400">Caricamento impostazioni...</p>
+          <p className="text-gray-400">{t.loading}</p>
         </div>
       </div>
     );
@@ -259,9 +235,9 @@ export default function WorkspaceSettingsPage() {
               <Settings className="h-6 w-6 text-purple-400" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white">Feature Control Center</h1>
+              <h1 className="text-4xl font-bold text-white">{t.heroTitle}</h1>
               <p className="text-muted-foreground mt-1">
-                Personalizza la tua dashboard attivando o disattivando i moduli
+                {t.heroSubtitle}
               </p>
             </div>
           </div>
@@ -269,7 +245,7 @@ export default function WorkspaceSettingsPage() {
           {isTrial && (
             <div className="mt-4 p-4 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg">
               <p className="text-sm text-purple-300">
-                🎉 <strong>Trial Attivo</strong> - Hai accesso a tutti i moduli per i prossimi {7 - Math.floor((Date.now() - new Date().getTime()) / (1000 * 60 * 60 * 24))} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.
+                🎉 <strong>{t.trialActive}</strong> - {t.trialDesc(7)}
               </p>
             </div>
           )}
@@ -333,14 +309,13 @@ export default function WorkspaceSettingsPage() {
         {/* Info Box */}
         <Card className="mt-8 border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
           <CardHeader>
-            <CardTitle className="text-lg text-white">💡 Come funziona</CardTitle>
+            <CardTitle className="text-lg text-white">{t.howItWorks}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li>• I moduli disattivati scompariranno dalla barra laterale della dashboard</li>
-              <li>• Durante il trial, tutti i moduli sono disponibili</li>
-              <li>• Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati</li>
-              <li>• Le impostazioni vengono salvate automaticamente</li>
+              {t.howItWorksList.map((item, i) => (
+                <li key={i}>• {item}</li>
+              ))}
             </ul>
           </CardContent>
         </Card>

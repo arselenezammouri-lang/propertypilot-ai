@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,16 +64,79 @@ interface FormData {
   tone: "professionale" | "energico" | "luxury" | "emozionale";
 }
 
-const SCRIPT_TYPES = [
-  { id: "script15s", label: "15 Secondi", icon: Zap, description: "TikTok/Reels" },
-  { id: "script30s", label: "30 Secondi", icon: Clock, description: "Reels/Shorts" },
-  { id: "script60s", label: "60 Secondi", icon: Film, description: "Tour completo" },
-  { id: "scriptLuxury", label: "Luxury", icon: Crown, description: "Cinematografico" },
-  { id: "hooksVirali", label: "Hooks", icon: Sparkles, description: "5 aperture" },
-] as const;
-
 export default function VideoScriptsPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const t = {
+    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    heroTitle: "Video Script AI",
+    heroSubtitle: isItalian ? "Genera script professionali per i tuoi video immobiliari" : "Generate professional scripts for your real estate videos",
+    heroBadge: "Video Creator AI",
+    formTitle: isItalian ? "Dati Immobile" : "Property Data",
+    formSubtitle: isItalian ? "Inserisci le informazioni per generare script video personalizzati" : "Enter information to generate personalized video scripts",
+    typeLabel: isItalian ? "Tipo di Immobile *" : "Property Type *",
+    typePlaceholder: isItalian ? "es. Attico con terrazzo panoramico" : "e.g. Penthouse with panoramic terrace",
+    locationLabel: isItalian ? "Località *" : "Location *",
+    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Milan Centre",
+    priceLabel: isItalian ? "Prezzo *" : "Price *",
+    pricePlaceholder: isItalian ? "es. €450.000" : "e.g. $450,000",
+    featuresLabel: isItalian ? "Caratteristiche Principali *" : "Main Features *",
+    featuresPlaceholder: isItalian ? "es. 3 camere, 2 bagni, terrazzo 50mq, vista Duomo, ascensore..." : "e.g. 3 beds, 2 baths, 50sqm terrace, cathedral view, elevator...",
+    strengthsLabel: isItalian ? "Punti di Forza *" : "Key Strengths *",
+    strengthsPlaceholder: isItalian ? "es. Posizione esclusiva, finiture di pregio, luminosità eccezionale..." : "e.g. Exclusive location, premium finishes, exceptional brightness...",
+    targetLabel: isItalian ? "Target Buyer" : "Target Buyer",
+    selectTarget: isItalian ? "Seleziona target" : "Select target",
+    toneLabel: isItalian ? "Tono Video" : "Video Tone",
+    selectTone: isItalian ? "Seleziona tono" : "Select tone",
+    generateIdle: isItalian ? "Genera 5 Script Video" : "Generate 5 Video Scripts",
+    generateLoading: isItalian ? "Generazione in corso..." : "Generating...",
+    emptyTitle: isItalian ? "Nessuno script generato" : "No script generated",
+    emptySubtitle: isItalian ? "Compila il form e clicca \"Genera\" per creare script video con timestamp e indicazioni visive." : "Fill the form and click \"Generate\" to create video scripts with timestamps and visual cues.",
+    loadingTitle: isItalian ? "Generazione in corso..." : "Generating...",
+    loadingSubtitle: isItalian ? "Stiamo creando 5 script video personalizzati" : "We are creating 5 personalized video scripts",
+    filmingTip: isItalian ? "Consiglio per le Riprese" : "Filming Tip",
+    scriptLabel: isItalian ? "Script" : "Script",
+    sceneLabel: isItalian ? "Scena" : "Scene",
+    scenesLabel: isItalian ? "Scene" : "Scenes",
+    hookLabel: isItalian ? "Hook Iniziale" : "Opening Hook",
+    ctaLabel: "Call-to-Action",
+    hashtagsLabel: isItalian ? "Hashtag Consigliati" : "Suggested Hashtags",
+    copyScript: isItalian ? "Copia Script" : "Copy Script",
+    copyAll: isItalian ? "Copia Tutti" : "Copy All",
+    viralHooksTitle: isItalian ? "5 Hooks Virali" : "5 Viral Hooks",
+    openingsLabel: isItalian ? "Aperture video" : "Video openings",
+    hooksDesc: isItalian ? "Frasi d'apertura testate per massimizzare engagement e watch time" : "Tested opening lines to maximize engagement and watch time",
+    // toasts
+    fieldRequired: isItalian ? "Campo obbligatorio" : "Required field",
+    typeRequired: isItalian ? "Inserisci il tipo di immobile (min 5 caratteri)" : "Enter property type (min 5 characters)",
+    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
+    priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
+    featuresRequired: isItalian ? "Descrivi le caratteristiche (min 10 caratteri)" : "Describe features (min 10 characters)",
+    strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
+    limitTitle: isItalian ? "Limite raggiunto" : "Limit reached",
+    limitDefault: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
+    accessDenied: isItalian ? "Accesso negato" : "Access denied",
+    accessDeniedDesc: isItalian ? "Devi effettuare il login per usare questa funzione." : "You must log in to use this feature.",
+    successTitle: isItalian ? "Script generati con successo!" : "Scripts generated successfully!",
+    successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    successDesc: isItalian ? "5 script video pronti per le riprese" : "5 video scripts ready for filming",
+    errorTitle: isItalian ? "Errore" : "Error",
+    errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+  };
+
+  const scriptTypes = [
+    { id: "script15s", label: isItalian ? "15 Secondi" : "15 Seconds", icon: Zap, description: "TikTok/Reels" },
+    { id: "script30s", label: isItalian ? "30 Secondi" : "30 Seconds", icon: Clock, description: "Reels/Shorts" },
+    { id: "script60s", label: isItalian ? "60 Secondi" : "60 Seconds", icon: Film, description: isItalian ? "Tour completo" : "Full tour" },
+    { id: "scriptLuxury", label: "Luxury", icon: Crown, description: isItalian ? "Cinematografico" : "Cinematic" },
+    { id: "hooksVirali", label: "Hooks", icon: Sparkles, description: isItalian ? "5 aperture" : "5 openings" },
+  ] as const;
+
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<VideoScriptResult | null>(null);
   const [activeTab, setActiveTab] = useState("script15s");
@@ -94,47 +158,23 @@ export default function VideoScriptsPage() {
 
   const handleSubmit = async () => {
     if (!formData.type.trim() || formData.type.length < 5) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il tipo di immobile (min 5 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.typeRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.location.trim()) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci la località",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.locationRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.price.trim()) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il prezzo",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.priceRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.features.trim() || formData.features.length < 10) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Descrivi le caratteristiche (min 10 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.featuresRequired, variant: "destructive" });
       return;
     }
-
     if (!formData.strengths.trim() || formData.strengths.length < 10) {
-      toast({
-        title: "Campo obbligatorio",
-        description: "Descrivi i punti di forza (min 10 caratteri)",
-        variant: "destructive",
-      });
+      toast({ title: t.fieldRequired, description: t.strengthsRequired, variant: "destructive" });
       return;
     }
 
@@ -152,36 +192,21 @@ export default function VideoScriptsPage() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          toast({
-            title: "Limite raggiunto",
-            description: data.message || "Troppi tentativi. Riprova tra un minuto.",
-            variant: "destructive",
-          });
+          toast({ title: t.limitTitle, description: data.message || t.limitDefault, variant: "destructive" });
           return;
         }
         if (response.status === 401) {
-          toast({
-            title: "Accesso negato",
-            description: "Devi effettuare il login per usare questa funzione.",
-            variant: "destructive",
-          });
+          toast({ title: t.accessDenied, description: t.accessDeniedDesc, variant: "destructive" });
           return;
         }
-        throw new Error(data.error || "Errore nella generazione");
+        throw new Error(data.error || t.errorGeneric);
       }
 
       setResult(data);
       setActiveTab("script15s");
-      toast({
-        title: "Script generati con successo!",
-        description: data.cached ? "Risultato dalla cache (24h)" : "5 script video pronti per le riprese",
-      });
+      toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nella generazione",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -191,17 +216,10 @@ export default function VideoScriptsPage() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
-      toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
-      });
+      toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.copyFailed, variant: "destructive" });
     }
   };
 
@@ -220,7 +238,7 @@ export default function VideoScriptsPage() {
   };
 
   const renderScriptCard = (script: VideoScript, scriptType: string) => {
-    const typeInfo = SCRIPT_TYPES.find(t => t.id === scriptType) || SCRIPT_TYPES[0];
+    const typeInfo = scriptTypes.find(s => s.id === scriptType) || scriptTypes[0];
     const Icon = typeInfo.icon;
     
     return (
@@ -229,7 +247,7 @@ export default function VideoScriptsPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Icon className="h-5 w-5 text-purple-600" />
-              Script {typeInfo.label}
+              {t.scriptLabel} {typeInfo.label}
               <Badge variant="outline" className="ml-2 text-xs">
                 {script.durata}
               </Badge>
@@ -242,7 +260,7 @@ export default function VideoScriptsPage() {
               data-testid={`button-copy-full-${scriptType}`}
             >
               {copiedField === `full-${scriptType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-              Copia Script
+              {t.copyScript}
             </Button>
           </div>
         </CardHeader>
@@ -250,7 +268,7 @@ export default function VideoScriptsPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Zap className="h-3 w-3" /> Hook Iniziale
+                <Zap className="h-3 w-3" /> {t.hookLabel}
               </Label>
               <Button
                 variant="ghost"
@@ -269,7 +287,7 @@ export default function VideoScriptsPage() {
 
           <div className="space-y-3">
             <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-              <Film className="h-3 w-3" /> Scene ({script.scenes.length})
+                <Film className="h-3 w-3" /> {t.scenesLabel} ({script.scenes.length})
             </Label>
             <div className="space-y-3">
               {script.scenes.map((scene, idx) => (
@@ -277,7 +295,7 @@ export default function VideoScriptsPage() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                        Scena {scene.numero}
+                        {t.sceneLabel} {scene.numero}
                       </Badge>
                       <span className="text-xs font-mono text-muted-foreground bg-background px-2 py-1 rounded">
                         {scene.timestamp}
@@ -306,7 +324,7 @@ export default function VideoScriptsPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Play className="h-3 w-3" /> Call-to-Action
+                <Play className="h-3 w-3" /> {t.ctaLabel}
               </Label>
               <Button
                 variant="ghost"
@@ -326,7 +344,7 @@ export default function VideoScriptsPage() {
           <div className="space-y-2 pt-2 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Hash className="h-3 w-3" /> Hashtag Consigliati
+                <Hash className="h-3 w-3" /> {t.hashtagsLabel}
               </Label>
               <Button
                 variant="ghost"
@@ -357,9 +375,9 @@ export default function VideoScriptsPage() {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Sparkles className="h-5 w-5 text-pink-600" />
-            5 Hooks Virali
+            {t.viralHooksTitle}
             <Badge variant="outline" className="ml-2 text-xs">
-              Aperture video
+              {t.openingsLabel}
             </Badge>
           </CardTitle>
           <Button
@@ -370,11 +388,11 @@ export default function VideoScriptsPage() {
             data-testid="button-copy-all-hooks"
           >
             {copiedField === 'all-hooks' ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-            Copia Tutti
+            {t.copyAll}
           </Button>
         </div>
         <CardDescription>
-          Frasi d'apertura testate per massimizzare engagement e watch time
+          {t.hooksDesc}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 pt-4">
@@ -404,7 +422,7 @@ export default function VideoScriptsPage() {
       <div className="mb-6">
         <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Torna alla Dashboard
+          {t.backToDashboard}
         </Link>
       </div>
 
@@ -414,14 +432,14 @@ export default function VideoScriptsPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Video Script AI
+            {t.heroTitle}
           </h1>
           <p className="text-muted-foreground">
-            Genera script professionali per i tuoi video immobiliari
+            {t.heroSubtitle}
           </p>
         </div>
         <Badge className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-          Video Creator AI
+          {t.heroBadge}
         </Badge>
       </div>
 
@@ -430,18 +448,18 @@ export default function VideoScriptsPage() {
           <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-purple-600" />
-              Dati Immobile
+              {t.formTitle}
             </CardTitle>
             <CardDescription>
-              Inserisci le informazioni per generare script video personalizzati
+              {t.formSubtitle}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label htmlFor="type">Tipo di Immobile *</Label>
+              <Label htmlFor="type">{t.typeLabel}</Label>
               <Input
                 id="type"
-                placeholder="es. Attico con terrazzo panoramico"
+                placeholder={t.typePlaceholder}
                 value={formData.type}
                 onChange={(e) => handleInputChange("type", e.target.value)}
                 data-testid="input-type"
@@ -450,20 +468,20 @@ export default function VideoScriptsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="location">Località *</Label>
+                <Label htmlFor="location">{t.locationLabel}</Label>
                 <Input
                   id="location"
-                  placeholder="es. Milano Centro"
+                  placeholder={t.locationPlaceholder}
                   value={formData.location}
                   onChange={(e) => handleInputChange("location", e.target.value)}
                   data-testid="input-location"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">Prezzo *</Label>
+                <Label htmlFor="price">{t.priceLabel}</Label>
                 <Input
                   id="price"
-                  placeholder="es. €450.000"
+                  placeholder={t.pricePlaceholder}
                   value={formData.price}
                   onChange={(e) => handleInputChange("price", e.target.value)}
                   data-testid="input-price"
@@ -472,10 +490,10 @@ export default function VideoScriptsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="features">Caratteristiche Principali *</Label>
+              <Label htmlFor="features">{t.featuresLabel}</Label>
               <Textarea
                 id="features"
-                placeholder="es. 3 camere, 2 bagni, terrazzo 50mq, vista Duomo, ascensore..."
+                placeholder={t.featuresPlaceholder}
                 value={formData.features}
                 onChange={(e) => handleInputChange("features", e.target.value)}
                 rows={3}
@@ -484,10 +502,10 @@ export default function VideoScriptsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="strengths">Punti di Forza *</Label>
+              <Label htmlFor="strengths">{t.strengthsLabel}</Label>
               <Textarea
                 id="strengths"
-                placeholder="es. Posizione esclusiva, finiture di pregio, luminosità eccezionale..."
+                placeholder={t.strengthsPlaceholder}
                 value={formData.strengths}
                 onChange={(e) => handleInputChange("strengths", e.target.value)}
                 rows={2}
@@ -497,7 +515,7 @@ export default function VideoScriptsPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="targetBuyer">Target Buyer</Label>
+                <Label htmlFor="targetBuyer">{t.targetLabel}</Label>
                 <Select
                   value={formData.targetBuyer}
                   onValueChange={(value: FormData["targetBuyer"]) => 
@@ -505,7 +523,7 @@ export default function VideoScriptsPage() {
                   }
                 >
                   <SelectTrigger data-testid="select-target">
-                    <SelectValue placeholder="Seleziona target" />
+                    <SelectValue placeholder={t.selectTarget} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="famiglie">Famiglie</SelectItem>
@@ -516,7 +534,7 @@ export default function VideoScriptsPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tone">Tono Video</Label>
+                <Label htmlFor="tone">{t.toneLabel}</Label>
                 <Select
                   value={formData.tone}
                   onValueChange={(value: FormData["tone"]) => 
@@ -524,7 +542,7 @@ export default function VideoScriptsPage() {
                   }
                 >
                   <SelectTrigger data-testid="select-tone">
-                    <SelectValue placeholder="Seleziona tono" />
+                    <SelectValue placeholder={t.selectTone} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="professionale">Professionale</SelectItem>
@@ -545,12 +563,12 @@ export default function VideoScriptsPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generazione in corso...
+                  {t.generateLoading}
                 </>
               ) : (
                 <>
                   <Video className="h-4 w-4 mr-2" />
-                  Genera 5 Script Video
+                  {t.generateIdle}
                 </>
               )}
             </Button>
@@ -563,11 +581,10 @@ export default function VideoScriptsPage() {
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <Video className="h-16 w-16 text-muted-foreground/50 mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  Nessuno script generato
+                  {t.emptyTitle}
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  Compila il form con i dati dell'immobile e clicca "Genera" per creare 
-                  script video professionali con timestamp e indicazioni visive.
+                  {t.emptySubtitle}
                 </p>
               </CardContent>
             </Card>
@@ -577,9 +594,9 @@ export default function VideoScriptsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
                 <Loader2 className="h-12 w-12 text-purple-500 animate-spin mb-4" />
-                <h3 className="text-lg font-medium mb-2">Generazione in corso...</h3>
+                <h3 className="text-lg font-medium mb-2">{t.loadingTitle}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Stiamo creando 5 script video personalizzati
+                  {t.loadingSubtitle}
                 </p>
               </CardContent>
             </Card>
@@ -594,7 +611,7 @@ export default function VideoScriptsPage() {
                       <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          Consiglio per le Riprese
+                          {t.filmingTip}
                         </h4>
                         <p className="text-sm text-amber-700 dark:text-amber-300">
                           {result.consiglioVideo}
@@ -607,7 +624,7 @@ export default function VideoScriptsPage() {
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-5 gap-1 h-auto p-1">
-                  {SCRIPT_TYPES.map((type) => {
+                  {scriptTypes.map((type) => {
                     const Icon = type.icon;
                     return (
                       <TabsTrigger

@@ -11,12 +11,12 @@ import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
+import { DashboardProTips } from "@/components/dashboard-pro-tips";
 import { 
   Home, 
   FileText, 
   CreditCard, 
   Settings, 
-  Sparkles,
   TrendingUp,
   ArrowRight,
   Zap,
@@ -209,33 +209,7 @@ export default async function DashboardPage() {
 
         </div>
 
-        {/* PRO TIPS SECTION - Futuristic Info Card */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="futuristic-card p-8 md:p-10 bg-gradient-to-br from-royal-purple/10 to-electric-blue/5 border-royal-purple/30 animate-fade-in-up delay-600">
-          <div className="flex items-start space-x-5">
-            <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-royal-purple/30 to-electric-blue/20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-glow-purple">
-              <Sparkles className="h-7 w-7 md:h-8 md:w-8 text-royal-purple" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-2xl md:text-3xl font-bold mb-4 gradient-text-purple">Suggerimenti Pro per Annunci Migliori</h3>
-              <ul className="space-y-3 text-base md:text-lg text-muted-foreground">
-                <li className="flex items-start space-x-3">
-                  <span className="text-neon-aqua mt-1.5 text-xl font-bold">•</span>
-                  <span>Includi dettagli specifici su posizione, servizi e caratteristiche uniche</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-electric-blue mt-1.5 text-xl font-bold">•</span>
-                  <span>Usa metrature accurate e numero stanze per risultati AI migliori</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-sunset-gold mt-1.5 text-xl font-bold">•</span>
-                  <span>Genera più versioni e scegli quella che si adatta meglio alle tue esigenze</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          </div>
-        </div>
+        <DashboardProTips />
 
         {/* Aria Coach - Con limiti per piano FREE (1 ora/giorno) */}
         <AriaCoach 

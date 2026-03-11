@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Gift, Copy, Users, Sparkles, Share2, Check } from "lucide-react";
-import { getBrowserLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { SupportedLocale } from "@/lib/i18n/dictionary";
 
 const referralMessages: Record<string, string> = {
@@ -21,7 +21,8 @@ const referralMessages: Record<string, string> = {
 
 export function ReferralSection() {
   const { toast } = useToast();
-  const [currentLocale, setCurrentLocale] = useState<SupportedLocale>("it");
+  const { locale } = useLocaleContext();
+  const currentLocale = (locale as SupportedLocale) || "it";
   const [referralData, setReferralData] = useState<{
     referralCode: string;
     referralLink: string;
@@ -31,10 +32,36 @@ export function ReferralSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
+  const t = {
+    it: {
+      copied: "Link copiato!",
+      copiedDesc: "Condividilo con i tuoi colleghi per guadagnare crediti AI.",
+      error: "Errore",
+      copyError: "Impossibile copiare il link",
+      title: "Invita un Collega",
+      subtitle: "Guadagna 10 crediti AI per ogni amico che si iscrive",
+      invited: "Colleghi invitati",
+      credits: "Crediti bonus",
+      yourLink: "Il tuo link referral:",
+      bonusElite: "Bonus Elite:",
+      bonusDesc: "Invita 5 colleghi e ricevi 1 mese PRO gratis!",
+    },
+    en: {
+      copied: "Link copied!",
+      copiedDesc: "Share it with colleagues to earn AI credits.",
+      error: "Error",
+      copyError: "Unable to copy the link",
+      title: "Invite a Colleague",
+      subtitle: "Earn 10 AI credits for each friend who signs up",
+      invited: "Invited colleagues",
+      credits: "Bonus credits",
+      yourLink: "Your referral link:",
+      bonusElite: "Elite Bonus:",
+      bonusDesc: "Invite 5 colleagues and get 1 month of PRO for free!",
+    },
+  }[(currentLocale === "it" ? "it" : "en") as "it" | "en"];
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentLocale(localeToSupportedLocale(getBrowserLocale()));
-    }
     fetchReferralData();
   }, []);
 
@@ -59,15 +86,15 @@ export function ReferralSection() {
       await navigator.clipboard.writeText(referralData.referralLink);
       setCopied(true);
       toast({
-        title: "Link copiato!",
-        description: "Condividilo con i tuoi colleghi per guadagnare crediti AI.",
+        title: t.copied,
+        description: t.copiedDesc,
         duration: 3000,
       });
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il link",
+        title: t.error,
+        description: t.copyError,
         variant: "destructive",
       });
     }
@@ -112,9 +139,9 @@ export function ReferralSection() {
             <Gift className="h-5 w-5 text-white" />
           </div>
           <div>
-            <CardTitle className="text-lg gradient-text-gold">Invita un Collega</CardTitle>
+            <CardTitle className="text-lg gradient-text-gold">{t.title}</CardTitle>
             <CardDescription className="text-silver-frost/70">
-              Guadagna 10 crediti AI per ogni amico che si iscrive
+              {t.subtitle}
             </CardDescription>
           </div>
         </div>
@@ -127,19 +154,19 @@ export function ReferralSection() {
               <Users className="h-4 w-4 text-neon-aqua" />
               <span className="text-2xl font-bold text-white">{referralData?.totalReferrals || 0}</span>
             </div>
-            <p className="text-xs text-silver-frost/60">Colleghi invitati</p>
+            <p className="text-xs text-silver-frost/60">{t.invited}</p>
           </div>
           <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <Sparkles className="h-4 w-4 text-sunset-gold" />
               <span className="text-2xl font-bold text-white">{referralData?.bonusCredits || 0}</span>
             </div>
-            <p className="text-xs text-silver-frost/60">Crediti bonus</p>
+            <p className="text-xs text-silver-frost/60">{t.credits}</p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-silver-frost/80">Il tuo link referral:</label>
+          <label className="text-sm font-medium text-silver-frost/80">{t.yourLink}</label>
           <div className="flex gap-2">
             <Input 
               value={referralData?.referralLink || ''} 
@@ -175,7 +202,7 @@ export function ReferralSection() {
 
         <div className="p-3 rounded-lg bg-gradient-to-r from-sunset-gold/10 to-royal-purple/10 border border-sunset-gold/20">
           <p className="text-xs text-center text-silver-frost/80">
-            <span className="font-semibold text-sunset-gold">Bonus Elite:</span> Invita 5 colleghi e ricevi 1 mese PRO gratis!
+            <span className="font-semibold text-sunset-gold">{t.bonusElite}</span> {t.bonusDesc}
           </p>
         </div>
       </CardContent>

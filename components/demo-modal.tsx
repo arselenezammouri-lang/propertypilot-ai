@@ -31,6 +31,50 @@ export function DemoModal() {
   const currentLocale = useLocale();
   const [mounted, setMounted] = useState(false);
   const whatsappNumber = "+393401234567";
+  const a11y = {
+    it: {
+      openModal: "Apri la finestra per prenotare una demo",
+      goToDemo: "Vai alla pagina di prenotazione demo",
+      chooseTime: "Scegli data e ora per la demo",
+      whatsapp: "Contattaci su WhatsApp",
+    },
+    en: {
+      openModal: "Open the demo booking modal",
+      goToDemo: "Go to the demo booking page",
+      chooseTime: "Choose date and time for the demo",
+      whatsapp: "Contact us on WhatsApp",
+    },
+    es: {
+      openModal: "Abrir la ventana para reservar una demo",
+      goToDemo: "Ir a la pagina de reserva de la demo",
+      chooseTime: "Elegir fecha y hora para la demo",
+      whatsapp: "Contactanos por WhatsApp",
+    },
+    fr: {
+      openModal: "Ouvrir la fenetre de reservation de demo",
+      goToDemo: "Aller a la page de reservation de demo",
+      chooseTime: "Choisir la date et l'heure de la demo",
+      whatsapp: "Nous contacter sur WhatsApp",
+    },
+    de: {
+      openModal: "Demo-Buchungsfenster offnen",
+      goToDemo: "Zur Demo-Buchungsseite gehen",
+      chooseTime: "Datum und Uhrzeit fur die Demo wahlen",
+      whatsapp: "Kontaktieren Sie uns auf WhatsApp",
+    },
+    ar: {
+      openModal: "افتح نافذة حجز العرض التوضيحي",
+      goToDemo: "اذهب إلى صفحة حجز العرض التوضيحي",
+      chooseTime: "اختر تاريخ ووقت العرض التوضيحي",
+      whatsapp: "تواصل معنا عبر واتساب",
+    },
+    pt: {
+      openModal: "Abrir a janela de agendamento da demo",
+      goToDemo: "Ir para a pagina de agendamento da demo",
+      chooseTime: "Escolher data e hora para a demo",
+      whatsapp: "Fale conosco no WhatsApp",
+    },
+  } as const;
   
   useEffect(() => {
     setMounted(true);
@@ -42,7 +86,7 @@ export function DemoModal() {
         <Button
           className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl text-sm sm:text-base"
           size="lg"
-          aria-label="Open demo booking modal"
+          aria-label={labels.openModal}
           disabled
         >
           <span className="relative flex items-center">
@@ -56,6 +100,7 @@ export function DemoModal() {
   
   const t = demoTranslations[currentLocale] || demoTranslations['en'];
   const whatsappMessage = encodeURIComponent(whatsappMessages[currentLocale] || whatsappMessages['en']);
+  const labels = a11y[currentLocale] || a11y.en;
 
   return (
     <>
@@ -67,7 +112,7 @@ export function DemoModal() {
               className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
               size="lg"
               data-testid="button-demo-modal-trigger"
-              aria-label="Open demo booking modal"
+              aria-label={labels.openModal}
             >
               <span className="absolute inset-0 bg-gradient-to-r from-sunset-gold via-royal-purple to-electric-blue opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative flex items-center">
@@ -103,8 +148,8 @@ export function DemoModal() {
 
               {/* CTA Buttons */}
               <div className="space-y-3 pt-4">
-                <Link href="/demo" onClick={() => setIsOpen(false)} aria-label="Go to demo booking page">
-                  <Button className="w-full neon-button text-lg py-6 shadow-glow-gold" size="lg" data-testid="button-go-to-demo" aria-label="Choose date and time for demo">
+                <Link href="/demo" onClick={() => setIsOpen(false)} aria-label={labels.goToDemo}>
+                  <Button className="w-full neon-button text-lg py-6 shadow-glow-gold" size="lg" data-testid="button-go-to-demo" aria-label={labels.chooseTime}>
                     {t.chooseDate}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -115,9 +160,9 @@ export function DemoModal() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block"
-                  aria-label="Contact us on WhatsApp"
+                  aria-label={labels.whatsapp}
                 >
-                  <Button variant="outline" className="w-full py-6 border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 font-bold" size="lg" data-testid="button-whatsapp-modal" aria-label="Contact us on WhatsApp">
+                  <Button variant="outline" className="w-full py-6 border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 font-bold" size="lg" data-testid="button-whatsapp-modal" aria-label={labels.whatsapp}>
                     <SiWhatsapp className="mr-2 h-5 w-5" />
                     {t.contactWhatsApp}
                   </Button>

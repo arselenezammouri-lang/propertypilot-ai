@@ -8,11 +8,44 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 export default function CompliancePage() {
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
   const [selectedCountry, setSelectedCountry] = useState<string>('IT');
+
+  const t = {
+    pageTitle: "Compliance Center",
+    pageSubtitle: isItalian
+      ? "Documenti legali pre-compilati per il tuo paese"
+      : "Pre-compiled legal documents for your country",
+    encTitle: "Crittografia AES-256",
+    encDesc: isItalian
+      ? "Tutti i dati sensibili (telefoni, email) sono criptati con standard bancario."
+      : "All sensitive data (phones, emails) are encrypted with banking-grade standards.",
+    gdprTitle: "GDPR Compliant",
+    gdprDesc: isItalian
+      ? "Conformità totale con GDPR, CCPA e normative internazionali."
+      : "Full compliance with GDPR, CCPA and international regulations.",
+    certTitle: isItalian ? "Certificazioni" : "Certifications",
+    certDesc: isItalian
+      ? "ISO 27001, SOC 2 Type II (in corso di certificazione)."
+      : "ISO 27001, SOC 2 Type II (certification in progress).",
+    countryTitle: isItalian ? "Seleziona il tuo Paese" : "Select your Country",
+    countryDesc: isItalian
+      ? "I documenti verranno generati secondo le normative del paese selezionato"
+      : "Documents will be generated according to the regulations of the selected country",
+    docsTitle: isItalian ? "Documenti Disponibili" : "Available Documents",
+    updated: isItalian ? "Aggiornato:" : "Updated:",
+    available: isItalian ? "Disponibile" : "Available",
+    comingSoon: isItalian ? "In arrivo" : "Coming Soon",
+    downloadPdf: isItalian ? "Scarica PDF" : "Download PDF",
+    downloadStarted: isItalian ? "Download avviato" : "Download started",
+    downloadDesc: (filename: string) => isItalian ? `Scaricando ${filename}...` : `Downloading ${filename}...`,
+  };
 
   const countries = [
     { code: 'IT', name: 'Italia', flag: '🇮🇹' },
@@ -57,10 +90,7 @@ export default function CompliancePage() {
     // In produzione: generare PDF dinamico o scaricare da storage
     const filename = `${docType}_${selectedCountry}_${new Date().getFullYear()}.pdf`;
     // Simula download
-    toast({
-      title: "Download avviato",
-      description: `Scaricando ${filename}...`,
-    });
+    toast({ title: t.downloadStarted, description: t.downloadDesc(filename) });
   };
 
   return (
@@ -73,9 +103,9 @@ export default function CompliancePage() {
               <Shield className="h-6 w-6 text-purple-400" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white">Compliance Center</h1>
+              <h1 className="text-4xl font-bold text-white">{t.pageTitle}</h1>
               <p className="text-muted-foreground mt-1">
-                Documenti legali pre-compilati per il tuo paese
+                {t.pageSubtitle}
               </p>
             </div>
           </div>
@@ -87,12 +117,12 @@ export default function CompliancePage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Lock className="h-5 w-5 text-purple-400" />
-                <CardTitle className="text-lg text-white">Crittografia AES-256</CardTitle>
+                <CardTitle className="text-lg text-white">{t.encTitle}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300">
-                Tutti i dati sensibili (telefoni, email) sono criptati con standard bancario.
+                {t.encDesc}
               </p>
             </CardContent>
           </Card>
@@ -101,12 +131,12 @@ export default function CompliancePage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Globe className="h-5 w-5 text-cyan-400" />
-                <CardTitle className="text-lg text-white">GDPR Compliant</CardTitle>
+                <CardTitle className="text-lg text-white">{t.gdprTitle}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300">
-                Conformità totale con GDPR, CCPA e normative internazionali.
+                {t.gdprDesc}
               </p>
             </CardContent>
           </Card>
@@ -115,12 +145,12 @@ export default function CompliancePage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <CheckCircle2 className="h-5 w-5 text-green-400" />
-                <CardTitle className="text-lg text-white">Certificazioni</CardTitle>
+                <CardTitle className="text-lg text-white">{t.certTitle}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300">
-                ISO 27001, SOC 2 Type II (in corso di certificazione).
+                {t.certDesc}
               </p>
             </CardContent>
           </Card>
@@ -129,9 +159,9 @@ export default function CompliancePage() {
         {/* Country Selector */}
         <Card className="border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10 mb-8">
           <CardHeader>
-            <CardTitle className="text-xl text-white">Seleziona il tuo Paese</CardTitle>
+            <CardTitle className="text-xl text-white">{t.countryTitle}</CardTitle>
             <CardDescription>
-              I documenti verranno generati secondo le normative del paese selezionato
+              {t.countryDesc}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -162,7 +192,7 @@ export default function CompliancePage() {
           <CardHeader>
             <CardTitle className="text-xl text-white flex items-center gap-2">
               <FileText className="h-5 w-5 text-cyan-400" />
-              Documenti Disponibili
+              {t.docsTitle}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -177,7 +207,7 @@ export default function CompliancePage() {
                     <div>
                       <p className="text-sm font-semibold text-white">{doc.name}</p>
                       <p className="text-xs text-gray-400">
-                        Aggiornato: {new Date().toLocaleDateString('it-IT')}
+                        {t.updated} {new Date().toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}
                       </p>
                     </div>
                   </div>
@@ -186,7 +216,7 @@ export default function CompliancePage() {
                       <>
                         <Badge className="bg-green-500 text-white">
                           <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Disponibile
+                          {t.available}
                         </Badge>
                         <Button
                           size="sm"
@@ -194,12 +224,12 @@ export default function CompliancePage() {
                           className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600"
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Scarica PDF
+                          {t.downloadPdf}
                         </Button>
                       </>
                     ) : (
                       <Badge variant="outline" className="border-white/10 text-white/40">
-                        In arrivo
+                        {t.comingSoon}
                       </Badge>
                     )}
                   </div>

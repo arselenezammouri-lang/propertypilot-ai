@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Book } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 // Mock content - in produzione: CMS o file markdown
 const docContent: Record<string, { title: string; content: string }> = {
@@ -101,6 +102,8 @@ Uno script efficace può trasformare una chiamata in un mandato.
 
 export default function DocArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
   const slug = Array.isArray(resolvedParams.slug) 
     ? resolvedParams.slug.join('/') 
     : resolvedParams.slug;
@@ -118,7 +121,7 @@ export default function DocArticlePage({ params }: { params: Promise<{ slug: str
         <Link href="/docs">
           <Button variant="ghost" className="mb-6 text-gray-400 hover:text-white">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Torna alla documentazione
+            {isItalian ? 'Torna alla documentazione' : 'Back to documentation'}
           </Button>
         </Link>
 

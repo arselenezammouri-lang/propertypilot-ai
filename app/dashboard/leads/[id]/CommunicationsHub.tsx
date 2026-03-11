@@ -14,28 +14,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import type { Lead, CommunicationLog, CommunicationTone, CommunicationChannel } from '@/lib/types/database.types';
 
 interface CommunicationsHubProps {
   lead: Lead;
 }
-
-const toneOptions: { value: CommunicationTone; label: string }[] = [
-  { value: 'professional', label: 'Professionale' },
-  { value: 'emotional', label: 'Emozionale' },
-  { value: 'luxury', label: 'Luxury' },
-  { value: 'casual', label: 'Informale' },
-  { value: 'urgent', label: 'Urgente' },
-];
-
-const purposeOptions = [
-  { value: 'follow_up', label: 'Follow-up' },
-  { value: 'first_contact', label: 'Primo Contatto' },
-  { value: 'appointment', label: 'Appuntamento' },
-  { value: 'offer', label: 'Offerta' },
-  { value: 'thank_you', label: 'Ringraziamento' },
-  { value: 'reminder', label: 'Promemoria' },
-];
 
 const channelConfig: Record<CommunicationChannel, { icon: any; label: string; color: string; gradient: string }> = {
   email: { icon: Mail, label: 'Email', color: 'text-blue-400', gradient: 'from-blue-600 to-indigo-600' },
@@ -46,11 +30,13 @@ const channelConfig: Record<CommunicationChannel, { icon: any; label: string; co
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isIt = locale === 'it';
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
-    toast({ title: 'Copiato!' });
+    toast({ title: isIt ? 'Copiato!' : 'Copied!' });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -63,6 +49,57 @@ function CopyButton({ text }: { text: string }) {
 
 export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
+
+  const toneOptions: { value: CommunicationTone; label: string }[] = [
+    { value: 'professional', label: isItalian ? 'Professionale' : 'Professional' },
+    { value: 'emotional', label: isItalian ? 'Emozionale' : 'Emotional' },
+    { value: 'luxury', label: 'Luxury' },
+    { value: 'casual', label: isItalian ? 'Informale' : 'Casual' },
+    { value: 'urgent', label: isItalian ? 'Urgente' : 'Urgent' },
+  ];
+
+  const purposeOptions = [
+    { value: 'follow_up', label: 'Follow-up' },
+    { value: 'first_contact', label: isItalian ? 'Primo Contatto' : 'First Contact' },
+    { value: 'appointment', label: isItalian ? 'Appuntamento' : 'Appointment' },
+    { value: 'offer', label: isItalian ? 'Offerta' : 'Offer' },
+    { value: 'thank_you', label: isItalian ? 'Ringraziamento' : 'Thank You' },
+    { value: 'reminder', label: isItalian ? 'Promemoria' : 'Reminder' },
+  ];
+
+  const t = {
+    hubTitle: 'Communication Hub',
+    hubDesc: isItalian
+      ? 'Invia email, WhatsApp e SMS con AI - tutto in un unico posto'
+      : 'Send emails, WhatsApp and SMS with AI - all in one place',
+    newMessage: (channel: string) => isItalian ? `Nuovo ${channel}` : `New ${channel}`,
+    emailSubjectPlaceholder: isItalian ? 'Oggetto email...' : 'Email subject...',
+    smsPlaceholder: isItalian ? 'Messaggio SMS (max 160 caratteri)...' : 'SMS message (max 160 characters)...',
+    messagePlaceholder: (channel: string) => isItalian ? `Scrivi il tuo ${channel}...` : `Write your ${channel}...`,
+    generatedVariants: isItalian ? 'Varianti generate:' : 'Generated variants:',
+    useVariant: isItalian ? 'Usa' : 'Use',
+    generating: isItalian ? 'Generando...' : 'Generating...',
+    generateWithAI: isItalian ? 'Genera con AI' : 'Generate with AI',
+    sending: isItalian ? 'Invio...' : 'Sending...',
+    openWhatsApp: isItalian ? 'Apri WhatsApp' : 'Open WhatsApp',
+    send: isItalian ? 'Invia' : 'Send',
+    historyToggle: (count: number) => isItalian ? `Storico Comunicazioni (${count})` : `Communication History (${count})`,
+    noHistory: isItalian ? 'Nessuna comunicazione registrata' : 'No communications recorded',
+    // toasts
+    msgGenerated: isItalian ? 'Messaggio generato!' : 'Message generated!',
+    fromCache: isItalian ? 'Dalla cache (24h)' : 'From cache (24h)',
+    characters: (n: number) => isItalian ? `${n} caratteri` : `${n} characters`,
+    error: isItalian ? 'Errore' : 'Error',
+    emptyMessage: isItalian ? 'Inserisci un messaggio' : 'Please enter a message',
+    smsTooLong: isItalian ? 'SMS troppo lungo' : 'SMS too long',
+    smsTooLongDesc: (n: number) => isItalian ? `${n}/160 caratteri. Riduci il testo.` : `${n}/160 characters. Shorten the text.`,
+    missingSubject: isItalian ? "Inserisci l'oggetto email" : 'Please enter an email subject',
+    whatsappOpened: isItalian ? 'WhatsApp aperto!' : 'WhatsApp opened!',
+    whatsappDesc: isItalian ? 'Invia il messaggio dalla finestra WhatsApp' : 'Send the message from the WhatsApp window',
+  };
+
   const [activeChannel, setActiveChannel] = useState<CommunicationChannel>('email');
   const [logs, setLogs] = useState<CommunicationLog[]>([]);
   const [isLoadingLogs, setIsLoadingLogs] = useState(true);
@@ -113,7 +150,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || 'Errore nella generazione');
+        throw new Error(error.error || (isItalian ? 'Errore nella generazione' : 'Generation error'));
       }
 
       const data = await res.json();
@@ -128,11 +165,11 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
       }
 
       toast({
-        title: 'Messaggio generato!',
-        description: data.cached ? 'Dalla cache (24h)' : `${data.character_count} caratteri`,
+        title: t.msgGenerated,
+        description: data.cached ? t.fromCache : t.characters(data.character_count),
       });
     } catch (error: any) {
-      toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+      toast({ title: t.error, description: error.message, variant: 'destructive' });
     } finally {
       setIsGenerating(false);
     }
@@ -140,14 +177,14 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
   const handleSend = async () => {
     if (!message.trim()) {
-      toast({ title: 'Errore', description: 'Inserisci un messaggio', variant: 'destructive' });
+      toast({ title: t.error, description: t.emptyMessage, variant: 'destructive' });
       return;
     }
 
     if (activeChannel === 'sms' && message.length > 160) {
       toast({ 
-        title: 'SMS troppo lungo', 
-        description: `${message.length}/160 caratteri. Riduci il testo.`,
+        title: t.smsTooLong, 
+        description: t.smsTooLongDesc(message.length),
         variant: 'destructive' 
       });
       return;
@@ -163,7 +200,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
       if (activeChannel === 'email') {
         if (!emailSubject.trim()) {
-          toast({ title: 'Errore', description: 'Inserisci l\'oggetto email', variant: 'destructive' });
+          toast({ title: t.error, description: t.missingSubject, variant: 'destructive' });
           setIsSending(false);
           return;
         }
@@ -178,16 +215,16 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
       if (!res.ok) {
         const error = await res.json();
-        throw new Error(error.error || 'Errore nell\'invio');
+        throw new Error(error.error || (isItalian ? "Errore nell'invio" : 'Sending error'));
       }
 
       const data = await res.json();
       
       if (activeChannel === 'whatsapp' && data.whatsapp_url) {
         window.open(data.whatsapp_url, '_blank');
-        toast({ title: 'WhatsApp aperto!', description: 'Invia il messaggio dalla finestra WhatsApp' });
+        toast({ title: t.whatsappOpened, description: t.whatsappDesc });
       } else {
-        toast({ title: 'Inviato!', description: data.message });
+        toast({ title: isItalian ? 'Inviato!' : 'Sent!', description: data.message });
       }
 
       setMessage('');
@@ -195,7 +232,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
       setGeneratedVariants([]);
       fetchLogs();
     } catch (error: any) {
-      toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+      toast({ title: t.error, description: error.message, variant: 'destructive' });
     } finally {
       setIsSending(false);
     }
@@ -222,7 +259,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
           <Badge className="bg-indigo-500/20 text-indigo-300 text-xs">CRM 4.0</Badge>
         </CardTitle>
         <CardDescription className="text-slate-400">
-          Invia email, WhatsApp e SMS con AI - tutto in un unico posto
+          {t.hubDesc}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -255,7 +292,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
                 const Icon = channelConfig[activeChannel].icon;
                 return <Icon className={`h-4 w-4 ${channelConfig[activeChannel].color}`} />;
               })()}
-              Nuovo {channelConfig[activeChannel].label}
+              {t.newMessage(channelConfig[activeChannel].label)}
             </h4>
             <div className="flex items-center gap-2">
               <Select value={tone} onValueChange={(v) => setTone(v as CommunicationTone)}>
@@ -283,7 +320,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
 
           {activeChannel === 'email' && (
             <Input
-              placeholder="Oggetto email..."
+              placeholder={t.emailSubjectPlaceholder}
               value={emailSubject}
               onChange={(e) => setEmailSubject(e.target.value)}
               className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
@@ -294,9 +331,9 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
           <div className="relative">
             <Textarea
               placeholder={
-                activeChannel === 'sms' 
-                  ? 'Messaggio SMS (max 160 caratteri)...' 
-                  : `Scrivi il tuo ${channelConfig[activeChannel].label}...`
+                activeChannel === 'sms'
+                  ? t.smsPlaceholder
+                  : t.messagePlaceholder(channelConfig[activeChannel].label)
               }
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -314,7 +351,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
           {/* Generated Variants */}
           {generatedVariants.length > 0 && (
             <div className="space-y-2">
-              <p className="text-slate-400 text-xs font-medium">Varianti generate:</p>
+              <p className="text-slate-400 text-xs font-medium">{t.generatedVariants}</p>
               {generatedVariants.map((variant, i) => (
                 <div key={i} className="bg-slate-800/50 p-2 rounded text-slate-300 text-sm flex items-start justify-between gap-2">
                   <span className="flex-1">{variant}</span>
@@ -326,7 +363,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
                       onClick={() => setMessage(variant)}
                       className="h-7 px-2 text-xs text-indigo-400 hover:text-indigo-300"
                     >
-                      Usa
+                      {t.useVariant}
                     </Button>
                   </div>
                 </div>
@@ -346,12 +383,12 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generando...
+                  {t.generating}
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Genera con AI
+                  {t.generateWithAI}
                 </>
               )}
             </Button>
@@ -364,12 +401,12 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
               {isSending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Invio...
+                  {t.sending}
                 </>
               ) : (
                 <>
                   <Send className="mr-2 h-4 w-4" />
-                  {activeChannel === 'whatsapp' ? 'Apri WhatsApp' : 'Invia'}
+                  {activeChannel === 'whatsapp' ? t.openWhatsApp : t.send}
                 </>
               )}
             </Button>
@@ -384,7 +421,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
           data-testid="button-toggle-logs"
         >
           <Clock className="mr-2 h-4 w-4" />
-          Storico Comunicazioni ({logs.length})
+          {t.historyToggle(logs.length)}
           {showLogs ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
         </Button>
 
@@ -396,7 +433,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
                 <Loader2 className="h-5 w-5 animate-spin text-indigo-400 mx-auto" />
               </div>
             ) : logs.length === 0 ? (
-              <p className="text-slate-400 text-center py-4 text-sm">Nessuna comunicazione registrata</p>
+              <p className="text-slate-400 text-center py-4 text-sm">{t.noHistory}</p>
             ) : (
               logs.map((log) => {
                 const config = channelConfig[log.channel];
@@ -421,7 +458,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
                           {log.status}
                         </Badge>
                         <span className="text-slate-500 text-xs">
-                          {new Date(log.created_at).toLocaleString('it-IT')}
+                          {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
                         </span>
                       </div>
                     </div>

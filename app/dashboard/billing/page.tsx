@@ -7,26 +7,17 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Calendar, AlertCircle, Check, ExternalLink, Crown, Zap, Sparkles, TrendingUp, Shield, Rocket, Building2, Gift } from 'lucide-react';
 import { Subscription, SubscriptionStatus } from '@/lib/types/database.types';
 import { STRIPE_PLANS, STRIPE_ONE_TIME_PACKAGES, PlanType } from '@/lib/stripe/config';
-import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
-
-const FREE_PLAN_CONFIG = {
-  name: 'Free',
-  price: 0,
-  priceId: null,
-  tagline: 'Nessun abbonamento attivo',
-  features: [
-    'Visualizza i piani disponibili',
-    'Abbonati per sbloccare le funzionalità',
-  ],
-  limits: {
-    listingsPerMonth: 0,
-  },
-};
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { getTranslation, SupportedLocale } from '@/lib/i18n/dictionary';
+import { formatCurrencyForLocale, formatDateForLocale } from '@/lib/i18n/intl';
+import { Locale } from '@/lib/i18n/config';
 
 export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { locale } = useLocaleContext();
+  const translation = getTranslation(locale as SupportedLocale);
+  const billingT = translation.billing;
 
   const { data: subscriptionData, isLoading, error } = useQuery<{ success: boolean; data: Subscription }>({
     queryKey: ['/api/user/subscription'],
@@ -37,7 +28,19 @@ export default function BillingPage() {
   const rawStatus = subscription?.status || 'free';
   const isFreePlan = rawStatus === 'free';
   const currentPlan = isFreePlan ? null : (rawStatus as PlanType);
-  const planConfig = currentPlan ? STRIPE_PLANS[currentPlan] : FREE_PLAN_CONFIG;
+  const freePlanConfig = {
+    name: billingT.freePlanName,
+    price: 0,
+    priceId: null,
+    tagline: billingT.noActiveSubscription,
+    features: [billingT.viewPlans, billingT.subscribeToUnlock],
+    limits: {
+      listingsPerMonth: 0,
+    },
+  };
+  const planConfig = currentPlan ? STRIPE_PLANS[currentPlan] : freePlanConfig;
+  const formatPlanPrice = (amount: number) =>
+    `${formatCurrencyForLocale(amount, locale as Locale)}${billingT.perMonth}`;
 
   if (error && !subscription) {
     console.warn('[BILLING] Subscription fetch failed, showing default Free plan:', error);
@@ -55,7 +58,7 @@ export default function BillingPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] });
       toast({
-        title: 'Abbonamento cancellato',
+        title: billingT.cancelledTitle,
         description: data.message,
         duration: 8000,
       });
@@ -63,8 +66,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile cancellare l\'abbonamento.',
+        title: translation.common.error,
+        description: error.message || billingT.cancelError,
         duration: 8000,
       });
     },
@@ -82,7 +85,7 @@ export default function BillingPage() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] });
       toast({
-        title: 'Abbonamento riattivato',
+        title: billingT.reactivatedTitle,
         description: data.message,
         duration: 8000,
       });
@@ -90,8 +93,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile riattivare l\'abbonamento.',
+        title: translation.common.error,
+        description: error.message || billingT.reactivateError,
         duration: 8000,
       });
     },
@@ -114,8 +117,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile aprire il portale pagamenti.',
+        title: translation.common.error,
+        description: error.message || billingT.portalError,
         duration: 8000,
       });
     },
@@ -144,8 +147,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile avviare il checkout.',
+        title: translation.common.error,
+        description: error.message || billingT.startCheckoutError,
         duration: 8000,
       });
     },
@@ -164,8 +167,8 @@ export default function BillingPage() {
     },
     onSuccess: (data) => {
       toast({
-        title: data.isUpgrade ? 'Upgrade completato!' : 'Piano modificato!',
-        description: data.message + ' Ricaricamento pagina...',
+        title: data.isUpgrade ? billingT.completedUpgradeTitle : billingT.changedPlanTitle,
+        description: `${data.message} ${billingT.reloadMessage}`,
         duration: 3000,
       });
       setTimeout(() => {
@@ -175,8 +178,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore Upgrade',
-        description: error.message || 'Impossibile completare l\'upgrade.',
+        title: billingT.upgradeErrorTitle,
+        description: error.message || billingT.upgradeError,
         duration: 8000,
       });
     },
@@ -201,8 +204,8 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile avviare il checkout.',
+        title: translation.common.error,
+        description: error.message || billingT.startCheckoutError,
         duration: 8000,
       });
     },
@@ -218,7 +221,7 @@ export default function BillingPage() {
 
   const getStatusBadge = () => {
     if (subscription?.cancel_at_period_end) {
-      return <Badge variant="destructive" className="text-base px-4 py-1.5" data-testid="badge-status">In scadenza</Badge>;
+      return <Badge variant="destructive" className="text-base px-4 py-1.5" data-testid="badge-status">{billingT.expiring}</Badge>;
     }
     
     switch (currentPlan) {
@@ -229,7 +232,7 @@ export default function BillingPage() {
       case 'agency':
         return <Badge variant="default" className="bg-royal-purple text-white text-base px-4 py-1.5" data-testid="badge-status">👑 Agency</Badge>;
       default:
-        return <Badge variant="secondary" className="text-base px-4 py-1.5" data-testid="badge-status">Gratuito</Badge>;
+        return <Badge variant="secondary" className="text-base px-4 py-1.5" data-testid="badge-status">{billingT.freePlanName}</Badge>;
     }
   };
 
@@ -289,10 +292,10 @@ export default function BillingPage() {
     <div className="container max-w-6xl py-10 space-y-10 md:py-12 md:space-y-12">
       <div className="text-center md:text-left animate-fade-in-up">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4" data-testid="heading-billing">
-          Gestione <span className="gradient-text-purple">Abbonamento</span>
+          {billingT.title} <span className="gradient-text-purple">{billingT.titleAccent}</span>
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground" data-testid="text-description">
-          Visualizza e gestisci il tuo piano di abbonamento
+          {billingT.subtitle}
         </p>
       </div>
 
@@ -307,10 +310,10 @@ export default function BillingPage() {
               </div>
               <div>
                 <h2 className={`text-3xl md:text-4xl font-black ${theme.textGradient} capitalize`} data-testid="text-plan-name">
-                  Piano {planConfig.name}
+                  {billingT.currentPlanPrefix} {planConfig.name}
                 </h2>
                 <p className="text-lg md:text-xl text-muted-foreground font-medium" data-testid="text-plan-price">
-                  {isFreePlan ? 'Nessun abbonamento' : `€${planConfig.price}/mese`}
+                  {isFreePlan ? billingT.noSubscription : formatPlanPrice(planConfig.price)}
                 </p>
               </div>
             </div>
@@ -323,8 +326,8 @@ export default function BillingPage() {
               <div>
                 <p className="font-bold text-lg" data-testid="text-limits">
                   {planConfig.limits.listingsPerMonth === -1
-                    ? 'Annunci illimitati'
-                    : `${planConfig.limits.listingsPerMonth} annunci al mese`}
+                    ? billingT.unlimitedListings
+                    : `${planConfig.limits.listingsPerMonth} ${billingT.listingsPerMonth}`}
                 </p>
               </div>
             </div>
@@ -340,17 +343,16 @@ export default function BillingPage() {
             <div className="pt-6 border-t border-silver-frost/30 space-y-3 mb-8">
               <div className="flex items-center gap-3 text-base">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                <span className="text-muted-foreground font-medium">Prossimo rinnovo:</span>
+                <span className="text-muted-foreground font-medium">{billingT.nextRenewal}</span>
                 <span className="font-bold" data-testid="text-renewal-date">
-                  {format(new Date(subscription.current_period_end), 'dd MMMM yyyy', { locale: it })}
+                  {formatDateForLocale(subscription.current_period_end, locale as Locale)}
                 </span>
               </div>
               {subscription.cancel_at_period_end && (
                 <div className="flex items-start gap-3 text-base text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 p-4 rounded-xl">
                   <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
                   <p className="font-medium" data-testid="text-cancel-warning">
-                    L'abbonamento verrà cancellato alla fine del periodo di fatturazione. 
-                    Tornerai al piano gratuito.
+                    {billingT.cancelWarning}
                   </p>
                 </div>
               )}
@@ -372,7 +374,7 @@ export default function BillingPage() {
                   ) : (
                     <Rocket className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Starter €197
+                  {billingT.switchToStarter} {formatCurrencyForLocale(197, locale as Locale)}
                 </Button>
                 <Button
                   onClick={() => checkoutMutation.mutate('pro')}
@@ -385,7 +387,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Pro €497
+                  {billingT.switchToPro} {formatCurrencyForLocale(497, locale as Locale)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -400,7 +402,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Passa a Agency €897
+                  {billingT.switchToAgency} {formatCurrencyForLocale(897, locale as Locale)}
                 </Button>
               </>
             )}
@@ -418,7 +420,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Pro €497
+                  {billingT.upgradeToPro} {formatCurrencyForLocale(497, locale as Locale)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -433,7 +435,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €897
+                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale)}
                 </Button>
               </>
             )}
@@ -451,7 +453,7 @@ export default function BillingPage() {
                   ) : (
                     <Crown className="h-5 w-5 mr-2" />
                   )}
-                  Upgrade a Agency €897
+                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </>
@@ -471,7 +473,7 @@ export default function BillingPage() {
                     ) : (
                       <Check className="h-5 w-5 mr-2" />
                     )}
-                    Riattiva Abbonamento
+                    {billingT.reactivateSubscription}
                   </Button>
                 ) : (
                   <Button
@@ -486,7 +488,7 @@ export default function BillingPage() {
                     ) : (
                       <AlertCircle className="h-5 w-5 mr-2" />
                     )}
-                    Cancella Abbonamento
+                    {billingT.cancelSubscription}
                   </Button>
                 )}
                 
@@ -502,7 +504,7 @@ export default function BillingPage() {
                   ) : (
                     <ExternalLink className="h-5 w-5 mr-2" />
                   )}
-                  Gestisci Pagamenti
+                  {billingT.managePayments}
                 </Button>
               </>
             )}
@@ -514,7 +516,7 @@ export default function BillingPage() {
         <div>
           <h2 className="text-3xl md:text-4xl font-bold mb-8 flex items-center gap-3 animate-fade-in-up delay-200">
             <TrendingUp className="h-8 w-8 text-royal-purple" />
-            <span>Sblocca Funzionalità Premium</span>
+            <span>{billingT.unlockPremium}</span>
           </h2>
           
           <div className="grid md:grid-cols-3 gap-6">
@@ -528,11 +530,11 @@ export default function BillingPage() {
                   </div>
                   
                   <h3 className="text-2xl font-black text-electric-blue mb-2">Starter</h3>
-                  <p className="text-sm text-muted-foreground font-medium mb-4">Per iniziare</p>
+                  <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.starterForBeginners}</p>
                   
                   <div className="mb-6">
-                    <span className="text-4xl font-black gradient-text-purple">€197</span>
-                    <span className="text-lg text-muted-foreground">/mese</span>
+                    <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(197, locale as Locale)}</span>
+                    <span className="text-lg text-muted-foreground">{billingT.perMonth}</span>
                   </div>
                   
                   <ul className="space-y-3 mb-6">
@@ -556,7 +558,7 @@ export default function BillingPage() {
                     ) : (
                       <Rocket className="h-5 w-5 mr-2" />
                     )}
-                    Scegli Starter
+                    {translation.landing.pricing.cta.chooseStarter}
                   </Button>
                 </div>
               </div>
@@ -567,7 +569,7 @@ export default function BillingPage() {
               
               <div className="absolute top-3 right-3">
                 <span className="premium-badge shadow-glow-gold text-xs">
-                  ⭐ Consigliato
+                  ⭐ {billingT.recommended}
                 </span>
               </div>
               
@@ -577,11 +579,11 @@ export default function BillingPage() {
                 </div>
                 
                 <h3 className="text-2xl font-black gradient-text-gold mb-2">Pro</h3>
-                <p className="text-sm text-muted-foreground font-medium mb-4">Per professionisti</p>
+                <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.proForProfessionals}</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-gold">€497</span>
-                  <span className="text-lg text-muted-foreground">/mese</span>
+                  <span className="text-4xl font-black gradient-text-gold">{formatCurrencyForLocale(497, locale as Locale)}</span>
+                  <span className="text-lg text-muted-foreground">{billingT.perMonth}</span>
                 </div>
                 
                 <ul className="space-y-3 mb-6">
@@ -604,7 +606,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  {currentPlan === 'starter' ? 'Upgrade a Pro' : 'Scegli Pro'}
+                  {currentPlan === 'starter' ? billingT.upgradeToPro : translation.landing.pricing.cta.choosePro}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </div>
@@ -619,11 +621,11 @@ export default function BillingPage() {
                 </div>
                 
                 <h3 className="text-2xl font-black gradient-text-purple mb-2">Agency</h3>
-                <p className="text-sm text-muted-foreground font-medium mb-4">Per team</p>
+                <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.agencyForTeams}</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-purple">€897</span>
-                  <span className="text-lg text-gray-100">/mese</span>
+                  <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(897, locale as Locale)}</span>
+                  <span className="text-lg text-gray-100">{billingT.perMonth}</span>
                 </div>
                 
                 <ul className="space-y-3 mb-6">
@@ -647,7 +649,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  {(currentPlan === 'starter' || currentPlan === 'pro') ? 'Upgrade a Agency' : 'Scegli Agency'}
+                  {(currentPlan === 'starter' || currentPlan === 'pro') ? billingT.upgradeToAgency : translation.landing.pricing.cta.chooseAgency}
                 </Button>
               </div>
             </div>
@@ -659,7 +661,7 @@ export default function BillingPage() {
       <div className="animate-fade-in-up delay-500">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 flex items-center gap-3">
           <Gift className="h-8 w-8 text-sunset-gold" />
-          <span>Pacchetto Speciale</span>
+          <span>{billingT.specialPackage}</span>
         </h2>
         
         <div className="futuristic-card p-8 md:p-10 border-2 border-orange-500/50 shadow-glow-gold hover-lift relative overflow-hidden group" data-testid="card-boost-package">
@@ -683,8 +685,8 @@ export default function BillingPage() {
               </p>
               
               <div className="mb-6">
-                <span className="text-5xl font-black gradient-text-gold">€{STRIPE_ONE_TIME_PACKAGES.boost.price.toLocaleString('it-IT')}</span>
-                <span className="text-lg text-muted-foreground ml-2">una tantum</span>
+                <span className="text-5xl font-black gradient-text-gold">{formatCurrencyForLocale(STRIPE_ONE_TIME_PACKAGES.boost.price, locale as Locale)}</span>
+                <span className="text-lg text-muted-foreground ml-2">{billingT.oneTime}</span>
               </div>
               
               <Button
@@ -698,13 +700,13 @@ export default function BillingPage() {
                 ) : (
                   <Zap className="h-5 w-5 mr-2" />
                 )}
-                Acquista Agency Boost
+                {billingT.buyAgencyBoost}
                 <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
               </Button>
             </div>
             
             <div>
-              <h4 className="text-lg font-bold mb-4 text-muted-foreground">Cosa include:</h4>
+              <h4 className="text-lg font-bold mb-4 text-muted-foreground">{billingT.whatIncludes}</h4>
               <ul className="space-y-3">
                 {STRIPE_ONE_TIME_PACKAGES.boost.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-3">

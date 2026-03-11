@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import { 
   Key, 
   Plus, 
@@ -41,8 +42,96 @@ interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
 }
 
 export default function CRMSettingsPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const t = {
+    pageTitle: "CRM Settings",
+    pageBadge: "🔑 API Keys",
+    pageSubtitle: isItalian
+      ? "Gestisci le API keys per i form di lead capture esterni"
+      : "Manage API keys for external lead capture forms",
+    apiKeysTitle: "API Keys",
+    apiKeysDesc: isItalian
+      ? "Crea chiavi API per integrare form di lead capture nel tuo sito"
+      : "Create API keys to integrate lead capture forms on your website",
+    newApiKey: isItalian ? "Nuova API Key" : "New API Key",
+    dialogCreateTitle: isItalian ? "Crea Nuova API Key" : "Create New API Key",
+    dialogCreateDesc: isItalian
+      ? "Configura una nuova chiave per catturare lead dal tuo sito"
+      : "Configure a new key to capture leads from your website",
+    keyCreatedSuccess: isItalian ? "API Key creata con successo!" : "API Key created successfully!",
+    keyCreatedHint: isItalian
+      ? "Copia questa chiave ora. Non sarà più visibile in seguito."
+      : "Copy this key now. It won't be visible again.",
+    done: isItalian ? "Fatto" : "Done",
+    keyNameLabel: isItalian ? "Nome API Key *" : "API Key Name *",
+    keyNamePlaceholder: isItalian ? "es. Form Sito Web, Landing Page..." : "e.g. Website Form, Landing Page...",
+    defaultMarket: isItalian ? "Mercato Default" : "Default Market",
+    autoLeadScore: isItalian ? "Lead Score Automatico" : "Auto Lead Score",
+    autoLeadScoreDesc: isItalian ? "Analizza automaticamente ogni lead con AI" : "Automatically analyze each lead with AI",
+    autoFollowup: isItalian ? "Follow-up Automatico" : "Auto Follow-up",
+    autoFollowupDesc: isItalian ? "Invia email di follow-up AI automatiche" : "Send automatic AI follow-up emails",
+    cancel: isItalian ? "Annulla" : "Cancel",
+    createApiKey: isItalian ? "Crea API Key" : "Create API Key",
+    noKeys: isItalian ? "Nessuna API key creata" : "No API keys created",
+    noKeysHint: isItalian
+      ? "Crea la tua prima chiave per iniziare a catturare lead"
+      : "Create your first key to start capturing leads",
+    active: isItalian ? "Attiva" : "Active",
+    inactive: isItalian ? "Disattivata" : "Inactive",
+    leadsCaptured: (n: number) => isItalian ? `${n} leads catturati` : `${n} leads captured`,
+    lastUsed: isItalian ? "Ultimo uso:" : "Last used:",
+    deleteConfirm: isItalian
+      ? "Sei sicuro di voler eliminare questa API key?"
+      : "Are you sure you want to delete this API key?",
+    embedCode: isItalian ? "Codice Embed Form" : "Embed Form Code",
+    embedCodeDesc: isItalian
+      ? "Copia questo codice e incollalo nel tuo sito web"
+      : "Copy this code and paste it into your website",
+    copy: isItalian ? "Copia" : "Copy",
+    howToUse: isItalian ? "Come usare:" : "How to use:",
+    howToUseSteps: isItalian
+      ? [
+          "Copia il codice sopra",
+          "Incollalo prima del tag </body> del tuo sito",
+          'Il form apparirà nel div con id "propertypilot-lead-form"',
+          "I lead saranno automaticamente salvati nel tuo CRM",
+        ]
+      : [
+          "Copy the code above",
+          "Paste it before the </body> tag on your website",
+          'The form will appear in the div with id "propertypilot-lead-form"',
+          "Leads will be automatically saved to your CRM",
+        ],
+    securityTitle: isItalian ? "Sicurezza API" : "API Security",
+    securityDesc: isItalian ? "Informazioni importanti sulla sicurezza" : "Important security information",
+    securityItems: isItalian
+      ? [
+          "Le API keys sono visibili solo al momento della creazione",
+          "Rate limit: 30 richieste al minuto per API key",
+          "CORS abilitato per richieste cross-origin",
+        ]
+      : [
+          "API keys are only visible at the moment of creation",
+          "Rate limit: 30 requests per minute per API key",
+          "CORS enabled for cross-origin requests",
+        ],
+    securityWarning: isItalian
+      ? "Non condividere le chiavi API in repository pubblici"
+      : "Do not share API keys in public repositories",
+    // toasts
+    keyCreatedTitle: isItalian ? "API Key creata!" : "API Key created!",
+    keyCreatedDesc: isItalian
+      ? "Copia la chiave ora, non sarà più visibile in seguito."
+      : "Copy the key now, it won't be visible later.",
+    keyUpdated: isItalian ? "API Key aggiornata" : "API Key updated",
+    keyDeleted: isItalian ? "API Key eliminata" : "API Key deleted",
+    copied: isItalian ? "Copiato negli appunti!" : "Copied to clipboard!",
+    keyNameRequired: isItalian ? "Inserisci un nome per la API key" : "Enter a name for the API key",
+  };
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
@@ -77,17 +166,10 @@ export default function CRMSettingsPage() {
       setNewKeyName('');
       setAutoLeadScore(false);
       setAutoFollowup(false);
-      toast({
-        title: 'API Key creata!',
-        description: 'Copia la chiave ora, non sarà più visibile in seguito.',
-      });
+      toast({ title: t.keyCreatedTitle, description: t.keyCreatedDesc });
     },
     onError: (error: Error) => {
-      toast({
-        title: 'Errore',
-        description: error.message,
-        variant: 'destructive'
-      });
+      toast({ title: isItalian ? 'Errore' : 'Error', description: error.message, variant: 'destructive' });
     }
   });
 
@@ -103,19 +185,19 @@ export default function CRMSettingsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
-      toast({ title: 'API Key aggiornata' });
+      toast({ title: t.keyUpdated });
     }
   });
 
   const deleteKeyMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`/api/crm/api-keys?id=${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Errore nell\'eliminazione');
+      if (!res.ok) throw new Error('delete error');
       return res.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
-      toast({ title: 'API Key eliminata' });
+      toast({ title: t.keyDeleted });
     }
   });
 
@@ -125,12 +207,12 @@ export default function CRMSettingsPage() {
       setCopiedKeyId(keyId);
       setTimeout(() => setCopiedKeyId(null), 2000);
     }
-    toast({ title: 'Copiato negli appunti!' });
+    toast({ title: t.copied });
   };
 
   const handleCreateKey = () => {
     if (!newKeyName.trim()) {
-      toast({ title: 'Inserisci un nome per la API key', variant: 'destructive' });
+      toast({ title: t.keyNameRequired, variant: 'destructive' });
       return;
     }
     createKeyMutation.mutate({
@@ -246,14 +328,14 @@ export default function CRMSettingsPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                CRM Settings
+                {t.pageTitle}
               </h1>
               <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0">
-                🔑 API Keys
+                {t.pageBadge}
               </Badge>
             </div>
             <p className="text-slate-400 mt-1">
-              Gestisci le API keys per i form di lead capture esterni
+              {t.pageSubtitle}
             </p>
           </div>
         </div>
@@ -266,9 +348,9 @@ export default function CRMSettingsPage() {
                   <Key className="h-6 w-6 text-violet-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-white">API Keys</CardTitle>
+                  <CardTitle className="text-white">{t.apiKeysTitle}</CardTitle>
                   <CardDescription className="text-slate-400">
-                    Crea chiavi API per integrare form di lead capture nel tuo sito
+                    {t.apiKeysDesc}
                   </CardDescription>
                 </div>
               </div>
@@ -279,14 +361,14 @@ export default function CRMSettingsPage() {
                     data-testid="button-create-api-key"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Nuova API Key
+                    {t.newApiKey}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-slate-900 border-slate-700">
                   <DialogHeader>
-                    <DialogTitle className="text-white">Crea Nuova API Key</DialogTitle>
+                    <DialogTitle className="text-white">{t.dialogCreateTitle}</DialogTitle>
                     <DialogDescription className="text-slate-400">
-                      Configura una nuova chiave per catturare lead dal tuo sito
+                      {t.dialogCreateDesc}
                     </DialogDescription>
                   </DialogHeader>
                   
@@ -295,10 +377,10 @@ export default function CRMSettingsPage() {
                       <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                         <div className="flex items-center gap-2 mb-3">
                           <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                          <span className="font-medium text-emerald-400">API Key creata con successo!</span>
+                          <span className="font-medium text-emerald-400">{t.keyCreatedSuccess}</span>
                         </div>
                         <p className="text-sm text-slate-400 mb-3">
-                          Copia questa chiave ora. Non sarà più visibile in seguito.
+                          {t.keyCreatedHint}
                         </p>
                         <div className="flex items-center gap-2">
                           <Input 
@@ -325,25 +407,25 @@ export default function CRMSettingsPage() {
                           }}
                           className="w-full bg-gradient-to-r from-violet-600 to-purple-600"
                         >
-                          Fatto
+                          {t.done}
                         </Button>
                       </DialogFooter>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-slate-300">Nome API Key *</Label>
+                        <Label className="text-slate-300">{t.keyNameLabel}</Label>
                         <Input 
                           value={newKeyName}
                           onChange={(e) => setNewKeyName(e.target.value)}
-                          placeholder="es. Form Sito Web, Landing Page..."
+                          placeholder={t.keyNamePlaceholder}
                           className="bg-slate-800 border-slate-600 mt-1"
                           data-testid="input-key-name"
                         />
                       </div>
                       
                       <div>
-                        <Label className="text-slate-300">Mercato Default</Label>
+                        <Label className="text-slate-300">{t.defaultMarket}</Label>
                         <Select value={newKeyMarket} onValueChange={(v: LeadMarket) => setNewKeyMarket(v)}>
                           <SelectTrigger className="bg-slate-800 border-slate-600 mt-1" data-testid="select-market">
                             <SelectValue />
@@ -359,7 +441,7 @@ export default function CRMSettingsPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-cyan-400" />
-                            <Label className="text-slate-300">Lead Score Automatico</Label>
+                            <Label className="text-slate-300">{t.autoLeadScore}</Label>
                           </div>
                           <Switch 
                             checked={autoLeadScore} 
@@ -368,13 +450,13 @@ export default function CRMSettingsPage() {
                           />
                         </div>
                         <p className="text-xs text-slate-500 ml-6">
-                          Analizza automaticamente ogni lead con AI
+                          {t.autoLeadScoreDesc}
                         </p>
                         
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Zap className="h-4 w-4 text-amber-400" />
-                            <Label className="text-slate-300">Follow-up Automatico</Label>
+                            <Label className="text-slate-300">{t.autoFollowup}</Label>
                           </div>
                           <Switch 
                             checked={autoFollowup} 
@@ -383,7 +465,7 @@ export default function CRMSettingsPage() {
                           />
                         </div>
                         <p className="text-xs text-slate-500 ml-6">
-                          Invia email di follow-up AI automatiche
+                          {t.autoFollowupDesc}
                         </p>
                       </div>
                       
@@ -393,7 +475,7 @@ export default function CRMSettingsPage() {
                           onClick={() => setIsCreateDialogOpen(false)}
                           className="border-slate-600"
                         >
-                          Annulla
+                          {t.cancel}
                         </Button>
                         <Button 
                           onClick={handleCreateKey}
@@ -406,7 +488,7 @@ export default function CRMSettingsPage() {
                           ) : (
                             <Key className="h-4 w-4 mr-2" />
                           )}
-                          Crea API Key
+                          {t.createApiKey}
                         </Button>
                       </DialogFooter>
                     </div>
@@ -424,9 +506,9 @@ export default function CRMSettingsPage() {
             ) : apiKeys.length === 0 ? (
               <div className="text-center py-12">
                 <Key className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-                <p className="text-slate-400 mb-2">Nessuna API key creata</p>
+                <p className="text-slate-400 mb-2">{t.noKeys}</p>
                 <p className="text-sm text-slate-500">
-                  Crea la tua prima chiave per iniziare a catturare lead
+                  {t.noKeysHint}
                 </p>
               </div>
             ) : (
@@ -448,7 +530,7 @@ export default function CRMSettingsPage() {
                               : 'bg-slate-700 text-slate-400'
                             }
                           >
-                            {key.is_active ? 'Attiva' : 'Disattivata'}
+                            {key.is_active ? t.active : t.inactive}
                           </Badge>
                           <Badge variant="outline" className="border-slate-600 text-slate-400">
                             {key.default_market === 'italy' ? '🇮🇹' : '🇺🇸'} {key.default_market}
@@ -464,7 +546,7 @@ export default function CRMSettingsPage() {
                         <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
                           <span className="flex items-center gap-1">
                             <Globe className="h-3.5 w-3.5" />
-                            {key.leads_captured} leads catturati
+                            {t.leadsCaptured(key.leads_captured)}
                           </span>
                           {key.auto_lead_score && (
                             <span className="flex items-center gap-1 text-cyan-400">
@@ -480,7 +562,7 @@ export default function CRMSettingsPage() {
                           )}
                           {key.last_used_at && (
                             <span>
-                              Ultimo uso: {new Date(key.last_used_at).toLocaleDateString('it-IT')}
+                              {t.lastUsed} {new Date(key.last_used_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}
                             </span>
                           )}
                         </div>
@@ -513,7 +595,7 @@ export default function CRMSettingsPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            if (confirm('Sei sicuro di voler eliminare questa API key?')) {
+                            if (confirm(t.deleteConfirm)) {
                               deleteKeyMutation.mutate(key.id);
                             }
                           }}
@@ -536,29 +618,23 @@ export default function CRMSettingsPage() {
             <div className="flex items-center gap-3">
               <Shield className="h-5 w-5 text-slate-400" />
               <div>
-                <CardTitle className="text-white text-lg">Sicurezza API</CardTitle>
+                <CardTitle className="text-white text-lg">{t.securityTitle}</CardTitle>
                 <CardDescription className="text-slate-400">
-                  Informazioni importanti sulla sicurezza
+                  {t.securityDesc}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-slate-400">
-            <p className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-              Le API keys sono visibili solo al momento della creazione
-            </p>
-            <p className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-              Rate limit: 30 richieste al minuto per API key
-            </p>
-            <p className="flex items-start gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-              CORS abilitato per richieste cross-origin
-            </p>
+            {t.securityItems.map((item, i) => (
+              <p key={i} className="flex items-start gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                {item}
+              </p>
+            ))}
             <p className="flex items-start gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
-              Non condividere le chiavi API in repository pubblici
+              {t.securityWarning}
             </p>
           </CardContent>
         </Card>
@@ -568,10 +644,10 @@ export default function CRMSettingsPage() {
             <DialogHeader>
               <DialogTitle className="text-white flex items-center gap-2">
                 <Code className="h-5 w-5 text-violet-400" />
-                Codice Embed Form
+                {t.embedCode}
               </DialogTitle>
               <DialogDescription className="text-slate-400">
-                Copia questo codice e incollalo nel tuo sito web
+                {t.embedCodeDesc}
               </DialogDescription>
             </DialogHeader>
             
@@ -587,17 +663,14 @@ export default function CRMSettingsPage() {
                 data-testid="button-copy-embed"
               >
                 <Copy className="h-4 w-4 mr-1" />
-                Copia
+                {t.copy}
               </Button>
             </div>
             
             <div className="p-4 rounded-lg bg-violet-500/10 border border-violet-500/30">
-              <h4 className="font-medium text-violet-300 mb-2">Come usare:</h4>
+              <h4 className="font-medium text-violet-300 mb-2">{t.howToUse}</h4>
               <ol className="list-decimal list-inside text-sm text-slate-400 space-y-1">
-                <li>Copia il codice sopra</li>
-                <li>Incollalo prima del tag <code className="bg-slate-800 px-1 rounded">&lt;/body&gt;</code> del tuo sito</li>
-                <li>Il form apparirà nel div con id "propertypilot-lead-form"</li>
-                <li>I lead saranno automaticamente salvati nel tuo CRM</li>
+                {t.howToUseSteps.map((step, i) => <li key={i}>{step}</li>)}
               </ol>
             </div>
           </DialogContent>

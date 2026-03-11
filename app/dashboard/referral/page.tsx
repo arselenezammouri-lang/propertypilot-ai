@@ -8,8 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Gift, Share2, Users, Percent, TrendingUp, Copy, Check, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 export default function ReferralPage() {
+  const { locale } = useLocaleContext();
   const { toast } = useToast();
   const [referralCode, setReferralCode] = useState<string>("");
   const [copied, setCopied] = useState(false);
@@ -18,6 +22,40 @@ export default function ReferralPage() {
     discountsEarned: 0,
     potentialEarnings: 0,
   });
+  const isItalian = locale === "it";
+  const t = {
+    copied: isItalian ? "Link copiato!" : "Link copied!",
+    copiedDesc: isItalian ? "Il link di referral e stato copiato negli appunti." : "The referral link has been copied to your clipboard.",
+    programTitle: isItalian ? "Referral Program" : "Referral Program",
+    programSubtitle: isItalian
+      ? "Invita un'altra agenzia e ricevi uno sconto del 20% sul tuo prossimo rinnovo"
+      : "Invite another agency and receive a 20% discount on your next renewal",
+    uniqueLink: isItalian ? "Il tuo Link Unico" : "Your Unique Link",
+    uniqueLinkDesc: isItalian
+      ? "Condividi questo link con altre agenzie. Quando si iscrivono al piano PRO o AGENCY, ricevi il 20% di sconto sul tuo prossimo rinnovo."
+      : "Share this link with other agencies. When they subscribe to the PRO or AGENCY plan, you receive a 20% discount on your next renewal.",
+    shareWhatsapp: isItalian ? "Condividi su WhatsApp" : "Share on WhatsApp",
+    invitedFriends: isItalian ? "Amici Invitati" : "Friends Invited",
+    registeredAgencies: isItalian ? "Agenzie registrate" : "Registered agencies",
+    discountsEarned: isItalian ? "Sconti Maturati" : "Discounts Earned",
+    totalDiscount: isItalian ? "Sconto totale accumulato" : "Total discount accumulated",
+    potentialEarnings: isItalian ? "Guadagno Potenziale" : "Potential Earnings",
+    futureValue: isItalian ? "Valore sconti futuri" : "Future discount value",
+    howItWorks: isItalian ? "Come Funziona" : "How It Works",
+    step1Title: isItalian ? "Condividi il tuo link" : "Share your link",
+    step1Desc: isItalian ? "Invita altre agenzie usando il link unico o WhatsApp." : "Invite other agencies using your unique link or WhatsApp.",
+    step2Title: isItalian ? "Si iscrivono al piano PRO o AGENCY" : "They subscribe to the PRO or AGENCY plan",
+    step2Desc: isItalian
+      ? "Quando un'amica si iscrive a un piano a pagamento, il sistema la registra automaticamente."
+      : "When a referred agency subscribes to a paid plan, the system records it automatically.",
+    step3Title: isItalian ? "Ricevi il 20% di sconto" : "Receive a 20% discount",
+    step3Desc: isItalian
+      ? "Lo sconto viene applicato automaticamente al tuo prossimo rinnovo. Puoi accumulare piu sconti!"
+      : "The discount is automatically applied to your next renewal. You can accumulate multiple discounts!",
+    whatsappMessage: isItalian
+      ? "Ciao! Ho trovato PropertyPilot AI, la piattaforma che sta rivoluzionando il settore immobiliare. Con l'IA puoi generare annunci, trovare deal e ottenere mandati 24/7. Provala anche tu usando il mio link:"
+      : "Hi! I found PropertyPilot AI, the platform helping real estate agencies generate listings, find deals, and win mandates 24/7. Try it using my link:",
+  };
 
   useEffect(() => {
     loadReferralData();
@@ -58,14 +96,14 @@ export default function ReferralPage() {
     navigator.clipboard.writeText(referralLink);
     setCopied(true);
     toast({
-      title: "Link copiato!",
-      description: "Il link di referral è stato copiato negli appunti.",
+      title: t.copied,
+      description: t.copiedDesc,
     });
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleWhatsAppShare = () => {
-    const message = `Ciao! Ho trovato PropertyPilot AI, la piattaforma che sta rivoluzionando il settore immobiliare. Con l'IA puoi generare annunci, trovare deal e ottenere mandati 24/7. Provala anche tu usando il mio link: ${window.location.origin}/auth/signup?ref=${referralCode}`;
+    const message = `${t.whatsappMessage} ${window.location.origin}/auth/signup?ref=${referralCode}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -82,9 +120,9 @@ export default function ReferralPage() {
               <Gift className="h-6 w-6 text-amber-400" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white">Referral Program</h1>
+              <h1 className="text-4xl font-bold text-white">{t.programTitle}</h1>
               <p className="text-muted-foreground mt-1">
-                Invita un'altra agenzia e ricevi uno sconto del 20% sul tuo prossimo rinnovo
+                {t.programSubtitle}
               </p>
             </div>
           </div>
@@ -95,10 +133,10 @@ export default function ReferralPage() {
           <CardHeader>
             <CardTitle className="text-2xl text-white flex items-center gap-2">
               <Gift className="h-6 w-6 text-amber-400" />
-              Il tuo Link Unico
+              {t.uniqueLink}
             </CardTitle>
             <CardDescription className="text-gray-400">
-              Condividi questo link con altre agenzie. Quando si iscrivono al piano PRO o AGENCY, ricevi il 20% di sconto sul tuo prossimo rinnovo.
+              {t.uniqueLinkDesc}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -127,7 +165,7 @@ export default function ReferralPage() {
               className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
-              Condividi su WhatsApp
+              {t.shareWhatsapp}
             </Button>
           </CardContent>
         </Card>
@@ -138,12 +176,12 @@ export default function ReferralPage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Users className="h-5 w-5 text-purple-400" />
-                <CardTitle className="text-lg text-white">Amici Invitati</CardTitle>
+                <CardTitle className="text-lg text-white">{t.invitedFriends}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-purple-400">{stats.friendsInvited}</p>
-              <p className="text-sm text-gray-400 mt-1">Agenzie registrate</p>
+              <p className="text-sm text-gray-400 mt-1">{t.registeredAgencies}</p>
             </CardContent>
           </Card>
 
@@ -151,12 +189,12 @@ export default function ReferralPage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <Percent className="h-5 w-5 text-cyan-400" />
-                <CardTitle className="text-lg text-white">Sconti Maturati</CardTitle>
+                <CardTitle className="text-lg text-white">{t.discountsEarned}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-cyan-400">{stats.discountsEarned}%</p>
-              <p className="text-sm text-gray-400 mt-1">Sconto totale accumulato</p>
+              <p className="text-sm text-gray-400 mt-1">{t.totalDiscount}</p>
             </CardContent>
           </Card>
 
@@ -164,12 +202,12 @@ export default function ReferralPage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <TrendingUp className="h-5 w-5 text-green-400" />
-                <CardTitle className="text-lg text-white">Guadagno Potenziale</CardTitle>
+                <CardTitle className="text-lg text-white">{t.potentialEarnings}</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-green-400">€{stats.potentialEarnings}</p>
-              <p className="text-sm text-gray-400 mt-1">Valore sconti futuri</p>
+              <p className="text-3xl font-bold text-green-400">{formatCurrencyForLocale(stats.potentialEarnings, locale as Locale)}</p>
+              <p className="text-sm text-gray-400 mt-1">{t.futureValue}</p>
             </CardContent>
           </Card>
         </div>
@@ -177,29 +215,29 @@ export default function ReferralPage() {
         {/* How It Works */}
         <Card className="border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10">
           <CardHeader>
-            <CardTitle className="text-xl text-white">Come Funziona</CardTitle>
+            <CardTitle className="text-xl text-white">{t.howItWorks}</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-4 text-gray-300">
               <li className="flex items-start gap-3">
                 <Badge className="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">1</Badge>
                 <div>
-                  <p className="font-semibold text-white mb-1">Condividi il tuo link</p>
-                  <p className="text-sm text-gray-400">Invita altre agenzie usando il link unico o WhatsApp.</p>
+                  <p className="font-semibold text-white mb-1">{t.step1Title}</p>
+                  <p className="text-sm text-gray-400">{t.step1Desc}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Badge className="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">2</Badge>
                 <div>
-                  <p className="font-semibold text-white mb-1">Si iscrivono al piano PRO o AGENCY</p>
-                  <p className="text-sm text-gray-400">Quando un'amica si iscrive a un piano a pagamento, il sistema la registra automaticamente.</p>
+                  <p className="font-semibold text-white mb-1">{t.step2Title}</p>
+                  <p className="text-sm text-gray-400">{t.step2Desc}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <Badge className="bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">3</Badge>
                 <div>
-                  <p className="font-semibold text-white mb-1">Ricevi il 20% di sconto</p>
-                  <p className="text-sm text-gray-400">Lo sconto viene applicato automaticamente al tuo prossimo rinnovo. Puoi accumulare più sconti!</p>
+                  <p className="font-semibold text-white mb-1">{t.step3Title}</p>
+                  <p className="text-sm text-gray-400">{t.step3Desc}</p>
                 </div>
               </li>
             </ol>

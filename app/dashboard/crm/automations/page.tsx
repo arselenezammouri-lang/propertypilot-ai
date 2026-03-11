@@ -38,6 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import type { 
   AutomationRule, 
   AutomationTriggerType, 
@@ -46,48 +47,7 @@ import type {
   AutomationLog
 } from '@/lib/types/database.types';
 
-const TRIGGER_LABELS: Record<AutomationTriggerType, { label: string; description: string; icon: string }> = {
-  new_lead: { label: 'Nuovo Lead', description: 'Quando arriva un nuovo lead', icon: '🆕' },
-  score_updated: { label: 'Score Aggiornato', description: 'Quando il lead score cambia', icon: '📊' },
-  status_changed: { label: 'Status Cambiato', description: 'Quando lo status del lead cambia', icon: '🔄' },
-  priority_changed: { label: 'Priorità Cambiata', description: 'Quando la priorità cambia', icon: '⚡' },
-  market_changed: { label: 'Mercato Cambiato', description: 'Quando il mercato di riferimento cambia', icon: '🌍' },
-  email_sent: { label: 'Email Inviata', description: 'Quando viene inviata un\'email al lead', icon: '📧' },
-  whatsapp_sent: { label: 'WhatsApp Inviato', description: 'Quando viene inviato un messaggio WhatsApp', icon: '💬' },
-  sms_sent: { label: 'SMS Inviato', description: 'Quando viene inviato un SMS al lead', icon: '📱' }
-};
-
-const OPERATOR_LABELS: Record<AutomationConditionOperator, string> = {
-  eq: 'è uguale a',
-  neq: 'è diverso da',
-  gt: 'è maggiore di',
-  gte: 'è maggiore o uguale a',
-  lt: 'è minore di',
-  lte: 'è minore o uguale a',
-  contains: 'contiene',
-  not_contains: 'non contiene'
-};
-
-const FIELD_OPTIONS = [
-  { value: 'lead_score', label: 'Lead Score', type: 'number' },
-  { value: 'status', label: 'Status', type: 'select', options: ['new', 'contacted', 'followup', 'closed', 'lost'] },
-  { value: 'priorita', label: 'Priorità', type: 'select', options: ['low', 'medium', 'high'] },
-  { value: 'market', label: 'Mercato', type: 'select', options: ['italy', 'usa'] },
-  { value: 'source', label: 'Fonte', type: 'text' },
-  { value: 'messaggio', label: 'Messaggio', type: 'text' }
-];
-
-const ACTION_LABELS: Record<AutomationActionType, { label: string; description: string; needsValue: boolean }> = {
-  update_status: { label: 'Aggiorna Status', description: 'Cambia lo status del lead', needsValue: true },
-  update_priority: { label: 'Aggiorna Priorità', description: 'Cambia la priorità del lead', needsValue: true },
-  assign_to: { label: 'Assegna a', description: 'Assegna il lead a un agente', needsValue: true },
-  add_note: { label: 'Aggiungi Nota', description: 'Aggiunge una nota automatica', needsValue: true },
-  send_email: { label: 'Invia Email', description: 'Invia un\'email template', needsValue: true },
-  send_whatsapp: { label: 'Invia WhatsApp', description: 'Invia un messaggio WhatsApp template', needsValue: true },
-  send_sms: { label: 'Invia SMS', description: 'Invia un SMS template', needsValue: true },
-  trigger_lead_score: { label: 'Calcola Lead Score', description: 'Attiva il calcolo AI del lead score', needsValue: false },
-  trigger_enrichment: { label: 'Arricchisci Lead', description: 'Attiva l\'arricchimento AI del lead', needsValue: false }
-};
+// Locale-aware label dicts are built inside the component
 
 interface RuleFormData {
   name: string;
@@ -113,7 +73,126 @@ const initialFormData: RuleFormData = {
 
 export default function AutomationCenterPage() {
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const TRIGGER_LABELS: Record<AutomationTriggerType, { label: string; description: string; icon: string }> = {
+    new_lead: { label: isItalian ? 'Nuovo Lead' : 'New Lead', description: isItalian ? 'Quando arriva un nuovo lead' : 'When a new lead arrives', icon: '🆕' },
+    score_updated: { label: isItalian ? 'Score Aggiornato' : 'Score Updated', description: isItalian ? 'Quando il lead score cambia' : 'When the lead score changes', icon: '📊' },
+    status_changed: { label: isItalian ? 'Status Cambiato' : 'Status Changed', description: isItalian ? 'Quando lo status del lead cambia' : 'When the lead status changes', icon: '🔄' },
+    priority_changed: { label: isItalian ? 'Priorità Cambiata' : 'Priority Changed', description: isItalian ? 'Quando la priorità cambia' : 'When the priority changes', icon: '⚡' },
+    market_changed: { label: isItalian ? 'Mercato Cambiato' : 'Market Changed', description: isItalian ? 'Quando il mercato di riferimento cambia' : 'When the reference market changes', icon: '🌍' },
+    email_sent: { label: isItalian ? 'Email Inviata' : 'Email Sent', description: isItalian ? "Quando viene inviata un'email al lead" : 'When an email is sent to the lead', icon: '📧' },
+    whatsapp_sent: { label: isItalian ? 'WhatsApp Inviato' : 'WhatsApp Sent', description: isItalian ? 'Quando viene inviato un messaggio WhatsApp' : 'When a WhatsApp message is sent', icon: '💬' },
+    sms_sent: { label: isItalian ? 'SMS Inviato' : 'SMS Sent', description: isItalian ? 'Quando viene inviato un SMS al lead' : 'When an SMS is sent to the lead', icon: '📱' },
+  };
+
+  const OPERATOR_LABELS: Record<AutomationConditionOperator, string> = {
+    eq: isItalian ? 'è uguale a' : 'equals',
+    neq: isItalian ? 'è diverso da' : 'not equals',
+    gt: isItalian ? 'è maggiore di' : 'is greater than',
+    gte: isItalian ? 'è maggiore o uguale a' : 'is greater than or equal to',
+    lt: isItalian ? 'è minore di' : 'is less than',
+    lte: isItalian ? 'è minore o uguale a' : 'is less than or equal to',
+    contains: isItalian ? 'contiene' : 'contains',
+    not_contains: isItalian ? 'non contiene' : 'does not contain',
+  };
+
+  const FIELD_OPTIONS = [
+    { value: 'lead_score', label: 'Lead Score', type: 'number' },
+    { value: 'status', label: 'Status', type: 'select', options: ['new', 'contacted', 'followup', 'closed', 'lost'] },
+    { value: 'priorita', label: isItalian ? 'Priorità' : 'Priority', type: 'select', options: ['low', 'medium', 'high'] },
+    { value: 'market', label: isItalian ? 'Mercato' : 'Market', type: 'select', options: ['italy', 'usa'] },
+    { value: 'source', label: isItalian ? 'Fonte' : 'Source', type: 'text' },
+    { value: 'messaggio', label: isItalian ? 'Messaggio' : 'Message', type: 'text' },
+  ];
+
+  const ACTION_LABELS: Record<AutomationActionType, { label: string; description: string; needsValue: boolean }> = {
+    update_status: { label: isItalian ? 'Aggiorna Status' : 'Update Status', description: isItalian ? 'Cambia lo status del lead' : 'Change the lead status', needsValue: true },
+    update_priority: { label: isItalian ? 'Aggiorna Priorità' : 'Update Priority', description: isItalian ? 'Cambia la priorità del lead' : 'Change the lead priority', needsValue: true },
+    assign_to: { label: isItalian ? 'Assegna a' : 'Assign to', description: isItalian ? 'Assegna il lead a un agente' : 'Assign the lead to an agent', needsValue: true },
+    add_note: { label: isItalian ? 'Aggiungi Nota' : 'Add Note', description: isItalian ? 'Aggiunge una nota automatica' : 'Adds an automatic note', needsValue: true },
+    send_email: { label: isItalian ? 'Invia Email' : 'Send Email', description: isItalian ? "Invia un'email template" : 'Send a template email', needsValue: true },
+    send_whatsapp: { label: isItalian ? 'Invia WhatsApp' : 'Send WhatsApp', description: isItalian ? 'Invia un messaggio WhatsApp template' : 'Send a WhatsApp template message', needsValue: true },
+    send_sms: { label: isItalian ? 'Invia SMS' : 'Send SMS', description: isItalian ? 'Invia un SMS template' : 'Send a template SMS', needsValue: true },
+    trigger_lead_score: { label: isItalian ? 'Calcola Lead Score' : 'Calculate Lead Score', description: isItalian ? 'Attiva il calcolo AI del lead score' : 'Trigger the AI lead score calculation', needsValue: false },
+    trigger_enrichment: { label: isItalian ? 'Arricchisci Lead' : 'Enrich Lead', description: isItalian ? "Attiva l'arricchimento AI del lead" : 'Trigger AI lead enrichment', needsValue: false },
+  };
+
+  const t = {
+    pageTitle: "Automation Center",
+    pageBadge: "CRM 3.0",
+    pageSubtitle: isItalian ? "Crea regole automatiche per gestire i tuoi lead" : "Create automatic rules to manage your leads",
+    newRule: isItalian ? "Nuova Regola" : "New Rule",
+    createRuleTitle: isItalian ? "Crea Nuova Regola" : "Create New Rule",
+    createRuleDesc: isItalian
+      ? "Definisci trigger, condizione e azione per la tua automazione"
+      : "Define trigger, condition and action for your automation",
+    ruleNameLabel: isItalian ? "Nome Regola *" : "Rule Name *",
+    ruleNamePlaceholder: isItalian ? "Es: Lead Hot → Follow-up" : "e.g. Hot Lead → Follow-up",
+    descLabel: isItalian ? "Descrizione (opzionale)" : "Description (optional)",
+    descPlaceholder: isItalian ? "Descrivi cosa fa questa regola..." : "Describe what this rule does...",
+    triggerSection: "TRIGGER",
+    conditionSection: isItalian ? "CONDIZIONE" : "CONDITION",
+    actionSection: isItalian ? "AZIONE" : "ACTION",
+    selectStatus: isItalian ? "Seleziona status..." : "Select status...",
+    selectPriority: isItalian ? "Seleziona priorità..." : "Select priority...",
+    selectValue: isItalian ? "Seleziona..." : "Select...",
+    valueLabel: isItalian ? "Valore..." : "Value...",
+    cancel: isItalian ? "Annulla" : "Cancel",
+    creatingRule: isItalian ? "Creazione..." : "Creating...",
+    createRule: isItalian ? "Crea Regola" : "Create Rule",
+    statsTotalRules: isItalian ? "Regole Totali" : "Total Rules",
+    statsActiveRules: isItalian ? "Regole Attive" : "Active Rules",
+    statsTotalExec: isItalian ? "Esecuzioni Totali" : "Total Executions",
+    statsRecentLogs: isItalian ? "Log Recenti" : "Recent Logs",
+    tabRules: (n: number) => isItalian ? `Regole (${n})` : `Rules (${n})`,
+    tabLogs: (n: number) => isItalian ? `Log Esecuzioni (${n})` : `Execution Logs (${n})`,
+    noRules: isItalian ? "Nessuna regola creata" : "No rules created",
+    noRulesDesc: isItalian
+      ? "Crea la tua prima automazione per gestire i lead automaticamente"
+      : "Create your first automation to manage leads automatically",
+    createFirstRule: isItalian ? "Crea Prima Regola" : "Create First Rule",
+    active: isItalian ? "Attiva" : "Active",
+    inactive: isItalian ? "Disattivata" : "Inactive",
+    executions: (n: number) => isItalian ? `${n} esecuzioni` : `${n} executions`,
+    lastExec: isItalian ? "Ultima:" : "Last:",
+    conditionLabel: isItalian ? "Condizione:" : "Condition:",
+    actionLabel: isItalian ? "Azione:" : "Action:",
+    noCondition: isItalian ? "Nessuna condizione" : "No condition",
+    noAction: isItalian ? "Nessuna azione" : "No action",
+    noLogs: isItalian ? "Nessun log disponibile" : "No logs available",
+    noLogsDesc: isItalian ? "I log delle esecuzioni appariranno qui" : "Execution logs will appear here",
+    success: isItalian ? "Successo" : "Success",
+    error: isItalian ? "Errore" : "Error",
+    triggerLabel: isItalian ? "Trigger:" : "Trigger:",
+    howItWorksTitle: isItalian ? "Come funzionano le automazioni" : "How automations work",
+    howItWorksList: isItalian
+      ? [
+          "Le regole vengono eseguite automaticamente quando un lead soddisfa le condizioni",
+          "Puoi creare fino a 20 regole per account",
+          "Ogni regola può avere un trigger, una condizione e un'azione",
+          "I log mostrano tutte le esecuzioni delle regole",
+        ]
+      : [
+          "Rules are automatically executed when a lead meets the conditions",
+          "You can create up to 20 rules per account",
+          "Each rule can have a trigger, a condition and an action",
+          "Logs show all rule executions",
+        ],
+    // toasts
+    ruleNameRequired: isItalian ? "Inserisci un nome per la regola" : "Enter a name for the rule",
+    deleteConfirm: isItalian
+      ? "Sei sicuro di voler eliminare questa regola?"
+      : "Are you sure you want to delete this rule?",
+    successTitle: isItalian ? "Successo!" : "Success!",
+    errorTitle: isItalian ? "Errore" : "Error",
+    createError: isItalian ? "Errore nella creazione della regola" : "Error creating the rule",
+    updateError: isItalian ? "Errore nell'aggiornamento" : "Update error",
+    deleteError: isItalian ? "Errore nell'eliminazione" : "Deletion error",
+    ruleDefault: isItalian ? "Regola" : "Rule",
+  };
   
   const [rules, setRules] = useState<AutomationRule[]>([]);
   const [logs, setLogs] = useState<AutomationLog[]>([]);
@@ -158,7 +237,7 @@ export default function AutomationCenterPage() {
 
   const handleCreateRule = async () => {
     if (!formData.name.trim()) {
-      toast({ title: 'Errore', description: 'Inserisci un nome per la regola', variant: 'destructive' });
+      toast({ title: t.errorTitle, description: t.ruleNameRequired, variant: 'destructive' });
       return;
     }
 
@@ -189,15 +268,15 @@ export default function AutomationCenterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast({ title: 'Successo!', description: data.message });
+        toast({ title: t.successTitle, description: data.message });
         setShowCreateDialog(false);
         setFormData(initialFormData);
         fetchRules();
       } else {
-        toast({ title: 'Errore', description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: 'Errore', description: 'Errore nella creazione della regola', variant: 'destructive' });
+      toast({ title: t.errorTitle, description: t.createError, variant: 'destructive' });
     } finally {
       setSaving(false);
     }
@@ -214,18 +293,18 @@ export default function AutomationCenterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast({ title: 'Successo!', description: data.message });
+        toast({ title: t.successTitle, description: data.message });
         fetchRules();
       } else {
-        toast({ title: 'Errore', description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: 'Errore', description: 'Errore nell\'aggiornamento', variant: 'destructive' });
+      toast({ title: t.errorTitle, description: t.updateError, variant: 'destructive' });
     }
   };
 
   const handleDeleteRule = async (ruleId: string) => {
-    if (!confirm('Sei sicuro di voler eliminare questa regola?')) return;
+    if (!confirm(t.deleteConfirm)) return;
 
     try {
       const res = await fetch(`/api/automations/rules?id=${ruleId}`, {
@@ -235,13 +314,13 @@ export default function AutomationCenterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        toast({ title: 'Successo!', description: data.message });
+        toast({ title: t.successTitle, description: data.message });
         fetchRules();
       } else {
-        toast({ title: 'Errore', description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: 'Errore', description: 'Errore nell\'eliminazione', variant: 'destructive' });
+      toast({ title: t.errorTitle, description: t.deleteError, variant: 'destructive' });
     }
   };
 
@@ -256,21 +335,16 @@ export default function AutomationCenterPage() {
   };
 
   const formatCondition = (condition: any) => {
-    if (!condition) return 'Nessuna condizione';
-    
+    if (!condition) return t.noCondition;
     const field = FIELD_OPTIONS.find(f => f.value === condition.field)?.label || condition.field;
     const operator = OPERATOR_LABELS[condition.operator as AutomationConditionOperator] || condition.operator;
-    const value = condition.value;
-    
-    return `${field} ${operator} "${value}"`;
+    return `${field} ${operator} "${condition.value}"`;
   };
 
   const formatAction = (action: any) => {
-    if (!action) return 'Nessuna azione';
-    
+    if (!action) return t.noAction;
     const actionInfo = ACTION_LABELS[action.type as AutomationActionType];
     if (!actionInfo) return action.type;
-    
     return action.value ? `${actionInfo.label}: "${action.value}"` : actionInfo.label;
   };
 
@@ -323,12 +397,12 @@ export default function AutomationCenterPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                    Automation Center
+                    {t.pageTitle}
                     <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs">
-                      CRM 3.0
+                      {t.pageBadge}
                     </Badge>
                   </h1>
-                  <p className="text-white/60 text-sm">Crea regole automatiche per gestire i tuoi lead</p>
+                  <p className="text-white/60 text-sm">{t.pageSubtitle}</p>
                 </div>
               </div>
             </div>
@@ -341,38 +415,38 @@ export default function AutomationCenterPage() {
                 data-testid="button-create-rule"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Nuova Regola
+                {t.newRule}
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-violet-400" />
-                  Crea Nuova Regola
+                  {t.createRuleTitle}
                 </DialogTitle>
                 <DialogDescription className="text-white/60">
-                  Definisci trigger, condizione e azione per la tua automazione
+                  {t.createRuleDesc}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-6 py-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <Label className="text-white/80">Nome Regola *</Label>
+                    <Label className="text-white/80">{t.ruleNameLabel}</Label>
                     <Input
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Es: Lead Hot → Follow-up"
+                      placeholder={t.ruleNamePlaceholder}
                       className="bg-white/5 border-white/10 text-white mt-1"
                       data-testid="input-rule-name"
                     />
                   </div>
                   <div className="col-span-2">
-                    <Label className="text-white/80">Descrizione (opzionale)</Label>
+                    <Label className="text-white/80">{t.descLabel}</Label>
                     <Textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Descrivi cosa fa questa regola..."
+                      placeholder={t.descPlaceholder}
                       className="bg-white/5 border-white/10 text-white mt-1 resize-none"
                       rows={2}
                       data-testid="input-rule-description"
@@ -385,7 +459,7 @@ export default function AutomationCenterPage() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-violet-400">
                     <Target className="h-4 w-4" />
-                    <span className="font-medium">TRIGGER</span>
+                    <span className="font-medium">{t.triggerSection}</span>
                   </div>
                   <Select
                     value={formData.trigger_type}
@@ -413,7 +487,7 @@ export default function AutomationCenterPage() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-cyan-400">
                     <GitBranch className="h-4 w-4" />
-                    <span className="font-medium">CONDIZIONE</span>
+                    <span className="font-medium">{t.conditionSection}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-3">
                     <Select
@@ -454,7 +528,7 @@ export default function AutomationCenterPage() {
                         onValueChange={(value) => setFormData({ ...formData, condition_value: value })}
                       >
                         <SelectTrigger className="bg-white/5 border-white/10 text-white" data-testid="select-condition-value">
-                          <SelectValue placeholder="Seleziona..." />
+                          <SelectValue placeholder={t.selectValue} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-white/10">
                           {FIELD_OPTIONS.find(f => f.value === formData.condition_field)?.options?.map((opt) => (
@@ -482,7 +556,7 @@ export default function AutomationCenterPage() {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-emerald-400">
                     <Activity className="h-4 w-4" />
-                    <span className="font-medium">AZIONE</span>
+                    <span className="font-medium">{t.actionSection}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Select
@@ -511,7 +585,7 @@ export default function AutomationCenterPage() {
                           onValueChange={(value) => setFormData({ ...formData, action_value: value })}
                         >
                           <SelectTrigger className="bg-white/5 border-white/10 text-white" data-testid="select-action-value-status">
-                            <SelectValue placeholder="Seleziona status..." />
+                            <SelectValue placeholder={t.selectStatus} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-white/10">
                             {['new', 'contacted', 'followup', 'closed', 'lost'].map((opt) => (
@@ -527,7 +601,7 @@ export default function AutomationCenterPage() {
                           onValueChange={(value) => setFormData({ ...formData, action_value: value })}
                         >
                           <SelectTrigger className="bg-white/5 border-white/10 text-white" data-testid="select-action-value-priority">
-                            <SelectValue placeholder="Seleziona priorità..." />
+                            <SelectValue placeholder={t.selectPriority} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-white/10">
                             {['low', 'medium', 'high'].map((opt) => (
@@ -541,11 +615,7 @@ export default function AutomationCenterPage() {
                         <Input
                           value={formData.action_value}
                           onChange={(e) => setFormData({ ...formData, action_value: e.target.value })}
-                          placeholder={
-                            formData.action_type === 'assign_to' ? 'Email agente...' :
-                            formData.action_type === 'add_note' ? 'Testo nota...' :
-                            formData.action_type === 'send_email' ? 'Template email...' : 'Valore...'
-                          }
+                          placeholder={t.valueLabel}
                           className="bg-white/5 border-white/10 text-white"
                           data-testid="input-action-value"
                         />
@@ -562,7 +632,7 @@ export default function AutomationCenterPage() {
                   className="text-white/70 hover:text-white"
                   data-testid="button-cancel-rule"
                 >
-                  Annulla
+                  {t.cancel}
                 </Button>
                 <Button
                   onClick={handleCreateRule}
@@ -573,12 +643,12 @@ export default function AutomationCenterPage() {
                   {saving ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Creazione...
+                      {t.creatingRule}
                     </>
                   ) : (
                     <>
                       <Zap className="h-4 w-4 mr-2" />
-                      Crea Regola
+                      {t.createRule}
                     </>
                   )}
                 </Button>
@@ -592,7 +662,7 @@ export default function AutomationCenterPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/60 text-sm">Regole Totali</p>
+                  <p className="text-white/60 text-sm">{t.statsTotalRules}</p>
                   <p className="text-3xl font-bold text-white">{rules.length}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-violet-500/20">
@@ -606,7 +676,7 @@ export default function AutomationCenterPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/60 text-sm">Regole Attive</p>
+                  <p className="text-white/60 text-sm">{t.statsActiveRules}</p>
                   <p className="text-3xl font-bold text-emerald-400">{rules.filter(r => r.is_active).length}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-emerald-500/20">
@@ -620,7 +690,7 @@ export default function AutomationCenterPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/60 text-sm">Esecuzioni Totali</p>
+                  <p className="text-white/60 text-sm">{t.statsTotalExec}</p>
                   <p className="text-3xl font-bold text-cyan-400">
                     {rules.reduce((sum, r) => sum + (r.execution_count || 0), 0)}
                   </p>
@@ -636,7 +706,7 @@ export default function AutomationCenterPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/60 text-sm">Log Recenti</p>
+                  <p className="text-white/60 text-sm">{t.statsRecentLogs}</p>
                   <p className="text-3xl font-bold text-amber-400">{logs.length}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-amber-500/20">
@@ -651,11 +721,11 @@ export default function AutomationCenterPage() {
           <TabsList className="bg-white/5 border-white/10">
             <TabsTrigger value="rules" className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-white/60" data-testid="tab-rules">
               <Zap className="h-4 w-4 mr-2" />
-              Regole ({rules.length})
+              {t.tabRules(rules.length)}
             </TabsTrigger>
             <TabsTrigger value="logs" className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-white/60" data-testid="tab-logs">
               <Activity className="h-4 w-4 mr-2" />
-              Log Esecuzioni ({logs.length})
+              {t.tabLogs(logs.length)}
             </TabsTrigger>
           </TabsList>
 
@@ -664,15 +734,15 @@ export default function AutomationCenterPage() {
               <Card className="bg-white/5 border-white/10">
                 <CardContent className="py-12 text-center">
                   <Zap className="h-12 w-12 text-white/20 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Nessuna regola creata</h3>
-                  <p className="text-white/60 mb-6">Crea la tua prima automazione per gestire i lead automaticamente</p>
+                  <h3 className="text-lg font-medium text-white mb-2">{t.noRules}</h3>
+                  <p className="text-white/60 mb-6">{t.noRulesDesc}</p>
                   <Button 
                     onClick={() => setShowCreateDialog(true)}
                     className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
                     data-testid="button-create-first-rule"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Crea Prima Regola
+                    {t.createFirstRule}
                   </Button>
                 </CardContent>
               </Card>
@@ -690,7 +760,7 @@ export default function AutomationCenterPage() {
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold text-white">{rule.name}</h3>
                               <Badge className={rule.is_active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}>
-                                {rule.is_active ? 'Attiva' : 'Disattivata'}
+                                {rule.is_active ? t.active : t.inactive}
                               </Badge>
                               <Badge className="bg-violet-500/20 text-violet-400">
                                 {TRIGGER_LABELS[rule.trigger_type]?.icon} {TRIGGER_LABELS[rule.trigger_type]?.label}
@@ -702,12 +772,12 @@ export default function AutomationCenterPage() {
                             <div className="flex items-center gap-4 text-sm text-white/50">
                               <span className="flex items-center gap-1">
                                 <Activity className="h-3 w-3" />
-                                {rule.execution_count || 0} esecuzioni
+                                {t.executions(rule.execution_count || 0)}
                               </span>
                               {rule.last_executed_at && (
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
-                                  Ultima: {new Date(rule.last_executed_at).toLocaleDateString('it-IT')}
+                                  {t.lastExec} {new Date(rule.last_executed_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}
                                 </span>
                               )}
                             </div>
@@ -717,13 +787,13 @@ export default function AutomationCenterPage() {
                                 <div className="flex items-center gap-2">
                                   <GitBranch className="h-4 w-4 text-cyan-400" />
                                   <span className="text-white/80 text-sm">
-                                    <strong>Condizione:</strong> {formatCondition(rule.condition)}
+                                    <strong>{t.conditionLabel}</strong> {formatCondition(rule.condition)}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Activity className="h-4 w-4 text-emerald-400" />
                                   <span className="text-white/80 text-sm">
-                                    <strong>Azione:</strong> {formatAction(rule.action)}
+                                    <strong>{t.actionLabel}</strong> {formatAction(rule.action)}
                                   </span>
                                 </div>
                               </div>
@@ -773,8 +843,8 @@ export default function AutomationCenterPage() {
               <Card className="bg-white/5 border-white/10">
                 <CardContent className="py-12 text-center">
                   <Activity className="h-12 w-12 text-white/20 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-white mb-2">Nessun log disponibile</h3>
-                  <p className="text-white/60">I log delle esecuzioni appariranno qui</p>
+                  <h3 className="text-lg font-medium text-white mb-2">{t.noLogs}</h3>
+                  <p className="text-white/60">{t.noLogsDesc}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -796,14 +866,14 @@ export default function AutomationCenterPage() {
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="font-medium text-white">
-                                    {(log as any).automations_rules?.name || 'Regola'}
+                                    {(log as any).automations_rules?.name || t.ruleDefault}
                                   </span>
                                   <Badge className={log.success ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}>
-                                    {log.success ? 'Successo' : 'Errore'}
+                                    {log.success ? t.success : t.error}
                                   </Badge>
                                 </div>
                                 <p className="text-white/60 text-sm">
-                                  Trigger: {TRIGGER_LABELS[log.trigger_type]?.label || log.trigger_type}
+                                  {t.triggerLabel} {TRIGGER_LABELS[log.trigger_type]?.label || log.trigger_type}
                                 </p>
                                 {log.error_message && (
                                   <p className="text-red-400 text-sm mt-1">{log.error_message}</p>
@@ -811,7 +881,7 @@ export default function AutomationCenterPage() {
                               </div>
                             </div>
                             <span className="text-white/40 text-sm">
-                              {new Date(log.created_at).toLocaleString('it-IT')}
+                              {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
                             </span>
                           </div>
                         </div>
@@ -831,12 +901,9 @@ export default function AutomationCenterPage() {
                 <AlertTriangle className="h-6 w-6 text-violet-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-white mb-2">Come funzionano le automazioni</h3>
+                <h3 className="font-semibold text-white mb-2">{t.howItWorksTitle}</h3>
                 <ul className="text-white/70 text-sm space-y-1">
-                  <li>• Le regole vengono eseguite automaticamente quando un lead soddisfa le condizioni</li>
-                  <li>• Puoi creare fino a 20 regole per account</li>
-                  <li>• Ogni regola può avere un trigger, una condizione e un'azione</li>
-                  <li>• I log mostrano tutte le esecuzioni delle regole</li>
+                  {t.howItWorksList.map((item, i) => <li key={i}>• {item}</li>)}
                 </ul>
               </div>
             </div>

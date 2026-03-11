@@ -5,6 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 type Opportunity = {
   id: string;
@@ -17,11 +20,55 @@ type Opportunity = {
 };
 
 export default function OpportunitiesPage() {
+  const { locale } = useLocaleContext();
   const [type, setType] = useState<"underpriced" | "old" | "uncontacted">("underpriced");
   const [days, setDays] = useState(14);
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Opportunity[]>([]);
+
+  const t = {
+    it: {
+      title: "Radar Opportunità",
+      subtitle: "Trova immobili sotto-prezzo, annunci vecchi o mai contattati per nuovi mandati.",
+      type: "Tipo opportunità",
+      underpriced: "Sotto-prezzo",
+      old: "Annunci vecchi",
+      uncontacted: "Mai contattati",
+      city: "Città (opzionale)",
+      cityPlaceholder: "Milano",
+      oldDays: "Vecchi da almeno (giorni)",
+      loading: "Caricamento...",
+      refresh: "Aggiorna",
+      results: "Risultati",
+      noResults: "Nessuna opportunità trovata con i filtri correnti.",
+      selectListing: "Seleziona un annuncio per aprire i dettagli.",
+      loadingResults: "Caricamento opportunità...",
+      unknown: "sconosciuto",
+      status: "Stato",
+      na: "n.d.",
+    },
+    en: {
+      title: "Opportunity Radar",
+      subtitle: "Find underpriced properties, old listings, or never-contacted owners for new mandates.",
+      type: "Opportunity type",
+      underpriced: "Underpriced",
+      old: "Old listings",
+      uncontacted: "Never contacted",
+      city: "City (optional)",
+      cityPlaceholder: "Milan",
+      oldDays: "Older than (days)",
+      loading: "Loading...",
+      refresh: "Refresh",
+      results: "Results",
+      noResults: "No opportunities found with the current filters.",
+      selectListing: "Select a listing to open details.",
+      loadingResults: "Loading opportunities...",
+      unknown: "unknown",
+      status: "Status",
+      na: "n/a",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     void load();
@@ -51,22 +98,22 @@ export default function OpportunitiesPage() {
   };
 
   const formatPrice = (price: number | null) => {
-    if (!price) return "n.d.";
-    return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(price);
+    if (!price) return t.na;
+    return formatCurrencyForLocale(price, locale as Locale);
   };
 
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Radar Opportunità</CardTitle>
+          <CardTitle>{t.title}</CardTitle>
           <CardDescription>
-            Trova immobili sotto-prezzo, annunci vecchi o mai contattati per nuovi mandati.
+            {t.subtitle}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-4">
           <div>
-            <p className="text-sm font-medium mb-1">Tipo opportunità</p>
+            <p className="text-sm font-medium mb-1">{t.type}</p>
             <Select
               value={type}
               onValueChange={(v) => setType(v as typeof type)}
@@ -75,23 +122,23 @@ export default function OpportunitiesPage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="underpriced">Sotto-prezzo</SelectItem>
-                <SelectItem value="old">Annunci vecchi</SelectItem>
-                <SelectItem value="uncontacted">Mai contattati</SelectItem>
+                <SelectItem value="underpriced">{t.underpriced}</SelectItem>
+                <SelectItem value="old">{t.old}</SelectItem>
+                <SelectItem value="uncontacted">{t.uncontacted}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <p className="text-sm font-medium mb-1">Città (opzionale)</p>
+            <p className="text-sm font-medium mb-1">{t.city}</p>
             <Input
-              placeholder="Milano"
+              placeholder={t.cityPlaceholder}
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
           </div>
           {type === "old" && (
             <div>
-              <p className="text-sm font-medium mb-1">Vecchi da almeno (giorni)</p>
+              <p className="text-sm font-medium mb-1">{t.oldDays}</p>
               <Input
                 type="number"
                 value={days}
@@ -101,7 +148,7 @@ export default function OpportunitiesPage() {
           )}
           <div className="flex items-end">
             <Button onClick={load} disabled={loading}>
-              {loading ? "Caricamento..." : "Aggiorna"}
+              {loading ? t.loading : t.refresh}
             </Button>
           </div>
         </CardContent>
@@ -109,15 +156,15 @@ export default function OpportunitiesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Risultati</CardTitle>
+          <CardTitle>{t.results}</CardTitle>
           <CardDescription>
             {items.length === 0 && !loading
-              ? "Nessuna opportunità trovata con i filtri correnti."
-              : "Seleziona un annuncio per aprire i dettagli."}
+              ? t.noResults
+              : t.selectListing}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {loading && <p className="text-sm text-muted-foreground">Caricamento opportunità...</p>}
+          {loading && <p className="text-sm text-muted-foreground">{t.loadingResults}</p>}
           {!loading && items.length > 0 && (
             <div className="space-y-2 text-sm">
               {items.map((item) => (
@@ -131,13 +178,13 @@ export default function OpportunitiesPage() {
                   <div>
                     <p className="font-medium">{item.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {item.city} • {item.source || "sconosciuto"}
+                      {item.city} • {item.source || t.unknown}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold">{formatPrice(item.price)}</p>
                     {item.status && (
-                      <p className="text-xs text-muted-foreground">Stato: {item.status}</p>
+                      <p className="text-xs text-muted-foreground">{t.status}: {item.status}</p>
                     )}
                   </div>
                 </div>

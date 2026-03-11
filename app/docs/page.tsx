@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 interface DocSection {
   id: string;
@@ -20,7 +21,8 @@ interface DocSection {
   }>;
 }
 
-const docSections: DocSection[] = [
+function getDocSections(it: boolean): DocSection[] {
+  return [
   {
     id: 'getting-started',
     title: 'Getting Started',
@@ -28,20 +30,20 @@ const docSections: DocSection[] = [
     articles: [
       {
         id: 'welcome',
-        title: 'Benvenuto in PropertyPilot AI',
-        description: 'Guida introduttiva alla piattaforma',
+        title: it ? 'Benvenuto in PropertyPilot AI' : 'Welcome to PropertyPilot AI',
+        description: it ? 'Guida introduttiva alla piattaforma' : 'Introduction guide to the platform',
         slug: 'getting-started/welcome',
       },
       {
         id: 'first-listing',
-        title: 'Crea il tuo primo annuncio',
-        description: 'Genera un annuncio AI in 2 minuti',
+        title: it ? 'Crea il tuo primo annuncio' : 'Create your first listing',
+        description: it ? 'Genera un annuncio AI in 2 minuti' : 'Generate an AI listing in 2 minutes',
         slug: 'getting-started/first-listing',
       },
       {
         id: 'workspace-setup',
-        title: 'Configura il tuo Workspace',
-        description: 'Personalizza la dashboard',
+        title: it ? 'Configura il tuo Workspace' : 'Set up your Workspace',
+        description: it ? 'Personalizza la dashboard' : 'Customize your dashboard',
         slug: 'getting-started/workspace-setup',
       },
     ],
@@ -51,24 +53,9 @@ const docSections: DocSection[] = [
     title: 'Prospecting Engine',
     icon: <Zap className="h-5 w-5" />,
     articles: [
-      {
-        id: 'scraper-guide',
-        title: 'Guida allo Scraper Globale',
-        description: 'Come trovare immobili su Idealista, Zillow, Immobiliare.it',
-        slug: 'prospecting/scraper-guide',
-      },
-      {
-        id: 'arbitrage',
-        title: 'Guida all\'Arbitraggio',
-        description: 'Identifica opportunità di mercato e calcola il Market Gap',
-        slug: 'prospecting/arbitrage',
-      },
-      {
-        id: 'filters',
-        title: 'Filtri di Ricerca Avanzati',
-        description: 'Configura filtri automatici per trovare i migliori deal',
-        slug: 'prospecting/filters',
-      },
+      { id: 'scraper-guide', title: it ? 'Guida allo Scraper Globale' : 'Global Scraper Guide', description: it ? 'Come trovare immobili su Idealista, Zillow, Immobiliare.it' : 'How to find properties on Idealista, Zillow, Immobiliare.it', slug: 'prospecting/scraper-guide' },
+      { id: 'arbitrage', title: it ? "Guida all'Arbitraggio" : 'Arbitrage Guide', description: it ? 'Identifica opportunità di mercato e calcola il Market Gap' : 'Identify market opportunities and calculate the Market Gap', slug: 'prospecting/arbitrage' },
+      { id: 'filters', title: it ? 'Filtri di Ricerca Avanzati' : 'Advanced Search Filters', description: it ? 'Configura filtri automatici per trovare i migliori deal' : 'Set up automatic filters to find the best deals', slug: 'prospecting/filters' },
     ],
   },
   {
@@ -76,24 +63,9 @@ const docSections: DocSection[] = [
     title: 'AI Voice Calling',
     icon: <Phone className="h-5 w-5" />,
     articles: [
-      {
-        id: 'voice-setup',
-        title: 'Configurazione Chiamate AI',
-        description: 'Imposta Bland AI e inizia a chiamare',
-        slug: 'ai-voice/voice-setup',
-      },
-      {
-        id: 'call-scripts',
-        title: 'Script di Chiamata Personalizzati',
-        description: 'Crea script efficaci per ottenere mandati',
-        slug: 'ai-voice/call-scripts',
-      },
-      {
-        id: 'obstacle-handling',
-        title: 'Gestione Obiezioni',
-        description: 'Come l\'IA gestisce le obiezioni dei proprietari',
-        slug: 'ai-voice/obstacle-handling',
-      },
+      { id: 'voice-setup', title: it ? 'Configurazione Chiamate AI' : 'AI Call Setup', description: it ? 'Imposta Bland AI e inizia a chiamare' : 'Set up Bland AI and start calling', slug: 'ai-voice/voice-setup' },
+      { id: 'call-scripts', title: it ? 'Script di Chiamata Personalizzati' : 'Custom Call Scripts', description: it ? 'Crea script efficaci per ottenere mandati' : 'Create effective scripts to win mandates', slug: 'ai-voice/call-scripts' },
+      { id: 'obstacle-handling', title: it ? 'Gestione Obiezioni' : 'Objection Handling', description: it ? "Come l'IA gestisce le obiezioni dei proprietari" : 'How AI handles owner objections', slug: 'ai-voice/obstacle-handling' },
     ],
   },
   {
@@ -101,18 +73,8 @@ const docSections: DocSection[] = [
     title: '3D Virtual Staging',
     icon: <Box className="h-5 w-5" />,
     articles: [
-      {
-        id: 'staging-guide',
-        title: 'Guida al 3D Staging',
-        description: 'Genera visioni post-ristrutturazione per convincere i clienti',
-        slug: '3d-staging/staging-guide',
-      },
-      {
-        id: 'whatsapp-integration',
-        title: 'Invio via WhatsApp',
-        description: 'Condividi progetti 3D con proprietari e clienti',
-        slug: '3d-staging/whatsapp-integration',
-      },
+      { id: 'staging-guide', title: it ? 'Guida al 3D Staging' : '3D Staging Guide', description: it ? 'Genera visioni post-ristrutturazione per convincere i clienti' : 'Generate post-renovation visualizations to convince clients', slug: '3d-staging/staging-guide' },
+      { id: 'whatsapp-integration', title: it ? 'Invio via WhatsApp' : 'Send via WhatsApp', description: it ? 'Condividi progetti 3D con proprietari e clienti' : 'Share 3D projects with owners and clients', slug: '3d-staging/whatsapp-integration' },
     ],
   },
   {
@@ -120,18 +82,8 @@ const docSections: DocSection[] = [
     title: 'Price Drop Sniper',
     icon: <Target className="h-5 w-5" />,
     articles: [
-      {
-        id: 'sniper-guide',
-        title: 'Come funziona lo Sniper',
-        description: 'Rileva ribassi di prezzo in tempo reale',
-        slug: 'price-sniper/sniper-guide',
-      },
-      {
-        id: 'sniper-strategy',
-        title: 'Strategia Sniper',
-        description: 'Approccia proprietari dopo un ribasso',
-        slug: 'price-sniper/sniper-strategy',
-      },
+      { id: 'sniper-guide', title: it ? 'Come funziona lo Sniper' : 'How the Sniper works', description: it ? 'Rileva ribassi di prezzo in tempo reale' : 'Detect price drops in real time', slug: 'price-sniper/sniper-guide' },
+      { id: 'sniper-strategy', title: it ? 'Strategia Sniper' : 'Sniper Strategy', description: it ? 'Approccia proprietari dopo un ribasso' : 'Approach owners after a price drop', slug: 'price-sniper/sniper-strategy' },
     ],
   },
   {
@@ -139,18 +91,8 @@ const docSections: DocSection[] = [
     title: 'Commercial Intelligence',
     icon: <Building2 className="h-5 w-5" />,
     articles: [
-      {
-        id: 'commercial-guide',
-        title: 'Analisi Immobili Commerciali',
-        description: 'Identifica attività consigliate e gap di mercato',
-        slug: 'commercial/commercial-guide',
-      },
-      {
-        id: 'business-features',
-        title: 'Key Business Features',
-        description: 'Rileva canna fumaria, vetrina, categoria C3',
-        slug: 'commercial/business-features',
-      },
+      { id: 'commercial-guide', title: it ? 'Analisi Immobili Commerciali' : 'Commercial Property Analysis', description: it ? 'Identifica attività consigliate e gap di mercato' : 'Identify recommended businesses and market gaps', slug: 'commercial/commercial-guide' },
+      { id: 'business-features', title: 'Key Business Features', description: it ? 'Rileva canna fumaria, vetrina, categoria C3' : 'Detect chimney, storefront, C3 category', slug: 'commercial/business-features' },
     ],
   },
   {
@@ -158,18 +100,8 @@ const docSections: DocSection[] = [
     title: 'Territory Commander',
     icon: <Map className="h-5 w-5" />,
     articles: [
-      {
-        id: 'territory-guide',
-        title: 'Analisi del Territorio',
-        description: 'Domanda, DNA quartiere, velocità vendita',
-        slug: 'territory/territory-guide',
-      },
-      {
-        id: 'map-usage',
-        title: 'Uso della Mappa Tattica',
-        description: 'Naviga i deal sulla mappa interattiva',
-        slug: 'territory/map-usage',
-      },
+      { id: 'territory-guide', title: it ? 'Analisi del Territorio' : 'Territory Analysis', description: it ? 'Domanda, DNA quartiere, velocità vendita' : 'Demand, neighborhood DNA, sales velocity', slug: 'territory/territory-guide' },
+      { id: 'map-usage', title: it ? 'Uso della Mappa Tattica' : 'Tactical Map Usage', description: it ? 'Naviga i deal sulla mappa interattiva' : 'Navigate deals on the interactive map', slug: 'territory/map-usage' },
     ],
   },
   {
@@ -177,18 +109,8 @@ const docSections: DocSection[] = [
     title: 'AI Smart Briefing',
     icon: <FileText className="h-5 w-5" />,
     articles: [
-      {
-        id: 'briefing-guide',
-        title: 'Guida al Smart Briefing',
-        description: 'Vantaggi, difetti, target automatici',
-        slug: 'smart-briefing/briefing-guide',
-      },
-      {
-        id: 'client-ready',
-        title: 'Copia per il Cliente',
-        description: 'Genera riassunti WhatsApp-ready',
-        slug: 'smart-briefing/client-ready',
-      },
+      { id: 'briefing-guide', title: it ? 'Guida al Smart Briefing' : 'Smart Briefing Guide', description: it ? 'Vantaggi, difetti, target automatici' : 'Pros, cons, automatic target audience', slug: 'smart-briefing/briefing-guide' },
+      { id: 'client-ready', title: it ? 'Copia per il Cliente' : 'Client-Ready Copy', description: it ? 'Genera riassunti WhatsApp-ready' : 'Generate WhatsApp-ready summaries', slug: 'smart-briefing/client-ready' },
     ],
   },
   {
@@ -196,18 +118,8 @@ const docSections: DocSection[] = [
     title: 'AI X-Ray Vision',
     icon: <Sparkles className="h-5 w-5" />,
     articles: [
-      {
-        id: 'xray-guide',
-        title: 'Analisi Tecnica Immagini',
-        description: 'Rileva difetti e pregi con l\'IA',
-        slug: 'xray/xray-guide',
-      },
-      {
-        id: 'renovation-quote',
-        title: 'Budget Riqualificazione',
-        description: 'Calcola costi di ristrutturazione',
-        slug: 'xray/renovation-quote',
-      },
+      { id: 'xray-guide', title: it ? 'Analisi Tecnica Immagini' : 'Technical Image Analysis', description: it ? "Rileva difetti e pregi con l'IA" : 'Detect defects and features with AI', slug: 'xray/xray-guide' },
+      { id: 'renovation-quote', title: it ? 'Budget Riqualificazione' : 'Renovation Budget', description: it ? 'Calcola costi di ristrutturazione' : 'Calculate renovation costs', slug: 'xray/renovation-quote' },
     ],
   },
   {
@@ -215,18 +127,43 @@ const docSections: DocSection[] = [
     title: 'Competitor Radar',
     icon: <TrendingDown className="h-5 w-5" />,
     articles: [
-      {
-        id: 'radar-guide',
-        title: 'Rilevamento Mandati in Scadenza',
-        description: 'Trova immobili fermi da 120+ giorni',
-        slug: 'competitor/radar-guide',
-      },
+      { id: 'radar-guide', title: it ? 'Rilevamento Mandati in Scadenza' : 'Expiring Mandate Detection', description: it ? 'Trova immobili fermi da 120+ giorni' : 'Find properties stagnant for 120+ days', slug: 'competitor/radar-guide' },
     ],
   },
-];
+  ];
+}
 
 export default function DocumentationPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const [searchQuery, setSearchQuery] = useState("");
+
+  const t = {
+    pageTitle: "Documentation Hub",
+    pageSubtitle: isItalian
+      ? "Guide complete per dominare PropertyPilot AI"
+      : "Complete guides to master PropertyPilot AI",
+    searchPlaceholder: isItalian ? "Cerca nelle guide..." : "Search guides...",
+    articleSingular: isItalian ? "articolo" : "article",
+    articlePlural: isItalian ? "articoli" : "articles",
+    quickStartTitle: "🚀 Quick Start",
+    quickStartDesc: isItalian
+      ? "Nuovo su PropertyPilot? Inizia da qui."
+      : "New to PropertyPilot? Start here.",
+    quickStartBtn: isItalian ? "Inizia qui" : "Start here",
+    bestPracticesTitle: "💡 Best Practices",
+    bestPracticesDesc: isItalian
+      ? "Strategie avanzate per massimizzare i risultati."
+      : "Advanced strategies to maximize results.",
+    bestPracticesBtn: isItalian ? "Scopri strategie" : "Discover strategies",
+    goalsTitle: isItalian ? "🎯 Obiettivi" : "🎯 Goals",
+    goalsDesc: isItalian
+      ? "Come ottenere mandati con l'IA in 7 giorni."
+      : "How to win mandates with AI in 7 days.",
+    goalsBtn: isItalian ? "Ottieni mandati" : "Win mandates",
+  };
+
+  const docSections = getDocSections(isItalian);
 
   const filteredSections = docSections.map((section) => ({
     ...section,
@@ -242,9 +179,9 @@ export default function DocumentationPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Documentation Hub</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">{t.pageTitle}</h1>
           <p className="text-muted-foreground text-lg">
-            Guide complete per dominare PropertyPilot AI
+            {t.pageSubtitle}
           </p>
         </div>
 
@@ -253,7 +190,7 @@ export default function DocumentationPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="Cerca nelle guide..."
+              placeholder={t.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 h-12 bg-background/50 border-purple-500/30 focus:border-purple-500 text-white"
@@ -276,7 +213,7 @@ export default function DocumentationPage() {
                   <CardTitle className="text-xl text-white">{section.title}</CardTitle>
                 </div>
                 <CardDescription className="text-gray-400">
-                  {section.articles.length} {section.articles.length === 1 ? 'articolo' : 'articoli'}
+                  {section.articles.length} {section.articles.length === 1 ? t.articleSingular : t.articlePlural}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -308,15 +245,15 @@ export default function DocumentationPage() {
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           <Card className="border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">🚀 Quick Start</CardTitle>
+              <CardTitle className="text-lg text-white">{t.quickStartTitle}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">
-                Nuovo su PropertyPilot? Inizia da qui.
+                {t.quickStartDesc}
               </p>
               <Link href="/docs/getting-started/welcome">
                 <Button variant="outline" className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
-                  Inizia qui
+                  {t.quickStartBtn}
                 </Button>
               </Link>
             </CardContent>
@@ -324,15 +261,15 @@ export default function DocumentationPage() {
 
           <Card className="border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">💡 Best Practices</CardTitle>
+              <CardTitle className="text-lg text-white">{t.bestPracticesTitle}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">
-                Strategie avanzate per massimizzare i risultati.
+                {t.bestPracticesDesc}
               </p>
               <Link href="/docs/prospecting/arbitrage">
                 <Button variant="outline" className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10">
-                  Scopri strategie
+                  {t.bestPracticesBtn}
                 </Button>
               </Link>
             </CardContent>
@@ -340,15 +277,15 @@ export default function DocumentationPage() {
 
           <Card className="border-green-500/30 bg-gradient-to-br from-[#0a0a0a] to-green-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">🎯 Obiettivi</CardTitle>
+              <CardTitle className="text-lg text-white">{t.goalsTitle}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">
-                Come ottenere mandati con l'IA in 7 giorni.
+                {t.goalsDesc}
               </p>
               <Link href="/docs/ai-voice/call-scripts">
                 <Button variant="outline" className="w-full border-green-500/30 text-green-400 hover:bg-green-500/10">
-                  Ottieni mandati
+                  {t.goalsBtn}
                 </Button>
               </Link>
             </CardContent>

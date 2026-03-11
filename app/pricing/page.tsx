@@ -22,6 +22,8 @@ import {
 import { useState } from "react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 const plans = [
   {
@@ -112,6 +114,15 @@ const defaultFaqs = [
   { question: "Offrite supporto in italiano?", answer: "Assolutamente sì! Il nostro team di supporto è completamente italiano e disponibile via email e chat." },
 ];
 
+const defaultFaqsEn = [
+  { question: "Can I change plan at any time?", answer: "Yes, you can upgrade or downgrade your plan at any time. Changes will be applied to the next billing cycle." },
+  { question: "Is there a free trial?", answer: "Yes, we offer a 7-day free trial on all paid plans. No credit card required to get started." },
+  { question: "What happens if I exceed my plan limits?", answer: "We will warn you when you get close to your limits. You can easily upgrade to the next plan to keep growing." },
+  { question: "How does the Agency plan work?", answer: "The Agency plan is designed for teams and multi-agency workflows. It includes unlimited listings, all features, and dedicated support." },
+  { question: "Can I cancel my subscription?", answer: "Yes, you can cancel at any time from the dashboard. Access remains active until the end of the period you already paid for." },
+  { question: "Do you offer support in English?", answer: "Absolutely. Our support team is available by email and chat to help you onboard and grow." },
+];
+
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -162,6 +173,55 @@ export default function PricingPage() {
 
   const t = getTranslation(currentLocale as SupportedLocale);
   const pp = t.landing?.pricingPage;
+  const isItalian = currentLocale === "it";
+  const localizedPlans = plans.map((plan) => {
+    switch (plan.id) {
+      case "starter":
+        return {
+          ...plan,
+          tagline: isItalian ? "Strumenti AI per agenti individuali" : "AI listing tools for solo agents",
+          period: isItalian ? "/ mese" : "/ month",
+          includes: isItalian
+            ? ["Strumenti AI di base per annunci", "Per singoli agenti", "Accesso alle funzioni core di generazione annunci"]
+            : ["Core AI listing tools", "Built for solo agents", "Access to essential listing generation features"],
+          cta: isItalian ? "Inizia con Starter" : "Start with Starter",
+        };
+      case "pro":
+        return {
+          ...plan,
+          tagline: isItalian ? "CRM, automazioni e strumenti AI" : "CRM, automations & AI tools",
+          period: isItalian ? "/ mese" : "/ month",
+          includes: isItalian
+            ? ["Tutte le funzionalità Starter", "CRM e automazioni", "Strumenti AI avanzati per agenzie"]
+            : ["Everything in Starter", "CRM and automations", "Advanced AI tools for agencies"],
+          cta: isItalian ? "Passa a Pro" : "Upgrade to Pro",
+        };
+      case "agency":
+        return {
+          ...plan,
+          tagline: isItalian ? "Per team fino a 10 agenti" : "For teams up to 10 agents",
+          period: isItalian ? "/ mese" : "/ month",
+          includes: isItalian
+            ? ["Tutte le funzionalità Pro", "Pensato per team fino a 10 agenti", "Gestione multi-utente / multi-agenzia"]
+            : ["Everything in Pro", "Built for teams up to 10 agents", "Multi-user / multi-agency management"],
+          cta: isItalian ? "Passa a Agency" : "Upgrade to Agency",
+        };
+      case "boost":
+        return {
+          ...plan,
+          tagline: isItalian ? "Pacchetto setup done-for-you" : "Done-for-you setup package",
+          period: isItalian ? "una tantum" : "one-time",
+          includes: isItalian
+            ? ["Setup completo \"done-for-you\"", "Implementazione e onboarding guidato", "Supporto premium per il lancio"]
+            : ["Complete done-for-you setup", "Guided implementation and onboarding", "Premium launch support"],
+          cta: isItalian ? "Acquista Agency Boost" : "Buy Agency Boost",
+        };
+      default:
+        return plan;
+    }
+  });
+  const localizedFaqs = (pp?.faqs as { question: string; answer: string }[] | undefined)
+    ?? (isItalian ? defaultFaqs : defaultFaqsEn);
 
   return (
     <div className="min-h-screen bg-background">
@@ -209,7 +269,7 @@ export default function PricingPage() {
       <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
-            {plans.map((plan) => (
+            {localizedPlans.map((plan) => (
               <div 
                 key={plan.id}
                 className={`relative rounded-3xl p-6 lg:p-8 transition-all duration-500 hover:-translate-y-2 border-2 ${plan.borderColor} ${plan.bgClass} ${
@@ -226,7 +286,7 @@ export default function PricingPage() {
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
                     <span className="inline-flex items-center gap-1 px-4 py-2 text-sm font-bold bg-gradient-to-r from-sunset-gold via-royal-purple to-sunset-gold text-white rounded-full shadow-lg">
                       <Star className="h-4 w-4 fill-white" />
-                      Consigliato
+                      {isItalian ? "Consigliato" : "Recommended"}
                     </span>
                   </div>
                 )}
@@ -237,7 +297,7 @@ export default function PricingPage() {
                     <div className="relative">
                       <span className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-extrabold uppercase tracking-wider bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] text-black rounded-full shadow-[0_0_30px_rgba(255,215,0,0.6),0_0_60px_rgba(255,215,0,0.3)] animate-pulse border-2 border-[#FFD700]/50">
                         <Gift className="h-5 w-5 animate-bounce" />
-                        OFFERTA ÉLITE
+                        {isItalian ? "OFFERTA ELITE" : "ELITE OFFER"}
                         <Sparkles className="h-5 w-5 animate-spin" style={{ animationDuration: '3s' }} />
                       </span>
                       <div className="absolute inset-0 bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] rounded-full blur-md opacity-50 -z-10 animate-pulse" />
@@ -264,14 +324,14 @@ export default function PricingPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl lg:text-5xl font-extrabold">
-                      €{plan.price}
+                      {formatCurrencyForLocale(plan.price, currentLocale as Locale)}
                     </span>
-                    <span className="text-lg text-muted-foreground">
+                    <span className="text-lg text-muted-foreground whitespace-nowrap">
                       {plan.period}
                     </span>
                   </div>
                   {plan.price > 0 && (
-                    <p className="text-xs text-muted-foreground mt-1">IVA esclusa</p>
+                    <p className="text-xs text-muted-foreground mt-1">{isItalian ? "IVA esclusa" : "VAT excluded"}</p>
                   )}
                 </div>
 
@@ -363,7 +423,7 @@ export default function PricingPage() {
           </div>
 
           <div className="bg-background rounded-2xl border border-silver-frost/20 p-6 md:p-8">
-            {(pp?.faqs ?? defaultFaqs).map((faq, index) => (
+            {localizedFaqs.map((faq, index) => (
               <FAQItem key={index} question={faq.question} answer={faq.answer} />
             ))}
           </div>
@@ -401,17 +461,17 @@ export default function PricingPage() {
       <footer className="border-t border-silver-frost/20 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 PropertyPilot AI. Tutti i diritti riservati.
+            © 2024 PropertyPilot AI. {isItalian ? "Tutti i diritti riservati." : "All rights reserved."}
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
               Privacy Policy
             </Link>
             <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-              Termini di Servizio
+              {isItalian ? "Termini di Servizio" : "Terms of Service"}
             </Link>
             <Link href="/refund" className="text-muted-foreground hover:text-foreground transition-colors">
-              Politica Rimborsi
+              {isItalian ? "Politica Rimborsi" : "Refund Policy"}
             </Link>
           </div>
         </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import Link from 'next/link';
 import { ArrowLeft, Globe, Languages, Sparkles, Copy, Check, Loader2, BookOpen, Lightbulb, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,16 +27,6 @@ const LANGUAGES = [
   { code: 'tr', name: 'Türkçe', flag: '🇹🇷', country: 'Turchia' },
 ];
 
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
-
-const TONES = [
-  { value: 'standard', label: 'Standard', description: 'Professionale e chiaro', gradient: 'from-blue-500 to-cyan-500' },
-  { value: 'luxury', label: 'Luxury', description: 'Esclusivo e prestigioso', gradient: 'from-amber-500 to-yellow-400' },
-];
 
 interface TranslationResult {
   linguaTarget: {
@@ -56,6 +47,74 @@ interface TranslationResult {
 }
 
 export default function TranslatePage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
+
+  const t = {
+    backToDashboard: isItalian ? 'Dashboard' : 'Dashboard',
+    heroTitle: isItalian ? 'Traduttore Multilingua AI' : 'AI Multilingual Translator',
+    heroBadge: '🌍 International Ready',
+    formTitle: isItalian ? 'Testo Originale' : 'Original Text',
+    formSubtitle: isItalian ? "Inserisci l'annuncio da tradurre" : 'Enter the listing to translate',
+    listingType: isItalian ? 'Tipo Annuncio' : 'Listing Type',
+    selectTransaction: isItalian ? 'Seleziona tipo transazione' : 'Select transaction type',
+    titleLabel: isItalian ? 'Titolo annuncio *' : 'Listing title *',
+    titlePlaceholder: isItalian ? 'Es: Splendido appartamento con vista mare' : 'e.g. Stunning apartment with sea view',
+    descriptionLabel: isItalian ? 'Descrizione *' : 'Description *',
+    descriptionPlaceholder: isItalian ? "Inserisci la descrizione completa dell'immobile..." : 'Enter the full property description...',
+    featuresLabel: isItalian ? 'Caratteristiche (opzionale)' : 'Features (optional)',
+    featuresPlaceholder: isItalian ? 'Es: 3 camere, 2 bagni, terrazzo, box auto...' : 'e.g. 3 beds, 2 baths, terrace, parking...',
+    targetLanguage: isItalian ? 'Lingua Target' : 'Target Language',
+    selectLanguage: isItalian ? 'Seleziona la lingua di destinazione' : 'Select the destination language',
+    toneLabel: isItalian ? 'Tono' : 'Tone',
+    toneStandardDesc: isItalian ? 'Professionale e chiaro' : 'Professional and clear',
+    toneLuxuryDesc: isItalian ? 'Esclusivo e prestigioso' : 'Exclusive and prestigious',
+    translateIdle: isItalian ? 'Traduci in' : 'Translate to',
+    translateLoading: isItalian ? 'Traduzione in corso...' : 'Translating...',
+    loadingText: isItalian ? 'Traduzione AI in corso...' : 'AI Translation in progress...',
+    loadingSubtext: isItalian ? "Sto adattando l'annuncio per" : 'Adapting the listing for',
+    emptyTitle: isItalian ? 'Pronto per tradurre' : 'Ready to translate',
+    emptySubtitle: isItalian ? 'Inserisci l\'annuncio, seleziona la lingua e il tono, poi clicca su "Traduci"' : 'Enter the listing, select language and tone, then click "Translate"',
+    moreLanguages: isItalian ? '+6 altre' : '+6 more',
+    resultTitle: isItalian ? 'Traduzione in' : 'Translation in',
+    market: isItalian ? 'Mercato:' : 'Market:',
+    tone: isItalian ? 'Tono:' : 'Tone:',
+    cache: 'Cache',
+    translatedTitle: isItalian ? 'Titolo Tradotto' : 'Translated Title',
+    originalLabel: isItalian ? 'Originale:' : 'Original:',
+    translatedDesc: isItalian ? 'Descrizione Tradotta' : 'Translated Description',
+    seoVersion: isItalian ? 'Versione SEO Ottimizzata' : 'SEO-Optimized Version',
+    seoOptimized: isItalian ? 'Ottimizzata per i motori di ricerca in' : 'Optimized for search engines in',
+    vocabTitle: isItalian ? 'Vocabolario Adattato' : 'Adapted Vocabulary',
+    vocabDesc: isItalian ? 'Terminologia immobiliare per' : 'Real estate terminology for',
+    culturalTitle: isItalian ? 'Note Culturali' : 'Cultural Notes',
+    culturalDesc: isItalian ? 'Adattamento per il mercato' : 'Adaptation for the market',
+    // toasts
+    titleRequired: isItalian ? 'Titolo richiesto' : 'Title required',
+    titleRequiredDesc: isItalian ? 'Inserisci un titolo di almeno 5 caratteri.' : 'Enter a title of at least 5 characters.',
+    descRequired: isItalian ? 'Descrizione richiesta' : 'Description required',
+    descRequiredDesc: isItalian ? 'Inserisci una descrizione di almeno 20 caratteri.' : 'Enter a description of at least 20 characters.',
+    tooManyRequests: isItalian ? 'Troppe richieste. Riprova tra un minuto.' : 'Too many requests. Try again in a minute.',
+    errorGeneric: isItalian ? 'Errore durante la traduzione' : 'Error during translation',
+    successTitle: isItalian ? 'Traduzione completata!' : 'Translation complete!',
+    successCached: isItalian ? 'Risultato caricato dalla cache.' : 'Result loaded from cache.',
+    errorTitle: isItalian ? 'Errore' : 'Error',
+    copied: isItalian ? 'Copiato!' : 'Copied!',
+    copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
+    copyFailed: isItalian ? 'Impossibile copiare il testo.' : 'Unable to copy text.',
+  };
+
+  const tipoTransazioneOptions = [
+    { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
+    { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
+    { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
+  ];
+
+  const tones = [
+    { value: 'standard', label: 'Standard', description: t.toneStandardDesc, gradient: 'from-blue-500 to-cyan-500' },
+    { value: 'luxury', label: 'Luxury', description: t.toneLuxuryDesc, gradient: 'from-amber-500 to-yellow-400' },
+  ];
+
   const [tipoTransazione, setTipoTransazione] = useState('vendita');
   const [titolo, setTitolo] = useState('');
   const [descrizione, setDescrizione] = useState('');
@@ -69,20 +128,11 @@ export default function TranslatePage() {
 
   const handleTranslate = async () => {
     if (!titolo.trim() || titolo.length < 5) {
-      toast({
-        title: 'Titolo richiesto',
-        description: 'Inserisci un titolo di almeno 5 caratteri.',
-        variant: 'destructive',
-      });
+      toast({ title: t.titleRequired, description: t.titleRequiredDesc, variant: 'destructive' });
       return;
     }
-
     if (!descrizione.trim() || descrizione.length < 20) {
-      toast({
-        title: 'Descrizione richiesta',
-        description: 'Inserisci una descrizione di almeno 20 caratteri.',
-        variant: 'destructive',
-      });
+      toast({ title: t.descRequired, description: t.descRequiredDesc, variant: 'destructive' });
       return;
     }
 
@@ -107,26 +157,19 @@ export default function TranslatePage() {
 
       if (!response.ok) {
         if (response.status === 429) {
-          throw new Error(data.error || 'Troppe richieste. Riprova tra un minuto.');
+          throw new Error(data.error || t.tooManyRequests);
         }
-        throw new Error(data.error || 'Errore durante la traduzione');
+        throw new Error(data.error || t.errorGeneric);
       }
 
       setResult(data);
-      
       toast({
-        title: 'Traduzione completata!',
-        description: data.cached 
-          ? 'Risultato caricato dalla cache.' 
-          : `Annuncio tradotto in ${data.linguaTarget.name}.`,
+        title: t.successTitle,
+        description: data.cached ? t.successCached : `${isItalian ? 'Annuncio tradotto in' : 'Listing translated to'} ${data.linguaTarget.name}.`,
       });
     } catch (error) {
       console.error('Translation error:', error);
-      toast({
-        title: 'Errore',
-        description: error instanceof Error ? error.message : 'Errore durante la traduzione.',
-        variant: 'destructive',
-      });
+      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -136,17 +179,10 @@ export default function TranslatePage() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
-      toast({
-        title: 'Copiato!',
-        description: 'Testo copiato negli appunti.',
-      });
+      toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch (error) {
-      toast({
-        title: 'Errore',
-        description: 'Impossibile copiare il testo.',
-        variant: 'destructive',
-      });
+      toast({ title: t.errorTitle, description: t.copyFailed, variant: 'destructive' });
     }
   };
 
@@ -169,14 +205,14 @@ export default function TranslatePage() {
               </div>
               <div>
                 <h1 className="text-lg font-bold bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                  Traduttore Multilingua AI
+                  {t.heroTitle}
                 </h1>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-              🌍 International Ready
+              {t.heroBadge}
             </span>
           </div>
         </div>
@@ -189,24 +225,24 @@ export default function TranslatePage() {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Languages className="h-5 w-5 text-emerald-500" />
-                  Testo Originale
+                  {t.formTitle}
                 </CardTitle>
                 <CardDescription>
-                  Inserisci l'annuncio da tradurre
+                  {t.formSubtitle}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Tipo Annuncio</Label>
+                  <Label>{t.listingType}</Label>
                   <Select
                     value={tipoTransazione}
                     onValueChange={(value) => setTipoTransazione(value)}
                   >
                     <SelectTrigger className="bg-white dark:bg-slate-900" data-testid="select-tipo-transazione">
-                      <SelectValue placeholder="Seleziona tipo transazione" />
+                      <SelectValue placeholder={t.selectTransaction} />
                     </SelectTrigger>
                     <SelectContent>
-                      {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                      {tipoTransazioneOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           <span className="flex items-center gap-2">
                             <span>{option.icon}</span>
@@ -219,10 +255,10 @@ export default function TranslatePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="titolo">Titolo annuncio *</Label>
+                  <Label htmlFor="titolo">{t.titleLabel}</Label>
                   <Input
                     id="titolo"
-                    placeholder="Es: Splendido appartamento con vista mare"
+                    placeholder={t.titlePlaceholder}
                     value={titolo}
                     onChange={(e) => setTitolo(e.target.value)}
                     className="bg-white dark:bg-slate-900"
@@ -231,10 +267,10 @@ export default function TranslatePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="descrizione">Descrizione *</Label>
+                  <Label htmlFor="descrizione">{t.descriptionLabel}</Label>
                   <Textarea
                     id="descrizione"
-                    placeholder="Inserisci la descrizione completa dell'immobile..."
+                    placeholder={t.descriptionPlaceholder}
                     value={descrizione}
                     onChange={(e) => setDescrizione(e.target.value)}
                     rows={6}
@@ -244,10 +280,10 @@ export default function TranslatePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="caratteristiche">Caratteristiche (opzionale)</Label>
+                  <Label htmlFor="caratteristiche">{t.featuresLabel}</Label>
                   <Textarea
                     id="caratteristiche"
-                    placeholder="Es: 3 camere, 2 bagni, terrazzo, box auto..."
+                    placeholder={t.featuresPlaceholder}
                     value={caratteristiche}
                     onChange={(e) => setCaratteristiche(e.target.value)}
                     rows={3}
@@ -262,10 +298,10 @@ export default function TranslatePage() {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Globe className="h-5 w-5 text-cyan-500" />
-                  Lingua Target
+                  {t.targetLanguage}
                 </CardTitle>
                 <CardDescription>
-                  Seleziona la lingua di destinazione
+                  {t.selectLanguage}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -295,12 +331,12 @@ export default function TranslatePage() {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Sparkles className="h-5 w-5 text-amber-500" />
-                  Tono
+                  {t.toneLabel}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3">
-                  {TONES.map((tone) => (
+                  {tones.map((tone) => (
                     <button
                       key={tone.value}
                       onClick={() => setSelectedTone(tone.value)}
@@ -330,12 +366,12 @@ export default function TranslatePage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Traduzione in corso...
+                  {t.translateLoading}
                 </>
               ) : (
                 <>
                   <Globe className="h-5 w-5 mr-2" />
-                  Traduci in {selectedLangInfo?.name} {selectedLangInfo?.flag}
+                  {t.translateIdle} {selectedLangInfo?.name} {selectedLangInfo?.flag}
                 </>
               )}
             </Button>
@@ -354,10 +390,10 @@ export default function TranslatePage() {
                     </div>
                     <div className="text-center">
                       <p className="font-semibold text-emerald-700 dark:text-emerald-300">
-                        Traduzione AI in corso...
+                        {t.loadingText}
                       </p>
                       <p className="text-sm text-slate-500 mt-1">
-                        Sto adattando l'annuncio per {selectedLangInfo?.country}
+                        {t.loadingSubtext} {selectedLangInfo?.country}
                       </p>
                     </div>
                   </div>
@@ -374,10 +410,10 @@ export default function TranslatePage() {
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300">
-                        Pronto per tradurre
+                        {t.emptyTitle}
                       </h3>
                       <p className="text-sm text-slate-500 mt-2 max-w-md">
-                        Inserisci l'annuncio, seleziona la lingua e il tono, poi clicca su "Traduci"
+                        {t.emptySubtitle}
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-2 mt-4">
@@ -387,7 +423,7 @@ export default function TranslatePage() {
                         </span>
                       ))}
                       <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-sm text-emerald-700 dark:text-emerald-300">
-                        +6 altre
+                        {t.moreLanguages}
                       </span>
                     </div>
                   </div>
@@ -401,11 +437,11 @@ export default function TranslatePage() {
                   <span className="text-4xl">{result.linguaTarget.flag}</span>
                   <div>
                     <h2 className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
-                      Traduzione in {result.linguaTarget.name}
+                      {t.resultTitle} {result.linguaTarget.name}
                     </h2>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Mercato: {result.linguaTarget.country} • Tono: {result.tono === 'luxury' ? 'Luxury' : 'Standard'}
-                      {result.cached && ' • Cache'}
+                      {t.market} {result.linguaTarget.country} • {t.tone} {result.tono === 'luxury' ? 'Luxury' : 'Standard'}
+                      {result.cached && ` • ${t.cache}`}
                     </p>
                   </div>
                 </div>
@@ -416,7 +452,7 @@ export default function TranslatePage() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Languages className="h-5 w-5 text-emerald-500" />
-                        Titolo Tradotto
+                        {t.translatedTitle}
                       </CardTitle>
                       <Button
                         size="sm"
@@ -434,7 +470,7 @@ export default function TranslatePage() {
                       {result.titoloTradotto}
                     </p>
                     <p className="text-sm text-slate-500 mt-2 line-through">
-                      Originale: {result.titoloOriginale}
+                      {t.originalLabel} {result.titoloOriginale}
                     </p>
                   </CardContent>
                 </Card>
@@ -445,7 +481,7 @@ export default function TranslatePage() {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-blue-500" />
-                        Descrizione Tradotta
+                        {t.translatedDesc}
                       </CardTitle>
                       <Button
                         size="sm"
@@ -472,7 +508,7 @@ export default function TranslatePage() {
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-lg flex items-center gap-2">
                           <Search className="h-5 w-5 text-amber-500" />
-                          Versione SEO Ottimizzata
+                          {t.seoVersion}
                         </CardTitle>
                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
                           Ranking +50%
@@ -489,7 +525,7 @@ export default function TranslatePage() {
                       </Button>
                     </div>
                     <CardDescription>
-                      Ottimizzata per i motori di ricerca in {result.linguaTarget.country}
+                      {t.seoOptimized} {result.linguaTarget.country}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -505,10 +541,10 @@ export default function TranslatePage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <BookOpen className="h-5 w-5 text-purple-500" />
-                        Vocabolario Adattato
+                        {t.vocabTitle}
                       </CardTitle>
                       <CardDescription>
-                        Terminologia immobiliare per {result.linguaTarget.country}
+                        {t.vocabDesc} {result.linguaTarget.country}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -528,10 +564,10 @@ export default function TranslatePage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex items-center gap-2">
                         <Lightbulb className="h-5 w-5 text-teal-500" />
-                        Note Culturali
+                        {t.culturalTitle}
                       </CardTitle>
                       <CardDescription>
-                        Adattamento per il mercato {result.linguaTarget.country}
+                        {t.culturalDesc} {result.linguaTarget.country}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>

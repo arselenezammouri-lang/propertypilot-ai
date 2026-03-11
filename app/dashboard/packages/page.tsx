@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Check, Sparkles, Loader2, ShoppingBag, ArrowRight, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 interface Purchase {
   id: string;
@@ -24,10 +25,42 @@ interface Purchase {
 
 function PackagesPageContent() {
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const [loadingPackage, setLoadingPackage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('packages');
+
+  const t = {
+    purchaseComplete: isItalian ? "Acquisto completato!" : "Purchase complete!",
+    purchaseCompleteDesc: isItalian ? "Grazie per aver acquistato Agency Boost. Trovi i dettagli nei tuoi acquisti." : "Thank you for purchasing Agency Boost. Find the details in your purchases.",
+    purchaseCanceled: isItalian ? "Acquisto annullato" : "Purchase canceled",
+    purchaseCanceledDesc: isItalian ? "Il pagamento è stato annullato. Puoi riprovare quando vuoi." : "The payment was canceled. You can try again whenever you want.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    checkoutError: isItalian ? "Impossibile avviare il checkout" : "Cannot start checkout",
+    pageTitle: isItalian ? "Pacchetti Premium" : "Premium Packages",
+    pageDesc: isItalian ? "Soluzioni complete per scalare la tua agenzia con l'AI" : "Complete solutions to scale your agency with AI",
+    tabPackages: isItalian ? "Pacchetti" : "Packages",
+    tabPurchases: isItalian ? "I Miei Acquisti" : "My Purchases",
+    oneTime: isItalian ? "una tantum" : "one-time",
+    setupComplete: isItalian ? "Setup Completo" : "Complete Setup",
+    onboarding: isItalian ? "Onboarding" : "Onboarding",
+    premiumSupport: isItalian ? "Supporto Premium" : "Premium Support",
+    included: isItalian ? "Incluso" : "Included",
+    purchasedOn: isItalian ? "Acquistato il" : "Purchased on",
+    active: isItalian ? "Attivo" : "Active",
+    processing: isItalian ? "Elaborazione..." : "Processing...",
+    buyAgencyBoost: isItalian ? "Acquista Agency Boost" : "Buy Agency Boost",
+    noPurchases: isItalian ? "Nessun acquisto" : "No purchases",
+    noPurchasesDesc: isItalian ? "Non hai ancora acquistato nessun pacchetto premium." : "You haven't purchased any premium packages yet.",
+    explorePackages: isItalian ? "Esplora i Pacchetti" : "Explore Packages",
+    packageScale: isItalian ? "Pacchetto Scala in 7 Giorni" : "Scale in 7 Days Package",
+    featureSetup: isItalian ? "Setup completo CRM + automazioni" : "Full CRM setup + automations",
+    featureLeads: isItalian ? "10 moduli acquisizione lead" : "10 lead acquisition modules",
+    featureFollowUp: isItalian ? "3 script follow-up personalizzati" : "3 personalized follow-up scripts",
+    featureTraining: isItalian ? "1 ora formazione video + Consulenza 1:1" : "1 hour video training + 1:1 consulting",
+  };
 
   const { data: purchasesData, isLoading: loadingPurchases } = useQuery<{ purchases: Purchase[] }>({
     queryKey: ['/api/purchases'],
@@ -41,16 +74,16 @@ function PackagesPageContent() {
 
     if (success === 'true') {
       toast({
-        title: 'Acquisto completato!',
-        description: `Grazie per aver acquistato Agency Boost. Trovi i dettagli nei tuoi acquisti.`,
+        title: t.purchaseComplete,
+        description: t.purchaseCompleteDesc,
       });
       queryClient.invalidateQueries({ queryKey: ['/api/purchases'] });
       setActiveTab('purchases');
       window.history.replaceState({}, '', '/dashboard/packages');
     } else if (canceled === 'true') {
       toast({
-        title: 'Acquisto annullato',
-        description: 'Il pagamento è stato annullato. Puoi riprovare quando vuoi.',
+        title: t.purchaseCanceled,
+        description: t.purchaseCanceledDesc,
         variant: 'destructive',
       });
       window.history.replaceState({}, '', '/dashboard/packages');
@@ -70,17 +103,17 @@ function PackagesPageContent() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Errore durante il checkout');
+      throw new Error(data.error || t.checkoutError);
       }
-
+      
       if (data.url) {
         window.location.href = data.url;
       }
     } catch (error) {
       console.error('Checkout error:', error);
       toast({
-        title: 'Errore',
-        description: error instanceof Error ? error.message : 'Impossibile avviare il checkout',
+        title: t.errorTitle,
+        description: error instanceof Error ? error.message : t.checkoutError,
         variant: 'destructive',
       });
     } finally {
@@ -98,31 +131,31 @@ function PackagesPageContent() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{purchase.package_name}</CardTitle>
             <Badge variant={purchase.status === 'completed' ? 'default' : 'secondary'}>
-              {purchase.status === 'completed' ? 'Attivo' : purchase.status}
+              {purchase.status === 'completed' ? t.active : purchase.status}
             </Badge>
           </div>
           <CardDescription>
-            Acquistato il {new Date(purchase.created_at).toLocaleDateString('it-IT')}
+            {t.purchasedOn} {new Date(purchase.created_at).toLocaleDateString(isItalian ? 'it-IT' : 'en-US')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4 text-sm">
             {deliverables.setupComplete && (
               <div>
-                <p className="text-muted-foreground">Setup Completo</p>
-                <p className="font-medium text-green-600">Incluso</p>
+                <p className="text-muted-foreground">{t.setupComplete}</p>
+                <p className="font-medium text-green-600">{t.included}</p>
               </div>
             )}
             {deliverables.onboarding && (
               <div>
-                <p className="text-muted-foreground">Onboarding</p>
-                <p className="font-medium text-green-600">Incluso</p>
+                <p className="text-muted-foreground">{t.onboarding}</p>
+                <p className="font-medium text-green-600">{t.included}</p>
               </div>
             )}
             {deliverables.premiumSupport && (
               <div>
-                <p className="text-muted-foreground">Supporto Premium</p>
-                <p className="font-medium text-green-600">Incluso</p>
+                <p className="text-muted-foreground">{t.premiumSupport}</p>
+                <p className="font-medium text-green-600">{t.included}</p>
               </div>
             )}
           </div>
@@ -134,9 +167,9 @@ function PackagesPageContent() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Pacchetti Premium</h1>
+        <h1 className="text-3xl font-bold mb-2">{t.pageTitle}</h1>
         <p className="text-muted-foreground">
-          Soluzioni complete per scalare la tua agenzia con l'AI
+          {t.pageDesc}
         </p>
       </div>
 
@@ -144,11 +177,11 @@ function PackagesPageContent() {
         <TabsList className="grid w-full max-w-md grid-cols-2">
           <TabsTrigger value="packages" data-testid="tab-packages">
             <Sparkles className="h-4 w-4 mr-2" />
-            Pacchetti
+            {t.tabPackages}
           </TabsTrigger>
           <TabsTrigger value="purchases" data-testid="tab-purchases">
             <ShoppingBag className="h-4 w-4 mr-2" />
-            I Miei Acquisti
+            {t.tabPurchases}
           </TabsTrigger>
         </TabsList>
 
@@ -165,7 +198,7 @@ function PackagesPageContent() {
                   variant="secondary" 
                   className="bg-gradient-to-r from-sunset-gold to-orange-500 text-white border-0"
                 >
-                  Pacchetto Scala in 7 Giorni
+                  {t.packageScale}
                 </Badge>
                 <div className="p-2 rounded-full bg-gradient-to-r from-sunset-gold to-orange-500">
                   <Rocket className="h-5 w-5 text-white" />
@@ -180,7 +213,7 @@ function PackagesPageContent() {
                 <span className="text-4xl font-bold bg-gradient-to-r from-sunset-gold to-orange-500 bg-clip-text text-transparent">
                   €{boostPackage.price}
                 </span>
-                <span className="text-muted-foreground text-sm">una tantum</span>
+                <span className="text-muted-foreground text-sm">{t.oneTime}</span>
               </div>
 
               <ul className="space-y-3">
@@ -192,19 +225,19 @@ function PackagesPageContent() {
                 ))}
                 <li className="flex items-start gap-2">
                   <Check className="h-5 w-5 mt-0.5 shrink-0 text-sunset-gold" />
-                  <span className="text-sm text-muted-foreground">Setup completo CRM + automazioni</span>
+                  <span className="text-sm text-muted-foreground">{t.featureSetup}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="h-5 w-5 mt-0.5 shrink-0 text-sunset-gold" />
-                  <span className="text-sm text-muted-foreground">10 moduli acquisizione lead</span>
+                  <span className="text-sm text-muted-foreground">{t.featureLeads}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="h-5 w-5 mt-0.5 shrink-0 text-sunset-gold" />
-                  <span className="text-sm text-muted-foreground">3 script follow-up personalizzati</span>
+                  <span className="text-sm text-muted-foreground">{t.featureFollowUp}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <Check className="h-5 w-5 mt-0.5 shrink-0 text-sunset-gold" />
-                  <span className="text-sm text-muted-foreground">1 ora formazione video + Consulenza 1:1</span>
+                  <span className="text-sm text-muted-foreground">{t.featureTraining}</span>
                 </li>
               </ul>
             </CardContent>
@@ -219,11 +252,11 @@ function PackagesPageContent() {
                 {loadingPackage === 'boost' ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Elaborazione...
+                    {t.processing}
                   </>
                 ) : (
                   <>
-                    Acquista Agency Boost
+                    {t.buyAgencyBoost}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
@@ -245,15 +278,15 @@ function PackagesPageContent() {
             <Card className="border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Nessun acquisto</h3>
+                <h3 className="text-lg font-medium mb-2">{t.noPurchases}</h3>
                 <p className="text-muted-foreground text-center mb-4">
-                  Non hai ancora acquistato nessun pacchetto premium.
+                  {t.noPurchasesDesc}
                 </p>
                 <Button 
                   variant="outline" 
                   onClick={() => setActiveTab('packages')}
                 >
-                  Esplora i Pacchetti
+                  {t.explorePackages}
                 </Button>
               </CardContent>
             </Card>

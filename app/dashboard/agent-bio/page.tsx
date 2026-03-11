@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Sparkles, 
   Copy, 
@@ -58,19 +59,9 @@ interface FormData {
   mercato: "italia" | "usa" | "internazionale";
 }
 
-const TONI = [
-  { value: "professionale", label: "Professionale", icon: Briefcase, description: "Formale e autorevole" },
-  { value: "amichevole", label: "Amichevole", icon: Heart, description: "Caldo e accessibile" },
-  { value: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e sofisticato" },
-];
-
-const MERCATI = [
-  { value: "italia", label: "🇮🇹 Italia", description: "Mercato italiano" },
-  { value: "usa", label: "🇺🇸 USA", description: "Mercato americano" },
-  { value: "internazionale", label: "🌍 Internazionale", description: "Clientela globale" },
-];
-
 export default function AgentBioPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const [formData, setFormData] = useState<FormData>({
     nomeAgente: "",
     nomeAgenzia: "",
@@ -87,12 +78,80 @@ export default function AgentBioPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("professionale");
   const { toast } = useToast();
+  const t = {
+    required: isItalian ? "Campo obbligatorio" : "Required field",
+    agentNameRequired: isItalian ? "Inserisci il nome dell'agente" : "Enter the agent name",
+    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
+    specializationRequired: isItalian ? "Inserisci almeno una specializzazione" : "Enter at least one specialization",
+    areaRequired: isItalian ? "Inserisci la zona operativa" : "Enter the service area",
+    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
+    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
+    accessDenied: isItalian ? "Accesso negato" : "Access denied",
+    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
+    generateError: isItalian ? "Errore nella generazione" : "Generation error",
+    bioSuccess: isItalian ? "Bio generate con successo!" : "Bios generated successfully!",
+    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    readyVariants: isItalian ? "5 varianti pronte per l'uso" : "5 ready-to-use variants",
+    error: isItalian ? "Errore" : "Error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedText: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    copyAll: isItalian ? "Copia tutto" : "Copy all",
+    opening: isItalian ? "Frase di Apertura" : "Opening Line",
+    fullBio: isItalian ? "Bio Completa" : "Full Bio",
+    skills: isItalian ? "Skills & Punti di Forza" : "Skills & Strengths",
+    salesApproach: isItalian ? "Approccio di Vendita" : "Sales Approach",
+    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    pageSubtitle: isItalian ? "Genera biografie professionali per il tuo personal branding" : "Generate professional bios for your personal branding",
+    agentBranding: isItalian ? "Agent Branding AI" : "Agent Branding AI",
+    agentData: isItalian ? "Dati Agente" : "Agent Data",
+    agentDataDesc: isItalian ? "Inserisci le informazioni per generare 5 varianti di bio" : "Enter the information to generate 5 bio variants",
+    agentName: isItalian ? "Nome Agente" : "Agent Name",
+    agencyName: isItalian ? "Nome Agenzia" : "Agency Name",
+    experienceYears: isItalian ? "Anni di Esperienza" : "Years of Experience",
+    serviceArea: isItalian ? "Zona Operativa" : "Service Area",
+    specializations: isItalian ? "Specializzazioni" : "Specializations",
+    certifications: isItalian ? "Certificazioni / Premi (opzionale)" : "Certifications / Awards (optional)",
+    tone: isItalian ? "Tono della Bio" : "Bio Tone",
+    targetMarket: isItalian ? "Mercato Target" : "Target Market",
+    premiumIncluded: isItalian ? "5 Varianti Premium Incluse" : "5 Premium Variants Included",
+    premiumIncludedDesc: isItalian ? "Professionale, Emotiva, Luxury, Social e Website SEO" : "Professional, Emotional, Luxury, Social, and Website SEO",
+    generating: isItalian ? "Generazione in corso..." : "Generating...",
+    generate5: isItalian ? "Genera 5 Bio AI" : "Generate 5 AI Bios",
+    readyCreate: isItalian ? "Pronto a creare la tua Bio" : "Ready to create your bio",
+    readyCreateDesc: isItalian ? "Compila il form e genera 5 versioni professionali della tua biografia per sito web, social media e materiali di marketing." : "Fill in the form and generate 5 professional versions of your biography for website, social media, and marketing materials.",
+    generating5: isItalian ? "Generazione delle 5 bio in corso..." : "Generating 5 bios...",
+    waitTime: isItalian ? "Questo puo richiedere 15-30 secondi" : "This may take 15-30 seconds",
+    brandingTip: isItalian ? "Consiglio Personal Branding" : "Personal Branding Tip",
+  };
+  const TONI = isItalian
+    ? [
+        { value: "professionale", label: "Professionale", icon: Briefcase, description: "Formale e autorevole" },
+        { value: "amichevole", label: "Amichevole", icon: Heart, description: "Caldo e accessibile" },
+        { value: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e sofisticato" },
+      ]
+    : [
+        { value: "professionale", label: "Professional", icon: Briefcase, description: "Formal and authoritative" },
+        { value: "amichevole", label: "Friendly", icon: Heart, description: "Warm and approachable" },
+        { value: "luxury", label: "Luxury", icon: Crown, description: "Exclusive and sophisticated" },
+      ];
+  const MERCATI = isItalian
+    ? [
+        { value: "italia", label: "🇮🇹 Italia", description: "Mercato italiano" },
+        { value: "usa", label: "🇺🇸 USA", description: "Mercato americano" },
+        { value: "internazionale", label: "🌍 Internazionale", description: "Clientela globale" },
+      ]
+    : [
+        { value: "italia", label: "🇮🇹 Italy", description: "Italian market" },
+        { value: "usa", label: "🇺🇸 USA", description: "American market" },
+        { value: "internazionale", label: "🌍 International", description: "Global audience" },
+      ];
 
   const handleSubmit = async () => {
     if (!formData.nomeAgente.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome dell'agente",
+        title: t.required,
+        description: t.agentNameRequired,
         variant: "destructive",
       });
       return;
@@ -100,8 +159,8 @@ export default function AgentBioPage() {
 
     if (!formData.nomeAgenzia.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome dell'agenzia",
+        title: t.required,
+        description: t.agencyNameRequired,
         variant: "destructive",
       });
       return;
@@ -109,8 +168,8 @@ export default function AgentBioPage() {
 
     if (!formData.specializzazioni.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci almeno una specializzazione",
+        title: t.required,
+        description: t.specializationRequired,
         variant: "destructive",
       });
       return;
@@ -118,8 +177,8 @@ export default function AgentBioPage() {
 
     if (!formData.zonaOperativa.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci la zona operativa",
+        title: t.required,
+        description: t.areaRequired,
         variant: "destructive",
       });
       return;
@@ -140,33 +199,33 @@ export default function AgentBioPage() {
       if (!response.ok) {
         if (response.status === 429) {
           toast({
-            title: "Limite raggiunto",
-            description: data.message || "Troppi tentativi. Riprova tra un minuto.",
+            title: t.rateLimit,
+            description: data.message || t.rateLimitDesc,
             variant: "destructive",
           });
           return;
         }
         if (response.status === 401) {
           toast({
-            title: "Accesso negato",
-            description: "Devi effettuare il login per usare questa funzione.",
+            title: t.accessDenied,
+            description: t.loginRequired,
             variant: "destructive",
           });
           return;
         }
-        throw new Error(data.error || "Errore nella generazione");
+        throw new Error(data.error || t.generateError);
       }
 
       setResult(data);
       setActiveTab("professionale");
       toast({
-        title: "Bio generate con successo!",
-        description: data.cached ? "Risultato dalla cache (24h)" : "5 varianti pronte per l'uso",
+        title: t.bioSuccess,
+        description: data.cached ? t.cacheResult : t.readyVariants,
       });
     } catch (error) {
       toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nella generazione",
+        title: t.error,
+        description: error instanceof Error ? error.message : t.generateError,
         variant: "destructive",
       });
     } finally {
@@ -179,14 +238,14 @@ export default function AgentBioPage() {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
       toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
+        title: t.copied,
+        description: t.copiedText,
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.error,
+        description: t.copyFailed,
         variant: "destructive",
       });
     }
@@ -235,14 +294,14 @@ export default function AgentBioPage() {
             data-testid={`button-copy-full-${variantName}`}
           >
             {copiedField === `full-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-            Copia tutto
+            {t.copyAll}
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4 pt-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-muted-foreground">Frase di Apertura</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{t.opening}</Label>
             <Button
               variant="ghost"
               size="sm"
@@ -260,7 +319,7 @@ export default function AgentBioPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-muted-foreground">Bio Completa</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{t.fullBio}</Label>
             <Button
               variant="ghost"
               size="sm"
@@ -278,7 +337,7 @@ export default function AgentBioPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-muted-foreground">Skills & Punti di Forza</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{t.skills}</Label>
             <Button
               variant="ghost"
               size="sm"
@@ -301,7 +360,7 @@ export default function AgentBioPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-muted-foreground">Approccio di Vendita</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{t.salesApproach}</Label>
             <Button
               variant="ghost"
               size="sm"
@@ -365,7 +424,7 @@ export default function AgentBioPage() {
           <Link href="/dashboard">
             <Button variant="ghost" size="sm" className="mb-4" data-testid="button-back">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Torna alla Dashboard
+              {t.back}
             </Button>
           </Link>
           
@@ -375,14 +434,14 @@ export default function AgentBioPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Agent BIO AI Creator
+                {isItalian ? "Agent BIO AI Creator" : "Agent BIO AI Creator"}
               </h1>
               <p className="text-muted-foreground">
-                Genera biografie professionali per il tuo personal branding
+                {t.pageSubtitle}
               </p>
             </div>
             <span className="ml-auto px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow-lg shadow-blue-500/25">
-              ✨ Agent Branding AI
+              ✨ {t.agentBranding}
             </span>
           </div>
         </div>
@@ -393,10 +452,10 @@ export default function AgentBioPage() {
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-blue-500" />
-                  Dati Agente
+                  {t.agentData}
                 </CardTitle>
                 <CardDescription>
-                  Inserisci le informazioni per generare 5 varianti di bio
+                  {t.agentDataDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
@@ -404,7 +463,7 @@ export default function AgentBioPage() {
                   <div className="space-y-2">
                     <Label htmlFor="nomeAgente" className="flex items-center gap-2">
                       <User className="h-4 w-4 text-blue-500" />
-                      Nome Agente *
+                      {t.agentName} *
                     </Label>
                     <Input
                       id="nomeAgente"
@@ -417,7 +476,7 @@ export default function AgentBioPage() {
                   <div className="space-y-2">
                     <Label htmlFor="nomeAgenzia" className="flex items-center gap-2">
                       <Building2 className="h-4 w-4 text-blue-500" />
-                      Nome Agenzia *
+                      {t.agencyName} *
                     </Label>
                     <Input
                       id="nomeAgenzia"
@@ -431,7 +490,7 @@ export default function AgentBioPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="anniEsperienza">Anni di Esperienza</Label>
+                    <Label htmlFor="anniEsperienza">{t.experienceYears}</Label>
                     <Input
                       id="anniEsperienza"
                       type="number"
@@ -445,7 +504,7 @@ export default function AgentBioPage() {
                   <div className="space-y-2">
                     <Label htmlFor="zonaOperativa" className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-blue-500" />
-                      Zona Operativa *
+                      {t.serviceArea} *
                     </Label>
                     <Input
                       id="zonaOperativa"
@@ -458,7 +517,7 @@ export default function AgentBioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="specializzazioni">Specializzazioni *</Label>
+                  <Label htmlFor="specializzazioni">{t.specializations} *</Label>
                   <Textarea
                     id="specializzazioni"
                     value={formData.specializzazioni}
@@ -472,7 +531,7 @@ export default function AgentBioPage() {
                 <div className="space-y-2">
                   <Label htmlFor="certificazioniPremi" className="flex items-center gap-2">
                     <Award className="h-4 w-4 text-amber-500" />
-                    Certificazioni / Premi (opzionale)
+                    {t.certifications}
                   </Label>
                   <Textarea
                     id="certificazioniPremi"
@@ -485,7 +544,7 @@ export default function AgentBioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Tono della Bio</Label>
+                  <Label>{t.tone}</Label>
                   <div className="grid grid-cols-3 gap-2">
                     {TONI.map((tono) => {
                       const Icon = tono.icon;
@@ -513,7 +572,7 @@ export default function AgentBioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Mercato Target</Label>
+                  <Label>{t.targetMarket}</Label>
                   <Select
                     value={formData.mercato}
                     onValueChange={(value) => setFormData({ ...formData, mercato: value as any })}
@@ -536,10 +595,10 @@ export default function AgentBioPage() {
                 <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-blue-500" />
-                    <span className="font-medium text-blue-700 dark:text-blue-300">5 Varianti Premium Incluse</span>
+                    <span className="font-medium text-blue-700 dark:text-blue-300">{t.premiumIncluded}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Professionale, Emotiva, Luxury, Social e Website SEO
+                    {t.premiumIncludedDesc}
                   </p>
                 </div>
 
@@ -553,12 +612,12 @@ export default function AgentBioPage() {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Generazione in corso...
+                      {t.generating}
                     </>
                   ) : (
                     <>
                       <Sparkles className="mr-2 h-5 w-5" />
-                      Genera 5 Bio AI
+                      {t.generate5}
                     </>
                   )}
                 </Button>
@@ -573,10 +632,9 @@ export default function AgentBioPage() {
                   <div className="p-4 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
                     <User className="h-8 w-8 text-blue-500" />
                   </div>
-                  <h3 className="text-lg font-medium mb-2">Pronto a creare la tua Bio</h3>
+                  <h3 className="text-lg font-medium mb-2">{t.readyCreate}</h3>
                   <p className="text-muted-foreground max-w-md">
-                    Compila il form e genera 5 versioni professionali della tua biografia 
-                    per sito web, social media e materiali di marketing.
+                    {t.readyCreateDesc}
                   </p>
                 </CardContent>
               </Card>
@@ -586,8 +644,8 @@ export default function AgentBioPage() {
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
                   <Loader2 className="h-12 w-12 animate-spin text-blue-500 mb-4" />
-                  <p className="text-muted-foreground">Generazione delle 5 bio in corso...</p>
-                  <p className="text-sm text-muted-foreground mt-2">Questo può richiedere 15-30 secondi</p>
+                  <p className="text-muted-foreground">{t.generating5}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{t.waitTime}</p>
                 </CardContent>
               </Card>
             )}
@@ -599,7 +657,7 @@ export default function AgentBioPage() {
                     <CardHeader className="pb-2">
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <Lightbulb className="h-5 w-5 text-amber-500" />
-                        Consiglio Personal Branding
+                        {t.brandingTip}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>

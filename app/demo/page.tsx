@@ -32,33 +32,71 @@ import { SiWhatsapp } from "react-icons/si";
 
 const valuePointIcons = [Sparkles, Users, Zap, BarChart3, Mail, Crown];
 
-const testimonials = [
-  {
-    name: "Marco R.",
-    role: "Agente Immobiliare, Milano",
-    quote: "PropertyPilot AI ha rivoluzionato il mio modo di lavorare. Creo annunci in 30 secondi invece di 30 minuti.",
-    rating: 5,
-  },
-  {
-    name: "Laura B.",
-    role: "Titolare Agenzia, Roma",
-    quote: "Il CRM e le automazioni mi hanno fatto risparmiare ore ogni settimana. Lo consiglio a tutti!",
-    rating: 5,
-  },
-  {
-    name: "Giuseppe T.",
-    role: "Property Manager, Napoli",
-    quote: "Finalmente una piattaforma italiana che capisce le nostre esigenze. Supporto eccezionale.",
-    rating: 5,
-  },
-];
-
 export default function DemoPage() {
   const { locale, currency, setLocale, setCurrency } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
   const calendlyUrl = "https://calendly.com/propertypilot-ai/demo";
   const whatsappNumber = "+393401234567";
-  const whatsappMessage = encodeURIComponent("Ciao! Vorrei prenotare una demo di PropertyPilot AI.");
+  const isItalian = locale === "it";
+  const whatsappMessage = encodeURIComponent(
+    isItalian
+      ? "Ciao! Vorrei prenotare una demo di PropertyPilot AI."
+      : "Hello! I would like to book a PropertyPilot AI demo."
+  );
+  const testimonials = isItalian
+    ? [
+        {
+          name: "Marco R.",
+          role: "Agente Immobiliare, Milano",
+          quote: "PropertyPilot AI ha rivoluzionato il mio modo di lavorare. Creo annunci in 30 secondi invece di 30 minuti.",
+          rating: 5,
+        },
+        {
+          name: "Laura B.",
+          role: "Titolare Agenzia, Roma",
+          quote: "Il CRM e le automazioni mi hanno fatto risparmiare ore ogni settimana. Lo consiglio a tutti!",
+          rating: 5,
+        },
+        {
+          name: "Giuseppe T.",
+          role: "Property Manager, Napoli",
+          quote: "Finalmente una piattaforma italiana che capisce le nostre esigenze. Supporto eccezionale.",
+          rating: 5,
+        },
+      ]
+    : [
+        {
+          name: "Marco R.",
+          role: "Real Estate Agent, Milan",
+          quote: "PropertyPilot AI completely changed the way I work. I now create listings in 30 seconds instead of 30 minutes.",
+          rating: 5,
+        },
+        {
+          name: "Laura B.",
+          role: "Agency Owner, Rome",
+          quote: "The CRM and automations save me hours every week. I recommend it to every serious agency.",
+          rating: 5,
+        },
+        {
+          name: "Giuseppe T.",
+          role: "Property Manager, Naples",
+          quote: "Finally, a platform that understands what agencies really need. Exceptional support.",
+          rating: 5,
+        },
+      ];
+  const trustStats = isItalian
+    ? [
+        { icon: Clock, value: "30 min", label: "Demo gratuita", color: "text-neon-aqua" },
+        { icon: Shield, value: "100%", label: "Senza impegno", color: "text-electric-blue" },
+        { icon: Users, value: "500+", label: "Clienti soddisfatti", color: "text-royal-purple" },
+        { icon: TrendingUp, value: "+40%", label: "Produttività media", color: "text-sunset-gold" },
+      ]
+    : [
+        { icon: Clock, value: "30 min", label: "Free demo", color: "text-neon-aqua" },
+        { icon: Shield, value: "100%", label: "No commitment", color: "text-electric-blue" },
+        { icon: Users, value: "500+", label: "Happy customers", color: "text-royal-purple" },
+        { icon: TrendingUp, value: "+40%", label: "Average productivity", color: "text-sunset-gold" },
+      ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,7 +108,7 @@ export default function DemoPage() {
               <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110" />
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
+                <p className="text-xs text-muted-foreground">{t.landing?.nav?.tagline ?? "Pilot Your Agency to the Next Level"}</p>
               </div>
             </Link>
             
@@ -140,7 +178,7 @@ export default function DemoPage() {
                   width="100%"
                   height="600"
                   frameBorder="0"
-                  title="Prenota Demo PropertyPilot AI"
+                  title={isItalian ? "Prenota Demo PropertyPilot AI" : "Book PropertyPilot AI Demo"}
                   className="w-full"
                   data-testid="iframe-calendly"
                 />
@@ -273,12 +311,7 @@ export default function DemoPage() {
       <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {[
-              { icon: Clock, value: "30 min", label: "Demo gratuita", color: "text-neon-aqua" },
-              { icon: Shield, value: "100%", label: "Senza impegno", color: "text-electric-blue" },
-              { icon: Users, value: "500+", label: "Clienti soddisfatti", color: "text-royal-purple" },
-              { icon: TrendingUp, value: "+40%", label: "Produttività media", color: "text-sunset-gold" },
-            ].map((stat, index) => (
+            {trustStats.map((stat, index) => (
               <div key={index} className="text-center group" data-testid={`stat-demo-${index}`}>
                 <div className="w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className={stat.color} size={28} />
@@ -296,15 +329,21 @@ export default function DemoPage() {
         <div className="absolute inset-0 bg-gradient-cyber-glow opacity-10" />
         <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 animate-fade-in-up" data-testid="text-cta-title">
-            Pronto a <span className="gradient-text-gold">Trasformare</span> la Tua Agenzia?
+            {isItalian ? (
+              <>Pronto a <span className="gradient-text-gold">Trasformare</span> la Tua Agenzia?</>
+            ) : (
+              <>Ready to <span className="gradient-text-gold">Transform</span> Your Agency?</>
+            )}
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-100">
-            Prenota ora la tua demo gratuita e scopri come PropertyPilot AI può moltiplicare le tue vendite.
+            {isItalian
+              ? "Prenota ora la tua demo gratuita e scopri come PropertyPilot AI può moltiplicare le tue vendite."
+              : "Book your free demo now and discover how PropertyPilot AI can multiply your sales."}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-200">
             <a href="#calendly">
               <Button className="neon-button text-lg px-10 py-6" size="lg" data-testid="button-final-cta">
-                Prenota Demo Gratuita
+                {isItalian ? "Prenota Demo Gratuita" : "Book Free Demo"}
                 <Calendar className="ml-2 h-5 w-5" />
               </Button>
             </a>
@@ -330,7 +369,7 @@ export default function DemoPage() {
               <PropertyPilotLogo className="w-10 h-10 flex-shrink-0" />
               <div>
                 <p className="font-bold gradient-text-purple">PropertyPilot AI</p>
-                <p className="text-xs text-muted-foreground">© 2024 Tutti i diritti riservati</p>
+                <p className="text-xs text-muted-foreground">© 2024 {isItalian ? "Tutti i diritti riservati" : "All rights reserved"}</p>
               </div>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">

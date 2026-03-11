@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 import {
   Target,
   Flame,
@@ -94,10 +95,12 @@ const FACTOR_ICONS: Record<string, any> = {
 };
 
 export default function LeadScorePage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
   const [mercato, setMercato] = useState<'italia' | 'usa'>('italia');
   const [messaggioLead, setMessaggioLead] = useState<string>('');
   const [tipoImmobile, setTipoImmobile] = useState<string>('appartamento');
-  const [tempistiche, setTempistiche] = useState<string>('Non specificato');
+  const [tempistiche, setTempistiche] = useState<string>(isItalian ? 'Non specificato' : 'Not specified');
   const [budget, setBudget] = useState<string>('');
   const [nomeLead, setNomeLead] = useState<string>('');
   
@@ -107,12 +110,82 @@ export default function LeadScorePage() {
   const [processingTime, setProcessingTime] = useState<number | null>(null);
   
   const { toast } = useToast();
+  const t = {
+    required: isItalian ? "Campo obbligatorio" : "Required field",
+    requiredMessage: isItalian ? "Inserisci il messaggio del lead per procedere con l'analisi" : "Enter the lead message to continue with the analysis",
+    messageTooShort: isItalian ? "Messaggio troppo breve" : "Message too short",
+    messageTooShortDesc: isItalian ? "Il messaggio deve contenere almeno 20 caratteri per un'analisi accurata" : "The message must contain at least 20 characters for an accurate analysis",
+    analysisDone: isItalian ? "Analisi completata" : "Analysis completed",
+    cachedResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    analysisIn: (s: number) => isItalian ? `Analisi completata in ${s}s` : `Analysis completed in ${s}s`,
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: (label: string) => isItalian ? `${label} copiato negli appunti` : `${label} copied to clipboard`,
+    pageTitle: isItalian ? "Lead Scoring AI" : "AI Lead Scoring",
+    pageSubtitle: isItalian ? "Analizza automaticamente i messaggi dei tuoi lead con l'AI. Ottieni un punteggio 0-100, priorita d'azione e template di risposta personalizzati." : "Automatically analyze your lead messages with AI. Get a 0-100 score, action priorities, and personalized reply templates.",
+    analyzeLead: isItalian ? "Analizza un Nuovo Lead" : "Analyze a New Lead",
+    analyzeLeadDesc: isItalian ? "Inserisci il messaggio del lead e le informazioni disponibili per ottenere un'analisi completa" : "Enter the lead message and available information to get a complete analysis",
+    referenceMarket: isItalian ? "Mercato di Riferimento" : "Reference Market",
+    selectMarket: isItalian ? "Seleziona mercato" : "Select market",
+    propertyType: isItalian ? "Tipo Immobile Richiesto" : "Requested Property Type",
+    selectType: isItalian ? "Seleziona tipo" : "Select type",
+    timing: isItalian ? "Tempistiche Dichiarate" : "Declared Timeline",
+    selectTiming: isItalian ? "Seleziona tempistiche" : "Select timeline",
+    leadName: isItalian ? "Nome del Lead (opzionale)" : "Lead Name (optional)",
+    statedBudget: isItalian ? "Budget Dichiarato (opzionale)" : "Declared Budget (optional)",
+    leadMessage: isItalian ? "Messaggio del Lead" : "Lead Message",
+    leadMessagePlaceholder: isItalian ? "Incolla qui il messaggio ricevuto dal lead (email, form di contatto, WhatsApp, ecc.)..." : "Paste the message received from the lead here (email, contact form, WhatsApp, etc.)...",
+    characters: isItalian ? "caratteri" : "characters",
+    minimum20: isItalian ? "Minimo 20 caratteri richiesti" : "Minimum 20 characters required",
+    analyzing: isItalian ? "Analisi in corso..." : "Analyzing...",
+    analyzeWithAi: isItalian ? "Analizza Lead con AI" : "Analyze Lead with AI",
+    analysisSummary: isItalian ? "Sintesi dell'Analisi" : "Analysis Summary",
+    leadScoreLabel: "Lead Score",
+    leadProfile: isItalian ? "Profilo Lead" : "Lead Profile",
+    lossRisk: isItalian ? "Rischio Perdita" : "Risk of Loss",
+    factorBreakdown: isItalian ? "Breakdown dei 5 Fattori (0-20 punti ciascuno)" : "5-Factor Breakdown (0-20 points each)",
+    factorBreakdownDesc: isItalian ? "Analisi dettagliata dei fattori che determinano il punteggio del lead" : "Detailed analysis of the factors that determine the lead score",
+    actionPriorities: isItalian ? "Priorita d'Azione" : "Action Priorities",
+    actionPrioritiesDesc: isItalian ? "Azioni consigliate in ordine di priorita per convertire questo lead" : "Recommended actions in order of priority to convert this lead",
+    followUpStrategy: isItalian ? "Strategia Follow-Up (7-14 giorni)" : "Follow-Up Strategy (7-14 days)",
+    responseTemplates: isItalian ? "Template di Risposta AI" : "AI Response Templates",
+    responseTemplatesDesc: isItalian ? "Risposte personalizzate pronte all'uso, generate in base al profilo del lead" : "Ready-to-use personalized replies generated from the lead profile",
+    quickReply: isItalian ? "Risposta Rapida" : "Quick Reply",
+    professionalReply: isItalian ? "Risposta Professionale" : "Professional Reply",
+    subject: isItalian ? "OGGETTO:" : "SUBJECT:",
+    shortVersion: isItalian ? "VERSIONE BREVE:" : "SHORT VERSION:",
+    fullVersion: isItalian ? "VERSIONE COMPLETA:" : "FULL VERSION:",
+    intro: isItalian ? "INTRO:" : "INTRO:",
+    fullEmail: isItalian ? "EMAIL COMPLETA:" : "FULL EMAIL:",
+    perfectCopy: isItalian ? "Suggerimenti Perfect Copy" : "Perfect Copy Suggestions",
+    perfectCopyDesc: isItalian ? "Contenuti consigliati per aumentare le conversioni con questo lead" : "Suggested content to increase conversions with this lead",
+    newAnalysis: isItalian ? "Nuova Analisi" : "New Analysis",
+    cacheBadge: isItalian ? "⚡ Risultato dalla cache (24h)" : "⚡ Result from cache (24h)",
+  };
+  const marketOptions = isItalian
+    ? [
+        { value: 'italia', label: '🇮🇹 Italia' },
+        { value: 'usa', label: '🇺🇸 USA' },
+      ]
+    : [
+        { value: 'italia', label: '🇮🇹 Italy' },
+        { value: 'usa', label: '🇺🇸 USA' },
+      ];
+  const propertyTypes = isItalian
+    ? [
+        ['appartamento', 'Appartamento'], ['villa', 'Villa'], ['attico', 'Attico'], ['loft', 'Loft'], ['ufficio', 'Ufficio'], ['locale_commerciale', 'Locale Commerciale'], ['terreno', 'Terreno'], ['altro', 'Altro']
+      ]
+    : [
+        ['appartamento', 'Apartment'], ['villa', 'Villa'], ['attico', 'Penthouse'], ['loft', 'Loft'], ['ufficio', 'Office'], ['locale_commerciale', 'Commercial Space'], ['terreno', 'Land'], ['altro', 'Other']
+      ];
+  const timingOptions = isItalian
+    ? ['Immediato (entro 1 mese)', 'Breve termine (1-3 mesi)', 'Medio termine (3-6 mesi)', 'Lungo termine (6+ mesi)', 'Non specificato']
+    : ['Immediate (within 1 month)', 'Short term (1-3 months)', 'Medium term (3-6 months)', 'Long term (6+ months)', 'Not specified'];
 
   const handleSubmit = async () => {
     if (!messaggioLead.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il messaggio del lead per procedere con l'analisi",
+        title: t.required,
+        description: t.requiredMessage,
         variant: "destructive"
       });
       return;
@@ -120,8 +193,8 @@ export default function LeadScorePage() {
 
     if (messaggioLead.trim().length < 20) {
       toast({
-        title: "Messaggio troppo breve",
-        description: "Il messaggio deve contenere almeno 20 caratteri per un'analisi accurata",
+        title: t.messageTooShort,
+        description: t.messageTooShortDesc,
         variant: "destructive"
       });
       return;
@@ -147,7 +220,7 @@ export default function LeadScorePage() {
       const data: LeadScoreResponse = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Errore durante l\'analisi');
+        throw new Error(data.error || (isItalian ? "Errore durante l'analisi" : "Error during analysis"));
       }
 
       setResult(data.data || null);
@@ -155,8 +228,8 @@ export default function LeadScorePage() {
       setProcessingTime(data.processingTimeMs || null);
 
       toast({
-        title: "Analisi completata",
-        description: data.cached ? "Risultato dalla cache (24h)" : `Analisi completata in ${Math.round((data.processingTimeMs || 0) / 1000)}s`
+        title: t.analysisDone,
+        description: data.cached ? t.cachedResult : t.analysisIn(Math.round((data.processingTimeMs || 0) / 1000))
       });
 
     } catch (error: any) {
@@ -173,8 +246,8 @@ export default function LeadScorePage() {
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({
-      title: "Copiato!",
-      description: `${label} copiato negli appunti`
+      title: t.copied,
+      description: t.copiedDesc(label)
     });
   };
 
@@ -231,15 +304,14 @@ export default function LeadScorePage() {
               <Target className="w-8 h-8 text-cyan-400" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Lead Scoring AI
+              {t.pageTitle}
             </h1>
             <Badge className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 border-cyan-500/30">
               🎯 Priority
             </Badge>
           </div>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Analizza automaticamente i messaggi dei tuoi lead con l'AI. Ottieni un punteggio 0-100, 
-            priorità d'azione e template di risposta personalizzati.
+            {t.pageSubtitle}
           </p>
         </div>
 
@@ -248,10 +320,10 @@ export default function LeadScorePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-white">
               <User className="w-5 h-5 text-cyan-400" />
-              Analizza un Nuovo Lead
+              {t.analyzeLead}
             </CardTitle>
             <CardDescription>
-              Inserisci il messaggio del lead e le informazioni disponibili per ottenere un'analisi completa
+              {t.analyzeLeadDesc}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -259,49 +331,43 @@ export default function LeadScorePage() {
             {/* Row 1: Mercato, Tipo Immobile, Tempistiche */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label className="text-slate-300">Mercato di Riferimento</Label>
+                <Label className="text-slate-300">{t.referenceMarket}</Label>
                 <Select value={mercato} onValueChange={(v) => setMercato(v as 'italia' | 'usa')}>
                   <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white" data-testid="select-mercato">
-                    <SelectValue placeholder="Seleziona mercato" />
+                    <SelectValue placeholder={t.selectMarket} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="italia">🇮🇹 Italia</SelectItem>
-                    <SelectItem value="usa">🇺🇸 USA</SelectItem>
+                    {marketOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <Label className="text-slate-300">Tipo Immobile Richiesto</Label>
+                <Label className="text-slate-300">{t.propertyType}</Label>
                 <Select value={tipoImmobile} onValueChange={setTipoImmobile}>
                   <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white" data-testid="select-tipo-immobile">
-                    <SelectValue placeholder="Seleziona tipo" />
+                    <SelectValue placeholder={t.selectType} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="appartamento">Appartamento</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="attico">Attico</SelectItem>
-                    <SelectItem value="loft">Loft</SelectItem>
-                    <SelectItem value="ufficio">Ufficio</SelectItem>
-                    <SelectItem value="locale_commerciale">Locale Commerciale</SelectItem>
-                    <SelectItem value="terreno">Terreno</SelectItem>
-                    <SelectItem value="altro">Altro</SelectItem>
+                    {propertyTypes.map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               
               <div className="space-y-2">
-                <Label className="text-slate-300">Tempistiche Dichiarate</Label>
+                <Label className="text-slate-300">{t.timing}</Label>
                 <Select value={tempistiche} onValueChange={setTempistiche}>
                   <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white" data-testid="select-tempistiche">
-                    <SelectValue placeholder="Seleziona tempistiche" />
+                    <SelectValue placeholder={t.selectTiming} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Immediato (entro 1 mese)">Immediato (entro 1 mese)</SelectItem>
-                    <SelectItem value="Breve termine (1-3 mesi)">Breve termine (1-3 mesi)</SelectItem>
-                    <SelectItem value="Medio termine (3-6 mesi)">Medio termine (3-6 mesi)</SelectItem>
-                    <SelectItem value="Lungo termine (6+ mesi)">Lungo termine (6+ mesi)</SelectItem>
-                    <SelectItem value="Non specificato">Non specificato</SelectItem>
+                    {timingOptions.map((option) => (
+                      <SelectItem key={option} value={option}>{option}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -310,7 +376,7 @@ export default function LeadScorePage() {
             {/* Row 2: Nome Lead e Budget */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-slate-300">Nome del Lead (opzionale)</Label>
+                <Label className="text-slate-300">{t.leadName}</Label>
                 <input
                   type="text"
                   value={nomeLead}
@@ -322,7 +388,7 @@ export default function LeadScorePage() {
               </div>
               
               <div className="space-y-2">
-                <Label className="text-slate-300">Budget Dichiarato (opzionale)</Label>
+                <Label className="text-slate-300">{t.statedBudget}</Label>
                 <input
                   type="text"
                   value={budget}
@@ -337,17 +403,17 @@ export default function LeadScorePage() {
             {/* Messaggio Lead */}
             <div className="space-y-2">
               <Label className="text-slate-300">
-                Messaggio del Lead <span className="text-red-400">*</span>
+                {t.leadMessage} <span className="text-red-400">*</span>
               </Label>
               <Textarea
                 value={messaggioLead}
                 onChange={(e) => setMessaggioLead(e.target.value)}
-                placeholder="Incolla qui il messaggio ricevuto dal lead (email, form di contatto, WhatsApp, ecc.)..."
+                placeholder={t.leadMessagePlaceholder}
                 className="min-h-[150px] bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-500"
                 data-testid="textarea-messaggio-lead"
               />
               <p className="text-xs text-slate-500">
-                {messaggioLead.length} caratteri • Minimo 20 caratteri richiesti
+                {messaggioLead.length} {t.characters} • {t.minimum20}
               </p>
             </div>
             
@@ -361,12 +427,12 @@ export default function LeadScorePage() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Analisi in corso...
+                  {t.analyzing}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5 mr-2" />
-                  Analizza Lead con AI
+                  {t.analyzeWithAi}
                 </>
               )}
             </Button>
@@ -394,7 +460,7 @@ export default function LeadScorePage() {
                     <div className={`text-6xl font-bold ${getScoreColor(result.leadScore)}`}>
                       {result.leadScore}
                     </div>
-                    <p className="text-slate-400 mt-2">Lead Score</p>
+                    <p className="text-slate-400 mt-2">{t.leadScoreLabel}</p>
                     <Progress 
                       value={result.leadScore} 
                       className="w-full mt-4 h-3"
@@ -405,7 +471,7 @@ export default function LeadScorePage() {
                   <div className="lg:col-span-2 p-6 rounded-xl bg-slate-800/50 border border-slate-700/50">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-cyan-400" />
-                      Sintesi dell'Analisi
+                      {t.analysisSummary}
                     </h3>
                     <p className="text-slate-300 leading-relaxed mb-4">
                       {result.sintesiAnalisi}
@@ -415,13 +481,13 @@ export default function LeadScorePage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
                         <h4 className="text-sm font-medium text-cyan-400 flex items-center gap-1 mb-2">
-                          <User className="w-4 h-4" /> Profilo Lead
+                          <User className="w-4 h-4" /> {t.leadProfile}
                         </h4>
                         <p className="text-sm text-slate-400">{result.profiloLead}</p>
                       </div>
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-red-500/20">
                         <h4 className="text-sm font-medium text-red-400 flex items-center gap-1 mb-2">
-                          <AlertTriangle className="w-4 h-4" /> Rischio Perdita
+                          <AlertTriangle className="w-4 h-4" /> {t.lossRisk}
                         </h4>
                         <p className="text-sm text-slate-400">{result.rischioPerditaLead}</p>
                       </div>
@@ -429,7 +495,7 @@ export default function LeadScorePage() {
                     
                     {cached && (
                       <Badge className="mt-4 bg-purple-500/20 text-purple-400 border-purple-500/30">
-                        ⚡ Risultato dalla cache (24h)
+                        {t.cacheBadge}
                       </Badge>
                     )}
                   </div>
@@ -442,10 +508,10 @@ export default function LeadScorePage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Target className="w-5 h-5 text-cyan-400" />
-                  Breakdown dei 5 Fattori (0-20 punti ciascuno)
+                  {t.factorBreakdown}
                 </CardTitle>
                 <CardDescription>
-                  Analisi dettagliata dei fattori che determinano il punteggio del lead
+                  {t.factorBreakdownDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -480,10 +546,10 @@ export default function LeadScorePage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <ArrowRight className="w-5 h-5 text-amber-400" />
-                  Priorità d'Azione
+                  {t.actionPriorities}
                 </CardTitle>
                 <CardDescription>
-                  Azioni consigliate in ordine di priorità per convertire questo lead
+                  {t.actionPrioritiesDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -513,7 +579,7 @@ export default function LeadScorePage() {
                 {result.followUpStrategy && (
                   <div className="mt-6 p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
                     <h4 className="text-sm font-medium text-cyan-400 mb-2 flex items-center gap-2">
-                      <Calendar className="w-4 h-4" /> Strategia Follow-Up (7-14 giorni)
+                      <Calendar className="w-4 h-4" /> {t.followUpStrategy}
                     </h4>
                     <p className="text-sm text-slate-300">{result.followUpStrategy}</p>
                   </div>
@@ -526,10 +592,10 @@ export default function LeadScorePage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Mail className="w-5 h-5 text-purple-400" />
-                  Template di Risposta AI
+                  {t.responseTemplates}
                 </CardTitle>
                 <CardDescription>
-                  Risposte personalizzate pronte all'uso, generate in base al profilo del lead
+                  {t.responseTemplatesDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -539,14 +605,14 @@ export default function LeadScorePage() {
                   <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-4">
                       <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                        ⚡ Risposta Rapida
+                        ⚡ {t.quickReply}
                       </Badge>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(
                           `Oggetto: ${result.rispostaBrieveTemplate.oggetto}\n\n${result.rispostaBrieveTemplate.lungo}`,
-                          'Risposta breve'
+                          t.quickReply
                         )}
                         className="text-slate-400 hover:text-white"
                         data-testid="button-copy-risposta-breve"
@@ -557,17 +623,17 @@ export default function LeadScorePage() {
                     
                     <div className="space-y-3">
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">OGGETTO:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.subject}</p>
                         <p className="text-white font-medium">{result.rispostaBrieveTemplate.oggetto}</p>
                       </div>
                       
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">VERSIONE BREVE:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.shortVersion}</p>
                         <p className="text-slate-300">{result.rispostaBrieveTemplate.breve}</p>
                       </div>
                       
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">VERSIONE COMPLETA:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.fullVersion}</p>
                         <p className="text-slate-300 whitespace-pre-line">{result.rispostaBrieveTemplate.lungo}</p>
                       </div>
                     </div>
@@ -577,14 +643,14 @@ export default function LeadScorePage() {
                   <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-4">
                       <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-                        📧 Risposta Professionale
+                        📧 {t.professionalReply}
                       </Badge>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(
                           `Oggetto: ${result.rispostaLungaTemplate.oggetto}\n\n${result.rispostaLungaTemplate.lungo}`,
-                          'Risposta professionale'
+                          t.professionalReply
                         )}
                         className="text-slate-400 hover:text-white"
                         data-testid="button-copy-risposta-lunga"
@@ -595,17 +661,17 @@ export default function LeadScorePage() {
                     
                     <div className="space-y-3">
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">OGGETTO:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.subject}</p>
                         <p className="text-white font-medium">{result.rispostaLungaTemplate.oggetto}</p>
                       </div>
                       
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">INTRO:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.intro}</p>
                         <p className="text-slate-300">{result.rispostaLungaTemplate.breve}</p>
                       </div>
                       
                       <div className="p-3 rounded-lg bg-slate-900/50 border border-slate-700/30">
-                        <p className="text-xs text-slate-500 mb-1">EMAIL COMPLETA:</p>
+                        <p className="text-xs text-slate-500 mb-1">{t.fullEmail}</p>
                         <p className="text-slate-300 whitespace-pre-line">{result.rispostaLungaTemplate.lungo}</p>
                       </div>
                     </div>
@@ -619,10 +685,10 @@ export default function LeadScorePage() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-400" />
-                  Suggerimenti Perfect Copy
+                  {t.perfectCopy}
                 </CardTitle>
                 <CardDescription>
-                  Contenuti consigliati per aumentare le conversioni con questo lead
+                  {t.perfectCopyDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -649,8 +715,9 @@ export default function LeadScorePage() {
             {/* Processing Info */}
             {processingTime && (
               <div className="text-center text-sm text-slate-500">
-                Analisi completata in {(processingTime / 1000).toFixed(1)}s
-                {cached && ' (dalla cache)'}
+                {isItalian
+                  ? `Analisi completata in ${(processingTime / 1000).toFixed(1)}s${cached ? ' (dalla cache)' : ''}`
+                  : `Analysis completed in ${(processingTime / 1000).toFixed(1)}s${cached ? ' (from cache)' : ''}`}
               </div>
             )}
             
@@ -668,7 +735,7 @@ export default function LeadScorePage() {
                 data-testid="button-nuova-analisi"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
-                Nuova Analisi
+                {t.newAnalysis}
               </Button>
             </div>
           </div>

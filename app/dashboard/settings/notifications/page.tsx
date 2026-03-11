@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import {
   ArrowLeft,
   BellRing,
@@ -27,7 +28,57 @@ interface NotificationSettings {
 
 export default function NotificationsSettingsPage() {
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const t = {
+    pageTitle: "AI Morning Intel",
+    pageSubtitle: isItalian
+      ? "Configura le tue notifiche giornaliere di intelligence"
+      : "Configure your daily intelligence notifications",
+    cardTitle: isItalian ? "Briefing Mattutino" : "Morning Briefing",
+    cardDesc: isItalian
+      ? "Ricevi ogni mattina le top 3 opportunità immobiliari della tua zona"
+      : "Receive the top 3 real estate opportunities in your area every morning",
+    enableLabel: isItalian ? "Attiva AI Morning Intel" : "Enable AI Morning Intel",
+    enableDesc: isItalian
+      ? "Ricevi un briefing quotidiano con le migliori opportunità"
+      : "Receive a daily briefing with the best opportunities",
+    emailLabel: isItalian ? "Notifica via Email" : "Email Notification",
+    emailDesc: isItalian ? "Ricevi il briefing nella tua casella email" : "Receive the briefing in your inbox",
+    whatsappLabel: isItalian ? "Notifica via WhatsApp" : "WhatsApp Notification",
+    whatsappDesc: isItalian ? "Ricevi il briefing direttamente su WhatsApp" : "Receive the briefing directly on WhatsApp",
+    timeLabel: isItalian ? "Orario del Briefing" : "Briefing Time",
+    timeDesc: isItalian
+      ? "Scegli l'orario in cui vuoi ricevere il briefing quotidiano"
+      : "Choose the time you want to receive the daily briefing",
+    sendTestIdle: isItalian ? "Invia Prova sul mio Cellulare" : "Send Test to My Phone",
+    sendTestLoading: isItalian ? "Invio in corso..." : "Sending...",
+    sendTestDesc: isItalian
+      ? "Ricevi subito un esempio di notifica per vedere quanto è professionale"
+      : "Receive a notification example right now to see how professional it looks",
+    previewTitle: isItalian ? "Anteprima Messaggio" : "Message Preview",
+    previewDesc: isItalian
+      ? "Ecco come apparirà il tuo briefing mattutino"
+      : "This is how your morning briefing will appear",
+    previewHeader: isItalian ? "🔥 TOP 3 OPPORTUNITÀ DI OGGI" : "🔥 TOP 3 OPPORTUNITIES TODAY",
+    previewFooter: isItalian
+      ? "Questi deal sono stati inviati anche a [X] agenzie partner nella tua zona. Affrettati!"
+      : "These deals have also been sent to [X] partner agencies in your area. Hurry!",
+    cancel: isItalian ? "Annulla" : "Cancel",
+    saveIdle: isItalian ? "Salva Impostazioni" : "Save Settings",
+    saveLoading: isItalian ? "Salvataggio..." : "Saving...",
+    // toasts
+    savedTitle: isItalian ? "Impostazioni salvate" : "Settings saved",
+    savedDesc: isItalian ? "Le tue preferenze di notifica sono state aggiornate" : "Your notification preferences have been updated",
+    errorTitle: isItalian ? "Errore" : "Error",
+    saveError: isItalian ? "Impossibile salvare le impostazioni" : "Unable to save settings",
+    connectionError: isItalian ? "Errore di connessione" : "Connection error",
+    testSentTitle: isItalian ? "Notifica di prova inviata!" : "Test notification sent!",
+    testSentDesc: isItalian ? "Controlla la tua email e WhatsApp" : "Check your email and WhatsApp",
+    testError: isItalian ? "Impossibile inviare la notifica di prova" : "Unable to send test notification",
+  };
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
@@ -70,23 +121,12 @@ export default function NotificationsSettingsPage() {
       const data = await response.json();
 
       if (data.success) {
-        toast({
-          title: "Impostazioni salvate",
-          description: "Le tue preferenze di notifica sono state aggiornate",
-        });
+        toast({ title: t.savedTitle, description: t.savedDesc });
       } else {
-        toast({
-          title: "Errore",
-          description: data.error || "Impossibile salvare le impostazioni",
-          variant: "destructive",
-        });
+        toast({ title: t.errorTitle, description: data.error || t.saveError, variant: "destructive" });
       }
     } catch (error) {
-      toast({
-        title: "Errore",
-        description: "Errore di connessione",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -107,23 +147,12 @@ export default function NotificationsSettingsPage() {
       const data = await response.json();
 
       if (data.success) {
-        toast({
-          title: "Notifica di prova inviata!",
-          description: "Controlla la tua email e WhatsApp",
-        });
+        toast({ title: t.testSentTitle, description: t.testSentDesc });
       } else {
-        toast({
-          title: "Errore",
-          description: data.error || "Impossibile inviare la notifica di prova",
-          variant: "destructive",
-        });
+        toast({ title: t.errorTitle, description: data.error || t.testError, variant: "destructive" });
       }
     } catch (error) {
-      toast({
-        title: "Errore",
-        description: "Errore di connessione",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
     } finally {
       setSendingTest(false);
     }
@@ -150,10 +179,10 @@ export default function NotificationsSettingsPage() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-2">
               <BellRing className="h-8 w-8 text-purple-400" />
-              AI Morning Intel
+              {t.pageTitle}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Configura le tue notifiche giornaliere di intelligence
+              {t.pageSubtitle}
             </p>
           </div>
         </div>
@@ -163,10 +192,10 @@ export default function NotificationsSettingsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-cyan-400" />
-              Briefing Mattutino
+              {t.cardTitle}
             </CardTitle>
             <CardDescription>
-              Ricevi ogni mattina le top 3 opportunità immobiliari della tua zona
+              {t.cardDesc}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -174,10 +203,10 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex-1">
                 <Label htmlFor="briefing-enabled" className="text-base font-semibold cursor-pointer">
-                  Attiva AI Morning Intel
+                  {t.enableLabel}
                 </Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Ricevi un briefing quotidiano con le migliori opportunità
+                  {t.enableDesc}
                 </p>
               </div>
               <Switch
@@ -197,10 +226,10 @@ export default function NotificationsSettingsPage() {
                     <Mail className="h-5 w-5 text-purple-400" />
                     <div>
                       <Label htmlFor="briefing-email" className="text-base font-semibold cursor-pointer">
-                        Notifica via Email
+                        {t.emailLabel}
                       </Label>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Ricevi il briefing nella tua casella email
+                        {t.emailDesc}
                       </p>
                     </div>
                   </div>
@@ -219,10 +248,10 @@ export default function NotificationsSettingsPage() {
                     <Smartphone className="h-5 w-5 text-green-400" />
                     <div>
                       <Label htmlFor="briefing-whatsapp" className="text-base font-semibold cursor-pointer">
-                        Notifica via WhatsApp
+                        {t.whatsappLabel}
                       </Label>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Ricevi il briefing direttamente su WhatsApp
+                        {t.whatsappDesc}
                       </p>
                     </div>
                   </div>
@@ -238,7 +267,7 @@ export default function NotificationsSettingsPage() {
                 {/* Time Selection */}
                 <div className="p-4 border rounded-lg">
                   <Label htmlFor="briefing-time" className="text-base font-semibold mb-2 block">
-                    Orario del Briefing
+                    {t.timeLabel}
                   </Label>
                   <input
                     id="briefing-time"
@@ -250,7 +279,7 @@ export default function NotificationsSettingsPage() {
                     className="px-3 py-2 border rounded-md bg-background"
                   />
                   <p className="text-sm text-muted-foreground mt-2">
-                    Scegli l'orario in cui vuoi ricevere il briefing quotidiano
+                    {t.timeDesc}
                   </p>
                 </div>
               </div>
@@ -267,17 +296,17 @@ export default function NotificationsSettingsPage() {
                   {sendingTest ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Invio in corso...
+                      {t.sendTestLoading}
                     </>
                   ) : (
                     <>
                       <Smartphone className="h-4 w-4 mr-2" />
-                      Invia Prova sul mio Cellulare
+                      {t.sendTestIdle}
                     </>
                   )}
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2 text-center">
-                  Ricevi subito un esempio di notifica per vedere quanto è professionale
+                  {t.sendTestDesc}
                 </p>
               </div>
             )}
@@ -288,21 +317,21 @@ export default function NotificationsSettingsPage() {
         {settings.morning_briefing_enabled && (
           <Card>
             <CardHeader>
-              <CardTitle>Anteprima Messaggio</CardTitle>
+              <CardTitle>{t.previewTitle}</CardTitle>
               <CardDescription>
-                Ecco come apparirà il tuo briefing mattutino
+                {t.previewDesc}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="bg-muted/50 rounded-lg p-4 space-y-3 font-mono text-sm">
-                <div className="font-bold text-purple-400">🔥 TOP 3 OPPORTUNITÀ DI OGGI</div>
+                <div className="font-bold text-purple-400">{t.previewHeader}</div>
                 <div className="space-y-2 text-gray-300">
                   <div>• [Link Report PDF 1] - Prezzo -20%</div>
                   <div>• [Link Report PDF 2] - Urgenza Alta</div>
                   <div>• [Link Report PDF 3] - Target Investitori</div>
                 </div>
                 <div className="text-xs text-muted-foreground pt-2 border-t">
-                  Questi deal sono stati inviati anche a [X] agenzie partner nella tua zona. Affrettati!
+                  {t.previewFooter}
                 </div>
               </div>
             </CardContent>
@@ -312,7 +341,7 @@ export default function NotificationsSettingsPage() {
         {/* Save Button */}
         <div className="flex justify-end gap-3 mt-6">
           <Button variant="outline" onClick={() => router.back()}>
-            Annulla
+            {t.cancel}
           </Button>
           <Button
             onClick={handleSave}
@@ -322,12 +351,12 @@ export default function NotificationsSettingsPage() {
             {saving ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Salvataggio...
+                {t.saveLoading}
               </>
             ) : (
               <>
                 <Check className="h-4 w-4 mr-2" />
-                Salva Impostazioni
+                {t.saveIdle}
               </>
             )}
           </Button>

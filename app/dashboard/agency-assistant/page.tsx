@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { ProFeaturePaywall } from "@/components/demo-modal";
 import { createClient } from "@/lib/supabase/client";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Home, 
   ArrowLeft,
@@ -96,6 +97,7 @@ const FEATURE_ROUTES: Record<string, string> = {
 };
 
 export default function AgencyAssistantPage() {
+  const { locale } = useLocaleContext();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [currentContext, setCurrentContext] = useState<string>("general");
@@ -104,6 +106,46 @@ export default function AgencyAssistantPage() {
   const { toast } = useToast();
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const isItalian = locale === "it";
+  const localizedQuickSuggestions = isItalian
+    ? QUICK_SUGGESTIONS
+    : [
+        { icon: FileText, text: "Generate a listing for this property", context: "copy" },
+        { icon: Mail, text: "Create a follow-up email", context: "email" },
+        { icon: MessageSquare, text: "Suggest social posts", context: "social" },
+        { icon: Lightbulb, text: "How do I use Perfect Copy 2.0?", context: "tutorial" },
+        { icon: Video, text: "Tips for real estate videos", context: "social" },
+        { icon: Hash, text: "Best hashtags for Instagram", context: "social" },
+      ];
+  const t = {
+    error: isItalian ? "Errore" : "Error",
+    premiumRequired: isItalian
+      ? "L'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
+      : "Agency Assistant AI is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
+    responseError: isItalian ? "Errore nella risposta" : "Response error",
+    title: "Agency Assistant AI",
+    subtitle: isItalian ? "Il tuo assistente immobiliare 24/7" : "Your real estate assistant 24/7",
+    aiActive: isItalian ? "AI Attivo" : "AI Active",
+    backAria: isItalian ? "Torna alla dashboard" : "Go back to dashboard",
+    paywallDescription: isItalian
+      ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'assistente AI completo."
+      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full AI assistant.",
+    introTitle: isItalian ? "Ciao! Sono il tuo Assistente AI" : "Hi! I am your AI Assistant",
+    introBody: isItalian
+      ? "Sono specializzato in copywriting immobiliare e conosco tutte le funzionalità di PropertyPilot AI. Chiedimi aiuto per annunci, email, post social, strategie di vendita e molto altro!"
+      : "I specialize in real estate copywriting and know every feature inside PropertyPilot AI. Ask me for help with listings, emails, social posts, sales strategy, and much more.",
+    quickStart: isItalian ? "Inizia con un suggerimento rapido" : "Start with a quick suggestion",
+    conversation: isItalian ? "Conversazione" : "Conversation",
+    messages: isItalian ? "messaggi" : "messages",
+    newChat: isItalian ? "Nuova chat" : "New chat",
+    emptyState: isItalian ? "Scrivi un messaggio per iniziare la conversazione" : "Write a message to start the conversation",
+    thinking: isItalian ? "Sto pensando..." : "Thinking...",
+    placeholder: isItalian ? "Scrivi un messaggio..." : "Write a message...",
+    sendAria: isItalian ? "Invia messaggio" : "Send message",
+    inputHint: isItalian
+      ? "Premi Invio per inviare • L'assistente conosce tutte le funzionalità di PropertyPilot AI"
+      : "Press Enter to send • The assistant knows all PropertyPilot AI features",
+  };
   
   // Agency Assistant AI is only for PRO and AGENCY plans
   const isLocked = userPlan === 'free' || userPlan === 'starter';
@@ -137,11 +179,11 @@ export default function AgencyAssistantPage() {
       // If 403, update user plan to free and show error
       if (response.status === 403) {
         setUserPlan('free');
-        throw new Error(result.message || result.error || "L'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.");
+        throw new Error(result.message || result.error || t.premiumRequired);
       }
 
       if (!response.ok) {
-        throw new Error(result.error || result.message || "Errore nella risposta");
+        throw new Error(result.error || result.message || t.responseError);
       }
 
       return result;
@@ -159,7 +201,7 @@ export default function AgencyAssistantPage() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Errore",
+        title: t.error,
         description: error.message,
         variant: "destructive",
       });
@@ -214,19 +256,19 @@ export default function AgencyAssistantPage() {
                 <Bot className="text-white" size={24} />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 bg-clip-text text-transparent">Agency Assistant AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">Il tuo assistente immobiliare 24/7</p>
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 bg-clip-text text-transparent">{t.title}</h1>
+                <p className="text-xs text-muted-foreground font-medium">{t.subtitle}</p>
               </div>
             </Link>
             
             <nav className="flex items-center space-x-2 md:space-x-4">
               <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500/20 to-violet-500/20 rounded-full border border-blue-500/30">
                 <Bot className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">AI Attivo</span>
+                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{t.aiActive}</span>
               </span>
               <ThemeToggle />
-              <Link href="/dashboard" aria-label="Go back to dashboard">
-                <Button variant="outline" size="sm" className="border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all" data-testid="button-back-dashboard" aria-label="Go back to dashboard">
+              <Link href="/dashboard" aria-label={t.backAria}>
+                <Button variant="outline" size="sm" className="border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all" data-testid="button-back-dashboard" aria-label={t.backAria}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -238,8 +280,8 @@ export default function AgencyAssistantPage() {
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
         <ProFeaturePaywall
-          title="Agency Assistant AI"
-          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'assistente AI completo."
+          title={t.title}
+          description={t.paywallDescription}
           isLocked={isLocked && !isLoadingPlan}
         >
         <div className="mb-6 animate-fade-in-up">
@@ -250,11 +292,10 @@ export default function AgencyAssistantPage() {
               </div>
               <div className="flex-1">
                 <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 bg-clip-text text-transparent">
-                  Ciao! Sono il tuo Assistente AI
+                  {t.introTitle}
                 </h2>
                 <p className="text-muted-foreground">
-                  Sono specializzato in copywriting immobiliare e conosco tutte le funzionalità di PropertyPilot AI. 
-                  Chiedimi aiuto per annunci, email, post social, strategie di vendita e molto altro!
+                  {t.introBody}
                 </p>
               </div>
             </div>
@@ -265,10 +306,10 @@ export default function AgencyAssistantPage() {
           <div className="mb-6 animate-fade-in-up delay-100">
             <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <Zap className="h-5 w-5 text-yellow-500" />
-              Inizia con un suggerimento rapido
+              {t.quickStart}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {QUICK_SUGGESTIONS.map((suggestion, index) => (
+              {localizedQuickSuggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => handleQuickSuggestion(suggestion.text, suggestion.context)}
@@ -290,9 +331,9 @@ export default function AgencyAssistantPage() {
           <div className="p-4 border-b border-silver-frost/30 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-violet-500" />
-              <span className="font-semibold">Conversazione</span>
+              <span className="font-semibold">{t.conversation}</span>
               {messages.length > 0 && (
-                <span className="text-xs text-muted-foreground">({messages.length} messaggi)</span>
+                <span className="text-xs text-muted-foreground">({messages.length} {t.messages})</span>
               )}
             </div>
             {messages.length > 0 && (
@@ -304,7 +345,7 @@ export default function AgencyAssistantPage() {
                 data-testid="button-clear-chat"
               >
                 <RefreshCw className="h-4 w-4 mr-1" />
-                Nuova chat
+                {t.newChat}
               </Button>
             )}
           </div>
@@ -314,7 +355,7 @@ export default function AgencyAssistantPage() {
               <div className="h-full flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
                   <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Scrivi un messaggio per iniziare la conversazione</p>
+                  <p>{t.emptyState}</p>
                 </div>
               </div>
             ) : (
@@ -358,7 +399,7 @@ export default function AgencyAssistantPage() {
                       )}
                       
                       <p className="text-xs text-muted-foreground mt-1 px-1">
-                        {message.timestamp.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                        {message.timestamp.toLocaleTimeString(isItalian ? 'it-IT' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     
@@ -378,7 +419,7 @@ export default function AgencyAssistantPage() {
                     <div className="bg-muted/50 border border-silver-frost/30 rounded-2xl rounded-bl-md p-4">
                       <div className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin text-violet-500" />
-                        <span className="text-sm text-muted-foreground">Sto pensando...</span>
+                        <span className="text-sm text-muted-foreground">{t.thinking}</span>
                       </div>
                     </div>
                   </div>
@@ -394,7 +435,7 @@ export default function AgencyAssistantPage() {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Scrivi un messaggio..."
+                placeholder={t.placeholder}
                 disabled={chatMutation.isPending}
                 className="flex-1 h-12 text-base border-2 border-silver-frost/30 focus:border-violet-500"
                 data-testid="input-chat-message"
@@ -404,7 +445,7 @@ export default function AgencyAssistantPage() {
                 disabled={!inputValue.trim() || chatMutation.isPending}
                 className="h-12 px-6 bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 hover:opacity-90 transition-all"
                 data-testid="button-send-message"
-                aria-label="Send message"
+                aria-label={t.sendAria}
               >
                 {chatMutation.isPending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -414,7 +455,7 @@ export default function AgencyAssistantPage() {
               </Button>
             </div>
             <p id="chat-input-hint" className="text-xs text-muted-foreground mt-2 text-center">
-              Premi Invio per inviare • L'assistente conosce tutte le funzionalità di PropertyPilot AI
+              {t.inputHint}
             </p>
           </div>
         </div>

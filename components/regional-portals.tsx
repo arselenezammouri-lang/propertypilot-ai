@@ -2,6 +2,7 @@
 
 import { useGeo } from '@/contexts/geo-context';
 import { ExternalLink, Globe, TrendingUp } from 'lucide-react';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 
 interface PortalInfo {
   name: string;
@@ -25,6 +26,7 @@ const PORTAL_DATA: Record<string, PortalInfo> = {
 
 export function RegionalPortals() {
   const { primaryPortals, secondaryPortals, region, config, isLoading } = useGeo();
+  const { locale } = useLocaleContext();
 
   if (isLoading) {
     return (
@@ -45,13 +47,29 @@ export function RegionalPortals() {
     middleeast: 'Middle East',
     global: 'Global',
   };
+  const t = {
+    it: {
+      title: 'Portali Prioritari',
+      primaryMarkets: 'Mercati Primari',
+      secondaryMarkets: 'Mercati Secondari',
+      currency: 'Valuta',
+      units: 'Unità',
+    },
+    en: {
+      title: 'Priority Portals',
+      primaryMarkets: 'Primary Markets',
+      secondaryMarkets: 'Secondary Markets',
+      currency: 'Currency',
+      units: 'Units',
+    },
+  }[(locale === 'it' ? 'it' : 'en') as 'it' | 'en'];
 
   return (
     <div className="elite-card p-4 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Globe className="h-4 w-4 text-primary" />
-          <h3 className="font-semibold text-sm">Priority Portals</h3>
+          <h3 className="font-semibold text-sm">{t.title}</h3>
         </div>
         <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
           {regionLabels[region]}
@@ -61,7 +79,7 @@ export function RegionalPortals() {
       <div className="space-y-3">
         <div>
           <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-            <TrendingUp className="h-3 w-3" /> Primary Markets
+            <TrendingUp className="h-3 w-3" /> {t.primaryMarkets}
           </p>
           <div className="flex flex-wrap gap-2">
             {primaryPortals.map(portal => {
@@ -87,7 +105,7 @@ export function RegionalPortals() {
         
         {secondaryPortals.length > 0 && (
           <div>
-            <p className="text-xs text-muted-foreground mb-2">Secondary Markets</p>
+            <p className="text-xs text-muted-foreground mb-2">{t.secondaryMarkets}</p>
             <div className="flex flex-wrap gap-2">
               {secondaryPortals.slice(0, 3).map(portal => {
                 const info = PORTAL_DATA[portal];
@@ -110,7 +128,7 @@ export function RegionalPortals() {
       <div className="pt-2 border-t border-white/[0.08]">
         <p className="text-xs text-muted-foreground">
           <span className="text-sunset-gold font-medium">{config.currencySymbol}</span>
-          {' '}Currency • {config.measurementUnit === 'sqft' ? 'sq ft' : 'm²'} Units
+          {' '}{t.currency} • {config.measurementUnit === 'sqft' ? 'sq ft' : 'm²'} {t.units}
         </p>
       </div>
     </div>

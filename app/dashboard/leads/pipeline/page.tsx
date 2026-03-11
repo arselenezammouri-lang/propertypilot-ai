@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { 
   ArrowLeft, 
   Users, 
@@ -36,44 +37,7 @@ interface Lead {
 
 type StatusColumn = 'new' | 'contacted' | 'followup' | 'closed' | 'lost';
 
-const statusConfig: Record<StatusColumn, { label: string; color: string; bgColor: string; borderColor: string }> = {
-  new: { 
-    label: 'Nuovi', 
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'border-blue-500/30'
-  },
-  contacted: { 
-    label: 'Contattati', 
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-500/10',
-    borderColor: 'border-yellow-500/30'
-  },
-  followup: { 
-    label: 'Follow-up', 
-    color: 'text-orange-400',
-    bgColor: 'bg-orange-500/10',
-    borderColor: 'border-orange-500/30'
-  },
-  closed: { 
-    label: 'Chiusi', 
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'border-emerald-500/30'
-  },
-  lost: { 
-    label: 'Persi', 
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/10',
-    borderColor: 'border-red-500/30'
-  }
-};
-
-const priorityConfig = {
-  low: { label: 'Bassa', color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' },
-  medium: { label: 'Media', color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' },
-  high: { label: 'Alta', color: 'bg-red-500/20 text-red-300 border-red-500/30' }
-};
+// Locale-independent configs — labels resolved inside component using t
 
 function getScoreColor(score: number | null): string {
   if (score === null || score === 0) return 'text-slate-400';
@@ -91,7 +55,52 @@ function getScoreBadge(score: number | null): string {
 
 export default function PipelinePage() {
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
+
+  const t = {
+    loadingPipeline: isItalian ? "Caricamento pipeline..." : "Loading pipeline...",
+    heroTitle: isItalian ? "Pipeline Leads" : "Leads Pipeline",
+    heroBadge: "🧠 CRM 2.5",
+    heroSubtitle: isItalian
+      ? "Trascina i lead tra le colonne per aggiornare lo stato"
+      : "Drag leads between columns to update their status",
+    tableView: isItalian ? "Vista Tabella" : "Table View",
+    refresh: isItalian ? "Aggiorna" : "Refresh",
+    noLeads: isItalian ? "Nessun lead" : "No leads",
+    openLead: isItalian ? "Apri Lead" : "Open Lead",
+    notAnalyzed: isItalian ? "Non analizzato" : "Not analyzed",
+    errorTitle: isItalian ? "Errore" : "Error",
+    loadError: isItalian ? "Impossibile caricare i lead" : "Cannot load leads",
+    statusUpdated: isItalian ? "Stato aggiornato" : "Status updated",
+    movedTo: (label: string) => isItalian ? `Lead spostato in "${label}"` : `Lead moved to "${label}"`,
+    automationApplied: isItalian ? "⚡ Automazione applicata" : "⚡ Automation applied",
+    automationRules: (n: number) => isItalian ? `${n} regola/e eseguita/e` : `${n} rule(s) executed`,
+    updateError: isItalian ? "Impossibile aggiornare lo stato del lead" : "Cannot update lead status",
+    statusNew: isItalian ? "Nuovi" : "New",
+    statusContacted: isItalian ? "Contattati" : "Contacted",
+    statusFollowup: "Follow-up",
+    statusClosed: isItalian ? "Chiusi" : "Closed",
+    statusLost: isItalian ? "Persi" : "Lost",
+    priorityLow: isItalian ? "Bassa" : "Low",
+    priorityMedium: isItalian ? "Media" : "Medium",
+    priorityHigh: isItalian ? "Alta" : "High",
+  };
+
+  const statusConfig: Record<StatusColumn, { label: string; color: string; bgColor: string; borderColor: string }> = {
+    new: { label: t.statusNew, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
+    contacted: { label: t.statusContacted, color: 'text-yellow-400', bgColor: 'bg-yellow-500/10', borderColor: 'border-yellow-500/30' },
+    followup: { label: t.statusFollowup, color: 'text-orange-400', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/30' },
+    closed: { label: t.statusClosed, color: 'text-emerald-400', bgColor: 'bg-emerald-500/10', borderColor: 'border-emerald-500/30' },
+    lost: { label: t.statusLost, color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30' },
+  };
+
+  const priorityConfig = {
+    low: { label: t.priorityLow, color: 'bg-slate-500/20 text-slate-300 border-slate-500/30' },
+    medium: { label: t.priorityMedium, color: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' },
+    high: { label: t.priorityHigh, color: 'bg-red-500/20 text-red-300 border-red-500/30' },
+  };
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [draggedLead, setDraggedLead] = useState<Lead | null>(null);
@@ -106,17 +115,13 @@ export default function PipelinePage() {
           router.push('/auth/login');
           return;
         }
-        throw new Error('Errore nel caricamento dei lead');
+        throw new Error('fetch error');
       }
       const data = await response.json();
       setLeads(data.data || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
-      toast({
-        title: "Errore",
-        description: "Impossibile caricare i lead",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.loadError, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -182,10 +187,7 @@ export default function PipelinePage() {
 
       const result = await response.json();
       
-      toast({
-        title: "Stato aggiornato",
-        description: result.message || `Lead spostato in "${statusConfig[newStatus].label}"`,
-      });
+      toast({ title: t.statusUpdated, description: result.message || t.movedTo(statusConfig[newStatus].label) });
 
       fetch('/api/automations/execute-rule', {
         method: 'POST',
@@ -200,10 +202,7 @@ export default function PipelinePage() {
         if (autoRes.ok) {
           const autoData = await autoRes.json();
           if (autoData.executed > 0) {
-            toast({
-              title: "⚡ Automazione applicata",
-              description: `${autoData.executed} regola/e eseguita/e`,
-            });
+            toast({ title: t.automationApplied, description: t.automationRules(autoData.executed) });
             fetchLeads();
           }
         }
@@ -218,11 +217,7 @@ export default function PipelinePage() {
             : lead
         )
       );
-      toast({
-        title: "Errore",
-        description: "Impossibile aggiornare lo stato del lead",
-        variant: "destructive",
-      });
+      toast({ title: t.errorTitle, description: t.updateError, variant: "destructive" });
     } finally {
       setIsUpdating(false);
       setDraggedLead(null);
@@ -242,7 +237,7 @@ export default function PipelinePage() {
           <div className="flex items-center justify-center h-[60vh]">
             <div className="flex flex-col items-center gap-4">
               <RefreshCw className="h-8 w-8 text-emerald-400 animate-spin" />
-              <p className="text-slate-400">Caricamento pipeline...</p>
+              <p className="text-slate-400">{t.loadingPipeline}</p>
             </div>
           </div>
         </div>
@@ -263,14 +258,14 @@ export default function PipelinePage() {
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-                  Pipeline Leads
+                  {t.heroTitle}
                 </h1>
                 <Badge className="bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-white border-0">
-                  🧠 CRM 2.5
+                  {t.heroBadge}
                 </Badge>
               </div>
               <p className="text-slate-400 mt-1">
-                Trascina i lead tra le colonne per aggiornare lo stato
+                {t.heroSubtitle}
               </p>
             </div>
           </div>
@@ -279,7 +274,7 @@ export default function PipelinePage() {
             <Link href="/dashboard/leads">
               <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800" data-testid="button-table-view">
                 <LayoutGrid className="h-4 w-4 mr-2" />
-                Vista Tabella
+                {t.tableView}
               </Button>
             </Link>
             <Button 
@@ -290,7 +285,7 @@ export default function PipelinePage() {
               data-testid="button-refresh-pipeline"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${isUpdating ? 'animate-spin' : ''}`} />
-              Aggiorna
+              {t.refresh}
             </Button>
           </div>
         </div>
@@ -340,7 +335,7 @@ export default function PipelinePage() {
                 {getLeadsByStatus(status).length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-32 text-slate-500">
                     <Users className="h-8 w-8 mb-2 opacity-50" />
-                    <p className="text-sm">Nessun lead</p>
+                    <p className="text-sm">{t.noLeads}</p>
                   </div>
                 ) : (
                   getLeadsByStatus(status).map(lead => (
@@ -405,7 +400,7 @@ export default function PipelinePage() {
                             aria-label={`Open lead ${lead.id} in table view`}
                           >
                             <ExternalLink className="h-3 w-3 mr-1" />
-                            Apri Lead
+                            {t.openLead}
                           </Button>
                         </Link>
                         <Link href={`/dashboard/leads/${lead.id}`} aria-label={`View AI insights for lead ${lead.id}`}>
@@ -444,7 +439,7 @@ export default function PipelinePage() {
             </div>
             <div className="flex items-center gap-2">
               <span>❓</span>
-              <span>Non analizzato</span>
+              <span>{t.notAnalyzed}</span>
             </div>
           </div>
         </div>

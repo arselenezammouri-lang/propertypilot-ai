@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Crown, Rocket, TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 
 interface AriaLimitModalProps {
   isOpen: boolean;
@@ -14,29 +15,55 @@ interface AriaLimitModalProps {
   limit: number;
 }
 
-const PLAN_UPGRADES: Record<string, { next: string; nextPlan: string; price: string; features: string[] }> = {
-  free: {
-    next: 'starter',
-    nextPlan: 'Starter',
-    price: '€197/mese',
-    features: ['50 annunci/mese', 'Tutti gli strumenti AI', 'PDF professionali'],
-  },
-  starter: {
-    next: 'pro',
-    nextPlan: 'Pro',
-    price: '€497/mese',
-    features: ['200 annunci/mese', 'CRM completo', 'Lead Scoring AI', '20 Automazioni'],
-  },
-  pro: {
-    next: 'agency',
-    nextPlan: 'Agency',
-    price: '€897/mese',
-    features: ['Annunci illimitati', '10 utenti inclusi', 'Voice AI 24/7', 'Supporto prioritario'],
-  },
-};
+function getPlanUpgrades(isItalian: boolean): Record<string, { next: string; nextPlan: string; price: string; features: string[] }> {
+  return {
+    free: {
+      next: 'starter',
+      nextPlan: 'Starter',
+      price: isItalian ? '€197/mese' : '€197/mo',
+      features: isItalian
+        ? ['50 annunci/mese', 'Tutti gli strumenti AI', 'PDF professionali']
+        : ['50 listings/month', 'All AI tools', 'Professional PDFs'],
+    },
+    starter: {
+      next: 'pro',
+      nextPlan: 'Pro',
+      price: isItalian ? '€497/mese' : '€497/mo',
+      features: isItalian
+        ? ['200 annunci/mese', 'CRM completo', 'Lead Scoring AI', '20 Automazioni']
+        : ['200 listings/month', 'Full CRM', 'AI Lead Scoring', '20 Automations'],
+    },
+    pro: {
+      next: 'agency',
+      nextPlan: 'Agency',
+      price: isItalian ? '€897/mese' : '€897/mo',
+      features: isItalian
+        ? ['Annunci illimitati', '10 utenti inclusi', 'Voice AI 24/7', 'Supporto prioritario']
+        : ['Unlimited listings', '10 users included', 'Voice AI 24/7', 'Priority support'],
+    },
+  };
+}
 
 export function AriaLimitModal({ isOpen, onClose, currentPlan, currentUsage, limit }: AriaLimitModalProps) {
-  const upgrade = PLAN_UPGRADES[currentPlan] || PLAN_UPGRADES.starter;
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
+  const upgrade = getPlanUpgrades(isItalian)[currentPlan] || getPlanUpgrades(isItalian).starter;
+
+  const t = {
+    title: isItalian ? "Capo, hai raggiunto il limite!" : "You've reached your limit!",
+    desc: isItalian
+      ? (used: number, lim: number, plan: string) =>
+          <>Hai utilizzato <span className="font-bold text-foreground">{used}</span> dei tuoi <span className="font-bold text-foreground">{lim}</span> annunci mensili con il piano <span className="font-bold text-royal-purple capitalize">{plan}</span>.</>
+      : (used: number, lim: number, plan: string) =>
+          <>You've used <span className="font-bold text-foreground">{used}</span> of your <span className="font-bold text-foreground">{lim}</span> monthly listings on the <span className="font-bold text-royal-purple capitalize">{plan}</span> plan.</>,
+    recommended: isItalian ? "CONSIGLIATO" : "RECOMMENDED",
+    ariaQuote: (name: string) =>
+      isItalian
+        ? `"Passa a ${name} per continuare a dominare il mercato!" - Aria`
+        : `"Upgrade to ${name} and keep dominating the market!" - Aria`,
+    later: isItalian ? "Più tardi" : "Later",
+    upgradeTo: (name: string) => isItalian ? `Passa a ${name}` : `Upgrade to ${name}`,
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -48,10 +75,10 @@ export function AriaLimitModal({ isOpen, onClose, currentPlan, currentUsage, lim
             </div>
           </div>
           <DialogTitle className="text-2xl font-bold">
-            <span className="gradient-text-purple">Capo, hai raggiunto il limite!</span>
+            <span className="gradient-text-purple">{t.title}</span>
           </DialogTitle>
           <DialogDescription className="text-base mt-2">
-            Hai utilizzato <span className="font-bold text-foreground">{currentUsage}</span> dei tuoi <span className="font-bold text-foreground">{limit}</span> annunci mensili con il piano <span className="font-bold text-royal-purple capitalize">{currentPlan}</span>.
+            {t.desc(currentUsage, limit, currentPlan)}
           </DialogDescription>
         </DialogHeader>
 

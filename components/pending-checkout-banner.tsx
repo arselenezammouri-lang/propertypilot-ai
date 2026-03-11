@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CreditCard, Sparkles, X, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 
 const PLAN_DETAILS: Record<string, { name: string; price: string; color: string }> = {
   starter: { name: "Starter", price: "€197/mese", color: "from-blue-500 to-cyan-500" },
@@ -20,6 +21,30 @@ export function PendingCheckoutBanner() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
+
+  const t = {
+    syncError: isItalian ? "Errore durante la sincronizzazione" : "Error during synchronization",
+    syncDone: isItalian ? "Sincronizzazione completata!" : "Sync completed!",
+    syncPlan: (plan: string) => isItalian ? `Piano attuale: ${plan}` : `Current plan: ${plan}`,
+    errorTitle: isItalian ? "Errore" : "Error",
+    invalidPlan: isItalian ? "Piano non valido" : "Invalid plan",
+    checkoutError: isItalian ? "Errore durante la creazione del checkout" : "Error creating checkout",
+    checkoutUrlMissing: isItalian ? "URL checkout non ricevuto" : "Checkout URL not received",
+    paymentError: isItalian ? "Impossibile avviare il pagamento" : "Unable to start payment",
+    closeLabel: isItalian ? "Chiudi" : "Close",
+    activatePlan: (name: string) => isItalian ? `Completa l'attivazione del piano ${name}` : `Complete ${name} plan activation`,
+    activateDesc: (name: string, price: string) =>
+      isItalian
+        ? `Hai selezionato il piano ${name} (${price}). Clicca il pulsante per completare il pagamento e attivare tutte le funzionalità.`
+        : `You selected the ${name} plan (${price}). Click the button to complete payment and activate all features.`,
+    loading: isItalian ? "Caricamento..." : "Loading...",
+    goToPayment: isItalian ? "Vai al Pagamento" : "Go to Payment",
+    syncing: isItalian ? "Sincronizzazione..." : "Syncing...",
+    alreadyPaid: isItalian ? "Già pagato? Sincronizza" : "Already paid? Sync",
+    pricePerMonth: isItalian ? "/mese" : "/mo",
+  };
 
   useEffect(() => {
     const plan = localStorage.getItem("pendingPlan");
@@ -38,12 +63,12 @@ export function PendingCheckoutBanner() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Errore durante la sincronizzazione");
+        throw new Error(data.error || t.syncError);
       }
 
       toast({
-        title: "Sincronizzazione completata!",
-        description: `Piano attuale: ${data.plan?.toUpperCase() || 'FREE'}`,
+        title: t.syncDone,
+        description: t.syncPlan(data.plan?.toUpperCase() || 'FREE'),
       });
 
       if (data.plan && data.plan !== 'free') {
@@ -53,7 +78,7 @@ export function PendingCheckoutBanner() {
       }
     } catch (error: any) {
       toast({
-        title: "Errore",
+        title: t.errorTitle,
         description: error.message,
         variant: "destructive",
       });
@@ -74,7 +99,7 @@ export function PendingCheckoutBanner() {
         endpoint = "/api/stripe/checkout-oneshot";
         body = { packageId: "boost" };
       } else {
-        throw new Error("Piano non valido");
+        throw new Error(t.invalidPlan);
       }
 
       const response = await fetch(endpoint, {
@@ -86,7 +111,7 @@ export function PendingCheckoutBanner() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Errore durante la creazione del checkout");
+        throw new Error(data.error || t.checkoutError);
       }
 
       if (data.url) {
@@ -94,13 +119,13 @@ export function PendingCheckoutBanner() {
         localStorage.removeItem("pendingPackage");
         window.location.href = data.url;
       } else {
-        throw new Error("URL checkout non ricevuto");
+        throw new Error(t.checkoutUrlMissing);
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
       toast({
-        title: "Errore",
-        description: error.message || "Impossibile avviare il pagamento",
+        title: t.errorTitle,
+        description: error.message || t.paymentError,
         variant: "destructive",
       });
       setIsLoading(false);
@@ -125,7 +150,7 @@ export function PendingCheckoutBanner() {
       <button
         onClick={handleDismiss}
         className="absolute top-3 right-3 p-1 rounded-full hover:bg-black/10 transition-colors z-10"
-        aria-label="Chiudi"
+        aria-label={t.closeLabel}
         data-testid="button-dismiss-checkout"
       >
         <X className="h-4 w-4 text-muted-foreground" />
@@ -139,11 +164,10 @@ export function PendingCheckoutBanner() {
             </div>
             <div>
               <h3 className="text-xl font-bold mb-1">
-                Completa l'attivazione del piano {details.name}
+                {t.activatePlan(details.name)}
               </h3>
               <p className="text-muted-foreground">
-                Hai selezionato il piano <strong>{details.name}</strong> ({details.price}). 
-                Clicca il pulsante per completare il pagamento e attivare tutte le funzionalità.
+                {t.activateDesc(details.name, details.price)}
               </p>
             </div>
           </div>
@@ -159,12 +183,12 @@ export function PendingCheckoutBanner() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Caricamento...
+                  {t.loading}
                 </>
               ) : (
                 <>
                   <CreditCard className="mr-2 h-5 w-5" />
-                  Vai al Pagamento
+                  {t.goToPayment}
                 </>
               )}
             </Button>
@@ -180,12 +204,12 @@ export function PendingCheckoutBanner() {
               {isSyncing ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Sincronizzazione...
+                  {t.syncing}
                 </>
               ) : (
                 <>
                   <RefreshCw className="mr-2 h-5 w-5" />
-                  Già pagato? Sincronizza
+                  {t.alreadyPaid}
                 </>
               )}
             </Button>

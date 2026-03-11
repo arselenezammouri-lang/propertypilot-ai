@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Home, 
   ArrowLeft, 
@@ -146,6 +147,58 @@ export default function TitlesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
+  const t = {
+    generateError: isItalian ? "Errore nella generazione" : "Generation error",
+    successTitle: isItalian ? "Titoli generati con successo!" : "Titles generated successfully!",
+    successDesc: isItalian
+      ? "19 titoli ad alto CTR sono pronti per essere utilizzati."
+      : "19 high-CTR titles are ready to use.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    locationRequired: isItalian ? "Località richiesta" : "Location required",
+    locationRequiredDesc: isItalian
+      ? "Inserisci la località dell'immobile"
+      : "Enter the property location",
+    pointsRequired: isItalian ? "Punti chiave richiesti" : "Key points required",
+    pointsRequiredDesc: isItalian
+      ? "Descrivi almeno i punti chiave dell'immobile (min 10 caratteri)"
+      : "Describe at least the key points of the property (min 10 characters)",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: isItalian ? "Titolo copiato negli appunti" : "Title copied to clipboard",
+    copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    appName: "PropertyPilot AI",
+    subtitleBadge: "CTR +40%",
+    headerLabel: isItalian ? "Titoli A/B" : "A/B Titles",
+    heroTitle: isItalian ? "Generatore Titoli A/B" : "A/B Title Generator",
+    heroDescription: isItalian
+      ? "Genera 19 titoli ad alto conversion rate ottimizzati per massimizzare i click sui tuoi annunci"
+      : "Generate 19 high-converting titles optimized to maximize clicks on your listings",
+    backToDashboard: isItalian ? "Dashboard" : "Dashboard",
+    propertyData: isItalian ? "Dati Immobile" : "Property Data",
+    propertyDataDesc: isItalian
+      ? "Inserisci le informazioni per generare titoli ottimizzati"
+      : "Enter the information to generate optimized titles",
+    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
+    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
+    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
+    selectPropertyType: isItalian ? "Seleziona tipo" : "Select type",
+    locationLabel: isItalian ? "Località *" : "Location *",
+    locationPlaceholder: isItalian ? "Es: Milano Centro" : "e.g. Downtown Milan",
+    priceLabel: isItalian ? "Prezzo" : "Price",
+    pricePlaceholder: isItalian ? "€ 350.000" : "$ 350,000",
+    sizeLabel: isItalian ? "Superficie" : "Size",
+    sizePlaceholder: isItalian ? "120 mq" : "120 sqm",
+    roomsLabel: isItalian ? "Camere" : "Rooms",
+    roomsPlaceholder: isItalian ? "3" : "3",
+    keyPointsLabel: isItalian ? "Punti Chiave dell'Immobile *" : "Key Features of the Property *",
+    keyPointsPlaceholder: isItalian
+      ? "Descrivi le caratteristiche principali: balcone, garage, giardino, vista, ristrutturato, luminoso..."
+      : "Describe the main features: balcony, garage, garden, view, renovated, bright...",
+    toneLabel: isItalian ? "Tono dei Titoli" : "Title Tone",
+    generateButtonIdle: isItalian ? "Genera Titoli" : "Generate Titles",
+    generateButtonLoading: isItalian ? "Generazione titoli..." : "Generating titles...",
+  };
   
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -171,7 +224,7 @@ export default function TitlesPage() {
       
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Errore nella generazione");
+        throw new Error(error.error || t.generateError);
       }
       
       return response.json() as Promise<TitlesResponse>;
@@ -179,13 +232,13 @@ export default function TitlesPage() {
     onSuccess: (data) => {
       setResult(data);
       toast({
-        title: "Titoli generati con successo!",
-        description: "19 titoli ad alto CTR sono pronti per essere utilizzati.",
+        title: t.successTitle,
+        description: t.successDesc,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Errore",
+        title: t.errorTitle,
         description: error.message,
         variant: "destructive",
       });
@@ -197,8 +250,8 @@ export default function TitlesPage() {
     
     if (!formData.localita || formData.localita.length < 2) {
       toast({
-        title: "Località richiesta",
-        description: "Inserisci la località dell'immobile",
+        title: t.locationRequired,
+        description: t.locationRequiredDesc,
         variant: "destructive",
       });
       return;
@@ -206,8 +259,8 @@ export default function TitlesPage() {
     
     if (!formData.puntiChiave || formData.puntiChiave.length < 10) {
       toast({
-        title: "Punti chiave richiesti",
-        description: "Descrivi almeno i punti chiave dell'immobile (min 10 caratteri)",
+        title: t.pointsRequired,
+        description: t.pointsRequiredDesc,
         variant: "destructive",
       });
       return;
@@ -221,14 +274,14 @@ export default function TitlesPage() {
       await navigator.clipboard.writeText(text);
       setCopiedTitle(text);
       toast({
-        title: "Copiato!",
-        description: "Titolo copiato negli appunti",
+        title: t.copied,
+        description: t.copiedDesc,
       });
       setTimeout(() => setCopiedTitle(null), 2000);
     } catch (err) {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.errorTitle,
+        description: t.copyFailedDesc,
         variant: "destructive",
       });
     }
@@ -274,9 +327,9 @@ export default function TitlesPage() {
               </div>
               <div>
                 <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  PropertyPilot AI
+                  {t.appName}
                 </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Titoli A/B</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.headerLabel}</p>
               </div>
             </Link>
           </div>
@@ -297,7 +350,7 @@ export default function TitlesPage() {
               data-testid="button-back-dashboard"
             >
               <ArrowLeft className="h-4 w-4" />
-              Dashboard
+              {t.backToDashboard}
             </Button>
           </div>
         </div>
@@ -307,18 +360,17 @@ export default function TitlesPage() {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-4xl font-bold">
-              Generatore{" "}
               <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Titoli A/B
+                {t.heroTitle}
               </span>
             </h1>
             <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg shadow-green-500/25">
               <TrendingUp className="h-3 w-3 mr-1" />
-              CTR +40%
+              {t.subtitleBadge}
             </Badge>
           </div>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            Genera 19 titoli ad alto conversion rate ottimizzati per massimizzare i click sui tuoi annunci
+            {t.heroDescription}
           </p>
         </div>
 
@@ -328,22 +380,22 @@ export default function TitlesPage() {
               <CardHeader className="border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5 text-indigo-500" />
-                  Dati Immobile
+                  {t.propertyData}
                 </CardTitle>
                 <CardDescription>
-                  Inserisci le informazioni per generare titoli ottimizzati
+                  {t.propertyDataDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
-                    <Label>Tipo Annuncio</Label>
+                    <Label>{t.listingType}</Label>
                     <Select
                       value={formData.tipoTransazione}
                       onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
                     >
                       <SelectTrigger data-testid="select-tipo-transazione">
-                        <SelectValue placeholder="Seleziona tipo transazione" />
+                        <SelectValue placeholder={t.selectTransaction} />
                       </SelectTrigger>
                       <SelectContent>
                         {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
@@ -360,13 +412,13 @@ export default function TitlesPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="tipoImmobile">Tipo Immobile *</Label>
+                      <Label htmlFor="tipoImmobile">{t.propertyType}</Label>
                       <Select
                         value={formData.tipoImmobile}
                         onValueChange={(value: TipoImmobile) => setFormData({ ...formData, tipoImmobile: value })}
                       >
                         <SelectTrigger className="mt-1.5" data-testid="select-tipo-immobile">
-                          <SelectValue placeholder="Seleziona tipo" />
+                          <SelectValue placeholder={t.selectPropertyType} />
                         </SelectTrigger>
                         <SelectContent>
                           {TIPO_IMMOBILE_OPTIONS.map((option) => (
@@ -378,10 +430,10 @@ export default function TitlesPage() {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="localita">Località *</Label>
+                      <Label htmlFor="localita">{t.locationLabel}</Label>
                       <Input
                         id="localita"
-                        placeholder="Es: Milano Centro"
+                        placeholder={t.locationPlaceholder}
                         value={formData.localita}
                         onChange={(e) => setFormData({ ...formData, localita: e.target.value })}
                         className="mt-1.5"
@@ -392,10 +444,10 @@ export default function TitlesPage() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <Label htmlFor="prezzo">Prezzo</Label>
+                      <Label htmlFor="prezzo">{t.priceLabel}</Label>
                       <Input
                         id="prezzo"
-                        placeholder="€ 350.000"
+                        placeholder={t.pricePlaceholder}
                         value={formData.prezzo}
                         onChange={(e) => setFormData({ ...formData, prezzo: e.target.value })}
                         className="mt-1.5"
@@ -403,10 +455,10 @@ export default function TitlesPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="superficie">Superficie</Label>
+                      <Label htmlFor="superficie">{t.sizeLabel}</Label>
                       <Input
                         id="superficie"
-                        placeholder="120 mq"
+                        placeholder={t.sizePlaceholder}
                         value={formData.superficie}
                         onChange={(e) => setFormData({ ...formData, superficie: e.target.value })}
                         className="mt-1.5"
@@ -414,10 +466,10 @@ export default function TitlesPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="camere">Camere</Label>
+                      <Label htmlFor="camere">{t.roomsLabel}</Label>
                       <Input
                         id="camere"
-                        placeholder="3"
+                        placeholder={t.roomsPlaceholder}
                         value={formData.camere}
                         onChange={(e) => setFormData({ ...formData, camere: e.target.value })}
                         className="mt-1.5"
@@ -427,10 +479,10 @@ export default function TitlesPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="puntiChiave">Punti Chiave dell'Immobile *</Label>
+                    <Label htmlFor="puntiChiave">{t.keyPointsLabel}</Label>
                     <Textarea
                       id="puntiChiave"
-                      placeholder="Descrivi le caratteristiche principali: balcone, garage, giardino, vista, ristrutturato, luminoso..."
+                      placeholder={t.keyPointsPlaceholder}
                       value={formData.puntiChiave}
                       onChange={(e) => setFormData({ ...formData, puntiChiave: e.target.value })}
                       className="mt-1.5 min-h-[80px]"
@@ -439,7 +491,7 @@ export default function TitlesPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <Label>Tono dei Titoli</Label>
+                    <Label>{t.toneLabel}</Label>
                     <div className="grid grid-cols-3 gap-2">
                       {TONI_OPTIONS.map((option) => {
                         const Icon = option.icon;

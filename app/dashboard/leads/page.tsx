@@ -55,6 +55,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatDateForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 import {
   ArrowLeft,
   Plus,
@@ -82,33 +85,103 @@ import {
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
 import NextDynamic from "next/dynamic";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
   ssr: false,
 });
 
-const statusConfig: Record<LeadStatus, { label: string; color: string; bgColor: string }> = {
-  new: { label: "Nuovo", color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
-  contacted: { label: "Contattato", color: "text-yellow-600", bgColor: "bg-yellow-100 dark:bg-yellow-900/30" },
-  followup: { label: "In Follow-Up", color: "text-purple-600", bgColor: "bg-purple-100 dark:bg-purple-900/30" },
-  closed: { label: "Chiuso", color: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30" },
-  lost: { label: "Perso", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },
-};
+const getStatusConfig = (isItalian: boolean): Record<LeadStatus, { label: string; color: string; bgColor: string }> => ({
+  new: { label: isItalian ? "Nuovo" : "New", color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
+  contacted: { label: isItalian ? "Contattato" : "Contacted", color: "text-yellow-600", bgColor: "bg-yellow-100 dark:bg-yellow-900/30" },
+  followup: { label: "Follow-Up", color: "text-purple-600", bgColor: "bg-purple-100 dark:bg-purple-900/30" },
+  closed: { label: isItalian ? "Chiuso" : "Closed", color: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30" },
+  lost: { label: isItalian ? "Perso" : "Lost", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },
+});
 
-const priorityConfig: Record<LeadPriority, { label: string; color: string; bgColor: string; emoji: string }> = {
-  low: { label: "Bassa", color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", emoji: "⬇️" },
-  medium: { label: "Media", color: "text-orange-600", bgColor: "bg-orange-100 dark:bg-orange-900/30", emoji: "➡️" },
-  high: { label: "Alta", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", emoji: "🔥" },
-};
+const getPriorityConfig = (isItalian: boolean): Record<LeadPriority, { label: string; color: string; bgColor: string; emoji: string }> => ({
+  low: { label: isItalian ? "Bassa" : "Low", color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", emoji: "⬇️" },
+  medium: { label: isItalian ? "Media" : "Medium", color: "text-orange-600", bgColor: "bg-orange-100 dark:bg-orange-900/30", emoji: "➡️" },
+  high: { label: isItalian ? "Alta" : "High", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", emoji: "🔥" },
+});
 
-const marketConfig: Record<LeadMarket, { label: string; emoji: string }> = {
-  italy: { label: "Italia", emoji: "🇮🇹" },
+const getMarketConfig = (isItalian: boolean): Record<LeadMarket, { label: string; emoji: string }> => ({
+  italy: { label: isItalian ? "Italia" : "Italy", emoji: "🇮🇹" },
   usa: { label: "USA", emoji: "🇺🇸" },
-};
+});
 
 export default function LeadsPage() {
   const router = useRouter();
+  const { locale } = useLocaleContext();
   const { toast } = useToast();
+  const isItalian = locale === "it";
+  const statusConfig = getStatusConfig(isItalian);
+  const priorityConfig = getPriorityConfig(isItalian);
+  const marketConfig = getMarketConfig(isItalian);
+  const t = {
+    premiumRequired: isItalian ? "Piano Premium richiesto" : "Premium plan required",
+    premiumRequiredDesc: isItalian
+      ? "Il Lead Manager + AI e una funzionalita Premium. Aggiorna il tuo account al piano PRO o AGENCY."
+      : "Lead Manager + AI is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
+    error: isItalian ? "Errore" : "Error",
+    loadingError: isItalian ? "Errore nel caricamento dei lead" : "Error loading leads",
+    connectionError: isItalian ? "Errore di connessione" : "Connection error",
+    nameRequired: isItalian ? "Il nome e obbligatorio" : "Name is required",
+    leadCreated: isItalian ? "Lead creato" : "Lead created",
+    leadCreatedDesc: (name: string) => isItalian ? `${name} e stato aggiunto con successo` : `${name} was added successfully`,
+    createError: isItalian ? "Errore nella creazione del lead" : "Error creating lead",
+    leadUpdated: isItalian ? "Lead aggiornato" : "Lead updated",
+    leadUpdatedDesc: (name: string) => isItalian ? `${name} e stato aggiornato` : `${name} was updated`,
+    updateError: isItalian ? "Errore nell'aggiornamento" : "Error updating lead",
+    leadDeleted: isItalian ? "Lead eliminato" : "Lead deleted",
+    leadDeletedDesc: (name: string) => isItalian ? `${name} e stato eliminato` : `${name} was deleted`,
+    deleteError: isItalian ? "Errore nell'eliminazione" : "Error deleting lead",
+    statusUpdated: isItalian ? "Stato aggiornato" : "Status updated",
+    statusUpdateError: isItalian ? "Errore nell'aggiornamento dello stato" : "Error updating status",
+    detailsError: isItalian ? "Errore nel caricamento dei dettagli" : "Error loading details",
+    noteError: isItalian ? "Errore nell'aggiunta della nota" : "Error adding note",
+    newLead: isItalian ? "Nuovo Lead" : "New Lead",
+    total: isItalian ? "Totali" : "Total",
+    status: isItalian ? "Stato" : "Status",
+    priority: isItalian ? "Priorita" : "Priority",
+    market: isItalian ? "Mercato" : "Market",
+    allStatuses: isItalian ? "Tutti gli stati" : "All statuses",
+    allPriorities: isItalian ? "Tutte le priorita" : "All priorities",
+    allMarkets: isItalian ? "Tutti i mercati" : "All markets",
+    noLeads: isItalian ? "Nessun lead trovato" : "No leads found",
+    adjustFilters: isItalian ? "Prova a modificare i filtri di ricerca" : "Try adjusting your search filters",
+    addFirstLead: isItalian ? "Inizia ad aggiungere i tuoi primi lead" : "Start by adding your first leads",
+    addLead: isItalian ? "Aggiungi Lead" : "Add Lead",
+    contacts: isItalian ? "Contatti" : "Contacts",
+    score: "Score",
+    date: isItalian ? "Data" : "Date",
+    actions: isItalian ? "Azioni" : "Actions",
+    leadManagerTitle: "Lead Manager + AI",
+    leadManagerDesc: isItalian
+      ? "Questa funzionalita e disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il CRM completo con pipeline, automazioni e AI."
+      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full CRM with pipeline, automations, and AI.",
+    searchPlaceholder: isItalian ? "Cerca per nome, email o telefono..." : "Search by name, email, or phone...",
+    noteAdded: isItalian ? "Nota aggiunta" : "Note added",
+    noteSaved: isItalian ? "La nota e stata salvata" : "The note has been saved",
+    delete: isItalian ? "Elimina" : "Delete",
+    addLeadInfo: isItalian ? "Inserisci le informazioni del nuovo lead" : "Enter the new lead information",
+    editLead: isItalian ? "Modifica Lead" : "Edit Lead",
+    editLeadInfo: isItalian ? "Modifica le informazioni del lead" : "Edit the lead information",
+    name: isItalian ? "Nome" : "Name",
+    phone: isItalian ? "Telefono" : "Phone",
+    leadMessage: isItalian ? "Messaggio del Lead" : "Lead Message",
+    leadMessagePlaceholder: isItalian ? "Inserisci il messaggio ricevuto dal lead..." : "Enter the message received from the lead...",
+    cancel: isItalian ? "Annulla" : "Cancel",
+    saveChanges: isItalian ? "Salva Modifiche" : "Save Changes",
+    leadDetails: isItalian ? "Dettagli Lead" : "Lead Details",
+    created: isItalian ? "Creato" : "Created",
+    updated: isItalian ? "Aggiornato" : "Updated",
+    notes: isItalian ? "Note" : "Notes",
+    areYouSure: isItalian ? "Sei sicuro?" : "Are you sure?",
+    deleteWarning: (name: string) => isItalian
+      ? `Stai per eliminare il lead "${name}". Questa azione non puo essere annullata.`
+      : `You are about to delete the lead "${name}". This action cannot be undone.`,
+  };
   
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -156,8 +229,8 @@ export default function LeadsPage() {
       if (response.status === 403) {
         setUserPlan('free');
         toast({
-          title: "Piano Premium richiesto",
-          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          title: t.premiumRequired,
+          description: data.message || data.error || t.premiumRequiredDesc,
           variant: "destructive",
         });
         return;
@@ -167,15 +240,15 @@ export default function LeadsPage() {
         setLeads(data.data);
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nel caricamento dei lead",
+          title: t.error,
+          description: data.error || t.loadingError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     } finally {
@@ -228,8 +301,8 @@ export default function LeadsPage() {
   const handleAddLead = async () => {
     if (!formData.nome.trim()) {
       toast({
-        title: "Errore",
-        description: "Il nome è obbligatorio",
+        title: t.error,
+        description: t.nameRequired,
         variant: "destructive",
       });
       return;
@@ -249,8 +322,8 @@ export default function LeadsPage() {
       if (response.status === 403) {
         setUserPlan('free');
         toast({
-          title: "Piano Premium richiesto",
-          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          title: t.premiumRequired,
+          description: data.message || data.error || t.premiumRequiredDesc,
           variant: "destructive",
         });
         return;
@@ -258,8 +331,8 @@ export default function LeadsPage() {
       
       if (data.success) {
         toast({
-          title: "Lead creato",
-          description: `${formData.nome} è stato aggiunto con successo`,
+          title: t.leadCreated,
+          description: t.leadCreatedDesc(formData.nome),
         });
         setIsAddModalOpen(false);
         setFormData({
@@ -273,15 +346,15 @@ export default function LeadsPage() {
         fetchLeads();
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nella creazione del lead",
+          title: t.error,
+          description: data.error || t.createError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     } finally {
@@ -304,23 +377,23 @@ export default function LeadsPage() {
       
       if (data.success) {
         toast({
-          title: "Lead aggiornato",
-          description: `${formData.nome} è stato aggiornato`,
+          title: t.leadUpdated,
+          description: t.leadUpdatedDesc(formData.nome),
         });
         setIsEditModalOpen(false);
         setSelectedLead(null);
         fetchLeads();
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nell'aggiornamento",
+          title: t.error,
+          description: data.error || t.updateError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     } finally {
@@ -340,23 +413,23 @@ export default function LeadsPage() {
       
       if (data.success) {
         toast({
-          title: "Lead eliminato",
-          description: `${selectedLead.nome} è stato eliminato`,
+          title: t.leadDeleted,
+          description: t.leadDeletedDesc(selectedLead.nome),
         });
         setIsDeleteDialogOpen(false);
         setSelectedLead(null);
         fetchLeads();
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nell'eliminazione",
+          title: t.error,
+          description: data.error || t.deleteError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     }
@@ -376,8 +449,8 @@ export default function LeadsPage() {
       if (response.status === 403) {
         setUserPlan('free');
         toast({
-          title: "Piano Premium richiesto",
-          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          title: t.premiumRequired,
+          description: data.message || data.error || t.premiumRequiredDesc,
           variant: "destructive",
         });
         return;
@@ -385,7 +458,7 @@ export default function LeadsPage() {
       
       if (data.success) {
         toast({
-          title: "Stato aggiornato",
+          title: t.statusUpdated,
           description: data.message,
         });
         fetchLeads();
@@ -394,15 +467,15 @@ export default function LeadsPage() {
         }
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nell'aggiornamento dello stato",
+          title: t.error,
+          description: data.error || t.statusUpdateError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     }
@@ -417,8 +490,8 @@ export default function LeadsPage() {
       if (response.status === 403) {
         setUserPlan('free');
         toast({
-          title: "Piano Premium richiesto",
-          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          title: t.premiumRequired,
+          description: data.message || data.error || t.premiumRequiredDesc,
           variant: "destructive",
         });
         return;
@@ -433,8 +506,8 @@ export default function LeadsPage() {
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore nel caricamento dei dettagli",
+        title: t.error,
+        description: t.detailsError,
         variant: "destructive",
       });
     }
@@ -463,8 +536,8 @@ export default function LeadsPage() {
       if (response.status === 403) {
         setUserPlan('free');
         toast({
-          title: "Piano Premium richiesto",
-          description: data.message || data.error || "Il Lead Manager + AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.",
+          title: t.premiumRequired,
+          description: data.message || data.error || t.premiumRequiredDesc,
           variant: "destructive",
         });
         return;
@@ -472,22 +545,22 @@ export default function LeadsPage() {
       
       if (data.success) {
         toast({
-          title: "Nota aggiunta",
-          description: "La nota è stata salvata",
+          title: t.noteAdded,
+          description: t.noteSaved,
         });
         setNewNote("");
         fetchLeadDetails(selectedLead.id);
       } else {
         toast({
-          title: "Errore",
-          description: data.error || "Errore nell'aggiunta della nota",
+          title: t.error,
+          description: data.error || t.noteError,
           variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: "Errore",
-        description: "Errore di connessione",
+        title: t.error,
+        description: t.connectionError,
         variant: "destructive",
       });
     } finally {
@@ -584,7 +657,7 @@ export default function LeadsPage() {
                 data-testid="button-add-lead"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">Nuovo Lead</span>
+                <span className="hidden sm:inline">{t.newLead}</span>
               </Button>
             </nav>
           </div>
@@ -593,15 +666,15 @@ export default function LeadsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProFeaturePaywall
-          title="Lead Manager + AI"
-          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il CRM completo con pipeline, automazioni e AI."
+          title={t.leadManagerTitle}
+          description={t.leadManagerDesc}
           isLocked={isLocked && !isLoadingPlan}
         >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
             <CardContent className="p-4 text-center">
               <p className="text-3xl font-bold text-emerald-600">{statsData.total}</p>
-              <p className="text-sm text-muted-foreground">Totali</p>
+              <p className="text-sm text-muted-foreground">{t.total}</p>
             </CardContent>
           </Card>
           <Card className={`${statusConfig.new.bgColor} border-0`}>
@@ -642,7 +715,7 @@ export default function LeadsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Cerca per nome, email o telefono..."
+                  placeholder={t.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -652,10 +725,10 @@ export default function LeadsPage() {
               <div className="flex gap-2 flex-wrap">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-status">
-                    <SelectValue placeholder="Stato" />
+                    <SelectValue placeholder={t.status} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tutti gli stati</SelectItem>
+                    <SelectItem value="all">{t.allStatuses}</SelectItem>
                     {Object.entries(statusConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.label}</SelectItem>
                     ))}
@@ -663,10 +736,10 @@ export default function LeadsPage() {
                 </Select>
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-priority">
-                    <SelectValue placeholder="Priorità" />
+                    <SelectValue placeholder={t.priority} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tutte le priorità</SelectItem>
+                    <SelectItem value="all">{t.allPriorities}</SelectItem>
                     {Object.entries(priorityConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
                     ))}
@@ -674,10 +747,10 @@ export default function LeadsPage() {
                 </Select>
                 <Select value={marketFilter} onValueChange={setMarketFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-market">
-                    <SelectValue placeholder="Mercato" />
+                    <SelectValue placeholder={t.market} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tutti i mercati</SelectItem>
+                    <SelectItem value="all">{t.allMarkets}</SelectItem>
                     {Object.entries(marketConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
                     ))}
@@ -695,36 +768,47 @@ export default function LeadsPage() {
                 <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
               </div>
             ) : leads.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <Users className="h-16 w-16 text-muted-foreground/30 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Nessun lead trovato</h3>
-                <p className="text-muted-foreground mb-6">
-                  {searchQuery || statusFilter !== "all" || priorityFilter !== "all"
-                    ? "Prova a modificare i filtri di ricerca"
-                    : "Inizia ad aggiungere i tuoi primi lead"}
-                </p>
-                <Button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
-                  data-testid="button-add-first-lead"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Aggiungi Lead
-                </Button>
-              </div>
+              <EmptyState
+                icon={<Users />}
+                title={t.noLeads}
+                description={
+                  searchQuery || statusFilter !== "all" || priorityFilter !== "all"
+                    ? t.adjustFilters
+                    : t.addFirstLead
+                }
+                gradient="from-emerald-500/20 to-teal-500/20"
+                size="lg"
+                actions={
+                  !(searchQuery || statusFilter !== "all" || priorityFilter !== "all")
+                    ? [
+                        {
+                          label: t.addLead,
+                          onClick: () => setIsAddModalOpen(true),
+                          icon: <Plus className="h-4 w-4" />,
+                        },
+                        {
+                          label: isItalian ? "Pipeline Kanban" : "Kanban Pipeline",
+                          href: "/dashboard/leads/pipeline",
+                          variant: "outline" as const,
+                          icon: <Kanban className="h-4 w-4" />,
+                        },
+                      ]
+                    : []
+                }
+              />
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Lead</TableHead>
-                      <TableHead>Contatti</TableHead>
-                      <TableHead>Stato</TableHead>
-                      <TableHead>Priorità</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead>Mercato</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead className="text-right">Azioni</TableHead>
+                      <TableHead>{t.contacts}</TableHead>
+                      <TableHead>{t.status}</TableHead>
+                      <TableHead>{t.priority}</TableHead>
+                      <TableHead>{t.score}</TableHead>
+                      <TableHead>{t.market}</TableHead>
+                      <TableHead>{t.date}</TableHead>
+                      <TableHead className="text-right">{t.actions}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -858,7 +942,7 @@ export default function LeadsPage() {
                                 data-testid={`button-delete-${lead.id}`}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Elimina
+                                {t.delete}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -879,15 +963,15 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plus className="h-5 w-5 text-emerald-500" />
-              Nuovo Lead
+              {t.newLead}
             </DialogTitle>
             <DialogDescription>
-              Inserisci le informazioni del nuovo lead
+              {t.addLeadInfo}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="nome">Nome *</Label>
+              <Label htmlFor="nome">{t.name} *</Label>
               <Input
                 id="nome"
                 value={formData.nome}
@@ -921,7 +1005,7 @@ export default function LeadsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>Priorità</Label>
+                <Label>{t.priority}</Label>
                 <Select
                   value={formData.priorita}
                   onValueChange={(value) => setFormData({ ...formData, priorita: value as LeadPriority })}
@@ -937,7 +1021,7 @@ export default function LeadsPage() {
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label>Mercato</Label>
+                <Label>{t.market}</Label>
                 <Select
                   value={formData.market}
                   onValueChange={(value) => setFormData({ ...formData, market: value as LeadMarket })}
@@ -954,12 +1038,12 @@ export default function LeadsPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="messaggio">Messaggio del Lead</Label>
+              <Label htmlFor="messaggio">{t.leadMessage}</Label>
               <Textarea
                 id="messaggio"
                 value={formData.messaggio}
                 onChange={(e) => setFormData({ ...formData, messaggio: e.target.value })}
-                placeholder="Inserisci il messaggio ricevuto dal lead..."
+                placeholder={t.leadMessagePlaceholder}
                 rows={4}
                 data-testid="textarea-lead-messaggio"
               />
@@ -967,7 +1051,7 @@ export default function LeadsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
-              Annulla
+              {t.cancel}
             </Button>
             <Button
               onClick={handleAddLead}
@@ -976,7 +1060,7 @@ export default function LeadsPage() {
               data-testid="button-submit-lead"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-              Aggiungi Lead
+              {t.addLead}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -987,15 +1071,15 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Pencil className="h-5 w-5 text-emerald-500" />
-              Modifica Lead
+              {t.editLead}
             </DialogTitle>
             <DialogDescription>
-              Modifica le informazioni del lead
+              {t.editLeadInfo}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-nome">Nome *</Label>
+              <Label htmlFor="edit-nome">{t.name} *</Label>
               <Input
                 id="edit-nome"
                 value={formData.nome}
@@ -1059,7 +1143,7 @@ export default function LeadsPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-messaggio">Messaggio del Lead</Label>
+              <Label htmlFor="edit-messaggio">{t.leadMessage}</Label>
               <Textarea
                 id="edit-messaggio"
                 value={formData.messaggio}
@@ -1071,7 +1155,7 @@ export default function LeadsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
-              Annulla
+              {t.cancel}
             </Button>
             <Button
               onClick={handleUpdateLead}
@@ -1080,7 +1164,7 @@ export default function LeadsPage() {
               data-testid="button-update-lead"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Pencil className="h-4 w-4 mr-2" />}
-              Salva Modifiche
+              {t.saveChanges}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1091,7 +1175,7 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-emerald-500" />
-              Dettagli Lead
+              {t.leadDetails}
             </DialogTitle>
           </DialogHeader>
           {selectedLead && (
@@ -1137,11 +1221,11 @@ export default function LeadsPage() {
                   )}
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>Creato: {new Date(selectedLead.created_at).toLocaleDateString("it-IT")}</span>
+                    <span>{t.created}: {formatDateForLocale(selectedLead.created_at, locale as Locale)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>Aggiornato: {new Date(selectedLead.updated_at).toLocaleDateString("it-IT")}</span>
+                    <span>{t.updated}: {formatDateForLocale(selectedLead.updated_at, locale as Locale)}</span>
                   </div>
                 </div>
 
@@ -1151,7 +1235,7 @@ export default function LeadsPage() {
                     <div>
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
                         <MessageSquare className="h-4 w-4" />
-                        Messaggio del Lead
+                        {t.leadMessage}
                       </h4>
                       <p className="text-muted-foreground bg-muted p-4 rounded-lg whitespace-pre-wrap">
                         {selectedLead.messaggio}
@@ -1165,7 +1249,7 @@ export default function LeadsPage() {
                 <div>
                   <h4 className="font-semibold mb-4 flex items-center gap-2">
                     <StickyNote className="h-4 w-4" />
-                    Note ({leadDetails?.notes.length || 0})
+                    {t.notes} ({leadDetails?.notes.length || 0})
                   </h4>
                   <div className="flex gap-2 mb-4">
                     <Textarea
@@ -1257,20 +1341,20 @@ export default function LeadsPage() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Sei sicuro?</AlertDialogTitle>
+            <AlertDialogTitle>{t.areYouSure}</AlertDialogTitle>
             <AlertDialogDescription>
-              Stai per eliminare il lead "{selectedLead?.nome}". Questa azione non può essere annullata.
+              {t.deleteWarning(selectedLead?.nome || "")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteLead}
               className="bg-red-500 hover:bg-red-600"
               data-testid="button-confirm-delete"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Elimina
+              {t.delete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

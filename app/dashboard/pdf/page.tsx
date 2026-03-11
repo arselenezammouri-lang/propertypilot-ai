@@ -42,6 +42,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 const pdfFormSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
@@ -88,6 +89,62 @@ export default function PdfGeneratorPage() {
   const [agencyBranding, setAgencyBranding] = useState<AgencyBranding | null>(null);
   const [loadingBranding, setLoadingBranding] = useState(true);
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
+
+  const t = {
+    headerLabel: isItalian ? "Generatore PDF" : "PDF Generator",
+    pageTitle: isItalian ? "Scheda Immobile PDF" : "Property PDF Sheet",
+    pageSubtitle: isItalian ? "Crea schede professionali per i tuoi annunci" : "Create professional sheets for your listings",
+    // toasts
+    pdfGenerated: isItalian ? "PDF Generato!" : "PDF Generated!",
+    pdfGeneratedDesc: isItalian ? "La tua scheda immobile è pronta per il download." : "Your property sheet is ready for download.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    limitReached: isItalian ? "Limite raggiunto" : "Limit reached",
+    maxImages: isItalian ? "Puoi aggiungere massimo 6 immagini" : "You can add a maximum of 6 images",
+    invalidUrl: isItalian ? "URL non valido" : "Invalid URL",
+    invalidUrlDesc: isItalian ? "Inserisci un URL valido per l'immagine" : "Enter a valid URL for the image",
+    pdfError: isItalian ? "Errore durante la generazione del PDF" : "Error during PDF generation",
+    // form
+    templateSection: isItalian ? "Template" : "Template",
+    templateModern: isItalian ? "Moderno" : "Modern",
+    templateLuxury: isItalian ? "Luxury" : "Luxury",
+    propertyInfoSection: isItalian ? "Informazioni Immobile" : "Property Information",
+    titleLabel: isItalian ? "Titolo Annuncio *" : "Listing Title *",
+    titlePlaceholder: isItalian ? "es. Luminoso trilocale con terrazza" : "e.g. Bright 3-bedroom with terrace",
+    descLabel: isItalian ? "Descrizione *" : "Description *",
+    descPlaceholder: isItalian ? "Descrivi l'immobile in dettaglio..." : "Describe the property in detail...",
+    surfaceLabel: isItalian ? "Superficie (m²)" : "Surface (m²)",
+    roomsLabel: isItalian ? "Locali" : "Rooms",
+    bathroomsLabel: isItalian ? "Bagni" : "Bathrooms",
+    priceLabel: isItalian ? "Prezzo" : "Price",
+    addressLabel: isItalian ? "Indirizzo" : "Address",
+    statusLabel: isItalian ? "Stato" : "Status",
+    propertyTypeLabel: isItalian ? "Tipo Immobile" : "Property Type",
+    floorLabel: isItalian ? "Piano" : "Floor",
+    energyLabel: isItalian ? "Classe Energetica" : "Energy Class",
+    yearLabel: isItalian ? "Anno Costruzione" : "Year Built",
+    parkingLabel: isItalian ? "Parcheggio" : "Parking",
+    heatingLabel: isItalian ? "Riscaldamento" : "Heating",
+    imagesSection: isItalian ? "Immagini" : "Images",
+    addImagePlaceholder: "https://example.com/photo.jpg",
+    addImageBtn: isItalian ? "Aggiungi" : "Add",
+    aiRewriteSection: isItalian ? "Riscrittura AI (opzionale)" : "AI Rewrite (optional)",
+    aiRewriteLabel: isItalian ? "Testo da riscrivere con AI" : "Text to rewrite with AI",
+    agentSection: isItalian ? "Dati Agente" : "Agent Details",
+    agentNameLabel: isItalian ? "Nome Agente" : "Agent Name",
+    agentPhoneLabel: isItalian ? "Telefono" : "Phone",
+    agentEmailLabel: isItalian ? "Email" : "Email",
+    brandingSection: isItalian ? "Branding Agenzia" : "Agency Branding",
+    useBrandingLabel: isItalian ? "Usa branding agenzia (White Label)" : "Use agency branding (White Label)",
+    brandingLoadingLabel: isItalian ? "Caricamento branding..." : "Loading branding...",
+    generateBtn: isItalian ? "Genera PDF" : "Generate PDF",
+    generatingBtn: isItalian ? "Generazione..." : "Generating...",
+    downloadBtn: isItalian ? "Scarica PDF" : "Download PDF",
+    regenerateBtn: isItalian ? "Rigenera" : "Regenerate",
+    previewSection: isItalian ? "Anteprima PDF" : "PDF Preview",
+    previewReady: isItalian ? "PDF pronto per il download" : "PDF ready for download",
+  };
 
   useEffect(() => {
     fetch("/api/agency-branding")
@@ -163,7 +220,7 @@ export default function PdfGeneratorPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.error || "Errore durante la generazione del PDF");
+        throw new Error(result.error || t.pdfError);
       }
 
       return result;
@@ -171,13 +228,13 @@ export default function PdfGeneratorPage() {
     onSuccess: (data) => {
       setGeneratedPdf({ base64: data.pdfBase64, fileName: data.fileName });
       toast({
-        title: "PDF Generato!",
-        description: "La tua scheda immobile è pronta per il download.",
+        title: t.pdfGenerated,
+        description: t.pdfGeneratedDesc,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Errore",
+        title: t.errorTitle,
         description: error.message,
         variant: "destructive",
       });
@@ -191,8 +248,8 @@ export default function PdfGeneratorPage() {
       new URL(newImageUrl);
       if (imageUrls.length >= 6) {
         toast({
-          title: "Limite raggiunto",
-          description: "Puoi aggiungere massimo 6 immagini",
+          title: t.limitReached,
+          description: t.maxImages,
           variant: "destructive",
         });
         return;
@@ -201,8 +258,8 @@ export default function PdfGeneratorPage() {
       setNewImageUrl("");
     } catch {
       toast({
-        title: "URL non valido",
-        description: "Inserisci un URL valido per l'immagine",
+        title: t.invalidUrl,
+        description: t.invalidUrlDesc,
         variant: "destructive",
       });
     }
@@ -250,7 +307,7 @@ export default function PdfGeneratorPage() {
               </div>
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">Generatore PDF</p>
+                <p className="text-xs text-muted-foreground font-medium">{t.headerLabel}</p>
               </div>
             </Link>
             
@@ -270,10 +327,10 @@ export default function PdfGeneratorPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-10 md:mb-14 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
-            Generatore <span className="gradient-text-gold">Schede PDF</span>
+            {isItalian ? <>Generatore <span className="gradient-text-gold">Schede PDF</span></> : <>Property <span className="gradient-text-gold">PDF Sheet</span></>}
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground">
-            Crea schede immobiliari professionali stile Canva Premium
+            {t.pageSubtitle}
           </p>
         </div>
 
@@ -414,7 +471,7 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up delay-100" data-testid="card-property-info">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-royal-purple" />
-                    Informazioni Immobile
+                    {t.propertyInfoSection}
                   </h3>
                   
                   <div className="space-y-4">
@@ -423,10 +480,10 @@ export default function PdfGeneratorPage() {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Titolo *</FormLabel>
+                          <FormLabel>{t.titleLabel}</FormLabel>
                           <FormControl>
                             <Input 
-                              placeholder="Es: Villa di Lusso con Vista Mare" 
+                              placeholder={isItalian ? "Es: Villa di Lusso con Vista Mare" : "e.g. Luxury Villa with Sea View"} 
                               {...field} 
                               data-testid="input-title"
                             />
@@ -441,10 +498,10 @@ export default function PdfGeneratorPage() {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Descrizione *</FormLabel>
+                          <FormLabel>{t.descLabel}</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Descrivi la proprietà in dettaglio..."
+                              placeholder={t.descPlaceholder}
                               className="min-h-[120px]"
                               {...field} 
                               data-testid="input-description"
@@ -462,11 +519,11 @@ export default function PdfGeneratorPage() {
                         <FormItem>
                           <FormLabel className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-sunset-gold" />
-                            Descrizione AI (opzionale)
+                            {t.aiRewriteSection}
                           </FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Incolla qui la versione riscritta dall'AI..."
+                              placeholder={isItalian ? "Incolla qui la versione riscritta dall'AI..." : "Paste the AI rewritten version here..."}
                               className="min-h-[100px] border-sunset-gold/30"
                               {...field} 
                               data-testid="input-ai-rewrite"
@@ -491,7 +548,7 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Award className="h-3 w-3" /> Prezzo
+                            <Award className="h-3 w-3" /> {t.priceLabel}
                           </FormLabel>
                           <FormControl>
                             <Input placeholder="€ 450.000" {...field} data-testid="input-price" />

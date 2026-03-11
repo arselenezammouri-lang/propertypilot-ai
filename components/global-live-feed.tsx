@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Activity, Globe, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatDateTimeForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 interface LiveActivity {
   id: string;
@@ -56,9 +59,28 @@ const activityTypes = [
 ];
 
 export function GlobalLiveFeed() {
+  const { locale } = useLocaleContext();
   const [activities, setActivities] = useState<LiveActivity[]>([]);
   const [activeLocations, setActiveLocations] = useState<Set<string>>(new Set());
   const router = useRouter();
+  const t = {
+    it: {
+      deal: "Deal Oro",
+      call: "Chiamata AI",
+      staging: "Virtual Staging",
+      priceDrop: "Price Drop",
+      subtitle: "Attività globale in tempo reale",
+      cta: "Sei parte di un network globale di elite. Non restare indietro.",
+    },
+    en: {
+      deal: "Golden Deal",
+      call: "AI Call",
+      staging: "Virtual Staging",
+      priceDrop: "Price Drop",
+      subtitle: "Global real-time activity",
+      cta: "You are part of a global elite network. Do not fall behind.",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     // Genera attività iniziale
@@ -86,9 +108,9 @@ export function GlobalLiveFeed() {
     const activityType = activityTypes[Math.floor(Math.random() * activityTypes.length)];
 
     const messages = {
-      deal: `Deal Oro rilevato a ${city.name}`,
-      call: `Chiamata AI fissata con successo a ${city.name}`,
-      staging: `Virtual Staging generato per immobile a ${city.name}`,
+      deal: `${t.deal} ${locale === "it" ? "rilevato a" : "detected in"} ${city.name}`,
+      call: `${t.call} ${locale === "it" ? "fissata con successo a" : "successfully scheduled in"} ${city.name}`,
+      staging: `${t.staging} ${locale === "it" ? "generato per immobile a" : "generated for property in"} ${city.name}`,
       price_drop: `Price Drop Sniper attivato a ${city.name}`,
     };
 
@@ -126,9 +148,7 @@ export function GlobalLiveFeed() {
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  };
+  const formatTime = (date: Date) => formatDateTimeForLocale(date, locale as Locale);
 
   return (
     <Card className="border-cyan-500/30 bg-[#0a0a0a]">
@@ -146,7 +166,7 @@ export function GlobalLiveFeed() {
                   LIVE
                 </Badge>
               </div>
-              <p className="text-xs text-gray-400 mt-1">Attività globale in tempo reale</p>
+              <p className="text-xs text-gray-400 mt-1">{t.subtitle}</p>
             </div>
           </div>
           <Badge className="bg-green-500 text-white animate-pulse">
@@ -202,7 +222,13 @@ export function GlobalLiveFeed() {
                       {formatTime(activity.timestamp)}
                     </span>
                     <Badge variant="outline" className="text-xs border-cyan-500/30 text-cyan-400">
-                      {activityType?.label}
+                      {activity.type === "deal"
+                        ? t.deal
+                        : activity.type === "call"
+                        ? t.call
+                        : activity.type === "staging"
+                        ? t.staging
+                        : t.priceDrop}
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-300 mt-1 font-mono">{activity.message}</p>
@@ -215,7 +241,7 @@ export function GlobalLiveFeed() {
         {/* CTA */}
         <div className="pt-4 border-t border-cyan-500/20 text-center">
           <p className="text-xs text-cyan-400 font-semibold">
-            Sei parte di un network globale di elite. Non restare indietro.
+            {t.cta}
           </p>
         </div>
       </CardContent>

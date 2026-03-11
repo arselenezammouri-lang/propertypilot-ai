@@ -6,52 +6,82 @@ import { Button } from '@/components/ui/button';
 import { Sparkles, Home, FileText, Rocket, ArrowRight, ArrowLeft, CheckCircle, Building2, Key, PartyPopper, Zap } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 
 interface OnboardingWizardProps {
   onComplete?: () => void;
 }
 
-const ONBOARDING_STEPS = [
-  {
-    icon: Home,
-    title: "Benvenuto in PropertyPilot AI!",
-    description: "Sono Aria, la tua assistente AI. Ti guiderò nella creazione del tuo primo annuncio professionale in pochi minuti.",
-    details: [
-      "Genera annunci professionali con l'AI",
-      "Scegli tra Vendita, Affitto o Affitto Breve",
-      "Ottieni titoli, descrizioni e traduzioni automatiche"
-    ],
-    gradient: "from-royal-purple to-electric-blue"
-  },
-  {
-    icon: FileText,
-    title: "Crea il Tuo Primo Annuncio",
-    description: "Vai alla sezione 'Genera Annuncio' e inserisci i dati dell'immobile. L'AI farà tutto il resto!",
-    details: [
-      "1. Scegli il tipo di transazione (Vendita/Affitto)",
-      "2. Inserisci indirizzo, prezzo e caratteristiche",
-      "3. Clicca 'Genera' e ricevi l'annuncio in 30 secondi"
-    ],
-    gradient: "from-electric-blue to-neon-aqua"
-  },
-  {
-    icon: Rocket,
-    title: "Sei Pronto a Dominare!",
-    description: "Ora hai tutti gli strumenti per creare annunci professionali che convertono. Buon lavoro!",
-    details: [
-      "Usa i Titoli A/B per massimizzare i click",
-      "Esplora gli Hashtag AI per i social",
-      "Prova il PDF Generator per schede professionali"
-    ],
-    gradient: "from-sunset-gold to-amber-500"
-  }
-];
+function getOnboardingSteps(isItalian: boolean) {
+  return [
+    {
+      icon: Home,
+      title: isItalian ? "Benvenuto in PropertyPilot AI!" : "Welcome to PropertyPilot AI!",
+      description: isItalian
+        ? "Sono Aria, la tua assistente AI. Ti guiderò nella creazione del tuo primo annuncio professionale in pochi minuti."
+        : "I'm Aria, your AI assistant. I'll guide you through creating your first professional listing in just a few minutes.",
+      details: isItalian
+        ? [
+            "Genera annunci professionali con l'AI",
+            "Scegli tra Vendita, Affitto o Affitto Breve",
+            "Ottieni titoli, descrizioni e traduzioni automatiche"
+          ]
+        : [
+            "Generate professional listings with AI",
+            "Choose between Sale, Rent or Short-Term Rental",
+            "Get titles, descriptions and automatic translations"
+          ],
+      gradient: "from-royal-purple to-electric-blue"
+    },
+    {
+      icon: FileText,
+      title: isItalian ? "Crea il Tuo Primo Annuncio" : "Create Your First Listing",
+      description: isItalian
+        ? "Vai alla sezione 'Genera Annuncio' e inserisci i dati dell'immobile. L'AI farà tutto il resto!"
+        : "Go to the 'Generate Listing' section and enter the property details. The AI will do the rest!",
+      details: isItalian
+        ? [
+            "1. Scegli il tipo di transazione (Vendita/Affitto)",
+            "2. Inserisci indirizzo, prezzo e caratteristiche",
+            "3. Clicca 'Genera' e ricevi l'annuncio in 30 secondi"
+          ]
+        : [
+            "1. Choose the transaction type (Sale/Rent)",
+            "2. Enter address, price and features",
+            "3. Click 'Generate' and receive your listing in 30 seconds"
+          ],
+      gradient: "from-electric-blue to-neon-aqua"
+    },
+    {
+      icon: Rocket,
+      title: isItalian ? "Sei Pronto a Dominare!" : "You're Ready to Dominate!",
+      description: isItalian
+        ? "Ora hai tutti gli strumenti per creare annunci professionali che convertono. Buon lavoro!"
+        : "You now have all the tools to create professional listings that convert. Good luck!",
+      details: isItalian
+        ? [
+            "Usa i Titoli A/B per massimizzare i click",
+            "Esplora gli Hashtag AI per i social",
+            "Prova il PDF Generator per schede professionali"
+          ]
+        : [
+            "Use A/B Titles to maximize clicks",
+            "Explore AI Hashtags for social media",
+            "Try the PDF Generator for professional property sheets"
+          ],
+      gradient: "from-sunset-gold to-amber-500"
+    }
+  ];
+}
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
+  const ONBOARDING_STEPS = getOnboardingSteps(isItalian);
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -176,7 +206,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           <div className="flex items-center justify-center gap-2 py-2">
             <PartyPopper className="h-5 w-5 text-sunset-gold animate-bounce" />
             <span className="text-sm font-medium text-sunset-gold">
-              Pronto a iniziare!
+              {isItalian ? "Pronto a iniziare!" : "Ready to start!"}
             </span>
             <PartyPopper className="h-5 w-5 text-sunset-gold animate-bounce" />
           </div>
@@ -187,12 +217,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             {currentStep > 0 && (
               <Button variant="outline" onClick={prevStep} className="flex-1">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Indietro
+                {isItalian ? "Indietro" : "Back"}
               </Button>
             )}
             {currentStep === 0 && (
               <Button variant="ghost" onClick={skipOnboarding} className="flex-1 text-muted-foreground">
-                Salta
+                {isItalian ? "Salta" : "Skip"}
               </Button>
             )}
             <Button 
@@ -201,12 +231,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             >
               {isLastStep ? (
                 <>
-                  Crea il Primo Annuncio
+                  {isItalian ? "Crea il Primo Annuncio" : "Create First Listing"}
                   <Zap className="ml-2 h-4 w-4" />
                 </>
               ) : (
                 <>
-                  Avanti
+                  {isItalian ? "Avanti" : "Next"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </>
               )}

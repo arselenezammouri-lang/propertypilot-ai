@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatDateTimeForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 type AutopilotRule = {
   id?: string;
@@ -22,10 +25,56 @@ type AutopilotRule = {
 };
 
 export default function AutopilotPage() {
+  const { locale } = useLocaleContext();
   const [rule, setRule] = useState<AutopilotRule | null>(null);
   const [runs, setRuns] = useState<any[]>([]);
   const [actions, setActions] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
+
+  const t = {
+    it: {
+      title: "Autopilot Mandati 24/7",
+      subtitle: "Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.",
+      active: "Autopilot attivo",
+      rulePlaceholder: "Nome regola (es. Mandati Milano Centro)",
+      city: "Città",
+      region: "Regione/Provincia",
+      minPrice: "Prezzo minimo",
+      maxPrice: "Prezzo massimo",
+      runHour: "Ora di esecuzione (UTC)",
+      dailyLimit: "Max nuovi lead al giorno",
+      saving: "Salvataggio...",
+      save: "Salva regola Autopilot",
+      lastRuns: "Ultimi run",
+      noRuns: "Nessun run registrato.",
+      opportunities: "opportunità",
+      leads: "lead",
+      recentActions: "Azioni recenti",
+      noActions: "Nessuna azione registrata.",
+      defaultRule: "Autopilot Mandati",
+    },
+    en: {
+      title: "Mandate Autopilot 24/7",
+      subtitle: "Scraper and Voice AI work every day to find new mandates and create leads automatically.",
+      active: "Autopilot enabled",
+      rulePlaceholder: "Rule name (e.g. Milan Center Mandates)",
+      city: "City",
+      region: "Region/Province",
+      minPrice: "Minimum price",
+      maxPrice: "Maximum price",
+      runHour: "Run time (UTC)",
+      dailyLimit: "Max new leads per day",
+      saving: "Saving...",
+      save: "Save Autopilot rule",
+      lastRuns: "Latest runs",
+      noRuns: "No runs recorded.",
+      opportunities: "opportunities",
+      leads: "leads",
+      recentActions: "Recent actions",
+      noActions: "No actions recorded.",
+      defaultRule: "Mandate Autopilot",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     void loadData();
@@ -43,7 +92,7 @@ export default function AutopilotPage() {
       setRule(rules[0] as AutopilotRule);
     } else {
       setRule({
-        name: "Autopilot Mandati",
+        name: t.defaultRule,
         active: false,
         city: null,
         region: null,
@@ -73,7 +122,7 @@ export default function AutopilotPage() {
   };
 
   const updateField = (patch: Partial<AutopilotRule>) => {
-    setRule((prev) => ({ ...(prev ?? { name: "Autopilot Mandati", portals: [] as string[] } as AutopilotRule), ...patch }));
+    setRule((prev) => ({ ...(prev ?? { name: t.defaultRule, portals: [] as string[] } as AutopilotRule), ...patch }));
   };
 
   const handleSave = async () => {
@@ -106,16 +155,16 @@ export default function AutopilotPage() {
     <div className="max-w-5xl mx-auto space-y-8 py-8">
       <Card>
         <CardHeader>
-          <CardTitle>Autopilot Mandati 24/7</CardTitle>
+          <CardTitle>{t.title}</CardTitle>
           <CardDescription>
-            Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.
+            {t.subtitle}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {rule && (
             <>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Autopilot attivo</span>
+                <span className="text-sm font-medium">{t.active}</span>
                 <Switch
                   checked={rule.active}
                   onCheckedChange={(v) => updateField({ active: v })}
@@ -123,19 +172,19 @@ export default function AutopilotPage() {
               </div>
 
               <Input
-                placeholder="Nome regola (es. Mandati Milano Centro)"
+                placeholder={t.rulePlaceholder}
                 value={rule.name}
                 onChange={(e) => updateField({ name: e.target.value })}
               />
 
               <div className="grid md:grid-cols-2 gap-4">
                 <Input
-                  placeholder="Città"
+                  placeholder={t.city}
                   value={rule.city ?? ""}
                   onChange={(e) => updateField({ city: e.target.value || null })}
                 />
                 <Input
-                  placeholder="Regione/Provincia"
+                  placeholder={t.region}
                   value={rule.region ?? ""}
                   onChange={(e) => updateField({ region: e.target.value || null })}
                 />
@@ -144,13 +193,13 @@ export default function AutopilotPage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <Input
                   type="number"
-                  placeholder="Prezzo minimo"
+                  placeholder={t.minPrice}
                   value={rule.min_price ?? ""}
                   onChange={(e) => updateField({ min_price: e.target.value ? Number(e.target.value) : null })}
                 />
                 <Input
                   type="number"
-                  placeholder="Prezzo massimo"
+                  placeholder={t.maxPrice}
                   value={rule.max_price ?? ""}
                   onChange={(e) => updateField({ max_price: e.target.value ? Number(e.target.value) : null })}
                 />
@@ -158,7 +207,7 @@ export default function AutopilotPage() {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium mb-1">Ora di esecuzione (UTC)</p>
+                  <p className="text-sm font-medium mb-1">{t.runHour}</p>
                   <Select
                     value={String(rule.run_hour_utc)}
                     onValueChange={(v) => updateField({ run_hour_utc: Number(v) })}
@@ -174,7 +223,7 @@ export default function AutopilotPage() {
                   </Select>
                 </div>
                 <div>
-                  <p className="text-sm font-medium mb-1">Max nuovi lead al giorno</p>
+                  <p className="text-sm font-medium mb-1">{t.dailyLimit}</p>
                   <Input
                     type="number"
                     value={rule.daily_limit}
@@ -184,7 +233,7 @@ export default function AutopilotPage() {
               </div>
 
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? "Salvataggio..." : "Salva regola Autopilot"}
+                {saving ? t.saving : t.save}
               </Button>
             </>
           )}
@@ -193,16 +242,16 @@ export default function AutopilotPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Ultimi run</CardTitle>
+          <CardTitle>{t.lastRuns}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
-          {runs.length === 0 && <p className="text-muted-foreground">Nessun run registrato.</p>}
+          {runs.length === 0 && <p className="text-muted-foreground">{t.noRuns}</p>}
           {runs.map((r) => (
             <div key={r.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{new Date(r.run_at).toLocaleString()}</span>
+              <span>{formatDateTimeForLocale(r.run_at, locale as Locale)}</span>
               <span>{r.status}</span>
-              <span>{r.total_opportunities} opportunità</span>
-              <span>{r.total_leads_created} lead</span>
+              <span>{r.total_opportunities} {t.opportunities}</span>
+              <span>{r.total_leads_created} {t.leads}</span>
             </div>
           ))}
         </CardContent>
@@ -210,13 +259,13 @@ export default function AutopilotPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Azioni recenti</CardTitle>
+          <CardTitle>{t.recentActions}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
-          {actions.length === 0 && <p className="text-muted-foreground">Nessuna azione registrata.</p>}
+          {actions.length === 0 && <p className="text-muted-foreground">{t.noActions}</p>}
           {actions.map((a) => (
             <div key={a.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{new Date(a.created_at).toLocaleString()}</span>
+              <span>{formatDateTimeForLocale(a.created_at, locale as Locale)}</span>
               <span>{a.action_type}</span>
               <span>{a.action_status}</span>
             </div>

@@ -14,29 +14,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { useLocaleContext } from '@/components/providers/locale-provider';
 import type { Lead, LeadEnrichmentResult, LeadNote } from '@/lib/types/database.types';
 import CommunicationsHub from './CommunicationsHub';
 
-const statusLabels: Record<string, string> = {
-  new: 'Nuovo',
-  contacted: 'Contattato',
-  followup: 'Follow-up',
-  closed: 'Chiuso',
-  lost: 'Perso',
-};
-
+// Status/priority colors are locale-independent
 const statusColors: Record<string, string> = {
   new: 'bg-blue-500',
   contacted: 'bg-yellow-500',
   followup: 'bg-purple-500',
   closed: 'bg-green-500',
   lost: 'bg-red-500',
-};
-
-const priorityLabels: Record<string, string> = {
-  low: 'Bassa',
-  medium: 'Media',
-  high: 'Alta',
 };
 
 const priorityColors: Record<string, string> = {
@@ -48,11 +36,13 @@ const priorityColors: Record<string, string> = {
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isIt = locale === 'it';
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
-    toast({ title: 'Copiato!', description: label || 'Testo copiato negli appunti' });
+    toast({ title: isIt ? 'Copiato!' : 'Copied!', description: label || (isIt ? 'Testo copiato negli appunti' : 'Text copied to clipboard') });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -98,8 +88,78 @@ function EnrichmentSection({
 export default function LeadDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === 'it';
   const { toast } = useToast();
   const leadId = params.id as string;
+
+  const statusLabels: Record<string, string> = {
+    new: isItalian ? 'Nuovo' : 'New',
+    contacted: isItalian ? 'Contattato' : 'Contacted',
+    followup: 'Follow-up',
+    closed: isItalian ? 'Chiuso' : 'Closed',
+    lost: isItalian ? 'Perso' : 'Lost',
+  };
+
+  const priorityLabels: Record<string, string> = {
+    low: isItalian ? 'Bassa' : 'Low',
+    medium: isItalian ? 'Media' : 'Medium',
+    high: isItalian ? 'Alta' : 'High',
+  };
+
+  const t = {
+    backToLeads: isItalian ? 'Torna ai Lead' : 'Back to Leads',
+    headerSubtitle: 'CRM 2.5 - Smart Lead Capture + AI',
+    analyzeBtn: isItalian ? 'Analisi in corso...' : 'Analyzing...',
+    regenerateBtn: isItalian ? 'Rigenera Analisi AI' : 'Regenerate AI Analysis',
+    enrichBtn: isItalian ? 'Arricchisci Lead con AI' : 'Enrich Lead with AI',
+    leadInfoTitle: isItalian ? 'Informazioni Lead' : 'Lead Information',
+    noEmail: isItalian ? 'Non fornita' : 'Not provided',
+    noPhone: isItalian ? 'Non fornito' : 'Not provided',
+    fromCache: isItalian ? 'Dalla cache (24h)' : 'From cache (24h)',
+    aiInsightsTitle: 'AI Lead Insights',
+    notFound: isItalian ? 'Lead non trovato' : 'Lead not found',
+    backToList: isItalian ? 'Torna alla lista' : 'Back to list',
+    // enrichment sections
+    psychoTitle: isItalian ? 'Profilo Psicografico' : 'Psychographic Profile',
+    buyerType: isItalian ? 'Tipo Acquirente:' : 'Buyer Type:',
+    motivations: isItalian ? 'Motivazioni:' : 'Motivations:',
+    decisionStyle: isItalian ? 'Stile Decisionale:' : 'Decision Style:',
+    painPoints: 'Pain Points:',
+    preferenceTitle: isItalian ? 'Preferenze Immobiliari' : 'Property Preferences',
+    propertyType: isItalian ? 'Tipo Immobile:' : 'Property Type:',
+    budget: 'Budget:',
+    timeline: isItalian ? 'Timeline:' : 'Timeline:',
+    location: isItalian ? 'Zona Preferita:' : 'Preferred Area:',
+    priorityFeatures: isItalian ? 'Caratteristiche Prioritarie:' : 'Priority Features:',
+    scoringTitle: isItalian ? 'Scoring & Priorità' : 'Scoring & Priority',
+    score: 'Score:',
+    priority: isItalian ? 'Priorità:' : 'Priority:',
+    urgency: isItalian ? 'Urgenza:' : 'Urgency:',
+    conversionProb: isItalian ? 'P. Conversione:' : 'Conv. Probability:',
+    strongPoints: isItalian ? 'Punti Forti:' : 'Strong Points:',
+    weakPoints: isItalian ? 'Punti Deboli:' : 'Weak Points:',
+    strategyTitle: isItalian ? 'Strategia Consigliata' : 'Recommended Strategy',
+    approach: isItalian ? 'Approccio:' : 'Approach:',
+    talkingPoints: isItalian ? 'Punti Chiave:' : 'Key Points:',
+    objections: isItalian ? 'Obiezioni Previste:' : 'Expected Objections:',
+    proposedProps: isItalian ? 'Immobili da Proporre:' : 'Properties to Propose:',
+    notesTitle: isItalian ? 'Note & Attività' : 'Notes & Activities',
+    noNotes: isItalian ? 'Nessuna nota ancora' : 'No notes yet',
+    automationsTitle: isItalian ? 'Log Automazioni' : 'Automation Logs',
+    noAutomations: isItalian ? 'Nessuna automazione eseguita' : 'No automations executed',
+    success: isItalian ? 'Successo' : 'Success',
+    error: isItalian ? 'Errore' : 'Error',
+    ruleLabel: isItalian ? 'Regola' : 'Rule',
+    triggerLabel: isItalian ? 'Trigger:' : 'Trigger:',
+    // toasts
+    loadError: isItalian ? 'Impossibile caricare i dati del lead' : 'Cannot load lead data',
+    analysisComplete: isItalian ? 'Analisi completata!' : 'Analysis complete!',
+    fromCacheDesc: isItalian ? 'Dati recuperati dalla cache' : 'Data retrieved from cache',
+    analysisDone: (ms: number) => isItalian ? `Analisi AI completata in ${ms}ms` : `AI analysis completed in ${ms}ms`,
+    copied: isItalian ? 'Copiato!' : 'Copied!',
+    copiedDesc: isItalian ? 'Testo copiato negli appunti' : 'Text copied to clipboard',
+  };
 
   const [lead, setLead] = useState<Lead | null>(null);
   const [notes, setNotes] = useState<LeadNote[]>([]);
@@ -147,7 +207,7 @@ export default function LeadDetailPage() {
       }
     } catch (error) {
       console.error('Error fetching lead data:', error);
-      toast({ title: 'Errore', description: 'Impossibile caricare i dati del lead', variant: 'destructive' });
+      toast({ title: t.error, description: t.loadError, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -170,12 +230,9 @@ export default function LeadDetailPage() {
       const result = await response.json();
       setEnrichment(result.data);
       setEnrichmentCached(result.cached);
-      toast({ 
-        title: 'Analisi completata!', 
-        description: result.cached ? 'Dati recuperati dalla cache' : `Analisi AI completata in ${result.duration}ms` 
-      });
+      toast({ title: t.analysisComplete, description: result.cached ? t.fromCacheDesc : t.analysisDone(result.duration) });
     } catch (error: any) {
-      toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+      toast({ title: t.error, description: error.message, variant: 'destructive' });
     } finally {
       setIsEnriching(false);
     }
@@ -193,9 +250,9 @@ export default function LeadDetailPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
         <div className="text-center text-white">
-          <p>Lead non trovato</p>
+          <p>{t.notFound}</p>
           <Link href="/dashboard/leads">
-            <Button className="mt-4">Torna alla lista</Button>
+            <Button className="mt-4">{t.backToList}</Button>
           </Link>
         </div>
       </div>
@@ -228,7 +285,7 @@ export default function LeadDetailPage() {
                   {scoreBadge.emoji} {lead.lead_score}
                 </Badge>
               </h1>
-              <p className="text-slate-400">CRM 2.5 - Smart Lead Capture + AI</p>
+              <p className="text-slate-400">{t.headerSubtitle}</p>
             </div>
           </div>
 
@@ -241,17 +298,17 @@ export default function LeadDetailPage() {
             {isEnriching ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analisi in corso...
+                {t.analyzeBtn}
               </>
             ) : enrichment ? (
               <>
                 <RefreshCw className="mr-2 h-4 w-4" />
-                Rigenera Analisi AI
+                {t.regenerateBtn}
               </>
             ) : (
               <>
                 <Sparkles className="mr-2 h-4 w-4" />
-                Arricchisci Lead con AI
+                {t.enrichBtn}
               </>
             )}
           </Button>
@@ -262,17 +319,17 @@ export default function LeadDetailPage() {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <User className="h-5 w-5 text-emerald-500" />
-              Informazioni Lead
+              {t.leadInfoTitle}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-3 text-slate-300">
               <Mail className="h-4 w-4 text-emerald-500" />
-              <span>{lead.email || 'Non fornita'}</span>
+              <span>{lead.email || t.noEmail}</span>
             </div>
             <div className="flex items-center gap-3 text-slate-300">
               <Phone className="h-4 w-4 text-emerald-500" />
-              <span>{lead.telefono || 'Non fornito'}</span>
+              <span>{lead.telefono || t.noPhone}</span>
             </div>
             <div className="flex items-center gap-2">
               <Badge className={`${statusColors[lead.status]} text-white`}>
@@ -284,7 +341,7 @@ export default function LeadDetailPage() {
             </div>
             <div className="flex items-center gap-3 text-slate-300">
               <Calendar className="h-4 w-4 text-emerald-500" />
-              <span>{new Date(lead.created_at).toLocaleDateString('it-IT')}</span>
+              <span>{new Date(lead.created_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}</span>
             </div>
             {lead.messaggio && (
               <div className="col-span-full">
@@ -306,11 +363,11 @@ export default function LeadDetailPage() {
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 <Brain className="h-6 w-6 text-violet-500" />
-                AI Lead Insights
+                {t.aiInsightsTitle}
               </h2>
               {enrichmentCached && (
                 <Badge variant="outline" className="text-slate-400 border-slate-600">
-                  <Clock className="h-3 w-3 mr-1" /> Dalla cache (24h)
+                  <Clock className="h-3 w-3 mr-1" /> {t.fromCache}
                 </Badge>
               )}
             </div>
@@ -318,20 +375,20 @@ export default function LeadDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Profilo Psicografico */}
               <EnrichmentSection 
-                title="Profilo Psicografico" 
+                title={t.psychoTitle} 
                 icon={UserCircle}
                 gradient="bg-gradient-to-br from-violet-600/90 to-purple-700/90"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Tipo Acquirente:</span>
+                    <span className="font-semibold">{t.buyerType}</span>
                     <div className="flex items-center gap-1">
                       <span>{enrichment.profilo_psicografico.tipo_acquirente}</span>
                       <CopyButton text={enrichment.profilo_psicografico.tipo_acquirente} label="tipo-acquirente" />
                     </div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Motivazioni:</span>
+                    <span className="font-semibold block mb-1">{t.motivations}</span>
                     <ul className="list-disc list-inside text-sm space-y-1">
                       {enrichment.profilo_psicografico.motivazioni_principali.map((m, i) => (
                         <li key={i}>{m}</li>
@@ -339,10 +396,10 @@ export default function LeadDetailPage() {
                     </ul>
                   </div>
                   <div>
-                    <span className="font-semibold">Stile Decisionale:</span> {enrichment.profilo_psicografico.stile_decisionale}
+                    <span className="font-semibold">{t.decisionStyle}</span> {enrichment.profilo_psicografico.stile_decisionale}
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Pain Points:</span>
+                    <span className="font-semibold block mb-1">{t.painPoints}</span>
                     <div className="flex flex-wrap gap-1">
                       {enrichment.profilo_psicografico.pain_points.map((p, i) => (
                         <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{p}</Badge>
@@ -354,7 +411,7 @@ export default function LeadDetailPage() {
 
               {/* Probabilità Chiusura */}
               <EnrichmentSection 
-                title="Probabilità Chiusura" 
+                title={t.conversionProb} 
                 icon={Target}
                 gradient="bg-gradient-to-br from-emerald-600/90 to-teal-700/90"
               >
@@ -370,7 +427,7 @@ export default function LeadDetailPage() {
                   </div>
                   <Separator className="bg-white/20" />
                   <div>
-                    <span className="font-semibold text-green-300 block mb-1">Fattori Positivi:</span>
+                    <span className="font-semibold text-green-300 block mb-1">{t.strongPoints}</span>
                     <ul className="list-disc list-inside text-sm space-y-1">
                       {enrichment.probabilita_chiusura.fattori_positivi.map((f, i) => (
                         <li key={i}>{f}</li>
@@ -378,7 +435,7 @@ export default function LeadDetailPage() {
                     </ul>
                   </div>
                   <div>
-                    <span className="font-semibold text-red-300 block mb-1">Fattori Negativi:</span>
+                    <span className="font-semibold text-red-300 block mb-1">{t.weakPoints}</span>
                     <ul className="list-disc list-inside text-sm space-y-1">
                       {enrichment.probabilita_chiusura.fattori_negativi.map((f, i) => (
                         <li key={i}>{f}</li>
@@ -390,7 +447,7 @@ export default function LeadDetailPage() {
 
               {/* Budget Analysis */}
               <EnrichmentSection 
-                title="Analisi Budget" 
+                title={t.budget} 
                 icon={DollarSign}
                 gradient="bg-gradient-to-br from-amber-600/90 to-orange-700/90"
               >
@@ -398,11 +455,11 @@ export default function LeadDetailPage() {
                   <div className="text-2xl font-bold">{enrichment.budget_analysis.fascia_prezzo}</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="font-semibold block">Capacità:</span>
+                      <span className="font-semibold block">{isItalian ? 'Capacità:' : 'Capacity:'}</span>
                       {enrichment.budget_analysis.capacita_investimento}
                     </div>
                     <div>
-                      <span className="font-semibold block">Flessibilità:</span>
+                      <span className="font-semibold block">{isItalian ? 'Flessibilità:' : 'Flexibility:'}</span>
                       {enrichment.budget_analysis.flessibilita_budget}
                     </div>
                   </div>
@@ -411,13 +468,13 @@ export default function LeadDetailPage() {
 
               {/* Fascia Immobile */}
               <EnrichmentSection 
-                title="Immobili Consigliati" 
+                title={t.preferenceTitle} 
                 icon={Home}
                 gradient="bg-gradient-to-br from-blue-600/90 to-indigo-700/90"
               >
                 <div className="space-y-3">
                   <div>
-                    <span className="font-semibold block mb-1">Tipologie:</span>
+                    <span className="font-semibold block mb-1">{t.propertyType}</span>
                     <div className="flex flex-wrap gap-1">
                       {enrichment.fascia_immobile.tipologie_consigliate.map((t, i) => (
                         <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{t}</Badge>
@@ -425,7 +482,7 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Zone Ideali:</span>
+                    <span className="font-semibold block mb-1">{t.location}</span>
                     <div className="flex flex-wrap gap-1">
                       {enrichment.fascia_immobile.zone_ideali.map((z, i) => (
                         <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{z}</Badge>
@@ -433,7 +490,7 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Caratteristiche Prioritarie:</span>
+                    <span className="font-semibold block mb-1">{t.priorityFeatures}</span>
                     <ul className="list-disc list-inside text-sm">
                       {enrichment.fascia_immobile.caratteristiche_prioritarie.slice(0, 4).map((c, i) => (
                         <li key={i}>{c}</li>
@@ -456,12 +513,12 @@ export default function LeadDetailPage() {
                   </div>
                   <p className="text-sm italic">{enrichment.buyer_persona.descrizione_breve}</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div><span className="font-semibold">Età:</span> {enrichment.buyer_persona.eta_stimata}</div>
-                    <div><span className="font-semibold">Professione:</span> {enrichment.buyer_persona.professione_probabile}</div>
-                    <div className="col-span-2"><span className="font-semibold">Famiglia:</span> {enrichment.buyer_persona.situazione_familiare}</div>
+                    <div><span className="font-semibold">{isItalian ? 'Età:' : 'Age:'}</span> {enrichment.buyer_persona.eta_stimata}</div>
+                    <div><span className="font-semibold">{isItalian ? 'Professione:' : 'Profession:'}</span> {enrichment.buyer_persona.professione_probabile}</div>
+                    <div className="col-span-2"><span className="font-semibold">{isItalian ? 'Famiglia:' : 'Family:'}</span> {enrichment.buyer_persona.situazione_familiare}</div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Valori Chiave:</span>
+                    <span className="font-semibold block mb-1">{isItalian ? 'Valori Chiave:' : 'Key Values:'}</span>
                     <div className="flex flex-wrap gap-1">
                       {enrichment.buyer_persona.valori_chiave.map((v, i) => (
                         <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{v}</Badge>
@@ -469,7 +526,7 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Trigger Acquisto:</span>
+                    <span className="font-semibold block mb-1">{isItalian ? 'Trigger Acquisto:' : 'Purchase Triggers:'}</span>
                     <ul className="list-disc list-inside text-sm">
                       {enrichment.buyer_persona.trigger_acquisto.map((t, i) => (
                         <li key={i}>{t}</li>
@@ -481,22 +538,22 @@ export default function LeadDetailPage() {
 
               {/* Strategia Follow-up */}
               <EnrichmentSection 
-                title="Strategia Follow-up" 
+                title={t.strategyTitle} 
                 icon={Zap}
                 gradient="bg-gradient-to-br from-cyan-600/90 to-sky-700/90"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold">Approccio:</span>
+                    <span className="font-semibold">{t.approach}</span>
                     <CopyButton text={enrichment.strategia_followup.approccio_consigliato} label="approccio" />
                   </div>
                   <p className="text-sm bg-white/10 p-2 rounded">{enrichment.strategia_followup.approccio_consigliato}</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div><span className="font-semibold">Frequenza:</span> {enrichment.strategia_followup.frequenza_contatto}</div>
-                    <div><span className="font-semibold">Canale:</span> {enrichment.strategia_followup.canale_preferito}</div>
+                    <div><span className="font-semibold">{isItalian ? 'Frequenza:' : 'Frequency:'}</span> {enrichment.strategia_followup.frequenza_contatto}</div>
+                    <div><span className="font-semibold">{isItalian ? 'Canale:' : 'Channel:'}</span> {enrichment.strategia_followup.canale_preferito}</div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">Azioni Prioritarie:</span>
+                    <span className="font-semibold block mb-1">{t.talkingPoints}</span>
                     <ol className="list-decimal list-inside text-sm space-y-1">
                       {enrichment.strategia_followup.azioni_prioritarie.map((a, i) => (
                         <li key={i}>{a}</li>
@@ -512,10 +569,10 @@ export default function LeadDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <AlertTriangle className="h-5 w-5" />
-                  Obiezioni Probabili e Risposte AI
+                  {isItalian ? 'Obiezioni Probabili e Risposte AI' : 'Likely Objections & AI Responses'}
                 </CardTitle>
                 <CardDescription className="text-white/70">
-                  Anticipa le obiezioni e preparati con risposte efficaci
+                  {isItalian ? 'Anticipa le obiezioni e preparati con risposte efficaci' : 'Anticipate objections and prepare effective responses'}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -534,11 +591,11 @@ export default function LeadDetailPage() {
                         </div>
                         <CopyButton text={ob.risposta_suggerita} label={`obiezione-${i}`} />
                       </div>
-                      <div className="text-white/90 text-sm">
-                        <span className="font-semibold text-green-300">Risposta:</span> {ob.risposta_suggerita}
+                        <div className="text-white/90 text-sm">
+                        <span className="font-semibold text-green-300">{isItalian ? 'Risposta:' : 'Answer:'}</span> {ob.risposta_suggerita}
                       </div>
                       <div className="text-white/70 text-xs">
-                        <span className="font-semibold">Strategia:</span> {ob.strategia}
+                        <span className="font-semibold">{isItalian ? 'Strategia:' : 'Strategy:'}</span> {ob.strategia}
                       </div>
                     </div>
                   ))}
@@ -553,13 +610,13 @@ export default function LeadDetailPage() {
                   <div className="flex items-center gap-4">
                     <Shield className="h-8 w-8 text-emerald-500" />
                     <div>
-                      <p className="text-slate-400 text-sm">Punteggio Qualità Lead</p>
+                      <p className="text-slate-400 text-sm">{isItalian ? 'Punteggio Qualità Lead' : 'Lead Quality Score'}</p>
                       <p className="text-2xl font-bold text-white">{enrichment.punteggio_qualita.score}/100</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-slate-300">{enrichment.punteggio_qualita.interpretazione}</p>
-                    <p className="text-slate-500 text-sm">Generato: {new Date(enrichment.generato_il).toLocaleString('it-IT')}</p>
+                    <p className="text-slate-500 text-sm">{isItalian ? 'Generato:' : 'Generated:'} {new Date(enrichment.generato_il).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -569,10 +626,13 @@ export default function LeadDetailPage() {
           <Card className="bg-slate-800/50 border-slate-700 border-dashed">
             <CardContent className="py-12 text-center">
               <Sparkles className="h-12 w-12 text-violet-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">Arricchisci questo Lead con l'AI</h3>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                {isItalian ? "Arricchisci questo Lead con l'AI" : 'Enrich this Lead with AI'}
+              </h3>
               <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                Ottieni un profilo psicografico completo, probabilità di chiusura, budget stimato, 
-                obiezioni probabili con risposte pronte e una strategia di follow-up personalizzata.
+                {isItalian
+                  ? 'Ottieni un profilo psicografico completo, probabilità di chiusura, budget stimato, obiezioni probabili con risposte pronte e una strategia di follow-up personalizzata.'
+                  : 'Get a complete psychographic profile, closing probability, estimated budget, likely objections with ready answers, and a personalized follow-up strategy.'}
               </p>
               <Button
                 onClick={handleEnrichLead}
@@ -584,12 +644,12 @@ export default function LeadDetailPage() {
                 {isEnriching ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Analisi AI in corso...
+                    {isItalian ? 'Analisi AI in corso...' : 'AI analysis in progress...'}
                   </>
                 ) : (
                   <>
                     <Brain className="mr-2 h-5 w-5" />
-                    Avvia Analisi AI
+                    {isItalian ? 'Avvia Analisi AI' : 'Start AI Analysis'}
                   </>
                 )}
               </Button>
@@ -603,11 +663,11 @@ export default function LeadDetailPage() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Zap className="h-5 w-5 text-violet-400" />
-                Automazioni Applicate ({automationLogs.length})
+                {isItalian ? 'Automazioni Applicate' : 'Applied Automations'} ({automationLogs.length})
                 <Badge className="bg-violet-500/20 text-violet-300 text-xs">CRM 3.0</Badge>
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Storico delle regole di automazione eseguite su questo lead
+                {isItalian ? 'Storico delle regole di automazione eseguite su questo lead' : 'History of automation rules executed on this lead'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -623,12 +683,12 @@ export default function LeadDetailPage() {
                     </div>
                     <div>
                       <p className="text-slate-200 text-sm font-medium">
-                        {log.automations_rules?.name || 'Regola'}
+                        {log.automations_rules?.name || t.ruleLabel}
                       </p>
                       <p className="text-slate-400 text-xs">
-                        Trigger: {log.trigger_type === 'status_changed' ? 'Status cambiato' : 
-                                 log.trigger_type === 'new_lead' ? 'Nuovo lead' :
-                                 log.trigger_type === 'score_updated' ? 'Score aggiornato' :
+                        {t.triggerLabel} {log.trigger_type === 'status_changed' ? (isItalian ? 'Status cambiato' : 'Status changed') :
+                                 log.trigger_type === 'new_lead' ? (isItalian ? 'Nuovo lead' : 'New lead') :
+                                 log.trigger_type === 'score_updated' ? (isItalian ? 'Score aggiornato' : 'Score updated') :
                                  log.trigger_type}
                       </p>
                       {log.error_message && (
@@ -637,7 +697,7 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <span className="text-slate-500 text-xs">
-                    {new Date(log.created_at).toLocaleString('it-IT')}
+                    {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
                   </span>
                 </div>
               ))}
@@ -651,7 +711,7 @@ export default function LeadDetailPage() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <MessageSquare className="h-5 w-5 text-emerald-500" />
-                Note ({notes.length})
+                {t.notesTitle} ({notes.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -659,7 +719,7 @@ export default function LeadDetailPage() {
                 <div key={note.id} className="bg-slate-900/50 p-3 rounded-lg">
                   <p className="text-slate-300 text-sm">{note.nota}</p>
                   <p className="text-slate-500 text-xs mt-1">
-                    {new Date(note.created_at).toLocaleString('it-IT')}
+                    {new Date(note.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
                   </p>
                 </div>
               ))}

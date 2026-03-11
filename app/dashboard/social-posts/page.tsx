@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Home, 
   ArrowLeft, 
@@ -112,6 +113,65 @@ export default function SocialPostsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
+  const t = {
+    generateError: isItalian ? "Errore nella generazione" : "Generation error",
+    successTitle: isItalian ? "Post generati con successo!" : "Posts generated successfully!",
+    successDesc: isItalian
+      ? "I tuoi contenuti social sono pronti per essere copiati."
+      : "Your social contents are ready to be copied.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    titleRequired: isItalian ? "Titolo richiesto" : "Title required",
+    titleRequiredDesc: isItalian
+      ? "Inserisci un titolo di almeno 5 caratteri"
+      : "Enter a title with at least 5 characters",
+    descriptionRequired: isItalian ? "Descrizione richiesta" : "Description required",
+    descriptionRequiredDesc: isItalian
+      ? "Inserisci una descrizione di almeno 20 caratteri"
+      : "Enter a description with at least 20 characters",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    headerLabel: isItalian ? "Social Posts" : "Social Posts",
+    heroTitle: isItalian ? "Generatore Post Social" : "Social Post Generator",
+    heroSubtitle: isItalian
+      ? "Crea contenuti virali per Instagram, Facebook e TikTok in pochi secondi"
+      : "Create viral content for Instagram, Facebook and TikTok in seconds",
+    formTitle: isItalian ? "Informazioni Immobile" : "Property Information",
+    formSubtitle: isItalian ? "Inserisci i dati per generare i post social" : "Enter data to generate social posts",
+    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
+    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
+    titleLabel: isItalian ? "Titolo *" : "Title *",
+    titlePlaceholder: isItalian ? "Es: Villa di Lusso con Vista Mare" : "e.g. Luxury Villa with Sea View",
+    descriptionLabel: isItalian ? "Descrizione *" : "Description *",
+    descriptionPlaceholder: isItalian ? "Descrivi l'immobile in dettaglio..." : "Describe the property in detail...",
+    priceLabel: isItalian ? "Prezzo" : "Price",
+    pricePlaceholder: isItalian ? "€ 450.000" : "$ 450,000",
+    sizeLabel: isItalian ? "Superficie" : "Size",
+    sizePlaceholder: isItalian ? "120 mq" : "120 sqm",
+    roomsLabel: isItalian ? "Camere" : "Rooms",
+    roomsPlaceholder: isItalian ? "3" : "3",
+    bathsLabel: isItalian ? "Bagni" : "Bathrooms",
+    bathsPlaceholder: isItalian ? "2" : "2",
+    locationLabel: isItalian ? "Località" : "Location",
+    locationPlaceholder: isItalian ? "Milano" : "Miami",
+    toneLabel: isItalian ? "Tono del Messaggio" : "Message Tone",
+    lengthLabel: isItalian ? "Lunghezza" : "Length",
+    generateButtonIdle: isItalian ? "Genera Post Social" : "Generate Social Posts",
+    generateButtonLoading: isItalian ? "Generazione in corso..." : "Generating...",
+    emptyTitle: isItalian ? "I tuoi post appariranno qui" : "Your posts will appear here",
+    emptySubtitle: isItalian
+      ? "Compila il form e clicca \"Genera Post Social\" per creare contenuti virali"
+      : "Fill the form and click \"Generate Social Posts\" to create viral content",
+    instagramLabel: isItalian ? "Post Instagram" : "Instagram Post",
+    facebookLabel: isItalian ? "Post Facebook" : "Facebook Post",
+    tiktokLabel: isItalian ? "Script TikTok" : "TikTok Script",
+    hashtagsLabel: isItalian ? "Hashtag" : "Hashtags",
+    copyPost: isItalian ? "Copia Post" : "Copy Post",
+    copyScript: isItalian ? "Copia Script" : "Copy Script",
+    copyHashtagsLabel: isItalian ? "Copia Hashtag" : "Copy Hashtags",
+  };
   
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -139,7 +199,7 @@ export default function SocialPostsPage() {
       
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Errore nella generazione");
+        throw new Error(error.error || t.generateError);
       }
       
       return response.json() as Promise<SocialPostResponse>;
@@ -147,13 +207,13 @@ export default function SocialPostsPage() {
     onSuccess: (data) => {
       setResult(data);
       toast({
-        title: "Post generati con successo!",
-        description: "I tuoi contenuti social sono pronti per essere copiati.",
+        title: t.successTitle,
+        description: t.successDesc,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Errore",
+        title: t.errorTitle,
         description: error.message,
         variant: "destructive",
       });
@@ -165,8 +225,8 @@ export default function SocialPostsPage() {
     
     if (!formData.titolo || formData.titolo.length < 5) {
       toast({
-        title: "Titolo richiesto",
-        description: "Inserisci un titolo di almeno 5 caratteri",
+        title: t.titleRequired,
+        description: t.titleRequiredDesc,
         variant: "destructive",
       });
       return;
@@ -174,8 +234,8 @@ export default function SocialPostsPage() {
     
     if (!formData.descrizione || formData.descrizione.length < 20) {
       toast({
-        title: "Descrizione richiesta",
-        description: "Inserisci una descrizione di almeno 20 caratteri",
+        title: t.descriptionRequired,
+        description: t.descriptionRequiredDesc,
         variant: "destructive",
       });
       return;
@@ -189,14 +249,14 @@ export default function SocialPostsPage() {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
       toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
+        title: t.copied,
+        description: t.copiedDesc,
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.errorTitle,
+        description: t.copyFailedDesc,
         variant: "destructive",
       });
     }
@@ -221,7 +281,7 @@ export default function SocialPostsPage() {
                 <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   PropertyPilot AI
                 </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Social Posts</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t.headerLabel}</p>
               </div>
             </Link>
           </div>
@@ -251,13 +311,12 @@ export default function SocialPostsPage() {
       <main className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">
-            Generatore{" "}
             <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-              Post Social
+              {t.heroTitle}
             </span>
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400">
-            Crea contenuti virali per Instagram, Facebook e TikTok in pochi secondi
+            {t.heroSubtitle}
           </p>
         </div>
 
@@ -267,23 +326,23 @@ export default function SocialPostsPage() {
               <CardHeader className="border-b border-slate-100 dark:border-slate-800">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-purple-500" />
-                  Informazioni Immobile
+                  {t.formTitle}
                 </CardTitle>
                 <CardDescription>
-                  Inserisci i dati per generare i post social
+                  {t.formSubtitle}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-4">
                     <div>
-                      <Label>Tipo Annuncio</Label>
+                      <Label>{t.listingType}</Label>
                       <Select
                         value={formData.tipoTransazione}
                         onValueChange={(value) => setFormData({ ...formData, tipoTransazione: value })}
                       >
                         <SelectTrigger className="mt-1.5" data-testid="select-tipo-transazione">
-                          <SelectValue placeholder="Seleziona tipo transazione" />
+                          <SelectValue placeholder={t.selectTransaction} />
                         </SelectTrigger>
                         <SelectContent>
                           {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
@@ -299,10 +358,10 @@ export default function SocialPostsPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="titolo">Titolo *</Label>
+                      <Label htmlFor="titolo">{t.titleLabel}</Label>
                       <Input
                         id="titolo"
-                        placeholder="Es: Villa di Lusso con Vista Mare"
+                        placeholder={t.titlePlaceholder}
                         value={formData.titolo}
                         onChange={(e) => setFormData({ ...formData, titolo: e.target.value })}
                         className="mt-1.5"
@@ -311,10 +370,10 @@ export default function SocialPostsPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="descrizione">Descrizione *</Label>
+                      <Label htmlFor="descrizione">{t.descriptionLabel}</Label>
                       <Textarea
                         id="descrizione"
-                        placeholder="Descrivi l'immobile in dettaglio..."
+                        placeholder={t.descriptionPlaceholder}
                         value={formData.descrizione}
                         onChange={(e) => setFormData({ ...formData, descrizione: e.target.value })}
                         className="mt-1.5 min-h-[100px]"
@@ -324,10 +383,10 @@ export default function SocialPostsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="prezzo">Prezzo</Label>
+                        <Label htmlFor="prezzo">{t.priceLabel}</Label>
                         <Input
                           id="prezzo"
-                          placeholder="€ 450.000"
+                          placeholder={t.pricePlaceholder}
                           value={formData.prezzo}
                           onChange={(e) => setFormData({ ...formData, prezzo: e.target.value })}
                           className="mt-1.5"
@@ -335,10 +394,10 @@ export default function SocialPostsPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="superficie">Superficie</Label>
+                        <Label htmlFor="superficie">{t.sizeLabel}</Label>
                         <Input
                           id="superficie"
-                          placeholder="120 mq"
+                          placeholder={t.sizePlaceholder}
                           value={formData.superficie}
                           onChange={(e) => setFormData({ ...formData, superficie: e.target.value })}
                           className="mt-1.5"
@@ -349,10 +408,10 @@ export default function SocialPostsPage() {
 
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="camere">Camere</Label>
+                        <Label htmlFor="camere">{t.roomsLabel}</Label>
                         <Input
                           id="camere"
-                          placeholder="3"
+                          placeholder={t.roomsPlaceholder}
                           value={formData.camere}
                           onChange={(e) => setFormData({ ...formData, camere: e.target.value })}
                           className="mt-1.5"
@@ -360,10 +419,10 @@ export default function SocialPostsPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="bagni">Bagni</Label>
+                        <Label htmlFor="bagni">{t.bathsLabel}</Label>
                         <Input
                           id="bagni"
-                          placeholder="2"
+                          placeholder={t.bathsPlaceholder}
                           value={formData.bagni}
                           onChange={(e) => setFormData({ ...formData, bagni: e.target.value })}
                           className="mt-1.5"
@@ -371,10 +430,10 @@ export default function SocialPostsPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="localita">Località</Label>
+                        <Label htmlFor="localita">{t.locationLabel}</Label>
                         <Input
                           id="localita"
-                          placeholder="Milano"
+                          placeholder={t.locationPlaceholder}
                           value={formData.localita}
                           onChange={(e) => setFormData({ ...formData, localita: e.target.value })}
                           className="mt-1.5"
@@ -385,7 +444,7 @@ export default function SocialPostsPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <Label>Tono del Messaggio</Label>
+                    <Label>{t.toneLabel}</Label>
                     <div className="grid grid-cols-3 gap-3">
                       {TONI_OPTIONS.map((option) => {
                         const Icon = option.icon;
@@ -421,7 +480,7 @@ export default function SocialPostsPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <Label>Lunghezza</Label>
+                    <Label>{t.lengthLabel}</Label>
                     <div className="grid grid-cols-3 gap-3">
                       {LUNGHEZZA_OPTIONS.map((option) => {
                         const Icon = option.icon;
@@ -463,12 +522,12 @@ export default function SocialPostsPage() {
                     {generateMutation.isPending ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Generazione in corso...
+                        {t.generateButtonLoading}
                       </>
                     ) : (
                       <>
                         <Sparkles className="h-5 w-5 mr-2" />
-                        Genera Post Social
+                        {t.generateButtonIdle}
                       </>
                     )}
                   </Button>
@@ -485,10 +544,10 @@ export default function SocialPostsPage() {
                     <Sparkles className="h-10 w-10 text-purple-500" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    I tuoi post appariranno qui
+                    {t.emptyTitle}
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Compila il form e clicca "Genera Post Social" per creare contenuti virali
+                    {t.emptySubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -502,10 +561,10 @@ export default function SocialPostsPage() {
                     <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-purple-500" />
                   </div>
                   <p className="mt-6 text-lg font-medium text-slate-700 dark:text-slate-300">
-                    Generazione contenuti AI...
+                    {t.generateButtonLoading}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                    Stiamo creando post ottimizzati per ogni piattaforma
+                    {t.emptySubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -518,7 +577,7 @@ export default function SocialPostsPage() {
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Instagram className="h-5 w-5" />
-                        Instagram Post
+                        {t.instagramLabel}
                       </div>
                       <Button
                         size="sm"
@@ -550,7 +609,7 @@ export default function SocialPostsPage() {
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Facebook className="h-5 w-5" />
-                        Facebook Post
+                        {t.facebookLabel}
                       </div>
                       <Button
                         size="sm"
@@ -582,7 +641,7 @@ export default function SocialPostsPage() {
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Hash className="h-5 w-5" />
-                        Hashtag Consigliati
+                        {t.hashtagsLabel}
                       </div>
                       <Button
                         size="sm"
@@ -618,7 +677,7 @@ export default function SocialPostsPage() {
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <SiTiktok className="h-5 w-5" />
-                        TikTok / Reels Script
+                        {t.tiktokLabel}
                       </div>
                       <Button
                         size="sm"

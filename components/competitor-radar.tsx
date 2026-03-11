@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { History, AlertTriangle, ExternalLink, RefreshCw, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 
 interface ExpiredListing {
   id: string;
@@ -20,9 +23,34 @@ interface ExpiredListing {
 }
 
 export function CompetitorRadar() {
+  const { locale } = useLocaleContext();
   const [listings, setListings] = useState<ExpiredListing[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const t = {
+    it: {
+      na: "N/A",
+      title: "Radar Scadenze",
+      subtitle: "Immobili offline o fermi da 120+ giorni",
+      removed: "Rimosso",
+      stale: "Fermo",
+      aiNote: "AI Note",
+      offlineFor: "Offline da",
+      days: "giorni",
+      viewAll: "Vedi tutti",
+    },
+    en: {
+      na: "N/A",
+      title: "Expiration Radar",
+      subtitle: "Properties offline or stale for 120+ days",
+      removed: "Removed",
+      stale: "Stale",
+      aiNote: "AI Note",
+      offlineFor: "Offline for",
+      days: "days",
+      viewAll: "View all",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     fetchExpiredListings();
@@ -44,11 +72,8 @@ export function CompetitorRadar() {
   };
 
   const formatPrice = (price: number | null) => {
-    if (!price) return "N/A";
-    return new Intl.NumberFormat("it-IT", {
-      style: "currency",
-      currency: "EUR",
-    }).format(price);
+    if (!price) return t.na;
+    return formatCurrencyForLocale(price, locale as Locale);
   };
 
   if (loading) {
@@ -76,9 +101,9 @@ export function CompetitorRadar() {
               <History className="h-5 w-5 text-cyan-400" />
             </div>
             <div>
-              <CardTitle className="text-lg">Radar Scadenze</CardTitle>
+              <CardTitle className="text-lg">{t.title}</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Immobili offline o fermi da 120+ giorni
+                {t.subtitle}
               </p>
             </div>
           </div>
@@ -113,12 +138,12 @@ export function CompetitorRadar() {
                     {listing.status === "removed" ? (
                       <>
                         <AlertTriangle className="h-3 w-3 mr-1" />
-                        Rimosso
+                        {t.removed}
                       </>
                     ) : (
                       <>
                         <History className="h-3 w-3 mr-1" />
-                        Fermo
+                        {t.stale}
                       </>
                     )}
                   </Badge>
@@ -126,10 +151,10 @@ export function CompetitorRadar() {
                 <div className="text-xs text-muted-foreground">{listing.location}</div>
                 <div className="text-sm font-medium">{formatPrice(listing.price)}</div>
                 <div className="text-xs text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 rounded p-2">
-                  <strong>AI Note:</strong> {listing.ai_note}
+                  <strong>{t.aiNote}:</strong> {listing.ai_note}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Offline da {listing.days_offline} giorni
+                  {t.offlineFor} {listing.days_offline} {t.days}
                 </div>
               </div>
               <Link href={`/dashboard/prospecting?listing=${listing.id}`}>
@@ -144,7 +169,7 @@ export function CompetitorRadar() {
           <div className="text-center pt-2">
             <Link href="/dashboard/prospecting?filter=expired">
               <Button variant="outline" size="sm" className="border-cyan-500/50 text-cyan-400">
-                Vedi tutti ({listings.length})
+                {t.viewAll} ({listings.length})
               </Button>
             </Link>
           </div>

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Sparkles, 
   Briefcase,
@@ -51,25 +52,90 @@ interface FormData {
   tone: "professional" | "emotional" | "luxury" | "seo";
 }
 
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
-
-const REFINE_TABS = [
-  { id: "professional", label: "Professional", icon: Briefcase, description: "Autorevole e credibile", gradient: "from-blue-500 to-indigo-500" },
-  { id: "emotional", label: "Emotional", icon: Heart, description: "Coinvolgente ed evocativo", gradient: "from-rose-500 to-pink-500" },
-  { id: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e raffinato", gradient: "from-amber-500 to-yellow-500" },
-  { id: "seo", label: "SEO Boosted", icon: Search, description: "Ottimizzato per Google", gradient: "from-emerald-500 to-teal-500" },
-] as const;
-
 export default function RefineListingPage() {
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<RefineListingResult | null>(null);
   const [activeTab, setActiveTab] = useState("professional");
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  const t = {
+    textTooShort: isItalian ? "Testo troppo breve" : "Text too short",
+    textTooShortDesc: isItalian ? "L'annuncio originale deve avere almeno 50 caratteri" : "The original listing must be at least 50 characters",
+    required: isItalian ? "Campo obbligatorio" : "Required field",
+    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile" : "Enter the property type",
+    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
+    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
+    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
+    accessDenied: isItalian ? "Accesso negato" : "Access denied",
+    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
+    refineError: isItalian ? "Errore nel raffinamento" : "Refinement error",
+    success: isItalian ? "Annuncio raffinato!" : "Listing refined!",
+    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
+    ready4: isItalian ? "4 versioni migliorate pronte all'uso" : "4 improved versions ready to use",
+    error: isItalian ? "Errore" : "Error",
+    copied: isItalian ? "Copiato!" : "Copied!",
+    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
+    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
+    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    pageSubtitle: isItalian ? "Raffina e migliora completamente i tuoi annunci esistenti" : "Refine and improve your existing listings",
+    listingToImprove: isItalian ? "Annuncio da Migliorare" : "Listing to Improve",
+    listingToImproveDesc: isItalian ? "Incolla il tuo annuncio esistente e lascia che l'AI lo perfezioni" : "Paste your existing listing and let AI perfect it",
+    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
+    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
+    originalText: isItalian ? "Testo Annuncio Originale *" : "Original Listing Text *",
+    originalPlaceholder: isItalian ? "Incolla qui il tuo annuncio esistente che vuoi migliorare... (min 50 caratteri)" : "Paste your existing listing to improve... (min 50 characters)",
+    chars: isItalian ? "caratteri" : "characters",
+    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
+    propertyTypePlaceholder: isItalian ? "es. Appartamento" : "e.g. Apartment",
+    location: isItalian ? "Località *" : "Location *",
+    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Downtown",
+    preferredTone: isItalian ? "Tono Preferito" : "Preferred Tone",
+    selectTone: isItalian ? "Seleziona tono" : "Select tone",
+    refining: isItalian ? "Raffinamento in corso..." : "Refining...",
+    refineButton: isItalian ? "Perfeziona Annuncio" : "Perfect Listing",
+    noResult: isItalian ? "Nessun annuncio raffinato" : "No refined listing",
+    noResultDesc: isItalian ? 'Incolla il tuo annuncio esistente e clicca "Perfeziona" per generare 4 versioni migliorate: Professional, Emotional, Luxury e SEO.' : 'Paste your existing listing and click "Perfect" to generate 4 improved versions: Professional, Emotional, Luxury and SEO.',
+    version: isItalian ? "Versione" : "Version",
+    copyAll: isItalian ? "Copia Tutto" : "Copy All",
+    improvedTitle: isItalian ? "Titolo Migliorato" : "Improved Title",
+    improvedDesc: isItalian ? "Descrizione Migliorata" : "Improved Description",
+    highlights5: isItalian ? "✨ 5 Highlights" : "✨ 5 Highlights",
+    ctaImproved: isItalian ? "🎯 CTA Migliorata" : "🎯 Improved CTA",
+    metaSeo: isItalian ? "Meta Description SEO" : "Meta Description SEO",
+    originalAnalysis: isItalian ? "Analisi Annuncio Originale" : "Original Listing Analysis",
+    highlightsHeading: isItalian ? "HIGHLIGHTS:" : "HIGHLIGHTS:",
+    ctaHeading: isItalian ? "CTA:" : "CTA:",
+    metaHeading: isItalian ? "META DESCRIPTION:" : "META DESCRIPTION:",
+  };
+
+  const tipoTransazioneOptions = isItalian
+    ? [
+        { value: "vendita", label: "Vendita", icon: "🏷️" },
+        { value: "affitto", label: "Affitto", icon: "🔑" },
+        { value: "affitto_breve", label: "Affitto Breve / Turistico", icon: "🏖️" },
+      ]
+    : [
+        { value: "vendita", label: "Sale", icon: "🏷️" },
+        { value: "affitto", label: "Rent", icon: "🔑" },
+        { value: "affitto_breve", label: "Short-term / Vacation Rent", icon: "🏖️" },
+      ];
+
+  const refineTabs = isItalian
+    ? [
+        { id: "professional", label: "Professional", icon: Briefcase, description: "Autorevole e credibile", gradient: "from-blue-500 to-indigo-500" },
+        { id: "emotional", label: "Emotional", icon: Heart, description: "Coinvolgente ed evocativo", gradient: "from-rose-500 to-pink-500" },
+        { id: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e raffinato", gradient: "from-amber-500 to-yellow-500" },
+        { id: "seo", label: "SEO Boosted", icon: Search, description: "Ottimizzato per Google", gradient: "from-emerald-500 to-teal-500" },
+      ] as const
+    : [
+        { id: "professional", label: "Professional", icon: Briefcase, description: "Authoritative and credible", gradient: "from-blue-500 to-indigo-500" },
+        { id: "emotional", label: "Emotional", icon: Heart, description: "Engaging and evocative", gradient: "from-rose-500 to-pink-500" },
+        { id: "luxury", label: "Luxury", icon: Crown, description: "Exclusive and refined", gradient: "from-amber-500 to-yellow-500" },
+        { id: "seo", label: "SEO Boosted", icon: Search, description: "Optimized for Google", gradient: "from-emerald-500 to-teal-500" },
+      ] as const;
 
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -86,8 +152,8 @@ export default function RefineListingPage() {
   const handleSubmit = async () => {
     if (!formData.originalText.trim() || formData.originalText.length < 50) {
       toast({
-        title: "Testo troppo breve",
-        description: "L'annuncio originale deve avere almeno 50 caratteri",
+        title: t.textTooShort,
+        description: t.textTooShortDesc,
         variant: "destructive",
       });
       return;
@@ -95,8 +161,8 @@ export default function RefineListingPage() {
 
     if (!formData.propertyType.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il tipo di immobile",
+        title: t.required,
+        description: t.propertyTypeRequired,
         variant: "destructive",
       });
       return;
@@ -104,8 +170,8 @@ export default function RefineListingPage() {
 
     if (!formData.location.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci la località",
+        title: t.required,
+        description: t.locationRequired,
         variant: "destructive",
       });
       return;
@@ -126,33 +192,33 @@ export default function RefineListingPage() {
       if (!response.ok) {
         if (response.status === 429) {
           toast({
-            title: "Limite raggiunto",
-            description: data.message || "Troppi tentativi. Riprova tra un minuto.",
+            title: t.rateLimit,
+            description: data.message || t.rateLimitDesc,
             variant: "destructive",
           });
           return;
         }
         if (response.status === 401) {
           toast({
-            title: "Accesso negato",
-            description: "Devi effettuare il login per usare questa funzione.",
+            title: t.accessDenied,
+            description: t.loginRequired,
             variant: "destructive",
           });
           return;
         }
-        throw new Error(data.error || "Errore nel raffinamento");
+        throw new Error(data.error || t.refineError);
       }
 
       setResult(data);
       setActiveTab("professional");
       toast({
-        title: "Annuncio raffinato!",
-        description: data.cached ? "Risultato dalla cache (24h)" : "4 versioni migliorate pronte all'uso",
+        title: t.success,
+        description: data.cached ? t.cacheResult : t.ready4,
       });
     } catch (error) {
       toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nel raffinamento",
+        title: t.error,
+        description: error instanceof Error ? error.message : t.refineError,
         variant: "destructive",
       });
     } finally {
@@ -165,14 +231,14 @@ export default function RefineListingPage() {
       await navigator.clipboard.writeText(text);
       setCopiedField(fieldName);
       toast({
-        title: "Copiato!",
-        description: "Testo copiato negli appunti",
+        title: t.copied,
+        description: t.copiedDesc,
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il testo",
+        title: t.error,
+        description: t.copyFailed,
         variant: "destructive",
       });
     }
@@ -181,15 +247,15 @@ export default function RefineListingPage() {
   const copyFullListing = (listing: RefinedListing, version: string) => {
     const fullText = `${listing.titolo}\n\n` +
       `${listing.descrizione}\n\n` +
-      `✨ HIGHLIGHTS:\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
-      `🎯 ${listing.cta}\n\n` +
-      `📝 META DESCRIPTION:\n${listing.metaDescription}`;
+      `✨ ${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
+      `🎯 ${t.ctaHeading} ${listing.cta}\n\n` +
+      `📝 ${t.metaHeading}\n${listing.metaDescription}`;
     
     copyToClipboard(fullText, `full-${version}`);
   };
 
   const renderListingCard = (listing: RefinedListing, version: string) => {
-    const tabInfo = REFINE_TABS.find(t => t.id === version) || REFINE_TABS[0];
+    const tabInfo = refineTabs.find((tab) => tab.id === version) || refineTabs[0];
     const Icon = tabInfo.icon;
     
     return (
@@ -198,7 +264,7 @@ export default function RefineListingPage() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg text-foreground">
               <Icon className="h-5 w-5" />
-              Versione {tabInfo.label}
+              {t.version} {tabInfo.label}
             </CardTitle>
             <Button
               onClick={() => copyFullListing(listing, version)}
@@ -206,7 +272,7 @@ export default function RefineListingPage() {
               data-testid={`button-copy-full-${version}`}
             >
               {copiedField === `full-${version}` ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
-              Copia Tutto
+              {t.copyAll}
             </Button>
           </div>
         </CardHeader>
@@ -214,7 +280,7 @@ export default function RefineListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Wand2 className="h-3 w-3" /> Titolo Migliorato
+                <Wand2 className="h-3 w-3" /> {t.improvedTitle}
               </Label>
               <Button
                 variant="ghost"
@@ -234,7 +300,7 @@ export default function RefineListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <FileText className="h-3 w-3" /> Descrizione Migliorata
+                <FileText className="h-3 w-3" /> {t.improvedDesc}
               </Label>
               <Button
                 variant="ghost"
@@ -256,7 +322,7 @@ export default function RefineListingPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">
-                ✨ 5 Highlights
+                {t.highlights5}
               </Label>
               <Button
                 variant="ghost"
@@ -283,7 +349,7 @@ export default function RefineListingPage() {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">
-                🎯 CTA Migliorata
+                {t.ctaImproved}
               </Label>
               <Button
                 variant="ghost"
@@ -303,7 +369,7 @@ export default function RefineListingPage() {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                <Search className="h-3 w-3" /> Meta Description SEO
+                <Search className="h-3 w-3" /> {t.metaSeo}
               </Label>
               <Button
                 variant="ghost"
@@ -320,7 +386,7 @@ export default function RefineListingPage() {
                 {listing.metaDescription}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {listing.metaDescription.length}/160 caratteri
+                {listing.metaDescription.length}/160 {t.chars}
               </p>
             </div>
           </div>
@@ -334,7 +400,7 @@ export default function RefineListingPage() {
       <div className="mb-6">
         <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Torna alla Dashboard
+          {t.back}
         </Link>
       </div>
 
@@ -347,7 +413,7 @@ export default function RefineListingPage() {
             Perfect Again AI
           </h1>
           <p className="text-muted-foreground">
-            Raffina e migliora completamente i tuoi annunci esistenti
+            {t.pageSubtitle}
           </p>
         </div>
         <Badge className="ml-auto bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0">
@@ -360,24 +426,24 @@ export default function RefineListingPage() {
           <CardHeader className="bg-gradient-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
             <CardTitle className="flex items-center gap-2">
               <Wand2 className="h-5 w-5 text-violet-600" />
-              Annuncio da Migliorare
+              {t.listingToImprove}
             </CardTitle>
             <CardDescription>
-              Incolla il tuo annuncio esistente e lascia che l'AI lo perfezioni
+              {t.listingToImproveDesc}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
-              <Label>Tipo Annuncio</Label>
+              <Label>{t.listingType}</Label>
               <Select
                 value={formData.tipoTransazione}
                 onValueChange={(value) => handleInputChange("tipoTransazione", value)}
               >
                 <SelectTrigger data-testid="select-tipo-transazione">
-                  <SelectValue placeholder="Seleziona tipo transazione" />
+                  <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
+                  {tipoTransazioneOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       <span className="flex items-center gap-2">
                         <span>{option.icon}</span>
@@ -390,10 +456,10 @@ export default function RefineListingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="originalText">Testo Annuncio Originale *</Label>
+              <Label htmlFor="originalText">{t.originalText}</Label>
               <Textarea
                 id="originalText"
-                placeholder="Incolla qui il tuo annuncio esistente che vuoi migliorare... (min 50 caratteri)"
+                placeholder={t.originalPlaceholder}
                 value={formData.originalText}
                 onChange={(e) => handleInputChange("originalText", e.target.value)}
                 rows={8}
@@ -401,26 +467,26 @@ export default function RefineListingPage() {
                 data-testid="input-original-text"
               />
               <p className="text-xs text-muted-foreground text-right">
-                {formData.originalText.length}/3000 caratteri
+                {formData.originalText.length}/3000 {t.chars}
               </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="propertyType">Tipo Immobile *</Label>
+                <Label htmlFor="propertyType">{t.propertyType}</Label>
                 <Input
                   id="propertyType"
-                  placeholder="es. Appartamento"
+                  placeholder={t.propertyTypePlaceholder}
                   value={formData.propertyType}
                   onChange={(e) => handleInputChange("propertyType", e.target.value)}
                   data-testid="input-property-type"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="location">Località *</Label>
+                <Label htmlFor="location">{t.location}</Label>
                 <Input
                   id="location"
-                  placeholder="es. Milano Centro"
+                  placeholder={t.locationPlaceholder}
                   value={formData.location}
                   onChange={(e) => handleInputChange("location", e.target.value)}
                   data-testid="input-location"
@@ -429,7 +495,7 @@ export default function RefineListingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tone">Tono Preferito</Label>
+              <Label htmlFor="tone">{t.preferredTone}</Label>
               <Select
                 value={formData.tone}
                 onValueChange={(value: FormData["tone"]) => 
@@ -437,7 +503,7 @@ export default function RefineListingPage() {
                 }
               >
                 <SelectTrigger data-testid="select-tone">
-                  <SelectValue placeholder="Seleziona tono" />
+                  <SelectValue placeholder={t.selectTone} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="professional">💼 Professional</SelectItem>
@@ -457,12 +523,12 @@ export default function RefineListingPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Raffinamento in corso...
+                  {t.refining}
                 </>
               ) : (
                 <>
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Perfeziona Annuncio
+                  {t.refineButton}
                 </>
               )}
             </Button>
@@ -475,11 +541,10 @@ export default function RefineListingPage() {
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <Sparkles className="h-16 w-16 text-muted-foreground/50 mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  Nessun annuncio raffinato
+                  {t.noResult}
                 </h3>
                 <p className="text-sm text-muted-foreground max-w-md">
-                  Incolla il tuo annuncio esistente e clicca "Perfeziona" per generare 
-                  4 versioni migliorate: Professional, Emotional, Luxury e SEO.
+                  {t.noResultDesc}
                 </p>
               </CardContent>
             </Card>
@@ -509,7 +574,7 @@ export default function RefineListingPage() {
                       <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          Analisi Annuncio Originale
+                          {t.originalAnalysis}
                         </h4>
                         <p className="text-sm text-amber-700 dark:text-amber-300">
                           {result.analisiOriginale}
@@ -522,7 +587,7 @@ export default function RefineListingPage() {
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-4 gap-1 h-auto p-1">
-                  {REFINE_TABS.map((tab) => {
+                  {refineTabs.map((tab) => {
                     const Icon = tab.icon;
                     return (
                       <TabsTrigger

@@ -36,6 +36,7 @@ import {
   Radar,
   Map
 } from "lucide-react";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 // import { STRIPE_PLANS } from "@/lib/stripe/config"; // Not used currently
 
 type PlanType = "free" | "starter" | "pro" | "agency";
@@ -284,7 +285,69 @@ interface DashboardPlanFeaturesProps {
 }
 
 export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPlanFeaturesProps) {
+  const { locale } = useLocaleContext();
   const [viewingPlan, setViewingPlan] = useState<PlanType>(currentPlan);
+  const t = {
+    it: {
+      plan: "Piano",
+      free: "Gratis",
+      freeLimit: "5 annunci/mese",
+      starterLimit: "50 annunci/mese",
+      proLimit: "200 annunci/mese",
+      agencyLimit: "Illimitati",
+      currentPlan: "Il tuo piano attuale",
+      requiresHigherPlan: "Richiede piano superiore",
+      open: "Apri",
+      unlock: "Sblocca",
+      higherPlans: "Funzionalità disponibili nei piani superiori",
+      unlockPlan: "Sblocca Piano",
+    },
+    en: {
+      plan: "Plan",
+      free: "Free",
+      freeLimit: "5 listings/month",
+      starterLimit: "50 listings/month",
+      proLimit: "200 listings/month",
+      agencyLimit: "Unlimited",
+      currentPlan: "Your current plan",
+      requiresHigherPlan: "Requires higher plan",
+      open: "Open",
+      unlock: "Unlock",
+      higherPlans: "Features available in higher plans",
+      unlockPlan: "Unlock Plan",
+    },
+  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const featureTranslations: Record<string, { name: string; description: string }> = locale === "it"
+    ? {}
+    : {
+        "generate": { name: "Generate New Listing", description: "Create professional AI-powered content in seconds" },
+        "scraper": { name: "AI Scraper", description: "Import listings from Immobiliare, Idealista, Casa, and Subito" },
+        "analyze": { name: "Link Analysis", description: "Paste a link and get instant AI analysis and rewrite" },
+        "pdf": { name: "Premium PDF Sheets", description: "Generate professional Canva-style property sheets" },
+        "lead-score": { name: "AI Lead Scoring", description: "Analyze leads with 0-100 score, action priority, and reply templates" },
+        "perfect-copy": { name: "Perfect Copy 2.0", description: "5 premium variants: Professional, Emotional, Short, SEO, Luxury" },
+        "translate": { name: "12-Language Translator", description: "Translate listings into 12 languages with cultural and local SEO adaptation" },
+        "social-posts": { name: "AI Social Posts", description: "Generate posts for Instagram, Facebook, and TikTok" },
+        "titles": { name: "High CTR A/B Titles", description: "19 optimized titles: clickbait, luxury, SEO" },
+        "hashtags": { name: "AI Hashtag Generator", description: "50+ optimized hashtags to maximize social reach" },
+        "emotional-listing": { name: "Emotional Listing AI", description: "Emotional descriptions that connect with buyers" },
+        "refine-listing": { name: "Perfect Again AI", description: "Refine and improve your existing listings with AI" },
+        "auditor": { name: "AI Property Audit", description: "Full audit: structure, SEO, emotions, red flags, and optimized version" },
+        "agent-bio": { name: "Agent BIO AI Creator", description: "5 professional bios: Pro, Emotional, Luxury, Social, Website SEO" },
+        "followup-emails": { name: "AI Follow-Up Email", description: "6 professional emails to convert your real estate leads" },
+        "video-scripts": { name: "AI Video Scripts", description: "Professional video scripts with timestamps and visual directions" },
+        "agency-branding": { name: "Agency Branding", description: "Customize your agency branding" },
+        "crm": { name: "Lead Manager + AI", description: "Email, WhatsApp, SMS with AI - pipeline, automations, capture forms" },
+        "virtual-staging": { name: "3D Virtual Staging", description: "Professional 3D staging for your properties" },
+        "voice-calling": { name: "AI Voice Calling", description: "Automatic AI owner calls (30/month)" },
+        "agency-assistant": { name: "Agency Assistant AI", description: "Chatbot for listings, email, social, and real estate strategy" },
+        "automations": { name: "AI Automations", description: "Follow-ups, reminders, and content generated automatically" },
+        "unlimited-voice": { name: "Unlimited AI Voice Calling", description: "24/7 automatic AI calling without limits" },
+        "team-management": { name: "Multi-user Team Management", description: "Teams up to 10 agents, advanced roles and permissions" },
+        "aura-vr": { name: "Aura VR: Virtual Tour Generation", description: "Unlimited cinematic virtual tour generation" },
+        "prospecting": { name: "War Room Prospecting", description: "AI-powered intelligence dashboard for property deals" },
+        "map": { name: "AI Territory Map", description: "View properties and opportunities on the map" },
+      };
   
   const currentPlanIndex = PLAN_ORDER.indexOf(viewingPlan);
   const nextPlan = currentPlanIndex < PLAN_ORDER.length - 1 ? PLAN_ORDER[currentPlanIndex + 1] : null;
@@ -297,12 +360,12 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
   );
   
   const planInfo = viewingPlan === "free" 
-    ? { name: "Free", price: "Gratis", color: "from-gray-500 to-gray-700", limit: "5 annunci/mese" }
+    ? { name: "Free", price: t.free, color: "from-gray-500 to-gray-700", limit: t.freeLimit }
     : viewingPlan === "starter"
-    ? { name: "Starter", price: "€197/mese", color: "from-blue-500 to-cyan-500", limit: "50 annunci/mese" }
+    ? { name: "Starter", price: "€197/mese", color: "from-blue-500 to-cyan-500", limit: t.starterLimit }
     : viewingPlan === "pro"
-    ? { name: "Pro", price: "€497/mese", color: "from-purple-500 to-pink-500", limit: "200 annunci/mese" }
-    : { name: "Agency", price: "€897/mese", color: "from-amber-500 to-orange-500", limit: "Illimitati" };
+    ? { name: "Pro", price: "€497/mese", color: "from-purple-500 to-pink-500", limit: t.proLimit }
+    : { name: "Agency", price: "€897/mese", color: "from-amber-500 to-orange-500", limit: t.agencyLimit };
   
   const handleNextPlan = () => {
     if (nextPlan) {
@@ -336,7 +399,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
             </div>
             <div>
               <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                Piano {planInfo.name}
+                {t.plan} {planInfo.name}
               </h2>
               <p className="text-sm text-muted-foreground">{planInfo.limit}</p>
             </div>
@@ -362,7 +425,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
               onClick={handleNextPlan}
               className="text-muted-foreground hover:text-foreground"
             >
-              <span className="text-sm mr-2">Piano {nextPlan === "starter" ? "Starter" : nextPlan === "pro" ? "Pro" : "Agency"}</span>
+              <span className="text-sm mr-2">{t.plan} {nextPlan === "starter" ? "Starter" : nextPlan === "pro" ? "Pro" : "Agency"}</span>
               <ChevronRight className="h-5 w-5" />
             </Button>
           )}
@@ -373,7 +436,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
       {viewingPlan === currentPlan && (
         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${planInfo.color}/20 border border-white/20 mb-6`}>
           <Check className="h-4 w-4" />
-          <span className="text-sm font-medium">Il tuo piano attuale</span>
+          <span className="text-sm font-medium">{t.currentPlan}</span>
         </div>
       )}
       
@@ -381,6 +444,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {planFeatures.map((feature) => {
           const locked = isFeatureLocked(feature);
+          const featureCopy = featureTranslations[feature.id] || feature;
           
           return (
             <Card 
@@ -395,7 +459,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-10 flex items-center justify-center">
                   <div className="text-center p-4">
                     <Lock className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-400 font-medium">Richiede piano superiore</p>
+                    <p className="text-sm text-gray-400 font-medium">{t.requiresHigherPlan}</p>
                   </div>
                 </div>
               )}
@@ -410,10 +474,10 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                 </div>
                 
                 <h3 className={`text-xl font-bold mb-2 ${locked ? "text-gray-500" : ""}`}>
-                  {feature.name}
+                  {featureCopy.name}
                 </h3>
                 <p className={`text-sm mb-4 ${locked ? "text-gray-600" : "text-muted-foreground"}`}>
-                  {feature.description}
+                  {featureCopy.description}
                 </p>
                 
                 {!locked ? (
@@ -423,7 +487,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                       className="w-full border-white/20 hover:border-white/40"
                       size="sm"
                     >
-                      Apri
+                      {t.open}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
@@ -436,7 +500,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                       disabled
                     >
                       <Lock className="mr-2 h-4 w-4" />
-                      Sblocca
+                      {t.unlock}
                     </Button>
                   </Link>
                 )}
@@ -452,30 +516,33 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
           <div className="flex items-center gap-2 mb-6">
             <Lock className="h-5 w-5 text-muted-foreground" />
             <h3 className="text-xl font-bold text-muted-foreground">
-              Funzionalità disponibili nei piani superiori
+              {t.higherPlans}
             </h3>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {lockedFeatures.slice(0, 6).map((feature) => (
-              <Card 
-                key={feature.id}
-                className="border border-white/[0.06] bg-white/[0.02] opacity-70"
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center">
-                      <div className="text-white/30">{feature.icon}</div>
+            {lockedFeatures.slice(0, 6).map((feature) => {
+              const featureCopy = featureTranslations[feature.id] || feature;
+              return (
+                <Card 
+                  key={feature.id}
+                  className="border border-white/[0.06] bg-white/[0.02] opacity-70"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center">
+                        <div className="text-white/30">{feature.icon}</div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-medium text-white/40">{featureCopy.name}</h4>
+                        <p className="text-xs text-white/25 mt-1">{featureCopy.description}</p>
+                      </div>
+                      <Lock className="h-4 w-4 text-white/25" />
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-medium text-white/40">{feature.name}</h4>
-                      <p className="text-xs text-white/25 mt-1">{feature.description}</p>
-                    </div>
-                    <Lock className="h-4 w-4 text-white/25" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
           
           {nextPlan && (
@@ -485,7 +552,7 @@ export function DashboardPlanFeatures({ currentPlan, onPlanChange }: DashboardPl
                   className={`bg-gradient-to-r ${planInfo.color} hover:opacity-90 text-white`}
                   size="lg"
                 >
-                  Sblocca Piano {nextPlan === "starter" ? "Starter" : nextPlan === "pro" ? "Pro" : "Agency"}
+                  {t.unlockPlan} {nextPlan === "starter" ? "Starter" : nextPlan === "pro" ? "Pro" : "Agency"}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

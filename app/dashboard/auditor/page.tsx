@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { ProFeaturePaywall } from '@/components/demo-modal';
+import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 
 interface StructuralAudit {
   titolo: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };
@@ -102,25 +103,26 @@ interface AuditResult {
   mercatoAnalisi: string;
 }
 
-const OBIETTIVI = [
-  { value: 'vendita', label: 'Vendita', icon: ShoppingCart, description: 'Massimizza conversioni' },
-  { value: 'seo', label: 'SEO', icon: Search, description: 'Visibilità portali' },
-  { value: 'luxury', label: 'Luxury', icon: Crown, description: 'Target alto spendente' },
-  { value: 'social', label: 'Social', icon: Share2, description: 'Engagement social' },
+const getObiettivi = (isItalian: boolean) => [
+  { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: ShoppingCart, description: isItalian ? 'Massimizza conversioni' : 'Maximize conversions' },
+  { value: 'seo', label: 'SEO', icon: Search, description: isItalian ? 'Visibilità portali' : 'Portal visibility' },
+  { value: 'luxury', label: 'Luxury', icon: Crown, description: isItalian ? 'Target alto spendente' : 'High-end target' },
+  { value: 'social', label: 'Social', icon: Share2, description: isItalian ? 'Engagement social' : 'Social engagement' },
 ];
 
-const MERCATI = [
+const getMercati = (isItalian: boolean) => [
   { value: 'italia', label: '🇮🇹 Italia', portali: 'Immobiliare, Idealista, Casa, Subito' },
   { value: 'usa', label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
 ];
 
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
+const getTipoTransazione = (isItalian: boolean) => [
+  { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
+  { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
+  { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
 ];
 
 export default function AuditorPage() {
+  const { locale } = useLocaleContext();
   const { toast } = useToast();
   const [inputMode, setInputMode] = useState<'text' | 'url'>('text');
   const [textInput, setTextInput] = useState('');
@@ -134,11 +136,83 @@ export default function AuditorPage() {
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const isItalian = locale === 'it';
+  const OBIETTIVI = getObiettivi(isItalian);
+  const MERCATI = getMercati(isItalian);
+  const TIPO_TRANSAZIONE_OPTIONS = getTipoTransazione(isItalian);
+  const t = {
+    copied: isItalian ? 'Copiato!' : 'Copied!',
+    copiedDesc: isItalian ? 'Testo copiato negli appunti' : 'Text copied to clipboard',
+    textTooShort: isItalian ? 'Testo insufficiente' : 'Text too short',
+    minText: isItalian ? 'Inserisci almeno 50 caratteri di testo' : 'Enter at least 50 characters of text',
+    urlRequired: isItalian ? 'URL richiesto' : 'URL required',
+    urlRequiredDesc: isItalian ? "Inserisci l'URL dell'annuncio da analizzare" : 'Enter the listing URL to analyze',
+    analysisError: isItalian ? "Errore durante l'analisi" : 'Error during analysis',
+    communicationError: isItalian ? 'Errore di comunicazione con il server. Riprova tra qualche secondo.' : 'Communication error with the server. Please try again in a few seconds.',
+    premiumRequired: isItalian ? 'Piano Premium richiesto' : 'Premium plan required',
+    premiumRequiredDesc: isItalian
+      ? "L'Audit Immobiliare AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
+      : 'AI Real Estate Audit is a Premium feature. Upgrade your account to the PRO or AGENCY plan.',
+    analysisDone: isItalian ? 'Analisi completata!' : 'Analysis completed!',
+    qualityScore: isItalian ? 'Punteggio qualità' : 'Quality score',
+    connectionFailed: isItalian ? 'Impossibile connettersi al server.' : 'Unable to connect to the server.',
+    excellent: isItalian ? 'Eccellente' : 'Excellent',
+    great: isItalian ? 'Ottimo' : 'Great',
+    good: isItalian ? 'Buono' : 'Good',
+    fair: isItalian ? 'Discreto' : 'Fair',
+    passable: isItalian ? 'Sufficiente' : 'Passable',
+    needsWork: isItalian ? 'Da migliorare' : 'Needs improvement',
+    back: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
+    heroSubtitle: isItalian
+      ? 'Analisi professionale completa: struttura, SEO, emozioni, red flags e versione ottimizzata'
+      : 'Complete professional analysis: structure, SEO, emotions, red flags, and optimized version',
+    paywallTitle: isItalian ? 'Audit Immobiliare AI' : 'AI Real Estate Audit',
+    paywallDescription: isItalian
+      ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'audit completo."
+      : 'This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full audit.',
+    analyzeListing: isItalian ? 'Analizza il tuo Annuncio' : 'Analyze Your Listing',
+    analyzeListingDesc: isItalian ? 'Incolla il testo o inserisci l\'URL per ricevere un audit completo' : 'Paste the text or enter the URL to receive a full audit',
+    listingType: isItalian ? 'Tipo Annuncio' : 'Listing Type',
+    selectTransaction: isItalian ? 'Seleziona tipo transazione' : 'Select transaction type',
+    market: isItalian ? 'Mercato di riferimento' : 'Target market',
+    goal: isItalian ? 'Obiettivo principale' : 'Primary goal',
+    insertText: isItalian ? 'Inserisci Testo' : 'Paste Text',
+    listingUrl: isItalian ? 'URL Annuncio' : 'Listing URL',
+    textareaPlaceholder: isItalian ? "Incolla qui il testo completo dell'annuncio immobiliare (minimo 50 caratteri)..." : 'Paste the full property listing text here (minimum 50 characters)...',
+    characters: isItalian ? 'Caratteri' : 'Characters',
+    minimum: isItalian ? 'minimo' : 'minimum',
+    supported: isItalian ? 'Supportati' : 'Supported',
+    imageUrl: isItalian ? 'URL Immagine (opzionale)' : 'Image URL (optional)',
+    imagePlaceholder: isItalian ? 'https://esempio.com/immagine.jpg' : 'https://example.com/image.jpg',
+    analyzing: isItalian ? 'Analisi in corso... (30-60 sec)' : 'Analyzing... (30-60 sec)',
+    startAudit: isItalian ? 'Avvia Audit Completo' : 'Start Full Audit',
+  };
+  const mercatiOptions = isItalian
+    ? MERCATI
+    : [
+        { value: 'italia', label: '🇮🇹 Italy', portali: 'Immobiliare, Idealista, Casa, Subito' },
+        { value: 'usa', label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
+      ];
+  const obiettiviOptions = isItalian
+    ? OBIETTIVI
+    : [
+        { value: 'vendita', label: 'Sales', icon: ShoppingCart, description: 'Maximize conversions' },
+        { value: 'seo', label: 'SEO', icon: Search, description: 'Portal visibility' },
+        { value: 'luxury', label: 'Luxury', icon: Crown, description: 'High-spending audience' },
+        { value: 'social', label: 'Social', icon: Share2, description: 'Social engagement' },
+      ];
+  const tipoTransazioneOptions = isItalian
+    ? TIPO_TRANSAZIONE_OPTIONS
+    : [
+        { value: 'vendita', label: 'Sale', icon: '🏷️' },
+        { value: 'affitto', label: 'Rent', icon: '🔑' },
+        { value: 'affitto_breve', label: 'Short-term / Vacation Rental', icon: '🏖️' },
+      ];
 
   const copyToClipboard = async (text: string, section: string) => {
     await navigator.clipboard.writeText(text);
     setCopiedSection(section);
-    toast({ title: 'Copiato!', description: 'Testo copiato negli appunti' });
+    toast({ title: t.copied, description: t.copiedDesc });
     setTimeout(() => setCopiedSection(null), 2000);
   };
 
@@ -146,8 +220,8 @@ export default function AuditorPage() {
     if (inputMode === 'text' && (!textInput.trim() || textInput.trim().length < 50)) {
       toast({
         variant: 'destructive',
-        title: 'Testo insufficiente',
-        description: 'Inserisci almeno 50 caratteri di testo',
+        title: t.textTooShort,
+        description: t.minText,
       });
       return;
     }
@@ -155,8 +229,8 @@ export default function AuditorPage() {
     if (inputMode === 'url' && !urlInput.trim()) {
       toast({
         variant: 'destructive',
-        title: 'URL richiesto',
-        description: 'Inserisci l\'URL dell\'annuncio da analizzare',
+        title: t.urlRequired,
+        description: t.urlRequiredDesc,
       });
       return;
     }
@@ -185,8 +259,8 @@ export default function AuditorPage() {
       } catch (parseError) {
         toast({
           variant: 'destructive',
-          title: 'Errore durante l\'analisi',
-          description: 'Errore di comunicazione con il server. Riprova tra qualche secondo.',
+          title: t.analysisError,
+          description: t.communicationError,
           duration: 8000,
         });
         return;
@@ -198,8 +272,8 @@ export default function AuditorPage() {
           setUserPlan('free');
           toast({
             variant: 'destructive',
-            title: 'Piano Premium richiesto',
-            description: result.message || result.error || 'L\'Audit Immobiliare AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY.',
+            title: t.premiumRequired,
+            description: result.message || result.error || t.premiumRequiredDesc,
             duration: 8000,
           });
           return;
@@ -208,7 +282,7 @@ export default function AuditorPage() {
         const errorMessage = result.message || result.error || 'Errore durante l\'analisi';
         toast({
           variant: 'destructive',
-          title: 'Errore durante l\'analisi',
+          title: t.analysisError,
           description: result.suggestion ? `${errorMessage}\n\n💡 ${result.suggestion}` : errorMessage,
           duration: 8000,
         });
@@ -218,16 +292,16 @@ export default function AuditorPage() {
       if (result.success && result.data) {
         setAuditResult(result.data);
         toast({
-          title: 'Analisi completata!',
-          description: `Punteggio qualità: ${result.data.qualityScore}/100`,
+          title: t.analysisDone,
+          description: `${t.qualityScore}: ${result.data.qualityScore}/100`,
           duration: 5000,
         });
       }
     } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: 'Errore durante l\'analisi',
-        description: error.message || 'Impossibile connettersi al server.',
+        title: t.analysisError,
+        description: error.message || t.connectionFailed,
         duration: 8000,
       });
     } finally {
@@ -248,12 +322,12 @@ export default function AuditorPage() {
   };
 
   const getScoreLabel = (score: number) => {
-    if (score >= 90) return 'Eccellente';
-    if (score >= 80) return 'Ottimo';
-    if (score >= 70) return 'Buono';
-    if (score >= 60) return 'Discreto';
-    if (score >= 50) return 'Sufficiente';
-    return 'Da migliorare';
+    if (score >= 90) return t.excellent;
+    if (score >= 80) return t.great;
+    if (score >= 70) return t.good;
+    if (score >= 60) return t.fair;
+    if (score >= 50) return t.passable;
+    return t.needsWork;
   };
 
   const getGravitaColor = (gravita: string) => {
@@ -311,7 +385,7 @@ export default function AuditorPage() {
         <div className="mb-6">
           <Link href="/dashboard" className="inline-flex items-center text-blue-300 hover:text-blue-200 transition-colors">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Torna alla Dashboard
+            {t.back}
           </Link>
         </div>
 
@@ -331,26 +405,26 @@ export default function AuditorPage() {
         </div>
 
         <ProFeaturePaywall
-          title="Audit Immobiliare AI"
-          description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'audit completo."
+          title={t.paywallTitle}
+          description={t.paywallDescription}
           isLocked={isLocked && !isLoadingPlan}
         >
           <Card className="mb-8 bg-gradient-to-br from-slate-900/90 to-slate-800/90 border-blue-500/30 shadow-2xl shadow-blue-500/10" data-testid="card-input">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-white">
                 <FileText className="h-6 w-6 text-blue-400" />
-                Analizza il tuo Annuncio
+                {t.analyzeListing}
               </CardTitle>
               <CardDescription className="text-blue-200/60">
-                Incolla il testo o inserisci l'URL per ricevere un audit completo
+                {t.analyzeListingDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
             <div className="space-y-3 mb-6">
-                <Label className="text-blue-200">Tipo Annuncio</Label>
+                <Label className="text-blue-200">{t.listingType}</Label>
                 <Select value={tipoTransazione} onValueChange={(v) => setTipoTransazione(v as 'vendita' | 'affitto' | 'affitto_breve')}>
                   <SelectTrigger className="bg-slate-800/50 border-blue-500/30 text-white" data-testid="select-tipo-transazione">
-                    <SelectValue placeholder="Seleziona tipo transazione" />
+                    <SelectValue placeholder={t.selectTransaction} />
                   </SelectTrigger>
                   <SelectContent>
                     {TIPO_TRANSAZIONE_OPTIONS.map((option) => (

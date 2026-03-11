@@ -38,6 +38,18 @@ export interface TranslationDictionary {
       upgradeToStarter: string;
       upgradeToPro: string;
       upgradeToAgency: string;
+      mapTitle: string;
+      mapSubtitle: string;
+      mapGhostListings: string;
+      mapRefresh: string;
+      mapLegend: string;
+      mapTopDeal: string;
+      mapHighUrgency: string;
+      mapWarm: string;
+      mapCold: string;
+      mapCallLaunched: string;
+      mapCallError: string;
+      mapLanciaChiamata: string;
     };
 
   // Auth (Login / Signup)
@@ -175,6 +187,54 @@ export interface TranslationDictionary {
     delete: string;
     edit: string;
     view: string;
+    loading: string;
+    error: string;
+  };
+
+  billing: {
+    title: string;
+    titleAccent: string;
+    subtitle: string;
+    noSubscription: string;
+    noActiveSubscription: string;
+    viewPlans: string;
+    subscribeToUnlock: string;
+    currentPlanPrefix: string;
+    perMonth: string;
+    unlimitedListings: string;
+    listingsPerMonth: string;
+    nextRenewal: string;
+    cancelWarning: string;
+    managePayments: string;
+    unlockPremium: string;
+    specialPackage: string;
+    oneTime: string;
+    whatIncludes: string;
+    buyAgencyBoost: string;
+    starterForBeginners: string;
+    proForProfessionals: string;
+    agencyForTeams: string;
+    recommended: string;
+    freePlanName: string;
+    expiring: string;
+    reactivateSubscription: string;
+    cancelSubscription: string;
+    cancelledTitle: string;
+    reactivatedTitle: string;
+    completedUpgradeTitle: string;
+    changedPlanTitle: string;
+    upgradeErrorTitle: string;
+    startCheckoutError: string;
+    cancelError: string;
+    reactivateError: string;
+    portalError: string;
+    upgradeError: string;
+    reloadMessage: string;
+    switchToStarter: string;
+    switchToPro: string;
+    switchToAgency: string;
+    upgradeToPro: string;
+    upgradeToAgency: string;
   };
   
   // Landing Page
@@ -450,6 +510,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Upgrade a Starter',
       upgradeToPro: 'Upgrade a Pro',
       upgradeToAgency: 'Upgrade a Agency',
+      mapTitle: 'Predator Command Map',
+      mapSubtitle: 'Mappa tattica degli affari più urgenti',
+      mapGhostListings: 'Ghost Listings (>90 giorni)',
+      mapRefresh: 'Aggiorna',
+      mapLegend: 'Legenda',
+      mapTopDeal: 'TOP DEAL (Arbitraggio >15%)',
+      mapHighUrgency: 'ALTA URGENZA (Urgenza >70)',
+      mapWarm: 'CALDO (Urgenza 30-70)',
+      mapCold: 'FREDDO (Urgenza <30)',
+      mapCallLaunched: 'Chiamata avviata',
+      mapCallError: 'Errore nell\'avvio della chiamata',
+      mapLanciaChiamata: 'Lancia Chiamata Predator',
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -582,6 +654,53 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       delete: 'Elimina',
       edit: 'Modifica',
       view: 'Visualizza',
+      loading: 'Caricamento...',
+      error: 'Errore',
+    },
+    billing: {
+      title: 'Gestione',
+      titleAccent: 'Abbonamento',
+      subtitle: 'Visualizza e gestisci il tuo piano di abbonamento',
+      noSubscription: 'Nessun abbonamento',
+      noActiveSubscription: 'Nessun abbonamento attivo',
+      viewPlans: 'Visualizza i piani disponibili',
+      subscribeToUnlock: 'Abbonati per sbloccare le funzionalità',
+      currentPlanPrefix: 'Piano',
+      perMonth: '/mese',
+      unlimitedListings: 'Annunci illimitati',
+      listingsPerMonth: 'annunci al mese',
+      nextRenewal: 'Prossimo rinnovo:',
+      cancelWarning: "L'abbonamento verrà cancellato alla fine del periodo di fatturazione. Tornerai al piano gratuito.",
+      managePayments: 'Gestisci Pagamenti',
+      unlockPremium: 'Sblocca Funzionalità Premium',
+      specialPackage: 'Pacchetto Speciale',
+      oneTime: 'una tantum',
+      whatIncludes: 'Cosa include:',
+      buyAgencyBoost: 'Acquista Agency Boost',
+      starterForBeginners: 'Per iniziare',
+      proForProfessionals: 'Per professionisti',
+      agencyForTeams: 'Per team',
+      recommended: 'Consigliato',
+      freePlanName: 'Gratuito',
+      expiring: 'In scadenza',
+      reactivateSubscription: 'Riattiva Abbonamento',
+      cancelSubscription: 'Cancella Abbonamento',
+      cancelledTitle: 'Abbonamento cancellato',
+      reactivatedTitle: 'Abbonamento riattivato',
+      completedUpgradeTitle: 'Upgrade completato!',
+      changedPlanTitle: 'Piano modificato!',
+      upgradeErrorTitle: 'Errore Upgrade',
+      startCheckoutError: 'Impossibile avviare il checkout.',
+      cancelError: "Impossibile cancellare l'abbonamento.",
+      reactivateError: "Impossibile riattivare l'abbonamento.",
+      portalError: 'Impossibile aprire il portale pagamenti.',
+      upgradeError: "Impossibile completare l'upgrade.",
+      reloadMessage: 'Ricaricamento pagina...',
+      switchToStarter: 'Passa a Starter',
+      switchToPro: 'Passa a Pro',
+      switchToAgency: 'Passa a Agency',
+      upgradeToPro: 'Upgrade a Pro',
+      upgradeToAgency: 'Upgrade a Agency',
     },
     landing: {
       nav: {
@@ -863,6 +982,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Upgrade to Starter',
       upgradeToPro: 'Upgrade to Pro',
       upgradeToAgency: 'Upgrade to Agency',
+      mapTitle: 'Predator Command Map',
+      mapSubtitle: 'Tactical map of the most urgent deals',
+      mapGhostListings: 'Ghost Listings (>90 days)',
+      mapRefresh: 'Refresh',
+      mapLegend: 'Legend',
+      mapTopDeal: 'TOP DEAL (Arbitrage >15%)',
+      mapHighUrgency: 'HIGH URGENCY (Score >70)',
+      mapWarm: 'WARM (Score 30-70)',
+      mapCold: 'COLD (Score <30)',
+      mapCallLaunched: 'Call started',
+      mapCallError: 'Error starting call',
+      mapLanciaChiamata: 'Launch Predator Call',
     },
     auth: {
       backToHome: 'Back to home',
@@ -995,6 +1126,53 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       delete: 'Delete',
       edit: 'Edit',
       view: 'View',
+      loading: 'Loading...',
+      error: 'Error',
+    },
+    billing: {
+      title: 'Subscription',
+      titleAccent: 'Management',
+      subtitle: 'View and manage your subscription plan',
+      noSubscription: 'No subscription',
+      noActiveSubscription: 'No active subscription',
+      viewPlans: 'View available plans',
+      subscribeToUnlock: 'Subscribe to unlock premium features',
+      currentPlanPrefix: 'Plan',
+      perMonth: '/month',
+      unlimitedListings: 'Unlimited listings',
+      listingsPerMonth: 'listings per month',
+      nextRenewal: 'Next renewal:',
+      cancelWarning: 'Your subscription will be cancelled at the end of the billing period. You will return to the free plan.',
+      managePayments: 'Manage Payments',
+      unlockPremium: 'Unlock Premium Features',
+      specialPackage: 'Special Package',
+      oneTime: 'one-time',
+      whatIncludes: "What's included:",
+      buyAgencyBoost: 'Buy Agency Boost',
+      starterForBeginners: 'To get started',
+      proForProfessionals: 'For professionals',
+      agencyForTeams: 'For teams',
+      recommended: 'Recommended',
+      freePlanName: 'Free',
+      expiring: 'Expiring',
+      reactivateSubscription: 'Reactivate Subscription',
+      cancelSubscription: 'Cancel Subscription',
+      cancelledTitle: 'Subscription cancelled',
+      reactivatedTitle: 'Subscription reactivated',
+      completedUpgradeTitle: 'Upgrade completed!',
+      changedPlanTitle: 'Plan changed!',
+      upgradeErrorTitle: 'Upgrade Error',
+      startCheckoutError: 'Unable to start checkout.',
+      cancelError: 'Unable to cancel subscription.',
+      reactivateError: 'Unable to reactivate subscription.',
+      portalError: 'Unable to open billing portal.',
+      upgradeError: 'Unable to complete upgrade.',
+      reloadMessage: 'Reloading page...',
+      switchToStarter: 'Switch to Starter',
+      switchToPro: 'Switch to Pro',
+      switchToAgency: 'Switch to Agency',
+      upgradeToPro: 'Upgrade to Pro',
+      upgradeToAgency: 'Upgrade to Agency',
     },
     landing: {
       nav: {

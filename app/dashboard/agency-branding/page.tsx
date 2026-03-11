@@ -22,6 +22,7 @@ import {
   Check
 } from "lucide-react";
 import Link from "next/link";
+import { useLocaleContext } from "@/components/providers/locale-provider";
 
 interface AgencyBranding {
   id: number;
@@ -39,7 +40,54 @@ interface AgencyBranding {
 
 export default function AgencyBrandingPage() {
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const [isLoading, setIsLoading] = useState(true);
+
+  const t = {
+    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    pageTitle: isItalian ? "Branding Agenzia" : "Agency Branding",
+    pageSubtitle: isItalian ? "Personalizza le schede PDF con il tuo brand White Label" : "Customize PDF sheets with your White Label brand",
+    agencyInfoTitle: isItalian ? "Informazioni Agenzia" : "Agency Information",
+    agencyInfoDesc: isItalian ? "Dati base della tua agenzia immobiliare" : "Basic data for your real estate agency",
+    agencyNameLabel: isItalian ? "Nome Agenzia *" : "Agency Name *",
+    agencyNamePlaceholder: isItalian ? "es. Immobiliare Rossi" : "e.g. Rossi Real Estate",
+    logoUrlLabel: isItalian ? "URL Logo (opzionale)" : "Logo URL (optional)",
+    logoUrlHelper: isItalian ? "Inserisci l'URL del logo della tua agenzia (formato PNG o JPG consigliato)" : "Enter your agency logo URL (PNG or JPG format recommended)",
+    websiteLabel: isItalian ? "Sito Web (opzionale)" : "Website (optional)",
+    websitePlaceholder: isItalian ? "https://www.tuaagenzia.it" : "https://www.youragency.com",
+    contactsTitle: isItalian ? "Contatti" : "Contacts",
+    contactsDesc: isItalian ? "Informazioni di contatto per le schede PDF" : "Contact information for PDF sheets",
+    contactNameLabel: isItalian ? "Nome Referente" : "Contact Name",
+    contactNamePlaceholder: isItalian ? "es. Mario Rossi" : "e.g. John Smith",
+    phoneLabel: isItalian ? "Telefono" : "Phone",
+    phonePlaceholder: isItalian ? "+39 02 1234567" : "+1 555 1234567",
+    emailPlaceholder: isItalian ? "info@agenzia.it" : "info@agency.com",
+    colorsTitle: isItalian ? "Colori Brand" : "Brand Colors",
+    colorsDesc: isItalian ? "Personalizza i colori delle tue schede PDF" : "Customize the colors of your PDF sheets",
+    primaryColor: isItalian ? "Colore Primario" : "Primary Color",
+    secondaryColor: isItalian ? "Colore Secondario" : "Secondary Color",
+    accentColor: isItalian ? "Colore Accento" : "Accent Color",
+    saving: isItalian ? "Salvataggio..." : "Saving...",
+    updateBranding: isItalian ? "Aggiorna Branding" : "Update Branding",
+    saveBranding: isItalian ? "Salva Branding" : "Save Branding",
+    previewTitle: isItalian ? "Anteprima Scheda PDF" : "PDF Sheet Preview",
+    previewDesc: isItalian ? "Ecco come apparirà la tua scheda White Label" : "Here's how your White Label sheet will look",
+    previewPropertyTitle: isItalian ? "Titolo Immobile" : "Property Title",
+    previewAgencyName: isItalian ? "Nome Agenzia" : "Agency Name",
+    previewContact: isItalian ? "Nome Referente" : "Contact Name",
+    previewPhone: isItalian ? "+39 000 0000000" : "+1 000 0000000",
+    previewWebsite: isItalian ? "www.agenzia.it" : "www.agency.com",
+    previewDesc2: isItalian ? "Splendido appartamento in zona centrale, luminoso e ristrutturato con finiture di pregio. Ideale per famiglie..." : "Splendid apartment in central area, bright and renovated with quality finishes. Ideal for families...",
+    brandingConfigured: isItalian ? "Branding configurato - Usa \"White Label\" nella generazione PDF" : "Branding configured - Use \"White Label\" in PDF generation",
+    // toasts
+    required: isItalian ? "Campo obbligatorio" : "Required field",
+    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
+    saved: isItalian ? "Branding salvato!" : "Branding saved!",
+    savedDesc: isItalian ? "Il profilo della tua agenzia è stato salvato con successo." : "Your agency profile has been saved successfully.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    saveError: isItalian ? "Errore nel salvataggio" : "Save error",
+  };
   const [isSaving, setIsSaving] = useState(false);
   const [hasExisting, setHasExisting] = useState(false);
 
@@ -92,8 +140,8 @@ export default function AgencyBrandingPage() {
   const handleSubmit = async () => {
     if (!formData.agency_name.trim()) {
       toast({
-        title: "Campo obbligatorio",
-        description: "Inserisci il nome dell'agenzia",
+        title: t.required,
+        description: t.agencyNameRequired,
         variant: "destructive",
       });
       return;
@@ -118,18 +166,18 @@ export default function AgencyBrandingPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Errore nel salvataggio");
+        throw new Error(data.error || t.saveError);
       }
 
       setHasExisting(true);
       toast({
-        title: "Branding salvato!",
-        description: "Il profilo della tua agenzia è stato salvato con successo.",
+        title: t.saved,
+        description: t.savedDesc,
       });
     } catch (error) {
       toast({
-        title: "Errore",
-        description: error instanceof Error ? error.message : "Errore nel salvataggio",
+        title: t.errorTitle,
+        description: error instanceof Error ? error.message : t.saveError,
         variant: "destructive",
       });
     } finally {
@@ -152,7 +200,7 @@ export default function AgencyBrandingPage() {
       <div className="mb-6">
         <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Torna alla Dashboard
+          {t.backToDashboard}
         </Link>
       </div>
 
@@ -162,10 +210,10 @@ export default function AgencyBrandingPage() {
         </div>
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            Branding Agenzia
+            {t.pageTitle}
           </h1>
           <p className="text-muted-foreground">
-            Personalizza le schede PDF con il tuo brand White Label
+            {t.pageSubtitle}
           </p>
         </div>
         <Badge className="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
@@ -179,18 +227,18 @@ export default function AgencyBrandingPage() {
             <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-indigo-600" />
-                Informazioni Agenzia
+                {t.agencyInfoTitle}
               </CardTitle>
               <CardDescription>
-                Dati base della tua agenzia immobiliare
+                {t.agencyInfoDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label htmlFor="agency_name">Nome Agenzia *</Label>
+                <Label htmlFor="agency_name">{t.agencyNameLabel}</Label>
                 <Input
                   id="agency_name"
-                  placeholder="es. Immobiliare Rossi"
+                  placeholder={t.agencyNamePlaceholder}
                   value={formData.agency_name}
                   onChange={(e) => handleInputChange("agency_name", e.target.value)}
                   data-testid="input-agency-name"
@@ -200,7 +248,7 @@ export default function AgencyBrandingPage() {
               <div className="space-y-2">
                 <Label htmlFor="logo_url" className="flex items-center gap-2">
                   <ImageIcon className="h-4 w-4" />
-                  URL Logo (opzionale)
+                  {t.logoUrlLabel}
                 </Label>
                 <Input
                   id="logo_url"
@@ -211,19 +259,19 @@ export default function AgencyBrandingPage() {
                   data-testid="input-logo-url"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Inserisci l'URL del logo della tua agenzia (formato PNG o JPG consigliato)
+                  {t.logoUrlHelper}
                 </p>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="website_url" className="flex items-center gap-2">
                   <Globe className="h-4 w-4" />
-                  Sito Web (opzionale)
+                  {t.websiteLabel}
                 </Label>
                 <Input
                   id="website_url"
                   type="url"
-                  placeholder="https://www.tuaagenzia.it"
+                  placeholder={t.websitePlaceholder}
                   value={formData.website_url}
                   onChange={(e) => handleInputChange("website_url", e.target.value)}
                   data-testid="input-website-url"
@@ -236,21 +284,21 @@ export default function AgencyBrandingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5 text-indigo-600" />
-                Contatti
+                {t.contactsTitle}
               </CardTitle>
               <CardDescription>
-                Informazioni di contatto per le schede PDF
+                {t.contactsDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="contact_name" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  Nome Referente
+                  {t.contactNameLabel}
                 </Label>
                 <Input
                   id="contact_name"
-                  placeholder="es. Mario Rossi"
+                  placeholder={t.contactNamePlaceholder}
                   value={formData.contact_name}
                   onChange={(e) => handleInputChange("contact_name", e.target.value)}
                   data-testid="input-contact-name"
@@ -261,11 +309,11 @@ export default function AgencyBrandingPage() {
                 <div className="space-y-2">
                   <Label htmlFor="contact_phone" className="flex items-center gap-2">
                     <Phone className="h-4 w-4" />
-                    Telefono
+                    {t.phoneLabel}
                   </Label>
                   <Input
                     id="contact_phone"
-                    placeholder="+39 02 1234567"
+                    placeholder={t.phonePlaceholder}
                     value={formData.contact_phone}
                     onChange={(e) => handleInputChange("contact_phone", e.target.value)}
                     data-testid="input-contact-phone"
@@ -279,7 +327,7 @@ export default function AgencyBrandingPage() {
                   <Input
                     id="contact_email"
                     type="email"
-                    placeholder="info@agenzia.it"
+                    placeholder={t.emailPlaceholder}
                     value={formData.contact_email}
                     onChange={(e) => handleInputChange("contact_email", e.target.value)}
                     data-testid="input-contact-email"
@@ -293,16 +341,16 @@ export default function AgencyBrandingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="h-5 w-5 text-indigo-600" />
-                Colori Brand
+                {t.colorsTitle}
               </CardTitle>
               <CardDescription>
-                Personalizza i colori delle tue schede PDF
+                {t.colorsDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="primary_color">Colore Primario</Label>
+                  <Label htmlFor="primary_color">{t.primaryColor}</Label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -321,7 +369,7 @@ export default function AgencyBrandingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="secondary_color">Colore Secondario</Label>
+                  <Label htmlFor="secondary_color">{t.secondaryColor}</Label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -340,7 +388,7 @@ export default function AgencyBrandingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="accent_color">Colore Accento</Label>
+                  <Label htmlFor="accent_color">{t.accentColor}</Label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
@@ -371,12 +419,12 @@ export default function AgencyBrandingPage() {
             {isSaving ? (
               <>
                 <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Salvataggio...
+                {t.saving}
               </>
             ) : (
               <>
                 <Save className="h-5 w-5 mr-2" />
-                {hasExisting ? "Aggiorna Branding" : "Salva Branding"}
+                {hasExisting ? t.updateBranding : t.saveBranding}
               </>
             )}
           </Button>
@@ -387,10 +435,10 @@ export default function AgencyBrandingPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Eye className="h-5 w-5 text-indigo-600" />
-                Anteprima Scheda PDF
+                {t.previewTitle}
               </CardTitle>
               <CardDescription>
-                Ecco come apparirà la tua scheda White Label
+                {t.previewDesc}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -414,7 +462,7 @@ export default function AgencyBrandingPage() {
                     />
                   ) : (
                     <div className="text-white font-bold text-sm">
-                      {formData.agency_name || "Nome Agenzia"}
+                      {formData.agency_name || t.previewAgencyName}
                     </div>
                   )}
                   <div 
@@ -434,7 +482,7 @@ export default function AgencyBrandingPage() {
                     className="font-bold text-lg mb-1"
                     style={{ color: formData.primary_color }}
                   >
-                    Titolo Immobile
+                    {t.previewPropertyTitle}
                   </h3>
                   <p 
                     className="text-xl font-bold"
@@ -460,8 +508,7 @@ export default function AgencyBrandingPage() {
 
                   <div className="mt-3 text-xs text-gray-600">
                     <p className="line-clamp-3">
-                      Splendido appartamento in zona centrale, luminoso e 
-                      ristrutturato con finiture di pregio. Ideale per famiglie...
+                      {t.previewDesc2}
                     </p>
                   </div>
                 </div>
@@ -473,15 +520,15 @@ export default function AgencyBrandingPage() {
                   <div className="flex items-center justify-between text-white">
                     <div className="text-xs">
                       <div className="font-semibold">
-                        {formData.contact_name || "Nome Referente"}
+                        {formData.contact_name || t.previewContact}
                       </div>
                       <div className="opacity-80">
-                        {formData.contact_phone || "+39 000 0000000"}
+                        {formData.contact_phone || t.previewPhone}
                       </div>
                     </div>
                     <div className="text-right text-xs opacity-80">
-                      <div>{formData.agency_name || "Nome Agenzia"}</div>
-                      <div>{formData.website_url || "www.agenzia.it"}</div>
+                      <div>{formData.agency_name || t.previewAgencyName}</div>
+                      <div>{formData.website_url || t.previewWebsite}</div>
                     </div>
                   </div>
                 </div>
@@ -490,7 +537,7 @@ export default function AgencyBrandingPage() {
               {hasExisting && (
                 <div className="mt-4 flex items-center gap-2 text-sm text-green-600">
                   <Check className="h-4 w-4" />
-                  Branding configurato - Usa "White Label" nella generazione PDF
+                  {t.brandingConfigured}
                 </div>
               )}
             </CardContent>
