@@ -97,6 +97,11 @@ const ProfitDashboard = NextDynamic(() => import("@/components/profit-dashboard"
   ssr: false,
 });
 
+const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").then(mod => ({ default: mod.UsageIndicator })), {
+  loading: () => <div className="futuristic-card p-4 animate-pulse bg-card/50" />,
+  ssr: false,
+});
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   
@@ -167,9 +172,10 @@ export default async function DashboardPage() {
 
         {/* 💰 PROFIT DASHBOARD - ROI Tracking */}
         <div className="mb-10 md:mb-14">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <ProfitDashboard />
             <ReferralSection />
+            <UsageIndicator />
           </div>
         </div>
 
