@@ -37,6 +37,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { DashboardCardSkeleton, ListSkeleton } from '@/components/ui/skeleton-loaders';
 import { useToast } from '@/hooks/use-toast';
 import { useLocaleContext } from '@/components/providers/locale-provider';
 import type { 
@@ -370,8 +371,24 @@ export default function AutomationCenterPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <DashboardCardSkeleton />
+          <Card className="bg-slate-900/60 border-slate-800">
+            <CardHeader>
+              <CardTitle className="text-white text-lg flex items-center gap-2">
+                <Zap className="h-5 w-5 text-violet-400" />
+                {t.pageTitle}
+              </CardTitle>
+              <CardDescription className="text-slate-400">
+                {t.pageSubtitle}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ListSkeleton items={6} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
