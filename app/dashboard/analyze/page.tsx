@@ -30,6 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 interface ScrapedData {
   title: string;
@@ -70,6 +71,7 @@ export default function AnalyzePage() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const isItalian = locale === "it";
+  const { handleAPIError } = useAPIErrorHandler();
   const t = {
     enterUrl: isItalian ? "Inserisci un URL" : "Enter a URL",
     pasteUrl: isItalian ? "Incolla il link dell'annuncio da analizzare" : "Paste the listing URL to analyze",
@@ -157,10 +159,11 @@ export default function AnalyzePage() {
         description: data.fromCache ? t.fromCache : t.newAnalysis,
       });
     } catch (err: any) {
-      setError(err.message);
+      const friendly = handleAPIError(err, t.analysisError);
+      setError(friendly);
       toast({
         title: t.error,
-        description: err.message,
+        description: friendly,
         variant: "destructive",
       });
     } finally {
