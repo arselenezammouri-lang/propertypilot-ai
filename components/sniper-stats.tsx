@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, TrendingDown, History } from "lucide-react";
+import { Target, TrendingDown, History, AlertTriangle } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 interface SniperStats {
   price_drops_today: number;
@@ -14,6 +15,8 @@ export function SniperStats() {
   const { locale } = useLocaleContext();
   const [stats, setStats] = useState<SniperStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { handleAPIError } = useAPIErrorHandler();
   const t = {
     it: {
       priceDropsToday: "Ribassi Oggi",
@@ -22,6 +25,7 @@ export function SniperStats() {
       opportunities: "Opportunità",
       last48h: "Rilevati nelle ultime 48h",
       offline120: "Immobili offline 120+ giorni",
+      loadError: "Impossibile caricare le statistiche Sniper.",
     },
     en: {
       priceDropsToday: "Price Drops Today",
@@ -30,6 +34,7 @@ export function SniperStats() {
       opportunities: "Opportunities",
       last48h: "Detected in the last 48h",
       offline120: "Properties offline 120+ days",
+      loadError: "Unable to load Sniper statistics.",
     },
   }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
@@ -44,15 +49,18 @@ export function SniperStats() {
 
       if (data.success) {
         setStats(data.data);
+      } else {
+        throw new Error(data.error || t.loadError);
       }
-    } catch (error) {
-      console.error("Error fetching sniper stats:", error);
+    } catch (err: any) {
+      console.error("Error fetching sniper stats:", err);
+      setError(handleAPIError(err, t.loadError));
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading || !stats) {
+  if (loading) {
     return (
       <>
         <div className="futuristic-card p-8 md:p-10 relative overflow-hidden group hover-lift animate-fade-in-up delay-400">
@@ -82,6 +90,24 @@ export function SniperStats() {
           <p className="text-base text-muted-foreground font-medium relative">{t.opportunities}</p>
         </div>
       </>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <Card className="futuristic-card p-8 md:p-10 relative overflow-hidden">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            Sniper Stats
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {error || t.loadError}
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
