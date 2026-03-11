@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ProFeaturePaywall } from "@/components/demo-modal";
 import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { 
   Home, 
   ArrowLeft,
@@ -107,6 +108,7 @@ export default function AgencyAssistantPage() {
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
   const isItalian = locale === "it";
+  const { handleAPIError } = useAPIErrorHandler();
   const localizedQuickSuggestions = isItalian
     ? QUICK_SUGGESTIONS
     : [
@@ -199,10 +201,10 @@ export default function AgencyAssistantPage() {
       };
       setMessages(prev => [...prev, assistantMessage]);
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: t.error,
-        description: error.message,
+        description: handleAPIError(error, t.title),
         variant: "destructive",
       });
     },
