@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -79,6 +80,7 @@ export default function PredatorMapPage() {
   const [callingListingId, setCallingListingId] = useState<string | null>(null);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const { handleAPIError } = useAPIErrorHandler();
 
   // Mock geocoding - in produzione usare API reale (Google Maps, Mapbox, etc.)
   const geocodeLocation = async (location: string): Promise<{ lat: number; lng: number } | null> => {
@@ -123,12 +125,27 @@ export default function PredatorMapPage() {
       const listingsData = await listingsRes.json();
       const eliteData = await eliteRes.json();
 
-      const userListings = listingsData.success ? (listingsData.data || []) : [];
-      const eliteListings = (eliteRes.ok && eliteData.success && Array.isArray(eliteData.data)) ? eliteData.data : [];
+      if (!listingsRes.ok || !listingsData.success) {
+        throw new Error(listingsData.error || t.mapLoadError || 'Unable to load listings');
+      }
+
+      if (!eliteRes.ok || !eliteData.success || !Array.isArray(eliteData.data)) {
+        // Elite deals are optional; log but don't block the map
+        console.warn('[PREDATOR MAP] Elite deals not available');
+      }
+
+      const userListings = listingsData.data || [];
+      const eliteListings = Array.isArray(eliteData.data) ? eliteData.data : [];
       setListings([...userListings, ...eliteListings]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching listings:', error);
       setListings([]);
+      const friendly = handleAPIError(error, t.mapLoadError || 'Error loading map data');
+      toast({
+        title: locale === "it" ? "Errore" : "Error",
+        description: friendly,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
