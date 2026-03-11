@@ -6,18 +6,60 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin } from 'lucide-react';
+import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
 import { SavedListing } from '@/lib/types/database.types';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
+import { it, enUS } from 'date-fns/locale';
+import { useLocaleContext } from "@/components/providers/locale-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TableSkeleton } from '@/components/ui/skeleton-loaders';
 
 export default function ListingsPage() {
   const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const isItalian = locale === "it";
   const queryClient = useQueryClient();
   const [selectedListing, setSelectedListing] = useState<SavedListing | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+
+  const t = {
+    deleted: isItalian ? "Annuncio eliminato" : "Listing deleted",
+    deletedDesc: isItalian ? "L'annuncio è stato eliminato con successo." : "The listing has been deleted successfully.",
+    errorTitle: isItalian ? "Errore" : "Error",
+    deleteError: isItalian ? "Impossibile eliminare l'annuncio." : "Cannot delete the listing.",
+    regenerated: isItalian ? "Contenuto rigenerato" : "Content regenerated",
+    regeneratedDesc: isItalian ? "Il contenuto AI è stato rigenerato con successo!" : "The AI content has been regenerated successfully!",
+    aiError: isItalian ? "Errore AI" : "AI Error",
+    regenError: isItalian ? "Impossibile rigenerare il contenuto." : "Cannot regenerate the content.",
+    loadError: isItalian ? "Impossibile caricare gli annunci" : "Cannot load listings",
+    loadErrorDesc: isItalian ? "Si è verificato un errore durante il caricamento della libreria. Riprova più tardi." : "An error occurred while loading the library. Try again later.",
+    contactSupport: isItalian ? "Se il problema persiste, contatta il supporto." : "If the problem persists, contact support.",
+    pageTitle: isItalian ? "Annunci Salvati" : "Saved Listings",
+    pageDesc: isItalian ? "Gestisci la tua libreria di annunci generati con AI" : "Manage your AI-generated listings library",
+    emptyTitle: isItalian ? "Nessun annuncio salvato" : "No saved listings",
+    emptyDesc: isItalian ? "Gli annunci che generi con AI appariranno qui. Inizia a creare il tuo primo annuncio!" : "Listings you generate with AI will appear here. Start creating your first listing!",
+    createListing: isItalian ? "Crea Annuncio" : "Create Listing",
+    createdOn: isItalian ? "Creato il" : "Created on",
+    view: isItalian ? "Visualizza" : "View",
+    propertyDetails: isItalian ? "Dettagli Immobile" : "Property Details",
+    locality: isItalian ? "Località:" : "Location:",
+    type: isItalian ? "Tipologia:" : "Type:",
+    size: isItalian ? "Superficie:" : "Size:",
+    rooms: isItalian ? "Locali:" : "Rooms:",
+    price: isItalian ? "Prezzo:" : "Price:",
+    features: isItalian ? "Caratteristiche:" : "Features:",
+    generatedContent: isItalian ? "Contenuto Generato" : "Generated Content",
+    tabProfessional: isItalian ? "Professionale" : "Professional",
+    tabShort: isItalian ? "Breve" : "Short",
+    tabTitles: isItalian ? "Titoli" : "Titles",
+    tabEnglish: isItalian ? "Inglese" : "English",
+    roomsUnit: isItalian ? "locali" : "rooms",
+    regenerating: isItalian ? "Rigenerazione..." : "Regenerating...",
+    regenerate: isItalian ? "Rigenera Contenuto" : "Regenerate Content",
+    delete: isItalian ? "Elimina" : "Delete",
+  };
 
   const { data: listingsData, isLoading, error } = useQuery<{ success: boolean; data: SavedListing[] }>({
     queryKey: ['/api/listings'],
@@ -41,8 +83,8 @@ export default function ListingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
       toast({
-        title: 'Annuncio eliminato',
-        description: 'L\'annuncio è stato eliminato con successo.',
+        title: t.deleted,
+        description: t.deletedDesc,
         duration: 5000,
       });
       setSelectedListing(null);
@@ -50,8 +92,8 @@ export default function ListingsPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore',
-        description: error.message || 'Impossibile eliminare l\'annuncio.',
+        title: t.errorTitle,
+        description: error.message || t.deleteError,
         duration: 8000,
       });
     },
@@ -77,8 +119,8 @@ export default function ListingsPage() {
       }
       
       toast({
-        title: 'Contenuto rigenerato',
-        description: 'Il contenuto AI è stato rigenerato con successo!',
+        title: t.regenerated,
+        description: t.regeneratedDesc,
         duration: 5000,
       });
       setIsRegenerating(false);
@@ -86,8 +128,8 @@ export default function ListingsPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: 'Errore AI',
-        description: error.message || 'Impossibile rigenerare il contenuto.',
+        title: t.aiError,
+        description: error.message || t.regenError,
         duration: 8000,
       });
       setIsRegenerating(false);
@@ -101,8 +143,29 @@ export default function ListingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" data-testid="loading-spinner" />
+      <div className="container max-w-6xl py-8 space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold mb-2" data-testid="heading-listings-skeleton">
+            {t.pageTitle}
+          </h1>
+          <p className="text-muted-foreground">
+            {t.pageDesc}
+          </p>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              {t.pageTitle}
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              {t.pageDesc}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <TableSkeleton rows={6} />
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -112,12 +175,12 @@ export default function ListingsPage() {
       <div className="container max-w-6xl py-8">
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <h2 className="text-2xl font-bold mb-2">Impossibile caricare gli annunci</h2>
+            <h2 className="text-2xl font-bold mb-2">{t.loadError}</h2>
             <p className="text-muted-foreground mb-6 text-center max-w-md">
-              Si è verificato un errore durante il caricamento della libreria. Riprova più tardi.
+              {t.loadErrorDesc}
             </p>
             <p className="text-sm text-muted-foreground">
-              Se il problema persiste, contatta il supporto.
+              {t.contactSupport}
             </p>
           </CardContent>
         </Card>
@@ -128,28 +191,35 @@ export default function ListingsPage() {
   return (
     <div className="container max-w-6xl py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="heading-listings">Annunci Salvati</h1>
+        <h1 className="text-3xl font-bold mb-2" data-testid="heading-listings">{t.pageTitle}</h1>
         <p className="text-muted-foreground" data-testid="text-description">
-          Gestisci la tua libreria di annunci generati con AI
+          {t.pageDesc}
         </p>
       </div>
 
       {listings.length === 0 ? (
-        <Card data-testid="card-empty">
-          <CardContent className="flex flex-col items-center justify-center py-16">
-            <div className="rounded-full bg-muted p-4 mb-4">
-              <Sparkles className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Nessun annuncio salvato</h3>
-            <p className="text-muted-foreground text-center mb-6 max-w-md">
-              Gli annunci che generi con AI appariranno qui. Inizia a creare il tuo primo annuncio!
-            </p>
-            <Button asChild data-testid="button-create-first">
-              <a href="/dashboard/scraper">
-                <Sparkles className="h-4 w-4 mr-2" />
-                Crea Annuncio
-              </a>
-            </Button>
+        <Card data-testid="card-empty" className="border-dashed border-white/20 bg-white/[0.02]">
+          <CardContent className="p-0">
+            <EmptyState
+              icon={<Sparkles />}
+              title={t.emptyTitle}
+              description={t.emptyDesc}
+              gradient="from-purple-500/20 to-violet-500/20"
+              size="lg"
+              actions={[
+                {
+                  label: t.createListing,
+                  href: "/dashboard/listings",
+                  icon: <Plus className="h-4 w-4" />,
+                },
+                {
+                  label: isItalian ? "Cerca sul Mercato" : "Search Market",
+                  href: "/dashboard/prospecting",
+                  variant: "outline",
+                  icon: <Sparkles className="h-4 w-4" />,
+                },
+              ]}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -167,7 +237,7 @@ export default function ListingsPage() {
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2" data-testid={`text-date-${listing.id}`}>
                   <Calendar className="h-3 w-3" />
-                  {format(new Date(listing.created_at), 'dd MMM yyyy', { locale: it })}
+                  {format(new Date(listing.created_at), 'dd MMM yyyy', { locale: isItalian ? it : enUS })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -188,7 +258,7 @@ export default function ListingsPage() {
                     )}
                     {listing.property_data.rooms && (
                       <span className="text-xs bg-muted px-2 py-1 rounded">
-                        {listing.property_data.rooms} locali
+                        {listing.property_data.rooms} {t.roomsUnit}
                       </span>
                     )}
                     {listing.property_data.size && (
@@ -209,7 +279,7 @@ export default function ListingsPage() {
                   data-testid={`button-view-${listing.id}`}
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Visualizza
+                  {t.view}
                 </Button>
               </CardContent>
             </Card>
@@ -222,7 +292,7 @@ export default function ListingsPage() {
           <DialogHeader>
             <DialogTitle data-testid="dialog-title">{selectedListing?.title}</DialogTitle>
             <DialogDescription data-testid="dialog-date">
-              Creato il {selectedListing && format(new Date(selectedListing.created_at), 'dd MMMM yyyy', { locale: it })}
+              {t.createdOn} {selectedListing && format(new Date(selectedListing.created_at), 'dd MMMM yyyy', { locale: isItalian ? it : enUS })}
             </DialogDescription>
           </DialogHeader>
 
@@ -230,51 +300,51 @@ export default function ListingsPage() {
             <ScrollArea className="flex-1 pr-4">
               <div className="space-y-6">
                 <div>
-                  <h3 className="font-semibold mb-2">Dettagli Immobile</h3>
+                  <h3 className="font-semibold mb-2">{t.propertyDetails}</h3>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Località:</span>
+                      <span className="text-muted-foreground">{t.locality}</span>
                       <p className="font-medium" data-testid="detail-location">{selectedListing.property_data.location}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Tipologia:</span>
+                      <span className="text-muted-foreground">{t.type}</span>
                       <p className="font-medium" data-testid="detail-type">{selectedListing.property_data.propertyType}</p>
                     </div>
                     {selectedListing.property_data.size && (
                       <div>
-                        <span className="text-muted-foreground">Superficie:</span>
+                        <span className="text-muted-foreground">{t.size}</span>
                         <p className="font-medium" data-testid="detail-size">{selectedListing.property_data.size} m²</p>
                       </div>
                     )}
                     {selectedListing.property_data.rooms && (
                       <div>
-                        <span className="text-muted-foreground">Locali:</span>
+                        <span className="text-muted-foreground">{t.rooms}</span>
                         <p className="font-medium" data-testid="detail-rooms">{selectedListing.property_data.rooms}</p>
                       </div>
                     )}
                     {selectedListing.property_data.price && (
                       <div>
-                        <span className="text-muted-foreground">Prezzo:</span>
+                        <span className="text-muted-foreground">{t.price}</span>
                         <p className="font-medium" data-testid="detail-price">{selectedListing.property_data.price}</p>
                       </div>
                     )}
                   </div>
                   {selectedListing.property_data.features && (
                     <div className="mt-3">
-                      <span className="text-muted-foreground text-sm">Caratteristiche:</span>
+                      <span className="text-muted-foreground text-sm">{t.features}</span>
                       <p className="text-sm mt-1" data-testid="detail-features">{selectedListing.property_data.features}</p>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-3">Contenuto Generato</h3>
+                  <h3 className="font-semibold mb-3">{t.generatedContent}</h3>
                   <Tabs defaultValue="professional" className="w-full">
                     <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="professional" data-testid="tab-professional">Professionale</TabsTrigger>
-                      <TabsTrigger value="short" data-testid="tab-short">Breve</TabsTrigger>
-                      <TabsTrigger value="titles" data-testid="tab-titles">Titoli</TabsTrigger>
-                      <TabsTrigger value="english" data-testid="tab-english">Inglese</TabsTrigger>
+                      <TabsTrigger value="professional" data-testid="tab-professional">{t.tabProfessional}</TabsTrigger>
+                      <TabsTrigger value="short" data-testid="tab-short">{t.tabShort}</TabsTrigger>
+                      <TabsTrigger value="titles" data-testid="tab-titles">{t.tabTitles}</TabsTrigger>
+                      <TabsTrigger value="english" data-testid="tab-english">{t.tabEnglish}</TabsTrigger>
                     </TabsList>
                     <TabsContent value="professional" className="mt-4">
                       <div className="bg-muted p-4 rounded-lg">
@@ -321,12 +391,12 @@ export default function ListingsPage() {
                     {isRegenerating ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Rigenerazione...
+                        {t.regenerating}
                       </>
                     ) : (
                       <>
                         <Sparkles className="h-4 w-4 mr-2" />
-                        Rigenera Contenuto
+                        {t.regenerate}
                       </>
                     )}
                   </Button>
@@ -341,7 +411,7 @@ export default function ListingsPage() {
                     ) : (
                       <Trash2 className="h-4 w-4 mr-2" />
                     )}
-                    Elimina
+                    {t.delete}
                   </Button>
                 </div>
               </div>
