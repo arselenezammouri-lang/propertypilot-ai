@@ -26,12 +26,14 @@ import {
 import { ScrapedListing } from '@/lib/scrapers/types';
 import { GeneratedContent } from '@/lib/ai/generateListingContent';
 import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
     pageTitle: isItalian ? "Analisi Annuncio AI" : "AI Listing Analysis",
@@ -163,10 +165,10 @@ export default function ScraperPage() {
     } catch (error: any) {
       // Catch only for network/parsing errors
       console.error('[SCRAPER UI] Error:', error);
-      
+      const friendly = handleAPIError(error, t.scrapeError);
       toast({
         title: t.errorTitle,
-        description: error.message || t.networkError,
+        description: friendly || t.networkError,
         variant: 'destructive',
         duration: 8000,
       });
@@ -223,10 +225,10 @@ export default function ScraperPage() {
 
     } catch (error: any) {
       console.error('[AI GENERATION] Error:', error);
-      
+      const friendly = handleAPIError(error, t.aiGenerationError);
       toast({
         title: t.aiErrorTitle,
-        description: error.message || t.networkError,
+        description: friendly || t.networkError,
         variant: 'destructive',
         duration: 8000,
       });
@@ -276,9 +278,10 @@ export default function ScraperPage() {
 
     } catch (error: any) {
       console.error('[SAVE] Error:', error);
+      const friendly = handleAPIError(error, t.saveError);
       toast({
         title: t.errorTitle,
-        description: error.message || t.saveGenericError,
+        description: friendly || t.saveGenericError,
         variant: 'destructive',
       });
     } finally {
