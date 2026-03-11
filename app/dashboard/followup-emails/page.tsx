@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { 
   Mail, 
   Clock, 
@@ -69,6 +70,7 @@ export default function FollowUpEmailsPage() {
   const [activeTab, setActiveTab] = useState("immediateResponse");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showLongVersion, setShowLongVersion] = useState(false);
+  const { handleAPIError } = useAPIErrorHandler();
   const t = {
     required: isItalian ? "Campo obbligatorio" : "Required field",
     leadNameRequired: isItalian ? "Inserisci il nome del lead" : "Enter the lead name",
@@ -254,9 +256,10 @@ export default function FollowUpEmailsPage() {
         description: data.cached ? t.cacheResult : t.ready6,
       });
     } catch (error) {
+      const friendly = handleAPIError(error, t.generateError);
       toast({
         title: t.error,
-        description: error instanceof Error ? error.message : t.generateError,
+        description: friendly,
         variant: "destructive",
       });
     } finally {
