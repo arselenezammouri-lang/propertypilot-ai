@@ -151,6 +151,66 @@ export default function LeadDetailPage() {
     noNotes: isItalian ? 'Nessuna nota ancora' : 'No notes yet',
     automationsTitle: isItalian ? 'Log Automazioni' : 'Automation Logs',
     noAutomations: isItalian ? 'Nessuna automazione eseguita' : 'No automations executed',
+    aiActivityTitle:
+      locale === 'es'
+        ? 'Actividad de IA en este lead'
+        : locale === 'fr'
+        ? "Activité IA sur ce lead"
+        : locale === 'pt'
+        ? 'Atividade de IA neste lead'
+        : locale === 'ar'
+        ? 'نشاط الذكاء الاصطناعي لهذا العميل المحتمل'
+        : isItalian
+        ? 'Attività AI su questo lead'
+        : 'AI Activity on this lead',
+    aiActivityDesc:
+      locale === 'es'
+        ? 'Resumen de análisis, automatizaciones y acciones de IA relacionadas con este lead.'
+        : locale === 'fr'
+        ? "Résumé des analyses, automatisations et actions IA liées à ce lead."
+        : locale === 'pt'
+        ? 'Resumo de análises, automações e ações de IA relacionadas a este lead.'
+        : locale === 'ar'
+        ? 'ملخص التحليلات والأتمتة وإجراءات الذكاء الاصطناعي المرتبطة بهذا العميل المحتمل.'
+        : isItalian
+        ? 'Riepilogo di analisi, automazioni e azioni AI collegate a questo lead.'
+        : 'Summary of analysis, automations and AI actions related to this lead.',
+    aiActivityEnrichment:
+      locale === 'es'
+        ? 'Análisis Lead Insights completado'
+        : locale === 'fr'
+        ? 'Analyse Lead Insights terminée'
+        : locale === 'pt'
+        ? 'Análise Lead Insights concluída'
+        : locale === 'ar'
+        ? 'تم إكمال تحليل Lead Insights'
+        : isItalian
+        ? 'Analisi Lead Insights completata'
+        : 'Lead Insights analysis completed',
+    aiActivityFromCache:
+      locale === 'es'
+        ? 'dato recuperado de caché'
+        : locale === 'fr'
+        ? 'donnée récupérée du cache'
+        : locale === 'pt'
+        ? 'dado recuperado do cache'
+        : locale === 'ar'
+        ? 'البيانات من الذاكرة المؤقتة'
+        : isItalian
+        ? 'dato recuperato da cache'
+        : 'data retrieved from cache',
+    aiActivityNoEvents:
+      locale === 'es'
+        ? 'Ninguna actividad de IA registrada todavía.'
+        : locale === 'fr'
+        ? "Aucune activité IA enregistrée pour l'instant."
+        : locale === 'pt'
+        ? 'Ainda não há atividade de IA registada.'
+        : locale === 'ar'
+        ? 'لا يوجد نشاط للذكاء الاصطناعي حتى الآن.'
+        : isItalian
+        ? 'Nessuna attività AI registrata finora.'
+        : 'No AI activity recorded yet.',
     success: isItalian ? 'Successo' : 'Success',
     error: isItalian ? 'Errore' : 'Error',
     ruleLabel: isItalian ? 'Regola' : 'Rule',
@@ -683,6 +743,66 @@ export default function LeadDetailPage() {
                   </>
                 )}
               </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* AI Activity Summary */}
+        {(enrichment || automationLogs.length > 0) && (
+          <Card className="bg-slate-900/60 border-slate-700">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Brain className="h-5 w-5 text-violet-400" />
+                {t.aiActivityTitle}
+              </CardTitle>
+              <CardDescription className="text-slate-400">
+                {t.aiActivityDesc}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {enrichment && (
+                <div className="flex items-start gap-2">
+                  <span className="mt-1">✨</span>
+                  <div>
+                    <p className="text-slate-200">{t.aiActivityEnrichment}</p>
+                    <p className="text-xs text-slate-500">
+                      {formatDateForLocale(enrichment.generato_il, locale as Locale)}
+                      {enrichmentCached ? ` • ${t.aiActivityFromCache}` : ""}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {automationLogs.length > 0 ? (
+                <div className="space-y-2">
+                  {automationLogs.slice(0, 3).map((log) => (
+                    <div key={log.id} className="flex items-start gap-2 text-slate-300">
+                      <span className="mt-1">⚡</span>
+                      <div>
+                        <p className="text-xs text-slate-500">
+                          {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                        </p>
+                        <p className="text-sm">
+                          {log.automations_rules?.name || t.ruleLabel} • {log.trigger_type}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                  {automationLogs.length > 3 && (
+                    <p className="text-xs text-slate-500">
+                      +{automationLogs.length - 3}{" "}
+                      {locale === "es"
+                        ? "acciones de IA más..."
+                        : locale === "ar"
+                        ? "إجراءات إضافية للذكاء الاصطناعي..."
+                        : isItalian
+                        ? "altre azioni AI..."
+                        : "more AI actions..."}
+                    </p>
+                  )}
+                </div>
+              ) : !enrichment ? (
+                <p className="text-slate-400 text-sm">{t.aiActivityNoEvents}</p>
+              ) : null}
             </CardContent>
           </Card>
         )}
