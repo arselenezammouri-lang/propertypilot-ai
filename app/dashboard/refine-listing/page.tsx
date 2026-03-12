@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { 
   Sparkles, 
@@ -56,6 +57,7 @@ export default function RefineListingPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<RefineListingResult | null>(null);
   const [activeTab, setActiveTab] = useState("professional");
@@ -218,7 +220,7 @@ export default function RefineListingPage() {
     } catch (error) {
       toast({
         title: t.error,
-        description: error instanceof Error ? error.message : t.refineError,
+        description: handleAPIError(error, t.refineError),
         variant: "destructive",
       });
     } finally {
