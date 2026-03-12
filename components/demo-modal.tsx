@@ -86,7 +86,7 @@ export function DemoModal() {
         <Button
           className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl text-sm sm:text-base"
           size="lg"
-          aria-label={labels.openModal}
+          aria-label="Open the demo booking modal"
           disabled
         >
           <span className="relative flex items-center">
