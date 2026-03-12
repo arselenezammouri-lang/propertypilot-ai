@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -114,6 +114,7 @@ export default function LeadDetailPage() {
     regenerateBtn: isItalian ? 'Rigenera Analisi AI' : 'Regenerate AI Analysis',
     enrichBtn: isItalian ? 'Arricchisci Lead con AI' : 'Enrich Lead with AI',
     leadInfoTitle: isItalian ? 'Informazioni Lead' : 'Lead Information',
+    followupBtn: isItalian ? 'Email di Follow-up AI' : 'Follow-up Email AI',
     noEmail: isItalian ? 'Non fornita' : 'Not provided',
     noPhone: isItalian ? 'Non fornito' : 'Not provided',
     fromCache: isItalian ? 'Dalla cache (24h)' : 'From cache (24h)',
@@ -270,11 +271,16 @@ export default function LeadDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+                {/* Header */}
+                <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard/leads">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" data-testid="button-back">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10"
+                data-testid="button-back"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -289,31 +295,50 @@ export default function LeadDetailPage() {
             </div>
           </div>
 
-          <Button
-            onClick={handleEnrichLead}
-            disabled={isEnriching}
-            className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
-            data-testid="button-enrich-lead"
-          >
-            {isEnriching ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t.analyzeBtn}
-              </>
-            ) : enrichment ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                {t.regenerateBtn}
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4" />
-                {t.enrichBtn}
-              </>
-            )}
-          </Button>
-        </div>
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={handleEnrichLead}
+              disabled={isEnriching}
+              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
+              data-testid="button-enrich-lead"
+            >
+              {isEnriching ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t.analyzeBtn}
+                </>
+              ) : enrichment ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {t.regenerateBtn}
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  {t.enrichBtn}
+                </>
+              )}
+            </Button>
 
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
+              data-testid="button-followup-email"
+              onClick={() => {
+                const params = new URLSearchParams({
+                  leadName: lead.nome || "",
+                  propertyTitle: (lead as any).property_title || "",
+                  propertyLocation: (lead as any).property_location || "",
+                  propertyPrice: (lead as any).property_price || "",
+                });
+                router.push(`/dashboard/followup-emails?${params.toString()}`);
+              }}
+            >
+              {t.followupBtn}
+            </Button>
+          </div>
+        </div>
         {/* Lead Info Card */}
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
