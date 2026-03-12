@@ -766,7 +766,7 @@ export default function LeadDetailPage() {
                   <div>
                     <p className="text-slate-200">{t.aiActivityEnrichment}</p>
                     <p className="text-xs text-slate-500">
-                      {formatDateForLocale(enrichment.generato_il, locale as Locale)}
+                      {new Date(enrichment.generato_il).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
                       {enrichmentCached ? ` • ${t.aiActivityFromCache}` : ""}
                     </p>
                   </div>
