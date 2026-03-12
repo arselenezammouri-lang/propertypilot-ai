@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,7 +61,11 @@ interface FormData {
   tone: "professionale" | "amichevole" | "luxury";
 }
 
-export default function FollowUpEmailsPage() {
+interface FollowUpEmailsPageProps {
+  searchParams?: Record<string, string | string[] | undefined>;
+}
+
+export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageProps) {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
   const { toast } = useToast();
@@ -148,6 +152,23 @@ export default function FollowUpEmailsPage() {
     reasonOfInterest: "",
     tone: "professionale",
   });
+
+  useEffect(() => {
+    if (!searchParams) return;
+
+    const getParam = (key: string) => {
+      const value = searchParams[key];
+      return Array.isArray(value) ? value[0] : value || "";
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      leadName: getParam("leadName") || prev.leadName,
+      propertyTitle: getParam("propertyTitle") || prev.propertyTitle,
+      propertyLocation: getParam("propertyLocation") || prev.propertyLocation,
+      propertyPrice: getParam("propertyPrice") || prev.propertyPrice,
+    }));
+  }, [searchParams]);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
