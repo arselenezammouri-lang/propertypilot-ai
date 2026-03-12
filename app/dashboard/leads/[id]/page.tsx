@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useLocaleContext } from '@/components/providers/locale-provider';
 import type { Lead, LeadEnrichmentResult, LeadNote } from '@/lib/types/database.types';
 import CommunicationsHub from './CommunicationsHub';
@@ -91,6 +92,7 @@ export default function LeadDetailPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
   const leadId = params.id as string;
 
   const statusLabels: Record<string, string> = {
@@ -155,6 +157,7 @@ export default function LeadDetailPage() {
     triggerLabel: isItalian ? 'Trigger:' : 'Trigger:',
     // toasts
     loadError: isItalian ? 'Impossibile caricare i dati del lead' : 'Cannot load lead data',
+    enrichError: isItalian ? "Errore nell'arricchimento del lead" : 'Error enriching lead',
     analysisComplete: isItalian ? 'Analisi completata!' : 'Analysis complete!',
     fromCacheDesc: isItalian ? 'Dati recuperati dalla cache' : 'Data retrieved from cache',
     analysisDone: (ms: number) => isItalian ? `Analisi AI completata in ${ms}ms` : `AI analysis completed in ${ms}ms`,
@@ -208,7 +211,8 @@ export default function LeadDetailPage() {
       }
     } catch (error) {
       console.error('Error fetching lead data:', error);
-      toast({ title: t.error, description: t.loadError, variant: 'destructive' });
+      const friendly = handleAPIError(error, t.loadError);
+      toast({ title: t.error, description: friendly, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -232,8 +236,9 @@ export default function LeadDetailPage() {
       setEnrichment(result.data);
       setEnrichmentCached(result.cached);
       toast({ title: t.analysisComplete, description: result.cached ? t.fromCacheDesc : t.analysisDone(result.duration) });
-    } catch (error: any) {
-      toast({ title: t.error, description: error.message, variant: 'destructive' });
+    } catch (error) {
+      const friendly = handleAPIError(error, t.enrichError);
+      toast({ title: t.error, description: friendly, variant: 'destructive' });
     } finally {
       setIsEnriching(false);
     }
