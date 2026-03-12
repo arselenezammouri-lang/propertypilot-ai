@@ -127,7 +127,7 @@ export default function PredatorMapPage() {
       const eliteData = await eliteRes.json();
 
       if (!listingsRes.ok || !listingsData.success) {
-        throw new Error(listingsData.error || t.mapLoadError || 'Unable to load listings');
+        throw new Error(listingsData.error || 'Unable to load listings');
       }
 
       if (!eliteRes.ok || !eliteData.success || !Array.isArray(eliteData.data)) {
@@ -141,7 +141,7 @@ export default function PredatorMapPage() {
     } catch (error: any) {
       console.error('Error fetching listings:', error);
       setListings([]);
-      const friendly = handleAPIError(error, t.mapLoadError || 'Error loading map data');
+      const friendly = handleAPIError(error, locale === "it" ? "Errore nel caricamento delle liste" : "Error loading map data");
       toast({
         title: locale === "it" ? "Errore" : "Error",
         description: friendly,
