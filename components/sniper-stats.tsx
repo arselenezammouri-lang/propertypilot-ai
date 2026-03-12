@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, TrendingDown, History, AlertTriangle } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
@@ -38,11 +38,7 @@ export function SniperStats() {
     },
   }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await fetch("/api/prospecting/price-drops");
       const data = await response.json();
@@ -58,7 +54,11 @@ export function SniperStats() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [handleAPIError, t.loadError]);
+
+  useEffect(() => {
+    void fetchStats();
+  }, [fetchStats]);
 
   if (loading) {
     return (

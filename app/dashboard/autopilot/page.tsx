@@ -87,61 +87,61 @@ export default function AutopilotPage() {
   }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
-    void loadData();
-  }, []);
+    const loadData = async () => {
+      const supabase = createClient();
+      try {
+        const { data: rules, error: rulesError } = await supabase
+          .from("prospecting_autopilot_rules")
+          .select("*")
+          .limit(1);
 
-  const loadData = async () => {
-    const supabase = createClient();
-    try {
-      const { data: rules, error: rulesError } = await supabase
-        .from("prospecting_autopilot_rules")
-        .select("*")
-        .limit(1);
+        if (rulesError) throw rulesError;
 
-      if (rulesError) throw rulesError;
+        if (rules && rules.length > 0) {
+          setRule(rules[0] as AutopilotRule);
+        } else {
+          setRule({
+            name: t.defaultRule,
+            active: false,
+            city: null,
+            region: null,
+            portals: ["idealista", "immobiliare"],
+            min_price: null,
+            max_price: null,
+            run_hour_utc: 7,
+            daily_limit: 10,
+          });
+        }
 
-      if (rules && rules.length > 0) {
-        setRule(rules[0] as AutopilotRule);
-      } else {
-        setRule({
-          name: t.defaultRule,
-          active: false,
-          city: null,
-          region: null,
-          portals: ["idealista", "immobiliare"],
-          min_price: null,
-          max_price: null,
-          run_hour_utc: 7,
-          daily_limit: 10,
+        const { data: recentRuns, error: runsError } = await supabase
+          .from("autopilot_runs")
+          .select("*")
+          .order("run_at", { ascending: false })
+          .limit(10);
+
+        if (runsError) throw runsError;
+        setRuns(recentRuns ?? []);
+
+        const { data: recentActions, error: actionsError } = await supabase
+          .from("autopilot_actions")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (actionsError) throw actionsError;
+        setActions(recentActions ?? []);
+      } catch (error: any) {
+        const friendly = handleAPIError(error, t.loadError);
+        toast({
+          title: "Autopilot",
+          description: friendly,
+          variant: "destructive",
         });
       }
+    };
 
-      const { data: recentRuns, error: runsError } = await supabase
-        .from("autopilot_runs")
-        .select("*")
-        .order("run_at", { ascending: false })
-        .limit(10);
-
-      if (runsError) throw runsError;
-      setRuns(recentRuns ?? []);
-
-      const { data: recentActions, error: actionsError } = await supabase
-        .from("autopilot_actions")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      if (actionsError) throw actionsError;
-      setActions(recentActions ?? []);
-    } catch (error: any) {
-      const friendly = handleAPIError(error, t.loadError);
-      toast({
-        title: "Autopilot",
-        description: friendly,
-        variant: "destructive",
-      });
-    }
-  };
+    void loadData();
+  }, [handleAPIError, toast, t.defaultRule, t.loadError]);
 
   const updateField = (patch: Partial<AutopilotRule>) => {
     setRule((prev) => ({ ...(prev ?? { name: t.defaultRule, portals: [] as string[] } as AutopilotRule), ...patch }));
