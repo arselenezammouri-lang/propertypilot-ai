@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useAPIErrorHandler } from '@/components/error-boundary';
 import { 
   Sparkles, 
   Loader2, 
@@ -57,6 +58,7 @@ export default function PerfectCopyPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
     backToDashboard: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
@@ -226,8 +228,8 @@ export default function PerfectCopyPage() {
       toast({ title: t.successTitle, description: t.successDesc });
 
     } catch (error) {
-      console.error('Generation error:', error);
-      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: 'destructive' });
+      const friendly = handleAPIError(error, t.errorGeneric);
+      toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
