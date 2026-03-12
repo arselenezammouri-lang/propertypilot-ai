@@ -9,6 +9,8 @@ import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkl
 import Link from "next/link";
 import { useLocaleContext } from "@/components/providers/locale-provider";
 
+export const dynamic = "force-static";
+
 interface DocSection {
   id: string;
   title: string;

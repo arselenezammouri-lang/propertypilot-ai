@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
         .from('profiles')
         .insert({
           id: user.id,
+          email: user.email ?? null,
           full_name: fullName || user.user_metadata?.full_name || null,
         });
 

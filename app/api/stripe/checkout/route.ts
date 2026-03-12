@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { supabaseService } from '@/lib/supabase/service';
 import { createCheckoutSession, getOrCreateCustomer, PLAN_TO_PRICE_ID } from '@/lib/stripe';
 import { z } from 'zod';
 
@@ -65,12 +66,27 @@ export async function POST(request: NextRequest) {
     }
     const plan = planRaw as 'STARTER' | 'PRO' | 'AGENCY';
 
-    // Recupera profilo utente
-    const { data: profile, error: profileError } = await supabase
+    // Recupera profilo utente; se manca, crealo con service role e riprova
+    let { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('email, full_name, stripe_customer_id')
       .eq('id', user.id)
       .single();
+
+    if (profileError || !profile) {
+      await supabaseService.from('profiles').upsert({
+        id: user.id,
+        email: user.email ?? undefined,
+        full_name: user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? null,
+      }, { onConflict: 'id' });
+      const { data: sub } = await supabaseService.from('subscriptions').select('id').eq('user_id', user.id).maybeSingle();
+      if (!sub) {
+        await supabaseService.from('subscriptions').insert({ user_id: user.id, status: 'free' });
+      }
+      const res = await supabase.from('profiles').select('email, full_name, stripe_customer_id').eq('id', user.id).single();
+      profile = res.data;
+      profileError = res.error;
+    }
 
     if (profileError || !profile) {
       return NextResponse.json(

@@ -219,6 +219,29 @@ export default function BillingPage() {
     );
   }
 
+  // Errore caricamento abbonamento: mostriamo piano Free e messaggio soft, senza bloccare
+  if (error && !subscription) {
+    return (
+      <div className="container max-w-6xl py-10 space-y-6">
+        <h1 className="text-4xl font-extrabold mb-3" data-testid="heading-billing">
+          {billingT.title} <span className="gradient-text-purple">{billingT.titleAccent}</span>
+        </h1>
+        <div className="futuristic-card p-6 border-orange-500/30 flex flex-col items-center justify-center min-h-[280px] gap-4">
+          <p className="text-muted-foreground text-center">
+            {locale === 'it' ? 'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.' : 'Unable to load subscription. Showing Free plan.'}
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] })}
+            variant="outline"
+            className="border-royal-purple/30"
+          >
+            {locale === 'it' ? 'Riprova' : 'Retry'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const getStatusBadge = () => {
     if (subscription?.cancel_at_period_end) {
       return <Badge variant="destructive" className="text-base px-4 py-1.5" data-testid="badge-status">{billingT.expiring}</Badge>;
