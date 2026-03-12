@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { 
   Hash, 
   Zap,
@@ -54,6 +55,7 @@ export default function HashtagsPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
     backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
@@ -214,7 +216,8 @@ export default function HashtagsPage() {
       setActiveTab("virali");
       toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      toast({ title: t.errorTitle, description: error instanceof Error ? error.message : t.errorGeneric, variant: "destructive" });
+      const friendly = handleAPIError(error, t.errorGeneric);
+      toast({ title: t.errorTitle, description: friendly, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

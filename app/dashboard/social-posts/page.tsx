@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
 import { 
   Home, 
   ArrowLeft, 
@@ -114,6 +115,7 @@ export default function SocialPostsPage() {
   const { toast } = useToast();
   const { theme, setTheme } = useTheme();
   const { locale } = useLocaleContext();
+  const { handleAPIError } = useAPIErrorHandler();
   const isItalian = locale === "it";
   const t = {
     generateError: isItalian ? "Errore nella generazione" : "Generation error",
@@ -212,9 +214,10 @@ export default function SocialPostsPage() {
       });
     },
     onError: (error: Error) => {
+      const friendly = handleAPIError(error, t.generateError);
       toast({
         title: t.errorTitle,
-        description: error.message,
+        description: friendly,
         variant: "destructive",
       });
     },
