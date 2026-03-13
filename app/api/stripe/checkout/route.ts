@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { supabaseService } from '@/lib/supabase/service';
 import { createCheckoutSession, getOrCreateCustomer, PLAN_TO_PRICE_ID } from '@/lib/stripe';
 import { z } from 'zod';
 
@@ -16,13 +15,14 @@ const VALID_PLANS = ['STARTER', 'PRO', 'AGENCY'] as const;
 async function createSessionForPlan(request: NextRequest, plan: 'STARTER' | 'PRO' | 'AGENCY') {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return { redirect: '/auth/login?redirect=' + encodeURIComponent(request.nextUrl.pathname + '?plan=' + plan) };
-  const { data: profile } = await supabase.from('profiles').select('email, full_name, stripe_customer_id').eq('id', user.id).single();
-  if (!profile) return { redirect: '/auth/signup?plan=' + plan };
-  const customer = await getOrCreateCustomer(user.id, profile.email || user.email || '', profile.full_name || undefined);
-  if (!profile.stripe_customer_id) {
-    await supabase.from('profiles').update({ stripe_customer_id: customer.id }).eq('id', user.id);
+  if (authError || !user) {
+    return { redirect: '/auth/login?redirect=' + encodeURIComponent(request.nextUrl.pathname + '?plan=' + plan) };
   }
+
+  const email = user.email || '';
+  const fullName = (user.user_metadata as any)?.full_name || undefined;
+
+  const customer = await getOrCreateCustomer(user.id, email, fullName);
   const priceId = PLAN_TO_PRICE_ID[plan];
   if (!priceId) return { redirect: '/pricing' };
   const session = await createCheckoutSession(
@@ -31,7 +31,7 @@ async function createSessionForPlan(request: NextRequest, plan: 'STARTER' | 'PRO
     user.id,
     `${request.nextUrl.origin}/dashboard?success=true`,
     `${request.nextUrl.origin}/dashboard?canceled=true`,
-    { plan, email: profile.email || user.email || '', paymentType: 'subscription' }
+    { plan, email, paymentType: 'subscription' }
   );
   return { url: session.url };
 }
@@ -66,49 +66,8 @@ export async function POST(request: NextRequest) {
     }
     const plan = planRaw as 'STARTER' | 'PRO' | 'AGENCY';
 
-    // Recupera profilo utente; se manca, crealo con service role e riprova
-    let { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('email, full_name, stripe_customer_id')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError || !profile) {
-      await supabaseService.from('profiles').upsert({
-        id: user.id,
-        email: user.email ?? undefined,
-        full_name: user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? null,
-      }, { onConflict: 'id' });
-      const { data: sub } = await supabaseService.from('subscriptions').select('id').eq('user_id', user.id).maybeSingle();
-      if (!sub) {
-        await supabaseService.from('subscriptions').insert({ user_id: user.id, status: 'free' });
-      }
-      const res = await supabase.from('profiles').select('email, full_name, stripe_customer_id').eq('id', user.id).single();
-      profile = res.data;
-      profileError = res.error;
-    }
-
-    if (profileError || !profile) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
-      );
-    }
-
-    // Ottieni o crea customer Stripe
-    const customer = await getOrCreateCustomer(
-      user.id,
-      profile.email || user.email || '',
-      profile.full_name || undefined
-    );
-
-    // Salva customer ID se non presente
-    if (!profile.stripe_customer_id) {
-      await supabase
-        .from('profiles')
-        .update({ stripe_customer_id: customer.id })
-        .eq('id', user.id);
-    }
+    const email = user.email || '';
+    const fullName = (user.user_metadata as any)?.full_name || undefined;
 
     // Ottieni Price ID
     const priceId = PLAN_TO_PRICE_ID[plan];
@@ -119,6 +78,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Ottieni o crea customer Stripe (non dipende più dalla tabella profiles)
+    const customer = await getOrCreateCustomer(
+      user.id,
+      email,
+      fullName
+    );
+
     // Crea checkout session
     const session = await createCheckoutSession(
       customer.id,
@@ -128,7 +94,7 @@ export async function POST(request: NextRequest) {
       `${request.nextUrl.origin}/dashboard?canceled=true`,
       {
         plan,
-        email: profile.email || user.email || '',
+        email,
         paymentType: 'subscription',
       }
     );
