@@ -5,7 +5,7 @@ import { scoreRealEstateLead, LeadScoreResult } from '@/lib/ai/leadScoring';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
 import { getAICacheService } from '@/lib/cache/ai-cache';
-import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
@@ -51,14 +51,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // STEP 0: Check PRO or AGENCY subscription (CRITICAL SECURITY CHECK)
-    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    // STEP 0: Check active subscription — Lead Scoring is available for Starter, Pro, Agency (per plan-features)
+    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
     if (!subscriptionCheck.allowed) {
       return NextResponse.json(
         { 
           success: false,
-          error: subscriptionCheck.error || 'Piano Premium richiesto',
-          message: subscriptionCheck.error || 'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.'
+          error: subscriptionCheck.error || 'Abbonamento attivo richiesto',
+          message: subscriptionCheck.error || 'Il Lead Scoring AI richiede un abbonamento attivo (Starter, Pro o Agency).'
         },
         { status: 403 }
       );

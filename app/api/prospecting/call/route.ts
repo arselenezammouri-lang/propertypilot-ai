@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { VOICE_CALLS_LIMIT_PRO } from '@/lib/utils/plan-features';
 import {
   createBlandAICall,
   generateProspectingCallScript,
@@ -11,6 +12,13 @@ import {
 import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
+
+function startOfMonth(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  return `${y}-${m}-01T00:00:00.000Z`;
+}
 
 const callRequestSchema = z.object({
   listing_id: z.string().uuid('ID listing non valido'),
@@ -44,6 +52,27 @@ export async function POST(request: NextRequest) {
         },
         { status: 403 }
       );
+    }
+
+    // Pro plan: limit 30 voice calls per month; Agency unlimited
+    if (subscriptionCheck.planType === 'pro') {
+      const start = startOfMonth();
+      const { count, error: countError } = await supabase
+        .from('external_listings')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('status', 'called')
+        .gte('updated_at', start);
+      if (!countError && (count ?? 0) >= VOICE_CALLS_LIMIT_PRO) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Limite chiamate Voice AI raggiunto',
+            message: `Hai raggiunto il limite di ${VOICE_CALLS_LIMIT_PRO} chiamate Voice AI al mese con il piano Pro. Passa ad Agency per chiamate illimitate.`,
+          },
+          { status: 403 }
+        );
+      }
     }
 
     const body = await request.json();

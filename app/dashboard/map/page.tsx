@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { useAPIErrorHandler } from "@/components/error-boundary";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -22,6 +22,7 @@ import {
   Clock,
   X,
   Loader2,
+  Lock,
 } from "lucide-react";
 import NextDynamic from "next/dynamic";
 import { analyzeUrgency } from "@/lib/ai/urgency-analysis";
@@ -82,6 +83,25 @@ export default function PredatorMapPage() {
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const { handleAPIError } = useAPIErrorHandler();
+  const [userPlan, setUserPlan] = useState<string>("free");
+  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+
+  useEffect(() => {
+    const fetchPlan = async () => {
+      try {
+        const res = await fetch("/api/user/subscription");
+        const data = await res.json();
+        if (data?.success && data?.data?.status) setUserPlan(data.data.status);
+      } catch {
+        setUserPlan("free");
+      } finally {
+        setIsLoadingPlan(false);
+      }
+    };
+    fetchPlan();
+  }, []);
+
+  const isMapLocked = userPlan !== "agency";
 
   // Mock geocoding - in produzione usare API reale (Google Maps, Mapbox, etc.)
   const geocodeLocation = async (location: string): Promise<{ lat: number; lng: number } | null> => {
@@ -153,8 +173,8 @@ export default function PredatorMapPage() {
   };
 
   useEffect(() => {
-    fetchListings();
-  }, []);
+    if (!isMapLocked) fetchListings();
+  }, [isMapLocked]);
 
   useEffect(() => {
     // Processa listings e crea markers
@@ -260,6 +280,53 @@ export default function PredatorMapPage() {
     if (!price) return 'N/A';
     return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
   };
+
+  if (isLoadingPlan) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-royal-purple" />
+      </div>
+    );
+  }
+
+  if (isMapLocked) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4">
+        <Card className="max-w-md border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-royal-purple/20">
+                <Lock className="h-8 w-8 text-royal-purple" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">
+                  {locale === "it" ? "Mappa Territorio AI" : "AI Territory Map"}
+                </CardTitle>
+                <CardDescription className="text-gray-400 mt-1">
+                  {locale === "it"
+                    ? "Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond."
+                    : "Available on Agency plan only. Unlock the map and all Diamond features."}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Link href="/dashboard/billing">
+              <Button className="w-full bg-gradient-to-r from-royal-purple to-sunset-gold hover:opacity-90">
+                {locale === "it" ? "Sblocca con Agency" : "Upgrade to Agency"}
+              </Button>
+            </Link>
+            <Link href="/dashboard/prospecting">
+              <Button variant="ghost" className="w-full mt-2 text-gray-400">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {locale === "it" ? "Torna al Prospecting" : "Back to Prospecting"}
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white relative">
