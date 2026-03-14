@@ -64,7 +64,8 @@ async function checkPage(page, path, opts = {}) {
 
   try {
     const waitUntil = opts.waitUntil ?? "networkidle";
-    const response = await page.goto(url, { waitUntil });
+    const timeout = opts.timeout ?? 30000;
+    const response = await page.goto(url, { waitUntil, timeout });
     const duration = Date.now() - start;
     const status = response?.status() ?? 0;
 
@@ -110,28 +111,41 @@ async function testAuth(page) {
     return false;
   }
 
-  // Pulisci il form
-  await page.goto(loginUrl, { waitUntil: "networkidle" });
+  // Pulisci il form e rifai login
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
+  await page.waitForSelector('[data-testid="input-email"]', { state: "visible", timeout: 8000 });
   await page.fill('[data-testid="input-email"]', TEST_EMAIL);
   await page.fill('[data-testid="input-password"]', TEST_PASSWORD);
   await page.click('[data-testid="button-login"]');
 
-  // Attendi la navigazione e la comparsa dell'header dashboard
-  await page.waitForTimeout(3000);
-  const headerLocator = page.locator('[data-testid="dashboard-header"]').first();
-  const headerVisible = await headerLocator.isVisible().catch(() => false);
-  return headerVisible;
+  // Attendi redirect a /dashboard (Supabase puo impiegare qualche secondo)
+  try {
+    await page.waitForURL(/\/dashboard/, { timeout: 20000 });
+  } catch (e) {
+    console.warn("Login: redirect a /dashboard non avvenuto in tempo. URL attuale:", page.url());
+    return false;
+  }
+
+  // Attendi che l'header della dashboard sia visibile (render client)
+  try {
+    await page.waitForSelector('[data-testid="dashboard-header"]', { state: "visible", timeout: 10000 });
+    return true;
+  } catch (e) {
+    console.warn("Login: header dashboard non visibile in tempo. URL:", page.url());
+    return false;
+  }
 }
 
 async function testAiFlow(page) {
-  // Usa API interno titles per non consumare troppi crediti
+  // Body richiesto da /api/generate-titles (schema TitlesRequestSchema)
   const ctx = page.request;
   const response = await ctx.post(`${BASE_URL}/api/generate-titles`, {
     data: {
-      locale: "en",
-      listingTitle: "Test Listing for Smoke Test",
-      propertyType: "apartment",
-      portal: "generic",
+      tipoTransazione: "vendita",
+      tipoImmobile: "appartamento",
+      localita: "Milano",
+      puntiChiave: "Appartamento centrale per smoke test, luminoso, zona servita.",
+      tono: "professionale",
     },
   });
 
@@ -177,8 +191,10 @@ async function main() {
     console.log("✅ Login riuscito, procedo con pagine dashboard e AI flow.");
 
     // 3) Pagine dashboard (solo se autenticato)
+    // /dashboard e /dashboard/autopilot non raggiungono networkidle -> usiamo "load"
     for (const path of DASHBOARD_PATHS) {
-      await checkPage(page, path);
+      const useLoad = path === "/dashboard" || path === "/dashboard/autopilot";
+      await checkPage(page, path, useLoad ? { waitUntil: "load", timeout: 35000 } : {});
     }
 
     // 4) AI flow test (API annunci)

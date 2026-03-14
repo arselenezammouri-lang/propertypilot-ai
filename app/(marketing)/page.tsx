@@ -49,14 +49,22 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import NextDynamic from "next/dynamic";
-import { InteractiveSearchHook } from "@/components/interactive-search-hook";
-import { SuccessStories } from "@/components/success-stories";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+
+const InteractiveSearchHook = NextDynamic(
+  () => import("@/components/interactive-search-hook").then((m) => ({ default: m.InteractiveSearchHook })),
+  { ssr: false, loading: () => <section className="py-16 min-h-[240px]" aria-hidden="true" /> }
+);
+
+const SuccessStories = NextDynamic(
+  () => import("@/components/success-stories").then((m) => ({ default: m.SuccessStories })),
+  { ssr: false, loading: () => <section className="py-24 min-h-[320px]" aria-hidden="true" /> }
+);
 
 const AriaCoach = NextDynamic(() => import("@/components/aria-coach").then((m) => ({ default: m.AriaCoach })), {
   ssr: false,
   loading: () => null,
 });
-import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency";
 import { Menu, X } from "lucide-react";
