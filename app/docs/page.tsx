@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export const dynamic = "force-static";
 
@@ -136,7 +136,7 @@ function getDocSections(it: boolean): DocSection[] {
 }
 
 export default function DocumentationPage() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -177,7 +177,7 @@ export default function DocumentationPage() {
   })).filter((section) => section.articles.length > 0);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <main id="main-content" className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
@@ -294,7 +294,7 @@ export default function DocumentationPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

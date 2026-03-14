@@ -1,7 +1,13 @@
 /**
  * 💎 PROPERTYPILOT AI - DIAMOND DESIGN SYSTEM
- * Design system centralizzato per garantire coerenza assoluta
- * Applicare questo file a TUTTE le pagine
+ * Design system centralizzato per garantire coerenza assoluta.
+ * Applicare questo file a TUTTE le pagine (import in app/layout.tsx).
+ *
+ * CONVENZIONI:
+ * - Per componenti e layout usare preferibilmente Tailwind + variabili globals
+ *   (globals.css + tailwind.config: bg-background, text-foreground, royal-purple, ecc.).
+ * - Le classi diamond-* (diamond-card, diamond-button-primary, diamond-border, ecc.)
+ *   sono per card/CTA premium e utility; usare dove serve uno stile distintivo.
  */
 
 /* ============================================
@@ -407,6 +413,49 @@ body {
 @keyframes diamond-shimmer {
   0% { left: -150%; }
   100% { left: 250%; }
+}
+
+/* ============================================
+   DASHBOARD - SEZIONI E CARD ARMONICHE
+   ============================================ */
+
+.dashboard-section {
+  margin-bottom: 2.5rem;
+}
+@media (min-width: 768px) {
+  .dashboard-section {
+    margin-bottom: 3.5rem;
+  }
+}
+
+.dashboard-card-row {
+  display: grid;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+@media (min-width: 768px) {
+  .dashboard-card-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.dashboard-card-equal {
+  min-height: 280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .dashboard-card-equal {
+    min-height: 320px;
+  }
+}
+
+/* Focus visible - accessibilità e keyboard */
+.diamond-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--diamond-black), 0 0 0 4px var(--diamond-purple);
 }
 
 /* 🤖 ARIA COACH BUTTON - Premium Floating */

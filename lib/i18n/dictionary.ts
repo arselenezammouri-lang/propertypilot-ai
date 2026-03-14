@@ -236,6 +236,20 @@ export interface TranslationDictionary {
     upgradeToPro: string;
     upgradeToAgency: string;
   };
+
+  /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
+  dashboardToasts: {
+    boostActivated: string;
+    boostDesc: string;
+    agencyActive: string;
+    agencyDesc: string;
+    paymentDone: string;
+    paymentDesc: string;
+    checkoutCanceled: string;
+    checkoutCanceledDesc: string;
+    limitNear: string;
+    limitNearDesc: string;
+  };
   
   // Landing Page
   landing: {
@@ -701,6 +715,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       switchToAgency: 'Passa a Agency',
       upgradeToPro: 'Upgrade a Pro',
       upgradeToAgency: 'Upgrade a Agency',
+    },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost attivato!',
+      boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Accesso Premium Confermato - Benvenuto nel Network Globale PropertyPilot!',
+      paymentDone: '✅ Pagamento completato!',
+      paymentDesc: 'Il tuo piano è stato attivato con successo.',
+      checkoutCanceled: 'Checkout annullato',
+      checkoutCanceledDesc: 'Puoi riprovare quando vuoi dalla pagina Billing.',
+      limitNear: '⚠️ Limite quasi raggiunto!',
+      limitNearDesc: 'Hai usato {used} dei tuoi {lim} annunci mensili (80%+). Considera un upgrade per continuare.',
     },
     landing: {
       nav: {
@@ -1174,6 +1200,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Upgrade to Pro',
       upgradeToAgency: 'Upgrade to Agency',
     },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+    },
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -1452,6 +1490,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Pasar a Starter',
       upgradeToPro: 'Pasar a Pro',
       upgradeToAgency: 'Pasar a Agency',
+    },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
     },
     auraVR: {
       title: 'Generador Aura VR',
@@ -1781,6 +1831,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Passer à Pro',
       upgradeToAgency: 'Passer à Agency',
     },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+    },
     auraVR: {
       title: 'Générateur Aura VR',
       subtitle: 'Transformez une vidéo smartphone en visite VR immersive 3D',
@@ -2108,6 +2170,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Auf Starter upgraden',
       upgradeToPro: 'Auf Pro upgraden',
       upgradeToAgency: 'Auf Agency upgraden',
+    },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -2439,6 +2513,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Mudar para Pro',
       upgradeToAgency: 'Mudar para Agency',
     },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+    },
     auraVR: {
       title: 'Gerador Aura VR',
       subtitle: 'Transforme um vídeo de smartphone em um tour VR imersivo 3D',
@@ -2558,6 +2644,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'الترقية إلى Starter',
       upgradeToPro: 'الترقية إلى Pro',
       upgradeToAgency: 'الترقية إلى Agency',
+    },
+    dashboardToasts: {
+      boostActivated: '🎉 Agency Boost Activated!',
+      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
+      agencyActive: '🎉 Agency Intelligence Active',
+      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
+      paymentDone: '✅ Payment completed!',
+      paymentDesc: 'Your plan has been activated successfully.',
+      checkoutCanceled: 'Checkout canceled',
+      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
+      limitNear: '⚠️ Limit almost reached!',
+      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
     },
     auraVR: {
       title: 'مولد Aura VR',

@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens principali: variabili qui sotto + theme in tailwind.config.ts.
+   design-system.css aggiunge palette "diamond" (--diamond-*) e utility; preferire
+   le classi Tailwind che usano queste variabili per coerenza. */
+
 @layer base {
   :root {
     /* 🎨 PROPERTYCOPY PRO - PREMIUM PALETTE LIGHT MODE */

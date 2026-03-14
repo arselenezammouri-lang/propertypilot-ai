@@ -422,7 +422,7 @@ export default function AgentBioPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="mb-4" data-testid="button-back">
+            <Button variant="ghost" size="sm" className="mb-4" data-testid="button-back" aria-label={t.back}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               {t.back}
             </Button>

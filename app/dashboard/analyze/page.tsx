@@ -234,7 +234,7 @@ export default function AnalyzePage() {
             <nav className="flex items-center space-x-2 md:space-x-4">
               <ThemeToggle />
               <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard">
+                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard" aria-label={t.back}>
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {t.back}
                 </Button>
@@ -244,7 +244,7 @@ export default function AnalyzePage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-10 md:mb-14 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
             {t.heroTitleLead} <span className="gradient-text-purple">{t.heroTitleAccent}</span>{t.heroTitleTail ? ` ${t.heroTitleTail}` : ""}
@@ -580,7 +580,7 @@ export default function AnalyzePage() {
             </Tabs>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

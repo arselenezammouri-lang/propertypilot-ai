@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { 
   ArrowLeft, 
   Users, 
@@ -55,7 +55,7 @@ function getScoreBadge(score: number | null): string {
 
 export default function PipelinePage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
 
@@ -251,7 +251,7 @@ export default function PipelinePage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back-dashboard">
+              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back-dashboard" aria-label="Back to dashboard">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>

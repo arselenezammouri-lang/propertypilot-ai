@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useAPIErrorHandler } from '@/components/error-boundary';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { useLocale } from '@/lib/i18n/locale-context';
 import type { Lead, LeadEnrichmentResult, LeadNote } from '@/lib/types/database.types';
 import CommunicationsHub from './CommunicationsHub';
 
@@ -37,7 +37,7 @@ const priorityColors: Record<string, string> = {
 function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isIt = locale === 'it';
 
   const handleCopy = async () => {
@@ -54,6 +54,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
       onClick={handleCopy}
       className="h-7 px-2 text-xs"
       data-testid={`copy-${label?.toLowerCase().replace(/\s/g, '-') || 'text'}`}
+      aria-label={copied ? (label ? `Copied: ${label}` : "Copied") : (label ? `Copy: ${label}` : "Copy")}
     >
       {copied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
     </Button>
@@ -89,7 +90,7 @@ function EnrichmentSection({
 export default function LeadDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
@@ -339,12 +340,13 @@ export default function LeadDetailPage() {
                 {/* Header */}
                 <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard/leads">
+            <Link href="/dashboard/leads" aria-label={t.backToList}>
               <Button
                 variant="ghost"
                 size="icon"
                 className="text-white hover:bg-white/10"
                 data-testid="button-back"
+                aria-label={t.backToList}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>

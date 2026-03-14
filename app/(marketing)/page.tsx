@@ -127,7 +127,7 @@ export default function PlatformPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-[#000000] text-white relative overflow-hidden font-sans ${currentLocale === "ar" ? "rtl" : "ltr"}`}>
+    <main id="main-content" className={`min-h-screen bg-[#000000] text-white relative overflow-hidden font-sans ${currentLocale === "ar" ? "rtl" : "ltr"}`}>
       {/* Mesh Gradient Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
@@ -1174,7 +1174,7 @@ export default function PlatformPage() {
           }
         }
       `}</style>
-    </div>
+    </main>
   );
 }
 

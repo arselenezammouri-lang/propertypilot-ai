@@ -8,14 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Mail, CheckCircle } from "lucide-react";
-
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://propertypilot-ai.vercel.app";
+import { getBaseUrl } from "@/lib/env";
 
 export default function ForgotPasswordPage() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -55,7 +54,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
-        redirectTo: `${APP_URL.replace(/\/$/, "")}/auth/reset-password`,
+        redirectTo: `${getBaseUrl().replace(/\/$/, "")}/auth/reset-password`,
       });
 
       if (error) throw error;
@@ -70,7 +69,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#000000] p-4 relative overflow-hidden">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-[#000000] p-4 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-[#06b6d4]/15 rounded-full blur-3xl" />
@@ -109,15 +108,17 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleReset} className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-white">{t.emailLabel}</Label>
+                  <Label htmlFor="forgot-email" className="text-white">{t.emailLabel}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
+                      id="forgot-email"
                       type="email"
                       placeholder={t.emailPlaceholder}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      autoComplete="email"
                       className="pl-10 bg-white/5 border-white/10 text-white"
                     />
                   </div>
@@ -130,6 +131,6 @@ export default function ForgotPasswordPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }

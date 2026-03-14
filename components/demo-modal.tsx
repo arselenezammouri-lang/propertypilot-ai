@@ -105,11 +105,11 @@ export function DemoModal() {
   return (
     <>
       {/* Fixed Button - Bottom Right - Responsive positioning */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 animate-fade-in-up" suppressHydrationWarning>
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[45] animate-fade-in-up" suppressHydrationWarning>
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button
-              className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+              className="group relative overflow-hidden bg-gradient-to-r from-electric-blue via-royal-purple to-sunset-gold text-white font-bold px-4 py-4 sm:px-6 sm:py-6 rounded-full shadow-2xl hover:scale-105 transition-all duration-300 text-sm sm:text-base focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black min-h-[44px]"
               size="lg"
               data-testid="button-demo-modal-trigger"
               aria-label={labels.openModal}

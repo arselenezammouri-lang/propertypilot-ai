@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { checkUserRateLimit } from '@/lib/utils/rate-limit';
 import type { Automation, InsertAutomation, AutomationType, AutomationRepeatInterval } from '@/lib/types/database.types';
@@ -72,15 +72,9 @@ function calculateNextRun(type: AutomationType, payload: any, repeatInterval: Au
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Non autorizzato. Effettua il login.' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // Check PRO or AGENCY subscription (Automazioni AI is a premium feature)
     const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
@@ -135,15 +129,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Non autorizzato. Effettua il login.' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // Check PRO or AGENCY subscription (Automazioni AI is a premium feature)
     const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);

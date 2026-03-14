@@ -129,6 +129,21 @@ if (req4.missing.length === 0 && req4.placeholders.length === 0) {
   console.log('✅ OpenAI');
 }
 
+// Stripe Price IDs (optional but recommended – checkout fails without them)
+const STRIPE_PRICE_IDS = [
+  'NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID',
+  'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID',
+  'NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID',
+  'NEXT_PUBLIC_STRIPE_AGENCY_BOOST_PRICE_ID',
+];
+const missingPriceIds = STRIPE_PRICE_IDS.filter(key => !process.env[key] || isPlaceholder(process.env[key]));
+if (missingPriceIds.length > 0) {
+  console.log('\n⚠️  Stripe Price IDs: missing or placeholder – checkout may not work');
+  missingPriceIds.forEach(key => console.log(`   - ${key}`));
+} else {
+  console.log('✅ Stripe Price IDs (Starter, Pro, Agency, Agency Boost)');
+}
+
 // Optional but recommended
 const optional = ['CONTACT_EMAIL', 'ADMIN_FORCE_LOGIN_SECRET', 'GOOGLE_CLIENT_ID'];
 optional.forEach(key => {

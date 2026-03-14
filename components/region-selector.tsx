@@ -38,7 +38,8 @@ export function RegionSelector() {
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all"
+          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          aria-label={`Region: ${currentOption.label}. Open to change.`}
         >
           <span className="text-lg">{currentOption.flag}</span>
           <span className="text-xs font-medium hidden sm:inline">{config.currencySymbol}</span>

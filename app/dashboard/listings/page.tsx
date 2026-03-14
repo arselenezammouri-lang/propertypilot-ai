@@ -6,22 +6,34 @@ import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { SavedListing } from '@/lib/types/database.types';
+import { fetchApi } from '@/lib/api/client';
 import { format } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TableSkeleton } from '@/components/ui/skeleton-loaders';
 
 export default function ListingsPage() {
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const queryClient = useQueryClient();
   const [selectedListing, setSelectedListing] = useState<SavedListing | null>(null);
+  const [listingToDelete, setListingToDelete] = useState<SavedListing | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
 
   const t = {
@@ -59,6 +71,11 @@ export default function ListingsPage() {
     regenerating: isItalian ? "Rigenerazione..." : "Regenerating...",
     regenerate: isItalian ? "Rigenera Contenuto" : "Regenerate Content",
     delete: isItalian ? "Elimina" : "Delete",
+    deleteConfirmTitle: isItalian ? "Elimina annuncio?" : "Delete listing?",
+    deleteConfirmDesc: isItalian
+      ? "L'annuncio verrà rimosso dalla libreria. Questa azione non può essere annullata."
+      : "The listing will be removed from your library. This action cannot be undone.",
+    deleting: isItalian ? "Eliminazione..." : "Deleting...",
   };
 
   const { data: listingsData, isLoading, error } = useQuery<{ success: boolean; data: SavedListing[] }>({
@@ -73,12 +90,9 @@ export default function ListingsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/listings?id=${id}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      const res = await fetchApi<unknown>(`/api/listings?id=${id}`, { method: 'DELETE' });
+      if (!res.success) throw new Error(res.message || res.error || 'Delete failed');
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
@@ -88,6 +102,7 @@ export default function ListingsPage() {
         duration: 5000,
       });
       setSelectedListing(null);
+      setListingToDelete(null);
     },
     onError: (error: Error) => {
       toast({
@@ -101,20 +116,18 @@ export default function ListingsPage() {
 
   const regenerateMutation = useMutation({
     mutationFn: async (listing: SavedListing) => {
-      const response = await fetch('/api/generate-comprehensive', {
+      const res = await fetchApi<{ data: SavedListing['generated_content'] }>('/api/generate-comprehensive', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(listing.property_data),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      if (!res.success) throw new Error(res.message || res.error || 'Regenerate failed');
+      return res;
     },
-    onSuccess: (data, listing) => {
-      if (selectedListing && selectedListing.id === listing.id) {
+    onSuccess: (res, listing) => {
+      if (selectedListing && selectedListing.id === listing.id && res.data != null) {
         setSelectedListing({
           ...selectedListing,
-          generated_content: data.data,
+          generated_content: res.data,
         });
       }
       
@@ -401,7 +414,7 @@ export default function ListingsPage() {
                     )}
                   </Button>
                   <Button
-                    onClick={() => deleteMutation.mutate(selectedListing.id)}
+                    onClick={() => setListingToDelete(selectedListing)}
                     disabled={deleteMutation.isPending}
                     data-testid="button-delete"
                     variant="destructive"
@@ -419,6 +432,36 @@ export default function ListingsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!listingToDelete} onOpenChange={(open) => !open && setListingToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.deleteConfirmDesc}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>{isItalian ? "Annulla" : "Cancel"}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                if (listingToDelete) deleteMutation.mutate(listingToDelete.id);
+              }}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="button-confirm-delete-listing"
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              {deleteMutation.isPending ? t.deleting : t.delete}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { PropertyCategory } from "@/lib/utils/property-category";
+import { fetchApi } from "@/lib/api/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,7 +77,7 @@ import {
   Zap,
   Send,
 } from "lucide-react";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
 import { maskPhone, maskName } from "@/lib/utils/pii-mask";
 import NextDynamic from "next/dynamic";
@@ -191,7 +192,7 @@ const platformConfig: Record<string, { label: string; emoji: string }> = {
 
 export default function ProspectingPage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
   const statusConfig = getStatusConfig(isItalian);
@@ -339,15 +340,12 @@ export default function ProspectingPage() {
       if (platformFilter !== "all") params.append("platform", platformFilter);
       if (locationSearch) params.append("location", locationSearch);
 
-      const response = await fetch(`/api/prospecting/listings?${params.toString()}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setListings(data.data || []);
-      } else {
-        throw new Error(data.error || t.loadError);
+      const res = await fetchApi<ExternalListing[]>(`/api/prospecting/listings?${params.toString()}`);
+      if (!res.success) {
+        throw new Error(res.error || res.message || t.loadError);
       }
-    } catch (error: any) {
+      setListings(res.data ?? []);
+    } catch (error: unknown) {
       const friendly = handleAPIError(error, t.loadError);
       toast({
         title: t.errorTitle,
@@ -361,11 +359,9 @@ export default function ProspectingPage() {
 
   const fetchFilters = async () => {
     try {
-      const response = await fetch('/api/prospecting/filters');
-      const data = await response.json();
-
-      if (data.success) {
-        setFilters(data.data || []);
+      const res = await fetchApi<ProspectingFilter[]>('/api/prospecting/filters');
+      if (res.success && res.data != null) {
+        setFilters(Array.isArray(res.data) ? res.data : []);
       }
     } catch (error) {
       console.error('Error fetching filters:', error);
@@ -373,65 +369,43 @@ export default function ProspectingPage() {
   };
 
   const fetchStats = async () => {
-    // Only fetch stats for PRO/AGENCY users
-    if (userPlan !== 'pro' && userPlan !== 'agency') {
-      return;
-    }
-    
+    if (userPlan !== 'pro' && userPlan !== 'agency') return;
     try {
-      const response = await fetch('/api/prospecting/stats');
-      const data = await response.json();
-
-      if (data.success) {
-        setStats(data.data);
-      } else if (response.status === 403) {
-        // 403 is expected for FREE users, silently ignore
-        // Stats not available for current plan - expected for free users
+      const res = await fetchApi<ProspectingStats>('/api/prospecting/stats');
+      if (res.success && res.data != null) {
+        setStats(res.data as ProspectingStats);
       }
     } catch (error) {
-      // Only log if it's not a 403 (expected for FREE users)
       if (error instanceof Error && !error.message.includes('403')) {
-      console.error('Error fetching stats:', error);
+        console.error('Error fetching stats:', error);
       }
     }
   };
 
   const fetchUserSubscription = async () => {
     try {
-      const response = await fetch('/api/user/subscription');
-      const data = await response.json();
+      const res = await fetchApi<{ status?: string }>('/api/user/subscription');
+      if (!res.success || !res.data) return;
+      const plan = (res.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
+      setUserPlan(plan);
 
-      if (data.success && data.data) {
-        const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-        setUserPlan(plan);
-
-        // Calcola chiamate rimanenti per piano PRO (30/mese) - solo se PRO/AGENCY
-        if (plan === 'pro') {
-          const now = new Date();
-          const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-          
-          // Conta chiamate effettuate questo mese
-          try {
-          const callsResponse = await fetch(`/api/prospecting/stats?month_start=${monthStart.toISOString()}`);
-          const callsData = await callsResponse.json();
-          const callsUsed = callsData.success ? (callsData.data?.calls_this_month || 0) : 0;
-          
+      if (plan === 'pro') {
+        const now = new Date();
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        try {
+          const callsRes = await fetchApi<{ calls_this_month?: number }>(`/api/prospecting/stats?month_start=${monthStart.toISOString()}`);
+          const callsUsed = callsRes.success && callsRes.data ? (callsRes.data.calls_this_month ?? 0) : 0;
           setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
-          } catch (statsError) {
-            // Ignore stats errors for subscription fetch
-            // Stats fetch failed - use default value
-            setVoiceCallsRemaining(30);
-          }
-        } else if (plan === 'agency') {
-          setVoiceCallsRemaining(-1); // Illimitato
-        } else {
-          setVoiceCallsRemaining(0); // FREE/STARTER non hanno chiamate
+        } catch {
+          setVoiceCallsRemaining(30);
         }
-        
-        // After setting plan, fetch stats if PRO/AGENCY
-        if (plan === 'pro' || plan === 'agency') {
-          fetchStats();
-        }
+      } else if (plan === 'agency') {
+        setVoiceCallsRemaining(-1);
+      } else {
+        setVoiceCallsRemaining(0);
+      }
+      if (plan === 'pro' || plan === 'agency') {
+        fetchStats();
       }
     } catch (error) {
       console.error('Error fetching subscription:', error);
@@ -478,44 +452,37 @@ export default function ProspectingPage() {
   const handleCall = async (listingId: string) => {
     setCallingListingId(listingId);
     try {
-      const response = await fetch('/api/prospecting/call', {
+      const res = await fetchApi<unknown>('/api/prospecting/call', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ listing_id: listingId }),
       });
-
-      const data = await response.json();
-
-      // If 403, update user plan and show error
-      if (response.status === 403) {
-        setUserPlan('free');
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumCallDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumCallDesc,
+          title: t.errorTitle,
+          description: res.error || res.message || t.callError,
           variant: "destructive",
         });
         return;
       }
-
-      if (data.success) {
-        toast({
-          title: t.callStarted,
-          description: t.callStartedDesc,
-        });
-        addLiveFeedItem(`🤖 AI sta chiamando il proprietario di "${selectedListing?.title || 'un immobile'}" a ${selectedListing?.location || 'N/A'}`, 'info');
-        // Ricarica lista e stats dopo un breve delay
-        setTimeout(() => {
-          fetchListings();
-          fetchStats();
-          fetchUserSubscription();
-        }, 2000);
-      } else {
-        toast({
-          title: t.errorTitle,
-          description: data.error || data.message || t.callError,
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: t.callStarted,
+        description: t.callStartedDesc,
+      });
+      addLiveFeedItem(`🤖 AI sta chiamando il proprietario di "${selectedListing?.title || 'un immobile'}" a ${selectedListing?.location || 'N/A'}`, 'info');
+      setTimeout(() => {
+        fetchListings();
+        fetchStats();
+        fetchUserSubscription();
+      }, 2000);
     } catch (error) {
       toast({
         title: t.errorTitle,
@@ -561,18 +528,14 @@ export default function ProspectingPage() {
 
   const handleToggleAutoRun = async (filterId: string, currentValue: boolean) => {
     try {
-      const response = await fetch('/api/prospecting/filters', {
+      const res = await fetchApi<unknown>('/api/prospecting/filters', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: filterId,
           auto_run: !currentValue,
         }),
       });
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.success) {
         fetchFilters();
         toast({
           title: t.autoRunUpdated,
@@ -581,7 +544,7 @@ export default function ProspectingPage() {
       } else {
         toast({
           title: t.errorTitle,
-          description: data.error || t.autoRunError,
+          description: res.error || res.message || t.autoRunError,
           variant: "destructive",
         });
       }
@@ -709,7 +672,7 @@ export default function ProspectingPage() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label={locale === "it" ? "Indietro" : "Back"}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -861,7 +824,7 @@ export default function ProspectingPage() {
                               <span className="text-sm font-medium">{filter.name}</span>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6">
+                                  <Button variant="ghost" size="icon" className="h-6 w-6" aria-label="More options">
                                     <MoreHorizontal className="h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
@@ -1161,12 +1124,11 @@ export default function ProspectingPage() {
                                   value={listing.status}
                                   onValueChange={async (newStatus) => {
                                     try {
-                                      const response = await fetch(`/api/prospecting/listings/${listing.id}`, {
+                                      const res = await fetchApi<unknown>(`/api/prospecting/listings/${listing.id}`, {
                                         method: 'PATCH',
-                                        headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ status: newStatus }),
                                       });
-                                        if (response.ok) {
+                                      if (res.success) {
                                         fetchListings();
                                         toast({
                                           title: t.statusUpdated,

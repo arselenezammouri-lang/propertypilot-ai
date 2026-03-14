@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { getAppUrl } from '@/lib/env';
 import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { nanoid } from 'nanoid';
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
+    const appUrl = getAppUrl(request);
     const referralLink = `${appUrl}/auth/signup?ref=${referralCode}`;
 
     return NextResponse.json({

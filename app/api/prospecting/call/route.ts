@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { VOICE_CALLS_LIMIT_PRO } from '@/lib/utils/plan-features';
 import {
@@ -10,6 +10,7 @@ import {
   analyzeCallOutcome,
 } from '@/lib/ai/voice-agent';
 import { logger } from '@/lib/utils/safe-logger';
+import { getAppUrl } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,15 +32,9 @@ const callRequestSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { success: false, error: 'Non autenticato' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // Check PRO or AGENCY subscription
     const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
@@ -142,7 +137,7 @@ export async function POST(request: NextRequest) {
 
     // Costruisci webhook URL per callback (se non fornito)
     // IMPORTANTE: Includi listing_id nei metadata per il webhook
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+    const baseUrl = getAppUrl(request);
     const callbackWebhook = webhook_url || `${baseUrl}/api/prospecting/call/webhook?listing_id=${listing_id}`;
 
     try {

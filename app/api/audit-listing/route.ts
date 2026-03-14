@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { auditListing, AuditOptions, AuditResult } from '@/lib/ai/auditListing';
@@ -46,15 +46,9 @@ export async function POST(request: NextRequest) {
 
     const { text, url, imageUrl, mercato, obiettivo } = validationResult.data;
 
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { success: false, error: 'Non autenticato' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // Check PRO or AGENCY subscription (Audit Immobiliare AI is a premium feature)
     const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);

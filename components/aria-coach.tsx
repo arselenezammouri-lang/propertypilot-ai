@@ -492,6 +492,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                 size="icon"
                 onClick={() => setIsMinimized(!isMinimized)}
                 className="h-7 w-7 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                aria-label={isMinimized ? "Restore Aria" : "Minimize Aria"}
               >
                 {isMinimized ? <Maximize2 className="h-3.5 w-3.5" /> : <Minimize2 className="h-3.5 w-3.5" />}
               </Button>
@@ -500,6 +501,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
                 size="icon"
                 onClick={() => setIsOpen(false)}
                 className="h-7 w-7 text-cyan-500/70 hover:text-cyan-400 hover:bg-cyan-500/10"
+                aria-label="Close Aria"
               >
                 <X className="h-3.5 w-3.5" />
               </Button>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { useLocale } from '@/lib/i18n/locale-context';
 import Link from 'next/link';
 import { ArrowLeft, Globe, Languages, Sparkles, Copy, Check, Loader2, BookOpen, Lightbulb, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ interface TranslationResult {
 }
 
 export default function TranslatePage() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
 
   const t = {
@@ -197,7 +197,7 @@ export default function TranslatePage() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back">
+              <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back" aria-label="Back to dashboard">
                 <ArrowLeft className="h-4 w-4" />
                 Dashboard
               </Button>
@@ -221,7 +221,7 @@ export default function TranslatePage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <Card className="border-slate-200/50 dark:border-slate-800/50 shadow-lg" data-testid="card-form">
@@ -589,7 +589,7 @@ export default function TranslatePage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

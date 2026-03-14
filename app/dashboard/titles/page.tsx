@@ -344,6 +344,7 @@ export default function TitlesPage() {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="rounded-full"
               data-testid="button-theme-toggle"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
@@ -352,6 +353,7 @@ export default function TitlesPage() {
               onClick={() => router.push("/dashboard")}
               className="gap-2"
               data-testid="button-back-dashboard"
+              aria-label={t.backToDashboard}
             >
               <ArrowLeft className="h-4 w-4" />
               {t.backToDashboard}
@@ -360,7 +362,7 @@ export default function TitlesPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-4xl font-bold">
@@ -662,7 +664,7 @@ export default function TitlesPage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -23,7 +23,8 @@ import {
   Settings,
   AlertTriangle,
   Copy,
-  Check
+  Check,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -39,7 +40,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { DashboardCardSkeleton, ListSkeleton } from '@/components/ui/skeleton-loaders';
 import { useToast } from '@/hooks/use-toast';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { fetchApi } from '@/lib/api/client';
+import { useLocale } from '@/lib/i18n/locale-context';
 import type { 
   AutomationRule, 
   AutomationTriggerType, 
@@ -74,7 +76,7 @@ const initialFormData: RuleFormData = {
 
 export default function AutomationCenterPage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
 
@@ -199,6 +201,7 @@ export default function AutomationCenterPage() {
   const [logs, setLogs] = useState<AutomationLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('rules');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingRule, setEditingRule] = useState<AutomationRule | null>(null);
@@ -212,10 +215,9 @@ export default function AutomationCenterPage() {
 
   const fetchRules = async () => {
     try {
-      const res = await fetch('/api/automations/rules');
-      if (res.ok) {
-        const data = await res.json();
-        setRules(data.rules || []);
+      const res = await fetchApi<{ rules?: AutomationRule[] }>('/api/automations/rules');
+      if (res.success && res.data != null) {
+        setRules((res.data.rules ?? []) as AutomationRule[]);
       }
     } catch (error) {
       console.error('Error fetching rules:', error);
@@ -226,10 +228,9 @@ export default function AutomationCenterPage() {
 
   const fetchLogs = async () => {
     try {
-      const res = await fetch('/api/automations/execute-rule?limit=50');
-      if (res.ok) {
-        const data = await res.json();
-        setLogs(data.logs || []);
+      const res = await fetchApi<{ logs?: unknown[] }>('/api/automations/execute-rule?limit=50');
+      if (res.success && res.data != null) {
+        setLogs(res.data.logs ?? []);
       }
     } catch (error) {
       console.error('Error fetching logs:', error);
@@ -260,21 +261,18 @@ export default function AutomationCenterPage() {
         is_active: true
       };
 
-      const res = await fetch('/api/automations/rules', {
+      const res = await fetchApi<{ message?: string }>('/api/automations/rules', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        toast({ title: t.successTitle, description: data.message });
+      if (res.success) {
+        toast({ title: t.successTitle, description: res.data?.message });
         setShowCreateDialog(false);
         setFormData(initialFormData);
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: t.errorTitle, description: t.createError, variant: 'destructive' });
@@ -285,19 +283,15 @@ export default function AutomationCenterPage() {
 
   const handleUpdateRule = async (ruleId: string, updates: Partial<AutomationRule>) => {
     try {
-      const res = await fetch('/api/automations/rules', {
+      const res = await fetchApi<{ message?: string }>('/api/automations/rules', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: ruleId, ...updates })
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast({ title: t.successTitle, description: data.message });
+      if (res.success) {
+        toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: t.errorTitle, description: t.updateError, variant: 'destructive' });
@@ -306,22 +300,19 @@ export default function AutomationCenterPage() {
 
   const handleDeleteRule = async (ruleId: string) => {
     if (!confirm(t.deleteConfirm)) return;
-
+    setDeletingRuleId(ruleId);
     try {
-      const res = await fetch(`/api/automations/rules?id=${ruleId}`, {
-        method: 'DELETE'
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast({ title: t.successTitle, description: data.message });
+      const res = await fetchApi<{ message?: string }>(`/api/automations/rules?id=${ruleId}`, { method: 'DELETE' });
+      if (res.success) {
+        toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: data.error, variant: 'destructive' });
+        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
       }
     } catch (error) {
       toast({ title: t.errorTitle, description: t.deleteError, variant: 'destructive' });
+    } finally {
+      setDeletingRuleId(null);
     }
   };
 
@@ -404,6 +395,7 @@ export default function AutomationCenterPage() {
               onClick={() => router.push('/dashboard')}
               className="text-white/70 hover:text-white hover:bg-white/10"
               data-testid="button-back"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -825,6 +817,7 @@ export default function AutomationCenterPage() {
                             onClick={() => toggleRuleExpanded(rule.id)}
                             className="text-white/50 hover:text-white hover:bg-white/10"
                             data-testid={`button-expand-rule-${rule.id}`}
+                            aria-label={expandedRules.has(rule.id) ? "Collapse rule" : "Expand rule"}
                           >
                             {expandedRules.has(rule.id) ? (
                               <ChevronUp className="h-4 w-4" />
@@ -841,10 +834,16 @@ export default function AutomationCenterPage() {
                             variant="ghost"
                             size="icon"
                             onClick={() => handleDeleteRule(rule.id)}
+                            disabled={deletingRuleId !== null}
                             className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                             data-testid={`button-delete-rule-${rule.id}`}
+                            aria-label="Delete rule"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {deletingRuleId === rule.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </div>
                       </div>

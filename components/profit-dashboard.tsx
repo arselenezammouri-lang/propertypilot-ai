@@ -15,7 +15,7 @@ interface ProfitStats {
 }
 
 export function ProfitDashboard() {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const [stats, setStats] = useState<ProfitStats>({
     hoursSaved: 0,
     valueGenerated: 0,
@@ -96,7 +96,7 @@ export function ProfitDashboard() {
   }
 
   return (
-    <Card className="glass border-white/10 overflow-hidden relative">
+    <Card className="h-full flex flex-col futuristic-card border-white/[0.08] overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-br from-neon-aqua/5 via-transparent to-electric-blue/5 pointer-events-none" />
       
       <CardHeader className="relative pb-2">
@@ -106,7 +106,7 @@ export function ProfitDashboard() {
         </div>
       </CardHeader>
       
-      <CardContent className="relative">
+      <CardContent className="relative flex-1 flex flex-col">
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-gradient-to-br from-neon-aqua/10 to-transparent border border-neon-aqua/20">
             <div className="flex items-center gap-2 mb-2">
@@ -128,10 +128,10 @@ export function ProfitDashboard() {
               <span className="text-xs text-silver-frost/60 uppercase tracking-wide">{t.valueGenerated}</span>
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-bold text-white">{formatCurrencyForLocale(stats.valueGenerated, locale as Locale)}</span>
+              <span className="text-3xl font-bold text-white">{formatCurrencyForLocale(stats.valueGenerated, locale as Locale, currency)}</span>
             </div>
             <p className="text-xs text-silver-frost/50 mt-1">
-              {formatCurrencyForLocale(25, locale as Locale)}/{t.estimatedValue}
+              {formatCurrencyForLocale(25, locale as Locale, currency)}/{t.estimatedValue}
             </p>
           </div>
         </div>

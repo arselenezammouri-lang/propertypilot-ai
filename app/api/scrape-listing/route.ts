@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, ScraperBlockedError, isScraperBlockedError } from '@/lib/errors/api-errors';
@@ -12,16 +12,9 @@ const SCRAPER_RATE_LIMIT_PER_MINUTE = 10;
 
 export async function POST(request: NextRequest) {
   try {
-    // STEP 1: Authentication
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user } = auth;
 
     // STEP 2: Rate limiting - User (10/min)
     const userRateLimit = await checkUserRateLimit(user.id);

@@ -128,6 +128,7 @@ export function WelcomeTour() {
               size="icon"
               onClick={handleClose}
               className="text-gray-400 hover:text-white"
+              aria-label="Close"
             >
               <X className="h-5 w-5" />
             </Button>

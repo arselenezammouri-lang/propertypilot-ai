@@ -99,7 +99,7 @@ export default function DemoPage() {
       ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <main id="main-content" className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -381,6 +381,6 @@ export default function DemoPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }

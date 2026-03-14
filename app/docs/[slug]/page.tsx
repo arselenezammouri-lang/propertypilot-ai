@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Book } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 // Mock content - in produzione: CMS o file markdown
 const docContent: Record<string, { title: string; content: string }> = {
@@ -102,7 +102,7 @@ Uno script efficace può trasformare una chiamata in un mandato.
 
 export default function DocArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
   const slug = Array.isArray(resolvedParams.slug) 
     ? resolvedParams.slug.join('/') 
@@ -115,7 +115,7 @@ export default function DocArticlePage({ params }: { params: Promise<{ slug: str
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <main id="main-content" className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}
         <Link href="/docs">
@@ -140,7 +140,7 @@ export default function DocArticlePage({ params }: { params: Promise<{ slug: str
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }
 

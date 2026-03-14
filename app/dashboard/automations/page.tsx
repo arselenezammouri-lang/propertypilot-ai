@@ -422,7 +422,7 @@ export default function AutomationsPage() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm" data-testid="button-back">
+                <Button variant="ghost" size="sm" data-testid="button-back" aria-label="Back to dashboard">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   {t.dashboard}
                 </Button>
@@ -723,7 +723,7 @@ export default function AutomationsPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProFeaturePaywall
           title={t.paywallTitle}
           description={t.paywallDescription}
@@ -861,7 +861,7 @@ export default function AutomationsPage() {
           </CardContent>
         </Card>
         </ProFeaturePaywall>
-      </main>
+      </div>
 
       <Dialog open={resultDialog.open} onOpenChange={(open) => setResultDialog({ open, result: null })}>
         <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">

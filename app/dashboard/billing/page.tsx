@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Calendar, AlertCircle, Check, ExternalLink, Crown, Zap, Sparkles, TrendingUp, Shield, Rocket, Building2, Gift } from 'lucide-react';
 import { Subscription, SubscriptionStatus } from '@/lib/types/database.types';
+import { fetchApi } from '@/lib/api/client';
 import { STRIPE_PLANS, STRIPE_ONE_TIME_PACKAGES, PlanType } from '@/lib/stripe/config';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 import { getTranslation, SupportedLocale } from '@/lib/i18n/dictionary';
@@ -15,7 +16,7 @@ import { Locale } from '@/lib/i18n/config';
 export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const translation = getTranslation(locale as SupportedLocale);
   const billingT = translation.billing;
 
@@ -40,7 +41,7 @@ export default function BillingPage() {
   };
   const planConfig = currentPlan ? STRIPE_PLANS[currentPlan] : freePlanConfig;
   const formatPlanPrice = (amount: number) =>
-    `${formatCurrencyForLocale(amount, locale as Locale)}${billingT.perMonth}`;
+    `${formatCurrencyForLocale(amount, locale as Locale, currency)}${billingT.perMonth}`;
 
   if (error && !subscription) {
     console.warn('[BILLING] Subscription fetch failed, showing default Free plan:', error);
@@ -48,12 +49,9 @@ export default function BillingPage() {
 
   const cancelMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/stripe/cancel-subscription', {
-        method: 'POST',
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      const res = await fetchApi<{ message?: string }>('/api/stripe/cancel-subscription', { method: 'POST' });
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] });
@@ -75,12 +73,9 @@ export default function BillingPage() {
 
   const reactivateMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/stripe/reactivate-subscription', {
-        method: 'POST',
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      const res = await fetchApi<{ message?: string }>('/api/stripe/reactivate-subscription', { method: 'POST' });
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] });
@@ -102,15 +97,12 @@ export default function BillingPage() {
 
   const portalMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/stripe/portal', {
-        method: 'POST',
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      const res = await fetchApi<{ url?: string }>('/api/stripe/portal', { method: 'POST' });
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data) => {
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       }
     },
@@ -126,21 +118,18 @@ export default function BillingPage() {
 
   const checkoutMutation = useMutation({
     mutationFn: async (planType: SubscriptionStatus) => {
-      const response = await fetch('/api/stripe/checkout', {
+      const res = await fetchApi<{ url?: string }>('/api/stripe/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planType }),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data, variables) => {
-      // Salva il piano in localStorage per mostrare il messaggio corretto dopo il checkout
       if (variables === 'agency') {
         localStorage.setItem('upgradedPlan', 'agency');
       }
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       }
     },
@@ -156,19 +145,17 @@ export default function BillingPage() {
 
   const upgradeMutation = useMutation({
     mutationFn: async (planType: SubscriptionStatus) => {
-      const response = await fetch('/api/stripe/upgrade', {
+      const res = await fetchApi<{ isUpgrade?: boolean; message?: string }>('/api/stripe/upgrade', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planType }),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data) => {
       toast({
-        title: data.isUpgrade ? billingT.completedUpgradeTitle : billingT.changedPlanTitle,
-        description: `${data.message} ${billingT.reloadMessage}`,
+        title: data?.isUpgrade ? billingT.completedUpgradeTitle : billingT.changedPlanTitle,
+        description: `${data?.message ?? ''} ${billingT.reloadMessage}`,
         duration: 3000,
       });
       setTimeout(() => {
@@ -187,17 +174,15 @@ export default function BillingPage() {
 
   const boostCheckoutMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/stripe/checkout-oneshot', {
+      const res = await fetchApi<{ url?: string }>('/api/stripe/checkout-oneshot', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ packageId: 'boost' }),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
-      return result;
+      if (!res.success) throw new Error(res.message || res.error);
+      return res.data ?? {};
     },
     onSuccess: (data) => {
-      if (data.url) {
+      if (data?.url) {
         window.location.href = data.url;
       }
     },
@@ -397,7 +382,7 @@ export default function BillingPage() {
                   ) : (
                     <Rocket className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.switchToStarter} {formatCurrencyForLocale(197, locale as Locale)}
+                  {billingT.switchToStarter} {formatCurrencyForLocale(197, locale as Locale, currency)}
                 </Button>
                 <Button
                   onClick={() => checkoutMutation.mutate('pro')}
@@ -410,7 +395,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.switchToPro} {formatCurrencyForLocale(497, locale as Locale)}
+                  {billingT.switchToPro} {formatCurrencyForLocale(497, locale as Locale, currency)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -425,7 +410,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.switchToAgency} {formatCurrencyForLocale(897, locale as Locale)}
+                  {billingT.switchToAgency} {formatCurrencyForLocale(897, locale as Locale, currency)}
                 </Button>
               </>
             )}
@@ -443,7 +428,7 @@ export default function BillingPage() {
                   ) : (
                     <Zap className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.upgradeToPro} {formatCurrencyForLocale(497, locale as Locale)}
+                  {billingT.upgradeToPro} {formatCurrencyForLocale(497, locale as Locale, currency)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
                 <Button
@@ -458,7 +443,7 @@ export default function BillingPage() {
                   ) : (
                     <Building2 className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale)}
+                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale, currency)}
                 </Button>
               </>
             )}
@@ -476,7 +461,7 @@ export default function BillingPage() {
                   ) : (
                     <Crown className="h-5 w-5 mr-2" />
                   )}
-                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale)}
+                  {billingT.upgradeToAgency} {formatCurrencyForLocale(897, locale as Locale, currency)}
                   <Sparkles className="h-5 w-5 ml-2 group-hover:rotate-12 transition-transform" />
                 </Button>
               </>
@@ -556,7 +541,7 @@ export default function BillingPage() {
                   <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.starterForBeginners}</p>
                   
                   <div className="mb-6">
-                    <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(197, locale as Locale)}</span>
+                    <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(197, locale as Locale, currency)}</span>
                     <span className="text-lg text-muted-foreground">{billingT.perMonth}</span>
                   </div>
                   
@@ -605,7 +590,7 @@ export default function BillingPage() {
                 <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.proForProfessionals}</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-gold">{formatCurrencyForLocale(497, locale as Locale)}</span>
+                  <span className="text-4xl font-black gradient-text-gold">{formatCurrencyForLocale(497, locale as Locale, currency)}</span>
                   <span className="text-lg text-muted-foreground">{billingT.perMonth}</span>
                 </div>
                 
@@ -647,7 +632,7 @@ export default function BillingPage() {
                 <p className="text-sm text-muted-foreground font-medium mb-4">{billingT.agencyForTeams}</p>
                 
                 <div className="mb-6">
-                  <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(897, locale as Locale)}</span>
+                  <span className="text-4xl font-black gradient-text-purple">{formatCurrencyForLocale(897, locale as Locale, currency)}</span>
                   <span className="text-lg text-gray-100">{billingT.perMonth}</span>
                 </div>
                 
@@ -708,7 +693,7 @@ export default function BillingPage() {
               </p>
               
               <div className="mb-6">
-                <span className="text-5xl font-black gradient-text-gold">{formatCurrencyForLocale(STRIPE_ONE_TIME_PACKAGES.boost.price, locale as Locale)}</span>
+                <span className="text-5xl font-black gradient-text-gold">{formatCurrencyForLocale(STRIPE_ONE_TIME_PACKAGES.boost.price, locale as Locale, currency)}</span>
                 <span className="text-lg text-muted-foreground ml-2">{billingT.oneTime}</span>
               </div>
               

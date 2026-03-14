@@ -26,9 +26,9 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <div className="min-h-screen bg-[#000000] text-white diamond-force-black">
+    <main id="main-content" className="min-h-screen bg-[#000000] text-white diamond-force-black">
       <DiamondPageHeader />
       <BlogPageContent />
-    </div>
+    </main>
   );
 }

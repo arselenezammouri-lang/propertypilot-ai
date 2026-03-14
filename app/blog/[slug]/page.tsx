@@ -5,11 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DiamondPageHeader } from "@/components/diamond-page-header";
 import { ArrowLeft } from "lucide-react";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
 
   const title = slug
@@ -21,7 +21,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
     <div className="min-h-screen bg-[#000000] text-white diamond-force-black">
       <DiamondPageHeader />
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+      <main id="main-content" className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm text-white/60 hover:text-white mb-8 transition-colors"

@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#000000] text-white diamond-force-black">
+    <main id="main-content" className="min-h-screen bg-[#000000] text-white diamond-force-black">
       <DiamondPageHeader />
       <AboutPageContent />
-    </div>
+    </main>
   );
 }

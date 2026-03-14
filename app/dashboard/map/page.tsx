@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,7 +73,7 @@ interface MapMarker {
 export default function PredatorMapPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale).dashboard;
   const [listings, setListings] = useState<ExternalListing[]>([]);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
@@ -278,7 +280,7 @@ export default function PredatorMapPage() {
 
   const formatPrice = (price: number | null) => {
     if (!price) return 'N/A';
-    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
+    return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
   if (isLoadingPlan) {
@@ -334,8 +336,8 @@ export default function PredatorMapPage() {
       <div className="absolute top-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-purple-500/20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard/prospecting">
-              <Button variant="ghost" size="icon">
+            <Link href="/dashboard/prospecting" aria-label={locale === "it" ? "Torna al Prospecting" : "Back to Prospecting"}>
+              <Button variant="ghost" size="icon" aria-label={locale === "it" ? "Indietro" : "Back"}>
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
@@ -534,6 +536,7 @@ export default function PredatorMapPage() {
                   size="icon"
                   onClick={() => setSelectedMarker(null)}
                   className="text-gray-400 hover:text-white"
+                  aria-label={locale === "it" ? "Chiudi dettaglio" : "Close detail"}
                 >
                   <X className="h-5 w-5" />
                 </Button>

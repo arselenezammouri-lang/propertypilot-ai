@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { scoreRealEstateLead, LeadScoreResult } from '@/lib/ai/leadScoring';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
@@ -41,15 +41,9 @@ export async function POST(request: NextRequest) {
 
     const { nomeLead, budget, tempistiche, messaggioLead, tipoImmobile, mercato, lead_id } = validationResult.data;
 
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { success: false, error: 'Non autenticato' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // STEP 0: Check active subscription — Lead Scoring is available for Starter, Pro, Agency (per plan-features)
     const subscriptionCheck = await requireActiveSubscription(supabase, user.id);

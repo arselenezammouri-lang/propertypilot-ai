@@ -400,7 +400,7 @@ export default function RefineListingPage() {
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
       <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors" aria-label={t.back}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           {t.back}
         </Link>

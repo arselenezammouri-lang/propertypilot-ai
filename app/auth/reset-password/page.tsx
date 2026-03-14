@@ -9,12 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 function ResetPasswordClient() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -107,7 +107,7 @@ function ResetPasswordClient() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#000000] p-4 relative overflow-hidden">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-[#000000] p-4 relative overflow-hidden">
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-[#06b6d4]/15 rounded-full blur-3xl" />
@@ -129,32 +129,36 @@ function ResetPasswordClient() {
           <CardContent>
             <form onSubmit={handleReset} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-white">{t.passwordLabel}</Label>
+                <Label htmlFor="reset-password" className="text-white">{t.passwordLabel}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
+                    id="reset-password"
                     type={showPassword ? "text" : "password"}
                     placeholder={t.passwordPlaceholder}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={8}
+                    autoComplete="new-password"
                     className="pl-10 pr-10 bg-white/5 border-white/10 text-white"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white" aria-label={showPassword ? "Hide password" : "Show password"}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-white">{t.confirmLabel}</Label>
+                <Label htmlFor="reset-confirm" className="text-white">{t.confirmLabel}</Label>
                 <Input
+                  id="reset-confirm"
                   type={showPassword ? "text" : "password"}
                   placeholder={t.confirmPlaceholder}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   minLength={8}
+                  autoComplete="new-password"
                   className="bg-white/5 border-white/10 text-white"
                 />
               </div>
@@ -165,7 +169,7 @@ function ResetPasswordClient() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }
 

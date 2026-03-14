@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { useLocale } from '@/lib/i18n/locale-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { fetchApi } from '@/lib/api/client';
 import { useAPIErrorHandler } from '@/components/error-boundary';
 import { 
   Sparkles, 
@@ -55,7 +56,7 @@ interface PerfectCopyResult {
 
 
 export default function PerfectCopyPage() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
@@ -208,22 +209,15 @@ export default function PerfectCopyPage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/generate-perfect-copy', {
+      const res = await fetchApi<PerfectCopyResult>('/api/generate-perfect-copy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error(data.error || t.tooManyRequests);
-        }
-        throw new Error(data.error || t.errorGeneric);
+      if (!res.success) {
+        if (res.status === 429) throw new Error(res.error ?? res.message ?? t.tooManyRequests);
+        throw new Error(res.error ?? res.message ?? t.errorGeneric);
       }
-
-      setResult(data);
+      setResult(res.data as PerfectCopyResult);
       setActiveTab('professionale');
       toast({ title: t.successTitle, description: t.successDesc });
 

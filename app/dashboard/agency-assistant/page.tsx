@@ -280,7 +280,7 @@ export default function AgencyAssistantPage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
+      <div className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
         <ProFeaturePaywall
           title={t.title}
           description={t.paywallDescription}
@@ -462,7 +462,7 @@ export default function AgencyAssistantPage() {
           </div>
         </div>
         </ProFeaturePaywall>
-      </main>
+      </div>
     </div>
   );
 }

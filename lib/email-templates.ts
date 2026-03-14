@@ -1,4 +1,6 @@
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
+import { getBaseUrl } from '@/lib/env';
+
+const APP_URL = getBaseUrl();
 
 export const emailTemplates = {
   welcome: (userName: string) => ({

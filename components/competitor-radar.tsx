@@ -23,7 +23,7 @@ interface ExpiredListing {
 }
 
 export function CompetitorRadar() {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const [listings, setListings] = useState<ExpiredListing[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -73,7 +73,7 @@ export function CompetitorRadar() {
 
   const formatPrice = (price: number | null) => {
     if (!price) return t.na;
-    return formatCurrencyForLocale(price, locale as Locale);
+    return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
   if (loading) {
@@ -112,6 +112,7 @@ export function CompetitorRadar() {
             size="icon"
             onClick={fetchExpiredListings}
             className="h-8 w-8"
+            aria-label={locale === "it" ? "Aggiorna elenco" : "Refresh list"}
           >
             <RefreshCw className="h-4 w-4" />
           </Button>

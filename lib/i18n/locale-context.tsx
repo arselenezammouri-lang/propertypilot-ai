@@ -11,6 +11,15 @@ interface LocaleContextValue {
   setCurrency: (currency: Currency) => void;
 }
 
+const LOCALE_COOKIE = "propertypilot_locale";
+const VALID_LOCALES = ["it", "en", "es", "fr", "de", "ar", "pt"] as const;
+
+function setLocaleCookie(locale: string) {
+  try {
+    document.cookie = `${LOCALE_COOKIE}=${encodeURIComponent(locale)};path=/;max-age=31536000;SameSite=Lax`;
+  } catch (_) {}
+}
+
 const LocaleContext = createContext<LocaleContextValue>({
   locale: defaultLocale,
   currency: "EUR",
@@ -23,16 +32,19 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>("EUR");
   const [mounted, setMounted] = useState(false);
 
-  // Read from localStorage on first mount
+  // Read from localStorage on first mount and sync cookie for server metadata
   useEffect(() => {
-    const savedLocale = localStorage.getItem("propertypilot_locale") as Locale;
-    if (savedLocale && ["it", "en", "es", "fr", "de", "ar", "pt"].includes(savedLocale)) {
-      setLocaleState(savedLocale);
-    }
-    const savedCurrency = localStorage.getItem("propertypilot_currency") as Currency;
-    if (savedCurrency && ["EUR", "USD", "GBP"].includes(savedCurrency)) {
-      setCurrencyState(savedCurrency);
-    }
+    try {
+      const savedLocale = localStorage.getItem("propertypilot_locale") as Locale;
+      if (savedLocale && VALID_LOCALES.includes(savedLocale)) {
+        setLocaleState(savedLocale);
+        setLocaleCookie(savedLocale);
+      }
+      const savedCurrency = localStorage.getItem("propertypilot_currency") as Currency;
+      if (savedCurrency && ["EUR", "USD", "GBP"].includes(savedCurrency)) {
+        setCurrencyState(savedCurrency);
+      }
+    } catch (_) {}
     setMounted(true);
   }, []);
 
@@ -40,9 +52,9 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const handler = (e: Event) => {
       const newLocale = (e as CustomEvent<Locale>).detail;
-      if (newLocale && ["it", "en", "es", "fr", "de", "ar", "pt"].includes(newLocale)) {
+      if (newLocale && VALID_LOCALES.includes(newLocale)) {
         setLocaleState(newLocale);
-        // Update document dir/lang for RTL support
+        setLocaleCookie(newLocale);
         document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
         document.documentElement.lang = newLocale;
       }
@@ -67,6 +79,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     setLocaleState(newLocale);
     if (typeof window !== "undefined") {
       localStorage.setItem("propertypilot_locale", newLocale);
+      setLocaleCookie(newLocale);
       document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
       document.documentElement.lang = newLocale;
       window.dispatchEvent(new CustomEvent("locale-change", { detail: newLocale }));

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 import {
   ArrowLeft,
   BellRing,
@@ -28,7 +28,7 @@ interface NotificationSettings {
 
 export default function NotificationsSettingsPage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
 
@@ -172,7 +172,7 @@ export default function NotificationsSettingsPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link href="/dashboard/settings/workspace">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>

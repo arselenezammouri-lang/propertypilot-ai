@@ -130,7 +130,7 @@ export function ReferralSection() {
   }
 
   return (
-    <Card className="glass border-white/10 overflow-hidden relative">
+    <Card className="h-full flex flex-col futuristic-card border-white/[0.08] overflow-hidden relative">
       <div className="absolute inset-0 bg-gradient-to-br from-sunset-gold/5 via-transparent to-royal-purple/5 pointer-events-none" />
       
       <CardHeader className="relative">
@@ -147,7 +147,7 @@ export function ReferralSection() {
         </div>
       </CardHeader>
       
-      <CardContent className="relative space-y-5">
+      <CardContent className="relative flex-1 flex flex-col space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-white/5 border border-white/10 text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
@@ -176,7 +176,7 @@ export function ReferralSection() {
             <Button 
               onClick={copyToClipboard}
               variant="outline"
-              className="shrink-0 border-white/10 hover:bg-white/10"
+              className="shrink-0 border-white/10 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black min-h-[36px]"
             >
               {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
             </Button>
@@ -186,14 +186,14 @@ export function ReferralSection() {
         <div className="flex gap-2">
           <Button 
             onClick={shareOnWhatsApp}
-            className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white"
+            className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             <Share2 className="h-4 w-4 mr-2" />
             WhatsApp
           </Button>
           <Button 
             onClick={shareOnLinkedIn}
-            className="flex-1 bg-[#0A66C2] hover:bg-[#094D92] text-white"
+            className="flex-1 bg-[#0A66C2] hover:bg-[#094D92] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             <Share2 className="h-4 w-4 mr-2" />
             LinkedIn

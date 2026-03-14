@@ -8,11 +8,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export default function CompliancePage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
   const [selectedCountry, setSelectedCountry] = useState<string>('IT');
@@ -94,7 +94,7 @@ export default function CompliancePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <main id="main-content" className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12">
@@ -239,6 +239,6 @@ export default function CompliancePage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }

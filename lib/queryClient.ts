@@ -6,13 +6,18 @@ export const queryClient = new QueryClient({
       queryFn: async ({ queryKey }) => {
         const url = queryKey[0] as string;
         const response = await fetch(url);
-        
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || error.error || 'API request failed');
+        const text = await response.text();
+        let body: unknown;
+        try {
+          body = text ? JSON.parse(text) : null;
+        } catch {
+          throw new Error(response.ok ? 'Invalid JSON' : (response.statusText || 'API request failed'));
         }
-        
-        return response.json();
+        if (!response.ok) {
+          const err = body as { message?: string; error?: string } | null;
+          throw new Error(err?.message || err?.error || response.statusText || 'API request failed');
+        }
+        return body;
       },
       staleTime: 60 * 1000,
       retry: 1,
@@ -21,7 +26,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-export async function apiRequest(url: string, options?: RequestInit) {
+export async function apiRequest<T = unknown>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -30,10 +35,16 @@ export async function apiRequest(url: string, options?: RequestInit) {
     },
   });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || error.error || 'API request failed');
+  const text = await response.text();
+  let body: unknown;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    throw new Error(response.ok ? 'Invalid JSON' : (response.statusText || 'API request failed'));
   }
-
-  return response.json();
+  if (!response.ok) {
+    const err = body as { message?: string; error?: string } | null;
+    throw new Error(err?.message || err?.error || response.statusText || 'API request failed');
+  }
+  return body as T;
 }

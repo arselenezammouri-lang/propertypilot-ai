@@ -22,7 +22,7 @@ import {
   Check
 } from "lucide-react";
 import Link from "next/link";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 interface AgencyBranding {
   id: number;
@@ -40,7 +40,7 @@ interface AgencyBranding {
 
 export default function AgencyBrandingPage() {
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const [isLoading, setIsLoading] = useState(true);
 

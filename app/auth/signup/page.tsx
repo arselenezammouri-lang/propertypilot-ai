@@ -139,7 +139,7 @@ function SignupClient() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#050505] p-4 relative overflow-hidden font-['Inter_Tight',sans-serif]">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-[#050505] p-4 relative overflow-hidden font-['Inter_Tight',sans-serif]">
       {/* Mesh Gradient Background - Same as Landing Page */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
@@ -343,7 +343,7 @@ function SignupClient() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -129,6 +129,7 @@ export function TierPreviewToggle({ currentRealTier, onTierChange }: TierPreview
             size="icon"
             onClick={toggleVisibility}
             className="h-6 w-6 text-white/40 hover:text-white"
+            aria-label="Toggle tier preview visibility"
           >
             <EyeOff className="h-3 w-3" />
           </Button>

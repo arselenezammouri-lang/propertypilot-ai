@@ -84,6 +84,7 @@ import {
   Kanban,
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
+import { fetchApi } from "@/lib/api/client";
 import NextDynamic from "next/dynamic";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -209,6 +210,7 @@ export default function LeadsPage() {
     market: "italy" as LeadMarket,
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
@@ -222,30 +224,27 @@ export default function LeadsPage() {
       if (priorityFilter !== "all") params.append("priorita", priorityFilter);
       if (marketFilter !== "all") params.append("market", marketFilter);
       if (searchQuery) params.append("search", searchQuery);
-      
-      const response = await fetch(`/api/leads?${params.toString()}`);
-      const data = await response.json();
-      
-      // If 403, update user plan to free and show paywall
-      if (response.status === 403) {
-        setUserPlan('free');
+
+      const res = await fetchApi<{ data: Lead[] }>(`/api/leads?${params.toString()}`);
+
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumRequiredDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumRequiredDesc,
+          title: t.error,
+          description: res.error || res.message || t.loadingError,
           variant: "destructive",
         });
         return;
       }
-      
-      if (data.success) {
-        setLeads(data.data);
-      } else {
-        toast({
-          title: t.error,
-          description: data.error || t.loadingError,
-          variant: "destructive",
-        });
-      }
+      setLeads(res.data.data);
     } catch (error) {
       toast({
         title: t.error,
@@ -275,11 +274,9 @@ export default function LeadsPage() {
   useEffect(() => {
     const fetchUserPlan = async () => {
       try {
-        const response = await fetch('/api/user/subscription');
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
+        const res = await fetchApi<{ status?: string }>('/api/user/subscription');
+        if (res.success) {
+          const plan = (res.data?.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
           setUserPlan(plan);
         }
       } catch (error) {
@@ -288,7 +285,6 @@ export default function LeadsPage() {
         setIsLoadingPlan(false);
       }
     };
-    
     fetchUserPlan();
   }, []);
 
@@ -311,47 +307,42 @@ export default function LeadsPage() {
 
     setSubmitting(true);
     try {
-      const response = await fetch("/api/leads", {
+      const res = await fetchApi<{ data: Lead }>("/api/leads", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      
-      const data = await response.json();
-      
-      // If 403, update user plan to free and show paywall
-      if (response.status === 403) {
-        setUserPlan('free');
+
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumRequiredDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumRequiredDesc,
+          title: t.error,
+          description: res.error || res.message || t.createError,
           variant: "destructive",
         });
         return;
       }
-      
-      if (data.success) {
-        toast({
-          title: t.leadCreated,
-          description: t.leadCreatedDesc(formData.nome),
-        });
-        setIsAddModalOpen(false);
-        setFormData({
-          nome: "",
-          email: "",
-          telefono: "",
-          messaggio: "",
-          priorita: "medium",
-          market: "italy",
-        });
-        fetchLeads();
-      } else {
-        toast({
-          title: t.error,
-          description: data.error || t.createError,
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: t.leadCreated,
+        description: t.leadCreatedDesc(formData.nome),
+      });
+      setIsAddModalOpen(false);
+      setFormData({
+        nome: "",
+        email: "",
+        telefono: "",
+        messaggio: "",
+        priorita: "medium",
+        market: "italy",
+      });
+      fetchLeads();
     } catch (error) {
       toast({
         title: t.error,
@@ -368,29 +359,25 @@ export default function LeadsPage() {
 
     setSubmitting(true);
     try {
-      const response = await fetch("/api/leads", {
+      const res = await fetchApi<{ data: Lead }>("/api/leads", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: selectedLead.id, ...formData }),
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        toast({
-          title: t.leadUpdated,
-          description: t.leadUpdatedDesc(formData.nome),
-        });
-        setIsEditModalOpen(false);
-        setSelectedLead(null);
-        fetchLeads();
-      } else {
+      if (!res.success) {
         toast({
           title: t.error,
-          description: data.error || t.updateError,
+          description: res.error || res.message || t.updateError,
           variant: "destructive",
         });
+        return;
       }
+      toast({
+        title: t.leadUpdated,
+        description: t.leadUpdatedDesc(formData.nome),
+      });
+      setIsEditModalOpen(false);
+      setSelectedLead(null);
+      fetchLeads();
     } catch (error) {
       toast({
         title: t.error,
@@ -404,74 +391,65 @@ export default function LeadsPage() {
 
   const handleDeleteLead = async () => {
     if (!selectedLead) return;
-
+    setIsDeleting(true);
     try {
-      const response = await fetch(`/api/leads?id=${selectedLead.id}`, {
-        method: "DELETE",
-      });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        toast({
-          title: t.leadDeleted,
-          description: t.leadDeletedDesc(selectedLead.nome),
-        });
-        setIsDeleteDialogOpen(false);
-        setSelectedLead(null);
-        fetchLeads();
-      } else {
+      const res = await fetchApi<unknown>(`/api/leads?id=${selectedLead.id}`, { method: "DELETE" });
+      if (!res.success) {
         toast({
           title: t.error,
-          description: data.error || t.deleteError,
+          description: res.error || res.message || t.deleteError,
           variant: "destructive",
         });
+        return;
       }
+      toast({
+        title: t.leadDeleted,
+        description: t.leadDeletedDesc(selectedLead.nome),
+      });
+      setIsDeleteDialogOpen(false);
+      setSelectedLead(null);
+      fetchLeads();
     } catch (error) {
       toast({
         title: t.error,
         description: t.connectionError,
         variant: "destructive",
       });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleStatusChange = async (leadId: string, newStatus: LeadStatus) => {
     try {
-      const response = await fetch("/api/leads/update-status", {
+      const res = await fetchApi<{ message?: string }>("/api/leads/update-status", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lead_id: leadId, new_status: newStatus }),
       });
-      
-      const data = await response.json();
-      
-      // If 403, update user plan to free and show paywall
-      if (response.status === 403) {
-        setUserPlan('free');
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumRequiredDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumRequiredDesc,
+          title: t.error,
+          description: res.error || res.message || t.statusUpdateError,
           variant: "destructive",
         });
         return;
       }
-      
-      if (data.success) {
-        toast({
-          title: t.statusUpdated,
-          description: data.message,
-        });
-        fetchLeads();
-        if (isDetailModalOpen && selectedLead?.id === leadId) {
-          fetchLeadDetails(leadId);
-        }
-      } else {
-        toast({
-          title: t.error,
-          description: data.error || t.statusUpdateError,
-          variant: "destructive",
-        });
+      toast({
+        title: t.statusUpdated,
+        description: res.data?.message ?? t.statusUpdated,
+      });
+      fetchLeads();
+      if (isDetailModalOpen && selectedLead?.id === leadId) {
+        fetchLeadDetails(leadId);
       }
     } catch (error) {
       toast({
@@ -484,25 +462,31 @@ export default function LeadsPage() {
 
   const fetchLeadDetails = async (leadId: string) => {
     try {
-      const response = await fetch(`/api/leads/${leadId}`);
-      const data = await response.json();
-      
-      // If 403, update user plan to free and show paywall
-      if (response.status === 403) {
-        setUserPlan('free');
+      type LeadWithDetails = Lead & { notes?: LeadNote[]; status_history?: LeadStatusHistory[] };
+      const res = await fetchApi<LeadWithDetails>(`/api/leads/${leadId}`);
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumRequiredDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumRequiredDesc,
+          title: t.error,
+          description: res.error || res.message || t.detailsError,
           variant: "destructive",
         });
         return;
       }
-      
-      if (data.success) {
-        setSelectedLead(data.data);
+      const lead = res.data;
+      if (lead) {
+        setSelectedLead(lead);
         setLeadDetails({
-          notes: data.data.notes || [],
-          status_history: data.data.status_history || [],
+          notes: lead.notes || [],
+          status_history: lead.status_history || [],
         });
       }
     } catch (error) {
@@ -525,39 +509,33 @@ export default function LeadsPage() {
 
     setAddingNote(true);
     try {
-      const response = await fetch("/api/leads/add-note", {
+      const res = await fetchApi<unknown>("/api/leads/add-note", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lead_id: selectedLead.id, nota: newNote }),
       });
-      
-      const data = await response.json();
-      
-      // If 403, update user plan to free and show paywall
-      if (response.status === 403) {
-        setUserPlan('free');
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan('free');
+          toast({
+            title: t.premiumRequired,
+            description: res.message || res.error || t.premiumRequiredDesc,
+            variant: "destructive",
+          });
+          return;
+        }
         toast({
-          title: t.premiumRequired,
-          description: data.message || data.error || t.premiumRequiredDesc,
+          title: t.error,
+          description: res.error || res.message || t.noteError,
           variant: "destructive",
         });
         return;
       }
-      
-      if (data.success) {
-        toast({
-          title: t.noteAdded,
-          description: t.noteSaved,
-        });
-        setNewNote("");
-        fetchLeadDetails(selectedLead.id);
-      } else {
-        toast({
-          title: t.error,
-          description: data.error || t.noteError,
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: t.noteAdded,
+        description: t.noteSaved,
+      });
+      setNewNote("");
+      fetchLeadDetails(selectedLead.id);
     } catch (error) {
       toast({
         title: t.error,
@@ -665,7 +643,7 @@ export default function LeadsPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProFeaturePaywall
           title={t.leadManagerTitle}
           description={t.leadManagerDesc}
@@ -967,7 +945,7 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
         </ProFeaturePaywall>
-      </main>
+      </div>
 
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
@@ -1358,14 +1336,19 @@ export default function LeadsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t.cancel}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteLead}
+              onClick={(e) => { e.preventDefault(); handleDeleteLead(); }}
+              disabled={isDeleting}
               className="bg-red-500 hover:bg-red-600"
               data-testid="button-confirm-delete"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
-              {t.delete}
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              {isDeleting ? (isItalian ? "Eliminazione..." : "Deleting...") : t.delete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -13,7 +13,7 @@ import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 
 export default function ReferralPage() {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
   const [referralCode, setReferralCode] = useState<string>("");
   const [copied, setCopied] = useState(false);
@@ -151,6 +151,7 @@ export default function ReferralPage() {
                 variant="outline"
                 size="icon"
                 className="border-amber-500/30 hover:bg-amber-500/10"
+                aria-label={copied ? (isItalian ? "Copiato" : "Copied") : (isItalian ? "Copia link" : "Copy link")}
               >
                 {copied ? (
                   <Check className="h-4 w-4 text-green-400" />
@@ -206,7 +207,7 @@ export default function ReferralPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-3xl font-bold text-green-400">{formatCurrencyForLocale(stats.potentialEarnings, locale as Locale)}</p>
+              <p className="text-3xl font-bold text-green-400">{formatCurrencyForLocale(stats.potentialEarnings, locale as Locale, currency)}</p>
               <p className="text-sm text-gray-400 mt-1">{t.futureValue}</p>
             </CardContent>
           </Card>

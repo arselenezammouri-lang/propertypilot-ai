@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { propertyInputSchema } from '@/lib/validations/property';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 import { 
@@ -22,16 +22,9 @@ const aiCache = getAICacheService();
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     // STEP 0: Check active subscription (CRITICAL SECURITY CHECK)
     const subscriptionCheck = await requireActiveSubscription(supabase, user.id);

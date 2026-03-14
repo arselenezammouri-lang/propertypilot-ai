@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import OpenAI from 'openai';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
@@ -263,18 +263,10 @@ Formato: una nota per riga, max 50 parole ciascuna.`
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    // Ottieni lingua utente
-    const userLocale = await getUserLocale(request, user?.id, supabase);
-
-    if (userError || !user) {
-      return NextResponse.json(
-        { error: getErrorMessage(userLocale, 'unauthorized') },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
+    const userLocale = await getUserLocale(request, user.id, supabase);
 
     // SECURITY: Check active subscription
     const subscriptionCheck = await requireActiveSubscription(supabase, user.id);

@@ -42,7 +42,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 const pdfFormSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
@@ -89,7 +89,7 @@ export default function PdfGeneratorPage() {
   const [agencyBranding, setAgencyBranding] = useState<AgencyBranding | null>(null);
   const [loadingBranding, setLoadingBranding] = useState(true);
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
 
   const t = {
@@ -314,7 +314,7 @@ export default function PdfGeneratorPage() {
             <nav className="flex items-center space-x-2 md:space-x-4">
               <ThemeToggle />
               <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard">
+                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard" aria-label="Back to dashboard">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -324,7 +324,7 @@ export default function PdfGeneratorPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-10 md:mb-14 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
             {isItalian ? <>Generatore <span className="gradient-text-gold">Schede PDF</span></> : <>Property <span className="gradient-text-gold">PDF Sheet</span></>}
@@ -922,7 +922,7 @@ export default function PdfGeneratorPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -44,12 +44,12 @@ export function UsageIndicator({ compact = false, className }: UsageIndicatorPro
 
   return (
     <div className={cn(
-      "rounded-xl p-4 border transition-all",
+      "h-full flex flex-col rounded-xl p-5 md:p-6 border transition-all futuristic-card",
       hasReachedLimit 
         ? "border-destructive/50 bg-destructive/5" 
         : isNearLimit 
           ? "border-sunset-gold/50 bg-sunset-gold/5" 
-          : "border-silver-frost/20 bg-background/50",
+          : "border-white/[0.08] bg-black/60 backdrop-blur-2xl",
       className
     )}>
       <div className="flex items-center justify-between mb-3">

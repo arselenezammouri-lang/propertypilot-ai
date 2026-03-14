@@ -57,7 +57,7 @@ import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency"
 import { Menu, X } from "lucide-react";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Locale } from "@/lib/i18n/config";
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 export default function PlatformPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -65,7 +65,7 @@ export default function PlatformPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [soundwaveHeights, setSoundwaveHeights] = useState<number[]>([20, 25, 30, 35, 30, 25, 20]); // Default values for SSR
   const heroRef = useRef<HTMLDivElement>(null);
-  const { locale, setLocale } = useLocaleContext();
+  const { locale, setLocale } = useLocale();
   
   // Get translations
   const t = getTranslation(locale as SupportedLocale);
@@ -139,7 +139,7 @@ export default function PlatformPage() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif] ${locale === "ar" ? "rtl" : "ltr"}`}>
+    <main id="main-content" className={`min-h-screen bg-[#050505] text-white relative overflow-hidden font-['Inter_Tight',sans-serif] ${locale === "ar" ? "rtl" : "ltr"}`}>
       {/* Mesh Gradient Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
@@ -1169,7 +1169,7 @@ export default function PlatformPage() {
           }
         }
       `}</style>
-    </div>
+    </main>
   );
 }
 

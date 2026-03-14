@@ -20,7 +20,7 @@ type Opportunity = {
 };
 
 export default function OpportunitiesPage() {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const [type, setType] = useState<"underpriced" | "old" | "uncontacted">("underpriced");
   const [days, setDays] = useState(14);
   const [city, setCity] = useState("");
@@ -99,7 +99,7 @@ export default function OpportunitiesPage() {
 
   const formatPrice = (price: number | null) => {
     if (!price) return t.na;
-    return formatCurrencyForLocale(price, locale as Locale);
+    return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
   return (

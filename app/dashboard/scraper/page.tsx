@@ -25,13 +25,14 @@ import {
 } from 'lucide-react';
 import { ScrapedListing } from '@/lib/scrapers/types';
 import { GeneratedContent } from '@/lib/ai/generateListingContent';
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { fetchApi } from '@/lib/api/client';
+import { useLocale } from "@/lib/i18n/locale-context";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { handleAPIError } = useAPIErrorHandler();
 
@@ -116,51 +117,31 @@ export default function ScraperPage() {
     setGeneratedContent(null);
 
     try {
-      const response = await fetch('/api/scrape-listing', {
+      const res = await fetchApi<ScrapedListing>('/api/scrape-listing', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
       });
 
-      // Try to parse JSON response, handle parse errors
-      let result;
-      try {
-        result = await response.json();
-      } catch (parseError) {
-        console.error('[SCRAPER UI] Failed to parse response:', parseError);
-        toast({
-          title: t.errorTitle,
-          description: t.serverError,
-          variant: 'destructive',
-          duration: 8000,
-        });
-        return;
-      }
-
-      if (!response.ok) {
-        const errorMessage = result.message || result.error || t.scrapeError;
-        const suggestion = result.suggestion;
-        
+      if (!res.success) {
+        const suggestion = (res as { suggestion?: string }).suggestion;
         toast({
           title: 'Errore',
-          description: suggestion ? `${errorMessage}\n\n💡 ${suggestion}` : errorMessage,
+          description: suggestion ? `${res.error ?? res.message}\n\n💡 ${suggestion}` : (res.error ?? res.message ?? t.scrapeError),
           variant: 'destructive',
           duration: 8000,
         });
         return;
       }
 
-      setScrapedData(result.data);
-      setSourceUrl(result.meta.sourceUrl);
-      
+      const scrapedData = res.data;
+      setScrapedData(scrapedData);
+      setSourceUrl(url);
       toast({
         title: t.scrapeSuccess,
         description: t.scrapeSuccessDesc,
         duration: 5000,
       });
-
-      // Auto-generate AI content after successful scraping
-      await handleGenerateAI(result.data);
+      await handleGenerateAI(scrapedData);
 
     } catch (error: any) {
       // Catch only for network/parsing errors
@@ -179,44 +160,21 @@ export default function ScraperPage() {
 
   const handleGenerateAI = async (data: ScrapedListing) => {
     setIsAiLoading(true);
-
     try {
-      const response = await fetch('/api/generate-comprehensive', {
+      const res = await fetchApi<GeneratedContent>('/api/generate-comprehensive', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
-      // Try to parse JSON response, handle parse errors
-      let result;
-      try {
-        result = await response.json();
-      } catch (parseError) {
-        console.error('[AI GENERATION] Failed to parse response:', parseError);
+      if (!res.success) {
         toast({
           title: t.aiErrorTitle,
-          description: t.serverError,
+          description: (res.error ?? res.message ?? t.aiGenerationError),
           variant: 'destructive',
           duration: 8000,
         });
         return;
       }
-
-      if (!response.ok) {
-        const errorMessage = result.message || result.error || t.aiGenerationError;
-        const suggestion = result.suggestion;
-        
-        toast({
-          title: t.aiErrorTitle,
-          description: suggestion ? `${errorMessage}\n\n💡 ${suggestion}` : errorMessage,
-          variant: 'destructive',
-          duration: 8000,
-        });
-        return;
-      }
-
-      setGeneratedContent(result.data);
-      
+      setGeneratedContent(res.data!);
       toast({
         title: t.aiSuccess,
         description: t.aiSuccessDesc,
@@ -250,9 +208,8 @@ export default function ScraperPage() {
     setIsSaving(true);
 
     try {
-      const response = await fetch('/api/listings/save', {
+      const res = await fetchApi<unknown>('/api/listings/save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: scrapedData.title || t.unnamedListing,
           property_data: scrapedData,
@@ -261,10 +218,8 @@ export default function ScraperPage() {
         }),
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || result.error || t.saveError);
+      if (!res.success) {
+        throw new Error(res.message ?? res.error ?? t.saveError);
       }
 
       toast({

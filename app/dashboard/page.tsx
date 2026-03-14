@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DashboardProBanner } from "@/components/demo-modal";
-import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
 import NextDynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
@@ -140,90 +139,79 @@ export default async function DashboardPage() {
   const limits = planLimits[currentPlan] || planLimits.free;
   const showUpgradeBanner = currentPlan === "free" || currentPlan === "starter";
 
-  // Render dashboard
+  // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
-    <div className="min-h-screen bg-[#050505] text-white relative overflow-hidden">
-      {/* Mesh Gradient Background - Same as Landing Page */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-[800px] h-[800px] bg-[#06b6d4]/15 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#9333ea]/10 rounded-full blur-3xl"></div>
-      </div>
-      <DashboardHeader />
+    <>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        {/* STATS GRID - Premium Futuristic Cards */}
+        <section className="dashboard-section" aria-label="Piano e statistiche">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              <DashboardStatsCards currentPlan={currentPlan} limits={limits} />
+              {(currentPlan === "pro" || currentPlan === "agency") && (
+                <Dashboard3DStats />
+              )}
+            </div>
+          </section>
 
-      {/* MAIN DASHBOARD CONTENT */}
-      <main className="relative z-10 pt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          {/* PENDING CHECKOUT BANNER - Client Component */}
-          <DashboardClientWrapper>
-            <></>
-          </DashboardClientWrapper>
-          
+          {/* 💰 PROFIT + REFERRAL + USAGE - Card uguale altezza */}
+          <section className="dashboard-section" aria-label="ROI e utilizzo">
+            <div className="dashboard-card-row">
+              <div className="dashboard-card-equal">
+                <ProfitDashboard />
+              </div>
+              <div className="dashboard-card-equal">
+                <ReferralSection />
+              </div>
+              <div className="dashboard-card-equal">
+                <UsageIndicator />
+              </div>
+            </div>
+          </section>
 
-          {/* STATS GRID - Premium Futuristic Cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-14">
-          <DashboardStatsCards currentPlan={currentPlan} limits={limits} />
-
-          {/* Progetti 3D Generati & WhatsApp Stats - Solo per PRO/AGENCY */}
+          {/* 🌅 AI MORNING INTEL BRIEFING */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
-            <Dashboard3DStats />
+            <section className="dashboard-section" aria-label="Morning briefing">
+              <MorningBriefingBox />
+            </section>
           )}
-        </div>
 
-        {/* 💰 PROFIT DASHBOARD - ROI Tracking */}
-        <div className="mb-10 md:mb-14">
-          <div className="grid md:grid-cols-3 gap-6">
-            <ProfitDashboard />
-            <ReferralSection />
-            <UsageIndicator />
-          </div>
-        </div>
-
-        {/* 🌅 AI MORNING INTEL BRIEFING */}
-        {(currentPlan === "pro" || currentPlan === "agency") && (
-          <MorningBriefingBox />
-        )}
-
-        {/* 🌍 REGIONAL PORTALS - Geo-Aware */}
-        <div className="mb-10 md:mb-14">
-          <DashboardClientWrapper>
+          {/* 🌍 REGIONAL PORTALS */}
+          <section className="dashboard-section" aria-label="Portali regionali">
             <RegionalPortals />
-          </DashboardClientWrapper>
-        </div>
+          </section>
 
-        {/* 🌍 GLOBAL LIVE FEED */}
-        {(currentPlan === "pro" || currentPlan === "agency") && (
-          <div className="mb-10 md:mb-14">
-            <GlobalLiveFeed />
-          </div>
-        )}
+          {/* 🌍 GLOBAL LIVE FEED */}
+          {(currentPlan === "pro" || currentPlan === "agency") && (
+            <section className="dashboard-section" aria-label="Live feed">
+              <GlobalLiveFeed />
+            </section>
+          )}
 
-        {/* 🎯 PIANO ATTUALE + 📋 TUTTI I PIANI (i18n client) */}
-        <DashboardPlanCardsSection currentPlan={currentPlan} />
+          {/* 🎯 PIANO ATTUALE + 📋 TUTTI I PIANI */}
+          <section className="dashboard-section" aria-label="Piani e prezzi">
+            <DashboardPlanCardsSection currentPlan={currentPlan} />
+          </section>
 
-        {/* 🚀 ALL TOOLS - Interactive Plan Features Navigator */}
-        <div className="mb-10 md:mb-14">
-          <DashboardPlanFeatures currentPlan={currentPlan} />
-        </div>
+          {/* 🚀 ALL TOOLS */}
+          <section className="dashboard-section" aria-label="Strumenti e funzionalità">
+            <DashboardPlanFeatures currentPlan={currentPlan} />
+          </section>
 
-        {/* 🎯 SNIPER STATS */}
-        {(currentPlan === "pro" || currentPlan === "agency") && (
-          <div className="mb-10 md:mb-14">
-            <SniperStats />
-          </div>
-        )}
+          {/* 🎯 SNIPER STATS */}
+          {(currentPlan === "pro" || currentPlan === "agency") && (
+            <section className="dashboard-section" aria-label="Statistiche sniper">
+              <SniperStats />
+            </section>
+          )}
+      </div>
 
-        </div>
+      <DashboardProTips />
 
-        <DashboardProTips />
-
-        {/* Aria Coach - Con limiti per piano FREE (1 ora/giorno) */}
-        <AriaCoach 
-          userName={profile?.full_name || undefined} 
-          userPlan={currentPlan as "free" | "starter" | "pro" | "agency"} 
-        />
-
-      </main>
-    </div>
+      {/* Aria Coach - Con limiti per piano FREE (1 ora/giorno) */}
+      <AriaCoach 
+        userName={profile?.full_name || undefined} 
+        userPlan={currentPlan as "free" | "starter" | "pro" | "agency"} 
+      />
+    </>
   );
 }

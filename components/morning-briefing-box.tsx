@@ -23,7 +23,7 @@ interface TopListing {
 }
 
 export function MorningBriefingBox() {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const [topListings, setTopListings] = useState<TopListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [partnerAgencies, setPartnerAgencies] = useState<number>(0);
@@ -87,7 +87,7 @@ export function MorningBriefingBox() {
 
   const formatPrice = (price: number | null) => {
     if (!price) return t.na;
-    return formatCurrencyForLocale(price, locale as Locale);
+    return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
   const handleSendTest = async () => {

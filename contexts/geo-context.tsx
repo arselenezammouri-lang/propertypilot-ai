@@ -34,16 +34,18 @@ export function GeoProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedRegion = localStorage.getItem(STORAGE_KEY) as Region | null;
-    
-    if (savedRegion && ['usa', 'europe', 'middleeast', 'global'].includes(savedRegion)) {
-      setRegionState(savedRegion);
-    } else {
-      const detected = detectRegionFromBrowser();
-      setRegionState(detected);
-      localStorage.setItem(STORAGE_KEY, detected);
-    }
-    
+    try {
+      const savedRegion = localStorage.getItem(STORAGE_KEY) as Region | null;
+      if (savedRegion && ['usa', 'europe', 'middleeast', 'global'].includes(savedRegion)) {
+        setRegionState(savedRegion);
+      } else {
+        const detected = detectRegionFromBrowser();
+        setRegionState(detected);
+        try {
+          localStorage.setItem(STORAGE_KEY, detected);
+        } catch (_) {}
+      }
+    } catch (_) {}
     setIsLoading(false);
   }, []);
 

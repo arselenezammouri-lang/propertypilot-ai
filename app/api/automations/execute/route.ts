@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { supabaseService } from '@/lib/supabase/service';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { logger } from '@/lib/utils/safe-logger';
@@ -138,15 +138,9 @@ Ogni contenuto deve essere pronto per l'uso, professionale e orientato al busine
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Non autorizzato. Effettua il login.' },
-        { status: 401 }
-      );
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user } = auth;
 
     const body = await request.json();
     const { automation_id } = body;

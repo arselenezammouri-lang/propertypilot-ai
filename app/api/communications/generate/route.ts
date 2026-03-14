@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
@@ -106,12 +106,9 @@ ${channel === 'sms' ? 'Rispondi in formato JSON: {"message": "SMS di max 160 car
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
-    }
+    const auth = await getAuthenticatedUser();
+    if (!auth.ok) return auth.response;
+    const { user, supabase } = auth;
 
     const body = await request.json();
     const validationResult = generateSchema.safeParse(body);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { getAppUrl } from '@/lib/env';
 import type { LeadCapturePayload } from '@/lib/types/database.types';
 
 export const dynamic = 'force-dynamic';
@@ -154,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     if (keyData.auto_lead_score && newLead) {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin;
+        const baseUrl = getAppUrl(request);
         const scoreResponse = await fetch(`${baseUrl}/api/lead-score`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

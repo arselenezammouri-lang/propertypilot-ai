@@ -147,7 +147,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 export default function PricingPage() {
   const router = useRouter();
-  const { locale: currentLocale } = useLocaleContext();
+  const { locale: currentLocale, currency } = useLocaleContext();
 
   const handlePlanClick = async (planId: string, isSubscription: boolean) => {
     // Check if user is logged in
@@ -224,7 +224,7 @@ export default function PricingPage() {
     ?? (isItalian ? defaultFaqs : defaultFaqsEn);
 
   return (
-    <div className="min-h-screen bg-background">
+    <main id="main-content" className="min-h-screen bg-background">
       <MarketingNavHeader />
 
       {/* Hero Section */}
@@ -324,7 +324,7 @@ export default function PricingPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl lg:text-5xl font-extrabold">
-                      {formatCurrencyForLocale(plan.price, currentLocale as Locale)}
+                      {formatCurrencyForLocale(plan.price, currentLocale as Locale, currency)}
                     </span>
                     <span className="text-lg text-muted-foreground whitespace-nowrap">
                       {plan.period}
@@ -476,6 +476,6 @@ export default function PricingPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }

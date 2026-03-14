@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { useLocale } from '@/lib/i18n/locale-context';
 import type { Lead, CommunicationLog, CommunicationTone, CommunicationChannel } from '@/lib/types/database.types';
 
 interface CommunicationsHubProps {
@@ -30,7 +30,7 @@ const channelConfig: Record<CommunicationChannel, { icon: any; label: string; co
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isIt = locale === 'it';
 
   const handleCopy = async () => {
@@ -49,7 +49,7 @@ function CopyButton({ text }: { text: string }) {
 
 export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === 'it';
 
   const toneOptions: { value: CommunicationTone; label: string }[] = [

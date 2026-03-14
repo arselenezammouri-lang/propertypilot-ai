@@ -38,7 +38,7 @@ export function LanguageSelector() {
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all"
+          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           data-testid="button-language-selector"
         >
           <Languages className="h-4 w-4" />

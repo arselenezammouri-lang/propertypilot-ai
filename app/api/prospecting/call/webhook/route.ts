@@ -4,6 +4,7 @@ import { logger } from '@/lib/utils/safe-logger';
 import { analyzeCallOutcome } from '@/lib/ai/voice-agent';
 import { sendEmail, generateAppointmentNotificationEmail } from '@/lib/utils/email';
 import { createGoogleCalendarEvent, generateAppointmentCalendarEvent } from '@/lib/calendar/google';
+import { getAppUrl } from '@/lib/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -174,7 +175,7 @@ export async function POST(request: NextRequest) {
             userEmail = authUser?.user?.email;
           }
 
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || request.nextUrl?.origin || 'https://propertypilot-ai.vercel.app';
+          const baseUrl = getAppUrl(request);
           const dashboardUrl = `${baseUrl}/dashboard/prospecting`;
 
           // Send email notification

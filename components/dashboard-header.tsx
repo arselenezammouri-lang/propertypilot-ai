@@ -41,13 +41,13 @@ export function DashboardHeader() {
             </div>
           </Link>
 
-          <nav className="flex items-center space-x-1.5 md:space-x-3">
+          <nav className="flex items-center space-x-1.5 md:space-x-3" aria-label={isIt ? "Navigazione principale" : "Main navigation"}>
             {/* Command Palette trigger */}
             <Button
               variant="ghost"
               size="sm"
               onClick={openCommandPalette}
-              className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground border border-white/10 hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] transition-all rounded-lg px-3 h-9"
+              className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground border border-white/10 hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] transition-all rounded-lg px-3 h-9 min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
               aria-label={isIt ? "Apri ricerca rapida" : "Open quick search"}
             >
               <Search className="h-3.5 w-3.5" />
@@ -60,13 +60,13 @@ export function DashboardHeader() {
             <RegionSelector />
             <ThemeToggle />
             <Link href="/dashboard/listings" className="hidden md:inline-flex">
-              <Button variant="ghost" size="sm" className="hover:text-royal-purple transition-colors" data-testid="button-generate">
+              <Button variant="ghost" size="sm" className="min-h-[36px] hover:text-royal-purple transition-colors focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black" data-testid="button-generate">
                 <Zap className="mr-2 h-4 w-4" />
                 {t.dashboard.generate}
               </Button>
             </Link>
             <form action="/auth/signout" method="post">
-              <Button type="submit" variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-signout">
+              <Button type="submit" variant="outline" size="sm" className="min-h-[36px] border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black" data-testid="button-signout">
                 {t.dashboard.signOut}
               </Button>
             </form>

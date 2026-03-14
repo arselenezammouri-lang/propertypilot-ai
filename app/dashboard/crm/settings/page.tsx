@@ -10,8 +10,18 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useLocaleContext } from '@/components/providers/locale-provider';
+import { useLocale } from '@/lib/i18n/locale-context';
 import { 
   Key, 
   Plus, 
@@ -35,6 +45,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import Link from 'next/link';
+import { getBaseUrl } from '@/lib/env';
+import { fetchApi } from '@/lib/api/client';
 import type { UserApiKey, InsertUserApiKey, LeadMarket } from '@/lib/types/database.types';
 
 interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
@@ -42,7 +54,7 @@ interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
 }
 
 export default function CRMSettingsPage() {
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -84,6 +96,7 @@ export default function CRMSettingsPage() {
     inactive: isItalian ? "Disattivata" : "Inactive",
     leadsCaptured: (n: number) => isItalian ? `${n} leads catturati` : `${n} leads captured`,
     lastUsed: isItalian ? "Ultimo uso:" : "Last used:",
+    delete: isItalian ? "Elimina" : "Delete",
     deleteConfirm: isItalian
       ? "Sei sicuro di voler eliminare questa API key?"
       : "Are you sure you want to delete this API key?",
@@ -142,6 +155,7 @@ export default function CRMSettingsPage() {
   const [newlyCreatedKey, setNewlyCreatedKey] = useState<string | null>(null);
   const [showEmbedCode, setShowEmbedCode] = useState(false);
   const [selectedKeyForEmbed, setSelectedKeyForEmbed] = useState<string | null>(null);
+  const [keyToDelete, setKeyToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const { data: apiKeysData, isLoading } = useQuery<{ apiKeys: MaskedApiKey[] }>({
     queryKey: ['/api/crm/api-keys']
@@ -149,16 +163,12 @@ export default function CRMSettingsPage() {
 
   const createKeyMutation = useMutation({
     mutationFn: async (data: InsertUserApiKey) => {
-      const res = await fetch('/api/crm/api-keys', {
+      const res = await fetchApi<{ apiKey: { api_key: string } }>('/api/crm/api-keys', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || 'Errore nella creazione');
-      }
-      return res.json();
+      if (!res.success) throw new Error(res.error || res.message || 'Errore nella creazione');
+      return res.data as { apiKey: { api_key: string } };
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
@@ -175,13 +185,12 @@ export default function CRMSettingsPage() {
 
   const updateKeyMutation = useMutation({
     mutationFn: async ({ id, ...updates }: { id: string; is_active?: boolean; auto_lead_score?: boolean; auto_followup?: boolean }) => {
-      const res = await fetch('/api/crm/api-keys', {
+      const res = await fetchApi<unknown>('/api/crm/api-keys', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, ...updates })
       });
-      if (!res.ok) throw new Error('Errore nell\'aggiornamento');
-      return res.json();
+      if (!res.success) throw new Error(res.error || res.message || 'Errore nell\'aggiornamento');
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
@@ -191,13 +200,17 @@ export default function CRMSettingsPage() {
 
   const deleteKeyMutation = useMutation({
     mutationFn: async (id: string) => {
-      const res = await fetch(`/api/crm/api-keys?id=${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('delete error');
-      return res.json();
+      const res = await fetchApi<unknown>(`/api/crm/api-keys?id=${id}`, { method: 'DELETE' });
+      if (!res.success) throw new Error(res.error || res.message || 'delete error');
+      return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
       toast({ title: t.keyDeleted });
+      setKeyToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast({ title: isItalian ? 'Errore' : 'Error', description: error.message, variant: 'destructive' });
     }
   });
 
@@ -224,7 +237,7 @@ export default function CRMSettingsPage() {
   };
 
   const getEmbedCode = (apiKey: string) => {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://propertypilot-ai.vercel.app';
+    const appUrl = getBaseUrl();
     return `<!-- PropertyPilot AI Lead Capture Form -->
 <div id="propertypilot-lead-form"></div>
 <script>
@@ -321,7 +334,7 @@ export default function CRMSettingsPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Link href="/dashboard/leads">
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back">
+            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back" aria-label="Back">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
@@ -394,6 +407,7 @@ export default function CRMSettingsPage() {
                             onClick={() => copyToClipboard(newlyCreatedKey)}
                             className="border-emerald-500/50 hover:bg-emerald-500/10"
                             data-testid="button-copy-new-key"
+                            aria-label="Copy API key"
                           >
                             <Copy className="h-4 w-4 text-emerald-400" />
                           </Button>
@@ -594,15 +608,17 @@ export default function CRMSettingsPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            if (confirm(t.deleteConfirm)) {
-                              deleteKeyMutation.mutate(key.id);
-                            }
-                          }}
+                          onClick={() => setKeyToDelete({ id: key.id, name: key.name })}
+                          disabled={deleteKeyMutation.isPending}
                           className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                           data-testid={`button-delete-${key.id}`}
+                          aria-label="Delete API key"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          {deleteKeyMutation.isPending && keyToDelete?.id === key.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -675,6 +691,36 @@ export default function CRMSettingsPage() {
             </div>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={!!keyToDelete} onOpenChange={(open) => !open && setKeyToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{isItalian ? 'Elimina API Key?' : 'Delete API Key?'}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {keyToDelete ? (isItalian ? `Sei sicuro di voler eliminare "${keyToDelete.name}"? I form che la usano smetteranno di funzionare.` : `Are you sure you want to delete "${keyToDelete.name}"? Forms using it will stop working.`) : ''}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleteKeyMutation.isPending}>{t.cancel}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (keyToDelete) deleteKeyMutation.mutate(keyToDelete.id);
+                }}
+                disabled={deleteKeyMutation.isPending}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                data-testid="button-confirm-delete-api-key"
+              >
+                {deleteKeyMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4 mr-2" />
+                )}
+                {deleteKeyMutation.isPending ? (isItalian ? 'Eliminazione...' : 'Deleting...') : t.delete}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

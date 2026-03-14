@@ -22,7 +22,7 @@ export function DashboardProTips() {
   }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12" aria-label={locale === "it" ? "Suggerimenti Pro" : "Pro Tips"}>
       <div className="futuristic-card p-8 md:p-10 bg-gradient-to-br from-royal-purple/10 to-electric-blue/5 border-royal-purple/30 animate-fade-in-up delay-600">
         <div className="flex items-start space-x-5">
           <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-royal-purple/30 to-electric-blue/20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-glow-purple">
@@ -47,6 +47,6 @@ export function DashboardProTips() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

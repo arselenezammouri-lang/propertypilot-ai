@@ -9,8 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Check, Sparkles, Loader2, ShoppingBag, ArrowRight, Rocket } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { fetchApi } from '@/lib/api/client';
 import { STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
-import { useLocaleContext } from "@/components/providers/locale-provider";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 interface Purchase {
   id: string;
@@ -25,7 +26,7 @@ interface Purchase {
 
 function PackagesPageContent() {
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
+  const { locale } = useLocale();
   const isItalian = locale === "it";
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -92,23 +93,13 @@ function PackagesPageContent() {
 
   const handlePurchase = async () => {
     setLoadingPackage('boost');
-    
     try {
-      const response = await fetch('/api/stripe/checkout-oneshot', {
+      const res = await fetchApi<{ url?: string }>('/api/stripe/checkout-oneshot', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ packageId: 'boost' }),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-      throw new Error(data.error || t.checkoutError);
-      }
-      
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      if (!res.success) throw new Error(res.error || res.message || t.checkoutError);
+      if (res.data?.url) window.location.href = res.data.url;
     } catch (error) {
       console.error('Checkout error:', error);
       toast({

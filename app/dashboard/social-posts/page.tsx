@@ -295,6 +295,7 @@ export default function SocialPostsPage() {
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="rounded-full"
               data-testid="button-theme-toggle"
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
@@ -303,6 +304,7 @@ export default function SocialPostsPage() {
               onClick={() => router.push("/dashboard")}
               className="gap-2"
               data-testid="button-back-dashboard"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft className="h-4 w-4" />
               Dashboard
@@ -311,7 +313,7 @@ export default function SocialPostsPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">
             <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
@@ -710,7 +712,7 @@ export default function SocialPostsPage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

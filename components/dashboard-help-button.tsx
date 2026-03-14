@@ -15,8 +15,9 @@ export function DashboardHelpButton() {
       variant="ghost"
       size="icon"
       onClick={handleOpenDocs}
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/30 transition-all shadow-lg hover:shadow-purple-500/20"
+      className="fixed bottom-24 right-4 sm:bottom-28 sm:right-6 z-40 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-purple-500/20 to-cyan-500/20 border border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/30 transition-all shadow-lg hover:shadow-purple-500/20 focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       title={locale === "it" ? "Apri Documentation Hub" : "Open Documentation Hub"}
+      aria-label={locale === "it" ? "Apri Documentation Hub" : "Open Documentation Hub"}
     >
       <HelpCircle className="h-6 w-6 text-purple-400" />
     </Button>
