@@ -25,7 +25,8 @@
     "pre-launch-audit": "node scripts/pre-launch-audit.js",
     "validate:env": "node scripts/validate-env.js",
     "validate:env:soft": "node scripts/validate-env.js --no-fail",
-    "marketing:stats": "node scripts/marketing-stats.mjs"
+    "marketing:stats": "node scripts/marketing-stats.mjs",
+    "test:smoke": "node scripts/run-all-smoke-tests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

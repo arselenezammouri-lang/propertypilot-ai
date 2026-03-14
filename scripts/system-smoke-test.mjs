@@ -176,12 +176,10 @@ async function main() {
 
   console.log(`🚀 System smoke test starting on ${BASE_URL}`);
 
-  // 1) Pagine pubbliche
+  // 1) Pagine pubbliche (blog e altre pagine pesanti: waitUntil "load" per evitare timeout)
   for (const path of PUBLIC_PATHS) {
-    const isDocs = path === "/docs";
-    const isCompliance = path === "/compliance";
-    const isContact = path === "/contact";
-    await checkPage(page, path, (isDocs || isCompliance || isContact) ? { waitUntil: "load" } : {});
+    const useLoad = ["/docs", "/compliance", "/contact", "/blog"].includes(path);
+    await checkPage(page, path, useLoad ? { waitUntil: "load" } : {});
   }
 
   // 2) Auth (fallita + riuscita)
@@ -191,9 +189,10 @@ async function main() {
     console.log("✅ Login riuscito, procedo con pagine dashboard e AI flow.");
 
     // 3) Pagine dashboard (solo se autenticato)
-    // /dashboard e /dashboard/autopilot non raggiungono networkidle -> usiamo "load"
+    // Alcune pagine non raggiungono networkidle -> usiamo "load"
+    const dashboardUseLoad = ["/dashboard", "/dashboard/autopilot", "/dashboard/packages"];
     for (const path of DASHBOARD_PATHS) {
-      const useLoad = path === "/dashboard" || path === "/dashboard/autopilot";
+      const useLoad = dashboardUseLoad.includes(path);
       await checkPage(page, path, useLoad ? { waitUntil: "load", timeout: 35000 } : {});
     }
 

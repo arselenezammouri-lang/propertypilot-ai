@@ -1,6 +1,23 @@
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { DiamondPageHeader } from "@/components/diamond-page-header";
-import { BlogPageContent } from "@/components/blog-page-content";
+
+const BlogPageContent = dynamic(
+  () => import("@/components/blog-page-content").then((m) => ({ default: m.BlogPageContent })),
+  {
+    ssr: true,
+    loading: () => (
+      <div className="container mx-auto max-w-4xl px-4 py-16 animate-pulse">
+        <div className="h-10 bg-white/10 rounded w-3/4 mb-8" />
+        <div className="space-y-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-24 bg-white/10 rounded" />
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
 
 export const metadata: Metadata = {
   title: "Blog | PropertyPilot AI",

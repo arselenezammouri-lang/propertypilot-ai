@@ -4,6 +4,7 @@ node_modules/
 venv/
 *.log
 .env.local
+.env.test
 debug.log
 test-results/
 playwright-report/

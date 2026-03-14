@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const userId = session.metadata?.userId;
+  const userId = (session.metadata?.userId ?? session.metadata?.user_id) as string | undefined;
   const paymentType = session.metadata?.paymentType;
 
   logger.stripeEvent('checkout.session.completed', {
@@ -295,7 +295,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     status: subscription.status,
   });
 
-  let userId = subscription.metadata?.userId;
+  let userId = (subscription.metadata?.userId ?? subscription.metadata?.user_id) as string | undefined;
 
   if (!userId) {
     logger.debug('Missing userId in metadata, falling back to database lookup', { 
