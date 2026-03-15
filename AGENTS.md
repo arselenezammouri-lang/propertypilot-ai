@@ -20,6 +20,10 @@
 
 ### Gotchas
 
-- **Jest picks up Playwright files:** The Jest `testMatch` glob (`**/?(*.)+(spec|test).[jt]s?(x)`) also matches `e2e/*.spec.ts`. These fail in Jest because they import `@playwright/test`. To run only unit tests: `npx jest --testPathPatterns='__tests__'`. Two test suites under `__tests__/` have pre-existing assertion mismatches (Italian vs English strings, outdated mock expectations) — these are not environment issues.
+- **Jest picks up Playwright files:** The Jest `testMatch` glob (`**/?(*.)+(spec|test).[jt]s?(x)`) also matches `e2e/*.spec.ts`. These fail in Jest because they import `@playwright/test`. To run only unit tests: `npx jest --testPathPatterns='__tests__'`.
 - **No Docker/DB setup required:** All data backends are cloud-managed (Supabase, Stripe, OpenAI). No local databases or containers needed.
 - **Node.js version:** Requires Node 18+. The environment ships with Node 22 which works fine.
+- **AI features need a real OpenAI API key:** The `.env.example` has placeholder `sk-proj_YOUR_KEY`. Without a valid key, `/api/generate` returns 503. The app boots and all non-AI pages work fine.
+- **Supabase profiles table:** The `onboarding_completed` column may not exist; the onboarding wizard uses localStorage as fallback.
+- **Agency branding:** Uses Neon `DATABASE_URL` directly; returns null gracefully if the DB is unreachable.
+- **Stripe keys required for billing flows:** Checkout, upgrade, cancel, and webhook endpoints require valid Stripe test/live keys. The billing page loads fine on Free plan without keys.
