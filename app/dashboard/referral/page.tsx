@@ -25,7 +25,7 @@ export default function ReferralPage() {
   const isItalian = locale === "it";
   const t = {
     copied: isItalian ? "Link copiato!" : "Link copied!",
-    copiedDesc: isItalian ? "Il link di referral e stato copiato negli appunti." : "The referral link has been copied to your clipboard.",
+    copiedDesc: isItalian ? "Il link di referral è stato copiato negli appunti." : "The referral link has been copied to your clipboard.",
     programTitle: isItalian ? "Referral Program" : "Referral Program",
     programSubtitle: isItalian
       ? "Invita un'altra agenzia e ricevi uno sconto del 20% sul tuo prossimo rinnovo"

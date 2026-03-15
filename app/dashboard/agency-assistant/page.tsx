@@ -153,6 +153,23 @@ export default function AgencyAssistantPage() {
   const isLocked = userPlan === 'free' || userPlan === 'starter';
 
   useEffect(() => {
+    async function fetchPlan() {
+      try {
+        const res = await fetch('/api/user/subscription');
+        if (res.ok) {
+          const json = await res.json();
+          const status = json?.data?.status;
+          if (status === 'starter' || status === 'pro' || status === 'agency') {
+            setUserPlan(status);
+          }
+        }
+      } catch {}
+      setIsLoadingPlan(false);
+    }
+    fetchPlan();
+  }, []);
+
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
