@@ -1,5 +1,3 @@
-import { checkUserRateLimit, checkIpRateLimit } from '@/lib/utils/rate-limit';
-
 // Mock Supabase service to avoid requiring SUPABASE_SERVICE_ROLE_KEY
 jest.mock('@/lib/supabase/service', () => ({
   supabaseService: {
@@ -60,7 +58,6 @@ jest.mock('@/lib/utils/rate-limit', () => {
   };
 });
 
-// Get the mocked functions
 const { checkUserRateLimit, checkIpRateLimit } = require('@/lib/utils/rate-limit');
 
 describe('Rate Limiting', () => {

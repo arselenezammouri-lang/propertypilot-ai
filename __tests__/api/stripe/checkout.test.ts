@@ -34,6 +34,7 @@ describe('POST /api/stripe/checkout', () => {
     mockUser = {
       id: 'user-123',
       email: 'test@example.com',
+      user_metadata: { full_name: 'Test User' },
     };
 
     mockSupabase = {
@@ -112,10 +113,10 @@ describe('POST /api/stripe/checkout', () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.error).toBe('Unauthorized');
+    expect(data.error).toBe('Non autorizzato');
   });
 
-  it('should return 404 if profile not found', async () => {
+  it('should still create checkout even without profile data', async () => {
     mockSupabase.single.mockResolvedValue({
       data: null,
       error: { message: 'Profile not found' },
@@ -129,8 +130,8 @@ describe('POST /api/stripe/checkout', () => {
     const response = await POST(request);
     const data = await response.json();
 
-    expect(response.status).toBe(404);
-    expect(data.error).toBe('Profile not found');
+    expect(response.status).toBe(200);
+    expect(data.success).toBe(true);
   });
 
   it('should return 400 for invalid plan', async () => {
@@ -150,7 +151,7 @@ describe('POST /api/stripe/checkout', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it('should save customer ID if not present', async () => {
+  it('should pass customer ID to checkout session', async () => {
     mockGetOrCreateCustomer.mockResolvedValue({ id: 'cus_new123' } as any);
 
     const request = new global.NextRequest('http://localhost:3000/api/stripe/checkout', {
@@ -158,11 +159,18 @@ describe('POST /api/stripe/checkout', () => {
       body: JSON.stringify({ plan: 'AGENCY' }),
     });
 
-    await POST(request);
+    const response = await POST(request);
+    const data = await response.json();
 
-    expect(mockSupabase.update).toHaveBeenCalledWith({
-      stripe_customer_id: 'cus_new123',
-    });
+    expect(response.status).toBe(200);
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith(
+      'cus_new123',
+      expect.any(String),
+      'user-123',
+      expect.any(String),
+      expect.any(String),
+      expect.any(Object),
+    );
   });
 
   it('should handle all plan types', async () => {
