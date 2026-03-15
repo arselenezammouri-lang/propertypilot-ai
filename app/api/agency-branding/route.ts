@@ -30,27 +30,33 @@ export async function GET() {
       );
     }
 
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    
-    const result = await pool.query(
-      'SELECT * FROM agency_branding WHERE user_id = $1',
-      [user.id]
-    );
-    
-    await pool.end();
-
-    if (result.rows.length === 0) {
+    if (!process.env.DATABASE_URL) {
       return NextResponse.json({ branding: null });
     }
 
-    return NextResponse.json({ branding: result.rows[0] });
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    
+    try {
+      const result = await pool.query(
+        'SELECT * FROM agency_branding WHERE user_id = $1',
+        [user.id]
+      );
+      
+      await pool.end();
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ branding: null });
+      }
+
+      return NextResponse.json({ branding: result.rows[0] });
+    } catch (dbError) {
+      await pool.end().catch(() => {});
+      return NextResponse.json({ branding: null });
+    }
 
   } catch (error) {
     console.error('Agency branding GET error:', error);
-    return NextResponse.json(
-      { error: 'Errore nel recupero del branding.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ branding: null });
   }
 }
 

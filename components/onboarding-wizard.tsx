@@ -89,6 +89,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   const checkOnboardingStatus = async () => {
     try {
+      if (typeof window !== 'undefined' && localStorage.getItem('onboarding_completed') === 'true') {
+        setIsLoading(false);
+        return;
+      }
+
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -97,14 +102,16 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('onboarding_completed')
         .eq('id', user.id)
         .single();
 
-      if (!profile?.onboarding_completed) {
+      if (error || !profile?.onboarding_completed) {
         setIsOpen(true);
+      } else if (typeof window !== 'undefined') {
+        localStorage.setItem('onboarding_completed', 'true');
       }
     } catch (error) {
       // Silently fail - onboarding is not critical
@@ -114,6 +121,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   };
 
   const completeOnboarding = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('onboarding_completed', 'true');
+    }
+
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -125,7 +136,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           .eq('id', user.id);
       }
     } catch (error) {
-      // Silently fail - onboarding completion is not critical
+      // Silently fail - localStorage already stores the state
     }
     
     setIsOpen(false);
