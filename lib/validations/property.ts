@@ -10,7 +10,7 @@ export const propertyInputSchema = z.object({
   notes: z.string().optional(),
   // AI Listing Engine 2.0: Style and Market parameters
   style: z.enum(['luxury', 'investment', 'standard']).optional().default('standard'),
-  market: z.enum(['usa', 'italy']).optional().default('italy'),
+  market: z.enum(['usa', 'italy', 'middle-east']).optional().default('italy'),
 });
 
 export const generatedContentSchema = z.object({

@@ -48,7 +48,7 @@ export default function ListingsPage() {
     features: '',
     notes: '',
     style: 'standard' as 'luxury' | 'investment' | 'standard',
-    market: 'italy' as 'usa' | 'italy',
+    market: 'italy' as 'usa' | 'italy' | 'middle-east',
   });
 
   const t = {
@@ -673,7 +673,7 @@ export default function ListingsPage() {
               <div className="space-y-2">
                 <Label>{t.marketLabel}</Label>
                 <div className="flex gap-2">
-                  {([{ value: 'italy', label: '🇮🇹 EU' }, { value: 'usa', label: '🇺🇸 USA' }] as const).map((m) => (
+                  {([{ value: 'italy', label: '🇮🇹 EU' }, { value: 'usa', label: '🇺🇸 USA' }, { value: 'middle-east', label: '🇦🇪 ME' }] as const).map((m) => (
                     <Button
                       key={m.value}
                       type="button"

@@ -151,13 +151,20 @@ export async function POST(request: NextRequest) {
     
     if (error.code === 'insufficient_quota') {
       return NextResponse.json(
-        { error: 'Quota OpenAI esaurita. Contatta il supporto.' },
+        { error: 'Quota OpenAI esaurita. Contatta il supporto.', message: 'OpenAI quota exceeded. Contact support.' },
+        { status: 503 }
+      );
+    }
+
+    if (error.code === 'invalid_api_key' || error.status === 401) {
+      return NextResponse.json(
+        { error: 'Servizio AI temporaneamente non disponibile. Riprova più tardi.', message: 'AI service temporarily unavailable. Please try again later.' },
         { status: 503 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Errore nella generazione. Riprova.' },
+      { error: 'Errore nella generazione. Riprova.', message: 'Generation error. Please try again.' },
       { status: 500 }
     );
   }
