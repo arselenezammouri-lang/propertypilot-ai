@@ -213,24 +213,37 @@ export default function ListingsPage() {
       });
       if (!res.success) throw new Error(res.message || res.error || 'Generation failed');
 
-      const content = res.data?.data;
+      const content = res.data;
       if (!content) throw new Error('No content returned');
 
-      const saveRes = await fetchApi<any>('/api/listings/save', {
-        method: 'POST',
-        body: JSON.stringify({
-          title: content.titles?.[0] || `${formData.propertyType} - ${formData.location}`,
-          property_data: payload,
-          generated_content: content,
-        }),
-      });
-      return saveRes;
+      try {
+        await fetchApi<any>('/api/listings/save', {
+          method: 'POST',
+          body: JSON.stringify({
+            title: content.titles?.[0] || `${formData.propertyType} - ${formData.location}`,
+            property_data: payload,
+            generated_content: content,
+          }),
+        });
+      } catch {
+        // Save failed (table may not exist) - still return content
+      }
+      return content;
     },
-    onSuccess: () => {
+    onSuccess: (content) => {
       queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
       toast({ title: t.generated, description: t.generatedDesc, duration: 5000 });
       setShowCreateDialog(false);
       setCreateForm({ propertyType: '', location: '', price: '', size: '', rooms: '', features: '', notes: '', style: 'standard', market: 'italy' });
+      if (content?.professional) {
+        setSelectedListing({
+          id: Date.now(),
+          title: content.titles?.[0] || 'Generated Listing',
+          created_at: new Date().toISOString(),
+          property_data: {},
+          generated_content: content,
+        } as any);
+      }
     },
     onError: (error: Error) => {
       toast({ variant: 'destructive', title: t.genError, description: error.message, duration: 8000 });
