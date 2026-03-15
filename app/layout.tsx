@@ -154,7 +154,7 @@ export default function RootLayout({
       '@type': 'AggregateOffer',
       priceCurrency: 'EUR',
       lowPrice: '0',
-      highPrice: '497',
+      highPrice: '897',
       offerCount: '4',
     },
     aggregateRating: {

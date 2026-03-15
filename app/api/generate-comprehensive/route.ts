@@ -61,7 +61,10 @@ export const POST = apiWrapper(
       .single();
 
     const currentPlan = subscription?.status || 'free';
-    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS].limits;
+    const FREE_PLAN_LIMITS = { listingsPerMonth: 5 } as const;
+    const planLimits = currentPlan === 'free'
+      ? FREE_PLAN_LIMITS
+      : (STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS]?.limits ?? FREE_PLAN_LIMITS);
     const currentUsage = subscription?.generations_count || 0;
 
     if (planLimits.listingsPerMonth !== -1 && currentUsage >= planLimits.listingsPerMonth) {

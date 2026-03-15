@@ -428,22 +428,17 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
         subscriptionId: subscription.id,
       });
     } else {
-      // Aggiorna anche profiles.subscription_plan a 'free'
-      const { data: subData } = await supabaseAdmin
-        .from('subscriptions')
-        .select('user_id')
-        .eq('stripe_subscription_id', subscription.id)
-        .single();
-      
-      if (subData?.user_id) {
+      const userId = data[0]?.user_id;
+      if (userId) {
         await supabaseAdmin
           .from('profiles')
           .update({ subscription_plan: 'free' })
-          .eq('id', subData.user_id);
+          .eq('id', userId);
       }
 
       logger.stripeEvent('subscription.deleted.success', {
         subscriptionId: subscription.id,
+        userId,
       });
     }
   } catch (error) {

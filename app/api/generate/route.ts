@@ -11,7 +11,6 @@ import {
 } from '@/lib/utils/rate-limit';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
-import { requireActiveSubscription } from '@/lib/utils/subscription-check';
 import OpenAI from 'openai';
 
 export const dynamic = 'force-dynamic';
@@ -25,18 +24,6 @@ export async function POST(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
-
-    // STEP 0: Check active subscription (CRITICAL SECURITY CHECK)
-    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
-    if (!subscriptionCheck.allowed) {
-      return NextResponse.json(
-        { 
-          error: subscriptionCheck.error || 'Abbonamento richiesto',
-          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
-        },
-        { status: 403 }
-      );
-    }
 
     // STEP 1: Rate limiting - Check user limit (10/min)
     const userRateLimit = await checkUserRateLimit(user.id);
@@ -86,7 +73,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     const currentPlan = subscription?.status || 'free';
-    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS].limits;
+    const FREE_PLAN_LIMITS = { listingsPerMonth: 5 } as const;
+    const planLimits = currentPlan === 'free'
+      ? FREE_PLAN_LIMITS
+      : (STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS]?.limits ?? FREE_PLAN_LIMITS);
 
     // STEP 2: Check monthly limit using generations_count instead of saved_listings
     const startOfMonth = new Date();
