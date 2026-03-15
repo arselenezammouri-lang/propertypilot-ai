@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus } from 'lucide-react';
+import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus, Wand2, Home, DollarSign, Ruler, BedDouble } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { SavedListing } from '@/lib/types/database.types';
 import { fetchApi } from '@/lib/api/client';
@@ -26,6 +26,9 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TableSkeleton } from '@/components/ui/skeleton-loaders';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ListingsPage() {
   const { toast } = useToast();
@@ -35,6 +38,18 @@ export default function ListingsPage() {
   const [selectedListing, setSelectedListing] = useState<SavedListing | null>(null);
   const [listingToDelete, setListingToDelete] = useState<SavedListing | null>(null);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    propertyType: '',
+    location: '',
+    price: '',
+    size: '',
+    rooms: '',
+    features: '',
+    notes: '',
+    style: 'standard' as 'luxury' | 'investment' | 'standard',
+    market: 'italy' as 'usa' | 'italy',
+  });
 
   const t = {
     deleted: isItalian ? "Annuncio eliminato" : "Listing deleted",
@@ -76,6 +91,28 @@ export default function ListingsPage() {
       ? "L'annuncio verrà rimosso dalla libreria. Questa azione non può essere annullata."
       : "The listing will be removed from your library. This action cannot be undone.",
     deleting: isItalian ? "Eliminazione..." : "Deleting...",
+    createTitle: isItalian ? "Genera Nuovo Annuncio" : "Generate New Listing",
+    createDesc: isItalian ? "Inserisci i dati dell'immobile per generare contenuti professionali con AI" : "Enter property details to generate professional AI content",
+    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
+    propertyTypePlaceholder: isItalian ? "es. Appartamento, Villa, Ufficio" : "e.g. Apartment, Villa, Office",
+    locationLabel: isItalian ? "Località *" : "Location *",
+    locationPlaceholder: isItalian ? "es. Milano Centro, Roma EUR" : "e.g. Downtown Miami, London W1",
+    priceLabel: isItalian ? "Prezzo" : "Price",
+    pricePlaceholder: isItalian ? "es. €350.000" : "e.g. $350,000",
+    sizeLabel: isItalian ? "Superficie (m²)" : "Size (sq ft)",
+    roomsLabel: isItalian ? "Locali" : "Rooms",
+    featuresLabel: isItalian ? "Caratteristiche" : "Features",
+    featuresPlaceholder: isItalian ? "es. Terrazza, garage, giardino, piscina" : "e.g. Terrace, garage, garden, pool",
+    notesLabel: isItalian ? "Note aggiuntive" : "Additional Notes",
+    notesPlaceholder: isItalian ? "Qualsiasi dettaglio extra per l'AI..." : "Any extra details for the AI...",
+    styleLabel: isItalian ? "Stile" : "Style",
+    marketLabel: isItalian ? "Mercato" : "Market",
+    generating: isItalian ? "Generazione in corso..." : "Generating...",
+    generate: isItalian ? "Genera con AI" : "Generate with AI",
+    generated: isItalian ? "Annuncio generato!" : "Listing generated!",
+    generatedDesc: isItalian ? "Il tuo annuncio è stato generato con successo." : "Your listing has been generated successfully.",
+    genError: isItalian ? "Errore nella generazione" : "Generation error",
+    fillRequired: isItalian ? "Compila tipo immobile e località" : "Fill in property type and location",
   };
 
   const { data: listingsData, isLoading, error } = useQuery<{ success: boolean; data: SavedListing[] }>({
@@ -154,6 +191,52 @@ export default function ListingsPage() {
     regenerateMutation.mutate(listing);
   };
 
+  const createMutation = useMutation({
+    mutationFn: async (formData: typeof createForm) => {
+      if (!formData.propertyType || !formData.location) {
+        throw new Error(t.fillRequired);
+      }
+      const payload = {
+        propertyType: formData.propertyType,
+        location: formData.location,
+        price: formData.price || undefined,
+        size: formData.size ? Number(formData.size) : undefined,
+        rooms: formData.rooms ? Number(formData.rooms) : undefined,
+        features: formData.features || undefined,
+        notes: formData.notes || undefined,
+        style: formData.style,
+        market: formData.market,
+      };
+      const res = await fetchApi<any>('/api/generate', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+      if (!res.success) throw new Error(res.message || res.error || 'Generation failed');
+
+      const content = res.data?.data;
+      if (!content) throw new Error('No content returned');
+
+      const saveRes = await fetchApi<any>('/api/listings/save', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: content.titles?.[0] || `${formData.propertyType} - ${formData.location}`,
+          property_data: payload,
+          generated_content: content,
+        }),
+      });
+      return saveRes;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
+      toast({ title: t.generated, description: t.generatedDesc, duration: 5000 });
+      setShowCreateDialog(false);
+      setCreateForm({ propertyType: '', location: '', price: '', size: '', rooms: '', features: '', notes: '', style: 'standard', market: 'italy' });
+    },
+    onError: (error: Error) => {
+      toast({ variant: 'destructive', title: t.genError, description: error.message, duration: 8000 });
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="container max-w-6xl py-8 space-y-8">
@@ -222,7 +305,7 @@ export default function ListingsPage() {
               actions={[
                 {
                   label: t.createListing,
-                  href: "/dashboard/listings",
+                  onClick: () => setShowCreateDialog(true),
                   icon: <Plus className="h-4 w-4" />,
                 },
                 {
@@ -462,6 +545,175 @@ export default function ListingsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Create Listing Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Wand2 className="h-6 w-6 text-royal-purple" />
+              {t.createTitle}
+            </DialogTitle>
+            <DialogDescription>{t.createDesc}</DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-5 py-4">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="propertyType">{t.propertyType}</Label>
+                <div className="relative">
+                  <Home className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="propertyType"
+                    placeholder={t.propertyTypePlaceholder}
+                    value={createForm.propertyType}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, propertyType: e.target.value }))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">{t.locationLabel}</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="location"
+                    placeholder={t.locationPlaceholder}
+                    value={createForm.location}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, location: e.target.value }))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">{t.priceLabel}</Label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="price"
+                    placeholder={t.pricePlaceholder}
+                    value={createForm.price}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, price: e.target.value }))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="size">{t.sizeLabel}</Label>
+                <div className="relative">
+                  <Ruler className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="size"
+                    type="number"
+                    placeholder="120"
+                    value={createForm.size}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, size: e.target.value }))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rooms">{t.roomsLabel}</Label>
+                <div className="relative">
+                  <BedDouble className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="rooms"
+                    type="number"
+                    placeholder="3"
+                    value={createForm.rooms}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, rooms: e.target.value }))}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="features">{t.featuresLabel}</Label>
+              <Input
+                id="features"
+                placeholder={t.featuresPlaceholder}
+                value={createForm.features}
+                onChange={(e) => setCreateForm(prev => ({ ...prev, features: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">{t.notesLabel}</Label>
+              <Textarea
+                id="notes"
+                placeholder={t.notesPlaceholder}
+                value={createForm.notes}
+                onChange={(e) => setCreateForm(prev => ({ ...prev, notes: e.target.value }))}
+                rows={2}
+              />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>{t.styleLabel}</Label>
+                <div className="flex gap-2">
+                  {(['standard', 'luxury', 'investment'] as const).map((s) => (
+                    <Button
+                      key={s}
+                      type="button"
+                      variant={createForm.style === s ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCreateForm(prev => ({ ...prev, style: s }))}
+                      className={createForm.style === s ? 'bg-royal-purple hover:bg-royal-purple/90' : ''}
+                    >
+                      {s === 'standard' ? 'Standard' : s === 'luxury' ? 'Luxury' : 'Investment'}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>{t.marketLabel}</Label>
+                <div className="flex gap-2">
+                  {([{ value: 'italy', label: '🇮🇹 EU' }, { value: 'usa', label: '🇺🇸 USA' }] as const).map((m) => (
+                    <Button
+                      key={m.value}
+                      type="button"
+                      variant={createForm.market === m.value ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCreateForm(prev => ({ ...prev, market: m.value }))}
+                      className={createForm.market === m.value ? 'bg-royal-purple hover:bg-royal-purple/90' : ''}
+                    >
+                      {m.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
+              {isItalian ? "Annulla" : "Cancel"}
+            </Button>
+            <Button
+              onClick={() => createMutation.mutate(createForm)}
+              disabled={createMutation.isPending || !createForm.propertyType || !createForm.location}
+              className="bg-gradient-to-r from-royal-purple to-electric-blue hover:opacity-90 text-white min-w-[180px]"
+            >
+              {createMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {t.generating}
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-4 w-4 mr-2" />
+                  {t.generate}
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
