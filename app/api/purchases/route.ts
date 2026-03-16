@@ -3,6 +3,15 @@ import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
+function isSchemaMissingTableError(error: unknown): boolean {
+  return Boolean(
+    error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code?: string }).code === 'PGRST205'
+  );
+}
+
 export async function GET() {
   try {
     const supabase = await createClient();
@@ -23,6 +32,17 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) {
+      if (isSchemaMissingTableError(error)) {
+        console.warn('Purchases table missing in schema cache, returning empty dataset');
+        return NextResponse.json({
+          purchases: [],
+          summary: {
+            totalPurchases: 0,
+            totalSpent: 0,
+            activePackages: [],
+          },
+        });
+      }
       console.error('Error fetching purchases:', error);
       return NextResponse.json(
         { error: 'Failed to fetch purchases' },

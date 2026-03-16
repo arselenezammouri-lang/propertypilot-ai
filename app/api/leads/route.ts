@@ -6,6 +6,15 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
+function isSchemaMissingTableError(error: unknown): boolean {
+  return Boolean(
+    error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code?: string }).code === 'PGRST205'
+  );
+}
+
 export async function GET(request: NextRequest) {
   try {
     const auth = await getAuthenticatedUser();
@@ -55,6 +64,13 @@ export async function GET(request: NextRequest) {
     const { data: leads, error } = await query;
 
     if (error) {
+      if (isSchemaMissingTableError(error)) {
+        logger.warn('Leads table missing in schema cache, returning empty dataset', {
+          endpoint: '/api/leads',
+          userId: user.id,
+        });
+        return NextResponse.json({ success: true, data: [] });
+      }
       console.error('Error fetching leads:', error);
       return NextResponse.json(
         { error: 'Errore nel recupero dei lead' },
