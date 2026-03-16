@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { updateStatusSchema } from '@/lib/validations/lead';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
