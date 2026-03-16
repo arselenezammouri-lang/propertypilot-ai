@@ -20,6 +20,7 @@ import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus } from 'lucide-r
 import { EmptyState } from '@/components/ui/empty-state';
 import { SavedListing } from '@/lib/types/database.types';
 import { fetchApi } from '@/lib/api/client';
+import Link from 'next/link';
 import { format } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -34,6 +35,7 @@ export default function ListingsPage() {
   const queryClient = useQueryClient();
   const [selectedListing, setSelectedListing] = useState<SavedListing | null>(null);
   const [listingToDelete, setListingToDelete] = useState<SavedListing | null>(null);
+  const [isCreateListingDialogOpen, setIsCreateListingDialogOpen] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
 
   const t = {
@@ -76,6 +78,12 @@ export default function ListingsPage() {
       ? "L'annuncio verrà rimosso dalla libreria. Questa azione non può essere annullata."
       : "The listing will be removed from your library. This action cannot be undone.",
     deleting: isItalian ? "Eliminazione..." : "Deleting...",
+    createDialogTitle: isItalian ? "Crea Nuovo Annuncio" : "Create New Listing",
+    createDialogDesc: isItalian
+      ? "Scegli come vuoi iniziare: compilazione guidata o ricerca opportunità dal mercato."
+      : "Choose how to start: guided generation or market prospecting.",
+    createFromWorkspace: isItalian ? "Apri Workspace Generazione" : "Open Generation Workspace",
+    searchMarket: isItalian ? "Cerca sul Mercato" : "Search Market",
   };
 
   const { data: listingsData, isLoading, error } = useQuery<{ success: boolean; data: SavedListing[] }>({
@@ -222,7 +230,7 @@ export default function ListingsPage() {
               actions={[
                 {
                   label: t.createListing,
-                  href: "/dashboard/listings",
+                  onClick: () => setIsCreateListingDialogOpen(true),
                   icon: <Plus className="h-4 w-4" />,
                 },
                 {
@@ -299,6 +307,31 @@ export default function ListingsPage() {
           ))}
         </div>
       )}
+
+      <Dialog open={isCreateListingDialogOpen} onOpenChange={setIsCreateListingDialogOpen}>
+        {isCreateListingDialogOpen ? (
+          <DialogContent className="sm:max-w-md" data-testid="dialog-create-listing">
+            <DialogHeader>
+              <DialogTitle>{t.createDialogTitle}</DialogTitle>
+              <DialogDescription>{t.createDialogDesc}</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-3 pt-2">
+              <Button asChild onClick={() => setIsCreateListingDialogOpen(false)} data-testid="button-open-generation-workspace">
+                <Link href="/dashboard/perfect-copy">
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t.createFromWorkspace}
+                </Link>
+              </Button>
+              <Button asChild variant="outline" onClick={() => setIsCreateListingDialogOpen(false)} data-testid="button-open-market-search">
+                <Link href="/dashboard/prospecting">
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  {t.searchMarket}
+                </Link>
+              </Button>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
 
       <Dialog open={!!selectedListing} onOpenChange={(open: boolean) => !open && setSelectedListing(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
