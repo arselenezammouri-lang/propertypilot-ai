@@ -125,7 +125,7 @@ export default function PipelinePage() {
     } finally {
       setIsLoading(false);
     }
-  }, [router, toast]);
+  }, [router, toast, t.errorTitle, t.loadError]);
 
   useEffect(() => {
     fetchLeads();

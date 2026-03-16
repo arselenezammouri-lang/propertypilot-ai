@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -65,16 +65,7 @@ export function WelcomeTour() {
       : "Click to unlock your first commission",
   };
 
-  useEffect(() => {
-    // Controlla se è il primo accesso (usa localStorage)
-    const hasSeenWelcome = localStorage.getItem("propertypilot_welcome_seen");
-    if (!hasSeenWelcome) {
-      setIsOpen(true);
-      startScanAnimation();
-    }
-  }, []);
-
-  const startScanAnimation = () => {
+  const startScanAnimation = useCallback(() => {
     let totalDuration = 0;
     scanSteps.forEach((step) => {
       totalDuration += step.duration;
@@ -103,7 +94,16 @@ export function WelcomeTour() {
         }, 500);
       }
     }, 100);
-  };
+  }, [scanSteps]);
+
+  useEffect(() => {
+    // Controlla se è il primo accesso (usa localStorage)
+    const hasSeenWelcome = localStorage.getItem("propertypilot_welcome_seen");
+    if (!hasSeenWelcome) {
+      setIsOpen(true);
+      startScanAnimation();
+    }
+  }, [startScanAnimation]);
 
   const handleClose = () => {
     setIsOpen(false);

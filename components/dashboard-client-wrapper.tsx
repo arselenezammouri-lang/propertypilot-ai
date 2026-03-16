@@ -56,7 +56,18 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
       setShowLimitModal(true);
       window.history.replaceState({}, '', '/dashboard');
     }
-  }, [searchParams, toast, locale]);
+  }, [
+    searchParams,
+    toast,
+    d.boostActivated,
+    d.boostDesc,
+    d.agencyActive,
+    d.agencyDesc,
+    d.paymentDone,
+    d.paymentDesc,
+    d.checkoutCanceled,
+    d.checkoutCanceledDesc,
+  ]);
 
   useEffect(() => {
     if (isNearLimit && !hasReachedLimit && plan !== 'agency') {
@@ -70,7 +81,7 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
     if (hasReachedLimit && plan !== 'agency') {
       setShowLimitModal(true);
     }
-  }, [isNearLimit, hasReachedLimit, currentUsage, limit, plan, toast, locale]);
+  }, [isNearLimit, hasReachedLimit, currentUsage, limit, plan, toast, d.limitNear, d.limitNearDesc]);
 
   const handleTierPreview = (tier: PreviewTier) => {
     if (typeof window !== 'undefined') {

@@ -89,7 +89,15 @@ function PackagesPageContent() {
       });
       window.history.replaceState({}, '', '/dashboard/packages');
     }
-  }, [searchParams, toast, queryClient]);
+  }, [
+    searchParams,
+    toast,
+    queryClient,
+    t.purchaseComplete,
+    t.purchaseCompleteDesc,
+    t.purchaseCanceled,
+    t.purchaseCanceledDesc,
+  ]);
 
   const handlePurchase = async () => {
     setLoadingPackage('boost');

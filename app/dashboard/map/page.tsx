@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
@@ -138,7 +138,7 @@ export default function PredatorMapPage() {
     };
   };
 
-  const fetchListings = async () => {
+  const fetchListings = useCallback(async () => {
     setLoading(true);
     try {
       const [listingsRes, eliteRes] = await Promise.all([
@@ -172,11 +172,11 @@ export default function PredatorMapPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [handleAPIError, locale, toast]);
 
   useEffect(() => {
     if (!isMapLocked) fetchListings();
-  }, [isMapLocked]);
+  }, [isMapLocked, fetchListings]);
 
   useEffect(() => {
     // Processa listings e crea markers
