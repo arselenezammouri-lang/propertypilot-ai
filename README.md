@@ -56,6 +56,7 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 - [API Documentation](./docs/API.md) - Documentazione completa API
 - [Architecture](./docs/ARCHITECTURE.md) - Architettura sistema
 - [Setup Guide](./docs/SETUP.md) - Guida setup e deployment
+- [Go-To-Market Plan](./docs/GO_TO_MARKET_EXECUTION_PLAN.md) - Piano marketing e vendita operativo
 
 ---
 
