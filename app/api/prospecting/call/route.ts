@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getAuthenticatedUser } from '@/lib/api/auth-helper';
+import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { VOICE_CALLS_LIMIT_PRO } from '@/lib/utils/plan-features';
 import {

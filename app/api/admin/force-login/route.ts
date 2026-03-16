@@ -1,22 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAppUrl } from '@/lib/env';
+import { timingSafeEqual } from 'crypto';
+import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const FOUNDER_USER_ID = '84cae443-bedb-4cfd-9c88-bcc2ba817ed2';
-const FOUNDER_EMAIL = 'arselenezammouri@gmail.com';
+const FOUNDER_USER_ID = process.env.ADMIN_FORCE_LOGIN_USER_ID || '84cae443-bedb-4cfd-9c88-bcc2ba817ed2';
+
+function isSecretValid(providedSecret: string, expectedSecret: string): boolean {
+  const provided = Buffer.from(providedSecret);
+  const expected = Buffer.from(expectedSecret);
+
+  if (provided.length !== expected.length) return false;
+  return timingSafeEqual(provided, expected);
+}
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const secret = searchParams.get('secret');
+  const isProduction = process.env.NODE_ENV === 'production';
+  const adminForceLoginEnabled = process.env.ADMIN_FORCE_LOGIN_ENABLED === 'true';
+  if (isProduction && !adminForceLoginEnabled) {
+    return NextResponse.json({ error: 'Endpoint non disponibile.' }, { status: 404 });
+  }
 
-  const validSecrets = [
-    process.env.SESSION_SECRET,
-    process.env.ADMIN_FORCE_LOGIN_SECRET,
-  ].filter(Boolean);
-  
-  if (!secret || !validSecrets.includes(secret)) {
+  const expectedSecret = process.env.ADMIN_FORCE_LOGIN_SECRET;
+  if (!expectedSecret) {
+    logger.error('[ADMIN FORCE LOGIN] Missing ADMIN_FORCE_LOGIN_SECRET');
+    return NextResponse.json({ error: 'Configurazione admin incompleta.' }, { status: 503 });
+  }
+
+  const querySecret = request.nextUrl.searchParams.get('secret');
+  const headerSecret = request.headers.get('x-admin-force-login-secret');
+  const providedSecret = headerSecret || (!isProduction ? querySecret : null);
+
+  if (!providedSecret || !isSecretValid(providedSecret, expectedSecret)) {
     return NextResponse.json(
       { error: 'Accesso negato. Secret richiesto.' },
       { status: 401 }
@@ -80,7 +97,7 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Force login error:', error);
+    logger.error('[ADMIN FORCE LOGIN] Error', error as Error);
     return NextResponse.json({
       error: 'Errore interno',
       details: error instanceof Error ? error.message : 'Unknown'

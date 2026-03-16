@@ -8,6 +8,7 @@ import { LuxuryTemplate } from '@/lib/pdf/templates/luxury-template';
 import sharp from 'sharp';
 import { Pool } from '@neondatabase/serverless';
 import { logger } from '@/lib/utils/safe-logger';
+import { requireActiveSubscription, requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
 export const dynamic = 'force-dynamic';
 
@@ -166,6 +167,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const activeSubscriptionCheck = await requireActiveSubscription(supabase as any, user.id);
+    if (!activeSubscriptionCheck.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: activeSubscriptionCheck.error || 'Funzionalità disponibile solo per piani a pagamento con pagamento Stripe confermato.',
+        },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json();
     
     const validationResult = GeneratePdfRequestSchema.safeParse(body);
@@ -184,6 +196,19 @@ export async function POST(request: NextRequest) {
 
     const data = validationResult.data;
     logger.debug('[PDF] Generating PDF with template', { template: data.template });
+
+    if (data.brandingMode === 'agency') {
+      const premiumSubscriptionCheck = await requireProOrAgencySubscription(supabase as any, user.id);
+      if (!premiumSubscriptionCheck.allowed) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: premiumSubscriptionCheck.error || 'Il PDF white-label richiede un piano PRO o AGENCY con pagamento Stripe confermato.',
+          },
+          { status: 403 }
+        );
+      }
+    }
 
     let optimizedImages: string[] = [];
     if (data.images && data.images.length > 0) {

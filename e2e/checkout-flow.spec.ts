@@ -18,7 +18,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Checkout Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Login prima di ogni test
-    await page.goto('/login');
+    await page.goto('/auth/login');
     
     const testEmail = process.env.E2E_TEST_EMAIL || 'test@example.com';
     const testPassword = process.env.E2E_TEST_PASSWORD || 'TestPassword123!';

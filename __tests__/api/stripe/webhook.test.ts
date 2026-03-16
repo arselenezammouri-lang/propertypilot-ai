@@ -274,8 +274,7 @@ describe('POST /api/stripe/webhook', () => {
     const response = await POST(request);
     const data = await response.json();
 
-    // In test environment, we accept either 200 (success) or 500 (handler error)
-    expect([200, 500]).toContain(response.status);
+    expect(response.status).toBe(200);
   });
 
   it('should return 500 if webhook secret is not configured', async () => {

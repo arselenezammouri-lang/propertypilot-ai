@@ -67,6 +67,22 @@ describe('Subscription Check', () => {
       expect(result.error).toContain('abbonamento');
     });
 
+    it('should deny access for agency plan without Stripe confirmation', async () => {
+      mockChain.single.mockResolvedValue({
+        data: {
+          status: 'agency',
+          stripe_subscription_id: null,
+        },
+        error: null,
+      });
+
+      const result = await requireActiveSubscription(mockSupabaseClient as any, 'user-123');
+
+      expect(result.allowed).toBe(false);
+      expect(result.planType).toBe('agency');
+      expect(result.error).toContain('pagamento');
+    });
+
     it('should handle missing subscription gracefully', async () => {
       mockChain.single.mockResolvedValue({
         data: null,
@@ -116,6 +132,22 @@ describe('Subscription Check', () => {
       expect(result.allowed).toBe(false);
       // The error message should contain "Premium" or "PRO" or "AGENCY"
       expect(result.error).toMatch(/Premium|PRO|AGENCY|piano/i);
+    });
+
+    it('should deny access for PRO plan when Stripe is not confirmed', async () => {
+      mockChain.single.mockResolvedValue({
+        data: {
+          status: 'pro',
+          stripe_subscription_id: null,
+        },
+        error: null,
+      });
+
+      const result = await requireProOrAgencySubscription(mockSupabaseClient as any, 'user-123');
+
+      expect(result.allowed).toBe(false);
+      expect(result.planType).toBe('pro');
+      expect(result.error).toContain('pagamento');
     });
   });
 

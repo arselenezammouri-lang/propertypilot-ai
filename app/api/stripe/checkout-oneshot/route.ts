@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireStripe, getOneTimePackage, STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
 import { logger } from '@/lib/utils/safe-logger';
+import { createClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 

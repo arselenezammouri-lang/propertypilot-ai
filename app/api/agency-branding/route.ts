@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { Pool } from '@neondatabase/serverless';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,14 @@ export async function GET() {
       return NextResponse.json(
         { error: 'Devi effettuare il login per accedere al branding.' },
         { status: 401 }
+      );
+    }
+
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { error: subscriptionCheck.error || 'Il branding white-label richiede un piano PRO o AGENCY con pagamento confermato.' },
+        { status: 403 }
       );
     }
 
@@ -64,6 +73,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Devi effettuare il login per salvare il branding.' },
         { status: 401 }
+      );
+    }
+
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { error: subscriptionCheck.error || 'Il branding white-label richiede un piano PRO o AGENCY con pagamento confermato.' },
+        { status: 403 }
       );
     }
 

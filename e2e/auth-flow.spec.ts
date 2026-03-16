@@ -44,7 +44,7 @@ test.describe('Authentication Flow', () => {
 
   test('should complete login flow', async ({ page }) => {
     // Navigate to login page
-    await page.goto('/login');
+    await page.goto('/auth/login');
     
     // Fill login form (assumendo che esista un test user)
     // NOTA: In produzione, creare un test user o usare variabili d'ambiente
@@ -67,7 +67,7 @@ test.describe('Authentication Flow', () => {
   });
 
   test('should handle invalid credentials', async ({ page }) => {
-    await page.goto('/login');
+    await page.goto('/auth/login');
     
     await page.fill('input[type="email"]', 'invalid@example.com');
     await page.fill('input[type="password"]', 'wrongpassword');
@@ -80,6 +80,6 @@ test.describe('Authentication Flow', () => {
     await expect(errorMessage).toBeVisible({ timeout: 5000 });
     
     // Should stay on login page
-    await expect(page).toHaveURL(/login/i);
+    await expect(page).toHaveURL(/auth\/login/i);
   });
 });

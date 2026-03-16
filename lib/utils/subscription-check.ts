@@ -64,9 +64,8 @@ export async function requireActiveSubscription(
       };
     }
 
-    // CONTROLLO CRITICO: stripe_subscription_id richiesto per starter/pro.
-    // Agency può essere concessa senza Stripe (es. Founder/DB riparato via SQL).
-    if (!subscription.stripe_subscription_id && planType !== 'agency') {
+    // CONTROLLO CRITICO: qualsiasi piano a pagamento richiede conferma Stripe nel DB.
+    if (!subscription.stripe_subscription_id) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('[SUBSCRIPTION CHECK] User has paid plan but no stripe_subscription_id:', {
           userId,
@@ -161,8 +160,8 @@ export async function requireProOrAgencySubscription(
       };
     }
 
-    // CONTROLLO CRITICO: stripe richiesto per Pro; Agency può essere senza Stripe (Founder/DB)
-    if (!subscription.stripe_subscription_id && planType !== 'agency') {
+    // CONTROLLO CRITICO: qualsiasi piano premium richiede conferma Stripe nel DB.
+    if (!subscription.stripe_subscription_id) {
       console.warn('[SUBSCRIPTION CHECK PRO/AGENCY] User has premium plan but no stripe_subscription_id:', {
         userId,
         planType,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireStripe, getPlanByPriceId, STRIPE_PLANS, getOneTimePackage } from '@/lib/stripe/config';
+import { requireStripe, getPlanByPriceId, getOneTimePackage } from '@/lib/stripe/config';
 import { createClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
 import Stripe from 'stripe';
@@ -359,7 +359,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
         updated_at: new Date().toISOString(),
       })
       .eq('stripe_subscription_id', subscription.id)
-      .select();
+      .select('user_id');
 
     if (error) {
       logger.error('Failed to update subscription', error, {
@@ -428,18 +428,13 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
         subscriptionId: subscription.id,
       });
     } else {
+      const affectedUserId = data[0]?.user_id;
       // Aggiorna anche profiles.subscription_plan a 'free'
-      const { data: subData } = await supabaseAdmin
-        .from('subscriptions')
-        .select('user_id')
-        .eq('stripe_subscription_id', subscription.id)
-        .single();
-      
-      if (subData?.user_id) {
+      if (affectedUserId) {
         await supabaseAdmin
           .from('profiles')
           .update({ subscription_plan: 'free' })
-          .eq('id', subData.user_id);
+          .eq('id', affectedUserId);
       }
 
       logger.stripeEvent('subscription.deleted.success', {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { supabaseService } from '@/lib/supabase/service';
+import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { logger } from '@/lib/utils/safe-logger';
 import type { Automation, FollowupPayload, ReminderPayload, WeeklyContentPayload } from '@/lib/types/database.types';
@@ -140,7 +141,15 @@ export async function POST(request: NextRequest) {
   try {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
-    const { user } = auth;
+    const { user, supabase } = auth;
+
+    const subscriptionCheck = await requireProOrAgencySubscription(supabase, user.id);
+    if (!subscriptionCheck.allowed) {
+      return NextResponse.json(
+        { error: subscriptionCheck.error || 'Questa funzionalità richiede un piano PRO o AGENCY con pagamento confermato.' },
+        { status: 403 }
+      );
+    }
 
     const body = await request.json();
     const { automation_id } = body;

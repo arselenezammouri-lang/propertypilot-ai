@@ -5,8 +5,27 @@ import { analyzeCallOutcome } from '@/lib/ai/voice-agent';
 import { sendEmail, generateAppointmentNotificationEmail } from '@/lib/utils/email';
 import { createGoogleCalendarEvent, generateAppointmentCalendarEvent } from '@/lib/calendar/google';
 import { getAppUrl } from '@/lib/env';
+import { createHmac, timingSafeEqual } from 'crypto';
 
 export const dynamic = 'force-dynamic';
+
+function verifyBlandSignature(rawBody: string, signatureHeader: string, secret: string): boolean {
+  const providedSignature = signatureHeader.includes('=')
+    ? signatureHeader.split('=').pop()?.trim() || ''
+    : signatureHeader.trim();
+
+  if (!providedSignature) return false;
+
+  const expectedSignature = createHmac('sha256', secret)
+    .update(rawBody, 'utf8')
+    .digest('hex');
+
+  const providedBuffer = Buffer.from(providedSignature, 'utf8');
+  const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
+
+  if (providedBuffer.length !== expectedBuffer.length) return false;
+  return timingSafeEqual(providedBuffer, expectedBuffer);
+}
 
 /**
  * POST /api/prospecting/call/webhook
@@ -16,6 +35,25 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(request: NextRequest) {
   try {
+    const rawBody = await request.text();
+    const webhookSecret = process.env.BLAND_AI_WEBHOOK_SECRET;
+    const signatureHeader =
+      request.headers.get('x-bland-signature')
+      || request.headers.get('x-webhook-signature')
+      || request.headers.get('x-signature');
+
+    if (!webhookSecret && process.env.NODE_ENV === 'production') {
+      logger.error('[PROSPECTING WEBHOOK] BLAND_AI_WEBHOOK_SECRET missing in production');
+      return NextResponse.json({ success: false, error: 'Webhook non configurato' }, { status: 503 });
+    }
+
+    if (webhookSecret) {
+      if (!signatureHeader || !verifyBlandSignature(rawBody, signatureHeader, webhookSecret)) {
+        logger.warn('[PROSPECTING WEBHOOK] Invalid signature');
+        return NextResponse.json({ success: false, error: 'Invalid signature' }, { status: 401 });
+      }
+    }
+
     // Usa service role key per bypassare RLS (webhook esterno)
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,7 +66,12 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const body = await request.json();
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ success: false, error: 'Invalid JSON payload' }, { status: 400 });
+    }
 
     // Bland AI webhook payload structure (adatta in base alla documentazione Bland AI)
     const {
