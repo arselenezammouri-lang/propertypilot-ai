@@ -122,7 +122,7 @@ export function DemoModal() {
             </Button>
           </DialogTrigger>
           
-          <DialogContent className="sm:max-w-lg border-2 border-sunset-gold/30 bg-background/95 backdrop-blur-xl shadow-glow-gold" aria-labelledby="demo-modal-title" aria-describedby="demo-modal-description">
+          {isOpen ? <DialogContent className="sm:max-w-lg border-2 border-sunset-gold/30 bg-background/95 backdrop-blur-xl shadow-glow-gold" aria-labelledby="demo-modal-title" aria-describedby="demo-modal-description">
             <DialogHeader className="text-center pb-4">
               <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-sunset-gold via-royal-purple to-electric-blue flex items-center justify-center mb-4 shadow-glow-gold" aria-hidden="true">
                 <Calendar className="h-8 w-8 text-white" />
@@ -176,7 +176,7 @@ export function DemoModal() {
                 {t.trustBadge}
               </span>
             </div>
-          </DialogContent>
+          </DialogContent> : null}
         </Dialog>
       </div>
     </>

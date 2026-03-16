@@ -12,6 +12,7 @@ import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { CommandPalette } from "@/components/command-palette";
+import { DisableServiceWorker } from "@/components/disable-service-worker";
 import { SkipToContent } from "@/components/skip-to-content";
 import { HtmlLangDir } from "@/components/html-lang-dir";
 import type { Locale } from "@/lib/i18n/config";
@@ -204,6 +205,7 @@ export default function RootLayout({
               storageKey="propertypilot-theme"
             >
               <PerformanceMonitor />
+              <DisableServiceWorker />
               <ErrorBoundary>
                 {children}
               </ErrorBoundary>

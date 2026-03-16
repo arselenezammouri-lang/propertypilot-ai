@@ -107,6 +107,12 @@
     @apply bg-background text-foreground transition-colors duration-300;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Safety net: never leave app shell non-interactive after modal/hydration glitches */
+  body,
+  #main-content {
+    pointer-events: auto;
+  }
   
   html {
     scroll-behavior: smooth;

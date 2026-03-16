@@ -81,22 +81,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const isClosingRef = useRef(false);
+  const onboardingEnabled = process.env.NEXT_PUBLIC_ENABLE_ONBOARDING === 'true';
   const router = useRouter();
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
   const ONBOARDING_STEPS = getOnboardingSteps(isItalian);
-
-  useEffect(() => {
-    checkOnboardingStatus();
-  }, []);
 
   const markOnboardingSeen = useCallback(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem(ONBOARDING_SEEN_KEY, "true");
   }, []);
 
-  const checkOnboardingStatus = async () => {
+  const checkOnboardingStatus = useCallback(async () => {
     try {
+      if (!onboardingEnabled || typeof window === "undefined") {
+        return;
+      }
+
       const alreadySeen = localStorage.getItem(ONBOARDING_SEEN_KEY) === "true";
       if (alreadySeen) {
         return;
@@ -110,13 +111,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('onboarding_completed')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (!profile?.onboarding_completed) {
+      if (!profileError && profile && profile.onboarding_completed === false) {
         setIsOpen(true);
       }
     } catch (error) {
@@ -124,7 +125,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [onboardingEnabled]);
+
+  useEffect(() => {
+    void checkOnboardingStatus();
+  }, [checkOnboardingStatus]);
 
   const completeOnboarding = useCallback(async (reason: 'completed' | 'dismissed') => {
     if (isClosingRef.current) return;
@@ -181,6 +186,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     void completeOnboarding('dismissed');
   };
 
+  if (!onboardingEnabled) return null;
   if (isLoading) return null;
 
   const step = ONBOARDING_STEPS[currentStep];
@@ -189,7 +195,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-gradient-to-br from-background via-background to-royal-purple/5 border-royal-purple/20">
+      {isOpen ? <DialogContent className="sm:max-w-lg bg-gradient-to-br from-background via-background to-royal-purple/5 border-royal-purple/20">
         <DialogHeader className="text-center pb-2">
           <div className="flex justify-center mb-4">
             <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg animate-pulse`}>
@@ -272,7 +278,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             </Button>
           </div>
         </DialogFooter>
-      </DialogContent>
+      </DialogContent> : null}
     </Dialog>
   );
 }

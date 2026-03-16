@@ -24,6 +24,7 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
   const { toast } = useToast();
   const { hasReachedLimit, isNearLimit, currentUsage, limit, plan } = useUsageLimits();
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const onboardingEnabled = process.env.NEXT_PUBLIC_ENABLE_ONBOARDING === 'true';
   const { locale } = useLocale();
   const d = getTranslation(locale as SupportedLocale).dashboardToasts;
 
@@ -83,6 +84,28 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
     }
   }, [isNearLimit, hasReachedLimit, currentUsage, limit, plan, toast, d.limitNear, d.limitNearDesc]);
 
+  useEffect(() => {
+    const restorePointerEvents = () => {
+      const hasOpenDialogOverlay = Boolean(
+        document.querySelector('[data-state="open"][class*="fixed"][class*="inset-0"][class*="z-50"]')
+      );
+      if (!hasOpenDialogOverlay && document.body.style.pointerEvents === "none") {
+        document.body.style.pointerEvents = "auto";
+      }
+    };
+
+    restorePointerEvents();
+    const intervalId = window.setInterval(restorePointerEvents, 1000);
+    window.addEventListener("focus", restorePointerEvents);
+    window.addEventListener("visibilitychange", restorePointerEvents);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", restorePointerEvents);
+      window.removeEventListener("visibilitychange", restorePointerEvents);
+    };
+  }, []);
+
   const handleTierPreview = (tier: PreviewTier) => {
     if (typeof window !== 'undefined') {
       if (tier === 'real') {
@@ -96,7 +119,7 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
 
   return (
     <>
-      <OnboardingWizard />
+      {onboardingEnabled ? <OnboardingWizard /> : null}
       <PendingCheckoutBanner />
       <TierPreviewToggle 
         currentRealTier={plan}

@@ -46,9 +46,7 @@ export function PWAInstallPrompt() {
       setTimeout(() => setShowPrompt(true), 5000);
     }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(console.error);
-    }
+    // Service worker registration intentionally disabled while stabilizing dashboard runtime.
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstall);

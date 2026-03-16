@@ -66,8 +66,8 @@ export function AriaLimitModal({ isOpen, onClose, currentPlan, currentUsage, lim
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg bg-gradient-to-br from-background via-background to-royal-purple/5 border-royal-purple/20">
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      {isOpen ? <DialogContent className="sm:max-w-lg bg-gradient-to-br from-background via-background to-royal-purple/5 border-royal-purple/20">
         <DialogHeader className="text-center pb-4">
           <div className="mx-auto mb-4 w-20 h-20 rounded-full bg-gradient-to-br from-royal-purple/20 to-electric-blue/20 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-royal-purple to-electric-blue flex items-center justify-center animate-pulse">
@@ -130,7 +130,7 @@ export function AriaLimitModal({ isOpen, onClose, currentPlan, currentUsage, lim
             </Link>
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </DialogContent> : null}
     </Dialog>
   );
 }

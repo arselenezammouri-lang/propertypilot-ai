@@ -26,6 +26,17 @@ export function useUsageLimits(): UsageLimits {
   const [remainingGenerations, setRemainingGenerations] = useState(0);
   const [percentageUsed, setPercentageUsed] = useState(0);
 
+  const applySafeFallback = useCallback((message: string | null) => {
+    setPlan('free');
+    setCurrentUsage(0);
+    setLimit(5);
+    setHasReachedLimit(false);
+    setIsNearLimit(false);
+    setRemainingGenerations(5);
+    setPercentageUsed(0);
+    setError(message);
+  }, []);
+
   const fetchUsage = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -35,28 +46,56 @@ export function useUsageLimits(): UsageLimits {
       
       if (!response.ok) {
         if (response.status === 401) {
+          applySafeFallback(null);
           setIsLoading(false);
           return;
         }
         throw new Error('Failed to fetch usage');
       }
 
-      const data = await response.json();
+      const rawData = await response.json();
+      const data = (rawData && typeof rawData === 'object') ? rawData as Record<string, unknown> : {};
 
-      setPlan(data.plan || 'free');
-      setCurrentUsage(data.currentUsage || 0);
-      setLimit(data.limit ?? 5);
-      setHasReachedLimit(data.hasReachedLimit || false);
-      setIsNearLimit(data.isNearLimit || false);
-      setRemainingGenerations(data.remainingGenerations ?? 0);
-      setPercentageUsed(data.percentageUsed || 0);
+      const safePlan = typeof data.plan === 'string' ? data.plan : 'free';
+      const safeCurrentUsage = typeof data.currentUsage === 'number' && Number.isFinite(data.currentUsage)
+        ? data.currentUsage
+        : 0;
+      const safeLimit = typeof data.limit === 'number' && Number.isFinite(data.limit)
+        ? data.limit
+        : 5;
+      const computedRemaining = safeLimit === -1 ? -1 : Math.max(0, safeLimit - safeCurrentUsage);
+      const computedHasReachedLimit = safeLimit !== -1 && safeCurrentUsage >= safeLimit;
+      const computedPercentageUsed = safeLimit > 0
+        ? Math.min(100, Math.max(0, Math.round((safeCurrentUsage / safeLimit) * 100)))
+        : 0;
+
+      const safeHasReachedLimit = typeof data.hasReachedLimit === 'boolean'
+        ? data.hasReachedLimit
+        : computedHasReachedLimit;
+      const safeIsNearLimit = typeof data.isNearLimit === 'boolean'
+        ? data.isNearLimit
+        : (safeLimit !== -1 && computedPercentageUsed >= 80 && !safeHasReachedLimit);
+      const safeRemainingGenerations = typeof data.remainingGenerations === 'number' && Number.isFinite(data.remainingGenerations)
+        ? data.remainingGenerations
+        : computedRemaining;
+      const safePercentageUsed = typeof data.percentageUsed === 'number' && Number.isFinite(data.percentageUsed)
+        ? data.percentageUsed
+        : computedPercentageUsed;
+
+      setPlan(safePlan);
+      setCurrentUsage(safeCurrentUsage);
+      setLimit(safeLimit);
+      setHasReachedLimit(safeHasReachedLimit);
+      setIsNearLimit(safeIsNearLimit);
+      setRemainingGenerations(safeRemainingGenerations);
+      setPercentageUsed(safePercentageUsed);
     } catch (err) {
       console.error('Error in useUsageLimits:', err);
-      setError('Errore nel caricamento');
+      applySafeFallback('Errore nel caricamento');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [applySafeFallback]);
 
   useEffect(() => {
     fetchUsage();
