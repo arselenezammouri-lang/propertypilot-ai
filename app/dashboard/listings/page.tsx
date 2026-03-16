@@ -116,7 +116,7 @@ export default function ListingsPage() {
 
   const regenerateMutation = useMutation({
     mutationFn: async (listing: SavedListing) => {
-      const res = await fetchApi<{ data: SavedListing['generated_content'] }>('/api/generate-comprehensive', {
+      const res = await fetchApi<SavedListing['generated_content']>('/api/generate-comprehensive', {
         method: 'POST',
         body: JSON.stringify(listing.property_data),
       });
