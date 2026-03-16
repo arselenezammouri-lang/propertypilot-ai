@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Sparkles, Home, FileText, Rocket, ArrowRight, ArrowLeft, CheckCircle, Building2, Key, PartyPopper, Zap } from 'lucide-react';
@@ -12,6 +12,8 @@ import { debugClientLog } from '@/lib/debug/client-log';
 interface OnboardingWizardProps {
   onComplete?: () => void;
 }
+
+const ONBOARDING_SEEN_KEY = "propertypilot_onboarding_seen";
 
 function getOnboardingSteps(isItalian: boolean) {
   return [
@@ -79,6 +81,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const isClosingRef = useRef(false);
   const router = useRouter();
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
@@ -88,8 +91,26 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     checkOnboardingStatus();
   }, []);
 
+  const markOnboardingSeen = useCallback(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(ONBOARDING_SEEN_KEY, "true");
+  }, []);
+
   const checkOnboardingStatus = async () => {
     try {
+      const alreadySeen = localStorage.getItem(ONBOARDING_SEEN_KEY) === "true";
+      if (alreadySeen) {
+        // #region agent log
+        debugClientLog({
+          hypothesisId: "B",
+          location: "components/onboarding-wizard.tsx:101",
+          message: "Onboarding skipped due to local seen flag",
+          data: { alreadySeen },
+        });
+        // #endregion
+        return;
+      }
+
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -136,7 +157,23 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     }
   };
 
-  const completeOnboarding = async () => {
+  const completeOnboarding = useCallback(async (reason: 'completed' | 'dismissed') => {
+    if (isClosingRef.current) return;
+    isClosingRef.current = true;
+    markOnboardingSeen();
+
+    // #region agent log
+    debugClientLog({
+      hypothesisId: "B",
+      location: "components/onboarding-wizard.tsx:151",
+      message: "Onboarding close flow triggered",
+      data: { reason },
+    });
+    // #endregion
+
+    setIsOpen(false);
+    onComplete?.();
+
     try {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
@@ -149,10 +186,19 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       }
     } catch (error) {
       // Silently fail - onboarding completion is not critical
+    } finally {
+      isClosingRef.current = false;
     }
-    
-    setIsOpen(false);
-    onComplete?.();
+  }, [markOnboardingSeen, onComplete]);
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setIsOpen(true);
+      return;
+    }
+    if (isOpen) {
+      void completeOnboarding('dismissed');
+    }
   };
 
   const nextStep = () => {
@@ -160,7 +206,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       setCurrentStep(currentStep + 1);
     } else {
       // Last step: redirect to listings page for quick win
-      completeOnboarding();
+      void completeOnboarding('completed');
       router.push('/dashboard/listings?onboarding=true');
     }
   };
@@ -172,7 +218,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   };
 
   const skipOnboarding = () => {
-    completeOnboarding();
+    void completeOnboarding('dismissed');
   };
 
   if (isLoading) return null;
@@ -182,7 +228,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const isLastStep = currentStep === ONBOARDING_STEPS.length - 1;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg bg-gradient-to-br from-background via-background to-royal-purple/5 border-royal-purple/20">
         <DialogHeader className="text-center pb-2">
           <div className="flex justify-center mb-4">
