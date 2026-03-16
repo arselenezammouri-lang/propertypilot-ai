@@ -228,7 +228,7 @@ export default function AutomationCenterPage() {
 
   const fetchLogs = async () => {
     try {
-      const res = await fetchApi<{ logs?: unknown[] }>('/api/automations/execute-rule?limit=50');
+      const res = await fetchApi<{ logs?: AutomationLog[] }>('/api/automations/execute-rule?limit=50');
       if (res.success && res.data != null) {
         setLogs(res.data.logs ?? []);
       }
