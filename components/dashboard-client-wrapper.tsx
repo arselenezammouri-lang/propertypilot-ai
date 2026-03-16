@@ -10,6 +10,7 @@ import { TierPreviewToggle, PreviewTier } from "./tier-preview-toggle";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { debugClientLog } from "@/lib/debug/client-log";
 
 interface DashboardClientWrapperProps {
   children: React.ReactNode;
@@ -26,6 +27,24 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
   const [showLimitModal, setShowLimitModal] = useState(false);
   const { locale } = useLocale();
   const d = getTranslation(locale as SupportedLocale).dashboardToasts;
+
+  useEffect(() => {
+    // #region agent log
+    debugClientLog({
+      hypothesisId: "A",
+      location: "components/dashboard-client-wrapper.tsx:33",
+      message: "Dashboard wrapper state snapshot",
+      data: {
+        plan,
+        hasReachedLimit,
+        isNearLimit,
+        showLimitModal,
+        currentUsage,
+        limit,
+      },
+    });
+    // #endregion
+  }, [plan, hasReachedLimit, isNearLimit, showLimitModal, currentUsage, limit]);
 
   useEffect(() => {
     const success = searchParams.get('success');
@@ -82,6 +101,76 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
       setShowLimitModal(true);
     }
   }, [isNearLimit, hasReachedLimit, currentUsage, limit, plan, toast, d.limitNear, d.limitNearDesc]);
+
+  useEffect(() => {
+    let clickSampleCount = 0;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      const targetTag = target?.tagName ?? "unknown";
+      const targetClass = target?.className?.toString().slice(0, 120) ?? "";
+      const overlayCount = document.querySelectorAll('[data-state="open"].fixed.inset-0, .fixed.inset-0.z-50').length;
+
+      if (overlayCount > 0 || clickSampleCount < 5) {
+        clickSampleCount += 1;
+        // #region agent log
+        debugClientLog({
+          hypothesisId: "A",
+          location: "components/dashboard-client-wrapper.tsx:105",
+          message: "Pointer down captured in dashboard shell",
+          data: {
+            targetTag,
+            targetClass,
+            overlayCount,
+          },
+        });
+        // #endregion
+      }
+    };
+
+    const onWindowError = (event: ErrorEvent) => {
+      // #region agent log
+      debugClientLog({
+        hypothesisId: "C",
+        location: "components/dashboard-client-wrapper.tsx:121",
+        message: "Window runtime error detected",
+        data: {
+          message: event.message,
+          source: event.filename,
+          line: event.lineno,
+          column: event.colno,
+        },
+      });
+      // #endregion
+    };
+
+    const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const reason =
+        typeof event.reason === "string"
+          ? event.reason
+          : (event.reason?.message as string | undefined) ?? "unknown-rejection";
+      // #region agent log
+      debugClientLog({
+        hypothesisId: "C",
+        location: "components/dashboard-client-wrapper.tsx:139",
+        message: "Unhandled promise rejection detected",
+        data: {
+          reason,
+        },
+      });
+      // #endregion
+    };
+
+    window.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("error", onWindowError);
+    window.addEventListener("unhandledrejection", onUnhandledRejection);
+
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("error", onWindowError);
+      window.removeEventListener("unhandledrejection", onUnhandledRejection);
+    };
+  }, []);
 
   const handleTierPreview = (tier: PreviewTier) => {
     if (typeof window !== 'undefined') {

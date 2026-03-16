@@ -7,6 +7,7 @@ import { Sparkles, Home, FileText, Rocket, ArrowRight, ArrowLeft, CheckCircle, B
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { debugClientLog } from '@/lib/debug/client-log';
 
 interface OnboardingWizardProps {
   onComplete?: () => void;
@@ -103,10 +104,32 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         .eq('id', user.id)
         .single();
 
+      // #region agent log
+      debugClientLog({
+        hypothesisId: "B",
+        location: "components/onboarding-wizard.tsx:104",
+        message: "Onboarding status loaded",
+        data: {
+          hasUser: Boolean(user?.id),
+          onboardingCompleted: Boolean(profile?.onboarding_completed),
+        },
+      });
+      // #endregion
+
       if (!profile?.onboarding_completed) {
         setIsOpen(true);
       }
     } catch (error) {
+      // #region agent log
+      debugClientLog({
+        hypothesisId: "B",
+        location: "components/onboarding-wizard.tsx:122",
+        message: "Onboarding status check failed",
+        data: {
+          hasError: true,
+        },
+      });
+      // #endregion
       // Silently fail - onboarding is not critical
     } finally {
       setIsLoading(false);

@@ -49,6 +49,7 @@ import {
 import { useLocale } from "@/lib/i18n/locale-context";
 import { createClient } from "@/lib/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { debugClientLog } from "@/lib/debug/client-log";
 
 interface CommandGroup {
   heading: string;
@@ -385,12 +386,37 @@ export function CommandPalette() {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
+        // #region agent log
+        debugClientLog({
+          hypothesisId: "D",
+          location: "components/command-palette.tsx:389",
+          message: "Command palette toggle shortcut received",
+          data: {
+            key: e.key,
+            metaKey: e.metaKey,
+            ctrlKey: e.ctrlKey,
+          },
+        });
+        // #endregion
         setOpen((prev) => !prev);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
+  useEffect(() => {
+    // #region agent log
+    debugClientLog({
+      hypothesisId: "D",
+      location: "components/command-palette.tsx:406",
+      message: "Command palette open state changed",
+      data: {
+        open,
+      },
+    });
+    // #endregion
+  }, [open]);
 
   const handleSelect = useCallback(
     (item: CommandItem) => {
