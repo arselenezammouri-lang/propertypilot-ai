@@ -243,7 +243,8 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
 
     const { data, error } = await supabaseAdmin
       .from('subscriptions')
-      .update({
+      .upsert({
+        user_id: userId,
         stripe_subscription_id: subscription.id,
         stripe_customer_id: session.customer as string,
         price_id: priceId,
@@ -253,8 +254,9 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
         cancel_at_period_end: subscription.cancel_at_period_end,
         generations_count: 0,
         updated_at: new Date().toISOString(),
+      }, {
+        onConflict: 'user_id',
       })
-      .eq('user_id', userId)
       .select();
 
     if (error) {
@@ -263,14 +265,6 @@ async function handleSubscriptionCheckout(session: Stripe.Checkout.Session, user
         subscriptionId: subscription.id,
       });
       throw error;
-    }
-
-    if (!data || data.length === 0) {
-      logger.error('No subscription found to update', undefined, {
-        endpoint: '/api/stripe/webhook',
-        subscriptionId: subscription.id,
-      });
-      throw new Error(`No subscription found for user ${userId}`);
     }
 
     // Aggiorna anche profiles.subscription_plan

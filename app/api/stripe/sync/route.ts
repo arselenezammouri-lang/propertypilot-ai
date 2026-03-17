@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
 
     const subscriptions = await stripe.subscriptions.list({
       customer: customer.id,
-      status: 'active',
-      limit: 1,
+      status: 'all',
+      limit: 10,
     });
 
     let plan = 'free';
@@ -73,8 +73,12 @@ export async function POST(request: NextRequest) {
     let periodStart = null;
     let periodEnd = null;
 
-    if (subscriptions.data.length > 0) {
-      const subscription = subscriptions.data[0];
+    const activeSubscription = subscriptions.data.find(
+      (sub) => sub.status === 'active' || sub.status === 'trialing'
+    );
+
+    if (activeSubscription) {
+      const subscription = activeSubscription;
       stripeSubscriptionId = subscription.id;
       priceId = subscription.items.data[0].price.id;
       

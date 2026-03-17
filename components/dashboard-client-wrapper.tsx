@@ -87,22 +87,37 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
   useEffect(() => {
     const restorePointerEvents = () => {
       const hasOpenDialogOverlay = Boolean(
-        document.querySelector('[data-state="open"][class*="fixed"][class*="inset-0"][class*="z-50"]')
+        document.querySelector(
+          [
+            '[data-state="open"][class*="fixed"][class*="inset-0"]',
+            '[role="dialog"][data-state="open"]',
+            '[data-radix-popper-content-wrapper][data-state="open"]',
+          ].join(',')
+        )
       );
+
       if (!hasOpenDialogOverlay && document.body.style.pointerEvents === "none") {
         document.body.style.pointerEvents = "auto";
+      }
+
+      if (!hasOpenDialogOverlay && document.documentElement.style.pointerEvents === "none") {
+        document.documentElement.style.pointerEvents = "auto";
       }
     };
 
     restorePointerEvents();
-    const intervalId = window.setInterval(restorePointerEvents, 1000);
+    const intervalId = window.setInterval(restorePointerEvents, 750);
     window.addEventListener("focus", restorePointerEvents);
     window.addEventListener("visibilitychange", restorePointerEvents);
+    window.addEventListener("pointerup", restorePointerEvents);
+    window.addEventListener("keyup", restorePointerEvents);
 
     return () => {
       window.clearInterval(intervalId);
       window.removeEventListener("focus", restorePointerEvents);
       window.removeEventListener("visibilitychange", restorePointerEvents);
+      window.removeEventListener("pointerup", restorePointerEvents);
+      window.removeEventListener("keyup", restorePointerEvents);
     };
   }, []);
 

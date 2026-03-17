@@ -30,6 +30,7 @@ function SignupClient() {
   
   const selectedPlan = searchParams.get('plan');
   const selectedPackage = searchParams.get('package');
+  const selectedReferralCode = searchParams.get('ref');
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +83,10 @@ function SignupClient() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include', // CRITICAL: Include cookies in request
-            body: JSON.stringify({ fullName: trimmedFullName }),
+            body: JSON.stringify({
+              fullName: trimmedFullName,
+              referralCode: selectedReferralCode?.trim() || null,
+            }),
           });
 
           if (setupResponse.ok) {
@@ -321,7 +325,14 @@ function SignupClient() {
               </div>
 
               <div className="text-center">
-                <Link href={`/auth/login${selectedPlan ? `?plan=${selectedPlan}` : selectedPackage ? `?package=${selectedPackage}` : ''}`}>
+                <Link href={`/auth/login${(() => {
+                  const params = new URLSearchParams();
+                  if (selectedPlan) params.set('plan', selectedPlan);
+                  if (selectedPackage) params.set('package', selectedPackage);
+                  if (selectedReferralCode) params.set('ref', selectedReferralCode);
+                  const query = params.toString();
+                  return query ? `?${query}` : '';
+                })()}`}>
                   <Button 
                     variant="outline" 
                     className="w-full h-11" 

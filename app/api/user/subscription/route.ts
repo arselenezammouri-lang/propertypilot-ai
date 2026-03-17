@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
+import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 
 export const dynamic = "force-dynamic";
 
@@ -165,21 +166,30 @@ export async function GET(request: NextRequest) {
     }
 
     if (PAID_STATUSES.includes(subscription.status) && !subscription.stripe_subscription_id) {
-      logger.debug('[SUBSCRIPTION SYNC] Downgrading orphan subscription', {
+      logger.debug('[SUBSCRIPTION SYNC] Attempting repair for orphan subscription', {
         userId: user.id,
         status: subscription.status,
       });
-      
-      const { error: updateError } = await supabaseAdmin
-        .from('subscriptions')
-        .update({
-          status: 'free',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('user_id', user.id);
 
-      if (updateError) {
-        logger.error('[SUBSCRIPTION SYNC] Failed to downgrade orphan subscription', updateError, { userId: user.id });
+      const repair = await repairMissingStripeSubscription({
+        userId: user.id,
+        currentStatus: subscription.status,
+        stripeCustomerId: subscription.stripe_customer_id ?? null,
+        supabase,
+      });
+
+      if (repair.repaired && repair.status !== 'free') {
+        return NextResponse.json({
+          success: true,
+          data: {
+            ...subscription,
+            status: repair.status,
+            stripe_subscription_id: repair.stripeSubscriptionId,
+            cancel_at_period_end: false,
+            stripe_verified: true,
+            sync_action: repair.reason,
+          },
+        });
       }
 
       return NextResponse.json({
@@ -187,9 +197,10 @@ export async function GET(request: NextRequest) {
         data: {
           ...subscription,
           status: 'free',
+          stripe_subscription_id: null,
           cancel_at_period_end: false,
           stripe_verified: true,
-          sync_action: 'downgraded_no_stripe_id',
+          sync_action: repair.reason,
         },
       });
     }

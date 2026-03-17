@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Gift, Share2, Users, Percent, TrendingUp, Copy, Check, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
@@ -63,31 +62,26 @@ export default function ReferralPage() {
 
   const loadReferralData = async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      // Genera o recupera referral code
-      const userCode = `PP-${user.id.slice(0, 8).toUpperCase()}`;
-      setReferralCode(userCode);
-
-      // Carica statistiche (mock per ora - in produzione: da database)
-      const { data: referrals } = await supabase
-        .from('referrals')
-        .select('*')
-        .eq('referrer_id', user.id)
-        .eq('status', 'completed');
-
-      if (referrals) {
-        setStats({
-          friendsInvited: referrals.length,
-          discountsEarned: referrals.length * 20, // 20% per referral
-          potentialEarnings: referrals.length * 179.4, // 20% di €897
-        });
+      const response = await fetch('/api/referral');
+      if (!response.ok) {
+        throw new Error('Errore nel recupero referral');
       }
+      const data = await response.json();
+
+      setReferralCode(data.referralCode || '');
+      const totalReferrals = Number(data.totalReferrals || 0);
+      setStats({
+        friendsInvited: totalReferrals,
+        discountsEarned: totalReferrals * 20,
+        potentialEarnings: totalReferrals * 179.4,
+      });
     } catch (error) {
       console.error('[REFERRAL] Error loading data:', error);
+      toast({
+        title: isItalian ? "Errore" : "Error",
+        description: isItalian ? "Impossibile caricare i dati referral." : "Unable to load referral data.",
+        variant: "destructive",
+      });
     }
   };
 

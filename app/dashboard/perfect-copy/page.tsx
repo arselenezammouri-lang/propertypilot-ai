@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLocale } from '@/lib/i18n/locale-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,7 @@ interface PerfectCopyResult {
 
 
 export default function PerfectCopyPage() {
+  const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === 'it';
   const { toast } = useToast();
@@ -214,6 +216,11 @@ export default function PerfectCopyPage() {
         body: JSON.stringify(formData),
       });
       if (!res.success) {
+        if (res.status === 403) {
+          throw new Error(isItalian
+            ? 'Questa funzionalità richiede un piano attivo verificato. Ti stiamo portando alla pagina piani.'
+            : 'This feature requires an active verified plan. Redirecting to billing.');
+        }
         if (res.status === 429) throw new Error(res.error ?? res.message ?? t.tooManyRequests);
         throw new Error(res.error ?? res.message ?? t.errorGeneric);
       }
@@ -224,6 +231,9 @@ export default function PerfectCopyPage() {
     } catch (error) {
       const friendly = handleAPIError(error, t.errorGeneric);
       toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
+      if (friendly.toLowerCase().includes('piano') || friendly.toLowerCase().includes('plan')) {
+        router.push('/dashboard/billing');
+      }
     } finally {
       setIsLoading(false);
     }

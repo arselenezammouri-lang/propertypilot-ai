@@ -7,6 +7,12 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
+function normalizeReferralCode(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : null;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -40,7 +46,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { fullName } = await request.json().catch(() => ({ fullName: null }));
+    const { fullName, referralCode } = await request.json().catch(() => ({ fullName: null, referralCode: null }));
+    const normalizedReferralCode = normalizeReferralCode(referralCode);
 
     const { data: existingProfile } = await supabaseService
       .from('profiles')
@@ -78,6 +85,68 @@ export async function POST(request: NextRequest) {
 
       if (subscriptionError) {
         logger.error('Subscription creation error', subscriptionError, { endpoint: '/api/auth/setup-user' });
+      }
+    }
+
+    if (normalizedReferralCode) {
+      try {
+        const { data: selfProfile, error: selfProfileError } = await supabaseService
+          .from('profiles')
+          .select('referred_by')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (!selfProfileError && !selfProfile?.referred_by) {
+          let referrerId: string | null = null;
+          let currentCredits = 0;
+          let currentReferrals = 0;
+
+          if (normalizedReferralCode.startsWith('PPID-')) {
+            referrerId = normalizedReferralCode.replace('PPID-', '');
+            const { data: referrerById } = await supabaseService
+              .from('profiles')
+              .select('id, referral_bonus_credits, total_referrals')
+              .eq('id', referrerId)
+              .maybeSingle();
+            if (referrerById) {
+              currentCredits = referrerById.referral_bonus_credits || 0;
+              currentReferrals = referrerById.total_referrals || 0;
+            } else {
+              referrerId = null;
+            }
+          } else {
+            const { data: referrerByCode } = await supabaseService
+              .from('profiles')
+              .select('id, referral_bonus_credits, total_referrals')
+              .eq('referral_code', normalizedReferralCode.toUpperCase())
+              .maybeSingle();
+            if (referrerByCode) {
+              referrerId = referrerByCode.id;
+              currentCredits = referrerByCode.referral_bonus_credits || 0;
+              currentReferrals = referrerByCode.total_referrals || 0;
+            }
+          }
+
+          if (referrerId && referrerId !== user.id) {
+            const { error: assignReferrerError } = await supabaseService
+              .from('profiles')
+              .update({ referred_by: referrerId })
+              .eq('id', user.id);
+
+            if (!assignReferrerError) {
+              const BONUS_CREDITS = 10;
+              await supabaseService
+                .from('profiles')
+                .update({
+                  referral_bonus_credits: currentCredits + BONUS_CREDITS,
+                  total_referrals: currentReferrals + 1,
+                })
+                .eq('id', referrerId);
+            }
+          }
+        }
+      } catch (referralError) {
+        logger.warn('Referral setup skipped', { endpoint: '/api/auth/setup-user' });
       }
     }
 

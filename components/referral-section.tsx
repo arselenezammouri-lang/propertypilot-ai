@@ -28,6 +28,7 @@ export function ReferralSection() {
     referralLink: string;
     bonusCredits: number;
     totalReferrals: number;
+    setupRequired?: boolean;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -71,9 +72,24 @@ export function ReferralSection() {
       if (response.ok) {
         const data = await response.json();
         setReferralData(data);
+      } else {
+        setReferralData({
+          referralCode: '',
+          referralLink: '',
+          bonusCredits: 0,
+          totalReferrals: 0,
+          setupRequired: true,
+        });
       }
     } catch (error) {
       console.error('Error fetching referral data:', error);
+      setReferralData({
+        referralCode: '',
+        referralLink: '',
+        bonusCredits: 0,
+        totalReferrals: 0,
+        setupRequired: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -172,6 +188,7 @@ export function ReferralSection() {
               value={referralData?.referralLink || ''} 
               readOnly 
               className="bg-white/5 border-white/10 text-sm"
+              placeholder={referralData?.setupRequired ? 'Referral setup in corso...' : ''}
             />
             <Button 
               onClick={copyToClipboard}
@@ -187,6 +204,7 @@ export function ReferralSection() {
           <Button 
             onClick={shareOnWhatsApp}
             className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            disabled={!referralData?.referralLink}
           >
             <Share2 className="h-4 w-4 mr-2" />
             WhatsApp
@@ -194,6 +212,7 @@ export function ReferralSection() {
           <Button 
             onClick={shareOnLinkedIn}
             className="flex-1 bg-[#0A66C2] hover:bg-[#094D92] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            disabled={!referralData?.referralLink}
           >
             <Share2 className="h-4 w-4 mr-2" />
             LinkedIn

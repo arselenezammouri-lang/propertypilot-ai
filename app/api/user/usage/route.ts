@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
+import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
     
     const { data: subData, error: subError } = await supabaseService
       .from('subscriptions')
-      .select('status, generations_count')
+      .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -42,7 +43,23 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const plan = subscription?.status || 'free';
+    let plan = subscription?.status || 'free';
+    if (
+      (plan === 'starter' || plan === 'pro' || plan === 'agency') &&
+      !subscription?.stripe_subscription_id
+    ) {
+      const repair = await repairMissingStripeSubscription({
+        userId: user.id,
+        currentStatus: plan,
+        stripeCustomerId: subscription?.stripe_customer_id || null,
+        supabase: supabaseService,
+      });
+      if (repair.repaired) {
+        plan = repair.status;
+      } else {
+        plan = 'free';
+      }
+    }
     const currentUsage = subscription?.generations_count || 0;
     
     const planLimits = STRIPE_PLANS[plan as keyof typeof STRIPE_PLANS]?.limits || { listingsPerMonth: 5 };

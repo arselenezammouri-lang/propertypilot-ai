@@ -122,8 +122,13 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
-  // Get current plan: prefer profile.subscription_plan (synced by Stripe webhook), fallback to subscription.status
-  const planValue = (profile as any)?.subscription_plan || subscription?.status || "free";
+  const paidStatuses = new Set(['starter', 'pro', 'agency']);
+  const rawStatus = subscription?.status || 'free';
+  const isStripeVerifiedPaid =
+    paidStatuses.has(rawStatus) ? Boolean(subscription?.stripe_subscription_id) : true;
+
+  // Security: never expose paid UI if DB has paid status without Stripe linkage.
+  const planValue = isStripeVerifiedPaid ? rawStatus : 'free';
   const currentPlan: "free" | "starter" | "pro" | "agency" = 
     (planValue === "free" || planValue === "starter" || planValue === "pro" || planValue === "agency") 
       ? planValue 

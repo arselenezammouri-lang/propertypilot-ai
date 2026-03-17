@@ -77,7 +77,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     }
 
     const body = await request.json();
-    const validated = analyzeLinkSchema.safeParse(body);
+    const rawUrl = typeof body?.url === 'string' ? body.url.trim() : '';
+    const normalizedUrl = rawUrl && !/^https?:\/\//i.test(rawUrl) ? `https://${rawUrl}` : rawUrl;
+    const validated = analyzeLinkSchema.safeParse({ url: normalizedUrl });
     
     if (!validated.success) {
       return NextResponse.json(

@@ -62,6 +62,12 @@ interface Analysis {
   };
 }
 
+function normalizeListingUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 export default function AnalyzePage() {
   const { locale } = useLocaleContext();
   const [url, setUrl] = useState("");
@@ -124,7 +130,8 @@ export default function AnalyzePage() {
   };
 
   const handleAnalyze = async () => {
-    if (!url.trim()) {
+    const normalizedUrl = normalizeListingUrl(url);
+    if (!normalizedUrl) {
       toast({
         title: t.enterUrl,
         description: t.pasteUrl,
@@ -142,7 +149,7 @@ export default function AnalyzePage() {
       const response = await fetch("/api/analyze-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ url: normalizedUrl }),
       });
 
       const data = await response.json();

@@ -46,7 +46,8 @@ export async function POST(request: NextRequest) {
 
     // STEP 4: Parse and validate input
     const body = await request.json();
-    const { url } = body;
+    const rawUrl = typeof body?.url === 'string' ? body.url.trim() : '';
+    const url = rawUrl && !/^https?:\/\//i.test(rawUrl) ? `https://${rawUrl}` : rawUrl;
 
     if (!url || typeof url !== 'string') {
       return NextResponse.json(

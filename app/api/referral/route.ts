@@ -7,6 +7,10 @@ import { nanoid } from 'nanoid';
 
 export const dynamic = 'force-dynamic';
 
+function fallbackReferralCode(userId: string): string {
+  return `PPID-${userId}`;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -28,29 +32,35 @@ export async function GET(request: NextRequest) {
     }
     
     if (profileError?.code === '42703') {
-      logger.warn('Profile table missing referral columns, returning defaults', { endpoint: '/api/referral' });
+      logger.warn('Profile table missing referral columns, using fallback referral code', { endpoint: '/api/referral' });
+      const appUrl = getAppUrl(request);
+      const code = fallbackReferralCode(user.id);
       return NextResponse.json({
-        referralCode: null,
-        referralLink: null,
+        referralCode: code,
+        referralLink: `${appUrl}/auth/signup?ref=${encodeURIComponent(code)}`,
         bonusCredits: 0,
         totalReferrals: 0,
         setupRequired: true,
       });
     }
 
-    let referralCode = profile?.referral_code;
+    let referralCode = profile?.referral_code || fallbackReferralCode(user.id);
 
-    if (!referralCode) {
-      referralCode = nanoid(8).toUpperCase();
+    if (!profile?.referral_code) {
+      const generatedCode = nanoid(8).toUpperCase();
       
       const { error: updateError } = await supabaseService
         .from('profiles')
-        .update({ referral_code: referralCode })
+        .update({ referral_code: generatedCode })
         .eq('id', user.id);
 
-      if (updateError) {
+      if (updateError && updateError.code !== '42703') {
         console.error('Error creating referral code:', updateError);
         return NextResponse.json({ error: 'Errore nella creazione del codice' }, { status: 500 });
+      }
+
+      if (!updateError) {
+        referralCode = generatedCode;
       }
     }
 
@@ -79,21 +89,48 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 });
     }
 
-    if (!referralCode) {
+    if (!referralCode || typeof referralCode !== 'string') {
       return NextResponse.json({ error: 'Codice referral mancante' }, { status: 400 });
     }
 
-    const { data: referrer, error: referrerError } = await supabase
-      .from('profiles')
-      .select('id, referral_bonus_credits, total_referrals')
-      .eq('referral_code', referralCode.toUpperCase())
-      .single();
+    const normalizedCode = referralCode.trim();
+    let referrerId: string | null = null;
+    let referrerCredits = 0;
+    let referrerTotal = 0;
 
-    if (referrerError || !referrer) {
-      return NextResponse.json({ error: 'Codice referral non valido' }, { status: 400 });
+    if (normalizedCode.startsWith('PPID-')) {
+      referrerId = normalizedCode.replace('PPID-', '');
+      const { data: referrerFromId, error: referrerFromIdError } = await supabase
+        .from('profiles')
+        .select('id, referral_bonus_credits, total_referrals')
+        .eq('id', referrerId)
+        .maybeSingle();
+
+      if (referrerFromIdError && referrerFromIdError.code !== '42703') {
+        return NextResponse.json({ error: 'Codice referral non valido' }, { status: 400 });
+      }
+      if (!referrerFromId && !referrerFromIdError) {
+        return NextResponse.json({ error: 'Codice referral non valido' }, { status: 400 });
+      }
+      referrerCredits = referrerFromId?.referral_bonus_credits || 0;
+      referrerTotal = referrerFromId?.total_referrals || 0;
+    } else {
+      const { data: referrer, error: referrerError } = await supabase
+        .from('profiles')
+        .select('id, referral_bonus_credits, total_referrals')
+        .eq('referral_code', normalizedCode.toUpperCase())
+        .single();
+
+      if (referrerError || !referrer) {
+        return NextResponse.json({ error: 'Codice referral non valido' }, { status: 400 });
+      }
+
+      referrerId = referrer.id;
+      referrerCredits = referrer.referral_bonus_credits || 0;
+      referrerTotal = referrer.total_referrals || 0;
     }
 
-    if (referrer.id === user.id) {
+    if (referrerId === user.id) {
       return NextResponse.json({ error: 'Non puoi usare il tuo stesso codice' }, { status: 400 });
     }
 
@@ -111,10 +148,17 @@ export async function POST(request: NextRequest) {
     
     const { error: updateUserError } = await supabase
       .from('profiles')
-      .update({ referred_by: referrer.id })
+      .update({ referred_by: referrerId })
       .eq('id', user.id);
 
     if (updateUserError) {
+      if (updateUserError.code === '42703') {
+        return NextResponse.json({
+          success: true,
+          message: 'Codice referral ricevuto. Tracking completo disponibile dopo aggiornamento schema referral.',
+          setupRequired: true,
+        });
+      }
       console.error('Error updating referred user:', updateUserError);
       return NextResponse.json({ error: 'Errore nella registrazione' }, { status: 500 });
     }
@@ -122,12 +166,19 @@ export async function POST(request: NextRequest) {
     const { error: updateReferrerError } = await supabase
       .from('profiles')
       .update({ 
-        referral_bonus_credits: (referrer.referral_bonus_credits || 0) + BONUS_CREDITS,
-        total_referrals: (referrer.total_referrals || 0) + 1 
+        referral_bonus_credits: referrerCredits + BONUS_CREDITS,
+        total_referrals: referrerTotal + 1 
       })
-      .eq('id', referrer.id);
+      .eq('id', referrerId);
 
     if (updateReferrerError) {
+      if (updateReferrerError.code === '42703') {
+        return NextResponse.json({
+          success: true,
+          message: 'Referral registrato. Statistiche bonus disponibili dopo aggiornamento schema referral.',
+          setupRequired: true,
+        });
+      }
       console.error('Error updating referrer bonus:', updateReferrerError);
       await supabase
         .from('profiles')

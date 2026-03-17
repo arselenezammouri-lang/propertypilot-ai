@@ -1,5 +1,15 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
+import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
+
+const ACTIVE_SUBSCRIPTION_REQUIRED =
+  'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.';
+const INVALID_SUBSCRIPTION_TYPE =
+  'Tipo di abbonamento non valido. Contatta il supporto.';
+const INVALID_PAYMENT_CONFIRMATION =
+  'Abbonamento non valido. Il pagamento non risulta confermato. Contatta il supporto.';
+const PRO_OR_AGENCY_REQUIRED =
+  'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.';
 
 /**
  * Verifica che l'utente abbia un abbonamento attivo prima di permettere l'uso di funzionalità premium.
@@ -17,14 +27,13 @@ export async function requireActiveSubscription(
   userId: string
 ): Promise<{ allowed: boolean; planType: string; error?: string }> {
   try {
-    // Recupera la subscription dal database
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
-      .select('status, stripe_subscription_id, price_id')
+      .select('status, stripe_subscription_id, stripe_customer_id, price_id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
-    if (subError) {
+    if (subError && subError.code !== 'PGRST116') {
       console.error('[SUBSCRIPTION CHECK] Error fetching subscription:', subError);
       return {
         allowed: false,
@@ -33,54 +42,56 @@ export async function requireActiveSubscription(
       };
     }
 
-    // Se non esiste subscription, considera free
     if (!subscription) {
       return {
         allowed: false,
         planType: 'free',
-        error: 'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.'
+        error: ACTIVE_SUBSCRIPTION_REQUIRED
       };
     }
 
     const planType = subscription.status || 'free';
 
-    // Se è free, blocca immediatamente
     if (planType === 'free') {
       return {
         allowed: false,
         planType: 'free',
-        error: 'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.'
+        error: ACTIVE_SUBSCRIPTION_REQUIRED
       };
     }
 
-    // Verifica che sia un piano a pagamento valido
     const paidPlans: SubscriptionStatus[] = ['starter', 'pro', 'agency'];
     if (!paidPlans.includes(planType as SubscriptionStatus)) {
       console.warn('[SUBSCRIPTION CHECK] Invalid plan type:', planType);
       return {
         allowed: false,
         planType: planType,
-        error: 'Tipo di abbonamento non valido. Contatta il supporto.'
+        error: INVALID_SUBSCRIPTION_TYPE
       };
     }
 
-    // CONTROLLO CRITICO: qualsiasi piano a pagamento richiede conferma Stripe nel DB.
     if (!subscription.stripe_subscription_id) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[SUBSCRIPTION CHECK] User has paid plan but no stripe_subscription_id:', {
-          userId,
-          planType,
-          priceId: subscription.price_id,
-        });
+      const repair = await repairMissingStripeSubscription({
+        userId,
+        currentStatus: planType,
+        stripeCustomerId: subscription.stripe_customer_id ?? null,
+        supabase,
+      });
+
+      if (repair.repaired && paidPlans.includes(repair.status as SubscriptionStatus)) {
+        return {
+          allowed: true,
+          planType: repair.status,
+        };
       }
+
       return {
         allowed: false,
         planType: planType,
-        error: 'Abbonamento non valido. Il pagamento non risulta confermato. Contatta il supporto.'
+        error: INVALID_PAYMENT_CONFIRMATION
       };
     }
 
-    // Tutti i controlli passati: abbonamento attivo e valido
     return {
       allowed: true,
       planType: planType
@@ -113,14 +124,13 @@ export async function requireProOrAgencySubscription(
   userId: string
 ): Promise<{ allowed: boolean; planType: string; error?: string }> {
   try {
-    // Recupera la subscription dal database
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
-      .select('status, stripe_subscription_id, price_id')
+      .select('status, stripe_subscription_id, stripe_customer_id, price_id')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
-    if (subError) {
+    if (subError && subError.code !== 'PGRST116') {
       console.error('[SUBSCRIPTION CHECK PRO/AGENCY] Error fetching subscription:', subError);
       return {
         allowed: false,
@@ -129,52 +139,56 @@ export async function requireProOrAgencySubscription(
       };
     }
 
-    // Se non esiste subscription, considera free
     if (!subscription) {
       return {
         allowed: false,
         planType: 'free',
-        error: 'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.'
+        error: PRO_OR_AGENCY_REQUIRED
       };
     }
 
     const planType = subscription.status || 'free';
 
-    // Blocca free e starter
     if (planType === 'free' || planType === 'starter') {
       return {
         allowed: false,
         planType: planType,
-        error: 'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.'
+        error: PRO_OR_AGENCY_REQUIRED
       };
     }
 
-    // Verifica che sia PRO o AGENCY
     const premiumPlans: SubscriptionStatus[] = ['pro', 'agency'];
     if (!premiumPlans.includes(planType as SubscriptionStatus)) {
       console.warn('[SUBSCRIPTION CHECK PRO/AGENCY] Invalid plan type:', planType);
       return {
         allowed: false,
         planType: planType,
-        error: 'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.'
+        error: PRO_OR_AGENCY_REQUIRED
       };
     }
 
-    // CONTROLLO CRITICO: qualsiasi piano premium richiede conferma Stripe nel DB.
     if (!subscription.stripe_subscription_id) {
-      console.warn('[SUBSCRIPTION CHECK PRO/AGENCY] User has premium plan but no stripe_subscription_id:', {
+      const repair = await repairMissingStripeSubscription({
         userId,
-        planType,
-        priceId: subscription.price_id
+        currentStatus: planType,
+        stripeCustomerId: subscription.stripe_customer_id ?? null,
+        supabase,
       });
+
+      if (repair.repaired && premiumPlans.includes(repair.status as SubscriptionStatus)) {
+        return {
+          allowed: true,
+          planType: repair.status,
+        };
+      }
+
       return {
         allowed: false,
         planType: planType,
-        error: 'Abbonamento non valido. Il pagamento non risulta confermato. Contatta il supporto.'
+        error: INVALID_PAYMENT_CONFIRMATION
       };
     }
 
-    // Tutti i controlli passati: abbonamento PRO o AGENCY attivo e valido
     return {
       allowed: true,
       planType: planType

@@ -29,6 +29,12 @@ import { fetchApi } from '@/lib/api/client';
 import { useLocale } from "@/lib/i18n/locale-context";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 
+function normalizeListingUrl(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -103,7 +109,8 @@ export default function ScraperPage() {
   const [sourceUrl, setSourceUrl] = useState('');
 
   const handleScrape = async () => {
-    if (!url.trim()) {
+    const normalizedUrl = normalizeListingUrl(url);
+    if (!normalizedUrl) {
       toast({
         title: t.urlRequired,
         description: t.urlRequiredDesc,
@@ -119,7 +126,7 @@ export default function ScraperPage() {
     try {
       const res = await fetchApi<ScrapedListing>('/api/scrape-listing', {
         method: 'POST',
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url: normalizedUrl }),
       });
 
       if (!res.success) {
@@ -135,7 +142,8 @@ export default function ScraperPage() {
 
       const scrapedData = res.data;
       setScrapedData(scrapedData);
-      setSourceUrl(url);
+      setSourceUrl(normalizedUrl);
+      setUrl(normalizedUrl);
       toast({
         title: t.scrapeSuccess,
         description: t.scrapeSuccessDesc,
