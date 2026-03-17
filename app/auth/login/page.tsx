@@ -31,9 +31,11 @@ function LoginClient() {
   const selectedPackage = searchParams.get('package');
   const redirectTo = searchParams.get('redirectTo') || searchParams.get('redirect');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleLogin = async (
+    e?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     
     setLoading(true);
 
@@ -157,7 +159,7 @@ function LoginClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} method="post" action="#" className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-white">
                   {t.auth.login.email}
@@ -221,7 +223,8 @@ function LoginClient() {
               </div>
 
               <Button 
-                type="submit" 
+                type="button"
+                onClick={handleLogin}
                 className="w-full h-11 text-base shadow-lg hover:shadow-xl transition-all" 
                 disabled={loading}
                 data-testid="button-login"
