@@ -31,11 +31,9 @@ function LoginClient() {
   const selectedPackage = searchParams.get('package');
   const redirectTo = searchParams.get('redirectTo') || searchParams.get('redirect');
 
-  const handleLogin = async (
-    e?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
-  ) => {
-    e?.preventDefault();
-    e?.stopPropagation();
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     
     setLoading(true);
 
@@ -223,8 +221,7 @@ function LoginClient() {
               </div>
 
               <Button 
-                type="button"
-                onClick={handleLogin}
+                type="submit"
                 className="w-full h-11 text-base shadow-lg hover:shadow-xl transition-all" 
                 disabled={loading}
                 data-testid="button-login"
