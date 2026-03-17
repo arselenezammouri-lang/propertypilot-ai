@@ -3,6 +3,10 @@ node_modules/
 .replit
 venv/
 *.log
+*.tmp
+*.temp
+*.tsbuildinfo
+.DS_Store
 .env.local
 .env.test
 debug.log
