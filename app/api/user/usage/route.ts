@@ -13,7 +13,12 @@ export async function GET(request: NextRequest) {
     if (!auth.ok) return auth.response;
     const { user } = auth;
 
-    let subscription = null;
+    let subscription: {
+      status?: string | null;
+      generations_count?: number | null;
+      stripe_subscription_id?: string | null;
+      stripe_customer_id?: string | null;
+    } | null = null;
     
     const { data: subData, error: subError } = await supabaseService
       .from('subscriptions')
@@ -28,7 +33,12 @@ export async function GET(request: NextRequest) {
         logger.error('Error fetching subscription', subError, { endpoint: '/api/user/usage' });
       }
     } else {
-      subscription = subData;
+      subscription = subData as {
+        status?: string | null;
+        generations_count?: number | null;
+        stripe_subscription_id?: string | null;
+        stripe_customer_id?: string | null;
+      } | null;
     }
 
     if (!subscription) {
@@ -39,7 +49,12 @@ export async function GET(request: NextRequest) {
         .single();
       
       if (!createError) {
-        subscription = newSub;
+        subscription = newSub as {
+          status?: string | null;
+          generations_count?: number | null;
+          stripe_subscription_id?: string | null;
+          stripe_customer_id?: string | null;
+        } | null;
       }
     }
 

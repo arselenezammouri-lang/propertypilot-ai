@@ -31,9 +31,12 @@ export async function requireActiveSubscription(
       .from('subscriptions')
       .select('status, stripe_subscription_id, stripe_customer_id, price_id')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
-    if (subError && subError.code !== 'PGRST116') {
+    const isMissingRowError =
+      subError && (subError.code === 'PGRST116' || String(subError.message || '').toLowerCase().includes('not found'));
+
+    if (subError && !isMissingRowError) {
       console.error('[SUBSCRIPTION CHECK] Error fetching subscription:', subError);
       return {
         allowed: false,
@@ -128,9 +131,12 @@ export async function requireProOrAgencySubscription(
       .from('subscriptions')
       .select('status, stripe_subscription_id, stripe_customer_id, price_id')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
-    if (subError && subError.code !== 'PGRST116') {
+    const isMissingRowError =
+      subError && (subError.code === 'PGRST116' || String(subError.message || '').toLowerCase().includes('not found'));
+
+    if (subError && !isMissingRowError) {
       console.error('[SUBSCRIPTION CHECK PRO/AGENCY] Error fetching subscription:', subError);
       return {
         allowed: false,

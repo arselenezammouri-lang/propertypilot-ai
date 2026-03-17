@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -56,11 +56,7 @@ export default function ReferralPage() {
       : "Hi! I found PropertyPilot AI, the platform helping real estate agencies generate listings, find deals, and win mandates 24/7. Try it using my link:",
   };
 
-  useEffect(() => {
-    loadReferralData();
-  }, []);
-
-  const loadReferralData = async () => {
+  const loadReferralData = useCallback(async () => {
     try {
       const response = await fetch('/api/referral');
       if (!response.ok) {
@@ -83,7 +79,11 @@ export default function ReferralPage() {
         variant: "destructive",
       });
     }
-  };
+  }, [toast, isItalian]);
+
+  useEffect(() => {
+    loadReferralData();
+  }, [loadReferralData]);
 
   const handleCopy = () => {
     const referralLink = `${window.location.origin}/auth/signup?ref=${referralCode}`;
