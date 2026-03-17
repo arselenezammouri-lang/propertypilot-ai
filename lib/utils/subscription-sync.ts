@@ -128,7 +128,9 @@ async function resolveStripeCustomerId(
   }
 
   const customers = await stripe.customers.list({ email, limit: 10 });
-  const activeCustomer = customers.data.find((customer) => !(customer as Stripe.DeletedCustomer).deleted);
+  const activeCustomer = customers.data.find(
+    (customer) => !('deleted' in customer && customer.deleted)
+  );
   return activeCustomer?.id ?? null;
 }
 
