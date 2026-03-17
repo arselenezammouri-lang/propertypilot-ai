@@ -58,6 +58,13 @@ const DASHBOARD_PATHS = [
 
 const RESULTS = [];
 
+async function typeIntoField(page, selector, value) {
+  const field = page.locator(selector);
+  await field.click({ clickCount: 3 });
+  await page.keyboard.press("Backspace");
+  await field.type(value);
+}
+
 async function checkPage(page, path, opts = {}) {
   const url = `${BASE_URL}${path}`;
   const start = Date.now();
@@ -98,8 +105,8 @@ async function testAuth(page) {
   if (!TEST_EMAIL || !TEST_PASSWORD) {
     // Tentativo di login fallito per verificare che il form non crashi
     await page.goto(loginUrl, { waitUntil: "networkidle" });
-    await page.fill('[data-testid="input-email"]', "wrong@example.com");
-    await page.fill('[data-testid="input-password"]', "wrong-password");
+    await typeIntoField(page, '[data-testid="input-email"]', "wrong@example.com");
+    await typeIntoField(page, '[data-testid="input-password"]', "wrong-password");
     await page.click('[data-testid="button-login"]').catch(() => {});
     await page.waitForTimeout(1000);
 
@@ -110,8 +117,8 @@ async function testAuth(page) {
   // Pulisci il form e rifai login
   await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
   await page.waitForSelector('[data-testid="input-email"]', { state: "visible", timeout: 8000 });
-  await page.fill('[data-testid="input-email"]', TEST_EMAIL);
-  await page.fill('[data-testid="input-password"]', TEST_PASSWORD);
+  await typeIntoField(page, '[data-testid="input-email"]', TEST_EMAIL);
+  await typeIntoField(page, '[data-testid="input-password"]', TEST_PASSWORD);
   await page.click('[data-testid="button-login"]');
 
   // Attendi redirect a /dashboard (Supabase puo impiegare qualche secondo)

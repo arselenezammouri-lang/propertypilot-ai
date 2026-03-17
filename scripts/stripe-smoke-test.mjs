@@ -15,12 +15,19 @@ const TEST_PASSWORD = process.env.TEST_PASSWORD;
 
 const PLANS = ["starter", "pro", "agency"];
 
+async function typeIntoField(page, selector, value) {
+  const field = page.locator(selector);
+  await field.click({ clickCount: 3 });
+  await page.keyboard.press("Backspace");
+  await field.type(value);
+}
+
 async function login(page) {
   const loginUrl = `${BASE_URL}/auth/login`;
   await page.goto(loginUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForSelector('[data-testid="input-email"]', { state: "visible", timeout: 15000 });
-  await page.fill('[data-testid="input-email"]', TEST_EMAIL);
-  await page.fill('[data-testid="input-password"]', TEST_PASSWORD);
+  await typeIntoField(page, '[data-testid="input-email"]', TEST_EMAIL);
+  await typeIntoField(page, '[data-testid="input-password"]', TEST_PASSWORD);
   await page.click('[data-testid="button-login"]');
   await page.waitForTimeout(2000);
   try {
