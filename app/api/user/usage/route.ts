@@ -7,6 +7,74 @@ import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 
 export const dynamic = 'force-dynamic';
 
+type UsageSubscriptionRow = {
+  status?: string | null;
+  generations_count?: number | null;
+  stripe_subscription_id?: string | null;
+  stripe_customer_id?: string | null;
+};
+
+async function fetchSubscriptionRow(userId: string): Promise<UsageSubscriptionRow | null> {
+  const attempts = [
+    'status, generations_count, stripe_subscription_id, stripe_customer_id',
+    'status, stripe_subscription_id, stripe_customer_id',
+    'status, generations_count',
+    'status',
+  ];
+
+  for (const selectClause of attempts) {
+    const { data, error } = await supabaseService
+      .from('subscriptions')
+      .select(selectClause)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (!error) {
+      return (data as UsageSubscriptionRow | null) ?? null;
+    }
+
+    if (error.code === '42703') {
+      continue;
+    }
+
+    logger.error('Error fetching subscription', error, { endpoint: '/api/user/usage' });
+    return null;
+  }
+
+  logger.warn('Subscriptions table schema mismatch, using fallback select', { endpoint: '/api/user/usage' });
+  return null;
+}
+
+async function createFreeSubscriptionRow(userId: string): Promise<UsageSubscriptionRow | null> {
+  const withCounter = await supabaseService
+    .from('subscriptions')
+    .insert({ user_id: userId, status: 'free', generations_count: 0 })
+    .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
+    .single();
+
+  if (!withCounter.error) {
+    return (withCounter.data as UsageSubscriptionRow | null) ?? null;
+  }
+
+  if (withCounter.error.code !== '42703') {
+    logger.error('Error creating subscription row', withCounter.error, { endpoint: '/api/user/usage' });
+    return null;
+  }
+
+  const minimalInsert = await supabaseService
+    .from('subscriptions')
+    .insert({ user_id: userId, status: 'free' })
+    .select('status')
+    .single();
+
+  if (minimalInsert.error) {
+    logger.error('Error creating minimal subscription row', minimalInsert.error, { endpoint: '/api/user/usage' });
+    return null;
+  }
+
+  return (minimalInsert.data as UsageSubscriptionRow | null) ?? null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const auth = await getAuthenticatedUser();
@@ -20,19 +88,8 @@ export async function GET(request: NextRequest) {
       stripe_customer_id?: string | null;
     } | null = null;
     
-    const { data: subData, error: subError } = await supabaseService
-      .from('subscriptions')
-      .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (subError) {
-      if (subError.code === '42703') {
-        logger.warn('Subscriptions table schema mismatch, using defaults', { endpoint: '/api/user/usage' });
-      } else {
-        logger.error('Error fetching subscription', subError, { endpoint: '/api/user/usage' });
-      }
-    } else {
+    const subData = await fetchSubscriptionRow(user.id);
+    if (subData) {
       subscription = subData as {
         status?: string | null;
         generations_count?: number | null;
@@ -42,13 +99,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (!subscription) {
-      const { data: newSub, error: createError } = await supabaseService
-        .from('subscriptions')
-        .insert({ user_id: user.id, status: 'free', generations_count: 0 })
-        .select('status, generations_count')
-        .single();
-      
-      if (!createError) {
+      const newSub = await createFreeSubscriptionRow(user.id);
+      if (newSub) {
         subscription = newSub as {
           status?: string | null;
           generations_count?: number | null;

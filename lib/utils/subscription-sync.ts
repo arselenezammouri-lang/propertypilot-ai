@@ -87,6 +87,51 @@ async function persistPlanState(
   return null;
 }
 
+async function resolveStripeCustomerId(
+  stripe: Stripe,
+  userId: string,
+  existingStripeCustomerId: string | null,
+  supabase: SupabaseClient
+) {
+  if (existingStripeCustomerId) {
+    return existingStripeCustomerId;
+  }
+
+  const admin = getAdminSupabaseClient();
+  let email: string | null = null;
+
+  if (admin) {
+    const { data: authUser, error: authUserError } = await admin.auth.admin.getUserById(userId);
+    if (!authUserError && authUser?.user?.email) {
+      email = authUser.user.email;
+    }
+
+    if (!email) {
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('email')
+        .eq('id', userId)
+        .maybeSingle();
+      email = (profile as { email?: string | null } | null)?.email ?? null;
+    }
+  } else {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('id', userId)
+      .maybeSingle();
+    email = (profile as { email?: string | null } | null)?.email ?? null;
+  }
+
+  if (!email) {
+    return null;
+  }
+
+  const customers = await stripe.customers.list({ email, limit: 10 });
+  const activeCustomer = customers.data.find((customer) => !(customer as Stripe.DeletedCustomer).deleted);
+  return activeCustomer?.id ?? null;
+}
+
 export async function repairMissingStripeSubscription({
   userId,
   currentStatus,
@@ -96,19 +141,35 @@ export async function repairMissingStripeSubscription({
   const status = (currentStatus ?? 'free') as SubscriptionStatus;
   const isPaidStatus = status === 'starter' || status === 'pro' || status === 'agency';
 
-  if (!isPaidStatus || !stripeCustomerId) {
+  if (!isPaidStatus) {
     return {
       repaired: false,
       status,
       stripeSubscriptionId: null,
-      reason: !isPaidStatus ? 'not-paid-status' : 'missing-customer-id',
+      reason: 'not-paid-status',
     };
   }
 
   try {
     const stripe = requireStripe();
+    const resolvedStripeCustomerId = await resolveStripeCustomerId(
+      stripe,
+      userId,
+      stripeCustomerId,
+      supabase
+    );
+
+    if (!resolvedStripeCustomerId) {
+      return {
+        repaired: false,
+        status,
+        stripeSubscriptionId: null,
+        reason: 'missing-customer-id',
+      };
+    }
+
     const { data: subscriptions } = await stripe.subscriptions.list({
-      customer: stripeCustomerId,
+      customer: resolvedStripeCustomerId,
       status: 'all',
       limit: 20,
     });
@@ -119,7 +180,7 @@ export async function repairMissingStripeSubscription({
 
     if (!activeSubscription) {
       await persistPlanState(supabase, userId, {
-        stripe_customer_id: stripeCustomerId,
+        stripe_customer_id: resolvedStripeCustomerId,
         stripe_subscription_id: null,
         price_id: null,
         status: 'free',
@@ -160,7 +221,7 @@ export async function repairMissingStripeSubscription({
     const periodEnd = (activeSubscription as Stripe.Subscription & { current_period_end?: number }).current_period_end;
 
     await persistPlanState(supabase, userId, {
-      stripe_customer_id: stripeCustomerId,
+      stripe_customer_id: resolvedStripeCustomerId,
       stripe_subscription_id: activeSubscription.id,
       price_id: priceId,
       status: detectedPlan as PaidPlan,
