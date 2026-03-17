@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,7 +95,9 @@ export function ReferralSection() {
     }
   };
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = async (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
     if (!referralData?.referralLink) return;
     
     try {
@@ -116,7 +118,9 @@ export function ReferralSection() {
     }
   };
 
-  const shareOnWhatsApp = () => {
+  const shareOnWhatsApp = (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
     if (!referralData?.referralLink) return;
     const messageText = referralMessages[currentLocale] || referralMessages['it'];
     const message = encodeURIComponent(
@@ -125,7 +129,9 @@ export function ReferralSection() {
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
-  const shareOnLinkedIn = () => {
+  const shareOnLinkedIn = (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
     if (!referralData?.referralLink) return;
     const url = encodeURIComponent(referralData.referralLink);
     window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
@@ -191,7 +197,7 @@ export function ReferralSection() {
               placeholder={referralData?.setupRequired ? 'Referral setup in corso...' : ''}
             />
             <Button 
-              onClick={copyToClipboard}
+              onClick={(event) => { void copyToClipboard(event); }}
               type="button"
               variant="outline"
               className="shrink-0 border-white/10 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black min-h-[36px]"
@@ -203,7 +209,7 @@ export function ReferralSection() {
 
         <div className="flex gap-2">
           <Button 
-            onClick={shareOnWhatsApp}
+            onClick={(event) => shareOnWhatsApp(event)}
             type="button"
             className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             disabled={!referralData?.referralLink}
@@ -212,7 +218,7 @@ export function ReferralSection() {
             WhatsApp
           </Button>
           <Button 
-            onClick={shareOnLinkedIn}
+            onClick={(event) => shareOnLinkedIn(event)}
             type="button"
             className="flex-1 bg-[#0A66C2] hover:bg-[#094D92] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             disabled={!referralData?.referralLink}

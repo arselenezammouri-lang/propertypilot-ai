@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, type MouseEvent } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +85,9 @@ export default function ReferralPage() {
     loadReferralData();
   }, [loadReferralData]);
 
-  const handleCopy = () => {
+  const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     const referralLink = `${window.location.origin}/auth/signup?ref=${referralCode}`;
     navigator.clipboard.writeText(referralLink);
     setCopied(true);
@@ -96,7 +98,9 @@ export default function ReferralPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleWhatsAppShare = () => {
+  const handleWhatsAppShare = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     const message = `${t.whatsappMessage} ${window.location.origin}/auth/signup?ref=${referralCode}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
