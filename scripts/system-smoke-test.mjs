@@ -94,19 +94,15 @@ async function checkPage(page, path, opts = {}) {
 async function testAuth(page) {
   const loginUrl = `${BASE_URL}/auth/login`;
 
-  // Tentativo di login fallito
-  await page.goto(loginUrl, { waitUntil: "networkidle" });
-
-  // Usa i data-testid definiti nella pagina di login
-  await page.fill('[data-testid="input-email"]', "wrong@example.com");
-  await page.fill('[data-testid="input-password"]', "wrong-password");
-  await page.click('[data-testid="button-login"]').catch(() => {});
-
-  // Attendi eventuale messaggio di errore (non è obbligatorio trovarlo, basta che non crashi)
-  await page.waitForTimeout(1000);
-
   // Login riuscito solo se abbiamo credenziali di test
   if (!TEST_EMAIL || !TEST_PASSWORD) {
+    // Tentativo di login fallito per verificare che il form non crashi
+    await page.goto(loginUrl, { waitUntil: "networkidle" });
+    await page.fill('[data-testid="input-email"]', "wrong@example.com");
+    await page.fill('[data-testid="input-password"]', "wrong-password");
+    await page.click('[data-testid="button-login"]').catch(() => {});
+    await page.waitForTimeout(1000);
+
     console.warn("TEST_EMAIL / TEST_PASSWORD non impostate: salto il login riuscito.");
     return false;
   }
