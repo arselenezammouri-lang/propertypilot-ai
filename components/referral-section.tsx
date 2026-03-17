@@ -192,6 +192,7 @@ export function ReferralSection() {
             />
             <Button 
               onClick={copyToClipboard}
+              type="button"
               variant="outline"
               className="shrink-0 border-white/10 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black min-h-[36px]"
             >
@@ -203,6 +204,7 @@ export function ReferralSection() {
         <div className="flex gap-2">
           <Button 
             onClick={shareOnWhatsApp}
+            type="button"
             className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             disabled={!referralData?.referralLink}
           >
@@ -211,6 +213,7 @@ export function ReferralSection() {
           </Button>
           <Button 
             onClick={shareOnLinkedIn}
+            type="button"
             className="flex-1 bg-[#0A66C2] hover:bg-[#094D92] text-white min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             disabled={!referralData?.referralLink}
           >

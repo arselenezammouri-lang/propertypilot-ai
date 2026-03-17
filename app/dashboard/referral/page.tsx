@@ -142,6 +142,7 @@ export default function ReferralPage() {
               />
               <Button
                 onClick={handleCopy}
+                type="button"
                 variant="outline"
                 size="icon"
                 className="border-amber-500/30 hover:bg-amber-500/10"
@@ -157,6 +158,7 @@ export default function ReferralPage() {
 
             <Button
               onClick={handleWhatsAppShare}
+              type="button"
               className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
