@@ -9,6 +9,7 @@ import {
   getClientIp 
 } from '@/lib/utils/rate-limit';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
+import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
 import { apiWrapper } from '@/lib/utils/api-wrapper';
 import { logger } from '@/lib/utils/safe-logger';
@@ -56,22 +57,36 @@ export const POST = apiWrapper(
     // STEP 4: Check subscription limits
     const { data: subscription } = await supabase
       .from('subscriptions')
-      .select('status, generations_count')
+      .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
       .single();
 
-    const currentPlan = subscription?.status || 'free';
-    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS].limits;
+    let currentPlan = subscription?.status || 'free';
+    if (
+      (currentPlan === 'starter' || currentPlan === 'pro' || currentPlan === 'agency') &&
+      !subscription?.stripe_subscription_id
+    ) {
+      const repair = await repairMissingStripeSubscription({
+        userId: user.id,
+        currentStatus: currentPlan,
+        stripeCustomerId: subscription?.stripe_customer_id ?? null,
+        supabase,
+      });
+      currentPlan = repair.repaired ? repair.status : 'free';
+    }
+
+    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS]?.limits;
+    const monthlyLimit = planLimits?.listingsPerMonth ?? 5;
     const currentUsage = subscription?.generations_count || 0;
 
-    if (planLimits.listingsPerMonth !== -1 && currentUsage >= planLimits.listingsPerMonth) {
+    if (monthlyLimit !== -1 && currentUsage >= monthlyLimit) {
       return NextResponse.json(
         { 
           error: 'Monthly limit reached',
-          message: `Hai raggiunto il limite mensile di ${planLimits.listingsPerMonth} generazioni. Aggiorna il tuo piano per continuare.`,
+          message: `Hai raggiunto il limite mensile di ${monthlyLimit} generazioni. Aggiorna il tuo piano per continuare.`,
           currentPlan,
           usage: currentUsage,
-          limit: planLimits.listingsPerMonth
+          limit: monthlyLimit
         },
         { status: 403 }
       );
@@ -106,6 +121,7 @@ export const POST = apiWrapper(
   },
   {
     method: 'POST',
-    requireSubscription: true,
+    // FREE plan includes AI Generation (5 listings/month).
+    requireSubscription: false,
   }
 );

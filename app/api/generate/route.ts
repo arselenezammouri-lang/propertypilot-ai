@@ -11,7 +11,7 @@ import {
 } from '@/lib/utils/rate-limit';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
-import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 import OpenAI from 'openai';
 
 export const dynamic = 'force-dynamic';
@@ -25,18 +25,6 @@ export async function POST(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
-
-    // STEP 0: Check active subscription (CRITICAL SECURITY CHECK)
-    const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
-    if (!subscriptionCheck.allowed) {
-      return NextResponse.json(
-        { 
-          error: subscriptionCheck.error || 'Abbonamento richiesto',
-          message: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.'
-        },
-        { status: 403 }
-      );
-    }
 
     // STEP 1: Rate limiting - Check user limit (10/min)
     const userRateLimit = await checkUserRateLimit(user.id);
@@ -81,12 +69,26 @@ export async function POST(request: NextRequest) {
     // STEP 2: Get subscription with generations_count
     const { data: subscription } = await supabase
       .from('subscriptions')
-      .select('status, generations_count')
+      .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
       .single();
 
-    const currentPlan = subscription?.status || 'free';
-    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS].limits;
+    let currentPlan = subscription?.status || 'free';
+    if (
+      (currentPlan === 'starter' || currentPlan === 'pro' || currentPlan === 'agency') &&
+      !subscription?.stripe_subscription_id
+    ) {
+      const repair = await repairMissingStripeSubscription({
+        userId: user.id,
+        currentStatus: currentPlan,
+        stripeCustomerId: subscription?.stripe_customer_id ?? null,
+        supabase,
+      });
+      currentPlan = repair.repaired ? repair.status : 'free';
+    }
+
+    const planLimits = STRIPE_PLANS[currentPlan as keyof typeof STRIPE_PLANS]?.limits;
+    const monthlyLimit = planLimits?.listingsPerMonth ?? 5;
 
     // STEP 2: Check monthly limit using generations_count instead of saved_listings
     const startOfMonth = new Date();
@@ -96,14 +98,14 @@ export async function POST(request: NextRequest) {
     // Use generations_count from subscription (reset monthly by webhook or cron job)
     const currentUsage = subscription?.generations_count || 0;
 
-    if (planLimits.listingsPerMonth !== -1 && currentUsage >= planLimits.listingsPerMonth) {
+    if (monthlyLimit !== -1 && currentUsage >= monthlyLimit) {
       return NextResponse.json(
         { 
           error: 'Monthly limit reached',
-          message: `Hai raggiunto il limite mensile di ${planLimits.listingsPerMonth} generazioni. Aggiorna il tuo piano per continuare.`,
+          message: `Hai raggiunto il limite mensile di ${monthlyLimit} generazioni. Aggiorna il tuo piano per continuare.`,
           currentPlan,
           usage: currentUsage,
-          limit: planLimits.listingsPerMonth
+          limit: monthlyLimit
         },
         { status: 403 }
       );
@@ -152,8 +154,8 @@ export async function POST(request: NextRequest) {
       fromCache,
       usage: {
         current: currentUsage + 1,
-        limit: planLimits.listingsPerMonth,
-        remaining: planLimits.listingsPerMonth === -1 ? -1 : planLimits.listingsPerMonth - currentUsage - 1,
+        limit: monthlyLimit,
+        remaining: monthlyLimit === -1 ? -1 : monthlyLimit - currentUsage - 1,
       },
     });
   } catch (error: any) {
