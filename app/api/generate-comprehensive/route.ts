@@ -13,11 +13,43 @@ import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 import { formatErrorResponse, isOpenAIQuotaError } from '@/lib/errors/api-errors';
 import { apiWrapper } from '@/lib/utils/api-wrapper';
 import { logger } from '@/lib/utils/safe-logger';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
 
 export const dynamic = 'force-dynamic';
 
 export const POST = apiWrapper(
   async (request: NextRequest, { user, supabase, body }) => {
+    if (isLocalMockModeEnabled()) {
+      const location = typeof body?.location === 'string' ? body.location : 'Miami';
+      const propertyType = typeof body?.propertyType === 'string' ? body.propertyType : 'Luxury Condo';
+      const market = typeof body?.market === 'string' ? body.market : 'usa';
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          professional:
+            `Diamond Agency Mock: ${propertyType} in ${location}. Premium storytelling, market-gap framing, and high-conversion CTA.`,
+          short:
+            `${propertyType} in ${location} - top-tier asset with immediate buyer appeal and strong positioning.`,
+          titles: [
+            `${location} Diamond Deal - ${propertyType}`,
+            `Luxury ${propertyType} in ${location} - Elite`,
+            `${location} Premium Listing - Fast Close`,
+            `High-End ${propertyType} ${location}`,
+            `Agency Spotlight: ${propertyType} ${location}`,
+          ],
+          english:
+            `Local mock comprehensive generation completed for ${location}.`,
+          meta: { fallback: true, mode: 'local_mock', market },
+        },
+        meta: {
+          duration: 42,
+          generatedAt: new Date().toISOString(),
+          fallback: true,
+        },
+      });
+    }
+
     // STEP 1: Rate limiting - User (10/min)
     const userRateLimit = await checkUserRateLimit(user.id);
     if (!userRateLimit.allowed) {

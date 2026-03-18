@@ -12,6 +12,7 @@ import {
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
 import OpenAI from 'openai';
 
 export const dynamic = 'force-dynamic';
@@ -22,6 +23,49 @@ const aiCache = getAICacheService();
 
 export async function POST(request: NextRequest) {
   try {
+    if (isLocalMockModeEnabled()) {
+      const body = await request.json();
+      const validatedInput = propertyInputSchema.safeParse(body);
+      if (!validatedInput.success) {
+        return NextResponse.json(
+          { error: 'Invalid input', details: validatedInput.error.errors },
+          { status: 400 }
+        );
+      }
+
+      const propertyData = validatedInput.data;
+      const market = propertyData.market || 'usa';
+      const style = propertyData.style || 'luxury';
+      const location = propertyData.location || 'Miami';
+      const propertyType = propertyData.propertyType || 'Luxury Condo';
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          professional:
+            `Luxury Market Simulation (${market.toUpperCase()}): ${propertyType} in ${location} with elite positioning, ` +
+            `high-end finishes, premium lifestyle narrative, and conversion-oriented CTA for top-tier buyers.`,
+          short: `${propertyType} luxury in ${location}. Ocean-view profile, high-end finishes, ready to close.`,
+          titles: [
+            `Luxury ${propertyType} in ${location} - Ocean View`,
+            `${location} Elite ${propertyType} - Private Terrace`,
+            `Prime ${location} ${propertyType} - High-End Investment`,
+            `${propertyType} ${location} - Designer Interior`,
+            `Miami Luxury Deal - ${propertyType} Ready`,
+          ],
+          english:
+            `This is a local Agency simulation for ${location}. Premium copy generated in Diamond mode for walkthrough validation.`,
+          meta: { fallback: true, mode: 'local_mock', style, market },
+        },
+        fromCache: false,
+        usage: {
+          current: 1,
+          limit: -1,
+          remaining: -1,
+        },
+      });
+    }
+
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
