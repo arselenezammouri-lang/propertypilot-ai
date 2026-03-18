@@ -1,3 +1,5 @@
+import { tryLocalMockResponse } from '@/lib/api/local-mock-service';
+
 /**
  * Frontend API client – typed fetch with consistent response shape.
  * Use fetchApi<T>() instead of raw fetch() for /api/* calls to get
@@ -18,19 +20,37 @@ export async function fetchApi<T = unknown>(
   url: string,
   init?: RequestInit
 ): Promise<ApiResponse<T>> {
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...init?.headers,
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        ...init?.headers,
+      },
+    });
+  } catch (error) {
+    const mockData = tryLocalMockResponse(url, init?.method, 'network_error');
+    if (mockData !== null) {
+      return { success: true, data: mockData as T };
+    }
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Errore di rete',
+    };
+  }
 
   let body: unknown;
   try {
     const text = await res.text();
     body = text ? JSON.parse(text) : null;
   } catch {
+    const mockData = tryLocalMockResponse(url, init?.method, `non_json_${res.status}`);
+    if (mockData !== null) {
+      return { success: true, data: mockData as T };
+    }
+
     return {
       success: false,
       error: res.statusText || 'Errore di rete',
@@ -39,6 +59,11 @@ export async function fetchApi<T = unknown>(
   }
 
   if (!res.ok) {
+    const mockData = tryLocalMockResponse(url, init?.method, `status_${res.status}`);
+    if (mockData !== null && (res.status === 401 || res.status === 403)) {
+      return { success: true, data: mockData as T };
+    }
+
     const obj = body as Record<string, unknown>;
     return {
       success: false,

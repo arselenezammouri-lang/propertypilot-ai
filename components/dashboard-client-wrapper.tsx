@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { PendingCheckoutBanner } from "./pending-checkout-banner";
-import { OnboardingWizard } from "./onboarding-wizard";
 import { AriaLimitModal } from "./aria-limit-modal";
 import { TierPreviewToggle, PreviewTier } from "./tier-preview-toggle";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -24,7 +23,6 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
   const { toast } = useToast();
   const { hasReachedLimit, isNearLimit, currentUsage, limit, plan } = useUsageLimits();
   const [showLimitModal, setShowLimitModal] = useState(false);
-  const onboardingEnabled = process.env.NEXT_PUBLIC_ENABLE_ONBOARDING === 'true';
   const { locale } = useLocale();
   const d = getTranslation(locale as SupportedLocale).dashboardToasts;
 
@@ -134,7 +132,6 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
 
   return (
     <>
-      {onboardingEnabled ? <OnboardingWizard /> : null}
       <PendingCheckoutBanner />
       <TierPreviewToggle 
         currentRealTier={plan}

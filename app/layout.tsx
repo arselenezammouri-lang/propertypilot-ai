@@ -7,7 +7,6 @@ import "../styles/design-system.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "@/components/providers";
-import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -203,7 +202,6 @@ export default function RootLayout({
                 {children}
               </ErrorBoundary>
               <Toaster />
-              <DemoModal />
               <CommandPalette />
             </ThemeProvider>
           </LocaleProvider>
