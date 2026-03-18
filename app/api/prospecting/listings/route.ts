@@ -3,6 +3,8 @@ import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { cachedSupabaseQuery } from '@/lib/utils/cache-edge';
 import { logger } from '@/lib/utils/safe-logger';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { getLocalMockProspectingListings } from '@/lib/api/local-mock-service';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +14,33 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
+    if (isLocalMockModeEnabled()) {
+      const { searchParams } = new URL(request.url);
+      const status = searchParams.get('status');
+      const platform = searchParams.get('platform');
+      const location = searchParams.get('location');
+
+      const allListings = getLocalMockProspectingListings();
+      const filteredListings = allListings.filter((listing) => {
+        if (status && status !== 'all' && listing.status !== status) return false;
+        if (platform && listing.source_platform !== platform) return false;
+        if (location && !listing.location.toLowerCase().includes(location.toLowerCase())) return false;
+        return true;
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: filteredListings,
+        pagination: {
+          page: 1,
+          limit: filteredListings.length,
+          total: filteredListings.length,
+          totalPages: 1,
+        },
+        fallback: true,
+      });
+    }
+
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;

@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import type { User } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { LOCAL_MOCK_USER_ID, getLocalMockPlan } from '@/lib/api/local-mock-service';
 
 export type AuthenticatedUser = {
   user: User;
@@ -32,12 +33,13 @@ export async function getAuthenticatedUser(): Promise<AuthResult> {
 
   if (userError || !user) {
     if (isLocalMockModeEnabled()) {
+      const mockPlan = getLocalMockPlan();
       const mockUser = {
-        id: 'local-mock-user',
+        id: LOCAL_MOCK_USER_ID,
         aud: 'authenticated',
         email: 'local-mock@propertypilot.local',
         app_metadata: { provider: 'email', providers: ['email'] },
-        user_metadata: { role: 'founder', source: 'local-mock' },
+        user_metadata: { role: 'founder', source: 'local-mock', plan: mockPlan },
         created_at: new Date().toISOString(),
       } as User;
 

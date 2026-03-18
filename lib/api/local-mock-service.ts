@@ -1,4 +1,144 @@
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type LocalMockPlan = 'free' | 'starter' | 'pro' | 'agency';
+
+export const LOCAL_MOCK_USER_ID = '00000000-0000-0000-0000-000000000001';
+
+function resolveLocalMockPlan(): LocalMockPlan {
+  const fromEnv = (
+    process.env.NEXT_PUBLIC_LOCAL_MOCK_PLAN ||
+    process.env.LOCAL_MOCK_PLAN ||
+    process.env.LOCAL_DEV_MOCK_PLAN
+  )?.toLowerCase();
+
+  if (fromEnv === 'free' || fromEnv === 'starter' || fromEnv === 'pro' || fromEnv === 'agency') {
+    return fromEnv;
+  }
+
+  // Founder simulation default: full agency mode.
+  return 'agency';
+}
+
+export function getLocalMockPlan(): LocalMockPlan {
+  return resolveLocalMockPlan();
+}
+
+export function getLocalMockUsagePayload() {
+  const plan = getLocalMockPlan();
+  const isAgency = plan === 'agency';
+  return {
+    plan,
+    currentUsage: isAgency ? 42 : 0,
+    limit: isAgency ? -1 : plan === 'pro' ? 200 : plan === 'starter' ? 50 : 5,
+    hasReachedLimit: false,
+    isNearLimit: false,
+    remainingGenerations: isAgency ? -1 : plan === 'pro' ? 200 : plan === 'starter' ? 50 : 5,
+    percentageUsed: isAgency ? 0 : 0,
+    fallback: true,
+  };
+}
+
+export function getLocalMockSubscriptionPayload() {
+  const plan = getLocalMockPlan();
+  return {
+    user_id: LOCAL_MOCK_USER_ID,
+    status: plan,
+    stripe_subscription_id: plan === 'free' ? null : 'sub_local_mock_agency',
+    stripe_customer_id: plan === 'free' ? null : 'cus_local_mock_founder',
+    cancel_at_period_end: false,
+    stripe_verified: plan !== 'free',
+    sync_action: 'local_mock_mode',
+    fallback: true,
+  };
+}
+
+export function getLocalMockProspectingListings() {
+  const now = new Date().toISOString();
+  return [
+    {
+      id: '11111111-1111-4111-8111-111111111111',
+      title: 'Luxury Condo Ocean View - Miami Beach',
+      location: 'Miami Beach, FL',
+      price: 2450000,
+      source_platform: 'zillow',
+      status: 'new',
+      owner_name: 'John Smith',
+      phone_number: '+13051234567',
+      source_url: 'https://www.zillow.com/homedetails/11111111',
+      ai_summary: { summary_note: 'Market Gap -21%. Ocean front opportunity.', market_gap: 21, price_drop_percentage: 8 },
+      lead_score: 96,
+      raw_data: { surface: 220, bedrooms: 4, bathrooms: 3, description: 'Oceanfront luxury condo in Miami Beach.' },
+      category: 'RESIDENTIAL_SALE',
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      id: '22222222-2222-4222-8222-222222222222',
+      title: 'Penthouse Brickell - Skyline & Bay View',
+      location: 'Miami, Brickell',
+      price: 1890000,
+      source_platform: 'zillow',
+      status: 'called',
+      owner_name: 'Maria Garcia',
+      phone_number: '+13059876543',
+      source_url: 'https://www.zillow.com/homedetails/22222222',
+      ai_summary: { summary_note: 'Strong upside with premium location.', market_gap: 18.5, price_drop_percentage: 4 },
+      lead_score: 93,
+      raw_data: { surface: 180, bedrooms: 3, bathrooms: 2, description: 'Brickell penthouse with skyline view.' },
+      category: 'RESIDENTIAL_SALE',
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      id: '33333333-3333-4333-8333-333333333333',
+      title: 'Modern Villa with Pool - Milano Brera',
+      location: 'Milano, Brera',
+      price: 1850000,
+      source_platform: 'immobiliare',
+      status: 'new',
+      owner_name: 'Giulia Romano',
+      phone_number: '+393459876543',
+      source_url: 'https://www.immobiliare.it/annunci/33333333/',
+      ai_summary: { summary_note: 'Premium district, rare inventory.', market_gap: 20.3, price_drop_percentage: 6 },
+      lead_score: 91,
+      raw_data: { surface: 250, bedrooms: 5, bathrooms: 4, description: 'Luxury villa in Brera.' },
+      category: 'RESIDENTIAL_SALE',
+      created_at: now,
+      updated_at: now,
+    },
+    {
+      id: '44444444-4444-4444-8444-444444444444',
+      title: 'Loft Design Navigli - ROI Opportunity',
+      location: 'Milano, Navigli',
+      price: 680000,
+      source_platform: 'idealista',
+      status: 'appointment_set',
+      owner_name: 'Marco Bianchi',
+      phone_number: '+393475551234',
+      source_url: 'https://www.idealista.it/annuncio/44444444/',
+      ai_summary: { summary_note: 'Excellent yield for short rental strategy.', market_gap: 17.8, price_drop_percentage: 3 },
+      lead_score: 88,
+      raw_data: { surface: 95, bedrooms: 2, bathrooms: 1, description: 'Design loft on Navigli canal.' },
+      category: 'RESIDENTIAL_SALE',
+      created_at: now,
+      updated_at: now,
+    },
+  ];
+}
+
+export function getLocalMockProspectingStats() {
+  return {
+    calls_today: 7,
+    appointments_this_week: 4,
+    new_listings_today: 12,
+    total_active: 48,
+    calls_this_month: 19,
+    fallback: true,
+  };
+}
+
+export function getLocalMockEliteDeals() {
+  return getLocalMockProspectingListings().filter((listing) => (listing.lead_score ?? 0) > 90);
+}
 
 function isLocalhostRuntime() {
   if (typeof window === 'undefined') return false;
@@ -27,26 +167,11 @@ function buildMockListing() {
 
 function getMockPayload(pathname: string, method: HttpMethod): unknown | null {
   if (pathname === '/api/user/usage') {
-    return {
-      plan: 'free',
-      currentUsage: 0,
-      limit: 5,
-      hasReachedLimit: false,
-      isNearLimit: false,
-      remainingGenerations: 5,
-      percentageUsed: 0,
-      fallback: true,
-    };
+    return getLocalMockUsagePayload();
   }
 
   if (pathname === '/api/user/subscription') {
-    return {
-      status: 'free',
-      stripe_subscription_id: null,
-      cancel_at_period_end: false,
-      stripe_verified: false,
-      fallback: true,
-    };
+    return getLocalMockSubscriptionPayload();
   }
 
   if (pathname.startsWith('/api/leads')) {
@@ -65,19 +190,27 @@ function getMockPayload(pathname: string, method: HttpMethod): unknown | null {
   }
 
   if (pathname.startsWith('/api/prospecting/listings')) {
-    return [];
+    return getLocalMockProspectingListings();
   }
 
   if (pathname.startsWith('/api/prospecting/filters')) {
     return [];
   }
 
+  if (pathname.startsWith('/api/prospecting/elite-deals')) {
+    return getLocalMockEliteDeals();
+  }
+
   if (pathname.startsWith('/api/prospecting/stats')) {
+    return getLocalMockProspectingStats();
+  }
+
+  if (pathname.startsWith('/api/prospecting/call') && method === 'POST') {
     return {
-      totalLeads: 0,
-      hotLeads: 0,
-      callsThisMonth: 0,
-      opportunities: 0,
+      call_id: `local-call-${Date.now()}`,
+      status: 'queued',
+      listing_id: 'local-mock-listing',
+      message: 'Mock Bland AI trigger started in local mode',
       fallback: true,
     };
   }

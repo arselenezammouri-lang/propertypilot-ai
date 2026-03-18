@@ -4,6 +4,8 @@ import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
 import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { getLocalMockSubscriptionPayload } from '@/lib/api/local-mock-service';
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +24,16 @@ const PAID_STATUSES = ['starter', 'pro', 'agency'];
 
 export async function GET(request: NextRequest) {
   try {
+    if (isLocalMockModeEnabled()) {
+      return NextResponse.json(
+        {
+          success: true,
+          data: getLocalMockSubscriptionPayload(),
+        },
+        { status: 200 }
+      );
+    }
+
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;

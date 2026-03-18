@@ -1,6 +1,8 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
 import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { LOCAL_MOCK_USER_ID, getLocalMockPlan } from '@/lib/api/local-mock-service';
 
 const ACTIVE_SUBSCRIPTION_REQUIRED =
   'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.';
@@ -25,6 +27,15 @@ export async function requireActiveSubscription(
   userId: string
 ): Promise<{ allowed: boolean; planType: string; error?: string }> {
   try {
+    if (isLocalMockModeEnabled() && userId === LOCAL_MOCK_USER_ID) {
+      const mockPlan = getLocalMockPlan();
+      return {
+        allowed: mockPlan !== 'free',
+        planType: mockPlan,
+        error: mockPlan === 'free' ? ACTIVE_SUBSCRIPTION_REQUIRED : undefined,
+      };
+    }
+
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
       .select('status, stripe_subscription_id, stripe_customer_id, price_id')
@@ -125,6 +136,16 @@ export async function requireProOrAgencySubscription(
   userId: string
 ): Promise<{ allowed: boolean; planType: string; error?: string }> {
   try {
+    if (isLocalMockModeEnabled() && userId === LOCAL_MOCK_USER_ID) {
+      const mockPlan = getLocalMockPlan();
+      const allowed = mockPlan === 'pro' || mockPlan === 'agency';
+      return {
+        allowed,
+        planType: mockPlan,
+        error: allowed ? undefined : PRO_OR_AGENCY_REQUIRED,
+      };
+    }
+
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
       .select('status, stripe_subscription_id, stripe_customer_id, price_id')

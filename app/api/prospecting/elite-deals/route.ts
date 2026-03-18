@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { getLocalMockEliteDeals } from '@/lib/api/local-mock-service';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +22,15 @@ const ELITE_DEALS_MILANO_MIAMI = [
 
 export async function GET() {
   try {
+    if (isLocalMockModeEnabled()) {
+      return NextResponse.json({
+        success: true,
+        data: getLocalMockEliteDeals(),
+        source: 'elite-local-mock',
+        fallback: true,
+      });
+    }
+
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 

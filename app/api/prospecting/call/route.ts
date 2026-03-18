@@ -12,6 +12,7 @@ import {
 } from '@/lib/ai/voice-agent';
 import { logger } from '@/lib/utils/safe-logger';
 import { getAppUrl } from '@/lib/env';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,19 @@ const callRequestSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
+    if (isLocalMockModeEnabled()) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          call_id: `local-call-${Date.now()}`,
+          status: 'queued',
+          listing_id: 'local-mock-listing',
+          message: 'Mock Bland AI trigger avviato (local mode)',
+          fallback: true,
+        },
+      });
+    }
+
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;

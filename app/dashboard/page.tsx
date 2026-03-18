@@ -12,6 +12,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
 import { isLocalMockModeEnabled } from "@/lib/utils/local-dev";
+import { LOCAL_MOCK_USER_ID, getLocalMockPlan } from "@/lib/api/local-mock-service";
 import { 
   Home, 
   FileText, 
@@ -105,6 +106,7 @@ const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").
 export default async function DashboardPage() {
   const supabase = await createClient();
   const localMockMode = isLocalMockModeEnabled();
+  const localMockPlan = getLocalMockPlan();
   
   const { data: { user }, error } = await supabase.auth.getUser();
   
@@ -112,7 +114,7 @@ export default async function DashboardPage() {
     redirect("/auth/login");
   }
 
-  const resolvedUserId = user?.id ?? "local-mock-user";
+  const resolvedUserId = user?.id ?? LOCAL_MOCK_USER_ID;
 
   const profile = user
     ? (
@@ -133,8 +135,8 @@ export default async function DashboardPage() {
         .single()
     ).data
     : {
-      status: "free",
-      stripe_subscription_id: null,
+      status: localMockPlan,
+      stripe_subscription_id: localMockPlan === "free" ? null : "sub_local_mock_agency",
     };
 
   const paidStatuses = new Set(['starter', 'pro', 'agency']);

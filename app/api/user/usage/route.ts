@@ -4,6 +4,8 @@ import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { getLocalMockUsagePayload } from '@/lib/api/local-mock-service';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,6 +79,10 @@ async function createFreeSubscriptionRow(userId: string): Promise<UsageSubscript
 
 export async function GET(request: NextRequest) {
   try {
+    if (isLocalMockModeEnabled()) {
+      return NextResponse.json(getLocalMockUsagePayload(), { status: 200 });
+    }
+
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user } = auth;

@@ -304,7 +304,7 @@ export default function PredatorMapPage() {
                 <CardTitle className="text-xl">
                   {locale === "it" ? "Mappa Territorio AI" : "AI Territory Map"}
                 </CardTitle>
-                <CardDescription className="text-gray-400 mt-1">
+                <CardDescription className="text-white/60 mt-1">
                   {locale === "it"
                     ? "Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond."
                     : "Available on Agency plan only. Unlock the map and all Diamond features."}
@@ -319,7 +319,7 @@ export default function PredatorMapPage() {
               </Button>
             </Link>
             <Link href="/dashboard/prospecting">
-              <Button variant="ghost" className="w-full mt-2 text-gray-400">
+              <Button variant="ghost" className="w-full mt-2 text-white/60 hover:text-white hover:bg-white/5">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {locale === "it" ? "Torna al Prospecting" : "Back to Prospecting"}
               </Button>
@@ -347,7 +347,7 @@ export default function PredatorMapPage() {
                 <span className="hidden sm:inline">{t.mapTitle}</span>
                 <span className="sm:hidden">{t.mapTitle.replace(' Command', '')}</span>
               </h1>
-              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">
+              <p className="text-xs sm:text-sm text-white/60 hidden sm:block">
                 {t.mapSubtitle}
               </p>
             </div>
@@ -358,18 +358,18 @@ export default function PredatorMapPage() {
                 checked={showGhostListings}
                 onCheckedChange={setShowGhostListings}
               />
-              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">{t.mapGhostListings}</span>
-              <span className="text-xs sm:text-sm text-gray-300 sm:hidden">Ghost</span>
+              <span className="text-xs sm:text-sm text-white/70 hidden sm:inline">{t.mapGhostListings}</span>
+              <span className="text-xs sm:text-sm text-white/70 sm:hidden">Ghost</span>
             </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={topDealsOnly}
                 onCheckedChange={setTopDealsOnly}
               />
-              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">
+              <span className="text-xs sm:text-sm text-white/70 hidden sm:inline">
                 {locale === "it" ? "Solo TOP DEAL" : "Top deals only"}
               </span>
-              <span className="text-xs sm:text-sm text-gray-300 sm:hidden">TOP</span>
+              <span className="text-xs sm:text-sm text-white/70 sm:hidden">TOP</span>
             </div>
             <Button onClick={fetchListings} variant="outline" size="sm" className="w-full sm:w-auto">
               <Filter className="h-4 w-4 mr-2" />
@@ -415,35 +415,35 @@ export default function PredatorMapPage() {
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
-                <span className="text-gray-300">{t.mapTopDeal}</span>
+                <span className="text-white/70">{t.mapTopDeal}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white flex items-center justify-center">
                   <Zap className="h-2.5 w-2.5 text-white" />
                 </div>
-                <span className="text-gray-300">{t.mapHighUrgency}</span>
+                <span className="text-white/70">{t.mapHighUrgency}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-yellow-500 border-2 border-white"></div>
-                <span className="text-gray-300">{t.mapWarm}</span>
+                <span className="text-white/70">{t.mapWarm}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-gray-500 border-2 border-white"></div>
-                <span className="text-gray-300">{t.mapCold}</span>
+                <span className="text-white/70">{t.mapCold}</span>
               </div>
               {/* KPI sintetici */}
               <div className="pt-2 mt-1 border-t border-purple-500/30 space-y-1">
-                <p className="text-[10px] text-gray-400 flex justify-between">
+                <p className="text-[10px] text-white/50 flex justify-between">
                   <span>{locale === "it" ? "Immobili mappati" : "Mapped listings"}</span>
                   <span className="font-semibold text-gray-100">{markers.length}</span>
                 </p>
-                <p className="text-[10px] text-gray-400 flex justify-between">
+                <p className="text-[10px] text-white/50 flex justify-between">
                   <span>{locale === "it" ? "Top Deals" : "Top deals"}</span>
                   <span className="font-semibold text-emerald-400">
                     {markers.filter(m => m.marketGap && m.marketGap > 15).length}
                   </span>
                 </p>
-                <p className="text-[10px] text-gray-400 flex justify-between">
+                <p className="text-[10px] text-white/50 flex justify-between">
                   <span>{locale === "it" ? "Alta urgenza" : "High urgency"}</span>
                   <span className="font-semibold text-red-400">
                     {markers.filter(m => m.urgencyScore >= 70).length}
