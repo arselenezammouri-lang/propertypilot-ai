@@ -80,7 +80,7 @@ describe('Subscription Check', () => {
 
       expect(result.allowed).toBe(false);
       expect(result.planType).toBe('agency');
-      expect(result.error).toContain('pagamento');
+      expect(result.error).toContain('abbonamento');
     });
 
     it('should handle missing subscription gracefully', async () => {
@@ -147,7 +147,7 @@ describe('Subscription Check', () => {
 
       expect(result.allowed).toBe(false);
       expect(result.planType).toBe('pro');
-      expect(result.error).toContain('pagamento');
+      expect(result.error).toContain('abbonamento');
     });
   });
 
