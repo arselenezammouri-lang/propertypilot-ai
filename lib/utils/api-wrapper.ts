@@ -13,6 +13,8 @@ import { logger } from './safe-logger';
 import { formatErrorResponse, toAPIError } from '@/lib/errors/api-errors';
 import { createClient } from '@/lib/supabase/server';
 import { requireActiveSubscription } from './subscription-check';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { LOCAL_MOCK_USER_ID, getLocalMockPlan } from '@/lib/api/local-mock-service';
 
 type Handler = (req: NextRequest, context: HandlerContext) => Promise<NextResponse>;
 type Validator = (body: any) => { valid: boolean; error?: string };
@@ -67,7 +69,7 @@ export function apiWrapper(
           supabase = await createClient();
           const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
 
-          if (authError || !authUser) {
+          if ((authError || !authUser) && !isLocalMockModeEnabled()) {
             logger.warn('Unauthorized API request', { path, method });
             return NextResponse.json(
               { error: 'Non autorizzato. Effettua il login per continuare.' },
@@ -75,16 +77,32 @@ export function apiWrapper(
             );
           }
 
-          user = {
-            id: authUser.id,
-            email: authUser.email,
-          };
+          if (authUser) {
+            user = {
+              id: authUser.id,
+              email: authUser.email,
+            };
+          } else {
+            const mockPlan = getLocalMockPlan();
+            user = {
+              id: LOCAL_MOCK_USER_ID,
+              email: `local-${mockPlan}@propertypilot.local`,
+            };
+          }
         } catch (authErr) {
+          if (isLocalMockModeEnabled()) {
+            user = {
+              id: LOCAL_MOCK_USER_ID,
+              email: 'local-agency@propertypilot.local',
+            };
+            supabase = null;
+          } else {
           logger.error('Auth check failed', authErr, { path, method });
           return NextResponse.json(
             { error: 'Errore di autenticazione. Riprova più tardi.' },
             { status: 401 }
           );
+          }
         }
       }
 
