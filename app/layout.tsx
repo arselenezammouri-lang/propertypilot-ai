@@ -12,7 +12,6 @@ import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { CommandPalette } from "@/components/command-palette";
-import { DisableServiceWorker } from "@/components/disable-service-worker";
 import { SkipToContent } from "@/components/skip-to-content";
 import { HtmlLangDir } from "@/components/html-lang-dir";
 import type { Locale } from "@/lib/i18n/config";
@@ -37,7 +36,6 @@ const APP_NAME = 'PropertyPilot AI';
 const APP_DESCRIPTION = 'The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups. Built for agents and teams in the US, Europe, and beyond.';
 const SUPPORT_EMAIL = 'support@propertypilotai.com';
 const SALES_EMAIL = 'sales@propertypilotai.com';
-const IS_PWA_ENABLED = process.env.NODE_ENV === 'production';
 
 export async function generateMetadata(): Promise<Metadata> {
   const cookieStore = await cookies();
@@ -180,11 +178,6 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
-        {IS_PWA_ENABLED && <link rel="manifest" href="/manifest.json" />}
-        {IS_PWA_ENABLED && <meta name="apple-mobile-web-app-capable" content="yes" />}
-        {IS_PWA_ENABLED && <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />}
-        {IS_PWA_ENABLED && <meta name="apple-mobile-web-app-title" content="PropertyPilot" />}
-        {IS_PWA_ENABLED && <meta name="mobile-web-app-capable" content="yes" />}
         <meta name="theme-color" content="#000000" />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta httpEquiv="Pragma" content="no-cache" />
@@ -206,7 +199,6 @@ export default function RootLayout({
               storageKey="propertypilot-theme"
             >
               <PerformanceMonitor />
-              <DisableServiceWorker />
               <ErrorBoundary>
                 {children}
               </ErrorBoundary>

@@ -8,6 +8,9 @@ export interface ScrapedListing {
   description_raw: string;
   images: string[];
   propertyType?: string;
+  isFallback?: boolean;
+  fallbackReason?: string;
+  sourcePortal?: string;
 }
 
 export interface ScraperResult {

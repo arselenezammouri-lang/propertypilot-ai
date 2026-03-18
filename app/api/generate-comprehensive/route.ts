@@ -55,11 +55,26 @@ export const POST = apiWrapper(
     }
 
     // STEP 4: Check subscription limits
-    const { data: subscription } = await supabase
+    const { data: subscriptionData, error: subscriptionError } = await supabase
       .from('subscriptions')
       .select('status, generations_count, stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
+
+    if (subscriptionError && subscriptionError.code !== 'PGRST116') {
+      logger.warn('[COMPREHENSIVE AI] Subscription fetch failed, fallback to FREE', {
+        userId: user.id,
+        errorCode: subscriptionError.code,
+        errorMessage: subscriptionError.message,
+      });
+    }
+
+    const subscription = subscriptionData ?? {
+      status: 'free',
+      generations_count: 0,
+      stripe_subscription_id: null,
+      stripe_customer_id: null,
+    };
 
     let currentPlan = subscription?.status || 'free';
     if (

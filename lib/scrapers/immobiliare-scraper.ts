@@ -1,6 +1,7 @@
 import { BaseScraper } from './base-scraper';
 import { ScraperResult, ScrapedListing } from './types';
 import type { CheerioAPI } from 'cheerio';
+import { createFallbackListing } from './fallback-listing';
 
 export class ImmobiliareScraper extends BaseScraper {
   async scrape(url: string): Promise<ScraperResult> {
@@ -34,6 +35,14 @@ export class ImmobiliareScraper extends BaseScraper {
       };
     } catch (error: any) {
       console.error('[ImmobiliareScraper] Error:', error);
+
+      if (this.isBlockedRequestError(error)) {
+        return {
+          success: true,
+          data: createFallbackListing(url, 'immobiliare.it', 'blocked_403'),
+        };
+      }
+
       return {
         success: false,
         error: error.message || 'Failed to scrape Immobiliare.it listing',

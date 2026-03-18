@@ -4,10 +4,8 @@ import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
 
 const ACTIVE_SUBSCRIPTION_REQUIRED =
   'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.';
-const INVALID_SUBSCRIPTION_TYPE =
-  'Tipo di abbonamento non valido. Contatta il supporto.';
-const INVALID_PAYMENT_CONFIRMATION =
-  'Abbonamento non valido. Il pagamento non risulta confermato. Contatta il supporto.';
+const INVALID_SUBSCRIPTION_TYPE = ACTIVE_SUBSCRIPTION_REQUIRED;
+const INVALID_PAYMENT_CONFIRMATION = ACTIVE_SUBSCRIPTION_REQUIRED;
 const PRO_OR_AGENCY_REQUIRED =
   'Il Lead Scoring AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY per sbloccare la priorità automatica dei lead.';
 
@@ -41,7 +39,7 @@ export async function requireActiveSubscription(
       return {
         allowed: false,
         planType: 'free',
-        error: 'Errore nel recupero dell\'abbonamento. Contatta il supporto.'
+        error: ACTIVE_SUBSCRIPTION_REQUIRED
       };
     }
 
@@ -105,7 +103,7 @@ export async function requireActiveSubscription(
     return {
       allowed: false,
       planType: 'free',
-      error: 'Errore nella verifica dell\'abbonamento. Riprova più tardi.'
+      error: ACTIVE_SUBSCRIPTION_REQUIRED
     };
   }
 }
@@ -141,7 +139,7 @@ export async function requireProOrAgencySubscription(
       return {
         allowed: false,
         planType: 'free',
-        error: 'Errore nel recupero dell\'abbonamento. Contatta il supporto.'
+        error: PRO_OR_AGENCY_REQUIRED
       };
     }
 
@@ -205,7 +203,7 @@ export async function requireProOrAgencySubscription(
     return {
       allowed: false,
       planType: 'free',
-      error: 'Errore nella verifica dell\'abbonamento. Riprova più tardi.'
+      error: PRO_OR_AGENCY_REQUIRED
     };
   }
 }

@@ -149,8 +149,17 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     logger.error('Error in usage endpoint', error, { endpoint: '/api/user/usage' });
     return NextResponse.json(
-      { error: 'Errore interno del server' },
-      { status: 500 }
+      {
+        plan: 'free',
+        currentUsage: 0,
+        limit: 5,
+        hasReachedLimit: false,
+        isNearLimit: false,
+        remainingGenerations: 5,
+        percentageUsed: 0,
+        fallback: true,
+      },
+      { status: 200 }
     );
   }
 }

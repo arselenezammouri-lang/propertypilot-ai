@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { ScrapedListing } from '@/lib/scrapers/types';
+import { createFallbackListing } from '@/lib/scrapers/fallback-listing';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
@@ -104,18 +105,35 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
 
     logger.debug('[ANALYZE-LINK] Scraping URL', { url });
     const scrapeResult = await scraper.scrape(url);
+    let scrapedData: ScrapedListing | null = null;
 
     if (!scrapeResult.success || !scrapeResult.data) {
+      const errorString = scrapeResult.error?.toLowerCase() || '';
+      if (errorString.includes('403') || errorString.includes('forbidden')) {
+        const portalName = new URL(url).hostname.replace('www.', '');
+        scrapedData = createFallbackListing(url, portalName, 'blocked_403');
+      } else {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: scrapeResult.error || 'Impossibile estrarre i dati dall\'annuncio. Verifica che il link sia corretto.',
+          },
+          { status: 422 }
+        );
+      }
+    } else {
+      scrapedData = scrapeResult.data;
+    }
+
+    if (!scrapedData) {
       return NextResponse.json(
         { 
           success: false, 
-          error: scrapeResult.error || 'Impossibile estrarre i dati dall\'annuncio. Verifica che il link sia corretto.',
+          error: 'Impossibile estrarre i dati dall\'annuncio. Verifica che il link sia corretto.',
         },
         { status: 422 }
       );
     }
-
-    const scrapedData = scrapeResult.data;
     logger.debug('[ANALYZE-LINK] Scraped data', {
       title: scrapedData.title,
       price: scrapedData.price,

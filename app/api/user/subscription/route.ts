@@ -35,8 +35,18 @@ export async function GET(request: NextRequest) {
     if (error) {
       logger.error('[GET SUBSCRIPTION] Error', error, { userId: user.id });
       return NextResponse.json(
-        { error: 'Failed to fetch subscription' },
-        { status: 500 }
+        {
+          success: true,
+          data: {
+            user_id: user.id,
+            status: 'free',
+            stripe_subscription_id: null,
+            cancel_at_period_end: false,
+            stripe_verified: false,
+            sync_action: 'fallback_free_on_fetch_error',
+          },
+        },
+        { status: 200 }
       );
     }
 
@@ -53,8 +63,18 @@ export async function GET(request: NextRequest) {
       if (insertError) {
         logger.error('[CREATE SUBSCRIPTION] Error', insertError, { userId: user.id });
         return NextResponse.json(
-          { error: 'Failed to create subscription' },
-          { status: 500 }
+          {
+            success: true,
+            data: {
+              user_id: user.id,
+              status: 'free',
+              stripe_subscription_id: null,
+              cancel_at_period_end: false,
+              stripe_verified: false,
+              sync_action: 'fallback_free_on_insert_error',
+            },
+          },
+          { status: 200 }
         );
       }
 
@@ -218,11 +238,17 @@ export async function GET(request: NextRequest) {
     logger.error('[USER SUBSCRIPTION API] Error', error as Error, { component: 'user-subscription' });
     
     return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error.message || 'Si è verificato un errore.'
+      {
+        success: true,
+        data: {
+          status: 'free',
+          stripe_subscription_id: null,
+          cancel_at_period_end: false,
+          stripe_verified: false,
+          sync_action: 'fallback_free_on_unexpected_error',
+        },
       },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }

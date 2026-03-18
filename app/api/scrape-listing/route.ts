@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { ScraperFactory } from '@/lib/scrapers/factory';
+import { createFallbackListing } from '@/lib/scrapers/fallback-listing';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
-import { formatErrorResponse, ScraperBlockedError, isScraperBlockedError } from '@/lib/errors/api-errors';
+import { formatErrorResponse } from '@/lib/errors/api-errors';
 import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
@@ -114,11 +115,22 @@ export async function POST(request: NextRequest) {
       const errorString = result.error?.toLowerCase() || '';
       if (errorString.includes('403') || errorString.includes('forbidden')) {
         const portalName = new URL(url).hostname.replace('www.', '');
-        const error = new ScraperBlockedError(portalName);
-        
+        const fallbackData = createFallbackListing(url, portalName, 'blocked_403');
+        await logGeneration(user.id, clientIp);
+
         return NextResponse.json(
-          formatErrorResponse(error),
-          { status: error.statusCode }
+          {
+            success: true,
+            data: fallbackData,
+            meta: {
+              sourceUrl: url,
+              scrapedAt: new Date().toISOString(),
+              duration,
+              fallback: true,
+              fallbackReason: 'blocked_403',
+            },
+          },
+          { status: 200 }
         );
       }
       
