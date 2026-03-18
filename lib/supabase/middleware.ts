@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
 
 const PROTECTED_ROUTES = ['/dashboard'];
 const DB_TIMEOUT_MS = 5000;
@@ -82,6 +83,9 @@ export async function updateSession(request: NextRequest) {
   );
 
   if (isProtectedRoute && !user) {
+    if (isLocalMockModeEnabled()) {
+      return response;
+    }
     const redirectUrl = new URL('/auth/login', request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);

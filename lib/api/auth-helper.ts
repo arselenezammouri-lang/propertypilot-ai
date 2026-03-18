@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import type { User } from '@supabase/supabase-js';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
 
 export type AuthenticatedUser = {
   user: User;
@@ -30,6 +31,19 @@ export async function getAuthenticatedUser(): Promise<AuthResult> {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
 
   if (userError || !user) {
+    if (isLocalMockModeEnabled()) {
+      const mockUser = {
+        id: 'local-mock-user',
+        aud: 'authenticated',
+        email: 'local-mock@propertypilot.local',
+        app_metadata: { provider: 'email', providers: ['email'] },
+        user_metadata: { role: 'founder', source: 'local-mock' },
+        created_at: new Date().toISOString(),
+      } as User;
+
+      return { ok: true, user: mockUser, supabase };
+    }
+
     return {
       ok: false,
       response: NextResponse.json(

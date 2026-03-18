@@ -11,6 +11,7 @@ import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
+import { isLocalMockModeEnabled } from "@/lib/utils/local-dev";
 import { 
   Home, 
   FileText, 
@@ -103,24 +104,38 @@ const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const localMockMode = isLocalMockModeEnabled();
   
   const { data: { user }, error } = await supabase.auth.getUser();
   
-  if (error || !user) {
+  if ((error || !user) && !localMockMode) {
     redirect("/auth/login");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  const resolvedUserId = user?.id ?? "local-mock-user";
 
-  const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("*")
-    .eq("user_id", user.id)
-    .single();
+  const profile = user
+    ? (
+      await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", resolvedUserId)
+        .single()
+    ).data
+    : { full_name: "Founder (Local Mock)" };
+
+  const subscription = user
+    ? (
+      await supabase
+        .from("subscriptions")
+        .select("*")
+        .eq("user_id", resolvedUserId)
+        .single()
+    ).data
+    : {
+      status: "free",
+      stripe_subscription_id: null,
+    };
 
   const paidStatuses = new Set(['starter', 'pro', 'agency']);
   const rawStatus = subscription?.status || 'free';

@@ -60,7 +60,7 @@ export async function fetchApi<T = unknown>(
 
   if (!res.ok) {
     const mockData = tryLocalMockResponse(url, init?.method, `status_${res.status}`);
-    if (mockData !== null && (res.status === 401 || res.status === 403)) {
+    if (mockData !== null && (res.status === 401 || res.status === 403 || res.status >= 500)) {
       return { success: true, data: mockData as T };
     }
 
