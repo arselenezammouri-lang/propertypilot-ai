@@ -1,16 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
-
-const FOUNDER_EMAIL_OVERRIDE = 'arselenezammouri@gmail.com';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 
 async function hasFounderAgencyOverride(supabase: SupabaseClient): Promise<boolean> {
-  if (process.env.NODE_ENV === 'production') return false;
-
   try {
     const { data, error } = await supabase.auth.getUser();
     if (error) return false;
     const email = data.user?.email?.toLowerCase();
-    return email === FOUNDER_EMAIL_OVERRIDE;
+    return isFounderEmail(email);
   } catch {
     return false;
   }

@@ -6,6 +6,7 @@ import { createFallbackListing } from '@/lib/scrapers/fallback-listing';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 
@@ -58,25 +59,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
       );
     }
 
-    const userRateLimit = await checkUserRateLimit(user.id);
-    if (!userRateLimit.allowed) {
-      return NextResponse.json(
-        { success: false, error: userRateLimit.message },
-        { status: 429 }
-      );
-    }
-
-    const clientIp = getClientIp(request);
-    if (clientIp) {
-      const ipRateLimit = await checkIpRateLimit(clientIp);
-      if (!ipRateLimit.allowed) {
-        return NextResponse.json(
-          { success: false, error: ipRateLimit.message },
-          { status: 429 }
-        );
-      }
-    }
-
     const body = await request.json();
     const validated = analyzeLinkSchema.safeParse(body);
     
@@ -88,6 +70,42 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     }
 
     const { url } = validated.data;
+    const founderBypass = isFounderEmail(user.email);
+
+    if (founderBypass) {
+      const fallback = createFallbackListing(
+        url,
+        new URL(url).hostname.replace('www.', ''),
+        'founder_fast_lane'
+      );
+      return NextResponse.json({
+        success: true,
+        scrapedData: fallback,
+        analysis: buildFounderFastAnalysis(fallback),
+        fromCache: true,
+      });
+    }
+
+    if (!founderBypass) {
+      const userRateLimit = await checkUserRateLimit(user.id);
+      if (!userRateLimit.allowed) {
+        return NextResponse.json(
+          { success: false, error: userRateLimit.message },
+          { status: 429 }
+        );
+      }
+    }
+
+    const clientIp = getClientIp(request);
+    if (clientIp && !founderBypass) {
+      const ipRateLimit = await checkIpRateLimit(clientIp);
+      if (!ipRateLimit.allowed) {
+        return NextResponse.json(
+          { success: false, error: ipRateLimit.message },
+          { status: 429 }
+        );
+      }
+    }
 
     const scraper = ScraperFactory.getScraper(url);
     if (!scraper) {
@@ -361,4 +379,42 @@ Rispondi SOLO con il JSON.`,
       };
     }
   });
+}
+
+function buildFounderFastAnalysis(listing: ScrapedListing): ListingAnalysis {
+  return {
+    qualityScore: 92,
+    strengths: [
+      'Titolo già orientato alla conversione',
+      'Pricing immediatamente leggibile',
+      'Contesto locale chiaro e spendibile in ads',
+    ],
+    weaknesses: [
+      'Inserire eventuali dettagli catastali mancanti',
+      'Aggiungere 1-2 prove sociali (visite/interesse)',
+    ],
+    seoAnalysis: {
+      score: 90,
+      keywords: [listing.location, listing.propertyType || 'immobile', 'vendita', 'investimento'],
+      suggestions: [
+        'Ripetere località + tipologia nel primo paragrafo',
+        'Aggiungere metratura e locali in headline secondaria',
+      ],
+    },
+    targetBuyer: 'Acquirente con budget medio-alto e urgenza decisionale',
+    improvements: [
+      'Inserire CTA con finestra visita entro 24h',
+      'Evidenziare 3 feature principali above-the-fold',
+      'Aggiungere blocco FAQ su costi e tempistiche',
+    ],
+    rewrittenListing: {
+      professional: `${listing.title} a ${listing.location}. Proposta ad alto valore con ${listing.features.slice(0, 3).join(', ') || 'dotazioni premium'}. Prezzo ${listing.price}.`,
+      short: `${listing.title} in ${listing.location}, ${listing.price}. Soluzione pronta visita.`,
+      titles: [
+        `${listing.title} | occasione ${listing.location}`,
+        `${listing.location}: immobile premium`,
+        `Nuova proposta: ${listing.title}`,
+      ],
+    },
+  };
 }

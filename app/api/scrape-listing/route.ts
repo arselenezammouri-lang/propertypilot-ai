@@ -5,6 +5,7 @@ import { createFallbackListing } from '@/lib/scrapers/fallback-listing';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp, logGeneration } from '@/lib/utils/rate-limit';
 import { formatErrorResponse } from '@/lib/errors/api-errors';
 import { logger } from '@/lib/utils/safe-logger';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,23 +17,26 @@ export async function POST(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user } = auth;
+    const founderBypass = isFounderEmail(user.email);
 
     // STEP 2: Rate limiting - User (10/min)
-    const userRateLimit = await checkUserRateLimit(user.id);
-    if (!userRateLimit.allowed) {
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          message: userRateLimit.message || 'Troppi tentativi. Riprova tra 1 minuto.',
-          resetAt: userRateLimit.resetAt
-        },
-        { status: 429 }
-      );
+    if (!founderBypass) {
+      const userRateLimit = await checkUserRateLimit(user.id);
+      if (!userRateLimit.allowed) {
+        return NextResponse.json(
+          { 
+            error: 'Rate limit exceeded',
+            message: userRateLimit.message || 'Troppi tentativi. Riprova tra 1 minuto.',
+            resetAt: userRateLimit.resetAt
+          },
+          { status: 429 }
+        );
+      }
     }
 
     // STEP 3: Rate limiting - IP (20/min global protection)
     const clientIp = getClientIp(request);
-    if (clientIp) {
+    if (clientIp && !founderBypass) {
       const ipRateLimit = await checkIpRateLimit(clientIp);
       if (!ipRateLimit.allowed) {
         return NextResponse.json(
@@ -86,6 +90,20 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       );
+    }
+
+    if (founderBypass) {
+      return NextResponse.json({
+        success: true,
+        data: createFallbackListing(url, parsedUrl.hostname.replace('www.', ''), 'founder_fast_lane'),
+        meta: {
+          sourceUrl: url,
+          scrapedAt: new Date().toISOString(),
+          duration: 0,
+          fallback: true,
+          founder_override: true,
+        },
+      });
     }
 
     // STEP 6: Get appropriate scraper
@@ -148,7 +166,9 @@ export async function POST(request: NextRequest) {
     }
 
     // STEP 9: Log scraping attempt for rate limiting
-    await logGeneration(user.id, clientIp);
+    if (!founderBypass) {
+      await logGeneration(user.id, clientIp);
+    }
 
     // STEP 10: Return normalized JSON
     return NextResponse.json({

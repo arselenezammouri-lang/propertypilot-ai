@@ -12,6 +12,7 @@ import {
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { requireActiveSubscription } from '@/lib/utils/subscription-check';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 import OpenAI from 'openai';
 
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
+    const founderBypass = isFounderEmail(user.email);
 
     // STEP 0: Check active subscription (CRITICAL SECURITY CHECK)
     const subscriptionCheck = await requireActiveSubscription(supabase, user.id);
@@ -39,21 +41,23 @@ export async function POST(request: NextRequest) {
     }
 
     // STEP 1: Rate limiting - Check user limit (10/min)
-    const userRateLimit = await checkUserRateLimit(user.id);
-    if (!userRateLimit.allowed) {
-      return NextResponse.json(
-        { 
-          error: 'Rate limit exceeded',
-          message: userRateLimit.message,
-          resetAt: userRateLimit.resetAt
-        },
-        { status: 429 }
-      );
+    if (!founderBypass) {
+      const userRateLimit = await checkUserRateLimit(user.id);
+      if (!userRateLimit.allowed) {
+        return NextResponse.json(
+          { 
+            error: 'Rate limit exceeded',
+            message: userRateLimit.message,
+            resetAt: userRateLimit.resetAt
+          },
+          { status: 429 }
+        );
+      }
     }
 
     // STEP 1: Rate limiting - Check IP limit (20/min)
     const clientIp = getClientIp(request);
-    if (clientIp) {
+    if (clientIp && !founderBypass) {
       const ipRateLimit = await checkIpRateLimit(clientIp);
       if (!ipRateLimit.allowed) {
         return NextResponse.json(
@@ -78,6 +82,19 @@ export async function POST(request: NextRequest) {
 
     const propertyData = validatedInput.data;
 
+    if (founderBypass) {
+      return NextResponse.json({
+        success: true,
+        data: buildFounderFastBasicContent(propertyData),
+        fromCache: true,
+        usage: {
+          current: 0,
+          limit: -1,
+          remaining: -1,
+        },
+      });
+    }
+
     // STEP 2: Get subscription with generations_count
     const { data: subscription } = await supabase
       .from('subscriptions')
@@ -96,7 +113,7 @@ export async function POST(request: NextRequest) {
     // Use generations_count from subscription (reset monthly by webhook or cron job)
     const currentUsage = subscription?.generations_count || 0;
 
-    if (planLimits.listingsPerMonth !== -1 && currentUsage >= planLimits.listingsPerMonth) {
+    if (!founderBypass && planLimits.listingsPerMonth !== -1 && currentUsage >= planLimits.listingsPerMonth) {
       return NextResponse.json(
         { 
           error: 'Monthly limit reached',
@@ -143,17 +160,21 @@ export async function POST(request: NextRequest) {
       await aiCache.set(cacheKey, 'generate_all', generatedContent);
     }
 
-    await logGeneration(user.id, clientIp);
-    await incrementGenerationCount(user.id);
+    if (!founderBypass) {
+      await logGeneration(user.id, clientIp);
+      await incrementGenerationCount(user.id);
+    }
 
     return NextResponse.json({
       success: true,
       data: generatedContent,
       fromCache,
       usage: {
-        current: currentUsage + 1,
+        current: founderBypass ? currentUsage : currentUsage + 1,
         limit: planLimits.listingsPerMonth,
-        remaining: planLimits.listingsPerMonth === -1 ? -1 : planLimits.listingsPerMonth - currentUsage - 1,
+        remaining: founderBypass
+          ? -1
+          : (planLimits.listingsPerMonth === -1 ? -1 : planLimits.listingsPerMonth - currentUsage - 1),
       },
     });
   } catch (error: any) {
@@ -189,6 +210,39 @@ function buildPropertyDescription(data: any): string {
   if (data.notes) parts.push(`Note aggiuntive: ${data.notes}`);
   
   return parts.join('\n');
+}
+
+function buildFounderFastBasicContent(data: any): {
+  professional: string;
+  short: string;
+  titles: string[];
+  english: string;
+} {
+  const propertyType = typeof data?.propertyType === 'string' && data.propertyType.trim()
+    ? data.propertyType.trim()
+    : 'Immobile residenziale';
+  const location = typeof data?.location === 'string' && data.location.trim()
+    ? data.location.trim()
+    : 'zona strategica';
+  const price = typeof data?.price === 'string' && data.price.trim()
+    ? data.price.trim()
+    : 'prezzo su richiesta';
+  const featureText = typeof data?.features === 'string' && data.features.trim()
+    ? data.features.trim()
+    : 'layout funzionale e alta luminosità';
+
+  return {
+    professional: `${propertyType} in ${location}. Soluzione valorizzata con ${featureText}. Prezzo ${price}. Ideale per clienti che cercano qualità, velocità di chiusura e posizionamento premium.`,
+    short: `${propertyType} a ${location}, ${price}. ${featureText}.`,
+    titles: [
+      `${propertyType} in ${location}`,
+      `${location}: proposta ad alta conversione`,
+      `${propertyType} | occasione premium`,
+      `Nuovo annuncio in ${location}`,
+      `${location}: immobile pronto vendita`,
+    ],
+    english: `${propertyType} in ${location}. Premium-ready listing with ${featureText}. Price: ${price}.`,
+  };
 }
 
 // AI Listing Engine 2.0: Market-specific terminology dictionaries

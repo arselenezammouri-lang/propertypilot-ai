@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,21 @@ export async function GET(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
+
+    if (isFounderEmail(user.email)) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          id: `founder-${user.id}`,
+          user_id: user.id,
+          status: 'agency',
+          stripe_subscription_id: null,
+          cancel_at_period_end: false,
+          stripe_verified: true,
+          founder_override: true,
+        },
+      });
+    }
 
     const { data: subscription, error } = await supabase
       .from('subscriptions')

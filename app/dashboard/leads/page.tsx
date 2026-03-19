@@ -184,6 +184,11 @@ export default function LeadsPage() {
       ? `Stai per eliminare il lead "${name}". Questa azione non puo essere annullata.`
       : `You are about to delete the lead "${name}". This action cannot be undone.`,
   };
+  const fallbackLeadName = isItalian ? "Lead In arrivo" : "Incoming Lead";
+  const getLeadName = (name?: string | null) => {
+    const cleaned = typeof name === "string" ? name.trim() : "";
+    return cleaned.length > 0 ? cleaned : fallbackLeadName;
+  };
   
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -244,7 +249,11 @@ export default function LeadsPage() {
         });
         return;
       }
-      setLeads(res.data.data);
+      const normalizedLeads = (res.data.data || []).map((lead) => ({
+        ...lead,
+        nome: getLeadName(lead.nome),
+      }));
+      setLeads(normalizedLeads);
     } catch (error) {
       toast({
         title: t.error,
@@ -404,7 +413,7 @@ export default function LeadsPage() {
       }
       toast({
         title: t.leadDeleted,
-        description: t.leadDeletedDesc(selectedLead.nome),
+        description: t.leadDeletedDesc(getLeadName(selectedLead.nome)),
       });
       setIsDeleteDialogOpen(false);
       setSelectedLead(null);
@@ -550,7 +559,7 @@ export default function LeadsPage() {
   const handleOpenEdit = (lead: Lead) => {
     setSelectedLead(lead);
     setFormData({
-      nome: lead.nome,
+      nome: getLeadName(lead.nome),
       email: lead.email || "",
       telefono: lead.telefono || "",
       messaggio: lead.messaggio || "",
@@ -815,7 +824,7 @@ export default function LeadsPage() {
                       >
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className="font-medium">{lead.nome}</div>
+                            <div className="font-medium">{getLeadName(lead.nome)}</div>
                             {lead.lead_score > 90 && (
                               <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
                                 💎 SOLDI
@@ -1172,7 +1181,7 @@ export default function LeadsPage() {
               <div className="space-y-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold">{selectedLead.nome}</h3>
+                    <h3 className="text-2xl font-bold">{getLeadName(selectedLead.nome)}</h3>
                     <div className="flex items-center gap-2 mt-2">
                       <Badge className={`${statusConfig[selectedLead.status].bgColor} ${statusConfig[selectedLead.status].color} border-0`}>
                         {statusConfig[selectedLead.status].label}
@@ -1332,7 +1341,7 @@ export default function LeadsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>{t.areYouSure}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t.deleteWarning(selectedLead?.nome || "")}
+              {t.deleteWarning(getLeadName(selectedLead?.nome))}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

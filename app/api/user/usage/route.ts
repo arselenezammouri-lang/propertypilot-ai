@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 import { logger } from '@/lib/utils/safe-logger';
 import { supabaseService } from '@/lib/supabase/service';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
+import { isFounderEmail } from '@/lib/utils/founder-access';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,19 @@ export async function GET(request: NextRequest) {
     const auth = await getAuthenticatedUser();
     if (!auth.ok) return auth.response;
     const { user } = auth;
+
+    if (isFounderEmail(user.email)) {
+      return NextResponse.json({
+        plan: 'agency',
+        currentUsage: 0,
+        limit: -1,
+        hasReachedLimit: false,
+        isNearLimit: false,
+        remainingGenerations: -1,
+        percentageUsed: 0,
+        founder_override: true,
+      });
+    }
 
     let subscription = null;
     
