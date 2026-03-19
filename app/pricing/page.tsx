@@ -224,7 +224,7 @@ export default function PricingPage() {
     ?? (isItalian ? defaultFaqs : defaultFaqsEn);
 
   return (
-    <main id="main-content" className="min-h-screen bg-background">
+    <main id="main-content" className="diamond-silicon-elite min-h-screen bg-[#000000]">
       <MarketingNavHeader />
 
       {/* Hero Section */}

@@ -7,7 +7,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#050505] text-white relative overflow-hidden">
+    <div className="diamond-silicon-elite min-h-screen bg-[#000000] text-white relative overflow-hidden">
       {/* Mesh gradient background - same as dashboard home */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#9333ea]/20 rounded-full blur-3xl" />

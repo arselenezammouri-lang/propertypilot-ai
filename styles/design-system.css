@@ -294,6 +294,24 @@ body {
   color: var(--diamond-white) !important;
 }
 
+/* Force Silicon Valley Elite theme on specific pages */
+.diamond-silicon-elite {
+  background: #000000 !important;
+  color: var(--diamond-white) !important;
+}
+
+.diamond-silicon-elite [class*="text-gray-"] {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.diamond-silicon-elite [class*="border-silver-frost"] {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.diamond-silicon-elite [class*="bg-background"] {
+  background-color: #000000 !important;
+}
+
 /* ============================================
    RESPONSIVE
    ============================================ */

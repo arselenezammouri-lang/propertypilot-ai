@@ -4,17 +4,7 @@ type LocalMockPlan = 'free' | 'starter' | 'pro' | 'agency';
 export const LOCAL_MOCK_USER_ID = '00000000-0000-0000-0000-000000000001';
 
 function resolveLocalMockPlan(): LocalMockPlan {
-  const fromEnv = (
-    process.env.NEXT_PUBLIC_LOCAL_MOCK_PLAN ||
-    process.env.LOCAL_MOCK_PLAN ||
-    process.env.LOCAL_DEV_MOCK_PLAN
-  )?.toLowerCase();
-
-  if (fromEnv === 'free' || fromEnv === 'starter' || fromEnv === 'pro' || fromEnv === 'agency') {
-    return fromEnv;
-  }
-
-  // Founder simulation default: full agency mode.
+  // Founder simulation is permanently forced to Agency in local mode.
   return 'agency';
 }
 
