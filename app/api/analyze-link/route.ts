@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ScraperFactory } from '@/lib/scrapers/factory';
 import { ScrapedListing } from '@/lib/scrapers/types';
+import { createFallbackListing } from '@/lib/scrapers/fallback-listing';
 import { getAICacheService } from '@/lib/cache/ai-cache';
 import { createOpenAIWithTimeout, withRetryAndTimeout } from '@/lib/utils/openai-retry';
 import { checkUserRateLimit, checkIpRateLimit, getClientIp } from '@/lib/utils/rate-limit';
@@ -102,8 +103,30 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
 
     logger.debug('[ANALYZE-LINK] Scraping URL', { url });
     const scrapeResult = await scraper.scrape(url);
+    const scrapeErrorMessage = scrapeResult.error?.toLowerCase() || '';
+    const scrapeBlocked = scrapeErrorMessage.includes('403') || scrapeErrorMessage.includes('forbidden');
 
     if (!scrapeResult.success || !scrapeResult.data) {
+      if (scrapeBlocked) {
+        const fallback = createFallbackListing(url, new URL(url).hostname.replace('www.', ''), 'blocked_403');
+        logger.warn('[ANALYZE-LINK] Using fallback listing due to blocked scraper', {
+          url,
+          portal: fallback.sourcePortal,
+        });
+        scrapeResult.success = true;
+        scrapeResult.data = fallback;
+      } else {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: scrapeResult.error || 'Impossibile estrarre i dati dall\'annuncio. Verifica che il link sia corretto.',
+          },
+          { status: 422 }
+        );
+      }
+    }
+
+    if (!scrapeResult.data) {
       return NextResponse.json(
         { 
           success: false, 

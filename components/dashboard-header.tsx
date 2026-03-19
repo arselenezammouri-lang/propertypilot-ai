@@ -14,6 +14,9 @@ import { useState, useEffect } from "react";
 export function DashboardHeader() {
   const { locale } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
+  const safeTagline = t?.landing?.nav?.tagline || 'AI Operating System for Real Estate';
+  const safeGenerate = t?.dashboard?.generate || (locale === 'it' ? 'Genera' : 'Generate');
+  const safeSignOut = t?.dashboard?.signOut || (locale === 'it' ? 'Esci' : 'Sign out');
   const isIt = locale !== 'en';
   const [isMac, setIsMac] = useState(false);
 
@@ -37,7 +40,7 @@ export function DashboardHeader() {
             <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
             <div className="hidden sm:block">
               <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-              <p className="text-xs text-muted-foreground font-medium">{t.landing.nav.tagline}</p>
+              <p className="text-xs text-muted-foreground font-medium">{safeTagline}</p>
             </div>
           </Link>
 
@@ -62,12 +65,12 @@ export function DashboardHeader() {
             <Link href="/dashboard/listings" className="hidden md:inline-flex">
               <Button variant="ghost" size="sm" className="min-h-[36px] hover:text-royal-purple transition-colors focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black" data-testid="button-generate">
                 <Zap className="mr-2 h-4 w-4" />
-                {t.dashboard.generate}
+                {safeGenerate}
               </Button>
             </Link>
             <form action="/auth/signout" method="post">
               <Button type="submit" variant="outline" size="sm" className="min-h-[36px] border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black" data-testid="button-signout">
-                {t.dashboard.signOut}
+                {safeSignOut}
               </Button>
             </form>
           </nav>

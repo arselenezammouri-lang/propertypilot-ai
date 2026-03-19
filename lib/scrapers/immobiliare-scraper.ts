@@ -1,8 +1,25 @@
 import { BaseScraper } from './base-scraper';
 import { ScraperResult, ScrapedListing } from './types';
 import type { CheerioAPI } from 'cheerio';
+import { createFallbackListing } from './fallback-listing';
 
 export class ImmobiliareScraper extends BaseScraper {
+  constructor() {
+    super();
+    // Stronger anti-403 profile for Immobiliare: more retries + wider UA rotation.
+    this.maxRetries = 4;
+    this.minJitterMs = 450;
+    this.maxJitterMs = 1400;
+    this.userAgents = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.207 Safari/537.36',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.6367.201 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_4_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
+    ];
+  }
+
   async scrape(url: string): Promise<ScraperResult> {
     try {
       const html = await this.fetchHTML(url);
@@ -34,6 +51,14 @@ export class ImmobiliareScraper extends BaseScraper {
       };
     } catch (error: any) {
       console.error('[ImmobiliareScraper] Error:', error);
+
+      if (this.isBlockedRequestError(error)) {
+        return {
+          success: true,
+          data: createFallbackListing(url, 'immobiliare.it', 'blocked_403'),
+        };
+      }
+
       return {
         success: false,
         error: error.message || 'Failed to scrape Immobiliare.it listing',
