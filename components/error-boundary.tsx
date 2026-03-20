@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useCallback } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -126,7 +126,7 @@ export function useAPIErrorHandler() {
   const { locale } = useLocale();
   const isIt = locale !== 'en';
 
-  const handleAPIError = (error: any, context?: string): string => {
+  const handleAPIError = useCallback((error: any, context?: string): string => {
     if (error?.message?.includes('API_KEY') || error?.message?.includes('SECRET')) {
       return isIt
         ? 'Errore di configurazione. Contatta il supporto.'
@@ -153,7 +153,7 @@ export function useAPIErrorHandler() {
 
     const contextMsg = context ? `${context}: ` : '';
     return `${contextMsg}${error?.message || (isIt ? 'Si è verificato un errore. Riprova più tardi.' : 'An error occurred. Please try again later.')}`;
-  };
+  }, [isIt]);
 
   return { handleAPIError };
 }
