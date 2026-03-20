@@ -179,7 +179,7 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var h=typeof location!=='undefined'&&location.hostname;var l=h&&/^localhost$|^127\\.0\\.0\\.1$|^\\[::1\\]$/.test(h);if(!l||typeof navigator==='undefined'||!('serviceWorker'in navigator))return;navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});});if('caches'in window)caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});})();`,
+            __html: `(function(){var h=typeof location!=='undefined'&&location.hostname;var l=h&&/^localhost$|^127\\.0\\.0\\.1$|^\\[::1\\]$|^::1$/i.test(h);if(!l||typeof navigator==='undefined'||!('serviceWorker'in navigator))return;navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});});if('caches'in window)caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});})();`,
           }}
         />
         <link rel="icon" href="/favicon.png" type="image/png" />

@@ -1,5 +1,5 @@
 /**
- * PropertyPilot — SW bypass (v5 network-only).
+ * PropertyPilot — SW bypass (v6 network-only).
  * Replaces legacy workers that returned invalid Responses / offline shells.
  * Always forwards to the network; clears caches on activate; no offline fallback.
  */

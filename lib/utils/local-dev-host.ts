@@ -6,15 +6,15 @@
 
 export function isLocalDevHostname(host: string | null | undefined): boolean {
   if (!host || typeof host !== 'string') return false;
-  const trimmed = host.trim().toLowerCase();
-  let hostname: string;
-  if (trimmed.startsWith('[')) {
-    const end = trimmed.indexOf(']');
-    hostname = end === -1 ? trimmed : trimmed.slice(1, end);
-  } else {
-    hostname = trimmed.split(':')[0];
+  try {
+    const raw = host.trim();
+    const withProto = /^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : `http://${raw}`;
+    const { hostname } = new URL(withProto);
+    const h = hostname.replace(/^\[|\]$/g, '').toLowerCase();
+    return h === 'localhost' || h === '127.0.0.1' || h === '::1';
+  } catch {
+    return false;
   }
-  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
 }
 
 /** Founder → preview AGENCY: host locale oppure `next dev` (NODE_ENV=development). Mai su deploy production. */

@@ -80,7 +80,8 @@
         } catch (e) {}
         window.location.replace(window.location.origin + "/?pwa_recovered=" + Date.now());
       }
-      if (/^localhost$|^127\.0\.0\.1$|^\[::1\]$/.test(window.location.hostname)) {
+      var hn = window.location.hostname;
+      if (/^localhost$|^127\.0\.0\.1$|^\[::1\]$|^::1$/i.test(hn)) {
         recoverFromStaleServiceWorker();
       }
       window.__propertyPilotRecoverPwa = recoverFromStaleServiceWorker;
