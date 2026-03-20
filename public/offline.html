@@ -107,6 +107,17 @@
         location.reload();
       }
     });
+    (function () {
+      var hn = window.location.hostname;
+      if (!/^localhost$|^127\.0\.0\.1$/i.test(hn)) return;
+      var a = document.createElement("a");
+      a.href = "/api/dev/reset-client?next=/";
+      a.textContent = "Svuota cache PWA (dev locale)";
+      a.style.cssText =
+        "display:inline-block;margin-top:1.25rem;color:#a78bfa;font-size:0.8125rem;text-decoration:underline;";
+      var c = document.querySelector(".container");
+      if (c) c.appendChild(a);
+    })();
   </script>
 </body>
 </html>
