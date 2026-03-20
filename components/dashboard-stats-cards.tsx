@@ -1,28 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Crown, CreditCard, BarChart3, Sparkles } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
 
 interface DashboardStatsCardsProps {
   currentPlan: string;
   limits: { used: number; listings: number };
 }
 
-export function DashboardStatsCards({ currentPlan, limits }: DashboardStatsCardsProps) {
+export function DashboardStatsCards({ currentPlan: initialPlan, limits: initialLimits }: DashboardStatsCardsProps) {
   const { locale } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
+  const usage = useUsageLimits();
+
+  const [plan, setPlan] = useState(initialPlan);
+  const [used, setUsed] = useState(initialLimits.used);
+  const [listings, setListings] = useState(initialLimits.listings);
+
+  useEffect(() => {
+    setPlan(initialPlan);
+    setUsed(initialLimits.used);
+    setListings(initialLimits.listings);
+  }, [initialPlan, initialLimits.used, initialLimits.listings]);
+
+  useEffect(() => {
+    if (usage.isLoading || usage.error) return;
+    setPlan(usage.plan);
+    setUsed(usage.currentUsage);
+    setListings(usage.limit);
+  }, [usage.isLoading, usage.error, usage.plan, usage.currentUsage, usage.limit]);
 
   const planDesc = {
     free: t.dashboard.planFree,
     starter: t.dashboard.planStarter,
     pro: t.dashboard.planPro,
     agency: t.dashboard.planAgency,
-  }[currentPlan] ?? t.dashboard.planFree;
+  }[plan] ?? t.dashboard.planFree;
 
-  const remainingText = limits.listings === -1
+  const remainingText = listings === -1
     ? t.dashboard.unlimitedAvailable
-    : `${limits.listings - limits.used} ${t.dashboard.remainingListings}`;
+    : `${Math.max(0, listings - used)} ${t.dashboard.remainingListings}`;
 
   return (
     <>
@@ -33,8 +53,8 @@ export function DashboardStatsCards({ currentPlan, limits }: DashboardStatsCards
           <div>
             <p className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-wider">{t.dashboard.currentPlan}</p>
             <h3 className="text-3xl md:text-4xl font-black capitalize gradient-text-purple flex items-center gap-2">
-              {currentPlan}
-              {currentPlan !== "free" && <Crown className="h-6 w-6 text-sunset-gold" />}
+              {plan}
+              {plan !== "free" && <Crown className="h-6 w-6 text-sunset-gold" />}
             </h3>
           </div>
           <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-royal-purple/30 to-royal-purple/10 rounded-2xl flex items-center justify-center shadow-glow-purple">
@@ -53,9 +73,9 @@ export function DashboardStatsCards({ currentPlan, limits }: DashboardStatsCards
           <div>
             <p className="text-sm font-bold text-muted-foreground mb-2 uppercase tracking-wider">{t.dashboard.thisMonth}</p>
             <h3 className="text-3xl md:text-4xl font-black text-electric-blue">
-              {limits.used}
-              {limits.listings > 0 && (
-                <span className="text-xl text-muted-foreground font-semibold">/{limits.listings}</span>
+              {used}
+              {listings > 0 && (
+                <span className="text-xl text-muted-foreground font-semibold">/{listings}</span>
               )}
             </h3>
           </div>

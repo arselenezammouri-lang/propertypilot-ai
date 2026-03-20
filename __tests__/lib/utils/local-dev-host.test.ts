@@ -1,4 +1,7 @@
-import { isLocalDevHostname } from '@/lib/utils/local-dev-host';
+import {
+  isLocalDevHostname,
+  isFounderSubscriptionPreviewAllowed,
+} from '@/lib/utils/local-dev-host';
 
 describe('isLocalDevHostname', () => {
   it('accepts localhost with port', () => {
@@ -13,5 +16,15 @@ describe('isLocalDevHostname', () => {
   it('rejects production hosts', () => {
     expect(isLocalDevHostname('propertypilot-ai.vercel.app')).toBe(false);
     expect(isLocalDevHostname('')).toBe(false);
+  });
+});
+
+describe('isFounderSubscriptionPreviewAllowed', () => {
+  it('allows localhost', () => {
+    expect(isFounderSubscriptionPreviewAllowed('localhost:3000')).toBe(true);
+  });
+
+  it('denies non-local host when NODE_ENV is test', () => {
+    expect(isFounderSubscriptionPreviewAllowed('app.example.com')).toBe(false);
   });
 });

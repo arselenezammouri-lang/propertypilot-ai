@@ -4,7 +4,7 @@ import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
 import { isFounderEmail } from '@/lib/utils/founder-access';
-import { isLocalDevHostname } from '@/lib/utils/local-dev-host';
+import { isFounderSubscriptionPreviewAllowed } from '@/lib/utils/local-dev-host';
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     const host =
       request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '';
-    if (isFounderEmail(user.email) && isLocalDevHostname(host)) {
+    if (isFounderEmail(user.email) && isFounderSubscriptionPreviewAllowed(host)) {
       return NextResponse.json({
         success: true,
         data: {

@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 import { headers } from "next/headers";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
-import { isLocalDevHostname } from "@/lib/utils/local-dev-host";
+import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
 
 export const dynamic = 'force-dynamic';
 
@@ -131,7 +131,7 @@ export default async function DashboardPage() {
     ?? "free";
   const hdrs = await headers();
   const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
-  const localDevHost = isLocalDevHostname(host);
+  const localDevHost = isFounderSubscriptionPreviewAllowed(host);
   const currentPlan = resolveUiSubscriptionPlan(user.email, rawPlan, { localDevHost });
   
   const planLimits = {
