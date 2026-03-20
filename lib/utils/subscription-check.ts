@@ -1,9 +1,14 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
+import { headers } from 'next/headers';
 import { isFounderEmail } from '@/lib/utils/founder-access';
+import { isLocalDevHostname } from '@/lib/utils/local-dev-host';
 
 async function hasFounderAgencyOverride(supabase: SupabaseClient): Promise<boolean> {
   try {
+    const h = await headers();
+    const host = h.get('x-forwarded-host') ?? h.get('host') ?? '';
+    if (!isLocalDevHostname(host)) return false;
     const { data, error } = await supabase.auth.getUser();
     if (error) return false;
     const email = data.user?.email?.toLowerCase();

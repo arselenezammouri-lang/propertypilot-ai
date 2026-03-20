@@ -2,16 +2,21 @@ import { isFounderEmail } from '@/lib/utils/founder-access';
 
 export type UiSubscriptionPlan = 'free' | 'starter' | 'pro' | 'agency';
 
+export type ResolveUiSubscriptionPlanOptions = {
+  /** Solo con Host localhost: founder vede AGENCY senza toccare il DB. */
+  localDevHost?: boolean;
+};
+
 /**
- * Piano effettivo per UI server/client: allineato a GET /api/user/subscription.
- * L'account founder è trattato come AGENCY indipendentemente dalla riga DB
- * (preview locale, webhook in ritardo, ecc.).
+ * Piano effettivo per UI: su host locale, il founder coincide con GET /api/user/subscription
+ * (override preview). In production `localDevHost` è false → solo valore DB.
  */
 export function resolveUiSubscriptionPlan(
   email: string | null | undefined,
-  rawFromDb: string | null | undefined
+  rawFromDb: string | null | undefined,
+  options?: ResolveUiSubscriptionPlanOptions
 ): UiSubscriptionPlan {
-  if (isFounderEmail(email)) {
+  if (options?.localDevHost === true && isFounderEmail(email)) {
     return 'agency';
   }
   const v = (rawFromDb ?? 'free').toString().trim().toLowerCase();

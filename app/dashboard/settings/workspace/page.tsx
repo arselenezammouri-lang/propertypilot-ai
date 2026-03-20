@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { createClient } from "@/lib/supabase/client";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
+import { isLocalDevHostname } from "@/lib/utils/local-dev-host";
 
 interface WorkspaceModule {
   id: string;
@@ -161,7 +162,11 @@ export default function WorkspaceSettingsPage() {
 
       if (profile) {
         const planHierarchy = ['FREE', 'STARTER', 'PRO', 'AGENCY'];
-        const effective = resolveUiSubscriptionPlan(user.email, profile.subscription_plan);
+        const localDevHost =
+          typeof window !== "undefined" && isLocalDevHostname(window.location.hostname);
+        const effective = resolveUiSubscriptionPlan(user.email, profile.subscription_plan, {
+          localDevHost,
+        });
         const userPlanIndex = planHierarchy.indexOf(effective.toUpperCase());
         const requiredPlanIndex = planHierarchy.indexOf(workspaceModule.requiredPlan);
 

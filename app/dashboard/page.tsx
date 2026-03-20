@@ -38,7 +38,9 @@ import {
   MessageSquare,
   Check
 } from "lucide-react";
+import { headers } from "next/headers";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
+import { isLocalDevHostname } from "@/lib/utils/local-dev-host";
 
 export const dynamic = 'force-dynamic';
 
@@ -127,7 +129,10 @@ export default async function DashboardPage() {
   const rawPlan = (profile as { subscription_plan?: string } | null)?.subscription_plan
     ?? subscription?.status
     ?? "free";
-  const currentPlan = resolveUiSubscriptionPlan(user.email, rawPlan);
+  const hdrs = await headers();
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
+  const localDevHost = isLocalDevHostname(host);
+  const currentPlan = resolveUiSubscriptionPlan(user.email, rawPlan, { localDevHost });
   
   const planLimits = {
     free: { listings: 5, used: 0 },
