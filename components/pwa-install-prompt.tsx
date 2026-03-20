@@ -17,6 +17,7 @@ export function PWAInstallPrompt() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (process.env.NODE_ENV === 'development') return;
 
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
     setIsIOS(isIOSDevice);

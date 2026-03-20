@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { CommandPalette } from "@/components/command-palette";
 import { SkipToContent } from "@/components/skip-to-content";
 import { HtmlLangDir } from "@/components/html-lang-dir";
+import { DevClientCacheBypass } from "@/components/dev-client-cache-bypass";
 import type { Locale } from "@/lib/i18n/config";
 import { getBaseUrl } from "@/lib/env";
 
@@ -197,6 +198,7 @@ export default function RootLayout({
               defaultTheme="dark"
               storageKey="propertypilot-theme"
             >
+              <DevClientCacheBypass />
               <PerformanceMonitor />
               <ErrorBoundary>
                 {children}
