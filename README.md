@@ -41,11 +41,16 @@ npm install
 cp .env.example .env.local
 # Edit .env.local with your keys
 
-# Run development server
+# Run development server (consigliato su Windows se le porte sono occupate)
+npm run dev:clean
+
+# In alternativa
 npm run dev
 ```
 
-Apri http://localhost:3000
+Apri **solo** http://localhost:3000 (stessa porta del terminale).
+
+**Problemi con «Sei Offline», 404 o porte 3001/3002?** → [AVVIO_LOCAL_WINDOWS.md](./AVVIO_LOCAL_WINDOWS.md)
 
 Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 
@@ -93,6 +98,8 @@ npm run perf:all
 ```bash
 # Development
 npm run dev          # Start dev server
+npm run dev:clean    # Libera 3000–3002 e avvia su porta 3000 (Windows / porte occupate)
+npm run dev:free-port # Solo kill porte 3000–3002
 npm run build        # Build for production
 npm run start        # Start production server
 
