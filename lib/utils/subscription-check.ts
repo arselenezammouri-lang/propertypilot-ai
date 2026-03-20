@@ -1,8 +1,26 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { SubscriptionStatus } from '@/lib/types/database.types';
 import { repairMissingStripeSubscription } from '@/lib/utils/subscription-sync';
-import { isLocalMockModeEnabled } from '@/lib/utils/local-dev';
+import { isLocalMockModeEnabled, isNextDevRuntime } from '@/lib/utils/local-dev';
 import { LOCAL_MOCK_USER_ID, getLocalMockPlan } from '@/lib/api/local-mock-service';
+
+const LOCAL_FOUNDER_EMAIL = 'arselenezammouri@gmail.com';
+
+async function localFounderAgencyBypass(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ allowed: true; planType: 'agency' } | null> {
+  if (!isNextDevRuntime()) return null;
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  const user = authData?.user;
+  if (authError || !user || user.id !== userId) return null;
+
+  const email = (user.email || '').trim().toLowerCase();
+  if (email !== LOCAL_FOUNDER_EMAIL) return null;
+
+  return { allowed: true, planType: 'agency' };
+}
 
 const ACTIVE_SUBSCRIPTION_REQUIRED =
   'Questa funzionalità richiede un abbonamento attivo. Aggiorna il tuo piano per continuare.';
@@ -35,6 +53,9 @@ export async function requireActiveSubscription(
         error: mockPlan === 'free' ? ACTIVE_SUBSCRIPTION_REQUIRED : undefined,
       };
     }
+
+    const founderBypass = await localFounderAgencyBypass(supabase, userId);
+    if (founderBypass) return founderBypass;
 
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
@@ -145,6 +166,9 @@ export async function requireProOrAgencySubscription(
         error: allowed ? undefined : PRO_OR_AGENCY_REQUIRED,
       };
     }
+
+    const founderBypassPro = await localFounderAgencyBypass(supabase, userId);
+    if (founderBypassPro) return founderBypassPro;
 
     const { data: subscription, error: subError } = await supabase
       .from('subscriptions')
