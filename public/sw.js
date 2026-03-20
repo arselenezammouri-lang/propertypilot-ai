@@ -1,16 +1,30 @@
-// Temporary kill-switch for corrupted/offline PWA caches.
-// This worker unregisters itself and clears all existing caches.
+/**
+ * PropertyPilot — SW bypass (v5 network-only).
+ * Replaces legacy workers that returned invalid Responses / offline shells.
+ * Always forwards to the network; clears caches on activate; no offline fallback.
+ */
 self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    const cacheNames = await caches.keys();
-    await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
-    await self.registration.unregister();
+  event.waitUntil(
+    (async () => {
+      if (self.caches && self.caches.keys) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map((k) => caches.delete(k)));
+      }
+      await self.clients.claim();
+    })()
+  );
+});
 
-    const clients = await self.clients.matchAll({ type: 'window' });
-    clients.forEach((client) => client.navigate(client.url));
-  })());
+self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
+  if (url.includes('/sw.js')) {
+    return;
+  }
+  event.respondWith(
+    fetch(event.request, { cache: 'no-store' }).catch(() => Response.error())
+  );
 });

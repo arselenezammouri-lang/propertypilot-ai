@@ -65,6 +65,27 @@
       box-shadow: 0 10px 30px rgba(6,182,212,0.3);
     }
   </style>
+  <script>
+    (function () {
+      async function recoverFromStaleServiceWorker() {
+        try {
+          if ("serviceWorker" in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(function (r) { return r.unregister(); }));
+          }
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(function (k) { return caches.delete(k); }));
+          }
+        } catch (e) {}
+        window.location.replace(window.location.origin + "/?pwa_recovered=" + Date.now());
+      }
+      if (/^localhost$|^127\.0\.0\.1$|^\[::1\]$/.test(window.location.hostname)) {
+        recoverFromStaleServiceWorker();
+      }
+      window.__propertyPilotRecoverPwa = recoverFromStaleServiceWorker;
+    })();
+  </script>
 </head>
 <body>
   <div class="container">
@@ -75,7 +96,16 @@
     </div>
     <h1>Sei Offline</h1>
     <p>Sembra che tu non sia connesso a Internet. Controlla la tua connessione e riprova.</p>
-    <button onclick="location.reload()">Riprova</button>
+    <button type="button" id="pp-offline-retry">Riprova</button>
   </div>
+  <script>
+    document.getElementById("pp-offline-retry").addEventListener("click", function () {
+      if (window.__propertyPilotRecoverPwa) {
+        window.__propertyPilotRecoverPwa();
+      } else {
+        location.reload();
+      }
+    });
+  </script>
 </body>
 </html>
