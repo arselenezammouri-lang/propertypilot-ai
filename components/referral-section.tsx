@@ -70,7 +70,17 @@ export function ReferralSection() {
       const response = await fetch('/api/referral');
       if (response.ok) {
         const data = await response.json();
-        setReferralData(data);
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const code = (data.referralCode || 'PP').toString().toUpperCase();
+        const link =
+          data.referralLink ||
+          (origin ? `${origin}/auth/signup?ref=${code}` : '');
+        setReferralData({
+          referralCode: code,
+          referralLink: link,
+          bonusCredits: typeof data.bonusCredits === 'number' ? data.bonusCredits : 0,
+          totalReferrals: typeof data.totalReferrals === 'number' ? data.totalReferrals : 0,
+        });
       }
     } catch (error) {
       console.error('Error fetching referral data:', error);

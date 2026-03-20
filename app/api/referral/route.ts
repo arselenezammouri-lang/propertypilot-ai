@@ -28,10 +28,14 @@ export async function GET(request: NextRequest) {
     }
     
     if (profileError?.code === '42703') {
-      logger.warn('Profile table missing referral columns, returning defaults', { endpoint: '/api/referral' });
+      logger.warn('Profile table missing referral columns, using fallback referral link', {
+        endpoint: '/api/referral',
+      });
+      const appUrl = getAppUrl(request);
+      const code = (process.env.NEXT_PUBLIC_REFERRAL_FALLBACK_CODE || 'PP').toUpperCase();
       return NextResponse.json({
-        referralCode: null,
-        referralLink: null,
+        referralCode: code,
+        referralLink: `${appUrl}/auth/signup?ref=${code}`,
         bonusCredits: 0,
         totalReferrals: 0,
         setupRequired: true,
