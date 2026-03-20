@@ -11,7 +11,7 @@ import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
-import { 
+import {
   Home, 
   FileText, 
   CreditCard, 
@@ -38,6 +38,7 @@ import {
   MessageSquare,
   Check
 } from "lucide-react";
+import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
 
 export const dynamic = 'force-dynamic';
 
@@ -122,12 +123,11 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
-  // Get current plan: prefer profile.subscription_plan (synced by Stripe webhook), fallback to subscription.status
-  const planValue = (profile as any)?.subscription_plan || subscription?.status || "free";
-  const currentPlan: "free" | "starter" | "pro" | "agency" = 
-    (planValue === "free" || planValue === "starter" || planValue === "pro" || planValue === "agency") 
-      ? planValue 
-      : "free";
+  // Piano UI: founder = agency (come /api/user/subscription), altrimenti DB
+  const rawPlan = (profile as { subscription_plan?: string } | null)?.subscription_plan
+    ?? subscription?.status
+    ?? "free";
+  const currentPlan = resolveUiSubscriptionPlan(user.email, rawPlan);
   
   const planLimits = {
     free: { listings: 5, used: 0 },

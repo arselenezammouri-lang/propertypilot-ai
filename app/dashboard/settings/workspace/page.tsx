@@ -9,6 +9,7 @@ import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, 
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { createClient } from "@/lib/supabase/client";
+import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
 
 interface WorkspaceModule {
   id: string;
@@ -160,7 +161,8 @@ export default function WorkspaceSettingsPage() {
 
       if (profile) {
         const planHierarchy = ['FREE', 'STARTER', 'PRO', 'AGENCY'];
-        const userPlanIndex = planHierarchy.indexOf(profile.subscription_plan || 'FREE');
+        const effective = resolveUiSubscriptionPlan(user.email, profile.subscription_plan);
+        const userPlanIndex = planHierarchy.indexOf(effective.toUpperCase());
         const requiredPlanIndex = planHierarchy.indexOf(workspaceModule.requiredPlan);
 
         if (userPlanIndex < requiredPlanIndex) {
