@@ -2,6 +2,26 @@
 
 Se vedi **«Missing script: dev:free-port»**, **404 su /dashboard**, **schermo vuoto**, **Sei Offline** su porte diverse: segui **solo questi passi**, nell’ordine.
 
+## 0) Emergenza — senza script nel `package.json`
+
+Se **`npm run dev:free-port`** o **`npm run dev:clean`** danno *Missing script*, puoi ottenere lo stesso effetto **subito** (dalla cartella del progetto, dopo `npm install`):
+
+```powershell
+npx --yes kill-port 3000 3001 3002
+npx next dev -p 3000
+```
+
+Nel terminale deve comparire **`http://localhost:3000`**. Il browser deve usare **esattamente quella porta** (se il terminale dice 3001/3002, quello è l’URL giusto — ma con i comandi sopra resti su 3000).
+
+Verifica di essere nel repo giusto:
+
+```powershell
+git remote -v
+```
+
+Dovresti vedere `github.com/arselenezammouri-lang/propertypilot-ai` (o il tuo fork di quello).  
+Cartelle tipo `propilot-ai` **senza** pull del branch aggiornato restano senza gli script npm: usa la sezione **2** oppure i comandi di emergenza qui sopra.
+
 ## 1) Cartella e repository giusti
 
 - Devi essere nella cartella del clone **GitHub** del progetto (repo `propertypilot-ai`), **non** in una copia vecchia o rinominata a caso.
