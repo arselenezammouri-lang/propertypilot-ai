@@ -516,7 +516,8 @@ export async function POST(request: NextRequest) {
 
     try {
       const cacheService = getAICacheService();
-      await cacheService.set(cacheKey, cachePromptType, result, 24 * 60 * 60 * 1000);
+      // TTL in secondi (coerente con AICacheService.set: * 1000 nel Date)
+      await cacheService.set(cacheKey, cachePromptType, result, 24 * 60 * 60);
       logger.debug('[Perfect Copy] Cached result');
     } catch (cacheError) {
       logger.warn('[Perfect Copy] Cache write error', { error: cacheError });
@@ -525,31 +526,63 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
 
   } catch (error: unknown) {
-    logger.error('[Perfect Copy] Generation error', error as Error, { component: 'generate-perfect-copy' });
-    
-    if (error instanceof Error) {
-      if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-        return NextResponse.json(
-          { error: 'Il servizio AI impiega troppo tempo. Riprova tra qualche minuto.' },
-          { status: 504 }
-        );
-      }
-      if (error.message.includes('429') || error.message.includes('rate limit')) {
-        return NextResponse.json(
-          { error: 'Limite richieste AI raggiunto. Riprova tra qualche minuto.' },
-          { status: 429 }
-        );
-      }
-      if (error.message.includes('quota') || error.message.includes('insufficient_quota')) {
-        return NextResponse.json(
-          { error: 'Crediti AI esauriti. Contatta il supporto.' },
-          { status: 503 }
-        );
-      }
+    const err = error instanceof Error ? error : new Error(String(error));
+    const status =
+      typeof error === 'object' &&
+      error !== null &&
+      'status' in error &&
+      typeof (error as { status?: number }).status === 'number'
+        ? (error as { status: number }).status
+        : undefined;
+
+    logger.error('[Perfect Copy] Generation error', err, {
+      component: 'generate-perfect-copy',
+      openaiStatus: status,
+    });
+
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (status === 429 || /rate limit|429/i.test(err.message)) {
+      return NextResponse.json(
+        { error: 'Limite richieste AI raggiunto. Riprova tra qualche minuto.' },
+        { status: 429 }
+      );
+    }
+
+    if (
+      status === 401 ||
+      /incorrect api key|invalid_api_key|invalid x-api-key/i.test(err.message)
+    ) {
+      return NextResponse.json(
+        {
+          error: isDev
+            ? `OpenAI: chiave non valida o mancante. (${err.message})`
+            : 'Servizio AI non configurato. Contatta il supporto.',
+        },
+        { status: 502 }
+      );
+    }
+
+    if (err.message.includes('timeout') || err.message.includes('Timeout')) {
+      return NextResponse.json(
+        { error: 'Il servizio AI impiega troppo tempo. Riprova tra qualche minuto.' },
+        { status: 504 }
+      );
+    }
+
+    if (err.message.includes('quota') || err.message.includes('insufficient_quota')) {
+      return NextResponse.json(
+        { error: 'Crediti AI esauriti. Contatta il supporto.' },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json(
-      { error: 'Errore durante la generazione. Riprova.' },
+      {
+        error: isDev
+          ? `Dev — ${err.message}`
+          : 'Errore durante la generazione. Riprova.',
+      },
       { status: 500 }
     );
   }
