@@ -1,4 +1,5 @@
 import { Locale } from '@/lib/i18n/config';
+import type { DashboardTimezone } from '@/lib/i18n/timezones';
 
 const INTL_LOCALES: Record<Locale, string> = {
   it: 'it-IT',
@@ -29,18 +30,21 @@ export function formatCurrencyForLocale(
 
 export function formatDateForLocale(
   value: string | number | Date,
-  locale: Locale
+  locale: Locale,
+  timeZone?: DashboardTimezone
 ): string {
   return new Intl.DateTimeFormat(toIntlLocale(locale), {
     day: '2-digit',
     month: 'long',
     year: 'numeric',
+    ...(timeZone ? { timeZone } : {}),
   }).format(new Date(value));
 }
 
 export function formatDateTimeForLocale(
   value: string | number | Date,
-  locale: Locale
+  locale: Locale,
+  timeZone?: DashboardTimezone
 ): string {
   return new Intl.DateTimeFormat(toIntlLocale(locale), {
     day: '2-digit',
@@ -48,5 +52,6 @@ export function formatDateTimeForLocale(
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    ...(timeZone ? { timeZone } : {}),
   }).format(new Date(value));
 }

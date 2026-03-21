@@ -122,7 +122,7 @@ const getMarketConfig = (isItalian: boolean): Record<LeadMarket, { label: string
 
 export default function LeadsPage() {
   const router = useRouter();
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const usage = useUsageLimits();
   const isItalian = locale === "it";
@@ -1232,11 +1232,11 @@ export default function LeadsPage() {
                   )}
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{t.created}: {formatDateForLocale(selectedLead.created_at, locale as Locale)}</span>
+                    <span>{t.created}: {formatDateForLocale(selectedLead.created_at, locale as Locale, timezone)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{t.updated}: {formatDateForLocale(selectedLead.updated_at, locale as Locale)}</span>
+                    <span>{t.updated}: {formatDateForLocale(selectedLead.updated_at, locale as Locale, timezone)}</span>
                   </div>
                 </div>
 

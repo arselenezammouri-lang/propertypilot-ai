@@ -31,7 +31,7 @@ type AutopilotRule = {
 };
 
 export default function AutopilotPage() {
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
   const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
@@ -302,7 +302,7 @@ export default function AutopilotPage() {
           )}
           {runs.map((r) => (
             <div key={r.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{formatDateTimeForLocale(r.run_at, locale as Locale)}</span>
+              <span>{formatDateTimeForLocale(r.run_at, locale as Locale, timezone)}</span>
               <span>{r.status}</span>
               <span>{r.total_opportunities} {t.opportunities}</span>
               <span>{r.total_leads_created} {t.leads}</span>
@@ -321,7 +321,7 @@ export default function AutopilotPage() {
           )}
           {actions.map((a) => (
             <div key={a.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{formatDateTimeForLocale(a.created_at, locale as Locale)}</span>
+              <span>{formatDateTimeForLocale(a.created_at, locale as Locale, timezone)}</span>
               <span>{a.action_type}</span>
               <span>{a.action_status}</span>
             </div>

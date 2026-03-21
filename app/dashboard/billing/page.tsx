@@ -21,7 +21,7 @@ import { apiFailureToast } from '@/lib/i18n/api-feature-feedback';
 export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { locale, currency } = useLocaleContext();
+  const { locale, currency, timezone } = useLocaleContext();
   const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
   const translation = getTranslation(locale as SupportedLocale);
   const billingT = translation.billing;
@@ -386,7 +386,7 @@ export default function BillingPage() {
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <span className="text-muted-foreground font-medium">{billingT.nextRenewal}</span>
                 <span className="font-bold" data-testid="text-renewal-date">
-                  {formatDateForLocale(subscription.current_period_end, locale as Locale)}
+                  {formatDateForLocale(subscription.current_period_end, locale as Locale, timezone)}
                 </span>
               </div>
               {subscription.cancel_at_period_end && (

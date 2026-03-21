@@ -64,7 +64,7 @@ interface FormData {
 }
 
 export default function AutomationsPage() {
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const usage = useUsageLimits();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -426,7 +426,7 @@ export default function AutomationsPage() {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return t.notAvailable;
-    return formatDateTimeForLocale(dateString, locale as Locale);
+    return formatDateTimeForLocale(dateString, locale as Locale, timezone);
   };
 
   return (

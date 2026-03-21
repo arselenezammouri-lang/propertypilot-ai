@@ -3,12 +3,20 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { Locale, defaultLocale } from "./config";
 import { Currency } from "@/lib/utils/currency";
+import {
+  DEFAULT_DASHBOARD_TIMEZONE,
+  isValidDashboardTimezone,
+  type DashboardTimezone,
+} from "@/lib/i18n/timezones";
 
 interface LocaleContextValue {
   locale: Locale;
   currency: Currency;
+  /** IANA timezone for date/time display in the dashboard (Fase C4) */
+  timezone: DashboardTimezone;
   setLocale: (locale: Locale) => void;
   setCurrency: (currency: Currency) => void;
+  setTimezone: (tz: DashboardTimezone) => void;
 }
 
 const LOCALE_COOKIE = "propertypilot_locale";
@@ -20,17 +28,36 @@ function setLocaleCookie(locale: string) {
   } catch (_) {}
 }
 
+const TIMEZONE_STORAGE = "propertypilot_timezone";
+
 const LocaleContext = createContext<LocaleContextValue>({
   locale: defaultLocale,
   currency: "EUR",
+  timezone: DEFAULT_DASHBOARD_TIMEZONE,
   setLocale: () => {},
   setCurrency: () => {},
+  setTimezone: () => {},
 });
+
+function resolveInitialTimezone(): DashboardTimezone {
+  if (typeof window === "undefined") return DEFAULT_DASHBOARD_TIMEZONE;
+  try {
+    const saved = localStorage.getItem(TIMEZONE_STORAGE);
+    if (saved && isValidDashboardTimezone(saved)) {
+      return saved;
+    }
+    const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (browserTz && isValidDashboardTimezone(browserTz)) {
+      return browserTz;
+    }
+  } catch (_) {}
+  return DEFAULT_DASHBOARD_TIMEZONE;
+}
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
   const [currency, setCurrencyState] = useState<Currency>("EUR");
-  const [mounted, setMounted] = useState(false);
+  const [timezone, setTimezoneState] = useState<DashboardTimezone>(DEFAULT_DASHBOARD_TIMEZONE);
 
   // Read from localStorage on first mount and sync cookie for server metadata
   useEffect(() => {
@@ -44,8 +71,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       if (savedCurrency && ["EUR", "USD", "GBP"].includes(savedCurrency)) {
         setCurrencyState(savedCurrency);
       }
+      setTimezoneState(resolveInitialTimezone());
     } catch (_) {}
-    setMounted(true);
   }, []);
 
   // Listen for locale-change events dispatched by LocaleCurrencySelector
@@ -94,8 +121,17 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setTimezone = useCallback((tz: DashboardTimezone) => {
+    setTimezoneState(tz);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(TIMEZONE_STORAGE, tz);
+    }
+  }, []);
+
   return (
-    <LocaleContext.Provider value={{ locale, currency, setLocale, setCurrency }}>
+    <LocaleContext.Provider
+      value={{ locale, currency, timezone, setLocale, setCurrency, setTimezone }}
+    >
       {children}
     </LocaleContext.Provider>
   );

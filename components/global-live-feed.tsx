@@ -59,7 +59,7 @@ const activityTypes = [
 ];
 
 export function GlobalLiveFeed() {
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const [activities, setActivities] = useState<LiveActivity[]>([]);
   const [activeLocations, setActiveLocations] = useState<Set<string>>(new Set());
   const router = useRouter();
@@ -148,7 +148,7 @@ export function GlobalLiveFeed() {
     });
   };
 
-  const formatTime = (date: Date) => formatDateTimeForLocale(date, locale as Locale);
+  const formatTime = (date: Date) => formatDateTimeForLocale(date, locale as Locale, timezone);
 
   return (
     <Card className="border-cyan-500/30 bg-[#0a0a0a]">

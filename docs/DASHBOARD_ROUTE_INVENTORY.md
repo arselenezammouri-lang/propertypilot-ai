@@ -52,7 +52,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 30 | `/dashboard/packages` | Brand / commercio | Free | No | OK | B4: shell, header, Stripe trust, toast `premiumPackages` |
 | 31 | `/dashboard/referral` | Brand | Free | No | OK | B4: shell, header, `GET /api/referral`, toast `referralProgram` |
 | 32 | `/dashboard/billing` | Account | Free | No | OK | B4 + **C2:** header `?` → `/docs/account/billing-guide` |
-| 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | OK | B6: shell + `workspaceModules` toast; trial load fix |
+| 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | OK | B6 + **C4:** card lingua/valuta (`LocaleCurrencySelector`) + fuso orario IANA; date dashboard usano `timezone` |
 | 34 | `/dashboard/settings/notifications` | Account | Free | No | OK | B6: shell + `morningIntelNotifications`; `fetchApi` |
 | 35 | `/dashboard/test-error` | — | — | N/A | Debole | Solo dev / test Error Boundary |
 
@@ -82,7 +82,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- **Fase C4:** preferenze utente (timezone, lingua/valuta espliciti in settings dove manca).  
+- **Fase C5:** performance percepita (lazy load, immagini).  
+- **C4 (fatto):** workspace settings — lingua/valuta (`LocaleCurrencySelector`) + fuso orario; date dashboard usano `timezone` dal contesto.  
 - **C3 (fatto):** command palette con **Collegamenti veloci** + **Guide** (`lib/dashboard/command-palette-extras.tsx`).  
 - **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel` (Perfect Copy, Pipeline, Billing); docs bilingue in `lib/docs/doc-content.ts`.  
 - Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  

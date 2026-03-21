@@ -1,12 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { DASHBOARD_TIMEZONE_OPTIONS, type DashboardTimezone } from "@/lib/i18n/timezones";
+import { formatDateTimeForLocale } from "@/lib/i18n/intl";
+import type { Locale } from "@/lib/i18n/config";
 import { createClient } from "@/lib/supabase/client";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
 import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
@@ -29,7 +44,7 @@ interface WorkspaceModule {
 }
 
 export default function WorkspaceSettingsPage() {
-  const { locale } = useLocale();
+  const { locale, currency, timezone, setLocale, setCurrency, setTimezone } = useLocale();
   const isItalian = locale === "it";
   const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
@@ -57,6 +72,15 @@ export default function WorkspaceSettingsPage() {
           "After the trial, only modules included in your plan can be enabled",
           "Settings are saved automatically",
         ],
+    prefsTitle: isItalian ? "Lingua, valuta e fuso orario" : "Language, currency & timezone",
+    prefsSubtitle: isItalian
+      ? "Stesse preferenze dell’header: qui le imposti in un unico posto. Il fuso orario influisce su date e orari nella dashboard (es. fatturazione, automazioni)."
+      : "Same choices as the header — manage them in one place. Timezone affects dates and times across the dashboard (billing, automations, etc.).",
+    timezoneLabel: isItalian ? "Fuso orario" : "Time zone",
+    timezoneHint: isItalian
+      ? "Salvato su questo browser. Se il tuo fuso non è in elenco, scegli UTC e segnala al supporto."
+      : "Saved in this browser. If your zone is missing, pick UTC and contact support.",
+    previewLabel: isItalian ? "Anteprima ora locale" : "Local time preview",
     insufficientPlan: isItalian ? "Piano insufficiente" : "Insufficient plan",
     insufficientPlanDesc: (plan: string) => isItalian
       ? `Questo modulo richiede il piano ${plan}. Aggiorna il tuo account.`
@@ -84,6 +108,34 @@ export default function WorkspaceSettingsPage() {
   const [isTrial, setIsTrial] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const timezoneGroups = useMemo(() => {
+    const labels: Record<string, string> = {
+      EU: isItalian ? "Europa" : "Europe",
+      US: isItalian ? "Stati Uniti" : "United States",
+      NA: isItalian ? "Nord America" : "North America",
+      LATAM: "LATAM",
+      ME: isItalian ? "Medio Oriente" : "Middle East",
+      APAC: "APAC",
+      UTC: "UTC",
+    };
+    const byRegion = new Map<string, (typeof DASHBOARD_TIMEZONE_OPTIONS)[number][]>();
+    for (const opt of DASHBOARD_TIMEZONE_OPTIONS) {
+      const list = byRegion.get(opt.region) ?? [];
+      list.push(opt);
+      byRegion.set(opt.region, list);
+    }
+    return Array.from(byRegion.entries()).map(([region, opts]) => ({
+      region,
+      label: labels[region] ?? region,
+      opts,
+    }));
+  }, [isItalian]);
+
+  const timePreview = useMemo(
+    () => formatDateTimeForLocale(new Date(), locale as Locale, timezone),
+    [locale, timezone]
+  );
 
   useEffect(() => {
     const loadWorkspaceSettings = async () => {
@@ -274,6 +326,58 @@ export default function WorkspaceSettingsPage() {
       ) : null}
 
       <div className="mx-auto max-w-5xl w-full space-y-4">
+        <Card className="border-white/10 bg-[#0a0a0a]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg text-white">
+              <Clock className="h-5 w-5 text-cyan-400" aria-hidden />
+              {t.prefsTitle}
+            </CardTitle>
+            <CardDescription className="text-white/60">{t.prefsSubtitle}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+              <LocaleCurrencySelector
+                currentLocale={locale}
+                currentCurrency={currency}
+                onLocaleChange={setLocale}
+                onCurrencyChange={setCurrency}
+              />
+            </div>
+            <Separator className="bg-white/10" />
+            <div className="space-y-2 max-w-md">
+              <Label htmlFor="workspace-timezone" className="text-white/90">
+                {t.timezoneLabel}
+              </Label>
+              <Select value={timezone} onValueChange={(v) => setTimezone(v as DashboardTimezone)}>
+                <SelectTrigger
+                  id="workspace-timezone"
+                  className="h-11 min-h-11 touch-manipulation border-white/20 bg-white/5 text-white"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-[min(24rem,70vh)]">
+                  {timezoneGroups.map(({ region, label, opts }) => (
+                    <SelectGroup key={region}>
+                      <SelectLabel className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {label}
+                      </SelectLabel>
+                      {opts.map((o) => (
+                        <SelectItem key={o.value} value={o.value} className="min-h-11 touch-manipulation">
+                          {o.value.replace(/_/g, " ")}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-white/50">{t.timezoneHint}</p>
+            </div>
+            <p className="text-sm text-white/70">
+              <span className="text-white/50">{t.previewLabel}:</span>{" "}
+              <span className="font-medium text-cyan-200 tabular-nums">{timePreview}</span>
+            </p>
+          </CardContent>
+        </Card>
           {modules.map((module) => (
             <Card
               key={module.id}
