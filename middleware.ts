@@ -1,5 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { refreshSessionInMiddleware } from '@/lib/supabase/middleware-session-refresh';
+import { copySessionCookiesTo } from '@/lib/supabase/apply-session-cookies';
 import { evaluateApiGuard } from '@/lib/security/middleware-api-guard';
 import { hashClientIpForAuditEdge, logSecurityAudit } from '@/lib/security/security-audit-log';
 import { getEdgeClientIp } from '@/lib/security/request-ip';
@@ -12,15 +14,41 @@ import {
   isUpstashAiRateLimitConfigured,
   limitAiRequestUpstash,
 } from '@/lib/security/upstash-ai-rate-limit';
+import {
+  isUpstashAiUserRateLimitConfigured,
+  limitAiUserRequestUpstash,
+} from '@/lib/security/upstash-ai-user-rate-limit';
+
+function jsonWithSession(
+  sessionResponse: NextResponse,
+  body: object,
+  status: number,
+  extraHeaders?: Record<string, string>
+): NextResponse {
+  const res = new NextResponse(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-store',
+      ...extraHeaders,
+    },
+  });
+  copySessionCookiesTo(sessionResponse, res);
+  return res;
+}
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (pathname.startsWith('/api/')) {
+    const { user, response: sessionResponse } =
+      await refreshSessionInMiddleware(request);
+
     const useRedis = isUpstashApiRateLimitConfigured();
     const ip = getEdgeClientIp(request);
     const isAiPost =
       request.method === 'POST' && isAiCostlyApiPath(pathname);
+    const userId = user?.id ?? null;
 
     if (useRedis) {
       const upstash = await limitApiRequestUpstash(`api:${ip}`);
@@ -39,13 +67,8 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-store',
-            'Retry-After': String(upstash.retryAfterSec),
-          },
+        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+          'Retry-After': String(upstash.retryAfterSec),
         });
       }
     }
@@ -67,20 +90,48 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-store',
-            'Retry-After': String(aiUp.retryAfterSec),
-          },
+        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+          'Retry-After': String(aiUp.retryAfterSec),
         });
       }
     }
 
+    if (
+      useRedis &&
+      isAiPost &&
+      userId &&
+      isUpstashAiUserRateLimitConfigured()
+    ) {
+      const userUp = await limitAiUserRequestUpstash(userId);
+      if (!userUp.ok) {
+        const rawIp = ip;
+        const ipHash = await hashClientIpForAuditEdge(
+          rawIp === 'unknown' ? undefined : rawIp
+        );
+        logSecurityAudit(
+          {
+            action: 'edge_rate_limit',
+            path: pathname,
+            method: request.method,
+            status: 429,
+            detail: 'ai_user_upstash',
+          },
+          { ipHash }
+        );
+        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+          'Retry-After': String(userUp.retryAfterSec),
+        });
+      }
+    }
+
+    const skipAiUserRedis =
+      Boolean(useRedis && isAiPost && userId && isUpstashAiUserRateLimitConfigured());
+
     const guard = evaluateApiGuard(request, {
       skipGeneralMemoryRateLimit: useRedis,
       skipAiMemoryRateLimit: Boolean(useRedis && isAiPost && isUpstashAiRateLimitConfigured()),
+      skipAiUserMemoryRateLimit: skipAiUserRedis,
+      authenticatedUserId: userId,
     });
     if (guard) {
       const rawIp = getEdgeClientIp(request);
@@ -98,13 +149,7 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return new NextResponse(JSON.stringify({ error: 'Forbidden' }), {
-          status: 403,
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-store',
-          },
-        });
+        return jsonWithSession(sessionResponse, { error: 'Forbidden' }, 403);
       }
       logSecurityAudit(
         {
@@ -116,17 +161,12 @@ export async function middleware(request: NextRequest) {
         },
         { ipHash }
       );
-      return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
-        status: 429,
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-store',
-          'Retry-After': String(guard.retryAfterSec),
-        },
+      return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+        'Retry-After': String(guard.retryAfterSec),
       });
     }
-    // Still refresh Supabase session cookies on API calls (browser fetch with credentials).
-    return await updateSession(request);
+
+    return sessionResponse;
   }
 
   return await updateSession(request);

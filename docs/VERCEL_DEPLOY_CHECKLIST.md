@@ -26,7 +26,8 @@ Copia da `.env.example` e verifica su **Vercel → Project → Settings → Envi
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` | Entrambe in produzione per captcha login/signup |
 | `EDGE_API_RATE_LIMIT_*` | Opzionale: tuning rate limit edge |
 | `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | **Opzionale ma consigliato** su Vercel multi-replica: limite globale per IP (`pp:mw:api`) + secondo bucket **più stretto** per route AI costose (`pp:mw:ai`, vedi `EDGE_AI_RATE_LIMIT_*`). Se assenti, restano i limiti in-memory per istanza. |
-| `EDGE_AI_RATE_LIMIT_MAX` / `EDGE_AI_RATE_LIMIT_WINDOW_MS` | Default **30 richieste / minuto / IP** su path tipo `/api/generate*`, `aria/chat`, `lead-score`, ecc. (lista in `lib/security/ai-costly-api-path.ts`). |
+| `EDGE_AI_RATE_LIMIT_MAX` / `EDGE_AI_RATE_LIMIT_WINDOW_MS` | Default **30 richieste / minuto / IP** su path AI costosi (lista in `lib/security/ai-costly-api-path.ts`). |
+| `EDGE_AI_USER_RATE_LIMIT_*` | Default **20 / minuto / utente loggato** (stessi path, solo POST con cookie sessione). Prefisso Redis `pp:mw:aiu`. Disattiva con `EDGE_AI_USER_RATE_LIMIT_ENABLED=false`. |
 | `SECURITY_AUDIT_IP_SALT` | Stringa lunga casuale: abilita `ip_hash` negli audit JSON (stesso utente = stesso hash finché non ruoti il salt) |
 | `SECURITY_AUDIT_LOG` | `true` (default in prod) / `false` per disattivare le righe `type":"security_audit"` |
 

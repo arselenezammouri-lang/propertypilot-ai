@@ -7,6 +7,10 @@ import {
   isEdgeApiRateLimitEnabled,
 } from '@/lib/security/edge-api-rate-params';
 import { getEdgeAiRateLimitParams } from '@/lib/security/edge-ai-rate-params';
+import {
+  getEdgeAiUserRateLimitParams,
+  isEdgeAiUserRateLimitEnabled,
+} from '@/lib/security/edge-ai-user-rate-params';
 import { isAiCostlyApiPath } from '@/lib/security/ai-costly-api-path';
 
 const SKIP_PREFIXES = [
@@ -28,18 +32,26 @@ function shouldSkipApiGuard(pathname: string): boolean {
 
 export type ApiGuardFailure =
   | { type: 'bot'; reason: 'empty_ua' | 'scanner_ua' }
-  | { type: 'rate'; retryAfterSec: number; detail?: 'general' | 'ai' };
+  | {
+      type: 'rate';
+      retryAfterSec: number;
+      detail?: 'general' | 'ai' | 'ai_user';
+    };
 
 /**
  * Returns null if the request may proceed, or a failure descriptor if it should be blocked.
  * Rate limit: when `skipGeneralMemoryRateLimit` is true, skip general in-memory (caller ran Upstash).
- * When `skipAiMemoryRateLimit` is true, skip AI in-memory (caller ran Upstash AI).
+ * When `skipAiMemoryRateLimit` is true, skip AI IP in-memory (caller ran Upstash AI).
+ * When `skipAiUserMemoryRateLimit` is true, skip per-user AI in-memory (caller ran Upstash user AI).
  */
 export function evaluateApiGuard(
   request: NextRequest,
   options?: {
     skipGeneralMemoryRateLimit?: boolean;
     skipAiMemoryRateLimit?: boolean;
+    skipAiUserMemoryRateLimit?: boolean;
+    /** Supabase user id when session exists; enables per-user AI bucket. */
+    authenticatedUserId?: string | null;
   }
 ): ApiGuardFailure | null {
   const pathname = request.nextUrl.pathname;
@@ -78,6 +90,24 @@ export function evaluateApiGuard(
     const aiRl = checkEdgeRateLimit(`ai:${ip}`, aiMax, aiWindow);
     if (!aiRl.ok) {
       return { type: 'rate', retryAfterSec: aiRl.retryAfterSec, detail: 'ai' };
+    }
+  }
+
+  if (
+    request.method === 'POST' &&
+    isAiCostlyApiPath(pathname) &&
+    options?.authenticatedUserId &&
+    isEdgeAiUserRateLimitEnabled() &&
+    !options?.skipAiUserMemoryRateLimit
+  ) {
+    const { max: uMax, windowMs: uWindow } = getEdgeAiUserRateLimitParams();
+    const uRl = checkEdgeRateLimit(
+      `aiu:${options.authenticatedUserId}`,
+      uMax,
+      uWindow
+    );
+    if (!uRl.ok) {
+      return { type: 'rate', retryAfterSec: uRl.retryAfterSec, detail: 'ai_user' };
     }
   }
 
