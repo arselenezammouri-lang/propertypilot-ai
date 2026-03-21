@@ -50,6 +50,21 @@ export interface TranslationDictionary {
       mapCallLaunched: string;
       mapCallError: string;
       mapLanciaChiamata: string;
+      onboardingChecklist: {
+        title: string;
+        subtitle: string;
+        dismiss: string;
+        dismissAria: string;
+        progress: string;
+        allDone: string;
+        steps: {
+          generate: { title: string; description: string; cta: string };
+          library: { title: string; description: string; cta: string };
+          pipeline: { title: string; description: string; cta: string };
+          billing: { title: string; description: string; cta: string };
+          workspace: { title: string; description: string; cta: string };
+        };
+      };
     };
 
   // Auth (Login / Signup)
@@ -542,6 +557,41 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Chiamata avviata',
       mapCallError: 'Errore nell\'avvio della chiamata',
       mapLanciaChiamata: 'Lancia Chiamata Predator',
+      onboardingChecklist: {
+        title: 'I tuoi primi 5 passi',
+        subtitle: 'Completa questa checklist per sbloccare valore subito. Puoi nasconderla quando vuoi: i progressi restano salvati su questo browser.',
+        dismiss: 'Nascondi',
+        dismissAria: 'Nascondi checklist onboarding',
+        progress: '{done} di {total} completati',
+        allDone: 'Ottimo lavoro — hai completato tutti i passi.',
+        steps: {
+          generate: {
+            title: 'Genera il primo annuncio con l\'AI',
+            description: 'Parti da Perfect Copy o dagli strumenti di copy: titoli, descrizioni e varianti in pochi minuti.',
+            cta: 'Vai a Perfect Copy',
+          },
+          library: {
+            title: 'Salva un annuncio in libreria',
+            description: 'Tieni i migliori testi e riutilizzali per i portali o i clienti.',
+            cta: 'Apri libreria',
+          },
+          pipeline: {
+            title: 'Organizza i lead in pipeline',
+            description: 'Sposta i lead tra le colonne e tieni sotto controllo follow-up e priorità.',
+            cta: 'Apri pipeline',
+          },
+          billing: {
+            title: 'Verifica piano e fatturazione',
+            description: 'Controlla il piano attivo e come gestire upgrade o fatture.',
+            cta: 'Apri fatturazione',
+          },
+          workspace: {
+            title: 'Configura il workspace',
+            description: 'Attiva i moduli che usi ogni giorno (CRM, voice, mappe, ecc.).',
+            cta: 'Impostazioni workspace',
+          },
+        },
+      },
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1032,6 +1082,41 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Call started',
       mapCallError: 'Error starting call',
       mapLanciaChiamata: 'Launch Predator Call',
+      onboardingChecklist: {
+        title: 'Your first 5 steps',
+        subtitle: 'Complete this checklist to get value fast. You can hide it anytime — progress is saved in this browser.',
+        dismiss: 'Hide',
+        dismissAria: 'Hide onboarding checklist',
+        progress: '{done} of {total} done',
+        allDone: 'Great — you completed every step.',
+        steps: {
+          generate: {
+            title: 'Generate your first listing with AI',
+            description: 'Start with Perfect Copy or other copy tools: titles, descriptions, and variants in minutes.',
+            cta: 'Open Perfect Copy',
+          },
+          library: {
+            title: 'Save a listing to your library',
+            description: 'Keep your best drafts and reuse them for portals or clients.',
+            cta: 'Open library',
+          },
+          pipeline: {
+            title: 'Organize leads in the pipeline',
+            description: 'Move leads across stages and stay on top of follow-ups.',
+            cta: 'Open pipeline',
+          },
+          billing: {
+            title: 'Review plan and billing',
+            description: 'See your active plan and how upgrades or invoices work.',
+            cta: 'Open billing',
+          },
+          workspace: {
+            title: 'Configure your workspace',
+            description: 'Enable the modules you use daily (CRM, voice, maps, and more).',
+            cta: 'Workspace settings',
+          },
+        },
+      },
     },
     auth: {
       backToHome: 'Back to home',

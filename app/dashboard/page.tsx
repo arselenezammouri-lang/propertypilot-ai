@@ -104,6 +104,11 @@ const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").
   ssr: false,
 });
 
+const DashboardOnboardingChecklist = NextDynamic(
+  () => import("@/components/dashboard-onboarding-checklist").then((mod) => ({ default: mod.DashboardOnboardingChecklist })),
+  { ssr: false, loading: () => null }
+);
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   
@@ -172,6 +177,8 @@ export default async function DashboardPage() {
             </Button>
           }
         />
+
+        <DashboardOnboardingChecklist />
 
         {/* STATS GRID - Premium Futuristic Cards */}
         <section className="dashboard-section" aria-label="Piano e statistiche">

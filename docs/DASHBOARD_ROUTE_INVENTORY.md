@@ -20,7 +20,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 | # | Path | Area JTBD | Piano minimo (target) | Gate UI in pagina | Stato UX | Note |
 |---|------|-----------|------------------------|-------------------|----------|------|
-| 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; moduli PRO/AGENCY nascosti lato server per piano |
+| 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; **C1:** checklist “primi 5 passi” (dismiss + `localStorage`); moduli PRO/AGENCY nascosti lato server per piano |
 | 2 | `/dashboard/listings` | Contenuti | Free | No | OK | `DashboardPageHeader` + shell + `listingsLibrary` toast; CTA “Crea annuncio” in header |
 | 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | Pilota A1–A4 |
 | 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | OK | Shell + `refineListing` toast + `fetchApi` |
@@ -82,6 +82,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
+- **Fase C2:** help contestuale (link “?” / tooltip su campi complessi).  
 - Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  
 - Estendere **`api-feature-feedback`** (`ApiFeatureId`) dove manca ancora.  
 - Ridurre **duplicazioni** (due pagine automations, badge PDF vs piano free in features).  

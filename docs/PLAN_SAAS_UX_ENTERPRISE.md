@@ -102,6 +102,8 @@ Per **ogni** area applicare la checklist in [DESIGN_UX_LOCALE.md §5](../DESIGN_
 | C4 | **Preferenze utente** — lingua, valuta, timezone espliciti in settings |
 | C5 | **Performance percepita** — lazy load sezioni pesanti, immagini ottimizzate |
 
+**Stato C1:** implementata `DashboardOnboardingChecklist` in `components/dashboard-onboarding-checklist.tsx` (home `/dashboard` solo): 5 passi con CTA, barra progresso, checkbox + auto-completamento quando l’utente visita le route collegate, dismiss persistente in `localStorage` (`propertypilot_onboarding_checklist_dismissed_v1`). Copy in `lib/i18n/dictionary.ts` (IT/EN; altre lingue → merge su EN). **Prossimo:** C2 help contestuale.
+
 ---
 
 ## Fase D — Go-live cliente
