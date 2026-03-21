@@ -25,6 +25,8 @@ Un prodotto che sia:
 
 **Definition of done:** documento inventario in `/docs` o issue tracker; priorità numerate per Fase B.
 
+**Stato:** inventario route in [DASHBOARD_ROUTE_INVENTORY.md](./DASHBOARD_ROUTE_INVENTORY.md) (35 route, JTBD, piano da `DashboardPlanFeatures`, gate UI, stato UX, priorità B1–B6). **Density:** default **comfort** (già implicito in Fase A). **Audit componenti condivisi:** prossimo sotto-passo Fase 0 (tabella Card/Button/modali) oppure in parallelo a B1.
+
 ---
 
 ## Fase A — Fondamenta UI / shell (impatto alto su tutto il SaaS)
@@ -53,7 +55,7 @@ Un prodotto che sia:
 
 **A6 (implementato):** target touch **≥44px** su header dashboard (logo, Cerca, Genera, Esci), selettori lingua/regione/tema, voci menu dropdown; pulsante **Menu** e link drawer; chiusura esplicita drawer (X); link sidebar `min-h-11`; slot azioni `DashboardPageHeader` con `[&_button]:min-h-11` + `touch-manipulation` dove utile.
 
-**Prossimo:** estendere `api-feature-feedback` alle altre pagine tool **oppure** inventario Fase 0 (route dashboard) in `/docs`.
+**Prossimo (dopo Fase 0 inventario):** **Fase B1** — migrare `/dashboard/listings` poi `refine-listing` e `translate` a `DashboardPageHeader` + `DashboardPageShell` + estendere `api-feature-feedback` (`ApiFeatureId`) per quelle feature. In parallelo utile: audit componenti Fase 0 o allineamento badge PDF / doppia pagina automations.
 
 ---
 

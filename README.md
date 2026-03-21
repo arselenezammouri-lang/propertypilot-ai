@@ -63,6 +63,7 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 - [Checklist deploy Vercel](./docs/VERCEL_DEPLOY_CHECKLIST.md) - Variabili ambiente, Origin, Turnstile, verifiche post-deploy
 - [Operations & security](./docs/OPERATIONS_SECURITY.md) - WAF Vercel, log `security_audit`, Dependabot, rotazione segreti
 - [Piano UX & struttura enterprise](./docs/PLAN_SAAS_UX_ENTERPRISE.md) - Roadmap design moderno, shell dashboard, verticali per area
+- [Inventario route dashboard (Fase 0)](./docs/DASHBOARD_ROUTE_INVENTORY.md) - URL, JTBD, piano, gate UI, priorità B1–B6
 - [API Documentation](./docs/API.md) - Documentazione completa API
 - [Architecture](./docs/ARCHITECTURE.md) - Architettura sistema
 - [Setup Guide](./docs/SETUP.md) - Guida setup e deployment
