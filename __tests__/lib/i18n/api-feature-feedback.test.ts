@@ -1,0 +1,52 @@
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+  premiumFeatureToast,
+} from '@/lib/i18n/api-feature-feedback';
+
+describe('apiFailureToast', () => {
+  it('maps 401 to sign-in copy', () => {
+    const r = apiFailureToast('en', 'perfectCopy', { status: 401 }, 'fallback');
+    expect(r.title).toContain('Sign-in');
+    expect(r.description.toLowerCase()).toContain('session');
+  });
+
+  it('maps 429 to rate limit copy', () => {
+    const r = apiFailureToast('it', 'leadManager', { status: 429 }, 'x');
+    expect(r.title).toContain('Limite');
+  });
+
+  it('prefers server message on 500 when present', () => {
+    const r = apiFailureToast('en', 'perfectCopy', { status: 500, message: 'Dev — boom' }, 'fallback');
+    expect(r.description).toBe('Dev — boom');
+  });
+
+  it('uses fallback for 400 without server text', () => {
+    const r = apiFailureToast('it', 'leadManager', { status: 400 }, 'Impossibile salvare');
+    expect(r.description).toContain('Impossibile salvare');
+  });
+});
+
+describe('networkFailureToast', () => {
+  it('returns feature-scoped connection title', () => {
+    const r = networkFailureToast('en', 'perfectCopy');
+    expect(r.title).toContain('Perfect Copy');
+    expect(r.title).toContain('Connection');
+  });
+});
+
+describe('validationToast', () => {
+  it('wraps validation message with feature label', () => {
+    const r = validationToast('it', 'perfectCopy', 'Compila i campi');
+    expect(r.title).toContain('Perfect Copy');
+    expect(r.description).toBe('Compila i campi');
+  });
+});
+
+describe('premiumFeatureToast', () => {
+  it('uses plan-required title', () => {
+    const r = premiumFeatureToast('en', 'leadManager', 'Upgrade to Pro');
+    expect(r.title).toContain('Plan required');
+  });
+});

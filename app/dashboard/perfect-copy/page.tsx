@@ -17,6 +17,12 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { useAPIErrorHandler } from '@/components/error-boundary';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 import { 
   Sparkles, 
   Loader2, 
@@ -66,6 +72,7 @@ export default function PerfectCopyPage() {
   const { handleAPIError } = useAPIErrorHandler();
   const usage = useUsageLimits();
   const [pageReady, setPageReady] = useState(false);
+  const feedbackLocale = isItalian ? 'it' : 'en';
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setPageReady(true));
@@ -136,15 +143,14 @@ export default function PerfectCopyPage() {
     tabSeo: 'SEO',
     tabLuxury: 'Luxury',
     // toasts
-    requiredFields: isItalian ? 'Campi obbligatori' : 'Required fields',
     requiredFieldsDesc: isItalian
       ? 'Compila tipo immobile, zona, caratteristiche e target cliente.'
       : 'Fill in property type, location, features and target client.',
-    tooManyRequests: isItalian ? 'Troppe richieste. Riprova tra un minuto.' : 'Too many requests. Try again in a minute.',
     errorGeneric: isItalian ? 'Errore durante la generazione' : 'Error during generation',
-    successTitle: isItalian ? '✨ Annunci generati!' : '✨ Listings generated!',
-    successDesc: isItalian ? 'Tutte le varianti sono pronte. Scegli quella perfetta per te.' : 'All variants are ready. Choose the perfect one for you.',
-    errorTitle: isItalian ? 'Errore' : 'Error',
+    successTitle: isItalian ? 'Perfect Copy — annunci pronti' : 'Perfect Copy — listings ready',
+    successDesc: isItalian
+      ? 'Tutte le varianti sono pronte. Scegli una scheda e copia il testo dove ti serve.'
+      : 'All variants are ready. Pick a tab and copy the text wherever you need it.',
     copied: isItalian ? 'Copiato!' : 'Copied!',
     copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
     copyFailed: isItalian ? 'Impossibile copiare. Riprova.' : 'Unable to copy. Try again.',
@@ -221,7 +227,8 @@ export default function PerfectCopyPage() {
 
   const handleSubmit = async () => {
     if (!formData.tipoImmobile || !formData.zona || !formData.caratteristiche || !formData.targetCliente) {
-      toast({ title: t.requiredFields, description: t.requiredFieldsDesc, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'perfectCopy', t.requiredFieldsDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -234,16 +241,22 @@ export default function PerfectCopyPage() {
         body: JSON.stringify(formData),
       });
       if (!res.success) {
-        if (res.status === 429) throw new Error(res.error ?? res.message ?? t.tooManyRequests);
-        throw new Error(res.error ?? res.message ?? t.errorGeneric);
+        const fail = apiFailureToast(feedbackLocale, 'perfectCopy', {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.errorGeneric);
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        return;
       }
       setResult(res.data as PerfectCopyResult);
       setActiveTab('professionale');
       toast({ title: t.successTitle, description: t.successDesc });
 
     } catch (error) {
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'perfectCopy');
+      const friendly = handleAPIError(error, net.description);
+      toast({ title: net.title, description: friendly, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -256,7 +269,8 @@ export default function PerfectCopyPage() {
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: 'destructive' });
+      const c = clipboardFailureToast(feedbackLocale, 'perfectCopy', t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
     }
   };
 

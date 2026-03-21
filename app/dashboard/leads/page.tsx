@@ -87,6 +87,12 @@ import {
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
 import { fetchApi } from "@/lib/api/client";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import NextDynamic from "next/dynamic";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
@@ -120,6 +126,7 @@ export default function LeadsPage() {
   const { toast } = useToast();
   const usage = useUsageLimits();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
   const statusConfig = getStatusConfig(isItalian);
   const priorityConfig = getPriorityConfig(isItalian);
   const marketConfig = getMarketConfig(isItalian);
@@ -189,6 +196,11 @@ export default function LeadsPage() {
     deleteWarning: (name: string) => isItalian
       ? `Stai per eliminare il lead "${name}". Questa azione non puo essere annullata.`
       : `You are about to delete the lead "${name}". This action cannot be undone.`,
+    successLeadCreatedTitle: isItalian ? "CRM Lead — Lead aggiunto" : "Lead CRM — Lead added",
+    successLeadUpdatedTitle: isItalian ? "CRM Lead — Modifiche salvate" : "Lead CRM — Changes saved",
+    successLeadDeletedTitle: isItalian ? "CRM Lead — Lead eliminato" : "Lead CRM — Lead removed",
+    successStatusTitle: isItalian ? "CRM Lead — Stato aggiornato" : "Lead CRM — Status updated",
+    successNoteTitle: isItalian ? "CRM Lead — Nota salvata" : "Lead CRM — Note saved",
   };
   const fallbackLeadName = isItalian ? "Lead In arrivo" : "Incoming Lead";
   const getLeadName = (name?: string | null) => {
@@ -241,18 +253,21 @@ export default function LeadsPage() {
       if (!res.success) {
         if (res.status === 403) {
           setUserPlan('free');
-          toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumRequiredDesc,
-            variant: "destructive",
-          });
+          const p = premiumFeatureToast(
+            feedbackLocale,
+            "leadManager",
+            res.message || res.error || t.premiumRequiredDesc
+          );
+          toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
         }
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.loadingError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.loadingError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       const normalizedLeads = (res.data.data || []).map((lead) => ({
@@ -261,11 +276,8 @@ export default function LeadsPage() {
       }));
       setLeads(normalizedLeads);
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -312,11 +324,8 @@ export default function LeadsPage() {
 
   const handleAddLead = async () => {
     if (!formData.nome.trim()) {
-      toast({
-        title: t.error,
-        description: t.nameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "leadManager", t.nameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -330,22 +339,25 @@ export default function LeadsPage() {
       if (!res.success) {
         if (res.status === 403) {
           setUserPlan('free');
-          toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumRequiredDesc,
-            variant: "destructive",
-          });
+          const p = premiumFeatureToast(
+            feedbackLocale,
+            "leadManager",
+            res.message || res.error || t.premiumRequiredDesc
+          );
+          toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
         }
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.createError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.createError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.leadCreated,
+        title: t.successLeadCreatedTitle,
         description: t.leadCreatedDesc(formData.nome),
       });
       setIsAddModalOpen(false);
@@ -359,11 +371,8 @@ export default function LeadsPage() {
       });
       fetchLeads();
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
@@ -379,26 +388,25 @@ export default function LeadsPage() {
         body: JSON.stringify({ id: selectedLead.id, ...formData }),
       });
       if (!res.success) {
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.updateError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.updateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.leadUpdated,
+        title: t.successLeadUpdatedTitle,
         description: t.leadUpdatedDesc(formData.nome),
       });
       setIsEditModalOpen(false);
       setSelectedLead(null);
       fetchLeads();
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     } finally {
       setSubmitting(false);
     }
@@ -410,26 +418,25 @@ export default function LeadsPage() {
     try {
       const res = await fetchApi<unknown>(`/api/leads?id=${selectedLead.id}`, { method: "DELETE" });
       if (!res.success) {
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.deleteError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.deleteError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.leadDeleted,
+        title: t.successLeadDeletedTitle,
         description: t.leadDeletedDesc(getLeadName(selectedLead.nome)),
       });
       setIsDeleteDialogOpen(false);
       setSelectedLead(null);
       fetchLeads();
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
@@ -444,22 +451,25 @@ export default function LeadsPage() {
       if (!res.success) {
         if (res.status === 403) {
           setUserPlan('free');
-          toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumRequiredDesc,
-            variant: "destructive",
-          });
+          const p = premiumFeatureToast(
+            feedbackLocale,
+            "leadManager",
+            res.message || res.error || t.premiumRequiredDesc
+          );
+          toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
         }
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.statusUpdateError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.statusUpdateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.statusUpdated,
+        title: t.successStatusTitle,
         description: res.data?.message ?? t.statusUpdated,
       });
       fetchLeads();
@@ -467,11 +477,8 @@ export default function LeadsPage() {
         fetchLeadDetails(leadId);
       }
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     }
   };
 
@@ -482,18 +489,21 @@ export default function LeadsPage() {
       if (!res.success) {
         if (res.status === 403) {
           setUserPlan('free');
-          toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumRequiredDesc,
-            variant: "destructive",
-          });
+          const p = premiumFeatureToast(
+            feedbackLocale,
+            "leadManager",
+            res.message || res.error || t.premiumRequiredDesc
+          );
+          toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
         }
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.detailsError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.detailsError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       const lead = res.data;
@@ -505,11 +515,8 @@ export default function LeadsPage() {
         });
       }
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.detailsError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     }
   };
 
@@ -531,32 +538,32 @@ export default function LeadsPage() {
       if (!res.success) {
         if (res.status === 403) {
           setUserPlan('free');
-          toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumRequiredDesc,
-            variant: "destructive",
-          });
+          const p = premiumFeatureToast(
+            feedbackLocale,
+            "leadManager",
+            res.message || res.error || t.premiumRequiredDesc
+          );
+          toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
         }
-        toast({
-          title: t.error,
-          description: res.error || res.message || t.noteError,
-          variant: "destructive",
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadManager",
+          { status: res.status, error: res.error, message: res.message },
+          t.noteError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.noteAdded,
+        title: t.successNoteTitle,
         description: t.noteSaved,
       });
       setNewNote("");
       fetchLeadDetails(selectedLead.id);
     } catch (error) {
-      toast({
-        title: t.error,
-        description: t.connectionError,
-        variant: "destructive",
-      });
+      const n = networkFailureToast(feedbackLocale, "leadManager");
+      toast({ title: n.title, description: n.description, variant: "destructive" });
     } finally {
       setAddingNote(false);
     }

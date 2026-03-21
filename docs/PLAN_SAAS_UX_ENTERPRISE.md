@@ -47,8 +47,9 @@ Un prodotto che sia:
 - **A2 (parziale):** utility `.dashboard-page-prose` in `app/globals.css` per body copy leggibile.
 - **A3 (parziale):** `ToolPageTwoColumnSkeleton` in `components/ui/skeleton-loaders.tsx` (layout form + area risultati).
 - **Pagine pilota:** `/dashboard/perfect-copy` e `/dashboard/leads` allineate a header + shell + badge piano (da `useUsageLimits`).
+- **A4 (pilota):** `lib/i18n/api-feature-feedback.ts` — titoli toast per feature (`Perfect Copy`, `CRM Lead` / `Lead CRM`) + prossimo passo per 401 / 429 / 5xx / rete / validazione / paywall; integrato nelle stesse due pagine pilota. Test: `__tests__/lib/i18n/api-feature-feedback.test.ts`.
 
-**Prossimo:** A4 (toast / messaggi per feature), A5 (sidebar per job-to-be-done), oppure estendere header + shell ad altre route dashboard.
+**Prossimo:** estendere `api-feature-feedback` (nuovi `ApiFeatureId`) alle altre dashboard che usano `fetchApi` + toast, **oppure** A5 (sidebar per job-to-be-done).
 
 ---
 
