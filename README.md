@@ -62,6 +62,7 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 - [Security hardening](./docs/SECURITY_HARDENING.md) - Middleware anti-abuso, header, limiti e cosa demandare a WAF / Cloudflare
 - [Checklist deploy Vercel](./docs/VERCEL_DEPLOY_CHECKLIST.md) - Variabili ambiente, Origin, Turnstile, verifiche post-deploy
 - [Operations & security](./docs/OPERATIONS_SECURITY.md) - WAF Vercel, log `security_audit`, Dependabot, rotazione segreti
+- [Piano UX & struttura enterprise](./docs/PLAN_SAAS_UX_ENTERPRISE.md) - Roadmap design moderno, shell dashboard, verticali per area
 - [API Documentation](./docs/API.md) - Documentazione completa API
 - [Architecture](./docs/ARCHITECTURE.md) - Architettura sistema
 - [Setup Guide](./docs/SETUP.md) - Guida setup e deployment

@@ -86,6 +86,7 @@ Tutto il lavoro pesante di UX/UI resta su **localhost** finché la checklist §5
 
 ## 7. Collegamenti
 
+- **Piano completo UX / struttura enterprise:** [docs/PLAN_SAAS_UX_ENTERPRISE.md](./docs/PLAN_SAAS_UX_ENTERPRISE.md)
 - Troubleshooting dev e PWA: [AVVIO_LOCAL_WINDOWS.md](./AVVIO_LOCAL_WINDOWS.md)
 - Setup generale: [docs/SETUP.md](./docs/SETUP.md)
 

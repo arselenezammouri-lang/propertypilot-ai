@@ -8,8 +8,8 @@ import NextDynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 import Link from "next/link";
-import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
 import {
   Home, 
@@ -142,12 +142,37 @@ export default async function DashboardPage() {
   } as const;
 
   const limits = planLimits[currentPlan] || planLimits.free;
-  const showUpgradeBanner = currentPlan === "free" || currentPlan === "starter";
+
+  const planBadgeLabel =
+    currentPlan === "agency"
+      ? "Agency"
+      : currentPlan === "pro"
+        ? "Pro"
+        : currentPlan === "starter"
+          ? "Starter"
+          : "Free";
 
   // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <DashboardPageHeader
+          title="Command Center"
+          subtitle="Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto."
+          planBadge={{ label: planBadgeLabel, variant: "outline" }}
+          actions={
+            <Button
+              asChild
+              className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] text-white border-0 shadow-lg hover:opacity-95"
+            >
+              <Link href="/dashboard/listings">
+                <Plus className="h-4 w-4 mr-2" />
+                Nuovo annuncio
+              </Link>
+            </Button>
+          }
+        />
+
         {/* STATS GRID - Premium Futuristic Cards */}
         <section className="dashboard-section" aria-label="Piano e statistiche">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
