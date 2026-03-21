@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +10,16 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
-import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
-  Home, 
-  ArrowLeft, 
   Copy, 
   Check, 
   Sparkles,
@@ -22,8 +27,6 @@ import {
   Heart,
   Crown,
   Loader2,
-  Sun,
-  Moon,
   Zap,
   Target,
   Search,
@@ -32,7 +35,6 @@ import {
   MousePointerClick
 } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import {
   Select,
   SelectContent,
@@ -145,38 +147,32 @@ const TITLE_CATEGORIES = [
 ];
 
 export default function TitlesPage() {
-  const router = useRouter();
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme();
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
-  const { handleAPIError } = useAPIErrorHandler();
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const t = {
     generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    successTitle: isItalian ? "Titoli generati con successo!" : "Titles generated successfully!",
+    successTitle: isItalian ? "Titoli A/B — generazione pronta" : "A/B titles — generation ready",
     successDesc: isItalian
       ? "19 titoli ad alto CTR sono pronti per essere utilizzati."
       : "19 high-CTR titles are ready to use.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    locationRequired: isItalian ? "Località richiesta" : "Location required",
     locationRequiredDesc: isItalian
       ? "Inserisci la località dell'immobile"
       : "Enter the property location",
-    pointsRequired: isItalian ? "Punti chiave richiesti" : "Key points required",
     pointsRequiredDesc: isItalian
       ? "Descrivi almeno i punti chiave dell'immobile (min 10 caratteri)"
       : "Describe at least the key points of the property (min 10 characters)",
     copied: isItalian ? "Copiato!" : "Copied!",
     copiedDesc: isItalian ? "Titolo copiato negli appunti" : "Title copied to clipboard",
     copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    appName: "PropertyPilot AI",
     subtitleBadge: "CTR +40%",
-    headerLabel: isItalian ? "Titoli A/B" : "A/B Titles",
     heroTitle: isItalian ? "Generatore Titoli A/B" : "A/B Title Generator",
     heroDescription: isItalian
       ? "Genera 19 titoli ad alto conversion rate ottimizzati per massimizzare i click sui tuoi annunci"
       : "Generate 19 high-converting titles optimized to maximize clicks on your listings",
-    backToDashboard: isItalian ? "Dashboard" : "Dashboard",
+    backToDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
     propertyData: isItalian ? "Dati Immobile" : "Property Data",
     propertyDataDesc: isItalian
       ? "Inserisci le informazioni per generare titoli ottimizzati"
@@ -216,21 +212,27 @@ export default function TitlesPage() {
   const [result, setResult] = useState<TitlesResponse | null>(null);
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   const generateMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await fetch("/api/generate-titles", {
+      const res = await fetchApi<TitlesResponse>("/api/generate-titles", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
-      const json = await response.json();
-
-      if (!response.ok) {
-        throw new Error(json.error || t.generateError);
+      if (!res.success) {
+        const err = new Error(res.message || res.error || t.generateError) as Error & { status?: number };
+        err.status = res.status;
+        throw err;
       }
-      
-      return json as TitlesResponse;
+      return res.data as TitlesResponse;
     },
     onSuccess: (data) => {
       setResult(data);
@@ -239,11 +241,15 @@ export default function TitlesPage() {
         description: t.successDesc,
       });
     },
-    onError: (error: Error) => {
-      const friendly = handleAPIError(error, t.generateError);
+    onError: (error: Error & { status?: number }) => {
+      const fail = apiFailureToast(feedbackLocale, "titleGenerator", {
+        status: error.status,
+        message: error.message,
+        error: error.message,
+      }, t.generateError);
       toast({
-        title: t.errorTitle,
-        description: friendly,
+        title: fail.title,
+        description: fail.description,
         variant: "destructive",
       });
     },
@@ -253,20 +259,14 @@ export default function TitlesPage() {
     e.preventDefault();
     
     if (!formData.localita || formData.localita.length < 2) {
-      toast({
-        title: t.locationRequired,
-        description: t.locationRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "titleGenerator", t.locationRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
     if (!formData.puntiChiave || formData.puntiChiave.length < 10) {
-      toast({
-        title: t.pointsRequired,
-        description: t.pointsRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "titleGenerator", t.pointsRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
@@ -282,12 +282,9 @@ export default function TitlesPage() {
         description: t.copiedDesc,
       });
       setTimeout(() => setCopiedTitle(null), 2000);
-    } catch (err) {
-      toast({
-        title: t.errorTitle,
-        description: t.copyFailedDesc,
-        variant: "destructive",
-      });
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, "titleGenerator", t.copyFailedDesc);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -321,64 +318,28 @@ export default function TitlesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                <Home className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {t.appName}
-                </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t.headerLabel}</p>
-              </div>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full"
-              data-testid="button-theme-toggle"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/dashboard")}
-              className="gap-2"
-              data-testid="button-back-dashboard"
-              aria-label={t.backToDashboard}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t.backToDashboard}
-            </Button>
-          </div>
-        </div>
-      </header>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back-dashboard"
+      >
+        <span aria-hidden>←</span>
+        {t.backToDashboard}
+      </Link>
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-4xl font-bold">
-              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                {t.heroTitle}
-              </span>
-            </h1>
-            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg shadow-green-500/25">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              {t.subtitleBadge}
-            </Badge>
-          </div>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            {t.heroDescription}
-          </p>
-        </div>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroDescription}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
+            <TrendingUp className="h-3 w-3 mr-1" />
+            {t.subtitleBadge}
+          </Badge>
+        }
+      />
 
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -664,7 +625,6 @@ export default function TitlesPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

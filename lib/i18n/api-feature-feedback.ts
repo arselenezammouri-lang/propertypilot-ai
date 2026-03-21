@@ -9,7 +9,11 @@ export type ApiFeatureId =
   | 'leadManager'
   | 'listingsLibrary'
   | 'refineListing'
-  | 'translateListing';
+  | 'translateListing'
+  | 'titleGenerator'
+  | 'emotionalListing'
+  | 'socialPosts'
+  | 'hashtagGenerator';
 
 export type ApiFailureInput = {
   status?: number;
@@ -23,6 +27,10 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   listingsLibrary: { it: 'Libreria annunci', en: 'Listing library' },
   refineListing: { it: 'Perfect Again', en: 'Perfect Again' },
   translateListing: { it: 'Traduttore annunci', en: 'Listing translator' },
+  titleGenerator: { it: 'Titoli A/B', en: 'A/B titles' },
+  emotionalListing: { it: 'Annuncio emozionale', en: 'Emotional listing' },
+  socialPosts: { it: 'Post social', en: 'Social posts' },
+  hashtagGenerator: { it: 'Hashtag', en: 'Hashtags' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

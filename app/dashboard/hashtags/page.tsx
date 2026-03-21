@@ -12,6 +12,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Hash, 
   Zap,
@@ -54,11 +64,13 @@ interface FormData {
 export default function HashtagsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
-    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    backToDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
     heroTitle: isItalian ? "Hashtag AI Generator" : "Hashtag AI Generator",
     heroSubtitle: isItalian
       ? "Genera hashtag ottimizzati per massimizzare il reach dei tuoi post"
@@ -104,20 +116,13 @@ export default function HashtagsPage() {
     usaMarketMsg: isItalian
       ? "Seleziona \"USA\" come mercato per generare hashtag americani"
       : "Select \"USA\" as market to generate American hashtags",
-    // toasts
-    fieldRequired: isItalian ? "Campo obbligatorio" : "Required field",
     propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile (min 3 caratteri)" : "Enter property type (min 3 characters)",
     locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
     strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
     priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
-    limitTitle: isItalian ? "Limite raggiunto" : "Limit reached",
-    limitDefault: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    accessDeniedDesc: isItalian ? "Devi effettuare il login per usare questa funzione." : "You must log in to use this feature.",
-    successTitle: isItalian ? "Hashtag generati con successo!" : "Hashtags generated successfully!",
+    successTitle: isItalian ? "Hashtag — set pronto" : "Hashtags — set ready",
     successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
     successDesc: isItalian ? "Oltre 50 hashtag pronti per i tuoi post" : "Over 50 hashtags ready for your posts",
-    errorTitle: isItalian ? "Errore" : "Error",
     errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
     copied: isItalian ? "Copiato!" : "Copied!",
     copiedDesc: isItalian ? "Hashtag copiati negli appunti" : "Hashtags copied to clipboard",
@@ -172,19 +177,23 @@ export default function HashtagsPage() {
 
   const handleSubmit = async () => {
     if (!formData.propertyType.trim() || formData.propertyType.length < 3) {
-      toast({ title: t.fieldRequired, description: t.propertyTypeRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.propertyTypeRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.location.trim()) {
-      toast({ title: t.fieldRequired, description: t.locationRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.locationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.strengths.trim() || formData.strengths.length < 10) {
-      toast({ title: t.fieldRequired, description: t.strengthsRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.strengthsRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.price.trim()) {
-      toast({ title: t.fieldRequired, description: t.priceRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.priceRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -192,32 +201,32 @@ export default function HashtagsPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/generate-hashtags", {
+      const res = await fetchApi<HashtagResult>("/api/generate-hashtags", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({ title: t.limitTitle, description: data.message || t.limitDefault, variant: "destructive" });
-          return;
-        }
-        if (response.status === 401) {
-          toast({ title: t.accessDenied, description: t.accessDeniedDesc, variant: "destructive" });
-          return;
-        }
-        throw new Error(data.error || t.errorGeneric);
+      if (!res.success) {
+        const fail = apiFailureToast(feedbackLocale, "hashtagGenerator", {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.errorGeneric);
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as HashtagResult;
       setResult(data);
       setActiveTab("virali");
       toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: "destructive" });
+      const net = networkFailureToast(feedbackLocale, "hashtagGenerator");
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -230,7 +239,8 @@ export default function HashtagsPage() {
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: "destructive" });
+      const c = clipboardFailureToast(feedbackLocale, "hashtagGenerator", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -314,31 +324,36 @@ export default function HashtagsPage() {
     );
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.backToDashboard}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
-          <Hash className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-            {t.heroTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.heroSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">
-          {t.heroBadge}
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backToDashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 text-xs">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-yellow-200 dark:border-yellow-800">
@@ -587,6 +602,6 @@ export default function HashtagsPage() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

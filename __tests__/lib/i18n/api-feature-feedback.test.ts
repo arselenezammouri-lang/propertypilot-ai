@@ -56,4 +56,9 @@ describe('B1 feature labels', () => {
     const r = apiFailureToast('it', 'listingsLibrary', { status: 500 }, 'fallback');
     expect(r.title).toContain('Libreria annunci');
   });
+
+  it('includes title generator label', () => {
+    const r = apiFailureToast('en', 'titleGenerator', { status: 429 }, 'x');
+    expect(r.title).toContain('A/B titles');
+  });
 });

@@ -25,10 +25,10 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | Pilota A1–A4 |
 | 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | OK | Shell + `refineListing` toast + `fetchApi` |
 | 5 | `/dashboard/translate` | Contenuti | Starter | No | OK | Shell dashboard + `translateListing` toast + `fetchApi` |
-| 6 | `/dashboard/titles` | Contenuti | Starter | No | Medio | **B1** |
-| 7 | `/dashboard/emotional-listing` | Contenuti | Starter | No | Medio | B1 |
-| 8 | `/dashboard/social-posts` | Contenuti | Starter | No | Medio | B1 |
-| 9 | `/dashboard/hashtags` | Contenuti | Starter | No | Medio | B1 |
+| 6 | `/dashboard/titles` | Contenuti | Starter | No | OK | Shell + `titleGenerator` + `fetchApi` |
+| 7 | `/dashboard/emotional-listing` | Contenuti | Starter | No | OK | Shell + `emotionalListing` |
+| 8 | `/dashboard/social-posts` | Contenuti | Starter | No | OK | Shell + `socialPosts` |
+| 9 | `/dashboard/hashtags` | Contenuti | Starter | No | OK | Shell + `hashtagGenerator` |
 | 10 | `/dashboard/followup-emails` | Contenuti | Pro | No | Medio | B1 / B5 |
 | 11 | `/dashboard/video-scripts` | Contenuti | Pro | No | Medio | B1 / B5 |
 | 12 | `/dashboard/agent-bio` | Contenuti | Pro | No | Medio | B1 |

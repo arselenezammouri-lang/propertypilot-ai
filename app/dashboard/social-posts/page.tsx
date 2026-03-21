@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +10,17 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
-import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { Badge } from "@/components/ui/badge";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
-  Home, 
-  ArrowLeft, 
   Instagram, 
   Facebook, 
   Hash, 
@@ -29,12 +35,9 @@ import {
   AlignCenter,
   AlignJustify,
   Loader2,
-  Sun,
-  Moon
 } from "lucide-react";
 import { SiTiktok } from "react-icons/si";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 
 type Tono = "professionale" | "emotivo" | "luxury";
 type Lunghezza = "breve" | "standard" | "lunga";
@@ -111,31 +114,27 @@ const LUNGHEZZA_OPTIONS = [
 ];
 
 export default function SocialPostsPage() {
-  const router = useRouter();
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme();
   const { locale } = useLocaleContext();
-  const { handleAPIError } = useAPIErrorHandler();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const t = {
     generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    successTitle: isItalian ? "Post generati con successo!" : "Posts generated successfully!",
+    successTitle: isItalian ? "Post social — contenuti pronti" : "Social posts — content ready",
     successDesc: isItalian
       ? "I tuoi contenuti social sono pronti per essere copiati."
       : "Your social contents are ready to be copied.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    titleRequired: isItalian ? "Titolo richiesto" : "Title required",
     titleRequiredDesc: isItalian
       ? "Inserisci un titolo di almeno 5 caratteri"
       : "Enter a title with at least 5 characters",
-    descriptionRequired: isItalian ? "Descrizione richiesta" : "Description required",
     descriptionRequiredDesc: isItalian
       ? "Inserisci una descrizione di almeno 20 caratteri"
       : "Enter a description with at least 20 characters",
     copied: isItalian ? "Copiato!" : "Copied!",
     copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
     copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    headerLabel: isItalian ? "Social Posts" : "Social Posts",
+    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
     heroTitle: isItalian ? "Generatore Post Social" : "Social Post Generator",
     heroSubtitle: isItalian
       ? "Crea contenuti virali per Instagram, Facebook e TikTok in pochi secondi"
@@ -191,20 +190,27 @@ export default function SocialPostsPage() {
   const [result, setResult] = useState<SocialPostResponse | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   const generateMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await fetch("/api/generate-social-post", {
+      const res = await fetchApi<SocialPostResponse>("/api/generate-social-post", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || t.generateError);
+      if (!res.success) {
+        const err = new Error(res.message || res.error || t.generateError) as Error & { status?: number };
+        err.status = res.status;
+        throw err;
       }
-      
-      return response.json() as Promise<SocialPostResponse>;
+      return res.data as SocialPostResponse;
     },
     onSuccess: (data) => {
       setResult(data);
@@ -213,11 +219,15 @@ export default function SocialPostsPage() {
         description: t.successDesc,
       });
     },
-    onError: (error: Error) => {
-      const friendly = handleAPIError(error, t.generateError);
+    onError: (error: Error & { status?: number }) => {
+      const fail = apiFailureToast(feedbackLocale, "socialPosts", {
+        status: error.status,
+        message: error.message,
+        error: error.message,
+      }, t.generateError);
       toast({
-        title: t.errorTitle,
-        description: friendly,
+        title: fail.title,
+        description: fail.description,
         variant: "destructive",
       });
     },
@@ -227,20 +237,14 @@ export default function SocialPostsPage() {
     e.preventDefault();
     
     if (!formData.titolo || formData.titolo.length < 5) {
-      toast({
-        title: t.titleRequired,
-        description: t.titleRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "socialPosts", t.titleRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
     if (!formData.descrizione || formData.descrizione.length < 20) {
-      toast({
-        title: t.descriptionRequired,
-        description: t.descriptionRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "socialPosts", t.descriptionRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
@@ -256,12 +260,9 @@ export default function SocialPostsPage() {
         description: t.copiedDesc,
       });
       setTimeout(() => setCopiedField(null), 2000);
-    } catch (err) {
-      toast({
-        title: t.errorTitle,
-        description: t.copyFailedDesc,
-        variant: "destructive",
-      });
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, "socialPosts", t.copyFailedDesc);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -272,58 +273,27 @@ export default function SocialPostsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                <Home className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  PropertyPilot AI
-                </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t.headerLabel}</p>
-              </div>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full"
-              data-testid="button-theme-toggle"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/dashboard")}
-              className="gap-2"
-              data-testid="button-back-dashboard"
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Dashboard
-            </Button>
-          </div>
-        </div>
-      </header>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back-dashboard"
+      >
+        <span aria-hidden>←</span>
+        {t.backDashboard}
+      </Link>
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">
-            <span className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent">
-              {t.heroTitle}
-            </span>
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            {t.heroSubtitle}
-          </p>
-        </div>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-pink-500/15 text-pink-100 border border-pink-500/30 text-xs">
+            IG · FB · TikTok
+          </Badge>
+        }
+      />
 
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="space-y-6">
@@ -712,7 +682,6 @@ export default function SocialPostsPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }
