@@ -10,7 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import {
   Dialog,
   DialogContent,
@@ -116,6 +118,7 @@ export default function LeadsPage() {
   const router = useRouter();
   const { locale } = useLocaleContext();
   const { toast } = useToast();
+  const usage = useUsageLimits();
   const isItalian = locale === "it";
   const statusConfig = getStatusConfig(isItalian);
   const priorityConfig = getPriorityConfig(isItalian);
@@ -162,6 +165,9 @@ export default function LeadsPage() {
     leadManagerDesc: isItalian
       ? "Questa funzionalita e disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il CRM completo con pipeline, automazioni e AI."
       : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full CRM with pipeline, automations, and AI.",
+    pageSubtitle: isItalian
+      ? "CRM con pipeline, filtri e insight AI: uno spazio unico per qualificare e seguire ogni lead."
+      : "CRM with pipeline, filters, and AI insights — one place to qualify and follow every lead.",
     searchPlaceholder: isItalian ? "Cerca per nome, email o telefono..." : "Search by name, email, or phone...",
     noteAdded: isItalian ? "Nota aggiunta" : "Note added",
     noteSaved: isItalian ? "La nota e stata salvata" : "The note has been saved",
@@ -591,38 +597,39 @@ export default function LeadsPage() {
     lost: leads.filter(l => l.status === "lost").length,
   };
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 animate-fade-in-down backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard" className="flex items-center text-muted-foreground hover:text-foreground transition-colors">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">Dashboard</span>
-              </Link>
-              <Separator orientation="vertical" className="h-6" />
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg">
-                  <Users className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 bg-clip-text text-transparent">
-                    Lead Manager + AI
-                  </h1>
-                  <p className="text-xs text-muted-foreground">CRM 2.5 - Smart Lead Capture + AI</p>
-                </div>
-              </div>
-            </div>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
+      <DashboardPageShell>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6 text-sm"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+        </Link>
+
+        <DashboardPageHeader
+          variant="dark"
+          title={t.leadManagerTitle}
+          subtitle={t.pageSubtitle}
+          planBadge={{ label: planBadgeLabel, variant: "outline" }}
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
               <Link href="/dashboard/leads/pipeline" aria-label="Switch to pipeline view">
                 <Button
                   aria-label="Switch to pipeline view"
                   variant="outline"
                   size="sm"
-                  className="border-violet-500/50 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-950/30"
+                  className="border-violet-500/50 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-950/30 min-h-9"
                   data-testid="button-pipeline-view"
                 >
                   <Kanban className="h-4 w-4 mr-2" />
@@ -634,6 +641,7 @@ export default function LeadsPage() {
                 variant="ghost"
                 size="sm"
                 disabled={refreshing}
+                className="min-h-9"
                 data-testid="button-refresh-leads"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
@@ -641,18 +649,16 @@ export default function LeadsPage() {
               <Button
                 onClick={() => setIsAddModalOpen(true)}
                 aria-label="Add new lead"
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white min-h-9"
                 data-testid="button-add-lead"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">{t.newLead}</span>
               </Button>
-            </nav>
-          </div>
-        </div>
-      </header>
+            </div>
+          }
+        />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProFeaturePaywall
           title={t.leadManagerTitle}
           description={t.leadManagerDesc}
@@ -954,7 +960,7 @@ export default function LeadsPage() {
           </CardContent>
         </Card>
         </ProFeaturePaywall>
-      </div>
+      </DashboardPageShell>
 
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent className="sm:max-w-[500px]">

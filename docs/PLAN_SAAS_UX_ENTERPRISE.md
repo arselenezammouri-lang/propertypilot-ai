@@ -40,7 +40,15 @@ Un prodotto che sia:
 
 **Definition of done:** dashboard home + 2 pagine pilota migrano al nuovo header e stati; zero regressioni i18n su stringhe toccate.
 
-**Stato implementazione (avvio):** componente `DashboardPageHeader` (`components/dashboard-page-header.tsx`) in uso sulla **home dashboard** (`/dashboard`) con titolo, sottotitolo valore, badge piano e CTA “Nuovo annuncio”. Prossimo: migrare 2 pagine pilota (es. Perfect Copy, CRM leads).
+**Stato implementazione:**
+
+- `DashboardPageHeader` (`components/dashboard-page-header.tsx`) — varianti `dark` / `light` per shell dashboard vs pagine con sfondo chiaro.
+- `DashboardPageShell` (`components/dashboard-page-shell.tsx`) — larghezza e padding verticali coerenti per le pagine tool.
+- **A2 (parziale):** utility `.dashboard-page-prose` in `app/globals.css` per body copy leggibile.
+- **A3 (parziale):** `ToolPageTwoColumnSkeleton` in `components/ui/skeleton-loaders.tsx` (layout form + area risultati).
+- **Pagine pilota:** `/dashboard/perfect-copy` e `/dashboard/leads` allineate a header + shell + badge piano (da `useUsageLimits`).
+
+**Prossimo:** A4 (toast / messaggi per feature), A5 (sidebar per job-to-be-done), oppure estendere header + shell ad altre route dashboard.
 
 ---
 

@@ -1,7 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ToolPageTwoColumnSkeleton } from '@/components/ui/skeleton-loaders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +64,22 @@ export default function PerfectCopyPage() {
   const isItalian = locale === 'it';
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
+  const usage = useUsageLimits();
+  const [pageReady, setPageReady] = useState(false);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setPageReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? 'Agency'
+      : usage.plan === 'pro'
+        ? 'Pro'
+        : usage.plan === 'starter'
+          ? 'Starter'
+          : 'Free';
 
   const t = {
     backToDashboard: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
@@ -444,38 +464,31 @@ export default function PerfectCopyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-gray-900 dark:via-amber-950/20 dark:to-orange-950/20">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <Link 
-            href="/dashboard" 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
-            data-testid="link-back-dashboard"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t.backToDashboard}
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 shadow-lg shadow-amber-500/25">
-              <Crown className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h1>
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-                  {t.heroBadge}
-                </Badge>
-              </div>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-        </div>
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="link-back-dashboard"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backToDashboard}
+      </Link>
 
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
+
+      {!pageReady || usage.isLoading ? (
+        <ToolPageTwoColumnSkeleton />
+      ) : (
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <Card className="border-amber-200 dark:border-amber-800/50 shadow-xl sticky top-8">
@@ -797,7 +810,7 @@ export default function PerfectCopyPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </DashboardPageShell>
   );
 }

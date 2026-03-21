@@ -132,6 +132,11 @@
 }
 
 @layer components {
+  /* Dashboard tool pages — vertical rhythm (Fase A2) */
+  .dashboard-page-prose {
+    @apply text-[15px] sm:text-base leading-relaxed;
+  }
+
   /* 💎 SILICON VALLEY ELITE DESIGN SYSTEM */
   
   /* 🖤 Elite Card - Nero assoluto con bordi sottili */
