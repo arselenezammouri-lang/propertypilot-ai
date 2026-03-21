@@ -65,7 +65,9 @@ Un prodotto che sia:
 
 **Fase B4 (completata):** `billing`, `packages`, `referral` — shell + header + badge piano; banner trust Stripe (`billing.stripeTrust`); toast con `billingSubscription` / `premiumPackages` / `referralProgram`; referral carica codice/link da `GET /api/referral`.
 
-**Prossimo:** B5 comunicazioni o audit Fase 0 (componenti condivisi).
+**Fase B5 (completata — canali & integrazioni):** `agency-assistant` (chat assistente: shell, header, `useUsageLimits`, `fetchApi` + toast `agencyAssistantChat`; fix paywall: piano da usage, loading gate); `crm/settings` (API lead capture + auto follow-up: shell, header, toast `crmLeadCapture` / validazione / clipboard).
+
+**Prossimo:** B6 impostazioni (`settings/*`, `agency-branding`) o audit Fase 0 (componenti condivisi).
 
 ---
 

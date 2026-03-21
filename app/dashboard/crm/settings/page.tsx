@@ -48,6 +48,14 @@ import Link from 'next/link';
 import { getBaseUrl } from '@/lib/env';
 import { fetchApi } from '@/lib/api/client';
 import type { UserApiKey, InsertUserApiKey, LeadMarket } from '@/lib/types/database.types';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 
 interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
   api_key: string;
@@ -56,8 +64,10 @@ interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
 export default function CRMSettingsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { plan, isLoading: planLoading } = useUsageLimits();
 
   const t = {
     pageTitle: "CRM Settings",
@@ -179,7 +189,10 @@ export default function CRMSettingsPage() {
       toast({ title: t.keyCreatedTitle, description: t.keyCreatedDesc });
     },
     onError: (error: Error) => {
-      toast({ title: isItalian ? 'Errore' : 'Error', description: error.message, variant: 'destructive' });
+      toast({
+        variant: 'destructive',
+        ...apiFailureToast(feedbackLocale, 'crmLeadCapture', {}, error.message),
+      });
     }
   });
 
@@ -195,7 +208,13 @@ export default function CRMSettingsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/crm/api-keys'] });
       toast({ title: t.keyUpdated });
-    }
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: 'destructive',
+        ...apiFailureToast(feedbackLocale, 'crmLeadCapture', {}, error.message),
+      });
+    },
   });
 
   const deleteKeyMutation = useMutation({
@@ -210,22 +229,39 @@ export default function CRMSettingsPage() {
       setKeyToDelete(null);
     },
     onError: (error: Error) => {
-      toast({ title: isItalian ? 'Errore' : 'Error', description: error.message, variant: 'destructive' });
+      toast({
+        variant: 'destructive',
+        ...apiFailureToast(feedbackLocale, 'crmLeadCapture', {}, error.message),
+      });
     }
   });
 
   const copyToClipboard = async (text: string, keyId?: string) => {
-    await navigator.clipboard.writeText(text);
-    if (keyId) {
-      setCopiedKeyId(keyId);
-      setTimeout(() => setCopiedKeyId(null), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      if (keyId) {
+        setCopiedKeyId(keyId);
+        setTimeout(() => setCopiedKeyId(null), 2000);
+      }
+      toast({ title: t.copied });
+    } catch {
+      toast({
+        variant: 'destructive',
+        ...clipboardFailureToast(
+          feedbackLocale,
+          'crmLeadCapture',
+          isItalian ? 'Impossibile copiare negli appunti.' : 'Could not copy to clipboard.'
+        ),
+      });
     }
-    toast({ title: t.copied });
   };
 
   const handleCreateKey = () => {
     if (!newKeyName.trim()) {
-      toast({ title: t.keyNameRequired, variant: 'destructive' });
+      toast({
+        variant: 'destructive',
+        ...validationToast(feedbackLocale, 'crmLeadCapture', t.keyNameRequired),
+      });
       return;
     }
     createKeyMutation.mutate({
@@ -330,29 +366,39 @@ export default function CRMSettingsPage() {
   const apiKeys = apiKeysData?.apiKeys || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <Link href="/dashboard/leads">
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back" aria-label="Back">
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex flex-wrap items-center gap-3">
+            <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
+              {t.pageTitle}
+            </span>
+            <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0 uppercase text-[10px] tracking-wider">
+              {t.pageBadge}
+            </Badge>
+          </span>
+        }
+        titleDataTestId="heading-crm-settings"
+        subtitle={t.pageSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: 'secondary' } : undefined
+        }
+        actions={
+          <Link href="/dashboard/leads" aria-label={isItalian ? 'Indietro' : 'Back'}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-11 min-h-11 w-11 touch-manipulation text-white/80 hover:text-white hover:bg-white/10"
+              data-testid="button-back"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                {t.pageTitle}
-              </h1>
-              <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0">
-                {t.pageBadge}
-              </Badge>
-            </div>
-            <p className="text-slate-400 mt-1">
-              {t.pageSubtitle}
-            </p>
-          </div>
-        </div>
+        }
+      />
 
+      <div className="max-w-5xl mx-auto w-full">
         <Card className="bg-gradient-to-br from-violet-950/50 via-purple-950/30 to-fuchsia-950/50 border-violet-500/30 mb-6">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -722,6 +768,6 @@ export default function CRMSettingsPage() {
           </AlertDialogContent>
         </AlertDialog>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

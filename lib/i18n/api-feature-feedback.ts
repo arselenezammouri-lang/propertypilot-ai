@@ -32,7 +32,9 @@ export type ApiFeatureId =
   | 'mandateAutopilot'
   | 'billingSubscription'
   | 'premiumPackages'
-  | 'referralProgram';
+  | 'referralProgram'
+  | 'agencyAssistantChat'
+  | 'crmLeadCapture';
 
 export type ApiFailureInput = {
   status?: number;
@@ -69,6 +71,8 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   billingSubscription: { it: 'Abbonamento', en: 'Subscription' },
   premiumPackages: { it: 'Pacchetti premium', en: 'Premium packages' },
   referralProgram: { it: 'Programma referral', en: 'Referral program' },
+  agencyAssistantChat: { it: 'Assistente agenzia', en: 'Agency assistant' },
+  crmLeadCapture: { it: 'Capture lead (sito)', en: 'Lead capture (site)' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

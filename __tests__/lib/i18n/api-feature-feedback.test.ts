@@ -96,4 +96,11 @@ describe('B1 feature labels', () => {
       'Subscription'
     );
   });
+
+  it('includes B5 communication labels', () => {
+    expect(apiFailureToast('it', 'agencyAssistantChat', { status: 429 }, 'x').title).toContain(
+      'Assistente'
+    );
+    expect(apiFailureToast('en', 'crmLeadCapture', { status: 403 }, 'x').title).toContain('Lead capture');
+  });
 });

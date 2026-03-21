@@ -43,12 +43,12 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | Shell + header + `leadPipeline` toast (B2) |
 | 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | OK | Shell + header + `leadDetail` toast (B2) |
 | 23 | `/dashboard/crm/automations` | Lead / CRM | Pro | No | OK | Regole if/then CRM; shell + toast `crmAutomationRules`; accoppiata a `/dashboard/automations` |
-| 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | Medio | API keys / capture — documentare piano in matrice Stripe |
+| 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | OK | B5: shell + header + `crmLeadCapture` (API keys, embed, auto follow-up) |
 | 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | OK | Shell + header + `useUsageLimits` + toast (`predatorMap`); mappa in card full-bleed |
 | 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | OK | Shell + header + `leadScoring` toast (B2) |
 | 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | OK | Workflow follow-up/reminder/contenuti; distinto dalle regole CRM; shell + `workflowAutomations` |
 | 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
-| 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | Medio | Copy piano: “Pro+” in UI vs “Pro” in features — allineare |
+| 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | OK | B5: shell + header + `agencyAssistantChat`; piano da `useUsageLimits`; paywall dopo load |
 | 30 | `/dashboard/packages` | Brand / commercio | Free | No | OK | B4: shell, header, Stripe trust, toast `premiumPackages` |
 | 31 | `/dashboard/referral` | Brand | Free | No | OK | B4: shell, header, `GET /api/referral`, toast `referralProgram` |
 | 32 | `/dashboard/billing` | Account | Free | No | OK | B4: shell, header, Stripe trust, toast `billingSubscription` |
@@ -64,16 +64,19 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
    Completata fino a `pdf`.
 
 2. **B2 — CRM (avviata)**  
-   **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`). **Prossimo:** altre route CRM / B3.
+   **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`).
 
 3. **B3 — Prospecting & map**  
-   **Fatto:** B1–B3 + B4 (`billing`, `packages`, `referral`). **Prossimo:** B5 comunicazioni o audit Fase 0.
+   **Fatto:** `analyze`, `scraper`, `auditor`, `prospecting`, `map`, `opportunities`, `autopilot`.
 
 4. **B4 — Billing & growth**  
    **Fatto:** `billing`, `packages`, `referral`.
 
-5. **B6 — Settings**  
-   `settings/workspace`, `settings/notifications`, `agency-branding`.
+5. **B5 — Comunicazioni & capture**  
+   **Fatto:** `agency-assistant`, `crm/settings`.
+
+6. **B6 — Settings**  
+   `settings/workspace`, `settings/notifications`, `agency-branding`. **Prossimo:** B6 o audit Fase 0.
 
 ---
 
