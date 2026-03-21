@@ -58,6 +58,7 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 
 ## 📚 Documentazione
 
+- [Design & UX (locale, benchmark internazionali)](./DESIGN_UX_LOCALE.md) - Principi enterprise, checklist per feature, allineamento al design system
 - [API Documentation](./docs/API.md) - Documentazione completa API
 - [Architecture](./docs/ARCHITECTURE.md) - Architettura sistema
 - [Setup Guide](./docs/SETUP.md) - Guida setup e deployment
