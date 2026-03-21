@@ -38,7 +38,9 @@ See `.env.example` section **EDGE / ANTI-ABUSE** and **Turnstile**.
 
 1. ~~**Cloudflare Turnstile on `/auth/login` and `/auth/signup`**~~ — **Done** in-app; add keys on Vercel + Cloudflare dashboard.
 2. **Stricter CSP** — Report-Only is **on in production** via `next.config.mjs`. Next: set `CSP_REPORT_URI`, review violations, then switch to enforcing CSP with nonces where possible.
-3. **Central API wrapper** — `withApiSecurity` + body preflight + Origin + `no-store` in `apiWrapper` (**done**). Next: structured audit sink (e.g. external log drain), optional `report-to` for CSP.
-4. **Redis / Upstash rate limit** — replace or augment edge in-memory limits for accurate counts across all instances (especially for AI-heavy routes).
-5. **Security headers on API responses** — for sensitive JSON routes, mirror `no-store` and minimal `Cache-Control` (some already set per-route).
-6. **Dependency & secret scanning** — CI job (`npm audit`, GitHub Dependabot, or similar) and periodic key rotation policy.
+3. **Central API wrapper** — `withApiSecurity` + body preflight + Origin + `no-store` in `apiWrapper` (**done**).
+4. **Security audit JSON lines** — `lib/security/security-audit-log.ts`: in production, eventi `edge_bot_block`, `edge_rate_limit`, `origin_rejected_*`, `payload_too_large`, `method_not_allowed` (vedi `SECURITY_AUDIT_*` in `.env.example`). Opzionale: drain log Vercel → SIEM.
+5. **CSP** — optional `report-to` / Reporting API endpoint.
+6. **Redis / Upstash rate limit** — replace or augment edge in-memory limits for accurate counts across all instances (especially for AI-heavy routes).
+7. **Security headers on API responses** — largely covered by `mergeNoStoreHeaders` / `apiWrapper`; review any raw `NextResponse.json` routes.
+8. **Dependency & secret scanning** — CI job (`npm audit`, GitHub Dependabot, or similar) and periodic key rotation policy.

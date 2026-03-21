@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/utils/safe-logger';
+import { logSecurityAudit } from '@/lib/security/security-audit-log';
+import { hashClientIpForAudit } from '@/lib/security/hash-client-ip-audit';
+import { getClientIp } from '@/lib/utils/rate-limit';
 
 export const DEFAULT_MAX_API_BODY_BYTES = 512 * 1024;
 
@@ -88,6 +91,19 @@ export function assertOriginAllowed(
     const trusted = getTrustedApiOrigins(request);
     if (trusted.has(origin)) return null;
     logger.warn('API origin rejected (trusted policy)', { path, origin });
+    logSecurityAudit(
+      {
+        action: 'origin_rejected_trusted',
+        path,
+        method: request.method,
+        status: 403,
+        detail: 'origin_not_trusted',
+      },
+      {
+        origin,
+        ipHash: hashClientIpForAudit(getClientIp(request)),
+      }
+    );
     return NextResponse.json(
       { error: 'Forbidden' },
       { status: 403, headers: { 'Cache-Control': NO_STORE } }
@@ -100,6 +116,19 @@ export function assertOriginAllowed(
     const trusted = getTrustedApiOrigins(request);
     if (trusted.has(origin) || embed.has(origin)) return null;
     logger.warn('API origin rejected (embed policy)', { path, origin });
+    logSecurityAudit(
+      {
+        action: 'origin_rejected_embed',
+        path,
+        method: request.method,
+        status: 403,
+        detail: 'origin_not_embed_allowed',
+      },
+      {
+        origin,
+        ipHash: hashClientIpForAudit(getClientIp(request)),
+      }
+    );
     return NextResponse.json(
       { error: 'Forbidden', code: 'ORIGIN_NOT_ALLOWED' },
       { status: 403, headers: { 'Cache-Control': NO_STORE } }
@@ -137,6 +166,16 @@ export async function assertRequestBodyWithinLimit(
         path,
         maxBytes,
       });
+      logSecurityAudit(
+        {
+          action: 'payload_too_large',
+          path,
+          method: request.method,
+          status: 413,
+          detail: 'content_length',
+        },
+        { ipHash: hashClientIpForAudit(getClientIp(request)) }
+      );
       return NextResponse.json(
         { error: 'Payload too large' },
         { status: 413, headers: { 'Cache-Control': NO_STORE } }
@@ -167,6 +206,16 @@ export async function assertRequestBodyWithinLimit(
       if (total > maxBytes) {
         await reader.cancel().catch(() => {});
         logger.warn('API body rejected: stream exceeds limit', { path, maxBytes });
+        logSecurityAudit(
+          {
+            action: 'payload_too_large',
+            path,
+            method: request.method,
+            status: 413,
+            detail: 'stream',
+          },
+          { ipHash: hashClientIpForAudit(getClientIp(request)) }
+        );
         return NextResponse.json(
           { error: 'Payload too large' },
           { status: 413, headers: { 'Cache-Control': NO_STORE } }
@@ -215,6 +264,15 @@ export function withApiSecurity(handler: ApiHandler, options?: WithApiSecurityOp
 
     if (options?.allowedMethods?.length && !options.allowedMethods.includes(method)) {
       logger.warn('API method not allowed', { path, method });
+      logSecurityAudit(
+        {
+          action: 'method_not_allowed',
+          path,
+          method,
+          status: 405,
+        },
+        { ipHash: hashClientIpForAudit(getClientIp(request)) }
+      );
       return NextResponse.json(
         { error: 'Method not allowed' },
         { status: 405, headers: { 'Cache-Control': NO_STORE } }
