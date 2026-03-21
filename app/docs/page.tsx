@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight } from "lucide-react";
+import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight, Users, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
 
@@ -47,6 +47,44 @@ function getDocSections(it: boolean): DocSection[] {
         title: it ? 'Configura il tuo Workspace' : 'Set up your Workspace',
         description: it ? 'Personalizza la dashboard' : 'Customize your dashboard',
         slug: 'getting-started/workspace-setup',
+      },
+      {
+        id: 'perfect-copy-guide',
+        title: it ? 'Perfect Copy — guida rapida' : 'Perfect Copy — quick guide',
+        description: it
+          ? 'Campi del form, varianti e salvataggio in libreria'
+          : 'Form fields, variants, and saving to your library',
+        slug: 'getting-started/perfect-copy',
+      },
+    ],
+  },
+  {
+    id: 'crm',
+    title: it ? 'CRM & lead' : 'CRM & leads',
+    icon: <Users className="h-5 w-5" />,
+    articles: [
+      {
+        id: 'pipeline-guide',
+        title: it ? 'Pipeline lead (Kanban)' : 'Lead pipeline (Kanban)',
+        description: it
+          ? 'Trascina i lead tra le colonne e aggiorna lo stato'
+          : 'Drag leads between columns to update status',
+        slug: 'crm/pipeline',
+      },
+    ],
+  },
+  {
+    id: 'account',
+    title: it ? 'Account' : 'Account',
+    icon: <CreditCard className="h-5 w-5" />,
+    articles: [
+      {
+        id: 'billing-guide',
+        title: it ? 'Piano e fatturazione' : 'Plan and billing',
+        description: it
+          ? 'Upgrade, portale Stripe e stato abbonamento'
+          : 'Upgrades, Stripe portal, and subscription status',
+        slug: 'account/billing-guide',
       },
     ],
   },

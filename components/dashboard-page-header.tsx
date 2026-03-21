@@ -10,6 +10,8 @@ export type DashboardPageHeaderProps = {
   /** e.g. "free" | "agency" — shown as a subtle plan badge */
   planBadge?: { label: string; variant?: "default" | "secondary" | "outline" };
   actions?: ReactNode;
+  /** Es. pulsante ? → guida contestuale (Fase C2) */
+  contextualHelp?: ReactNode;
   className?: string;
   /**
    * `dark` = testo chiaro su shell dashboard (#050505).
@@ -28,6 +30,7 @@ export function DashboardPageHeader({
   subtitle,
   planBadge,
   actions,
+  contextualHelp,
   className,
   variant = "dark",
 }: DashboardPageHeaderProps) {
@@ -82,8 +85,9 @@ export function DashboardPageHeader({
             </p>
           ) : null}
         </div>
-        {actions ? (
+        {actions || contextualHelp ? (
           <div className="flex flex-shrink-0 flex-wrap items-center gap-2 sm:justify-end [&_button]:min-h-11 [&_button]:touch-manipulation">
+            {contextualHelp}
             {actions}
           </div>
         ) : null}

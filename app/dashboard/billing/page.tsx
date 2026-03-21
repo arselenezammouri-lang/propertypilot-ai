@@ -15,6 +15,7 @@ import { Locale } from '@/lib/i18n/config';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import { apiFailureToast } from '@/lib/i18n/api-feature-feedback';
 
 export default function BillingPage() {
@@ -218,6 +219,7 @@ export default function BillingPage() {
           }
           titleDataTestId="heading-billing"
           subtitle={billingT.subtitle}
+          contextualHelp={<ContextualHelpTrigger docSlug="account/billing-guide" />}
           planBadge={
             !usagePlanLoading
               ? { label: usagePlan.toUpperCase(), variant: 'secondary' }
@@ -321,6 +323,7 @@ export default function BillingPage() {
         }
         titleDataTestId="heading-billing"
         subtitle={billingT.subtitle}
+        contextualHelp={<ContextualHelpTrigger docSlug="account/billing-guide" />}
         planBadge={
           !usagePlanLoading
             ? { label: usagePlan.toUpperCase(), variant: 'secondary' }

@@ -65,6 +65,11 @@ export interface TranslationDictionary {
           workspace: { title: string; description: string; cta: string };
         };
       };
+      contextualHelp: {
+        openGuideAria: string;
+        openGuideTooltip: string;
+        fieldHintAria: string;
+      };
     };
 
   // Auth (Login / Signup)
@@ -592,6 +597,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           },
         },
       },
+      contextualHelp: {
+        openGuideAria: 'Apri la guida in una nuova scheda',
+        openGuideTooltip: 'Apre la documentazione per questa funzione (nuova scheda).',
+        fieldHintAria: 'Suggerimento sul campo',
+      },
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1116,6 +1126,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
             cta: 'Workspace settings',
           },
         },
+      },
+      contextualHelp: {
+        openGuideAria: 'Open the guide in a new tab',
+        openGuideTooltip: 'Opens documentation for this feature (new tab).',
+        fieldHintAria: 'Field hint',
       },
     },
     auth: {

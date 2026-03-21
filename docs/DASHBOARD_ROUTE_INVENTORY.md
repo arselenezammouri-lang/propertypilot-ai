@@ -22,7 +22,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 |---|------|-----------|------------------------|-------------------|----------|------|
 | 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; **C1:** checklist “primi 5 passi” (dismiss + `localStorage`); moduli PRO/AGENCY nascosti lato server per piano |
 | 2 | `/dashboard/listings` | Contenuti | Free | No | OK | `DashboardPageHeader` + shell + `listingsLibrary` toast; CTA “Crea annuncio” in header |
-| 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | Pilota A1–A4 |
+| 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | A1–A4 + **C2:** header `?` → `/docs/getting-started/perfect-copy`; tooltip su caratteristiche e target |
 | 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | OK | Shell + `refineListing` toast + `fetchApi` |
 | 5 | `/dashboard/translate` | Contenuti | Starter | No | OK | Shell dashboard + `translateListing` toast + `fetchApi` |
 | 6 | `/dashboard/titles` | Contenuti | Starter | No | OK | Shell + `titleGenerator` + `fetchApi` |
@@ -40,7 +40,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 18 | `/dashboard/opportunities` | Lead / CRM | Pro ‡ | No | OK | Shell + header + `fetchApi` + toast (`opportunityRadar`) |
 | 19 | `/dashboard/prospecting` | Lead / CRM | Pro | **Sì** | OK | Shell + header + `useUsageLimits` + toast (`prospectingCommand`) |
 | 20 | `/dashboard/leads` | Lead / CRM | Pro | **Sì** | OK | Pilota A1–A4 |
-| 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | Shell + header + `leadPipeline` toast (B2) |
+| 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | B2 + **C2:** header `?` → `/docs/crm/pipeline` |
 | 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | OK | Shell + header + `leadDetail` toast (B2) |
 | 23 | `/dashboard/crm/automations` | Lead / CRM | Pro | No | OK | Regole if/then CRM; shell + toast `crmAutomationRules`; accoppiata a `/dashboard/automations` |
 | 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | OK | B5: shell + header + `crmLeadCapture` (API keys, embed, auto follow-up) |
@@ -51,7 +51,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | OK | B5: shell + header + `agencyAssistantChat`; piano da `useUsageLimits`; paywall dopo load |
 | 30 | `/dashboard/packages` | Brand / commercio | Free | No | OK | B4: shell, header, Stripe trust, toast `premiumPackages` |
 | 31 | `/dashboard/referral` | Brand | Free | No | OK | B4: shell, header, `GET /api/referral`, toast `referralProgram` |
-| 32 | `/dashboard/billing` | Account | Free | No | OK | B4: shell, header, Stripe trust, toast `billingSubscription` |
+| 32 | `/dashboard/billing` | Account | Free | No | OK | B4 + **C2:** header `?` → `/docs/account/billing-guide` |
 | 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | OK | B6: shell + `workspaceModules` toast; trial load fix |
 | 34 | `/dashboard/settings/notifications` | Account | Free | No | OK | B6: shell + `morningIntelNotifications`; `fetchApi` |
 | 35 | `/dashboard/test-error` | — | — | N/A | Debole | Solo dev / test Error Boundary |
@@ -82,7 +82,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- **Fase C2:** help contestuale (link “?” / tooltip su campi complessi).  
+- **Fase C3:** estendere command palette con azioni e link docs utili.  
+- **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel` (Perfect Copy, Pipeline, Billing); docs bilingue in `lib/docs/doc-content.ts`.  
 - Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  
 - Estendere **`api-feature-feedback`** (`ApiFeatureId`) dove manca ancora.  
 - Ridurre **duplicazioni** (due pagine automations, badge PDF vs piano free in features).  

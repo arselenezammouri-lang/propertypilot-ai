@@ -5,6 +5,8 @@ import { useLocale } from '@/lib/i18n/locale-context';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
+import { FieldHelpLabel } from '@/components/field-help-label';
 import { ToolPageTwoColumnSkeleton } from '@/components/ui/skeleton-loaders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -117,6 +119,12 @@ export default function PerfectCopyPage() {
     pricePlaceholder: isItalian ? 'Es: €350.000 - €400.000' : 'e.g. $350,000 - $400,000',
     toneLabel: isItalian ? 'Tono Principale' : 'Main Tone',
     portalLabel: isItalian ? 'Portale Target' : 'Target Portal',
+    featuresHelp: isItalian
+      ? 'Includi metratura, distribuzione, piano, bagno, balcone/terrazzo, anno ristrutturazione, classe energetica: l’AI userà questi dettagli per bullet e titoli credibili.'
+      : 'Include sqm, layout, floor, bathrooms, balcony/terrace, renovation year, energy class — the AI uses these for credible bullets and headlines.',
+    targetHelp: isItalian
+      ? 'Il target orienta tono e promesse: un investitore vuole rendimento e dati; una famiglia vuole spazi e vicinanza a scuole/verde.'
+      : 'Target shapes tone and promises: investors want yield and data; families want space and schools/green nearby.',
     variantsIncluded: isItalian ? '5 Varianti Premium Incluse' : '5 Premium Variants Included',
     variantsDesc: isItalian ? 'Professionale, Emotivo, Breve, SEO e Luxury' : 'Professional, Emotional, Brief, SEO and Luxury',
     generateIdle: isItalian ? 'Genera 5 Varianti' : 'Generate 5 Variants',
@@ -493,6 +501,7 @@ export default function PerfectCopyPage() {
         title={t.heroTitle}
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
             {t.heroBadge}
@@ -575,10 +584,12 @@ export default function PerfectCopyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-amber-500" />
-                    {t.featuresLabel}
-                  </Label>
+                  <FieldHelpLabel help={t.featuresHelp} className="items-center">
+                    <span className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-amber-500" />
+                      {t.featuresLabel}
+                    </span>
+                  </FieldHelpLabel>
                   <Textarea
                     placeholder={t.featuresPlaceholder}
                     value={formData.caratteristiche}
@@ -603,10 +614,12 @@ export default function PerfectCopyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-amber-500" />
-                    {t.targetLabel}
-                  </Label>
+                  <FieldHelpLabel help={t.targetHelp} className="items-center">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-amber-500" />
+                      {t.targetLabel}
+                    </span>
+                  </FieldHelpLabel>
                   <Select
                     value={formData.targetCliente}
                     onValueChange={(value) => setFormData({ ...formData, targetCliente: value })}
