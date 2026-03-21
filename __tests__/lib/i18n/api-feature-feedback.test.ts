@@ -103,4 +103,14 @@ describe('B1 feature labels', () => {
     );
     expect(apiFailureToast('en', 'crmLeadCapture', { status: 403 }, 'x').title).toContain('Lead capture');
   });
+
+  it('includes B6 settings labels', () => {
+    expect(apiFailureToast('en', 'workspaceModules', { status: 500 }, 'x').title).toContain('Workspace');
+    expect(apiFailureToast('it', 'morningIntelNotifications', { status: 401 }, 'x').title).toContain(
+      'Morning Intel'
+    );
+    expect(apiFailureToast('en', 'agencyBrandingWhiteLabel', { status: 403 }, 'x').title).toContain(
+      'Agency branding'
+    );
+  });
 });

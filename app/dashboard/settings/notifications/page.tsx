@@ -9,6 +9,15 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import {
   ArrowLeft,
   BellRing,
@@ -30,7 +39,9 @@ export default function NotificationsSettingsPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
 
   const t = {
     pageTitle: "AI Morning Intel",
@@ -78,6 +89,9 @@ export default function NotificationsSettingsPage() {
     testSentTitle: isItalian ? "Notifica di prova inviata!" : "Test notification sent!",
     testSentDesc: isItalian ? "Controlla la tua email e WhatsApp" : "Check your email and WhatsApp",
     testError: isItalian ? "Impossibile inviare la notifica di prova" : "Unable to send test notification",
+    testChannelsRequired: isItalian
+      ? "Attiva almeno Email o WhatsApp per inviare una prova."
+      : "Enable at least Email or WhatsApp to send a test.",
   };
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -90,20 +104,31 @@ export default function NotificationsSettingsPage() {
   });
 
   useEffect(() => {
-    fetchSettings();
+    void fetchSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch("/api/settings/notifications");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setSettings(data.data);
-        }
+      const res = await fetchApi<NotificationSettings>("/api/settings/notifications");
+      if (res.success && res.data) {
+        setSettings(res.data);
+      } else if (!res.success) {
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            isItalian ? "Impossibile caricare le notifiche." : "Could not load notification settings."
+          ),
+        });
       }
-    } catch (error) {
-      console.error("Error fetching settings:", error);
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setLoading(false);
     }
@@ -112,47 +137,68 @@ export default function NotificationsSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch("/api/settings/notifications", {
+      const res = await fetchApi<unknown>("/api/settings/notifications", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.success) {
         toast({ title: t.savedTitle, description: t.savedDesc });
       } else {
-        toast({ title: t.errorTitle, description: data.error || t.saveError, variant: "destructive" });
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            t.saveError
+          ),
+        });
       }
-    } catch (error) {
-      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handleSendTest = async () => {
+    if (!settings.morning_briefing_email && !settings.morning_briefing_whatsapp) {
+      toast({
+        variant: "destructive",
+        ...validationToast(feedbackLocale, "morningIntelNotifications", t.testChannelsRequired),
+      });
+      return;
+    }
     setSendingTest(true);
     try {
-      const response = await fetch("/api/notifications/test", {
+      const res = await fetchApi<unknown>("/api/notifications/test", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: settings.morning_briefing_email,
           whatsapp: settings.morning_briefing_whatsapp,
         }),
       });
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.success) {
         toast({ title: t.testSentTitle, description: t.testSentDesc });
       } else {
-        toast({ title: t.errorTitle, description: data.error || t.testError, variant: "destructive" });
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            t.testError
+          ),
+        });
       }
-    } catch (error) {
-      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setSendingTest(false);
     }
@@ -160,41 +206,48 @@ export default function NotificationsSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link href="/dashboard/settings/workspace">
-            <Button variant="ghost" size="icon" aria-label="Back">
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <BellRing className="h-8 w-8 shrink-0 text-purple-400" aria-hidden />
+            <span>{t.pageTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-notifications-settings"
+        subtitle={t.pageSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+        actions={
+          <Link href="/dashboard/settings/workspace" aria-label={isItalian ? "Indietro" : "Back"}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-11 min-h-11 w-11 touch-manipulation text-white/80 hover:text-white hover:bg-white/10"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <BellRing className="h-8 w-8 text-purple-400" />
-              {t.pageTitle}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {t.pageSubtitle}
-            </p>
-          </div>
-        </div>
+        }
+      />
 
-        {/* Main Settings Card */}
-        <Card className="mb-6">
+      <div className="mx-auto max-w-4xl w-full">
+        <Card className="mb-6 border-white/10 bg-white/[0.03]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <Zap className="h-5 w-5 text-cyan-400" />
               {t.cardTitle}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/60">
               {t.cardDesc}
             </CardDescription>
           </CardHeader>
@@ -315,10 +368,10 @@ export default function NotificationsSettingsPage() {
 
         {/* Preview Card */}
         {settings.morning_briefing_enabled && (
-          <Card>
+          <Card className="border-white/10 bg-white/[0.03]">
             <CardHeader>
-              <CardTitle>{t.previewTitle}</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">{t.previewTitle}</CardTitle>
+              <CardDescription className="text-white/60">
                 {t.previewDesc}
               </CardDescription>
             </CardHeader>
@@ -339,14 +392,18 @@ export default function NotificationsSettingsPage() {
         )}
 
         {/* Save Button */}
-        <div className="flex justify-end gap-3 mt-6">
-          <Button variant="outline" onClick={() => router.back()}>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button
+            variant="outline"
+            className="min-h-11 touch-manipulation border-white/20 bg-transparent text-white hover:bg-white/10"
+            onClick={() => router.back()}
+          >
             {t.cancel}
           </Button>
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
+            className="min-h-11 touch-manipulation bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
           >
             {saving ? (
               <>
@@ -362,7 +419,7 @@ export default function NotificationsSettingsPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 

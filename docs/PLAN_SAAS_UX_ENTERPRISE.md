@@ -67,7 +67,9 @@ Un prodotto che sia:
 
 **Fase B5 (completata — canali & integrazioni):** `agency-assistant` (chat assistente: shell, header, `useUsageLimits`, `fetchApi` + toast `agencyAssistantChat`; fix paywall: piano da usage, loading gate); `crm/settings` (API lead capture + auto follow-up: shell, header, toast `crmLeadCapture` / validazione / clipboard).
 
-**Prossimo:** B6 impostazioni (`settings/*`, `agency-branding`) o audit Fase 0 (componenti condivisi).
+**Fase B6 (completata):** `settings/workspace` (moduli dashboard), `settings/notifications` (AI Morning Intel), `agency-branding` (white-label PDF) — shell + header + badge piano; toast `workspaceModules`, `morningIntelNotifications`, `agencyBrandingWhiteLabel`; workspace: fix trial `enabled` con `inTrial` locale; notifications: `fetchApi` + validazione canali prima del test.
+
+**Prossimo:** audit Fase 0 (componenti condivisi Card/Button/modali) o Fase C (onboarding, help contestuale, ecc.).
 
 ---
 

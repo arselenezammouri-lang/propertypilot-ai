@@ -34,7 +34,10 @@ export type ApiFeatureId =
   | 'premiumPackages'
   | 'referralProgram'
   | 'agencyAssistantChat'
-  | 'crmLeadCapture';
+  | 'crmLeadCapture'
+  | 'workspaceModules'
+  | 'morningIntelNotifications'
+  | 'agencyBrandingWhiteLabel';
 
 export type ApiFailureInput = {
   status?: number;
@@ -73,6 +76,9 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   referralProgram: { it: 'Programma referral', en: 'Referral program' },
   agencyAssistantChat: { it: 'Assistente agenzia', en: 'Agency assistant' },
   crmLeadCapture: { it: 'Capture lead (sito)', en: 'Lead capture (site)' },
+  workspaceModules: { it: 'Moduli workspace', en: 'Workspace modules' },
+  morningIntelNotifications: { it: 'AI Morning Intel', en: 'AI Morning Intel' },
+  agencyBrandingWhiteLabel: { it: 'Branding agenzia', en: 'Agency branding' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

@@ -7,6 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Building2, 
   Palette,
@@ -42,6 +52,8 @@ export default function AgencyBrandingPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const { plan, isLoading: planLoading } = useUsageLimits();
   const [isLoading, setIsLoading] = useState(true);
 
   const t = {
@@ -80,13 +92,13 @@ export default function AgencyBrandingPage() {
     previewWebsite: isItalian ? "www.agenzia.it" : "www.agency.com",
     previewDesc2: isItalian ? "Splendido appartamento in zona centrale, luminoso e ristrutturato con finiture di pregio. Ideale per famiglie..." : "Splendid apartment in central area, bright and renovated with quality finishes. Ideal for families...",
     brandingConfigured: isItalian ? "Branding configurato - Usa \"White Label\" nella generazione PDF" : "Branding configured - Use \"White Label\" in PDF generation",
-    // toasts
-    required: isItalian ? "Campo obbligatorio" : "Required field",
     agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
     saved: isItalian ? "Branding salvato!" : "Branding saved!",
     savedDesc: isItalian ? "Il profilo della tua agenzia è stato salvato con successo." : "Your agency profile has been saved successfully.",
-    errorTitle: isItalian ? "Errore" : "Error",
     saveError: isItalian ? "Errore nel salvataggio" : "Save error",
+    loadForbidden: isItalian
+      ? "Il branding white-label richiede piano PRO o AGENCY con pagamento attivo."
+      : "White-label branding requires an active PRO or AGENCY plan with confirmed billing.",
   };
   const [isSaving, setIsSaving] = useState(false);
   const [hasExisting, setHasExisting] = useState(false);
@@ -104,34 +116,59 @@ export default function AgencyBrandingPage() {
   });
 
   useEffect(() => {
-    loadBranding();
-  }, []);
-
-  const loadBranding = async () => {
-    try {
-      const response = await fetch("/api/agency-branding");
-      const data = await response.json();
-      
-      if (data.branding) {
-        setFormData({
-          agency_name: data.branding.agency_name || "",
-          logo_url: data.branding.logo_url || "",
-          primary_color: data.branding.primary_color || "#1E3A5F",
-          secondary_color: data.branding.secondary_color || "#60A5FA",
-          accent_color: data.branding.accent_color || "#F59E0B",
-          contact_name: data.branding.contact_name || "",
-          contact_phone: data.branding.contact_phone || "",
-          contact_email: data.branding.contact_email || "",
-          website_url: data.branding.website_url || "",
+    const loadBranding = async () => {
+      try {
+        const res = await fetchApi<{ branding: AgencyBranding | null }>("/api/agency-branding");
+        if (!res.success) {
+          if (res.status === 403) {
+            toast({
+              variant: "destructive",
+              ...premiumFeatureToast(
+                feedbackLocale,
+                "agencyBrandingWhiteLabel",
+                res.message || res.error || t.loadForbidden
+              ),
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              ...apiFailureToast(
+                feedbackLocale,
+                "agencyBrandingWhiteLabel",
+                { status: res.status, message: res.message, error: res.error },
+                isItalian ? "Impossibile caricare il branding." : "Could not load branding."
+              ),
+            });
+          }
+          return;
+        }
+        const branding = res.data?.branding;
+        if (branding) {
+          setFormData({
+            agency_name: branding.agency_name || "",
+            logo_url: branding.logo_url || "",
+            primary_color: branding.primary_color || "#1E3A5F",
+            secondary_color: branding.secondary_color || "#60A5FA",
+            accent_color: branding.accent_color || "#F59E0B",
+            contact_name: branding.contact_name || "",
+            contact_phone: branding.contact_phone || "",
+            contact_email: branding.contact_email || "",
+            website_url: branding.website_url || "",
+          });
+          setHasExisting(true);
+        }
+      } catch {
+        toast({
+          variant: "destructive",
+          ...networkFailureToast(feedbackLocale, "agencyBrandingWhiteLabel"),
         });
-        setHasExisting(true);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error loading branding:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+    void loadBranding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; t/feedback stable enough for toast
+  }, []);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -140,9 +177,8 @@ export default function AgencyBrandingPage() {
   const handleSubmit = async () => {
     if (!formData.agency_name.trim()) {
       toast({
-        title: t.required,
-        description: t.agencyNameRequired,
         variant: "destructive",
+        ...validationToast(feedbackLocale, "agencyBrandingWhiteLabel", t.agencyNameRequired),
       });
       return;
     }
@@ -150,9 +186,8 @@ export default function AgencyBrandingPage() {
     setIsSaving(true);
 
     try {
-      const response = await fetch("/api/agency-branding", {
+      const res = await fetchApi<unknown>("/api/agency-branding", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           logo_url: formData.logo_url || null,
@@ -163,10 +198,28 @@ export default function AgencyBrandingPage() {
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || t.saveError);
+      if (!res.success) {
+        if (res.status === 403) {
+          toast({
+            variant: "destructive",
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "agencyBrandingWhiteLabel",
+              res.message || res.error || t.loadForbidden
+            ),
+          });
+          return;
+        }
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "agencyBrandingWhiteLabel",
+            { status: res.status, message: res.message, error: res.error },
+            t.saveError
+          ),
+        });
+        return;
       }
 
       setHasExisting(true);
@@ -174,11 +227,10 @@ export default function AgencyBrandingPage() {
         title: t.saved,
         description: t.savedDesc,
       });
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: error instanceof Error ? error.message : t.saveError,
         variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "agencyBrandingWhiteLabel"),
       });
     } finally {
       setIsSaving(false);
@@ -187,55 +239,62 @@ export default function AgencyBrandingPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 px-4 max-w-6xl">
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.backToDashboard}
-        </Link>
-      </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 p-2 text-white">
+              <Building2 className="h-8 w-8" aria-hidden />
+            </span>
+            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              {t.pageTitle}
+            </span>
+          </span>
+        }
+        titleDataTestId="heading-agency-branding"
+        subtitle={t.pageSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+        actions={
+          <Link href="/dashboard" className="text-sm text-white/70 hover:text-white">
+            <span className="inline-flex min-h-11 items-center gap-2 touch-manipulation">
+              <ArrowLeft className="h-4 w-4" />
+              {t.backToDashboard}
+            </span>
+          </Link>
+        }
+      />
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white">
-          <Building2 className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            {t.pageTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
+      <div className="mb-6 flex justify-end">
+        <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
           🏢 White Label
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mx-auto grid max-w-6xl w-full grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Building2 className="h-5 w-5 text-indigo-400" />
                 {t.agencyInfoTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.agencyInfoDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label htmlFor="agency_name">{t.agencyNameLabel}</Label>
+                <Label htmlFor="agency_name" className="text-white/90">{t.agencyNameLabel}</Label>
                 <Input
                   id="agency_name"
                   placeholder={t.agencyNamePlaceholder}
@@ -280,13 +339,13 @@ export default function AgencyBrandingPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <User className="h-5 w-5 text-indigo-400" />
                 {t.contactsTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.contactsDesc}
               </CardDescription>
             </CardHeader>
@@ -337,13 +396,13 @@ export default function AgencyBrandingPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Palette className="h-5 w-5 text-indigo-400" />
                 {t.colorsTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.colorsDesc}
               </CardDescription>
             </CardHeader>
@@ -412,7 +471,7 @@ export default function AgencyBrandingPage() {
           <Button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
+            className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
             size="lg"
             data-testid="button-save-branding"
           >
@@ -431,13 +490,13 @@ export default function AgencyBrandingPage() {
         </div>
 
         <div>
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800 sticky top-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-indigo-600" />
+          <Card className="sticky top-4 border border-white/10 bg-white/[0.03] lg:top-24">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Eye className="h-5 w-5 text-indigo-400" />
                 {t.previewTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.previewDesc}
               </CardDescription>
             </CardHeader>
@@ -544,6 +603,6 @@ export default function AgencyBrandingPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

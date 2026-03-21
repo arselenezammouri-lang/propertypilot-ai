@@ -47,13 +47,13 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | OK | Shell + header + `useUsageLimits` + toast (`predatorMap`); mappa in card full-bleed |
 | 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | OK | Shell + header + `leadScoring` toast (B2) |
 | 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | OK | Workflow follow-up/reminder/contenuti; distinto dalle regole CRM; shell + `workflowAutomations` |
-| 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
+| 28 | `/dashboard/agency-branding` | Brand | Pro | No | OK | B6: shell + `agencyBrandingWhiteLabel`; `fetchApi` GET/POST |
 | 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | OK | B5: shell + header + `agencyAssistantChat`; piano da `useUsageLimits`; paywall dopo load |
 | 30 | `/dashboard/packages` | Brand / commercio | Free | No | OK | B4: shell, header, Stripe trust, toast `premiumPackages` |
 | 31 | `/dashboard/referral` | Brand | Free | No | OK | B4: shell, header, `GET /api/referral`, toast `referralProgram` |
 | 32 | `/dashboard/billing` | Account | Free | No | OK | B4: shell, header, Stripe trust, toast `billingSubscription` |
-| 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | Medio | B6; `resolveUiSubscriptionPlan` per founder locale |
-| 34 | `/dashboard/settings/notifications` | Account | Free | No | Medio | B6 |
+| 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | OK | B6: shell + `workspaceModules` toast; trial load fix |
+| 34 | `/dashboard/settings/notifications` | Account | Free | No | OK | B6: shell + `morningIntelNotifications`; `fetchApi` |
 | 35 | `/dashboard/test-error` | — | — | N/A | Debole | Solo dev / test Error Boundary |
 
 ---
@@ -76,7 +76,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
    **Fatto:** `agency-assistant`, `crm/settings`.
 
 6. **B6 — Settings**  
-   `settings/workspace`, `settings/notifications`, `agency-branding`. **Prossimo:** B6 o audit Fase 0.
+   **Fatto:** `settings/workspace`, `settings/notifications`, `agency-branding`. **Prossimo:** audit Fase 0 o Fase C.
 
 ---
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -11,6 +10,13 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { createClient } from "@/lib/supabase/client";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
 import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  premiumFeatureToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 interface WorkspaceModule {
   id: string;
@@ -25,7 +31,9 @@ interface WorkspaceModule {
 export default function WorkspaceSettingsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
 
   const t = {
     loading: isItalian ? "Caricamento impostazioni..." : "Loading settings...",
@@ -78,70 +86,67 @@ export default function WorkspaceSettingsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    loadWorkspaceSettings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
-  }, []);
+    const loadWorkspaceSettings = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
 
-  const loadWorkspaceSettings = async () => {
-    try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
+        if (!user) return;
 
-      // Controlla se è in trial (primi 7 giorni)
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('created_at, subscription_plan')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        const daysSinceSignup = Math.floor(
-          (Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24)
-        );
-        setIsTrial(daysSinceSignup <= 7);
-
-        // Carica moduli abilitati dall'utente
-        const { data: workspace } = await supabase
-          .from('user_workspace_settings')
-          .select('enabled_modules')
-          .eq('user_id', user.id)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('created_at, subscription_plan')
+          .eq('id', user.id)
           .single();
 
-        const enabledModules = workspace?.enabled_modules || [];
+        if (profile) {
+          const daysSinceSignup = Math.floor(
+            (Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24)
+          );
+          const inTrial = daysSinceSignup <= 7;
+          setIsTrial(inTrial);
 
-        // Definisci tutti i moduli
-        const moduleList = [
-          { id: 'scraper', icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'ai_voice', icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: '3d_staging', icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'price_sniper', icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'commercial', icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
-          { id: 'territory_map', icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'smart_briefing', icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'xray_vision', icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'competitor_radar', icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-        ];
+          const { data: workspace } = await supabase
+            .from('user_workspace_settings')
+            .select('enabled_modules')
+            .eq('user_id', user.id)
+            .single();
 
-        const allModules: WorkspaceModule[] = moduleList.map(m => ({
-          id: m.id,
-          name: t.modules[m.id]?.name || m.id,
-          description: t.modules[m.id]?.desc || '',
-          icon: m.icon,
-          requiredPlan: m.requiredPlan,
-          enabled: enabledModules.includes(m.id) || (isTrial && !enabledModules.includes(m.id)),
-          trialEnabled: isTrial,
-        }));
+          const enabledModules = workspace?.enabled_modules || [];
 
-        setModules(allModules);
+          const moduleList = [
+            { id: 'scraper', icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'ai_voice', icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: '3d_staging', icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'price_sniper', icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'commercial', icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
+            { id: 'territory_map', icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'smart_briefing', icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'xray_vision', icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'competitor_radar', icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          ];
+
+          const allModules: WorkspaceModule[] = moduleList.map((m) => ({
+            id: m.id,
+            name: t.modules[m.id]?.name || m.id,
+            description: t.modules[m.id]?.desc || '',
+            icon: m.icon,
+            requiredPlan: m.requiredPlan,
+            enabled: enabledModules.includes(m.id) || (inTrial && !enabledModules.includes(m.id)),
+            trialEnabled: inTrial,
+          }));
+
+          setModules(allModules);
+        }
+      } catch (error) {
+        console.error('[WORKSPACE] Error loading settings:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('[WORKSPACE] Error loading settings:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    void loadWorkspaceSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount + locale for copy
+  }, [locale]);
 
   const handleToggleModule = async (moduleId: string) => {
     const workspaceModule = modules.find((m) => m.id === moduleId);
@@ -172,7 +177,14 @@ export default function WorkspaceSettingsPage() {
         const requiredPlanIndex = planHierarchy.indexOf(workspaceModule.requiredPlan);
 
         if (userPlanIndex < requiredPlanIndex) {
-          toast({ title: t.insufficientPlan, description: t.insufficientPlanDesc(workspaceModule.requiredPlan), variant: "destructive" });
+          toast({
+            variant: "destructive",
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "workspaceModules",
+              t.insufficientPlanDesc(workspaceModule.requiredPlan)
+            ),
+          });
           return;
         }
       }
@@ -210,7 +222,10 @@ export default function WorkspaceSettingsPage() {
       toast({ title: t.moduleUpdated, description: `${workspaceModule.name} ${!workspaceModule.enabled ? t.moduleEnabled : t.moduleDisabled}.` });
     } catch (error) {
       console.error('[WORKSPACE] Error saving:', error);
-      toast({ title: t.errorTitle, description: t.saveError, variant: "destructive" });
+      toast({
+        variant: "destructive",
+        ...apiFailureToast(feedbackLocale, "workspaceModules", {}, t.saveError),
+      });
       // Revert
       setModules((prev) =>
         prev.map((m) =>
@@ -224,43 +239,41 @@ export default function WorkspaceSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
-        <div className="text-center">
-          <Settings className="h-8 w-8 animate-spin text-purple-400 mx-auto mb-4" />
-          <p className="text-gray-400">{t.loading}</p>
-        </div>
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] flex-col items-center justify-center text-white">
+        <Settings className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+        <p className="mt-4 text-sm text-white/60">{t.loading}</p>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/30 to-cyan-500/30 flex items-center justify-center border border-purple-500/50">
-              <Settings className="h-6 w-6 text-purple-400" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">{t.heroTitle}</h1>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-purple-500/50 bg-gradient-to-br from-purple-500/30 to-cyan-500/30">
+              <Settings className="h-6 w-6 text-purple-400" aria-hidden />
+            </span>
+            <span>{t.heroTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-workspace-settings"
+        subtitle={t.heroSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+      />
 
-          {isTrial && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg">
-              <p className="text-sm text-purple-300">
-                🎉 <strong>{t.trialActive}</strong> - {t.trialDesc(7)}
-              </p>
-            </div>
-          )}
+      {isTrial ? (
+        <div className="mb-8 rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 p-4">
+          <p className="text-sm text-purple-200">
+            <strong>{t.trialActive}</strong> — {t.trialDesc(7)}
+          </p>
         </div>
+      ) : null}
 
-        {/* Modules List */}
-        <div className="space-y-4">
+      <div className="mx-auto max-w-5xl w-full space-y-4">
           {modules.map((module) => (
             <Card
               key={module.id}
@@ -312,7 +325,6 @@ export default function WorkspaceSettingsPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
 
         {/* Info Box */}
         <Card className="mt-8 border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
@@ -328,7 +340,7 @@ export default function WorkspaceSettingsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 
