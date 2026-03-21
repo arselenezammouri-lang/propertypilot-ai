@@ -7,6 +7,7 @@ const SKIP_PREFIXES = [
   '/api/stripe/webhook',
   '/api/prospecting/call/webhook',
   '/api/health',
+  '/api/auth/verify-turnstile',
 ] as const;
 
 function shouldSkipApiGuard(pathname: string): boolean {

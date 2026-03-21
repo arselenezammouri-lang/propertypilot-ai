@@ -6,18 +6,19 @@ This document describes **what is implemented in code** and what still belongs a
 
 | Layer | Mechanism | Notes |
 |-------|-----------|--------|
-| **Edge middleware** | Per-IP fixed-window rate limit on `/api/*` | In-memory per server instance. **Skips** `/api/stripe/webhook`, `/api/prospecting/call/webhook`, `/api/health`, and `/api/dev/*` in development. Enable/disable and tune via env (see `.env.example`). |
+| **Edge middleware** | Per-IP fixed-window rate limit on `/api/*` | In-memory per server instance. **Skips** `/api/stripe/webhook`, `/api/prospecting/call/webhook`, `/api/health`, `/api/auth/verify-turnstile`, and `/api/dev/*` in development. Enable/disable and tune via env (see `.env.example`). |
 | **Edge middleware** | User-Agent heuristics | Optional block of empty UA and known scanner/tool patterns. Tuned for noise reduction; false positives possible for custom integrations — use env to relax. |
 | **HTTP headers** | `Permissions-Policy`, `X-Permitted-Cross-Domain-Policies` | Reduces risky browser feature exposure; complements existing headers in `next.config.mjs`. |
 | **API routes** | User + IP limits via `generation_logs` / memory limiters | Already present on many AI endpoints; complements edge limits. |
 | **Auth** | Supabase session refresh in middleware | Dashboard routes require a valid session. |
+| **Auth** | Cloudflare Turnstile (login + signup) | When **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are set, widget + `/api/auth/verify-turnstile` run **before** Supabase. Site key only → **503** (misconfiguration). |
 | **Billing** | Stripe webhook signature verification | Do not expose `STRIPE_WEBHOOK_SECRET`; webhook paths are excluded from generic API throttling. |
 
 ## Recommended platform additions (not optional at scale)
 
 1. **Vercel Firewall / WAF** — fleet-wide rate limits, geo rules, managed rulesets.
-2. **Cloudflare (or similar)** — DDoS, Bot Fight Mode / Bot Management, Turnstile in front of auth.
-3. **Turnstile / hCaptcha** — human attestation on signup, login, or “high cost” forms (optional keys in `.env.example`; UI wiring is a separate task).
+2. **Cloudflare (or similar)** — DDoS, Bot Fight Mode / Bot Management; Turnstile keys are already wired in-app for auth.
+3. **hCaptcha / extra friction** — optional second layer on “high cost” forms only if needed.
 4. **Supabase** — RLS policies, leaked password protection, MFA for admin accounts.
 5. **Secrets** — rotate any key ever pasted in chat; use Vercel env only in production; never commit `.env.local`.
 
@@ -33,7 +34,7 @@ See `.env.example` section **EDGE / ANTI-ABUSE** and **Turnstile**.
 
 ## Suggested implementation backlog (autonomous next steps)
 
-1. **Cloudflare Turnstile on `/auth/login` and `/auth/signup`** — verify `TURNSTILE_SECRET_KEY` server-side before calling Supabase; keep keys in env only.
+1. ~~**Cloudflare Turnstile on `/auth/login` and `/auth/signup`**~~ — **Done** in-app; add keys on Vercel + Cloudflare dashboard.
 2. **Stricter CSP** — start with `Content-Security-Policy-Report-Only`, collect violations, then enforce with nonces for inline scripts Next needs.
 3. **Central API wrapper** — optional `withApiSecurity(handler)` that applies consistent JSON body size limits, origin checks for state-changing routes, and structured audit logging.
 4. **Redis / Upstash rate limit** — replace or augment edge in-memory limits for accurate counts across all instances (especially for AI-heavy routes).

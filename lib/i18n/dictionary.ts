@@ -96,6 +96,10 @@ export interface TranslationDictionary {
       accountCreated: string;
       redirectPayment: string;
       welcomePropertyPilot: string;
+      turnstileRequired: string;
+      turnstileFailed: string;
+      turnstileLoadFailed: string;
+      turnstileMisconfigured: string;
     };
   };
   
@@ -580,6 +584,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         accountCreated: 'Account creato! 🎉',
         redirectPayment: 'Verrai reindirizzato per completare il pagamento.',
         welcomePropertyPilot: 'Benvenuto in PropertyPilot AI!',
+        turnstileRequired: 'Completa il controllo di sicurezza prima di continuare.',
+        turnstileFailed: 'Verifica di sicurezza non riuscita. Riprova.',
+        turnstileLoadFailed: 'Impossibile caricare il controllo di sicurezza. Aggiorna la pagina o riprova più tardi.',
+        turnstileMisconfigured: 'Verifica di sicurezza non configurata correttamente sul server. Contatta il supporto.',
       },
     },
     auraVR: {
@@ -1064,6 +1072,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         accountCreated: 'Account created! 🎉',
         redirectPayment: 'You will be redirected to complete payment.',
         welcomePropertyPilot: 'Welcome to PropertyPilot AI!',
+        turnstileRequired: 'Please complete the security check before continuing.',
+        turnstileFailed: 'Security verification failed. Please try again.',
+        turnstileLoadFailed: 'Could not load the security check. Refresh the page or try again later.',
+        turnstileMisconfigured: 'Security check is misconfigured on the server. Please contact support.',
       },
     },
     auraVR: {
