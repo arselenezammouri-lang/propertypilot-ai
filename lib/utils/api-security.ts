@@ -186,7 +186,7 @@ export async function assertRequestBodyWithinLimit(
     }
   }
 
-  let clone: NextRequest;
+  let clone: Request;
   try {
     clone = request.clone();
   } catch {

@@ -2,6 +2,10 @@ import type { NextRequest } from 'next/server';
 import { checkEdgeRateLimit } from '@/lib/security/edge-rate-limit';
 import { getEdgeClientIp } from '@/lib/security/request-ip';
 import { evaluateBotGuard, parseBotGuardConfig } from '@/lib/security/bot-guard';
+import {
+  getEdgeApiRateLimitParams,
+  isEdgeApiRateLimitEnabled,
+} from '@/lib/security/edge-api-rate-params';
 
 const SKIP_PREFIXES = [
   '/api/stripe/webhook',
@@ -20,29 +24,18 @@ function shouldSkipApiGuard(pathname: string): boolean {
   return false;
 }
 
-export function isEdgeApiRateLimitEnabled(): boolean {
-  if (process.env.EDGE_API_RATE_LIMIT_ENABLED === 'false') return false;
-  if (process.env.EDGE_API_RATE_LIMIT_ENABLED === 'true') return true;
-  return process.env.NODE_ENV === 'production';
-}
-
-export function getEdgeApiRateLimitParams(): { max: number; windowMs: number } {
-  const max = Math.max(10, Number(process.env.EDGE_API_RATE_LIMIT_MAX ?? 180) || 180);
-  const windowMs = Math.max(
-    5000,
-    Number(process.env.EDGE_API_RATE_LIMIT_WINDOW_MS ?? 60_000) || 60_000
-  );
-  return { max, windowMs };
-}
-
 export type ApiGuardFailure =
   | { type: 'bot'; reason: 'empty_ua' | 'scanner_ua' }
   | { type: 'rate'; retryAfterSec: number };
 
 /**
  * Returns null if the request may proceed, or a failure descriptor if it should be blocked.
+ * Rate limit: when `useDistributedRateLimit` is true, skip in-memory check (caller runs Upstash first).
  */
-export function evaluateApiGuard(request: NextRequest): ApiGuardFailure | null {
+export function evaluateApiGuard(
+  request: NextRequest,
+  options?: { skipMemoryRateLimit?: boolean }
+): ApiGuardFailure | null {
   const pathname = request.nextUrl.pathname;
   if (!pathname.startsWith('/api/') || shouldSkipApiGuard(pathname)) {
     return null;
@@ -57,6 +50,10 @@ export function evaluateApiGuard(request: NextRequest): ApiGuardFailure | null {
   }
 
   if (!isEdgeApiRateLimitEnabled()) {
+    return null;
+  }
+
+  if (options?.skipMemoryRateLimit) {
     return null;
   }
 

@@ -25,6 +25,7 @@ Copia da `.env.example` e verifica su **Vercel → Project → Settings → Envi
 | `API_EMBED_ALLOWED_ORIGINS` | Solo se usi **form embed** sul sito del cliente: `https://www.agenzia-cliente.com`. Se vuoto, `/api/public/lead-capture` non applica il vincolo embed. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET_KEY` | Entrambe in produzione per captcha login/signup |
 | `EDGE_API_RATE_LIMIT_*` | Opzionale: tuning rate limit edge |
+| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | **Opzionale ma consigliato** su Vercel multi-replica: stesso limite globale per IP su tutte le istanze (Upstash). Se assenti, resta il limite in-memory per istanza. |
 | `SECURITY_AUDIT_IP_SALT` | Stringa lunga casuale: abilita `ip_hash` negli audit JSON (stesso utente = stesso hash finché non ruoti il salt) |
 | `SECURITY_AUDIT_LOG` | `true` (default in prod) / `false` per disattivare le righe `type":"security_audit"` |
 

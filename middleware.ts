@@ -3,12 +3,48 @@ import { updateSession } from '@/lib/supabase/middleware';
 import { evaluateApiGuard } from '@/lib/security/middleware-api-guard';
 import { hashClientIpForAuditEdge, logSecurityAudit } from '@/lib/security/security-audit-log';
 import { getEdgeClientIp } from '@/lib/security/request-ip';
+import {
+  isUpstashApiRateLimitConfigured,
+  limitApiRequestUpstash,
+} from '@/lib/security/upstash-api-rate-limit';
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (pathname.startsWith('/api/')) {
-    const guard = evaluateApiGuard(request);
+    const useRedis = isUpstashApiRateLimitConfigured();
+    if (useRedis) {
+      const ip = getEdgeClientIp(request);
+      const upstash = await limitApiRequestUpstash(`api:${ip}`);
+      if (!upstash.ok) {
+        const rawIp = ip;
+        const ipHash = await hashClientIpForAuditEdge(
+          rawIp === 'unknown' ? undefined : rawIp
+        );
+        logSecurityAudit(
+          {
+            action: 'edge_rate_limit',
+            path: pathname,
+            method: request.method,
+            status: 429,
+            detail: 'upstash',
+          },
+          { ipHash }
+        );
+        return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            'Retry-After': String(upstash.retryAfterSec),
+          },
+        });
+      }
+    }
+
+    const guard = evaluateApiGuard(request, {
+      skipMemoryRateLimit: useRedis,
+    });
     if (guard) {
       const rawIp = getEdgeClientIp(request);
       const ipHash = await hashClientIpForAuditEdge(
