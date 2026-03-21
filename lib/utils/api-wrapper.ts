@@ -14,8 +14,10 @@ import { formatErrorResponse, toAPIError } from '@/lib/errors/api-errors';
 import { createClient } from '@/lib/supabase/server';
 import { requireActiveSubscription } from './subscription-check';
 import {
+  assertOriginAllowed,
   assertRequestBodyWithinLimit,
   getDefaultMaxApiBodyBytes,
+  mergeNoStoreHeaders,
 } from './api-security';
 
 type Handler = (req: NextRequest, context: HandlerContext) => Promise<NextResponse>;
@@ -58,10 +60,20 @@ export function apiWrapper(
 
       // Verifica metodo HTTP
       if (options.method && method !== options.method) {
-        return NextResponse.json(
-          { error: `Method ${method} not allowed. Use ${options.method}` },
-          { status: 405 }
+        return mergeNoStoreHeaders(
+          NextResponse.json(
+            { error: `Method ${method} not allowed. Use ${options.method}` },
+            { status: 405 }
+          )
         );
+      }
+
+      if (
+        ['POST', 'PUT', 'PATCH'].includes(method) &&
+        options.requireAuth !== false
+      ) {
+        const originReject = assertOriginAllowed(req, 'trusted');
+        if (originReject) return originReject;
       }
 
       // Autenticazione
@@ -75,9 +87,11 @@ export function apiWrapper(
 
           if (authError || !authUser) {
             logger.warn('Unauthorized API request', { path, method });
-            return NextResponse.json(
-              { error: 'Non autorizzato. Effettua il login per continuare.' },
-              { status: 401 }
+            return mergeNoStoreHeaders(
+              NextResponse.json(
+                { error: 'Non autorizzato. Effettua il login per continuare.' },
+                { status: 401 }
+              )
             );
           }
 
@@ -87,9 +101,11 @@ export function apiWrapper(
           };
         } catch (authErr) {
           logger.error('Auth check failed', authErr, { path, method });
-          return NextResponse.json(
-            { error: 'Errore di autenticazione. Riprova più tardi.' },
-            { status: 401 }
+          return mergeNoStoreHeaders(
+            NextResponse.json(
+              { error: 'Errore di autenticazione. Riprova più tardi.' },
+              { status: 401 }
+            )
           );
         }
       }
@@ -112,9 +128,11 @@ export function apiWrapper(
           const validation = options.validateBody(body);
           if (!validation.valid) {
             logger.warn('Invalid request body', { path, method, error: validation.error });
-            return NextResponse.json(
-              { error: validation.error || 'Dati non validi' },
-              { status: 400 }
+            return mergeNoStoreHeaders(
+              NextResponse.json(
+                { error: validation.error || 'Dati non validi' },
+                { status: 400 }
+              )
             );
           }
         }
@@ -126,12 +144,16 @@ export function apiWrapper(
         
         if (!subscriptionCheck.allowed) {
           logger.subscriptionCheck(false, subscriptionCheck.planType || 'free', { path, method });
-          return NextResponse.json(
-            {
-              error: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento attivo.',
-              requiresSubscription: true,
-            },
-            { status: 403 }
+          return mergeNoStoreHeaders(
+            NextResponse.json(
+              {
+                error:
+                  subscriptionCheck.error ||
+                  'Questa funzionalità richiede un abbonamento attivo.',
+                requiresSubscription: true,
+              },
+              { status: 403 }
+            )
           );
         }
 
@@ -145,12 +167,16 @@ export function apiWrapper(
         
         if (!subscriptionCheck.allowed) {
           logger.subscriptionCheck(false, subscriptionCheck.planType || 'free', { path, method });
-          return NextResponse.json(
-            {
-              error: subscriptionCheck.error || 'Questa funzionalità richiede un abbonamento PRO o AGENCY.',
-              requiresProSubscription: true,
-            },
-            { status: 403 }
+          return mergeNoStoreHeaders(
+            NextResponse.json(
+              {
+                error:
+                  subscriptionCheck.error ||
+                  'Questa funzionalità richiede un abbonamento PRO o AGENCY.',
+                requiresProSubscription: true,
+              },
+              { status: 403 }
+            )
           );
         }
 
@@ -170,7 +196,7 @@ export function apiWrapper(
       // Log risposta
       logger.apiResponse(method, path, response.status, { duration: `${duration}ms` });
 
-      return response;
+      return mergeNoStoreHeaders(response);
 
     } catch (error: any) {
       const duration = Date.now() - startTime;
@@ -182,7 +208,9 @@ export function apiWrapper(
       });
 
       const formattedError = formatErrorResponse(apiError);
-      return NextResponse.json(formattedError, { status: apiError.statusCode });
+      return mergeNoStoreHeaders(
+        NextResponse.json(formattedError, { status: apiError.statusCode })
+      );
     }
   };
 }

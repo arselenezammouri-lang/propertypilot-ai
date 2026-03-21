@@ -60,4 +60,5 @@ async function postVerifyTurnstile(request: NextRequest) {
 export const POST = withApiSecurity(postVerifyTurnstile, {
   allowedMethods: ['POST'],
   maxBodyBytes: 32 * 1024,
+  originCheck: 'trusted',
 });

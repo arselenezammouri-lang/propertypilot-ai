@@ -167,4 +167,5 @@ async function postContact(request: NextRequest) {
 
 export const POST = withApiSecurity(postContact, {
   allowedMethods: ['POST'],
+  originCheck: 'trusted',
 });
