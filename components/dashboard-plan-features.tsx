@@ -83,7 +83,7 @@ const ALL_FEATURES: Feature[] = [
     description: "Genera schede immobiliari professionali stile Canva",
     icon: <FileText className="h-6 w-6" />,
     href: "/dashboard/pdf",
-    availableIn: ["free", "starter", "pro", "agency"],
+    availableIn: ["starter", "pro", "agency"],
   },
   
   // STARTER Features (include FREE + new)

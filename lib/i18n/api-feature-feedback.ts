@@ -13,7 +13,11 @@ export type ApiFeatureId =
   | 'titleGenerator'
   | 'emotionalListing'
   | 'socialPosts'
-  | 'hashtagGenerator';
+  | 'hashtagGenerator'
+  | 'followupEmails'
+  | 'videoScripts'
+  | 'agentBio'
+  | 'pdfSheets';
 
 export type ApiFailureInput = {
   status?: number;
@@ -31,6 +35,10 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   emotionalListing: { it: 'Annuncio emozionale', en: 'Emotional listing' },
   socialPosts: { it: 'Post social', en: 'Social posts' },
   hashtagGenerator: { it: 'Hashtag', en: 'Hashtags' },
+  followupEmails: { it: 'Follow-up email', en: 'Follow-up emails' },
+  videoScripts: { it: 'Script video', en: 'Video scripts' },
+  agentBio: { it: 'Bio agente', en: 'Agent bio' },
+  pdfSheets: { it: 'Schede PDF', en: 'PDF sheets' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

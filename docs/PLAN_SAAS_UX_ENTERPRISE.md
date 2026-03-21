@@ -55,9 +55,9 @@ Un prodotto che sia:
 
 **A6 (implementato):** target touch **≥44px** su header dashboard (logo, Cerca, Genera, Esci), selettori lingua/regione/tema, voci menu dropdown; pulsante **Menu** e link drawer; chiusura esplicita drawer (X); link sidebar `min-h-11`; slot azioni `DashboardPageHeader` con `[&_button]:min-h-11` + `touch-manipulation` dove utile.
 
-**Fase B1 (avviata):** libreria annunci, refine, translate, **titles, emotional-listing, social-posts, hashtags** — shell + `ApiFeatureId` dedicati in `api-feature-feedback.ts`.
+**Fase B1 (listing & AI copy):** completata la linea **listings → refine → translate → titles → emotional → social → hashtags → followup-emails → video-scripts → agent-bio → pdf** (shell, header, toast per feature; PDF allineato a Starter+ in `DashboardPlanFeatures` e nav).
 
-**Prossimo B1:** `followup-emails` → `video-scripts` → `agent-bio` → `pdf` (e allineamento badge piano PDF). In parallelo: debito automations / PDF / audit Fase 0.
+**Prossimo:** **Fase B2** (CRM / lead tools) oppure debito **automations** duplicata + audit Fase 0 componenti condivisi.
 
 ---
 

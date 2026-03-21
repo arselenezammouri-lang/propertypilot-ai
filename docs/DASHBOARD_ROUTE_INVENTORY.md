@@ -29,10 +29,10 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 7 | `/dashboard/emotional-listing` | Contenuti | Starter | No | OK | Shell + `emotionalListing` |
 | 8 | `/dashboard/social-posts` | Contenuti | Starter | No | OK | Shell + `socialPosts` |
 | 9 | `/dashboard/hashtags` | Contenuti | Starter | No | OK | Shell + `hashtagGenerator` |
-| 10 | `/dashboard/followup-emails` | Contenuti | Pro | No | Medio | B1 / B5 |
-| 11 | `/dashboard/video-scripts` | Contenuti | Pro | No | Medio | B1 / B5 |
-| 12 | `/dashboard/agent-bio` | Contenuti | Pro | No | Medio | B1 |
-| 13 | `/dashboard/pdf` | Contenuti | Free † | No | Medio | † In `DashboardPlanFeatures` è free; in Command Palette badge PRO — allineare copy/badge |
+| 10 | `/dashboard/followup-emails` | Contenuti | Pro | No | OK | Shell + toast Fase B1 |
+| 11 | `/dashboard/video-scripts` | Contenuti | Pro | No | OK | Shell + toast Fase B1 |
+| 12 | `/dashboard/agent-bio` | Contenuti | Pro | No | OK | Shell + toast Fase B1 |
+| 13 | `/dashboard/pdf` | Contenuti | Starter+ | No | OK | Allineato a `DashboardPlanFeatures` + nav STARTER+; shell + toast |
 | 14 | `/dashboard/analyze` | Intelligence | Free | No | Medio | B3 |
 | 15 | `/dashboard/scraper` | Intelligence | Free | No | Medio | B3 |
 | 16 | `/dashboard/auditor` | Intelligence | Pro | **Sì** (`ProFeaturePaywall`) | Medio | B3 |
@@ -61,7 +61,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 ## Priorità suggerite (Fase B)
 
 1. **B1 — Listing & AI copy (ordine implementazione consigliato)**  
-   `listings` → `refine-listing` → `translate` → `titles` → `emotional-listing` → `social-posts` → `hashtags` → `followup-emails` → `video-scripts` → `agent-bio` → `pdf` (e allineamento badge piano).
+   **B1 listing/copy:** batch completato fino a `pdf`. Prossimo: B2 o altre route B1-adiacenti secondo piano.
 
 2. **B2 — CRM**  
    `leads/[id]`, coerenza paywall `leads/pipeline` vs `leads`, `lead-score`, eventuale unificazione `automations` vs `crm/automations`.

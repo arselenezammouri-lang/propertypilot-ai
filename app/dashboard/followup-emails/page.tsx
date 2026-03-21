@@ -12,6 +12,16 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Mail, 
   Clock, 
@@ -68,6 +78,8 @@ interface FollowUpEmailsPageProps {
 export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageProps) {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<FollowUpResult | null>(null);
@@ -176,65 +188,44 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
 
   const handleSubmit = async () => {
     if (!formData.leadName.trim()) {
-      toast({
-        title: t.required,
-        description: t.leadNameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.leadNameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.agentName.trim()) {
-      toast({
-        title: t.required,
-        description: t.agentNameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.agentNameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.agencyName.trim()) {
-      toast({
-        title: t.required,
-        description: t.agencyNameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.agencyNameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.propertyTitle.trim()) {
-      toast({
-        title: t.required,
-        description: t.propertyTitleRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.propertyTitleRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.propertyLocation.trim()) {
-      toast({
-        title: t.required,
-        description: t.propertyLocationRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.propertyLocationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.propertyPrice.trim()) {
-      toast({
-        title: t.required,
-        description: t.propertyPriceRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.propertyPriceRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.reasonOfInterest.trim() || formData.reasonOfInterest.length < 10) {
-      toast({
-        title: t.required,
-        description: t.reasonRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "followupEmails", t.reasonRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -242,34 +233,23 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
     setResult(null);
 
     try {
-      const response = await fetch("/api/generate-followup", {
+      const res = await fetchApi<FollowUpResult>("/api/generate-followup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({
-            title: t.rateLimit,
-            description: data.message || t.rateLimitDesc,
-            variant: "destructive",
-          });
-          return;
-        }
-        if (response.status === 401) {
-          toast({
-            title: t.accessDenied,
-            description: t.loginRequired,
-            variant: "destructive",
-          });
-          return;
-        }
-        throw new Error(data.error || t.generateError);
+      if (!res.success) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "followupEmails",
+          { status: res.status, error: res.error, message: res.message },
+          t.generateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as FollowUpResult;
       setResult(data);
       setActiveTab("immediateResponse");
       toast({
@@ -277,10 +257,10 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
         description: data.cached ? t.cacheResult : t.ready6,
       });
     } catch (error) {
-      const friendly = handleAPIError(error, t.generateError);
+      const net = networkFailureToast(feedbackLocale, "followupEmails");
       toast({
-        title: t.error,
-        description: friendly,
+        title: net.title,
+        description: handleAPIError(error, net.description),
         variant: "destructive",
       });
     } finally {
@@ -298,11 +278,8 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: t.error,
-        description: t.copyFailed,
-        variant: "destructive",
-      });
+      const c = clipboardFailureToast(feedbackLocale, "followupEmails", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -464,31 +441,37 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
     );
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors" aria-label={t.back}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.back}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 text-white">
-          <Mail className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-            Follow-Up Email AI
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-red-500 to-orange-500 text-white border-0">
-          Lead Converter AI
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        aria-label={t.back}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title="Follow-Up Email AI"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0 text-xs">
+            Lead Converter AI
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-orange-200 dark:border-orange-800">
@@ -713,6 +696,6 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

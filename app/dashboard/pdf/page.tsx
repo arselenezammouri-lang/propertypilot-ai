@@ -8,10 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import { 
-  Home, 
   FileText,
   Loader2,
   Download,
@@ -43,6 +41,16 @@ import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 const pdfFormSchema = z.object({
   title: z.string().min(1, "Il titolo è obbligatorio"),
@@ -91,11 +99,14 @@ export default function PdfGeneratorPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
+  const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
-    headerLabel: isItalian ? "Generatore PDF" : "PDF Generator",
     pageTitle: isItalian ? "Scheda Immobile PDF" : "Property PDF Sheet",
     pageSubtitle: isItalian ? "Crea schede professionali per i tuoi annunci" : "Create professional sheets for your listings",
+    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
     // toasts
     pdfGenerated: isItalian ? "PDF Generato!" : "PDF Generated!",
     pdfGeneratedDesc: isItalian ? "La tua scheda immobile è pronta per il download." : "Your property sheet is ready for download.",
@@ -211,19 +222,41 @@ export default function PdfGeneratorPage() {
         brandingMode: useAgencyBranding && agencyBranding ? 'agency' : 'default',
       };
 
-      const response = await fetch("/api/generate-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || t.pdfError);
+      let res;
+      try {
+        res = await fetchApi<PdfApiSuccess>("/api/generate-pdf", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+      } catch (e) {
+        const net = networkFailureToast(feedbackLocale, "pdfSheets");
+        throw new Error(handleAPIError(e, net.description));
       }
 
-      return result;
+      if (!res.success) {
+        const err = new Error(
+          (res.message || res.error || t.pdfError).trim()
+        ) as Error & { status?: number };
+        err.status = res.status;
+        throw err;
+      }
+
+      const result = res.data as Record<string, unknown>;
+      if (
+        !result ||
+        result.success !== true ||
+        typeof result.pdfBase64 !== "string" ||
+        typeof result.fileName !== "string"
+      ) {
+        throw new Error(
+          typeof result?.error === "string" ? result.error : t.pdfError
+        );
+      }
+
+      return {
+        pdfBase64: result.pdfBase64,
+        fileName: result.fileName,
+      };
     },
     onSuccess: (data) => {
       setGeneratedPdf({ base64: data.pdfBase64, fileName: data.fileName });
@@ -232,10 +265,21 @@ export default function PdfGeneratorPage() {
         description: t.pdfGeneratedDesc,
       });
     },
-    onError: (error: Error) => {
+    onError: (error: Error & { status?: number }) => {
+      if (typeof error.status === "number") {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "pdfSheets",
+          { status: error.status, error: error.message },
+          t.pdfError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
+      }
+      const net = networkFailureToast(feedbackLocale, "pdfSheets");
       toast({
-        title: t.errorTitle,
-        description: error.message,
+        title: net.title,
+        description: handleAPIError(error, net.description),
         variant: "destructive",
       });
     },
@@ -247,21 +291,15 @@ export default function PdfGeneratorPage() {
     try {
       new URL(newImageUrl);
       if (imageUrls.length >= 6) {
-        toast({
-          title: t.limitReached,
-          description: t.maxImages,
-          variant: "destructive",
-        });
+        const v = validationToast(feedbackLocale, "pdfSheets", t.maxImages);
+        toast({ title: v.title, description: v.description, variant: "destructive" });
         return;
       }
       setImageUrls([...imageUrls, newImageUrl.trim()]);
       setNewImageUrl("");
     } catch {
-      toast({
-        title: t.invalidUrl,
-        description: t.invalidUrlDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "pdfSheets", t.invalidUrlDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
     }
   };
 
@@ -294,50 +332,50 @@ export default function PdfGeneratorPage() {
     generatePdfMutation.mutate(data);
   };
 
+  const onInvalidSubmit = () => {
+    const first = Object.values(form.formState.errors)[0];
+    const msg =
+      (first?.message as string | undefined) ||
+      (isItalian ? "Controlla i campi obbligatori." : "Check required fields.");
+    const v = validationToast(feedbackLocale, "pdfSheets", msg);
+    toast({ title: v.title, description: v.description, variant: "destructive" });
+  };
+
   const selectedTemplate = form.watch("template");
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-ai-aurora rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <Home className="text-white" size={24} />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">{t.headerLabel}</p>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard" aria-label="Back to dashboard">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <div className="mb-10 md:mb-14 animate-fade-in-up">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
-            {isItalian ? <>Generatore <span className="gradient-text-gold">Schede PDF</span></> : <>Property <span className="gradient-text-gold">PDF Sheet</span></>}
-          </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
+  return (
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back-dashboard"
+        aria-label={t.backDashboard}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backDashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-pdf-page"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+      />
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit, onInvalidSubmit)} className="space-y-6">
                 <div className="futuristic-card p-6 animate-fade-in-up" data-testid="card-template-selector">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-sunset-gold" />
@@ -922,7 +960,6 @@ export default function PdfGeneratorPage() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

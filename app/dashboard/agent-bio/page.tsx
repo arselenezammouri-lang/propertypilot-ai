@@ -10,6 +10,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Sparkles, 
   Copy, 
@@ -62,6 +73,9 @@ interface FormData {
 export default function AgentBioPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
+  const { handleAPIError } = useAPIErrorHandler();
   const [formData, setFormData] = useState<FormData>({
     nomeAgente: "",
     nomeAgenzia: "",
@@ -149,38 +163,26 @@ export default function AgentBioPage() {
 
   const handleSubmit = async () => {
     if (!formData.nomeAgente.trim()) {
-      toast({
-        title: t.required,
-        description: t.agentNameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "agentBio", t.agentNameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.nomeAgenzia.trim()) {
-      toast({
-        title: t.required,
-        description: t.agencyNameRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "agentBio", t.agencyNameRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.specializzazioni.trim()) {
-      toast({
-        title: t.required,
-        description: t.specializationRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "agentBio", t.specializationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.zonaOperativa.trim()) {
-      toast({
-        title: t.required,
-        description: t.areaRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "agentBio", t.areaRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -188,34 +190,23 @@ export default function AgentBioPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/generate-agent-bio", {
+      const res = await fetchApi<AgentBioResult>("/api/generate-agent-bio", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({
-            title: t.rateLimit,
-            description: data.message || t.rateLimitDesc,
-            variant: "destructive",
-          });
-          return;
-        }
-        if (response.status === 401) {
-          toast({
-            title: t.accessDenied,
-            description: t.loginRequired,
-            variant: "destructive",
-          });
-          return;
-        }
-        throw new Error(data.error || t.generateError);
+      if (!res.success) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "agentBio",
+          { status: res.status, error: res.error, message: res.message },
+          t.generateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as AgentBioResult;
       setResult(data);
       setActiveTab("professionale");
       toast({
@@ -223,9 +214,10 @@ export default function AgentBioPage() {
         description: data.cached ? t.cacheResult : t.readyVariants,
       });
     } catch (error) {
+      const net = networkFailureToast(feedbackLocale, "agentBio");
       toast({
-        title: t.error,
-        description: error instanceof Error ? error.message : t.generateError,
+        title: net.title,
+        description: handleAPIError(error, net.description),
         variant: "destructive",
       });
     } finally {
@@ -243,11 +235,8 @@ export default function AgentBioPage() {
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: t.error,
-        description: t.copyFailed,
-        variant: "destructive",
-      });
+      const c = clipboardFailureToast(feedbackLocale, "agentBio", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -417,36 +406,40 @@ export default function AgentBioPage() {
     </Card>
   );
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-blue-950 dark:to-indigo-950">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="mb-4" data-testid="button-back" aria-label={t.back}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t.back}
-            </Button>
-          </Link>
-          
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg shadow-blue-500/25">
-              <User className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {isItalian ? "Agent BIO AI Creator" : "Agent BIO AI Creator"}
-              </h1>
-              <p className="text-muted-foreground">
-                {t.pageSubtitle}
-              </p>
-            </div>
-            <span className="ml-auto px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow-lg shadow-blue-500/25">
-              ✨ {t.agentBranding}
-            </span>
-          </div>
-        </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-        <div className="grid lg:grid-cols-2 gap-8">
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back"
+        aria-label={t.back}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={isItalian ? "Agent BIO AI Creator" : "Agent BIO AI Creator"}
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/90">
+            ✨ {t.agentBranding}
+          </span>
+        }
+      />
+
+      <div className="grid lg:grid-cols-2 gap-8">
           <div className="space-y-6">
             <Card className="border-blue-200 dark:border-blue-800 shadow-xl shadow-blue-500/10">
               <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
@@ -712,7 +705,6 @@ export default function AgentBioPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

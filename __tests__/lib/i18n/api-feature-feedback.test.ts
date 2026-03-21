@@ -61,4 +61,9 @@ describe('B1 feature labels', () => {
     const r = apiFailureToast('en', 'titleGenerator', { status: 429 }, 'x');
     expect(r.title).toContain('A/B titles');
   });
+
+  it('includes pdf sheets label', () => {
+    const r = apiFailureToast('it', 'pdfSheets', { status: 500 }, 'x');
+    expect(r.title).toContain('Schede PDF');
+  });
 });

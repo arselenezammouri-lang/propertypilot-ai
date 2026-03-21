@@ -12,6 +12,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Video, 
   Clock, 
@@ -68,6 +78,8 @@ interface FormData {
 export default function VideoScriptsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
 
@@ -160,23 +172,28 @@ export default function VideoScriptsPage() {
 
   const handleSubmit = async () => {
     if (!formData.type.trim() || formData.type.length < 5) {
-      toast({ title: t.fieldRequired, description: t.typeRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "videoScripts", t.typeRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.location.trim()) {
-      toast({ title: t.fieldRequired, description: t.locationRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "videoScripts", t.locationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.price.trim()) {
-      toast({ title: t.fieldRequired, description: t.priceRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "videoScripts", t.priceRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.features.trim() || formData.features.length < 10) {
-      toast({ title: t.fieldRequired, description: t.featuresRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "videoScripts", t.featuresRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.strengths.trim() || formData.strengths.length < 10) {
-      toast({ title: t.fieldRequired, description: t.strengthsRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "videoScripts", t.strengthsRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -184,32 +201,33 @@ export default function VideoScriptsPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/generate-video-script", {
+      const res = await fetchApi<VideoScriptResult>("/api/generate-video-script", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({ title: t.limitTitle, description: data.message || t.limitDefault, variant: "destructive" });
-          return;
-        }
-        if (response.status === 401) {
-          toast({ title: t.accessDenied, description: t.accessDeniedDesc, variant: "destructive" });
-          return;
-        }
-        throw new Error(data.error || t.errorGeneric);
+      if (!res.success) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "videoScripts",
+          { status: res.status, error: res.error, message: res.message },
+          t.errorGeneric
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as VideoScriptResult;
       setResult(data);
       setActiveTab("script15s");
       toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: "destructive" });
+      const net = networkFailureToast(feedbackLocale, "videoScripts");
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -222,7 +240,8 @@ export default function VideoScriptsPage() {
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: "destructive" });
+      const c = clipboardFailureToast(feedbackLocale, "videoScripts", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -420,31 +439,36 @@ export default function VideoScriptsPage() {
     </Card>
   );
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.backToDashboard}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white">
-          <Video className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            {t.heroTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.heroSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
-          {t.heroBadge}
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backToDashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 text-xs">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-purple-200 dark:border-purple-800">
@@ -663,6 +687,6 @@ export default function VideoScriptsPage() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
