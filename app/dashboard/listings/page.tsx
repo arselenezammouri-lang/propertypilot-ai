@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -27,11 +27,27 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TableSkeleton } from '@/components/ui/skeleton-loaders';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import {
+  apiFailureToast,
+  networkFailureToast,
+} from '@/lib/i18n/api-feature-feedback';
+
+function errWithStatus(message: string, status?: number): Error & { status?: number } {
+  const e = new Error(message) as Error & { status?: number };
+  e.status = status;
+  return e;
+}
 
 export default function ListingsPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? 'it' : 'en';
+  const usage = useUsageLimits();
+  const [pageReady, setPageReady] = useState(false);
   const queryClient = useQueryClient();
   const [selectedListing, setSelectedListing] = useState<SavedListing | null>(null);
   const [listingToDelete, setListingToDelete] = useState<SavedListing | null>(null);
@@ -39,10 +55,12 @@ export default function ListingsPage() {
   const [isRegenerating, setIsRegenerating] = useState(false);
 
   const t = {
+    successDeletedTitle: isItalian ? "Libreria annunci — Eliminato" : "Listing library — Removed",
     deleted: isItalian ? "Annuncio eliminato" : "Listing deleted",
     deletedDesc: isItalian ? "L'annuncio è stato eliminato con successo." : "The listing has been deleted successfully.",
     errorTitle: isItalian ? "Errore" : "Error",
     deleteError: isItalian ? "Impossibile eliminare l'annuncio." : "Cannot delete the listing.",
+    successRegenTitle: isItalian ? "Libreria annunci — Contenuto aggiornato" : "Listing library — Content updated",
     regenerated: isItalian ? "Contenuto rigenerato" : "Content regenerated",
     regeneratedDesc: isItalian ? "Il contenuto AI è stato rigenerato con successo!" : "The AI content has been regenerated successfully!",
     aiError: isItalian ? "Errore AI" : "AI Error",
@@ -50,6 +68,7 @@ export default function ListingsPage() {
     loadError: isItalian ? "Impossibile caricare gli annunci" : "Cannot load listings",
     loadErrorDesc: isItalian ? "Si è verificato un errore durante il caricamento della libreria. Riprova più tardi." : "An error occurred while loading the library. Try again later.",
     contactSupport: isItalian ? "Se il problema persiste, contatta il supporto." : "If the problem persists, contact support.",
+    retryLoad: isItalian ? "Riprova caricamento" : "Retry loading",
     pageTitle: isItalian ? "Annunci Salvati" : "Saved Listings",
     pageDesc: isItalian ? "Gestisci la tua libreria di annunci generati con AI" : "Manage your AI-generated listings library",
     emptyTitle: isItalian ? "Nessun annuncio salvato" : "No saved listings",
@@ -84,9 +103,24 @@ export default function ListingsPage() {
       : "Choose how to start: guided generation or market prospecting.",
     createFromWorkspace: isItalian ? "Apri Workspace Generazione" : "Open Generation Workspace",
     searchMarket: isItalian ? "Cerca sul Mercato" : "Search Market",
+    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
   };
 
-  const { data: listingsData, isLoading, error } = useQuery<{ success: boolean; data: SavedListing[] }>({
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setPageReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? 'Agency'
+      : usage.plan === 'pro'
+        ? 'Pro'
+        : usage.plan === 'starter'
+          ? 'Starter'
+          : 'Free';
+
+  const { data: listingsData, isLoading, error, refetch } = useQuery<{ success: boolean; data: SavedListing[] }>({
     queryKey: ['/api/listings'],
   });
 
@@ -99,26 +133,28 @@ export default function ListingsPage() {
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       const res = await fetchApi<unknown>(`/api/listings?id=${id}`, { method: 'DELETE' });
-      if (!res.success) throw new Error(res.message || res.error || 'Delete failed');
+      if (!res.success) {
+        throw errWithStatus(res.message || res.error || t.deleteError, res.status);
+      }
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
       toast({
-        title: t.deleted,
+        title: t.successDeletedTitle,
         description: t.deletedDesc,
         duration: 5000,
       });
       setSelectedListing(null);
       setListingToDelete(null);
     },
-    onError: (error: Error) => {
-      toast({
-        variant: 'destructive',
-        title: t.errorTitle,
-        description: error.message || t.deleteError,
-        duration: 8000,
-      });
+    onError: (err: Error & { status?: number }) => {
+      const fail = apiFailureToast(feedbackLocale, 'listingsLibrary', {
+        status: err.status,
+        message: err.message,
+        error: err.message,
+      }, t.deleteError);
+      toast({ variant: 'destructive', title: fail.title, description: fail.description, duration: 8000 });
     },
   });
 
@@ -128,7 +164,9 @@ export default function ListingsPage() {
         method: 'POST',
         body: JSON.stringify(listing.property_data),
       });
-      if (!res.success) throw new Error(res.message || res.error || 'Regenerate failed');
+      if (!res.success) {
+        throw errWithStatus(res.message || res.error || t.regenError, res.status);
+      }
       return res;
     },
     onSuccess: (res, listing) => {
@@ -140,19 +178,19 @@ export default function ListingsPage() {
       }
       
       toast({
-        title: t.regenerated,
+        title: t.successRegenTitle,
         description: t.regeneratedDesc,
         duration: 5000,
       });
       setIsRegenerating(false);
     },
-    onError: (error: Error) => {
-      toast({
-        variant: 'destructive',
-        title: t.aiError,
-        description: error.message || t.regenError,
-        duration: 8000,
-      });
+    onError: (err: Error & { status?: number }) => {
+      const fail = apiFailureToast(feedbackLocale, 'listingsLibrary', {
+        status: err.status,
+        message: err.message,
+        error: err.message,
+      }, t.regenError);
+      toast({ variant: 'destructive', title: fail.title, description: fail.description, duration: 8000 });
       setIsRegenerating(false);
     },
   });
@@ -162,61 +200,101 @@ export default function ListingsPage() {
     regenerateMutation.mutate(listing);
   };
 
-  if (isLoading) {
+  if (isLoading || !pageReady || usage.isLoading) {
     return (
-      <div className="container max-w-6xl py-8 space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold mb-2" data-testid="heading-listings-skeleton">
-            {t.pageTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageDesc}
-          </p>
-        </div>
-
-        <Card>
+      <DashboardPageShell className="max-w-6xl">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        >
+          <span aria-hidden>←</span>
+          {t.backDashboard}
+        </Link>
+        <DashboardPageHeader
+          variant="dark"
+          title={t.pageTitle}
+          titleDataTestId="heading-listings"
+          subtitle={t.pageDesc}
+          planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        />
+        <Card className="border-white/10 bg-card/40">
           <CardHeader>
-            <CardTitle className="text-lg">
-              {t.pageTitle}
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              {t.pageDesc}
-            </CardDescription>
+            <CardTitle className="text-lg text-white">{t.pageTitle}</CardTitle>
+            <CardDescription className="text-white/60">{t.pageDesc}</CardDescription>
           </CardHeader>
           <CardContent>
             <TableSkeleton rows={6} />
           </CardContent>
         </Card>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   if (error && !listingsData) {
+    const fail = apiFailureToast(
+      feedbackLocale,
+      'listingsLibrary',
+      { message: error instanceof Error ? error.message : String(error) },
+      t.loadErrorDesc
+    );
     return (
-      <div className="container max-w-6xl py-8">
-        <Card>
+      <DashboardPageShell className="max-w-6xl">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        >
+          <span aria-hidden>←</span>
+          {t.backDashboard}
+        </Link>
+        <DashboardPageHeader
+          variant="dark"
+          title={t.pageTitle}
+          titleDataTestId="heading-listings"
+          subtitle={t.pageDesc}
+          planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        />
+        <Card className="border-white/10 bg-card/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
-            <h2 className="text-2xl font-bold mb-2">{t.loadError}</h2>
-            <p className="text-muted-foreground mb-6 text-center max-w-md">
-              {t.loadErrorDesc}
+            <h2 className="text-xl font-semibold mb-2 text-white">{fail.title}</h2>
+            <p className="text-white/65 mb-6 text-center max-w-md text-sm">
+              {fail.description}
             </p>
-            <p className="text-sm text-muted-foreground">
-              {t.contactSupport}
-            </p>
+            <p className="text-xs text-white/45 mb-4">{t.contactSupport}</p>
+            <Button variant="outline" className="border-white/20 text-white hover:bg-white/10" onClick={() => refetch()}>
+              {t.retryLoad}
+            </Button>
           </CardContent>
         </Card>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="container max-w-6xl py-8 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2" data-testid="heading-listings">{t.pageTitle}</h1>
-        <p className="text-muted-foreground" data-testid="text-description">
-          {t.pageDesc}
-        </p>
-      </div>
+    <DashboardPageShell className="max-w-6xl space-y-8">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+      >
+        <span aria-hidden>←</span>
+        {t.backDashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        subtitle={t.pageDesc}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        titleDataTestId="heading-listings"
+        actions={
+          <Button
+            className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] text-white border-0"
+            onClick={() => setIsCreateListingDialogOpen(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {t.createListing}
+          </Button>
+        }
+      />
 
       {listings.length === 0 ? (
         <Card data-testid="card-empty" className="border-dashed border-white/20 bg-white/[0.02]">
@@ -495,6 +573,6 @@ export default function ListingsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </DashboardPageShell>
   );
 }

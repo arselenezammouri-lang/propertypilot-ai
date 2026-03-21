@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 
 export type DashboardPageHeaderProps = {
   title: string;
+  /** e.g. for E2E — applied to the H1 */
+  titleDataTestId?: string;
   subtitle?: string;
   /** e.g. "free" | "agency" — shown as a subtle plan badge */
   planBadge?: { label: string; variant?: "default" | "secondary" | "outline" };
@@ -22,6 +24,7 @@ export type DashboardPageHeaderProps = {
  */
 export function DashboardPageHeader({
   title,
+  titleDataTestId,
   subtitle,
   planBadge,
   actions,
@@ -48,6 +51,7 @@ export function DashboardPageHeader({
                   ? "text-foreground"
                   : "text-white"
               )}
+              data-testid={titleDataTestId}
             >
               {title}
             </h1>

@@ -12,6 +12,17 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from '@/lib/api/client';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { Badge } from '@/components/ui/badge';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
@@ -50,6 +61,8 @@ interface TranslationResult {
 export default function TranslatePage() {
   const { locale } = useLocale();
   const isItalian = locale === 'it';
+  const feedbackLocale = isItalian ? 'it' : 'en';
+  const usage = useUsageLimits();
 
   const t = {
     backToDashboard: isItalian ? 'Dashboard' : 'Dashboard',
@@ -90,16 +103,11 @@ export default function TranslatePage() {
     vocabDesc: isItalian ? 'Terminologia immobiliare per' : 'Real estate terminology for',
     culturalTitle: isItalian ? 'Note Culturali' : 'Cultural Notes',
     culturalDesc: isItalian ? 'Adattamento per il mercato' : 'Adaptation for the market',
-    // toasts
-    titleRequired: isItalian ? 'Titolo richiesto' : 'Title required',
     titleRequiredDesc: isItalian ? 'Inserisci un titolo di almeno 5 caratteri.' : 'Enter a title of at least 5 characters.',
-    descRequired: isItalian ? 'Descrizione richiesta' : 'Description required',
     descRequiredDesc: isItalian ? 'Inserisci una descrizione di almeno 20 caratteri.' : 'Enter a description of at least 20 characters.',
-    tooManyRequests: isItalian ? 'Troppe richieste. Riprova tra un minuto.' : 'Too many requests. Try again in a minute.',
     errorGeneric: isItalian ? 'Errore durante la traduzione' : 'Error during translation',
-    successTitle: isItalian ? 'Traduzione completata!' : 'Translation complete!',
+    successTitle: isItalian ? 'Traduttore annunci — traduzione pronta' : 'Listing translator — translation ready',
     successCached: isItalian ? 'Risultato caricato dalla cache.' : 'Result loaded from cache.',
-    errorTitle: isItalian ? 'Errore' : 'Error',
     copied: isItalian ? 'Copiato!' : 'Copied!',
     copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
     copyFailed: isItalian ? 'Impossibile copiare il testo.' : 'Unable to copy text.',
@@ -130,11 +138,13 @@ export default function TranslatePage() {
 
   const handleTranslate = async () => {
     if (!titolo.trim() || titolo.length < 5) {
-      toast({ title: t.titleRequired, description: t.titleRequiredDesc, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'translateListing', t.titleRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
     if (!descrizione.trim() || descrizione.length < 20) {
-      toast({ title: t.descRequired, description: t.descRequiredDesc, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'translateListing', t.descRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -142,9 +152,8 @@ export default function TranslatePage() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/translate-listing', {
+      const res = await fetchApi<TranslationResult>('/api/translate-listing', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           tipoTransazione,
           titolo,
@@ -155,24 +164,29 @@ export default function TranslatePage() {
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new Error(data.error || t.tooManyRequests);
-        }
-        throw new Error(data.error || t.errorGeneric);
+      if (!res.success) {
+        const fail = apiFailureToast(feedbackLocale, 'translateListing', {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.errorGeneric);
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        return;
       }
 
+      const data = res.data as TranslationResult;
       setResult(data);
       toast({
         title: t.successTitle,
         description: data.cached ? t.successCached : `${isItalian ? 'Annuncio tradotto in' : 'Listing translated to'} ${data.linguaTarget.name}.`,
       });
     } catch (error) {
-      console.error('Translation error:', error);
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'translateListing');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -184,44 +198,49 @@ export default function TranslatePage() {
       setCopiedField(fieldName);
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
-    } catch (error) {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: 'destructive' });
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, 'translateListing', t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
     }
   };
 
   const selectedLangInfo = LANGUAGES.find(l => l.code === selectedLanguage);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2" data-testid="button-back" aria-label="Back to dashboard">
-                <ArrowLeft className="h-4 w-4" />
-                Dashboard
-              </Button>
-            </Link>
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center">
-                <Globe className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h1>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
-              {t.heroBadge}
-            </span>
-          </div>
-        </div>
-      </header>
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? 'Agency'
+      : usage.plan === 'pro'
+        ? 'Pro'
+        : usage.plan === 'starter'
+          ? 'Starter'
+          : 'Free';
 
-      <div className="container mx-auto px-4 py-8">
+  const backLabel = isItalian ? 'Torna alla dashboard' : 'Back to dashboard';
+
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back"
+        aria-label={backLabel}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {backLabel}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={isItalian ? 'Adatta titolo e descrizione al mercato di destinazione, con note culturali e SEO.' : 'Adapt title and description for the target market, with cultural notes and SEO.'}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <Badge className="bg-emerald-500/15 text-emerald-200 border border-emerald-500/30 text-xs">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
+
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <Card className="border-slate-200/50 dark:border-slate-800/50 shadow-lg" data-testid="card-form">
@@ -589,7 +608,6 @@ export default function TranslatePage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

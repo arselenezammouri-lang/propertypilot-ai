@@ -4,7 +4,12 @@
 
 export type FeedbackLocale = 'it' | 'en';
 
-export type ApiFeatureId = 'perfectCopy' | 'leadManager';
+export type ApiFeatureId =
+  | 'perfectCopy'
+  | 'leadManager'
+  | 'listingsLibrary'
+  | 'refineListing'
+  | 'translateListing';
 
 export type ApiFailureInput = {
   status?: number;
@@ -15,6 +20,9 @@ export type ApiFailureInput = {
 const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   perfectCopy: { it: 'Perfect Copy', en: 'Perfect Copy' },
   leadManager: { it: 'CRM Lead', en: 'Lead CRM' },
+  listingsLibrary: { it: 'Libreria annunci', en: 'Listing library' },
+  refineListing: { it: 'Perfect Again', en: 'Perfect Again' },
+  translateListing: { it: 'Traduttore annunci', en: 'Listing translator' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

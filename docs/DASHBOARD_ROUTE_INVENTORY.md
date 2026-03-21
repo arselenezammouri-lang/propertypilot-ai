@@ -21,10 +21,10 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | # | Path | Area JTBD | Piano minimo (target) | Gate UI in pagina | Stato UX | Note |
 |---|------|-----------|------------------------|-------------------|----------|------|
 | 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; moduli PRO/AGENCY nascosti lato server per piano |
-| 2 | `/dashboard/listings` | Contenuti | Free | No | Medio | Entry principale “Genera annuncio”; migrare a `DashboardPageHeader` |
+| 2 | `/dashboard/listings` | Contenuti | Free | No | OK | `DashboardPageHeader` + shell + `listingsLibrary` toast; CTA “Crea annuncio” in header |
 | 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | Pilota A1–A4 |
-| 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | Medio | **B1 priorità alta** |
-| 5 | `/dashboard/translate` | Contenuti | Starter | No | Medio | **B1 priorità alta** |
+| 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | OK | Shell + `refineListing` toast + `fetchApi` |
+| 5 | `/dashboard/translate` | Contenuti | Starter | No | OK | Shell dashboard + `translateListing` toast + `fetchApi` |
 | 6 | `/dashboard/titles` | Contenuti | Starter | No | Medio | **B1** |
 | 7 | `/dashboard/emotional-listing` | Contenuti | Starter | No | Medio | B1 |
 | 8 | `/dashboard/social-posts` | Contenuti | Starter | No | Medio | B1 |

@@ -55,7 +55,9 @@ Un prodotto che sia:
 
 **A6 (implementato):** target touch **≥44px** su header dashboard (logo, Cerca, Genera, Esci), selettori lingua/regione/tema, voci menu dropdown; pulsante **Menu** e link drawer; chiusura esplicita drawer (X); link sidebar `min-h-11`; slot azioni `DashboardPageHeader` con `[&_button]:min-h-11` + `touch-manipulation` dove utile.
 
-**Prossimo (dopo Fase 0 inventario):** **Fase B1** — migrare `/dashboard/listings` poi `refine-listing` e `translate` a `DashboardPageHeader` + `DashboardPageShell` + estendere `api-feature-feedback` (`ApiFeatureId`) per quelle feature. In parallelo utile: audit componenti Fase 0 o allineamento badge PDF / doppia pagina automations.
+**Fase B1 (avviata):** `/dashboard/listings`, `/dashboard/refine-listing`, `/dashboard/translate` — `DashboardPageHeader` + `DashboardPageShell` + `ApiFeatureId` `listingsLibrary` | `refineListing` | `translateListing` in `api-feature-feedback.ts`.
+
+**Prossimo B1:** `titles` → `emotional-listing` → `social-posts` → `hashtags` (stesso schema + nuovi `ApiFeatureId`). In parallelo: badge PDF / doppia pagina automations o audit componenti Fase 0.
 
 ---
 

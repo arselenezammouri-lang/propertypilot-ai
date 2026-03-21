@@ -12,6 +12,16 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Sparkles, 
   Briefcase,
@@ -56,6 +66,8 @@ interface FormData {
 export default function RefineListingPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const [isLoading, setIsLoading] = useState(false);
@@ -64,24 +76,18 @@ export default function RefineListingPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const t = {
-    textTooShort: isItalian ? "Testo troppo breve" : "Text too short",
     textTooShortDesc: isItalian ? "L'annuncio originale deve avere almeno 50 caratteri" : "The original listing must be at least 50 characters",
-    required: isItalian ? "Campo obbligatorio" : "Required field",
     propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile" : "Enter the property type",
     locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
-    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
     refineError: isItalian ? "Errore nel raffinamento" : "Refinement error",
-    success: isItalian ? "Annuncio raffinato!" : "Listing refined!",
+    successTitle: isItalian ? "Perfect Again — pronto" : "Perfect Again — ready",
     cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
     ready4: isItalian ? "4 versioni migliorate pronte all'uso" : "4 improved versions ready to use",
-    error: isItalian ? "Errore" : "Error",
     copied: isItalian ? "Copiato!" : "Copied!",
     copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
     copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
+    back: isItalian ? "Torna alla dashboard" : "Back to dashboard",
+    pageTitle: "Perfect Again AI",
     pageSubtitle: isItalian ? "Raffina e migliora completamente i tuoi annunci esistenti" : "Refine and improve your existing listings",
     listingToImprove: isItalian ? "Annuncio da Migliorare" : "Listing to Improve",
     listingToImproveDesc: isItalian ? "Incolla il tuo annuncio esistente e lascia che l'AI lo perfezioni" : "Paste your existing listing and let AI perfect it",
@@ -153,29 +159,20 @@ export default function RefineListingPage() {
 
   const handleSubmit = async () => {
     if (!formData.originalText.trim() || formData.originalText.length < 50) {
-      toast({
-        title: t.textTooShort,
-        description: t.textTooShortDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.textTooShortDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.propertyType.trim()) {
-      toast({
-        title: t.required,
-        description: t.propertyTypeRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.propertyTypeRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.location.trim()) {
-      toast({
-        title: t.required,
-        description: t.locationRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.locationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -183,44 +180,33 @@ export default function RefineListingPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/refine-listing", {
+      const res = await fetchApi<RefineListingResult>("/api/refine-listing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({
-            title: t.rateLimit,
-            description: data.message || t.rateLimitDesc,
-            variant: "destructive",
-          });
-          return;
-        }
-        if (response.status === 401) {
-          toast({
-            title: t.accessDenied,
-            description: t.loginRequired,
-            variant: "destructive",
-          });
-          return;
-        }
-        throw new Error(data.error || t.refineError);
+      if (!res.success) {
+        const fail = apiFailureToast(feedbackLocale, "refineListing", {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.refineError);
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as RefineListingResult;
       setResult(data);
       setActiveTab("professional");
       toast({
-        title: t.success,
+        title: t.successTitle,
         description: data.cached ? t.cacheResult : t.ready4,
       });
     } catch (error) {
+      const net = networkFailureToast(feedbackLocale, "refineListing");
       toast({
-        title: t.error,
-        description: handleAPIError(error, t.refineError),
+        title: net.title,
+        description: handleAPIError(error, net.description),
         variant: "destructive",
       });
     } finally {
@@ -238,11 +224,8 @@ export default function RefineListingPage() {
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: t.error,
-        description: t.copyFailed,
-        variant: "destructive",
-      });
+      const c = clipboardFailureToast(feedbackLocale, "refineListing", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -397,31 +380,37 @@ export default function RefineListingPage() {
     );
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors" aria-label={t.back}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.back}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white">
-          <Sparkles className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent">
-            Perfect Again AI
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0">
-          ✨ Perfect Again AI
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        aria-label={t.back}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-xs">
+            ✨ Perfect Again AI
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-violet-200 dark:border-violet-800">
@@ -623,6 +612,6 @@ export default function RefineListingPage() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

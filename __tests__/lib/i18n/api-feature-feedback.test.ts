@@ -50,3 +50,10 @@ describe('premiumFeatureToast', () => {
     expect(r.title).toContain('Plan required');
   });
 });
+
+describe('B1 feature labels', () => {
+  it('includes listings library label', () => {
+    const r = apiFailureToast('it', 'listingsLibrary', { status: 500 }, 'fallback');
+    expect(r.title).toContain('Libreria annunci');
+  });
+});
