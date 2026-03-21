@@ -49,4 +49,5 @@ Copia da `.env.example` e verifica su **Vercel → Project → Settings → Envi
 ## 5. Documentazione correlata
 
 - [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
+- [OPERATIONS_SECURITY.md](./OPERATIONS_SECURITY.md) — WAF, log drain, Dependabot, audit npm
 - [SETUP.md](./SETUP.md)

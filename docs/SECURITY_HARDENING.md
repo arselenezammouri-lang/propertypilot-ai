@@ -42,4 +42,4 @@ See `.env.example` section **EDGE / ANTI-ABUSE** and **Turnstile**.
 4. **Security audit JSON lines** — `lib/security/security-audit-log.ts`: in production, eventi `edge_bot_block`, `edge_rate_limit`, `origin_rejected_*`, `payload_too_large`, `method_not_allowed` (vedi `SECURITY_AUDIT_*` in `.env.example`). Opzionale: drain log Vercel → SIEM.
 5. **Redis / Upstash rate limit** — global + AI IP + **AI per-user** (`EDGE_AI_USER_RATE_LIMIT_*`) (**done**). Next: WAF / anomaly detection.
 6. **Security headers on API responses** — largely covered by `mergeNoStoreHeaders` / `apiWrapper`; review any raw `NextResponse.json` routes.
-7. **Dependency & secret scanning** — CI job (`npm audit`, GitHub Dependabot, or similar) and periodic key rotation policy.
+7. **Dependency & secret scanning** — Dependabot + CI `npm audit --audit-level=critical` + advisory high in log (**done**). Debito: [OPERATIONS_SECURITY.md](./OPERATIONS_SECURITY.md).
