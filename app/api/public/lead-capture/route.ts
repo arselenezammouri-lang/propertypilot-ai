@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { getAppUrl } from '@/lib/env';
 import type { LeadCapturePayload } from '@/lib/types/database.types';
+import { withApiSecurity } from '@/lib/utils/api-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +45,7 @@ function checkRateLimit(apiKey: string): boolean {
   return true;
 }
 
-export async function POST(request: NextRequest) {
+async function postLeadCapture(request: NextRequest) {
   try {
     const apiKey = request.headers.get('x-api-key') || request.headers.get('authorization')?.replace('Bearer ', '');
 
@@ -199,6 +200,10 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withApiSecurity(postLeadCapture, {
+  allowedMethods: ['POST'],
+});
 
 export async function OPTIONS() {
   return new NextResponse(null, {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 import { getResendClient } from '@/lib/resend-client';
+import { withApiSecurity } from '@/lib/utils/api-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,7 +73,7 @@ const validationErrorsByLocale: Record<'it' | 'en', Record<string, string>> = {
   en: { name: 'Name must be at least 2 characters', email: 'Invalid email', message: 'Message must be at least 10 characters' },
 };
 
-export async function POST(request: NextRequest) {
+async function postContact(request: NextRequest) {
   const locale = getLocaleFromRequest(request);
   const msg = messages[locale];
 
@@ -163,3 +164,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withApiSecurity(postContact, {
+  allowedMethods: ['POST'],
+});

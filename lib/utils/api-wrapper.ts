@@ -13,6 +13,10 @@ import { logger } from './safe-logger';
 import { formatErrorResponse, toAPIError } from '@/lib/errors/api-errors';
 import { createClient } from '@/lib/supabase/server';
 import { requireActiveSubscription } from './subscription-check';
+import {
+  assertRequestBodyWithinLimit,
+  getDefaultMaxApiBodyBytes,
+} from './api-security';
 
 type Handler = (req: NextRequest, context: HandlerContext) => Promise<NextResponse>;
 type Validator = (body: any) => { valid: boolean; error?: string };
@@ -32,6 +36,8 @@ interface ApiWrapperOptions {
   requireProSubscription?: boolean;
   validateBody?: Validator;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  /** Max raw JSON body bytes (default: env API_MAX_BODY_BYTES or 512 KiB). */
+  maxBodyBytes?: number;
 }
 
 /**
@@ -91,6 +97,10 @@ export function apiWrapper(
       // Validazione body (solo per POST/PUT/PATCH)
       let body: any = null;
       if (['POST', 'PUT', 'PATCH'].includes(method)) {
+        const maxBytes = options.maxBodyBytes ?? getDefaultMaxApiBodyBytes();
+        const tooLarge = await assertRequestBodyWithinLimit(req, maxBytes);
+        if (tooLarge) return tooLarge;
+
         try {
           body = await req.json();
         } catch (parseError) {

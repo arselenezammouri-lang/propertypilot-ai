@@ -13,6 +13,7 @@ This document describes **what is implemented in code** and what still belongs a
 | **API routes** | User + IP limits via `generation_logs` / memory limiters | Already present on many AI endpoints; complements edge limits. |
 | **Auth** | Supabase session refresh in middleware | Dashboard routes require a valid session. |
 | **Auth** | Cloudflare Turnstile (login + signup) | When **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are set, widget + `/api/auth/verify-turnstile` run **before** Supabase. Site key only → **503** (misconfiguration). |
+| **API** | `withApiSecurity` + `assertRequestBodyWithinLimit` | Public routes (`/api/contact`, `/api/auth/verify-turnstile`, `/api/public/lead-capture`) use `withApiSecurity` (method gate, body preflight, response logging). `apiWrapper` runs the same preflight before `req.json()`. Tune with `API_MAX_BODY_BYTES`. |
 | **Billing** | Stripe webhook signature verification | Do not expose `STRIPE_WEBHOOK_SECRET`; webhook paths are excluded from generic API throttling. |
 
 ## Recommended platform additions (not optional at scale)
@@ -37,7 +38,7 @@ See `.env.example` section **EDGE / ANTI-ABUSE** and **Turnstile**.
 
 1. ~~**Cloudflare Turnstile on `/auth/login` and `/auth/signup`**~~ — **Done** in-app; add keys on Vercel + Cloudflare dashboard.
 2. **Stricter CSP** — Report-Only is **on in production** via `next.config.mjs`. Next: set `CSP_REPORT_URI`, review violations, then switch to enforcing CSP with nonces where possible.
-3. **Central API wrapper** — optional `withApiSecurity(handler)` that applies consistent JSON body size limits, origin checks for state-changing routes, and structured audit logging.
+3. **Central API wrapper** — `withApiSecurity` + body preflight in `apiWrapper` (**done**). Next: optional Origin checks for state-changing embed routes, structured audit sink (e.g. external log drain).
 4. **Redis / Upstash rate limit** — replace or augment edge in-memory limits for accurate counts across all instances (especially for AI-heavy routes).
 5. **Security headers on API responses** — for sensitive JSON routes, mirror `no-store` and minimal `Cache-Control` (some already set per-route).
 6. **Dependency & secret scanning** — CI job (`npm audit`, GitHub Dependabot, or similar) and periodic key rotation policy.

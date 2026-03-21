@@ -6,6 +6,7 @@ import {
   isTurnstileMisconfigured,
   verifyTurnstileToken,
 } from '@/lib/utils/turnstile-verify';
+import { withApiSecurity } from '@/lib/utils/api-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,7 @@ const bodySchema = z.object({
  * Validates Turnstile token before Supabase auth (login/signup).
  * When keys are not configured, returns success so local/dev keeps working.
  */
-export async function POST(request: NextRequest) {
+async function postVerifyTurnstile(request: NextRequest) {
   if (isTurnstileMisconfigured()) {
     return NextResponse.json(
       { ok: false, error: 'turnstile_misconfigured' },
@@ -55,3 +56,8 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ ok: true });
 }
+
+export const POST = withApiSecurity(postVerifyTurnstile, {
+  allowedMethods: ['POST'],
+  maxBodyBytes: 32 * 1024,
+});
