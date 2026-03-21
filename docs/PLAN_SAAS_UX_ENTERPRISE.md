@@ -108,7 +108,9 @@ Per **ogni** area applicare la checklist in [DESIGN_UX_LOCALE.md §5](../DESIGN_
 
 **Stato C3:** command palette — gruppi **Collegamenti veloci** (navigazione interna) e **Guide (nuova scheda)** (`lib/dashboard/command-palette-extras.tsx`); le guide aprono `/docs/...` in `_blank`. Aggiunti articoli `getting-started/first-listing` e `getting-started/workspace-setup` in `doc-content.ts` (prima linkati dall’hub ma senza pagina).
 
-**Stato C4:** preferenze — `timezone` + `setTimezone` in `LocaleProvider` (`propertypilot_timezone` in `localStorage`; default da browser se nella lista IANA); `formatDateForLocale` / `formatDateTimeForLocale` accettano `timeZone` opzionale; pagine dashboard che mostrano date passano `timezone`. **Workspace settings:** card “Lingua, valuta e fuso orario” con `LocaleCurrencySelector` + select timezone raggruppato (`lib/i18n/timezones.ts`). **Prossimo:** C5 performance percepita.
+**Stato C4:** preferenze — `timezone` + `setTimezone` in `LocaleProvider` (`propertypilot_timezone` in `localStorage`; default da browser se nella lista IANA); `formatDateForLocale` / `formatDateTimeForLocale` accettano `timeZone` opzionale; pagine dashboard che mostrano date passano `timezone`. **Workspace settings:** card “Lingua, valuta e fuso orario” con `LocaleCurrencySelector` + select timezone raggruppato (`lib/i18n/timezones.ts`).
+
+**Stato C5:** performance percepita — `DeferredMount` (`components/deferred-mount.tsx`) con IntersectionObserver + `rootMargin` per ritardare il mount (e quindi `next/dynamic`) delle sezioni sotto la piega su `/dashboard`: ROI row, Morning briefing, portali, live feed, piani, griglia strumenti, sniper, Pro tips; 3D stats accanto alle stats cards; `DeferIdleMount` per **Aria Coach** dopo idle/timeout. Pulizia import morti in `app/dashboard/page.tsx`. **Prossimo:** Fase D (go-live / copy / checklist).
 
 ---
 

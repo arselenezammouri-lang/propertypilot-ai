@@ -20,7 +20,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 | # | Path | Area JTBD | Piano minimo (target) | Gate UI in pagina | Stato UX | Note |
 |---|------|-----------|------------------------|-------------------|----------|------|
-| 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; **C1:** checklist “primi 5 passi” (dismiss + `localStorage`); moduli PRO/AGENCY nascosti lato server per piano |
+| 1 | `/dashboard` | Account / home | Free | No | Shell | Command Center; **C1** checklist; **C5:** sezioni sotto piega in `DeferredMount` + Aria in `DeferIdleMount`; moduli PRO/AGENCY nascosti lato server |
 | 2 | `/dashboard/listings` | Contenuti | Free | No | OK | `DashboardPageHeader` + shell + `listingsLibrary` toast; CTA “Crea annuncio” in header |
 | 3 | `/dashboard/perfect-copy` | Contenuti | Starter | Usage / API | OK | A1–A4 + **C2:** header `?` → `/docs/getting-started/perfect-copy`; tooltip su caratteristiche e target |
 | 4 | `/dashboard/refine-listing` | Contenuti | Starter | No | OK | Shell + `refineListing` toast + `fetchApi` |
@@ -82,7 +82,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- **Fase C5:** performance percepita (lazy load, immagini).  
+- **Fase D:** go-live (copy IT/EN, [VERCEL_DEPLOY_CHECKLIST](./VERCEL_DEPLOY_CHECKLIST.md), smoke).  
+- **C5 (fatto):** home dashboard — `DeferredMount` / `DeferIdleMount` (`components/deferred-mount.tsx`, `defer-idle-mount.tsx`).  
 - **C4 (fatto):** workspace settings — lingua/valuta (`LocaleCurrencySelector`) + fuso orario; date dashboard usano `timezone` dal contesto.  
 - **C3 (fatto):** command palette con **Collegamenti veloci** + **Guide** (`lib/dashboard/command-palette-extras.tsx`).  
 - **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel` (Perfect Copy, Pipeline, Billing); docs bilingue in `lib/docs/doc-content.ts`.  
