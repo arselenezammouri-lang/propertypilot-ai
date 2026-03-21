@@ -42,11 +42,11 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 20 | `/dashboard/leads` | Lead / CRM | Pro | **Sì** | OK | Pilota A1–A4 |
 | 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | Shell + header + `leadPipeline` toast (B2) |
 | 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | OK | Shell + header + `leadDetail` toast (B2) |
-| 23 | `/dashboard/crm/automations` | Lead / CRM | Pro ‡ | No | Medio | ‡ Non in `ALL_FEATURES`; probabile gate solo API — uniformare con `/automations` |
+| 23 | `/dashboard/crm/automations` | Lead / CRM | Pro | No | OK | Regole if/then CRM; shell + toast `crmAutomationRules`; accoppiata a `/dashboard/automations` |
 | 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | Medio | API keys / capture — documentare piano in matrice Stripe |
 | 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | Medio | B3 |
 | 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | OK | Shell + header + `leadScoring` toast (B2) |
-| 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | Medio | Duplica concetto `/crm/automations` — roadmap: unificare o rinominare |
+| 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | OK | Workflow follow-up/reminder/contenuti; distinto dalle regole CRM; shell + `workflowAutomations` |
 | 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
 | 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | Medio | Copy piano: “Pro+” in UI vs “Pro” in features — allineare |
 | 30 | `/dashboard/packages` | Brand / commercio | Free | No | Medio | B4 |
@@ -64,7 +64,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
    **B1 listing/copy:** batch completato fino a `pdf`. Prossimo: B2 o altre route B1-adiacenti secondo piano.
 
 2. **B2 — CRM (avviata)**  
-   **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]` — shell + header + ApiFeatureId. **Prossimo:** coerenza paywall pipeline vs lista lead se necessario; `crm/automations` vs `automations`; altre route CRM.
+   **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`). **Prossimo:** altre route CRM / B3.
 
 3. **B3 — Prospecting & map**  
    `prospecting`, `map`, `analyze`, `scraper`, `auditor`, `opportunities`, `autopilot`.

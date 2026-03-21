@@ -208,9 +208,22 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
           href: "/dashboard/leads/pipeline",
         },
         {
+          id: "workflow-automations",
+          label: isIt ? "Workflow automazioni" : "Automation workflows",
+          description: isIt
+            ? "Follow-up, reminder e contenuti ricorrenti"
+            : "Follow-up, reminders, and recurring content",
+          icon: <Settings className="h-4 w-4" />,
+          href: "/dashboard/automations",
+          badge: "PRO",
+          badgeColor: "bg-amber-500",
+        },
+        {
           id: "crm-automations",
-          label: isIt ? "Automazioni CRM" : "CRM Automations",
-          description: isIt ? "Regole automatiche per i lead" : "Automatic rules for leads",
+          label: isIt ? "Regole CRM (if/then)" : "CRM rules (if/then)",
+          description: isIt
+            ? "Trigger su eventi lead: stato, score, email…"
+            : "Triggers on lead events: status, score, email…",
           icon: <Zap className="h-4 w-4" />,
           href: "/dashboard/crm/automations",
           badge: "PRO",

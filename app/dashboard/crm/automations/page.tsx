@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Zap, 
   Plus, 
@@ -42,6 +41,16 @@ import { DashboardCardSkeleton, ListSkeleton } from '@/components/ui/skeleton-lo
 import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { useAPIErrorHandler } from '@/components/error-boundary';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import Link from 'next/link';
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 import type { 
   AutomationRule, 
   AutomationTriggerType, 
@@ -75,10 +84,12 @@ const initialFormData: RuleFormData = {
 };
 
 export default function AutomationCenterPage() {
-  const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
   const TRIGGER_LABELS: Record<AutomationTriggerType, { label: string; description: string; icon: string }> = {
     new_lead: { label: isItalian ? 'Nuovo Lead' : 'New Lead', description: isItalian ? 'Quando arriva un nuovo lead' : 'When a new lead arrives', icon: '🆕' },
@@ -124,9 +135,15 @@ export default function AutomationCenterPage() {
   };
 
   const t = {
-    pageTitle: "Automation Center",
+    pageTitle: isItalian ? "Regole automazione CRM" : "CRM automation rules",
     pageBadge: "CRM 3.0",
-    pageSubtitle: isItalian ? "Crea regole automatiche per gestire i tuoi lead" : "Create automatic rules to manage your leads",
+    pageSubtitle: isItalian
+      ? "If/then su eventi lead — distinto dai workflow follow-up / reminder nella sezione Automazioni."
+      : "If/then on lead events — separate from follow-up / reminder workflows under Automations.",
+    workflowsLink: isItalian ? "Workflow automazioni" : "Automation workflows",
+    workflowsHint: isItalian
+      ? "Per follow-up pianificati, reminder visite e contenuti ricorrenti apri i workflow."
+      : "For scheduled follow-ups, visit reminders, and recurring content, open workflows.",
     newRule: isItalian ? "Nuova Regola" : "New Rule",
     createRuleTitle: isItalian ? "Crea Nuova Regola" : "Create New Rule",
     createRuleDesc: isItalian
@@ -208,25 +225,33 @@ export default function AutomationCenterPage() {
   const [formData, setFormData] = useState<RuleFormData>(initialFormData);
   const [expandedRules, setExpandedRules] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    fetchRules();
-    fetchLogs();
-  }, []);
-
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     try {
       const res = await fetchApi<{ rules?: AutomationRule[] }>('/api/automations/rules');
       if (res.success && res.data != null) {
         setRules((res.data.rules ?? []) as AutomationRule[]);
+      } else if (!res.success) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          isItalian ? 'Impossibile caricare le regole' : 'Cannot load rules'
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      console.error('Error fetching rules:', error);
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [feedbackLocale, toast, handleAPIError, isItalian]);
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const res = await fetchApi<{ logs?: AutomationLog[] }>('/api/automations/execute-rule?limit=50');
       if (res.success && res.data != null) {
@@ -235,11 +260,17 @@ export default function AutomationCenterPage() {
     } catch (error) {
       console.error('Error fetching logs:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void fetchRules();
+    void fetchLogs();
+  }, [fetchRules, fetchLogs]);
 
   const handleCreateRule = async () => {
     if (!formData.name.trim()) {
-      toast({ title: t.errorTitle, description: t.ruleNameRequired, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'crmAutomationRules', t.ruleNameRequired);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -272,10 +303,21 @@ export default function AutomationCenterPage() {
         setFormData(initialFormData);
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.createError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.createError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
@@ -291,10 +333,21 @@ export default function AutomationCenterPage() {
         toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.updateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.updateError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -307,10 +360,21 @@ export default function AutomationCenterPage() {
         toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.deleteError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.deleteError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setDeletingRuleId(null);
     }
@@ -360,73 +424,73 @@ export default function AutomationCenterPage() {
     }
   };
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <DashboardPageShell className="max-w-7xl">
+        <div className="space-y-6">
           <DashboardCardSkeleton />
-          <Card className="bg-slate-900/60 border-slate-800">
+          <Card className="border-white/10 bg-slate-900/60">
             <CardHeader>
-              <CardTitle className="text-white text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg text-white">
                 <Zap className="h-5 w-5 text-violet-400" />
                 {t.pageTitle}
               </CardTitle>
-              <CardDescription className="text-slate-400">
-                {t.pageSubtitle}
-              </CardDescription>
+              <CardDescription className="text-slate-400">{t.pageSubtitle}</CardDescription>
             </CardHeader>
             <CardContent>
               <ListSkeleton items={6} />
             </CardContent>
           </Card>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => router.push('/dashboard')}
-              className="text-white/70 hover:text-white hover:bg-white/10"
-              data-testid="button-back"
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                    {t.pageTitle}
-                    <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs">
-                      {t.pageBadge}
-                    </Badge>
-                  </h1>
-                  <p className="text-white/60 text-sm">{t.pageSubtitle}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back"
+        aria-label={isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {isItalian ? "Dashboard" : "Dashboard"}
+      </Link>
 
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button 
-                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
-                data-testid="button-create-rule"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {t.newRule}
-              </Button>
-            </DialogTrigger>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-crm-automation-rules"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="border-0 bg-gradient-to-r from-violet-500 to-purple-500 text-xs text-white">
+              {t.pageBadge}
+            </Badge>
+            <Button variant="outline" size="sm" className="border-white/20 text-white/90" asChild>
+              <Link href="/dashboard/automations">{t.workflowsLink}</Link>
+            </Button>
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+              <DialogTrigger asChild>
+                <Button
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
+                  data-testid="button-create-rule"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t.newRule}
+                </Button>
+              </DialogTrigger>
             <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
@@ -664,7 +728,11 @@ export default function AutomationCenterPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
+          </div>
+        }
+      />
+
+      <p className="mb-6 max-w-2xl text-sm text-white/55">{t.workflowsHint}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white/5 border-white/10">
@@ -925,7 +993,6 @@ export default function AutomationCenterPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }
