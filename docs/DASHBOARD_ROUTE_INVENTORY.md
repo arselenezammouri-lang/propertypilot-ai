@@ -49,9 +49,9 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | OK | Workflow follow-up/reminder/contenuti; distinto dalle regole CRM; shell + `workflowAutomations` |
 | 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
 | 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | Medio | Copy piano: “Pro+” in UI vs “Pro” in features — allineare |
-| 30 | `/dashboard/packages` | Brand / commercio | Free | No | Medio | B4 |
-| 31 | `/dashboard/referral` | Brand | Free | No | Medio | B4 |
-| 32 | `/dashboard/billing` | Account | Free | No | Medio | B4 |
+| 30 | `/dashboard/packages` | Brand / commercio | Free | No | OK | B4: shell, header, Stripe trust, toast `premiumPackages` |
+| 31 | `/dashboard/referral` | Brand | Free | No | OK | B4: shell, header, `GET /api/referral`, toast `referralProgram` |
+| 32 | `/dashboard/billing` | Account | Free | No | OK | B4: shell, header, Stripe trust, toast `billingSubscription` |
 | 33 | `/dashboard/settings/workspace` | Account | Free (moduli per piano) | No | Medio | B6; `resolveUiSubscriptionPlan` per founder locale |
 | 34 | `/dashboard/settings/notifications` | Account | Free | No | Medio | B6 |
 | 35 | `/dashboard/test-error` | — | — | N/A | Debole | Solo dev / test Error Boundary |
@@ -67,10 +67,10 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
    **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`). **Prossimo:** altre route CRM / B3.
 
 3. **B3 — Prospecting & map**  
-   **Fatto:** `analyze`, `scraper`, `auditor`, `prospecting`, `map`, `opportunities`, `autopilot`. **Prossimo:** B4 billing o audit Fase 0.
+   **Fatto:** B1–B3 + B4 (`billing`, `packages`, `referral`). **Prossimo:** B5 comunicazioni o audit Fase 0.
 
 4. **B4 — Billing & growth**  
-   `billing`, `packages`, `referral`.
+   **Fatto:** `billing`, `packages`, `referral`.
 
 5. **B6 — Settings**  
    `settings/workspace`, `settings/notifications`, `agency-branding`.

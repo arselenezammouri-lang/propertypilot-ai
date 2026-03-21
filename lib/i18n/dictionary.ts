@@ -239,6 +239,8 @@ export interface TranslationDictionary {
     switchToAgency: string;
     upgradeToPro: string;
     upgradeToAgency: string;
+    /** Trust line — Stripe handles cards & Customer Portal */
+    stripeTrust: string;
   };
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
@@ -723,6 +725,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       switchToAgency: 'Passa a Agency',
       upgradeToPro: 'Upgrade a Pro',
       upgradeToAgency: 'Upgrade a Agency',
+      stripeTrust:
+        'Pagamenti sicuri elaborati da Stripe. Carte, metodi di pagamento e fatture si gestiscono nel portale cliente Stripe.',
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
@@ -1211,6 +1215,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       switchToAgency: 'Switch to Agency',
       upgradeToPro: 'Upgrade to Pro',
       upgradeToAgency: 'Upgrade to Agency',
+      stripeTrust:
+        'Secure payments powered by Stripe. Cards, payment methods, and invoices are managed in the Stripe customer portal.',
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

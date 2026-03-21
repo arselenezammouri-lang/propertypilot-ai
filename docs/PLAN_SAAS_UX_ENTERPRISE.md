@@ -63,7 +63,9 @@ Un prodotto che sia:
 
 **Fase B3 (completata):** `analyze`, `scraper`, `auditor`, `prospecting`, `map`, `opportunities`, `autopilot` — shell + header + badge piano dove applicabile; ApiFeatureId: `linkAnalysis`, `listingScraper`, `listingAuditor`, `prospectingCommand`, `predatorMap`, `opportunityRadar`, `mandateAutopilot`; auditor: paywall solo sul form.
 
-**Prossimo:** B4 billing o audit Fase 0 (componenti condivisi).
+**Fase B4 (completata):** `billing`, `packages`, `referral` — shell + header + badge piano; banner trust Stripe (`billing.stripeTrust`); toast con `billingSubscription` / `premiumPackages` / `referralProgram`; referral carica codice/link da `GET /api/referral`.
+
+**Prossimo:** B5 comunicazioni o audit Fase 0 (componenti condivisi).
 
 ---
 

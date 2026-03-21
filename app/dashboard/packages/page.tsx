@@ -12,6 +12,12 @@ import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { Shield } from "lucide-react";
+import { apiFailureToast, networkFailureToast } from "@/lib/i18n/api-feature-feedback";
 
 interface Purchase {
   id: string;
@@ -28,6 +34,9 @@ function PackagesPageContent() {
   const { toast } = useToast();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const billingT = getTranslation(locale as SupportedLocale).billing;
+  const { plan, isLoading: planLoading } = useUsageLimits();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const [loadingPackage, setLoadingPackage] = useState<string | null>(null);
@@ -111,9 +120,10 @@ function PackagesPageContent() {
     } catch (error) {
       console.error('Checkout error:', error);
       toast({
-        title: t.errorTitle,
-        description: error instanceof Error ? error.message : t.checkoutError,
         variant: 'destructive',
+        ...(error instanceof Error
+          ? apiFailureToast(feedbackLocale, "premiumPackages", {}, error.message || t.checkoutError)
+          : networkFailureToast(feedbackLocale, "premiumPackages")),
       });
     } finally {
       setLoadingPackage(null);
@@ -164,15 +174,26 @@ function PackagesPageContent() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{t.pageTitle}</h1>
-        <p className="text-muted-foreground">
-          {t.pageDesc}
-        </p>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-packages"
+        subtitle={t.pageDesc}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+      />
+
+      <div
+        className="mb-6 flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/70"
+        data-testid="stripe-trust-banner-packages"
+      >
+        <Shield className="h-5 w-5 shrink-0 text-cyan-400 mt-0.5" aria-hidden />
+        <p className="leading-relaxed">{billingT.stripeTrust}</p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 max-w-4xl mx-auto w-full">
         <TabsList className="grid w-full max-w-md grid-cols-2">
           <TabsTrigger value="packages" data-testid="tab-packages">
             <Sparkles className="h-4 w-4 mr-2" />
@@ -292,16 +313,16 @@ function PackagesPageContent() {
           )}
         </TabsContent>
       </Tabs>
-    </div>
+    </DashboardPageShell>
   );
 }
 
 export default function PackagesPage() {
   return (
     <Suspense fallback={
-      <div className="container mx-auto py-8 px-4 max-w-4xl flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
+      <DashboardPageShell className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-royal-purple" />
+      </DashboardPageShell>
     }>
       <PackagesPageContent />
     </Suspense>

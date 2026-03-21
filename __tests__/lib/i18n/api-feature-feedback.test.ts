@@ -90,4 +90,10 @@ describe('B1 feature labels', () => {
       'Territory map'
     );
   });
+
+  it('includes billing label', () => {
+    expect(apiFailureToast('en', 'billingSubscription', { status: 500 }, 'x').title).toContain(
+      'Subscription'
+    );
+  });
 });

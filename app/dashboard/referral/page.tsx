@@ -1,21 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Gift, Share2, Users, Percent, TrendingUp, Copy, Check, MessageCircle } from "lucide-react";
+import { Gift, Users, Percent, TrendingUp, Copy, Check, MessageCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 export default function ReferralPage() {
   const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const billingT = getTranslation(locale as SupportedLocale).billing;
+  const { plan, isLoading: planLoading } = useUsageLimits();
   const [referralCode, setReferralCode] = useState<string>("");
+  const [referralLinkFromApi, setReferralLinkFromApi] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [stats, setStats] = useState({
     friendsInvited: 0,
@@ -57,76 +70,109 @@ export default function ReferralPage() {
       : "Hi! I found PropertyPilot AI, the platform helping real estate agencies generate listings, find deals, and win mandates 24/7. Try it using my link:",
   };
 
-  useEffect(() => {
-    loadReferralData();
-  }, []);
-
-  const loadReferralData = async () => {
+  const loadReferralData = useCallback(async () => {
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      // Genera o recupera referral code
-      const userCode = `PP-${user.id.slice(0, 8).toUpperCase()}`;
-      setReferralCode(userCode);
-
-      // Carica statistiche (mock per ora - in produzione: da database)
-      const { data: referrals } = await supabase
-        .from('referrals')
-        .select('*')
-        .eq('referrer_id', user.id)
-        .eq('status', 'completed');
-
-      if (referrals) {
-        setStats({
-          friendsInvited: referrals.length,
-          discountsEarned: referrals.length * 20, // 20% per referral
-          potentialEarnings: referrals.length * 179.4, // 20% di €897
+      const res = await fetchApi<{
+        referralCode?: string;
+        referralLink?: string;
+        totalReferrals?: number;
+      }>("/api/referral");
+      if (!res.success) {
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "referralProgram",
+            { status: res.status, message: res.message, error: res.error },
+            isItalian ? "Impossibile caricare il referral." : "Could not load referral data."
+          ),
         });
+        return;
       }
-    } catch (error) {
-      console.error('[REFERRAL] Error loading data:', error);
+      const d = res.data;
+      if (d?.referralCode) setReferralCode(d.referralCode);
+      if (d?.referralLink) setReferralLinkFromApi(d.referralLink);
+      const n = typeof d?.totalReferrals === "number" ? d.totalReferrals : 0;
+      setStats({
+        friendsInvited: n,
+        discountsEarned: n * 20,
+        potentialEarnings: n * 179.4,
+      });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "referralProgram"),
+      });
+    }
+  }, [feedbackLocale, isItalian, toast]);
+
+  useEffect(() => {
+    void loadReferralData();
+  }, [loadReferralData]);
+
+  const referralLink = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    if (referralLinkFromApi) return referralLinkFromApi;
+    if (!referralCode) return "";
+    return `${window.location.origin}/auth/signup?ref=${referralCode}`;
+  }, [referralCode, referralLinkFromApi]);
+
+  const handleCopy = async () => {
+    const link = referralLink;
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      toast({
+        title: t.copied,
+        description: t.copiedDesc,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        variant: "destructive",
+        ...clipboardFailureToast(
+          feedbackLocale,
+          "referralProgram",
+          isItalian ? "Impossibile copiare il link." : "Could not copy the link."
+        ),
+      });
     }
   };
 
-  const handleCopy = () => {
-    const referralLink = `${window.location.origin}/auth/signup?ref=${referralCode}`;
-    navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    toast({
-      title: t.copied,
-      description: t.copiedDesc,
-    });
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handleWhatsAppShare = () => {
-    const message = `${t.whatsappMessage} ${window.location.origin}/auth/signup?ref=${referralCode}`;
+    const link = referralLink || `${typeof window !== "undefined" ? window.location.origin : ""}/auth/signup?ref=${referralCode}`;
+    const message = `${t.whatsappMessage} ${link}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
-  const referralLink = typeof window !== 'undefined' ? `${window.location.origin}/auth/signup?ref=${referralCode}` : '';
-
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/30 to-yellow-500/30 flex items-center justify-center border border-amber-500/50">
-              <Gift className="h-6 w-6 text-amber-400" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">{t.programTitle}</h1>
-              <p className="text-muted-foreground mt-1">
-                {t.programSubtitle}
-              </p>
-            </div>
-          </div>
-        </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-amber-500/50 bg-gradient-to-br from-amber-500/30 to-yellow-500/30">
+              <Gift className="h-6 w-6 text-amber-400" aria-hidden />
+            </span>
+            <span>{t.programTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-referral"
+        subtitle={t.programSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+      />
+
+      <div
+        className="mb-8 flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/70"
+        data-testid="stripe-trust-banner-referral"
+      >
+        <Shield className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" aria-hidden />
+        <p className="leading-relaxed">{billingT.stripeTrust}</p>
+      </div>
 
         {/* Main Card - Gold Design */}
         <Card className="border-amber-500/30 bg-gradient-to-br from-[#0a0a0a] via-amber-900/10 to-yellow-900/10 mb-8 shadow-2xl shadow-amber-500/20">
@@ -147,10 +193,10 @@ export default function ReferralPage() {
                 className="bg-[#111111] border-amber-500/30 text-white font-mono text-sm"
               />
               <Button
-                onClick={handleCopy}
+                onClick={() => void handleCopy()}
                 variant="outline"
                 size="icon"
-                className="border-amber-500/30 hover:bg-amber-500/10"
+                className="min-h-11 min-w-11 touch-manipulation border-amber-500/30 hover:bg-amber-500/10"
                 aria-label={copied ? (isItalian ? "Copiato" : "Copied") : (isItalian ? "Copia link" : "Copy link")}
               >
                 {copied ? (
@@ -163,7 +209,7 @@ export default function ReferralPage() {
 
             <Button
               onClick={handleWhatsAppShare}
-              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
+              className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               {t.shareWhatsapp}
@@ -244,8 +290,7 @@ export default function ReferralPage() {
             </ol>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 

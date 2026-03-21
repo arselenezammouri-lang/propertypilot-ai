@@ -29,7 +29,10 @@ export type ApiFeatureId =
   | 'prospectingCommand'
   | 'predatorMap'
   | 'opportunityRadar'
-  | 'mandateAutopilot';
+  | 'mandateAutopilot'
+  | 'billingSubscription'
+  | 'premiumPackages'
+  | 'referralProgram';
 
 export type ApiFailureInput = {
   status?: number;
@@ -63,6 +66,9 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   predatorMap: { it: 'Mappa territorio', en: 'Territory map' },
   opportunityRadar: { it: 'Radar opportunità', en: 'Opportunity radar' },
   mandateAutopilot: { it: 'Autopilot mandati', en: 'Mandate autopilot' },
+  billingSubscription: { it: 'Abbonamento', en: 'Subscription' },
+  premiumPackages: { it: 'Pacchetti premium', en: 'Premium packages' },
+  referralProgram: { it: 'Programma referral', en: 'Referral program' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {
