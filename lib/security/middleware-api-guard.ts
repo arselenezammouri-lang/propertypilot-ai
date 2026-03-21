@@ -6,6 +6,8 @@ import {
   getEdgeApiRateLimitParams,
   isEdgeApiRateLimitEnabled,
 } from '@/lib/security/edge-api-rate-params';
+import { getEdgeAiRateLimitParams } from '@/lib/security/edge-ai-rate-params';
+import { isAiCostlyApiPath } from '@/lib/security/ai-costly-api-path';
 
 const SKIP_PREFIXES = [
   '/api/stripe/webhook',
@@ -26,15 +28,19 @@ function shouldSkipApiGuard(pathname: string): boolean {
 
 export type ApiGuardFailure =
   | { type: 'bot'; reason: 'empty_ua' | 'scanner_ua' }
-  | { type: 'rate'; retryAfterSec: number };
+  | { type: 'rate'; retryAfterSec: number; detail?: 'general' | 'ai' };
 
 /**
  * Returns null if the request may proceed, or a failure descriptor if it should be blocked.
- * Rate limit: when `useDistributedRateLimit` is true, skip in-memory check (caller runs Upstash first).
+ * Rate limit: when `skipGeneralMemoryRateLimit` is true, skip general in-memory (caller ran Upstash).
+ * When `skipAiMemoryRateLimit` is true, skip AI in-memory (caller ran Upstash AI).
  */
 export function evaluateApiGuard(
   request: NextRequest,
-  options?: { skipMemoryRateLimit?: boolean }
+  options?: {
+    skipGeneralMemoryRateLimit?: boolean;
+    skipAiMemoryRateLimit?: boolean;
+  }
 ): ApiGuardFailure | null {
   const pathname = request.nextUrl.pathname;
   if (!pathname.startsWith('/api/') || shouldSkipApiGuard(pathname)) {
@@ -53,16 +59,26 @@ export function evaluateApiGuard(
     return null;
   }
 
-  if (options?.skipMemoryRateLimit) {
-    return null;
+  const ip = getEdgeClientIp(request);
+
+  if (!options?.skipGeneralMemoryRateLimit) {
+    const { max, windowMs } = getEdgeApiRateLimitParams();
+    const rl = checkEdgeRateLimit(`api:${ip}`, max, windowMs);
+    if (!rl.ok) {
+      return { type: 'rate', retryAfterSec: rl.retryAfterSec, detail: 'general' };
+    }
   }
 
-  const { max, windowMs } = getEdgeApiRateLimitParams();
-  const ip = getEdgeClientIp(request);
-  const key = `api:${ip}`;
-  const rl = checkEdgeRateLimit(key, max, windowMs);
-  if (!rl.ok) {
-    return { type: 'rate', retryAfterSec: rl.retryAfterSec };
+  if (
+    request.method === 'POST' &&
+    isAiCostlyApiPath(pathname) &&
+    !options?.skipAiMemoryRateLimit
+  ) {
+    const { max: aiMax, windowMs: aiWindow } = getEdgeAiRateLimitParams();
+    const aiRl = checkEdgeRateLimit(`ai:${ip}`, aiMax, aiWindow);
+    if (!aiRl.ok) {
+      return { type: 'rate', retryAfterSec: aiRl.retryAfterSec, detail: 'ai' };
+    }
   }
 
   return null;

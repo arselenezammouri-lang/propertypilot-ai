@@ -7,14 +7,22 @@ import {
   isUpstashApiRateLimitConfigured,
   limitApiRequestUpstash,
 } from '@/lib/security/upstash-api-rate-limit';
+import { isAiCostlyApiPath } from '@/lib/security/ai-costly-api-path';
+import {
+  isUpstashAiRateLimitConfigured,
+  limitAiRequestUpstash,
+} from '@/lib/security/upstash-ai-rate-limit';
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (pathname.startsWith('/api/')) {
     const useRedis = isUpstashApiRateLimitConfigured();
+    const ip = getEdgeClientIp(request);
+    const isAiPost =
+      request.method === 'POST' && isAiCostlyApiPath(pathname);
+
     if (useRedis) {
-      const ip = getEdgeClientIp(request);
       const upstash = await limitApiRequestUpstash(`api:${ip}`);
       if (!upstash.ok) {
         const rawIp = ip;
@@ -42,8 +50,37 @@ export async function middleware(request: NextRequest) {
       }
     }
 
+    if (useRedis && isAiPost && isUpstashAiRateLimitConfigured()) {
+      const aiUp = await limitAiRequestUpstash(`ai:${ip}`);
+      if (!aiUp.ok) {
+        const rawIp = ip;
+        const ipHash = await hashClientIpForAuditEdge(
+          rawIp === 'unknown' ? undefined : rawIp
+        );
+        logSecurityAudit(
+          {
+            action: 'edge_rate_limit',
+            path: pathname,
+            method: request.method,
+            status: 429,
+            detail: 'ai_upstash',
+          },
+          { ipHash }
+        );
+        return new NextResponse(JSON.stringify({ error: 'Too many requests' }), {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            'Retry-After': String(aiUp.retryAfterSec),
+          },
+        });
+      }
+    }
+
     const guard = evaluateApiGuard(request, {
-      skipMemoryRateLimit: useRedis,
+      skipGeneralMemoryRateLimit: useRedis,
+      skipAiMemoryRateLimit: Boolean(useRedis && isAiPost && isUpstashAiRateLimitConfigured()),
     });
     if (guard) {
       const rawIp = getEdgeClientIp(request);
@@ -75,6 +112,7 @@ export async function middleware(request: NextRequest) {
           path: pathname,
           method: request.method,
           status: 429,
+          detail: guard.type === 'rate' ? guard.detail : undefined,
         },
         { ipHash }
       );
