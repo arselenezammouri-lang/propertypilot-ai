@@ -8,7 +8,8 @@ This document describes **what is implemented in code** and what still belongs a
 |-------|-----------|--------|
 | **Edge middleware** | Per-IP fixed-window rate limit on `/api/*` | In-memory per server instance. **Skips** `/api/stripe/webhook`, `/api/prospecting/call/webhook`, `/api/health`, `/api/auth/verify-turnstile`, and `/api/dev/*` in development. Enable/disable and tune via env (see `.env.example`). |
 | **Edge middleware** | User-Agent heuristics | Optional block of empty UA and known scanner/tool patterns. Tuned for noise reduction; false positives possible for custom integrations — use env to relax. |
-| **HTTP headers** | `Permissions-Policy`, `X-Permitted-Cross-Domain-Policies` | Reduces risky browser feature exposure; complements existing headers in `next.config.mjs`. |
+| **HTTP headers** | `Permissions-Policy`, `X-Permitted-Cross-Domain-Policies` | Reduces risky browser feature exposure; complements other headers in `next.config.mjs`. |
+| **HTTP headers** | `Content-Security-Policy-Report-Only` | **Production by default** (see `.env.example`). Policy built in `lib/security/content-security-policy.cjs`. Collects violations without blocking; tune `connect-src` / `frame-src` if you add new third-party scripts. |
 | **API routes** | User + IP limits via `generation_logs` / memory limiters | Already present on many AI endpoints; complements edge limits. |
 | **Auth** | Supabase session refresh in middleware | Dashboard routes require a valid session. |
 | **Auth** | Cloudflare Turnstile (login + signup) | When **both** `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` are set, widget + `/api/auth/verify-turnstile` run **before** Supabase. Site key only → **503** (misconfiguration). |
@@ -35,7 +36,7 @@ See `.env.example` section **EDGE / ANTI-ABUSE** and **Turnstile**.
 ## Suggested implementation backlog (autonomous next steps)
 
 1. ~~**Cloudflare Turnstile on `/auth/login` and `/auth/signup`**~~ — **Done** in-app; add keys on Vercel + Cloudflare dashboard.
-2. **Stricter CSP** — start with `Content-Security-Policy-Report-Only`, collect violations, then enforce with nonces for inline scripts Next needs.
+2. **Stricter CSP** — Report-Only is **on in production** via `next.config.mjs`. Next: set `CSP_REPORT_URI`, review violations, then switch to enforcing CSP with nonces where possible.
 3. **Central API wrapper** — optional `withApiSecurity(handler)` that applies consistent JSON body size limits, origin checks for state-changing routes, and structured audit logging.
 4. **Redis / Upstash rate limit** — replace or augment edge in-memory limits for accurate counts across all instances (especially for AI-heavy routes).
 5. **Security headers on API responses** — for sensitive JSON routes, mirror `no-store` and minimal `Cache-Control` (some already set per-route).
