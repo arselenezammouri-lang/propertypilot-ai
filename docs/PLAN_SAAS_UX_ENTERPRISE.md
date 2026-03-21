@@ -49,7 +49,9 @@ Un prodotto che sia:
 - **Pagine pilota:** `/dashboard/perfect-copy` e `/dashboard/leads` allineate a header + shell + badge piano (da `useUsageLimits`).
 - **A4 (pilota):** `lib/i18n/api-feature-feedback.ts` — titoli toast per feature (`Perfect Copy`, `CRM Lead` / `Lead CRM`) + prossimo passo per 401 / 429 / 5xx / rete / validazione / paywall; integrato nelle stesse due pagine pilota. Test: `__tests__/lib/i18n/api-feature-feedback.test.ts`.
 
-**Prossimo:** estendere `api-feature-feedback` (nuovi `ApiFeatureId`) alle altre dashboard che usano `fetchApi` + toast, **oppure** A5 (sidebar per job-to-be-done).
+**A5 (implementato):** navigazione per job-to-be-done con **unica sorgente** `lib/dashboard/nav-config.tsx` → sidebar desktop (`DashboardSidebar`), drawer mobile (`DashboardMobileNav` in header), Command Palette (`command-palette.tsx`). Layout dashboard: colonna sinistra + contenuto (`app/dashboard/layout.tsx`). `DashboardPageShell` ora solo padding verticale (niente doppio padding orizzontale).
+
+**Prossimo:** A6 (touch target / drawer UX) **oppure** estendere `api-feature-feedback` alle altre pagine tool.
 
 ---
 

@@ -9,7 +9,8 @@ export type DashboardPageShellProps = {
 };
 
 /**
- * Consistent content width and spacing for all dashboard tool pages (Fase A2).
+ * Vertical rhythm for tool pages. Horizontal padding lives in `app/dashboard/layout.tsx`
+ * next to the sidebar (Fase A5) — avoid double horizontal padding here.
  */
 export function DashboardPageShell({
   children,
@@ -17,12 +18,7 @@ export function DashboardPageShell({
   as: Tag = "div",
 }: DashboardPageShellProps) {
   return (
-    <Tag
-      className={cn(
-        "max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 md:py-8",
-        className
-      )}
-    >
+    <Tag className={cn("w-full py-6 md:py-8", className)}>
       {children}
     </Tag>
   );

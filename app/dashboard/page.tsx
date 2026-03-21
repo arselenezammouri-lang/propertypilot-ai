@@ -155,7 +155,7 @@ export default async function DashboardPage() {
   // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="w-full py-8 md:py-12">
         <DashboardPageHeader
           title="Command Center"
           subtitle="Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto."

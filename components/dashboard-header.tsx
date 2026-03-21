@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { RegionSelector } from "@/components/region-selector";
 import { LanguageSelector } from "@/components/language-selector";
 import { Zap, Search } from "lucide-react";
+import { DashboardMobileNav } from "@/components/dashboard-mobile-nav";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { useState, useEffect } from "react";
@@ -45,6 +46,7 @@ export function DashboardHeader() {
           </Link>
 
           <nav className="flex items-center space-x-1.5 md:space-x-3" aria-label={isIt ? "Navigazione principale" : "Main navigation"}>
+            <DashboardMobileNav />
             {/* Command Palette trigger */}
             <Button
               variant="ghost"
