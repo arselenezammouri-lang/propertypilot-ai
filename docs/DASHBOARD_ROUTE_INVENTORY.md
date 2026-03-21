@@ -36,15 +36,15 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 14 | `/dashboard/analyze` | Intelligence | Free | No | OK | B3: shell + `linkAnalysis` toast |
 | 15 | `/dashboard/scraper` | Intelligence | Free | No | OK | B3: shell + `listingScraper` toast |
 | 16 | `/dashboard/auditor` | Intelligence | Pro | **Sì** (`ProFeaturePaywall`) | OK | B3: shell + `useUsageLimits` + `listingAuditor` toast |
-| 17 | `/dashboard/autopilot` | Intelligence | Agency | No | Medio | Verificare allineamento API/piano; badge AGENCY in nav |
-| 18 | `/dashboard/opportunities` | Lead / CRM | Pro ‡ | No | Medio | ‡ Non in `ALL_FEATURES`; trattare come PRO+ finché non c’è matrice unica |
-| 19 | `/dashboard/prospecting` | Lead / CRM | Pro | **Sì** | Shell | Funzioni Agency-only (es. reveal contatti) dentro pagina |
+| 17 | `/dashboard/autopilot` | Intelligence | Agency | No | OK | Shell + header + badge piano + toast feature-scoped (`mandateAutopilot`) |
+| 18 | `/dashboard/opportunities` | Lead / CRM | Pro ‡ | No | OK | Shell + header + `fetchApi` + toast (`opportunityRadar`) |
+| 19 | `/dashboard/prospecting` | Lead / CRM | Pro | **Sì** | OK | Shell + header + `useUsageLimits` + toast (`prospectingCommand`) |
 | 20 | `/dashboard/leads` | Lead / CRM | Pro | **Sì** | OK | Pilota A1–A4 |
 | 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | Shell + header + `leadPipeline` toast (B2) |
 | 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | OK | Shell + header + `leadDetail` toast (B2) |
 | 23 | `/dashboard/crm/automations` | Lead / CRM | Pro | No | OK | Regole if/then CRM; shell + toast `crmAutomationRules`; accoppiata a `/dashboard/automations` |
 | 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | Medio | API keys / capture — documentare piano in matrice Stripe |
-| 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | Medio | B3 |
+| 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | OK | Shell + header + `useUsageLimits` + toast (`predatorMap`); mappa in card full-bleed |
 | 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | OK | Shell + header + `leadScoring` toast (B2) |
 | 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | OK | Workflow follow-up/reminder/contenuti; distinto dalle regole CRM; shell + `workflowAutomations` |
 | 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
@@ -66,8 +66,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 2. **B2 — CRM (avviata)**  
    **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`). **Prossimo:** altre route CRM / B3.
 
-3. **B3 — Prospecting & map (avviata)**  
-   **Fatto:** `analyze`, `scraper`, `auditor`. **Prossimo:** `prospecting`, `map`, `opportunities`, `autopilot`.
+3. **B3 — Prospecting & map**  
+   **Fatto:** `analyze`, `scraper`, `auditor`, `prospecting`, `map`, `opportunities`, `autopilot`. **Prossimo:** B4 billing o audit Fase 0.
 
 4. **B4 — Billing & growth**  
    `billing`, `packages`, `referral`.

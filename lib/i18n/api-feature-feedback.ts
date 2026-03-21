@@ -25,7 +25,11 @@ export type ApiFeatureId =
   | 'crmAutomationRules'
   | 'linkAnalysis'
   | 'listingScraper'
-  | 'listingAuditor';
+  | 'listingAuditor'
+  | 'prospectingCommand'
+  | 'predatorMap'
+  | 'opportunityRadar'
+  | 'mandateAutopilot';
 
 export type ApiFailureInput = {
   status?: number;
@@ -55,6 +59,10 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   linkAnalysis: { it: 'Analisi da link', en: 'Link analysis' },
   listingScraper: { it: 'Import annunci', en: 'Listing import' },
   listingAuditor: { it: 'Audit annuncio', en: 'Listing audit' },
+  prospectingCommand: { it: 'Prospecting', en: 'Prospecting' },
+  predatorMap: { it: 'Mappa territorio', en: 'Territory map' },
+  opportunityRadar: { it: 'Radar opportunità', en: 'Opportunity radar' },
+  mandateAutopilot: { it: 'Autopilot mandati', en: 'Mandate autopilot' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

@@ -1,13 +1,19 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -71,9 +77,10 @@ interface MapMarker {
 }
 
 export default function PredatorMapPage() {
-  const router = useRouter();
   const { toast } = useToast();
   const { locale, currency } = useLocaleContext();
+  const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const t = getTranslation(locale as SupportedLocale).dashboard;
   const [listings, setListings] = useState<ExternalListing[]>([]);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
@@ -85,25 +92,8 @@ export default function PredatorMapPage() {
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const { handleAPIError } = useAPIErrorHandler();
-  const [userPlan, setUserPlan] = useState<string>("free");
-  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
-
-  useEffect(() => {
-    const fetchPlan = async () => {
-      try {
-        const res = await fetch("/api/user/subscription");
-        const data = await res.json();
-        if (data?.success && data?.data?.status) setUserPlan(data.data.status);
-      } catch {
-        setUserPlan("free");
-      } finally {
-        setIsLoadingPlan(false);
-      }
-    };
-    fetchPlan();
-  }, []);
-
-  const isMapLocked = userPlan !== "agency";
+  const { plan: usagePlan, isLoading: usagePlanLoading } = useUsageLimits();
+  const isMapLocked = usagePlan !== "agency";
 
   // Mock geocoding - in produzione usare API reale (Google Maps, Mapbox, etc.)
   const geocodeLocation = async (location: string): Promise<{ lat: number; lng: number } | null> => {
@@ -160,19 +150,21 @@ export default function PredatorMapPage() {
       const userListings = listingsData.data || [];
       const eliteListings = Array.isArray(eliteData.data) ? eliteData.data : [];
       setListings([...userListings, ...eliteListings]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching listings:', error);
       setListings([]);
-      const friendly = handleAPIError(error, locale === "it" ? "Errore nel caricamento delle liste" : "Error loading map data");
+      const friendly = handleAPIError(
+        error,
+        isItalian ? "Errore nel caricamento delle liste" : "Error loading map data"
+      );
       toast({
-        title: locale === "it" ? "Errore" : "Error",
-        description: friendly,
+        ...apiFailureToast(feedbackLocale, "predatorMap", {}, friendly),
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
-  }, [handleAPIError, locale, toast]);
+  }, [handleAPIError, isItalian, feedbackLocale, toast]);
 
   useEffect(() => {
     if (!isMapLocked) fetchListings();
@@ -257,20 +249,25 @@ export default function PredatorMapPage() {
       if (data.success) {
         toast({
           title: t.mapCallLaunched,
-          description: locale === "it" ? "La chiamata AI è stata avviata con successo" : "AI call started successfully",
+          description: isItalian
+            ? "La chiamata AI è stata avviata con successo"
+            : "AI call started successfully",
         });
         fetchListings();
       } else {
         toast({
-          title: locale === "it" ? "Errore" : "Error",
-          description: data.error || t.mapCallError,
+          ...apiFailureToast(
+            feedbackLocale,
+            "predatorMap",
+            { message: data.error },
+            data.error || t.mapCallError
+          ),
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
-        title: locale === "it" ? "Errore" : "Error",
-        description: locale === "it" ? "Errore di connessione" : "Connection error",
+        ...networkFailureToast(feedbackLocale, "predatorMap"),
         variant: "destructive",
       });
     } finally {
@@ -283,17 +280,42 @@ export default function PredatorMapPage() {
     return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
-  if (isLoadingPlan) {
+  if (usagePlanLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-royal-purple" />
-      </div>
+      </DashboardPageShell>
     );
   }
 
   if (isMapLocked) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4">
+      <DashboardPageShell>
+        <DashboardPageHeader
+          variant="dark"
+          title={isItalian ? "Mappa Territorio AI" : "AI Territory Map"}
+          titleDataTestId="heading-predator-map"
+          subtitle={
+            isItalian
+              ? "Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond."
+              : "Available on Agency plan only. Unlock the map and all Diamond features."
+          }
+          planBadge={{ label: usagePlan.toUpperCase(), variant: "secondary" }}
+          actions={
+            <div className="flex flex-wrap gap-2 min-h-11 touch-manipulation">
+              <Link href="/dashboard/prospecting" aria-label={isItalian ? "Torna al Prospecting" : "Back to Prospecting"}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
+                  aria-label={isItalian ? "Indietro" : "Back"}
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          }
+        />
         <Card className="max-w-md border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10">
           <CardHeader>
             <div className="flex items-center gap-3">
@@ -301,94 +323,99 @@ export default function PredatorMapPage() {
                 <Lock className="h-8 w-8 text-royal-purple" />
               </div>
               <div>
-                <CardTitle className="text-xl">
-                  {locale === "it" ? "Mappa Territorio AI" : "AI Territory Map"}
+                <CardTitle className="text-xl text-white">
+                  {isItalian ? "Mappa Territorio AI" : "AI Territory Map"}
                 </CardTitle>
                 <CardDescription className="text-gray-400 mt-1">
-                  {locale === "it"
-                    ? "Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond."
-                    : "Available on Agency plan only. Unlock the map and all Diamond features."}
+                  {isItalian
+                    ? "Disponibile solo con piano Agency."
+                    : "Available on Agency plan only."}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <Link href="/dashboard/billing">
-              <Button className="w-full bg-gradient-to-r from-royal-purple to-sunset-gold hover:opacity-90">
-                {locale === "it" ? "Sblocca con Agency" : "Upgrade to Agency"}
+              <Button className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-royal-purple to-sunset-gold hover:opacity-90">
+                {isItalian ? "Sblocca con Agency" : "Upgrade to Agency"}
               </Button>
             </Link>
             <Link href="/dashboard/prospecting">
-              <Button variant="ghost" className="w-full mt-2 text-gray-400">
+              <Button variant="ghost" className="w-full mt-2 min-h-11 touch-manipulation text-gray-400">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {locale === "it" ? "Torna al Prospecting" : "Back to Prospecting"}
+                {isItalian ? "Torna al Prospecting" : "Back to Prospecting"}
               </Button>
             </Link>
           </CardContent>
         </Card>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-purple-500/20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard/prospecting" aria-label={locale === "it" ? "Torna al Prospecting" : "Back to Prospecting"}>
-              <Button variant="ghost" size="icon" aria-label={locale === "it" ? "Indietro" : "Back"}>
+    <DashboardPageShell className="!py-0">
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Zap className="h-6 w-6 shrink-0 text-cyan-400" aria-hidden />
+            <span className="hidden sm:inline">{t.mapTitle}</span>
+            <span className="sm:hidden">{t.mapTitle.replace(" Command", "")}</span>
+          </span>
+        }
+        titleDataTestId="heading-predator-map"
+        subtitle={t.mapSubtitle}
+        planBadge={{ label: usagePlan.toUpperCase(), variant: "secondary" }}
+        className="mb-4 md:mb-6 pb-4"
+        actions={
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 min-h-11 touch-manipulation">
+            <Link href="/dashboard/prospecting" aria-label={isItalian ? "Torna al Prospecting" : "Back to Prospecting"}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
+                aria-label={isItalian ? "Indietro" : "Back"}
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2">
-                <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
-                <span className="hidden sm:inline">{t.mapTitle}</span>
-                <span className="sm:hidden">{t.mapTitle.replace(' Command', '')}</span>
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">
-                {t.mapSubtitle}
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
             <div className="flex items-center gap-2">
-              <Switch
-                checked={showGhostListings}
-                onCheckedChange={setShowGhostListings}
-              />
-              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">{t.mapGhostListings}</span>
-              <span className="text-xs sm:text-sm text-gray-300 sm:hidden">Ghost</span>
+              <Switch checked={showGhostListings} onCheckedChange={setShowGhostListings} />
+              <span className="text-xs sm:text-sm text-white/80 hidden sm:inline">{t.mapGhostListings}</span>
+              <span className="text-xs sm:text-sm text-white/80 sm:hidden">Ghost</span>
             </div>
             <div className="flex items-center gap-2">
-              <Switch
-                checked={topDealsOnly}
-                onCheckedChange={setTopDealsOnly}
-              />
-              <span className="text-xs sm:text-sm text-gray-300 hidden sm:inline">
-                {locale === "it" ? "Solo TOP DEAL" : "Top deals only"}
+              <Switch checked={topDealsOnly} onCheckedChange={setTopDealsOnly} />
+              <span className="text-xs sm:text-sm text-white/80 hidden sm:inline">
+                {isItalian ? "Solo TOP DEAL" : "Top deals only"}
               </span>
-              <span className="text-xs sm:text-sm text-gray-300 sm:hidden">TOP</span>
+              <span className="text-xs sm:text-sm text-white/80 sm:hidden">TOP</span>
             </div>
-            <Button onClick={fetchListings} variant="outline" size="sm" className="w-full sm:w-auto">
+            <Button
+              onClick={fetchListings}
+              variant="outline"
+              size="sm"
+              className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10 w-full sm:w-auto"
+            >
               <Filter className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">{t.mapRefresh}</span>
-              <span className="sm:hidden">{t.mapRefresh}</span>
+              {t.mapRefresh}
             </Button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Map Container */}
-      <div className="pt-20 h-screen relative">
+      <div className="relative -mx-4 sm:-mx-0 rounded-xl border border-white/10 overflow-hidden min-h-[calc(100vh-14rem)] lg:min-h-[calc(100vh-12rem)] bg-[#0a0a0a] text-white">
         {/* Badge LIVE Predatori Online - Solo primo accesso */}
-        <PredatorLiveBadge />
+        <div className="pointer-events-none absolute left-0 right-0 top-0 z-[45] flex justify-center pt-2">
+          <div className="pointer-events-auto">
+            <PredatorLiveBadge />
+          </div>
+        </div>
         
         {/* Mappa Placeholder Professionale (Mapbox-style) */}
         <div
           ref={mapContainerRef}
-          className="w-full h-full bg-[#1a1a1a] relative overflow-hidden"
+          className="w-full min-h-[calc(100vh-14rem)] lg:min-h-[calc(100vh-12rem)] h-full bg-[#1a1a1a] relative overflow-hidden"
           style={{
             backgroundImage: `
               linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
@@ -509,12 +536,17 @@ export default function PredatorMapPage() {
             <div className="absolute inset-0 flex items-center justify-center z-20">
               <div className="text-center">
                 <MapPin className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg">Nessun immobile trovato</p>
+                <p className="text-gray-400 text-lg">
+                  {isItalian ? "Nessun immobile trovato" : "No listings found"}
+                </p>
                 <p className="text-gray-500 text-sm mt-2">
-                  {showGhostListings 
-                    ? 'Nessun Ghost Listing disponibile'
-                    : 'Attiva il filtro Ghost Listings per vedere più opzioni'
-                  }
+                  {showGhostListings
+                    ? isItalian
+                      ? "Nessun Ghost Listing disponibile"
+                      : "No ghost listings available"
+                    : isItalian
+                      ? "Attiva il filtro Ghost Listings per vedere più opzioni"
+                      : "Enable Ghost Listings to see more options"}
                 </p>
               </div>
             </div>
@@ -523,7 +555,7 @@ export default function PredatorMapPage() {
 
         {/* Sidebar Azione Rapida */}
         {selectedMarker && (
-          <div className="absolute top-20 right-0 w-96 h-[calc(100vh-5rem)] bg-[#0a0a0a]/95 backdrop-blur-xl border-l border-purple-500/30 z-40 overflow-y-auto">
+          <div className="absolute top-0 right-0 w-full max-w-md sm:w-96 h-full sm:h-full max-h-full bg-[#0a0a0a]/95 backdrop-blur-xl border-l border-purple-500/30 z-40 overflow-y-auto">
             <div className="p-6 space-y-6">
               {/* Header Sidebar */}
               <div className="flex items-start justify-between">
@@ -664,7 +696,7 @@ export default function PredatorMapPage() {
           listing={selectedMarker.listing}
         />
       )}
-    </div>
+    </DashboardPageShell>
   );
 }
 

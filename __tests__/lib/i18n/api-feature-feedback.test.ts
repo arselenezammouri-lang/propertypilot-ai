@@ -81,4 +81,13 @@ describe('B1 feature labels', () => {
     const r = apiFailureToast('en', 'linkAnalysis', { status: 500 }, 'x');
     expect(r.title).toContain('Link analysis');
   });
+
+  it('includes prospecting and map labels', () => {
+    expect(apiFailureToast('it', 'prospectingCommand', { status: 403 }, 'x').title).toContain(
+      'Prospecting'
+    );
+    expect(apiFailureToast('en', 'predatorMap', { status: 429 }, 'x').title).toContain(
+      'Territory map'
+    );
+  });
 });

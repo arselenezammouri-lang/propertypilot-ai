@@ -8,6 +8,12 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
+import { useToast } from "@/hooks/use-toast";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { fetchApi } from "@/lib/api/client";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { apiFailureToast, networkFailureToast } from "@/lib/i18n/api-feature-feedback";
 
 type Opportunity = {
   id: string;
@@ -21,6 +27,9 @@ type Opportunity = {
 
 export default function OpportunitiesPage() {
   const { locale, currency } = useLocaleContext();
+  const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const [type, setType] = useState<"underpriced" | "old" | "uncontacted">("underpriced");
   const [days, setDays] = useState(14);
   const [city, setCity] = useState("");
@@ -44,6 +53,7 @@ export default function OpportunitiesPage() {
       noResults: "Nessuna opportunità trovata con i filtri correnti.",
       selectListing: "Seleziona un annuncio per aprire i dettagli.",
       loadingResults: "Caricamento opportunità...",
+      loadFailed: "Impossibile caricare le opportunità.",
       unknown: "sconosciuto",
       status: "Stato",
       na: "n.d.",
@@ -64,6 +74,7 @@ export default function OpportunitiesPage() {
       noResults: "No opportunities found with the current filters.",
       selectListing: "Select a listing to open details.",
       loadingResults: "Loading opportunities...",
+      loadFailed: "Could not load opportunities.",
       unknown: "unknown",
       status: "Status",
       na: "n/a",
@@ -83,15 +94,29 @@ export default function OpportunitiesPage() {
     if (city) params.set("city", city);
 
     try {
-      const res = await fetch(`/api/opportunities?${params.toString()}`);
-      const json = await res.json();
-      if (json.success) {
-        setItems(json.data || []);
+      const res = await fetchApi<Opportunity[]>(
+        `/api/opportunities?${params.toString()}`
+      );
+      if (res.success) {
+        setItems(Array.isArray(res.data) ? res.data : []);
       } else {
         setItems([]);
+        toast({
+          ...apiFailureToast(
+            feedbackLocale,
+            "opportunityRadar",
+            { status: res.status, message: res.message, error: res.error },
+            t.loadFailed
+          ),
+          variant: "destructive",
+        });
       }
     } catch {
       setItems([]);
+      toast({
+        ...networkFailureToast(feedbackLocale, "opportunityRadar"),
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -103,12 +128,25 @@ export default function OpportunitiesPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 space-y-6">
-      <Card>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.title}
+        titleDataTestId="heading-opportunities"
+        subtitle={t.subtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+      />
+      <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle>{t.title}</CardTitle>
-          <CardDescription>
-            {t.subtitle}
+          <CardTitle className="text-white">
+            {locale === "it" ? "Filtri ricerca" : "Search filters"}
+          </CardTitle>
+          <CardDescription className="text-white/60">
+            {locale === "it"
+              ? "Affina il tipo di opportunità e la zona."
+              : "Refine opportunity type and area."}
           </CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-4">
@@ -154,37 +192,39 @@ export default function OpportunitiesPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle>{t.results}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">{t.results}</CardTitle>
+          <CardDescription className="text-white/60">
             {items.length === 0 && !loading
               ? t.noResults
               : t.selectListing}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {loading && <p className="text-sm text-muted-foreground">{t.loadingResults}</p>}
+          {loading && (
+            <p className="text-sm text-white/55">{t.loadingResults}</p>
+          )}
           {!loading && items.length > 0 && (
             <div className="space-y-2 text-sm">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between border-b border-border/20 py-2 cursor-pointer hover:bg-muted/10"
+                  className="flex items-center justify-between border-b border-white/10 py-2 cursor-pointer hover:bg-white/5 rounded-sm px-1 -mx-1"
                   onClick={() => {
                     window.location.href = `/dashboard/prospecting?listing=${item.id}`;
                   }}
                 >
                   <div>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-white">{item.title}</p>
+                    <p className="text-xs text-white/55">
                       {item.city} • {item.source || t.unknown}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold">{formatPrice(item.price)}</p>
+                    <p className="font-semibold text-white">{formatPrice(item.price)}</p>
                     {item.status && (
-                      <p className="text-xs text-muted-foreground">{t.status}: {item.status}</p>
+                      <p className="text-xs text-white/55">{t.status}: {item.status}</p>
                     )}
                   </div>
                 </div>
@@ -193,7 +233,7 @@ export default function OpportunitiesPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </DashboardPageShell>
   );
 }
 

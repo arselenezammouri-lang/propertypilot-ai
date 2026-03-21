@@ -89,6 +89,16 @@ import { GlobalStatsTicker } from "@/components/global-stats-ticker";
 import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 // Lazy load heavy components
 const InvestmentAnalysisModal = NextDynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
@@ -194,7 +204,9 @@ export default function ProspectingPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
+  const { plan: usagePlan, isLoading: usagePlanLoading, refresh: refreshUsagePlan } = useUsageLimits();
   const statusConfig = getStatusConfig(isItalian);
   const { handleAPIError } = useAPIErrorHandler();
 
@@ -320,6 +332,16 @@ export default function ProspectingPage() {
   const [showTopMatchOnly, setShowTopMatchOnly] = useState(false);
   const [copiedListingId, setCopiedListingId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+
+  useEffect(() => {
+    if (usagePlanLoading) return;
+    const p = (usagePlan || "free").toLowerCase();
+    if (p === "starter" || p === "pro" || p === "agency") {
+      setUserPlan(p);
+    } else {
+      setUserPlan("free");
+    }
+  }, [usagePlan, usagePlanLoading]);
   const [voiceCallsRemaining, setVoiceCallsRemaining] = useState<number>(0);
   const [isManualOverrideOpen, setIsManualOverrideOpen] = useState<string | null>(null);
   const [isAuraVRModalOpen, setIsAuraVRModalOpen] = useState(false);
@@ -348,8 +370,7 @@ export default function ProspectingPage() {
     } catch (error: unknown) {
       const friendly = handleAPIError(error, t.loadError);
       toast({
-        title: t.errorTitle,
-        description: friendly,
+        ...apiFailureToast(feedbackLocale, "prospectingCommand", {}, friendly),
         variant: "destructive",
       });
     } finally {
@@ -382,33 +403,26 @@ export default function ProspectingPage() {
     }
   };
 
-  const fetchUserSubscription = async () => {
+  const fetchVoiceCallQuota = async () => {
+    if (userPlan !== "pro" && userPlan !== "agency") {
+      setVoiceCallsRemaining(0);
+      return;
+    }
+    if (userPlan === "agency") {
+      setVoiceCallsRemaining(-1);
+      return;
+    }
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     try {
-      const res = await fetchApi<{ status?: string }>('/api/user/subscription');
-      if (!res.success || !res.data) return;
-      const plan = (res.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-      setUserPlan(plan);
-
-      if (plan === 'pro') {
-        const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        try {
-          const callsRes = await fetchApi<{ calls_this_month?: number }>(`/api/prospecting/stats?month_start=${monthStart.toISOString()}`);
-          const callsUsed = callsRes.success && callsRes.data ? (callsRes.data.calls_this_month ?? 0) : 0;
-          setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
-        } catch {
-          setVoiceCallsRemaining(30);
-        }
-      } else if (plan === 'agency') {
-        setVoiceCallsRemaining(-1);
-      } else {
-        setVoiceCallsRemaining(0);
-      }
-      if (plan === 'pro' || plan === 'agency') {
-        fetchStats();
-      }
-    } catch (error) {
-      console.error('Error fetching subscription:', error);
+      const callsRes = await fetchApi<{ calls_this_month?: number }>(
+        `/api/prospecting/stats?month_start=${monthStart.toISOString()}`
+      );
+      const callsUsed =
+        callsRes.success && callsRes.data ? (callsRes.data.calls_this_month ?? 0) : 0;
+      setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
+    } catch {
+      setVoiceCallsRemaining(30);
     }
   };
 
@@ -425,9 +439,16 @@ export default function ProspectingPage() {
   useEffect(() => {
     fetchListings();
     fetchFilters();
-    fetchUserSubscription();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- run when filters change only
   }, [statusFilter, platformFilter]);
+
+  useEffect(() => {
+    void fetchVoiceCallQuota();
+    if (userPlan === "pro" || userPlan === "agency") {
+      fetchStats();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- when plan from usage settles
+  }, [userPlan]);
 
   // Auto-refresh stats ogni 30 secondi (solo per PRO/AGENCY)
   useEffect(() => {
@@ -460,15 +481,22 @@ export default function ProspectingPage() {
         if (res.status === 403) {
           setUserPlan('free');
           toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumCallDesc,
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "prospectingCommand",
+              res.message || res.error || t.premiumCallDesc
+            ),
             variant: "destructive",
           });
           return;
         }
         toast({
-          title: t.errorTitle,
-          description: res.error || res.message || t.callError,
+          ...apiFailureToast(
+            feedbackLocale,
+            "prospectingCommand",
+            { status: res.status, message: res.message, error: res.error },
+            t.callError
+          ),
           variant: "destructive",
         });
         return;
@@ -481,12 +509,12 @@ export default function ProspectingPage() {
       setTimeout(() => {
         fetchListings();
         fetchStats();
-        fetchUserSubscription();
+        void refreshUsagePlan();
+        void fetchVoiceCallQuota();
       }, 2000);
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: t.connectionError,
+        ...networkFailureToast(feedbackLocale, "prospectingCommand"),
         variant: "destructive",
       });
     } finally {
@@ -543,15 +571,18 @@ export default function ProspectingPage() {
         });
       } else {
         toast({
-          title: t.errorTitle,
-          description: res.error || res.message || t.autoRunError,
+          ...apiFailureToast(
+            feedbackLocale,
+            "prospectingCommand",
+            { status: res.status, message: res.message, error: res.error },
+            t.autoRunError
+          ),
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: t.connectionError,
+        ...networkFailureToast(feedbackLocale, "prospectingCommand"),
         variant: "destructive",
       });
     }
@@ -661,42 +692,43 @@ export default function ProspectingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Global Stats Ticker */}
-        <div className="mb-4">
-          <GlobalStatsTicker />
-        </div>
+    <DashboardPageShell>
+      <div className="mb-4">
+        <GlobalStatsTicker />
+      </div>
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon" aria-label={locale === "it" ? "Indietro" : "Back"}>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        titleDataTestId="heading-prospecting"
+        subtitle={t.heroSubtitle}
+        planBadge={
+          !usagePlanLoading
+            ? { label: userPlan.toUpperCase(), variant: "secondary" }
+            : undefined
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-3 min-h-11 touch-manipulation">
+            <Link href="/dashboard" aria-label={isItalian ? "Indietro" : "Back"}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
+                aria-label={isItalian ? "Indietro" : "Back"}
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                <TrendingUp className="h-8 w-8 text-cyan-400" />
-                {t.heroTitle}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-lg border">
+            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
               <Switch
                 checked={showTopMatchOnly}
                 onCheckedChange={setShowTopMatchOnly}
               />
-              <span className="text-sm font-medium">{t.topMatchOnly}</span>
+              <span className="text-sm font-medium text-white/90">{t.topMatchOnly}</span>
             </div>
-            <Button 
+            <Button
               onClick={() => {
-                const exportData = listings.map(l => ({
+                const exportData = listings.map((l) => ({
                   title: l.title,
                   location: l.location,
                   price: l.price,
@@ -709,29 +741,34 @@ export default function ProspectingPage() {
                   url: l.source_url,
                   created_at: l.created_at,
                 }));
-                // Import dinamico per evitare errori SSR
-                import('@/lib/utils/export-data').then(({ exportToCSV, exportToExcel }) => {
-                  const format = window.confirm('Esporta in Excel? (OK = Excel, Annulla = CSV)');
+                import("@/lib/utils/export-data").then(({ exportToCSV, exportToExcel }) => {
+                  const format = window.confirm(t.exportConfirm);
                   if (format) {
-                    exportToExcel(exportData, 'prospecting-export');
+                    exportToExcel(exportData, "prospecting-export");
                   } else {
-                    exportToCSV(exportData, 'prospecting-export');
+                    exportToCSV(exportData, "prospecting-export");
                   }
                 });
               }}
               variant="outline"
+              className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10"
             >
               <Download className="h-4 w-4 mr-2" />
               {t.exportLeads}
             </Button>
-            <Button onClick={fetchListings} variant="outline">
+            <Button
+              onClick={fetchListings}
+              variant="outline"
+              className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10"
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               {t.refresh}
             </Button>
           </div>
-        </div>
+        }
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Sidebar Filtri */}
           <div className="lg:col-span-1">
             <Card>
@@ -803,7 +840,16 @@ export default function ProspectingPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toast({ title: t.filters, description: t.filtersComingSoon, duration: 4000 })}
+                      onClick={() =>
+                        toast({
+                          ...validationToast(
+                            feedbackLocale,
+                            "prospectingCommand",
+                            t.filtersComingSoon
+                          ),
+                          duration: 4000,
+                        })
+                      }
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -1064,10 +1110,13 @@ export default function ProspectingPage() {
                                                 description: t.copiedDesc,
                                               });
                                               setTimeout(() => setCopiedListingId(null), 2000);
-                                            } catch (error) {
+                                            } catch {
                                               toast({
-                                                title: t.errorTitle,
-                                                description: t.copyError,
+                                                ...clipboardFailureToast(
+                                                  feedbackLocale,
+                                                  "prospectingCommand",
+                                                  t.copyError
+                                                ),
                                                 variant: "destructive",
                                               });
                                             }
@@ -1134,11 +1183,27 @@ export default function ProspectingPage() {
                                           title: t.statusUpdated,
                                           description: t.statusUpdatedDesc(statusConfig[newStatus]?.label || newStatus),
                                         });
+                                      } else {
+                                        toast({
+                                          ...apiFailureToast(
+                                            feedbackLocale,
+                                            "prospectingCommand",
+                                            {
+                                              status: res.status,
+                                              message: res.message,
+                                              error: res.error,
+                                            },
+                                            t.statusUpdateFailDesc
+                                          ),
+                                          variant: "destructive",
+                                        });
                                       }
-                                    } catch (error) {
+                                    } catch {
                                       toast({
-                                        title: t.errorTitle,
-                                        description: t.statusUpdateFailDesc,
+                                        ...networkFailureToast(
+                                          feedbackLocale,
+                                          "prospectingCommand"
+                                        ),
                                         variant: "destructive",
                                       });
                                     }
@@ -1356,7 +1421,6 @@ export default function ProspectingPage() {
             </Card>
           </div>
         </div>
-      </div>
 
       {/* Modal Analisi Investimento */}
       <InvestmentAnalysisModal
@@ -1602,12 +1666,25 @@ export default function ProspectingPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => {
-                            navigator.clipboard.writeText(listing.phone_number || '');
-                            toast({
-                              title: "Copiato!",
-                              description: "Numero copiato negli appunti",
-                            });
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(listing.phone_number || '');
+                              toast({
+                                title: t.copiedTitle,
+                                description: isItalian
+                                  ? "Numero copiato negli appunti"
+                                  : "Phone number copied to clipboard",
+                              });
+                            } catch {
+                              toast({
+                                ...clipboardFailureToast(
+                                  feedbackLocale,
+                                  "prospectingCommand",
+                                  t.copyError
+                                ),
+                                variant: "destructive",
+                              });
+                            }
                           }}
                         >
                           <Copy className="h-4 w-4" />
@@ -1694,13 +1771,18 @@ export default function ProspectingPage() {
                     try {
                       await navigator.clipboard.writeText(generatedMessage);
                       toast({
-                        title: "Copiato!",
-                        description: "Messaggio copiato negli appunti",
+                        title: t.copiedTitle,
+                        description: isItalian
+                          ? "Messaggio copiato negli appunti"
+                          : "Message copied to clipboard",
                       });
-                    } catch (error) {
+                    } catch {
                       toast({
-                        title: "Errore",
-                        description: "Impossibile copiare",
+                        ...clipboardFailureToast(
+                          feedbackLocale,
+                          "prospectingCommand",
+                          t.copyError
+                        ),
                         variant: "destructive",
                       });
                     }
@@ -1728,7 +1810,7 @@ export default function ProspectingPage() {
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardPageShell>
   );
 }
 

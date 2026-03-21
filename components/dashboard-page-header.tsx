@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export type DashboardPageHeaderProps = {
-  title: string;
+  title: ReactNode;
   /** e.g. for E2E — applied to the H1 */
   titleDataTestId?: string;
   subtitle?: string;
