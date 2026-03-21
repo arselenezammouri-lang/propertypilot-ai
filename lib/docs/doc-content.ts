@@ -48,6 +48,82 @@ PropertyPilot AI helps real estate agents scale with AI: listings, leads, prospe
     `,
     },
   },
+  'getting-started/first-listing': {
+    it: {
+      title: 'Crea il tuo primo annuncio',
+      content: `
+# Crea il tuo primo annuncio
+
+In pochi minuti puoi passare da **dati grezzi** a copy pronto per i portali.
+
+## Percorso consigliato
+
+1. **Genera Annuncio** (\`/dashboard/listings\`) — flusso guidato per creare e salvare.
+2. **Perfect Copy** — se vuoi subito **5 varianti** (professionale, emotivo, breve, SEO, luxury) partendo da un form strutturato.
+3. **Libreria** — salva la variante migliore e riaprila quando pubblichi su Idealista, Immobiliare, MLS, ecc.
+
+## Suggerimento
+
+Compila **zona**, **metratura**, **target** e **punti di forza**: l’output sarà molto più credibile e adatto al tuo mercato.
+    `,
+    },
+    en: {
+      title: 'Create your first listing',
+      content: `
+# Create your first listing
+
+Move from **raw inputs** to portal-ready copy in minutes.
+
+## Recommended path
+
+1. **Generate Listing** (\`/dashboard/listings\`) — guided flow to create and save.
+2. **Perfect Copy** — if you want **five variants** (professional, emotional, short, SEO, luxury) from a structured form.
+3. **Library** — save the best variant and reopen it when you publish to Zillow, Idealista, MLS, etc.
+
+## Tip
+
+Fill in **area**, **size**, **target buyer**, and **strengths** for more credible, market-specific output.
+    `,
+    },
+  },
+  'getting-started/workspace-setup': {
+    it: {
+      title: 'Configura il tuo workspace',
+      content: `
+# Configura il workspace
+
+Da **Impostazioni workspace** attivi solo ciò che usi ogni giorno: meno rumore, più velocità.
+
+## Cosa fare
+
+1. Apri \`/dashboard/settings/workspace\`.
+2. Abilita i **moduli** rilevanti (CRM, voice, mappa, automazioni…) in base al tuo piano.
+3. Verifica **lingua e regione** dall’header (bandierina / selettore) per copy e formati coerenti.
+
+## Perché conta
+
+Un workspace ordinato riduce errori (es. tool PRO non necessari) e allinea il team sulle stesse funzioni.
+    `,
+    },
+    en: {
+      title: 'Set up your workspace',
+      content: `
+# Set up your workspace
+
+In **Workspace settings**, enable only what you use daily: less noise, faster work.
+
+## Steps
+
+1. Open \`/dashboard/settings/workspace\`.
+2. Turn on **modules** that match your plan (CRM, voice, map, automations…).
+3. Check **language and region** from the header for consistent copy and formats.
+
+## Why it matters
+
+A tidy workspace avoids confusion (e.g. PRO tools you do not need) and keeps teams aligned on the same features.
+    `,
+    },
+  },
   'getting-started/perfect-copy': {
     it: {
       title: 'Perfect Copy — guida rapida',

@@ -82,7 +82,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- **Fase C3:** estendere command palette con azioni e link docs utili.  
+- **Fase C4:** preferenze utente (timezone, lingua/valuta espliciti in settings dove manca).  
+- **C3 (fatto):** command palette con **Collegamenti veloci** + **Guide** (`lib/dashboard/command-palette-extras.tsx`).  
 - **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel` (Perfect Copy, Pipeline, Billing); docs bilingue in `lib/docs/doc-content.ts`.  
 - Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  
 - Estendere **`api-feature-feedback`** (`ApiFeatureId`) dove manca ancora.  

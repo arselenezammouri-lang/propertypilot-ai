@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -17,6 +16,11 @@ import { HelpCircle, LogOut } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardNavGroups, type DashboardNavItem } from "@/lib/dashboard/nav-config";
+import {
+  getCommandPaletteGuideLinks,
+  getCommandPaletteQuickLinks,
+  type CommandPaletteExtraItem,
+} from "@/lib/dashboard/command-palette-extras";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
@@ -33,9 +37,14 @@ export function CommandPalette() {
     signOutDesc: isIt ? "Chiudi sessione su questo dispositivo" : "Sign out on this device",
     help: isIt ? "Centro assistenza" : "Help center",
     helpDesc: isIt ? "Guide e FAQ" : "Guides and FAQ",
+    quickLinksHeading: isIt ? "Collegamenti veloci" : "Quick links",
+    guidesHeading: isIt ? "Guide (nuova scheda)" : "Guides (new tab)",
+    opensNewTab: isIt ? "Si apre in una nuova scheda" : "Opens in a new tab",
   };
 
   const navGroups = getDashboardNavGroups(isIt);
+  const quickLinks = getCommandPaletteQuickLinks(isIt);
+  const guideLinks = getCommandPaletteGuideLinks(isIt);
 
   const handleSelect = useCallback(
     (item: DashboardNavItem) => {
@@ -44,6 +53,20 @@ export function CommandPalette() {
         item.action();
       } else if (item.href) {
         router.push(item.href);
+      }
+    },
+    [router]
+  );
+
+  const handleSelectExtra = useCallback(
+    (item: CommandPaletteExtraItem) => {
+      setOpen(false);
+      if (item.kind === "internal") {
+        router.push(item.path);
+        return;
+      }
+      if (typeof window !== "undefined") {
+        window.open(item.path.startsWith("http") ? item.path : `${window.location.origin}${item.path}`, "_blank", "noopener,noreferrer");
       }
     },
     [router]
@@ -65,6 +88,51 @@ export function CommandPalette() {
       <CommandInput placeholder={t.placeholder} />
       <CommandList>
         <CommandEmpty>{t.noResults}</CommandEmpty>
+        <CommandGroup heading={t.quickLinksHeading}>
+          {quickLinks.map((item) => (
+            <CommandItem
+              key={item.id}
+              value={`${item.label} ${item.description} ${item.keywords}`}
+              onSelect={() => handleSelectExtra(item)}
+              className="flex cursor-pointer items-center gap-3"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                {item.icon}
+              </span>
+              <div className="min-w-0 flex-1">
+                <span className="text-sm font-medium">{item.label}</span>
+                <p className="truncate text-xs text-muted-foreground">{item.description}</p>
+              </div>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading={t.guidesHeading}>
+          {guideLinks.map((item) => (
+            <CommandItem
+              key={item.id}
+              value={`${item.label} ${item.description} ${item.keywords}`}
+              onSelect={() => handleSelectExtra(item)}
+              className="flex cursor-pointer items-center gap-3"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                {item.icon}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  <Badge variant="outline" className="h-5 border-white/20 px-1.5 text-[10px] text-muted-foreground">
+                    ↗
+                  </Badge>
+                </div>
+                <p className="truncate text-xs text-muted-foreground">
+                  {item.description} · {t.opensNewTab}
+                </p>
+              </div>
+            </CommandItem>
+          ))}
+        </CommandGroup>
+        <CommandSeparator />
         {navGroups.map((group, groupIdx) => (
           <div key={group.jtbdId}>
             {groupIdx > 0 && <CommandSeparator />}

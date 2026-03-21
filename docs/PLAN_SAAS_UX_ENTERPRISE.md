@@ -104,7 +104,9 @@ Per **ogni** area applicare la checklist in [DESIGN_UX_LOCALE.md §5](../DESIGN_
 
 **Stato C1:** implementata `DashboardOnboardingChecklist` in `components/dashboard-onboarding-checklist.tsx` (home `/dashboard` solo): 5 passi con CTA, barra progresso, checkbox + auto-completamento quando l’utente visita le route collegate, dismiss persistente in `localStorage` (`propertypilot_onboarding_checklist_dismissed_v1`). Copy in `lib/i18n/dictionary.ts` (IT/EN; altre lingue → merge su EN).
 
-**Stato C2:** help contestuale — `ContextualHelpTrigger` (`components/contextual-help-trigger.tsx`) nel `DashboardPageHeader` (prop `contextualHelp`); `FieldHelpLabel` per tooltip su campi complessi; `TooltipProvider` in `app/layout.tsx`; articoli bilingue IT/EN in `lib/docs/doc-content.ts` + `resolveDocArticle` in `lib/docs/doc-article.ts`; hub `/docs` aggiornato (sezioni CRM, Account, guida Perfect Copy). Pilota: **Perfect Copy**, **Pipeline lead**, **Billing**. **Prossimo:** C3 command palette.
+**Stato C2:** help contestuale — `ContextualHelpTrigger` (`components/contextual-help-trigger.tsx`) nel `DashboardPageHeader` (prop `contextualHelp`); `FieldHelpLabel` per tooltip su campi complessi; `TooltipProvider` in `app/layout.tsx`; articoli bilingue IT/EN in `lib/docs/doc-content.ts` + `resolveDocArticle` in `lib/docs/doc-article.ts`; hub `/docs` aggiornato (sezioni CRM, Account, guida Perfect Copy). Pilota: **Perfect Copy**, **Pipeline lead**, **Billing**.
+
+**Stato C3:** command palette — gruppi **Collegamenti veloci** (navigazione interna) e **Guide (nuova scheda)** (`lib/dashboard/command-palette-extras.tsx`); le guide aprono `/docs/...` in `_blank`. Aggiunti articoli `getting-started/first-listing` e `getting-started/workspace-setup` in `doc-content.ts` (prima linkati dall’hub ma senza pagina). **Prossimo:** C4 preferenze utente (timezone / settings espliciti).
 
 ---
 
