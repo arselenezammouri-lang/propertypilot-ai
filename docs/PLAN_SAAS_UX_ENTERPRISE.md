@@ -25,7 +25,7 @@ Un prodotto che sia:
 
 **Definition of done:** documento inventario in `/docs` o issue tracker; priorità numerate per Fase B.
 
-**Stato:** inventario route in [DASHBOARD_ROUTE_INVENTORY.md](./DASHBOARD_ROUTE_INVENTORY.md) (35 route, JTBD, piano da `DashboardPlanFeatures`, gate UI, stato UX, priorità B1–B6). **Density:** default **comfort** (già implicito in Fase A). **Audit componenti condivisi:** prossimo sotto-passo Fase 0 (tabella Card/Button/modali) oppure in parallelo a B1.
+**Stato:** inventario route in [DASHBOARD_ROUTE_INVENTORY.md](./DASHBOARD_ROUTE_INVENTORY.md) (35 route, JTBD, piano da `DashboardPlanFeatures`, gate UI, stato UX, priorità B1–B6). **Density:** default **comfort** (già implicito in Fase A). **Audit componenti condivisi:** completato in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (Card, Button, Dialog/AlertDialog, header, sidebar, `futuristic-card` / `neon-button`, priorità P1–P4).
 
 ---
 
@@ -69,7 +69,9 @@ Un prodotto che sia:
 
 **Fase B6 (completata):** `settings/workspace` (moduli dashboard), `settings/notifications` (AI Morning Intel), `agency-branding` (white-label PDF) — shell + header + badge piano; toast `workspaceModules`, `morningIntelNotifications`, `agencyBrandingWhiteLabel`; workspace: fix trial `enabled` con `inTrial` locale; notifications: `fetchApi` + validazione canali prima del test.
 
-**Prossimo:** audit Fase 0 (componenti condivisi Card/Button/modali) o Fase C (onboarding, help contestuale, ecc.).
+**Fase 0 — audit componenti:** [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (Card/Button/modali/header/sidebar, priorità P1–P4).
+
+**Prossimo:** Fase C (onboarding, help contestuale, command palette, preferenze, performance percepita) partendo da C1.
 
 ---
 

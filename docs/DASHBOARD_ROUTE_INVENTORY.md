@@ -82,7 +82,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- Estendere **`api-feature-feedback`** (`ApiFeatureId`) a ogni route B1 che usa `fetchApi` + toast.  
+- Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  
+- Estendere **`api-feature-feedback`** (`ApiFeatureId`) dove manca ancora.  
 - Ridurre **duplicazioni** (due pagine automations, badge PDF vs piano free in features).  
 - Aggiornare questa tabella quando una pagina passa a **OK** o quando Stripe/DB cambiano i gate.
 
