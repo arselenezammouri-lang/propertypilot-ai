@@ -51,7 +51,9 @@ Un prodotto che sia:
 
 **A5 (implementato):** navigazione per job-to-be-done con **unica sorgente** `lib/dashboard/nav-config.tsx` → sidebar desktop (`DashboardSidebar`), drawer mobile (`DashboardMobileNav` in header), Command Palette (`command-palette.tsx`). Layout dashboard: colonna sinistra + contenuto (`app/dashboard/layout.tsx`). `DashboardPageShell` ora solo padding verticale (niente doppio padding orizzontale).
 
-**Prossimo:** A6 (touch target / drawer UX) **oppure** estendere `api-feature-feedback` alle altre pagine tool.
+**A6 (implementato):** target touch **≥44px** su header dashboard (logo, Cerca, Genera, Esci), selettori lingua/regione/tema, voci menu dropdown; pulsante **Menu** e link drawer; chiusura esplicita drawer (X); link sidebar `min-h-11`; slot azioni `DashboardPageHeader` con `[&_button]:min-h-11` + `touch-manipulation` dove utile.
+
+**Prossimo:** estendere `api-feature-feedback` alle altre pagine tool **oppure** inventario Fase 0 (route dashboard) in `/docs`.
 
 ---
 

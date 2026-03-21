@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getDashboardNavGroups } from "@/lib/dashboard/nav-config";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -53,17 +54,28 @@ export function DashboardMobileNav() {
           type="button"
           variant="outline"
           size="sm"
-          className="lg:hidden min-h-9 border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08] hover:text-white"
+          className="lg:hidden h-11 min-h-11 px-3 border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08] hover:text-white touch-manipulation"
           aria-label={isIt ? "Apri menu area lavoro" : "Open workspace menu"}
           data-testid="button-dashboard-mobile-nav"
         >
-          <Menu className="h-4 w-4 mr-2" />
-          {isIt ? "Menu" : "Menu"}
+          <Menu className="h-5 w-5 mr-2 shrink-0" />
+          <span>{isIt ? "Menu" : "Menu"}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="fixed left-0 top-0 z-50 flex h-full max-h-none w-[min(100vw-1rem,320px)] translate-x-0 translate-y-0 flex-col rounded-none border-r border-white/10 bg-[#0a0a0a] p-0 text-white shadow-2xl data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-none sm:rounded-none [&>button]:hidden">
-        <DialogHeader className="px-4 py-4 border-b border-white/10 text-left space-y-1">
-          <DialogTitle className="text-base text-white">
+        <DialogHeader className="px-4 py-3 pr-14 border-b border-white/10 text-left space-y-1 relative">
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-11 w-11 min-h-11 min-w-11 text-white hover:bg-white/10 hover:text-white touch-manipulation rounded-lg"
+              aria-label={isIt ? "Chiudi menu" : "Close menu"}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </DialogClose>
+          <DialogTitle className="text-base text-white pr-2">
             {isIt ? "Area lavoro" : "Workspace"}
           </DialogTitle>
           <p className="text-xs text-white/50 font-normal">
@@ -90,7 +102,7 @@ export function DashboardMobileNav() {
                           href={href}
                           onClick={() => closeDashboardMobileNav()}
                           className={cn(
-                            "flex items-center gap-2 rounded-lg px-2.5 py-2.5 min-h-11 text-sm transition-colors",
+                            "flex items-center gap-2 rounded-lg px-2.5 py-2.5 min-h-12 text-sm transition-colors touch-manipulation",
                             active
                               ? "bg-white/10 text-white"
                               : "text-white/75 hover:text-white hover:bg-white/[0.06]"

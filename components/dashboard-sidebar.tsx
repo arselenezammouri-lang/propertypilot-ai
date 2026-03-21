@@ -50,7 +50,7 @@ export function DashboardSidebar() {
                         <Link
                           href={href}
                           className={cn(
-                            "flex items-center gap-2 rounded-lg px-2.5 py-2 min-h-10 text-sm transition-colors",
+                            "flex items-center gap-2 rounded-lg px-2.5 py-2 min-h-11 text-sm transition-colors touch-manipulation",
                             active
                               ? "bg-white/10 text-white border border-white/10"
                               : "text-white/70 hover:text-white hover:bg-white/[0.06]"

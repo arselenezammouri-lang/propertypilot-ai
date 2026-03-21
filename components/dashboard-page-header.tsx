@@ -79,7 +79,7 @@ export function DashboardPageHeader({
           ) : null}
         </div>
         {actions ? (
-          <div className="flex flex-shrink-0 flex-wrap items-center gap-2 sm:justify-end">
+          <div className="flex flex-shrink-0 flex-wrap items-center gap-2 sm:justify-end [&_button]:min-h-11 [&_button]:touch-manipulation">
             {actions}
           </div>
         ) : null}
