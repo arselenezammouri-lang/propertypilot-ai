@@ -66,4 +66,9 @@ describe('B1 feature labels', () => {
     const r = apiFailureToast('it', 'pdfSheets', { status: 500 }, 'x');
     expect(r.title).toContain('Schede PDF');
   });
+
+  it('includes lead scoring label', () => {
+    const r = apiFailureToast('en', 'leadScoring', { status: 429 }, 'x');
+    expect(r.title).toContain('Lead scoring');
+  });
 });

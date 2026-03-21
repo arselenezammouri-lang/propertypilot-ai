@@ -40,12 +40,12 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 18 | `/dashboard/opportunities` | Lead / CRM | Pro ‡ | No | Medio | ‡ Non in `ALL_FEATURES`; trattare come PRO+ finché non c’è matrice unica |
 | 19 | `/dashboard/prospecting` | Lead / CRM | Pro | **Sì** | Shell | Funzioni Agency-only (es. reveal contatti) dentro pagina |
 | 20 | `/dashboard/leads` | Lead / CRM | Pro | **Sì** | OK | Pilota A1–A4 |
-| 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | Medio | Stesso accesso API dei lead; valutare paywall coerente con `/leads` |
-| 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | Medio | B2 |
+| 21 | `/dashboard/leads/pipeline` | Lead / CRM | Pro | No | OK | Shell + header + `leadPipeline` toast (B2) |
+| 22 | `/dashboard/leads/[id]` | Lead / CRM | Pro | No | OK | Shell + header + `leadDetail` toast (B2) |
 | 23 | `/dashboard/crm/automations` | Lead / CRM | Pro ‡ | No | Medio | ‡ Non in `ALL_FEATURES`; probabile gate solo API — uniformare con `/automations` |
 | 24 | `/dashboard/crm/settings` | Lead / CRM | Pro ‡ | No | Medio | API keys / capture — documentare piano in matrice Stripe |
 | 25 | `/dashboard/map` | Lead / CRM | Agency | Blocco contenuto se non Agency | Medio | B3 |
-| 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | Medio | B2 |
+| 26 | `/dashboard/lead-score` | Lead / CRM | Starter | No | OK | Shell + header + `leadScoring` toast (B2) |
 | 27 | `/dashboard/automations` | Lead / CRM | Pro | **Sì** | Medio | Duplica concetto `/crm/automations` — roadmap: unificare o rinominare |
 | 28 | `/dashboard/agency-branding` | Brand | Pro | No | Medio | B6 |
 | 29 | `/dashboard/agency-assistant` | Brand | Pro | **Sì** (blocca Free+Starter) | Medio | Copy piano: “Pro+” in UI vs “Pro” in features — allineare |
@@ -63,8 +63,8 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 1. **B1 — Listing & AI copy (ordine implementazione consigliato)**  
    **B1 listing/copy:** batch completato fino a `pdf`. Prossimo: B2 o altre route B1-adiacenti secondo piano.
 
-2. **B2 — CRM**  
-   `leads/[id]`, coerenza paywall `leads/pipeline` vs `leads`, `lead-score`, eventuale unificazione `automations` vs `crm/automations`.
+2. **B2 — CRM (avviata)**  
+   **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]` — shell + header + ApiFeatureId. **Prossimo:** coerenza paywall pipeline vs lista lead se necessario; `crm/automations` vs `automations`; altre route CRM.
 
 3. **B3 — Prospecting & map**  
    `prospecting`, `map`, `analyze`, `scraper`, `auditor`, `opportunities`, `autopilot`.

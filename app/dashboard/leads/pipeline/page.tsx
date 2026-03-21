@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   ArrowLeft, 
   Users, 
@@ -57,9 +66,12 @@ export default function PipelinePage() {
   const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
-  const t = {
+  const t = useMemo(() => ({
     loadingPipeline: isItalian ? "Caricamento pipeline..." : "Loading pipeline...",
     heroTitle: isItalian ? "Pipeline Leads" : "Leads Pipeline",
     heroBadge: "🧠 CRM 2.5",
@@ -86,7 +98,7 @@ export default function PipelinePage() {
     priorityLow: isItalian ? "Bassa" : "Low",
     priorityMedium: isItalian ? "Media" : "Medium",
     priorityHigh: isItalian ? "Alta" : "High",
-  };
+  }), [isItalian]);
 
   const statusConfig: Record<StatusColumn, { label: string; color: string; bgColor: string; borderColor: string }> = {
     new: { label: t.statusNew, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
@@ -109,23 +121,34 @@ export default function PipelinePage() {
 
   const fetchLeads = useCallback(async () => {
     try {
-      const response = await fetch('/api/leads');
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push('/auth/login');
+      const res = await fetchApi<Lead[]>("/api/leads");
+      if (!res.success) {
+        if (res.status === 401) {
+          router.push("/auth/login");
           return;
         }
-        throw new Error('fetch error');
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadPipeline",
+          { status: res.status, error: res.error, message: res.message },
+          t.loadError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
-      const data = await response.json();
-      setLeads(data.data || []);
+      const list = Array.isArray(res.data) ? res.data : [];
+      setLeads(list);
     } catch (error) {
-      console.error('Error fetching leads:', error);
-      toast({ title: t.errorTitle, description: t.loadError, variant: "destructive" });
+      const net = networkFailureToast(feedbackLocale, "leadPipeline");
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [router, toast, t.errorTitle, t.loadError]);
+  }, [router, toast, feedbackLocale, t.loadError, handleAPIError]);
 
   useEffect(() => {
     fetchLeads();
@@ -172,22 +195,30 @@ export default function PipelinePage() {
     );
 
     try {
-      const response = await fetch('/api/leads/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/leads/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead_id: draggedLead.id,
-          new_status: newStatus
-        })
+          new_status: newStatus,
+        }),
       });
+      const body = (await response.json()) as { message?: string; error?: string };
 
       if (!response.ok) {
-        throw new Error('Errore nell\'aggiornamento');
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadPipeline",
+          { status: response.status, error: body.error, message: body.message },
+          t.updateError
+        );
+        throw new Error(fail.description);
       }
 
-      const result = await response.json();
-      
-      toast({ title: t.statusUpdated, description: result.message || t.movedTo(statusConfig[newStatus].label) });
+      toast({
+        title: t.statusUpdated,
+        description: body.message || t.movedTo(statusConfig[newStatus].label),
+      });
 
       fetch('/api/automations/execute-rule', {
         method: 'POST',
@@ -217,7 +248,11 @@ export default function PipelinePage() {
             : lead
         )
       );
-      toast({ title: t.errorTitle, description: t.updateError, variant: "destructive" });
+      const desc =
+        error instanceof Error && error.message
+          ? error.message
+          : t.updateError;
+      toast({ title: t.errorTitle, description: desc, variant: "destructive" });
     } finally {
       setIsUpdating(false);
       setDraggedLead(null);
@@ -230,47 +265,56 @@ export default function PipelinePage() {
 
   const columns: StatusColumn[] = ['new', 'contacted', 'followup', 'closed', 'lost'];
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-        <div className="max-w-[1800px] mx-auto">
-          <div className="flex items-center justify-center h-[60vh]">
-            <div className="flex flex-col items-center gap-4">
-              <RefreshCw className="h-8 w-8 text-emerald-400 animate-spin" />
-              <p className="text-slate-400">{t.loadingPipeline}</p>
-            </div>
-          </div>
+      <DashboardPageShell className="max-w-[1800px]">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+          <RefreshCw className="h-8 w-8 animate-spin text-emerald-400" />
+          <p className="text-slate-400">{t.loadingPipeline}</p>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-      <div className="max-w-[1800px] mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back-dashboard" aria-label="Back to dashboard">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h1>
-                <Badge className="bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-white border-0">
-                  {t.heroBadge}
-                </Badge>
-              </div>
-              <p className="text-slate-400 mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
+    <DashboardPageShell className="max-w-[1800px]">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+          data-testid="button-back-dashboard"
+          aria-label={isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {isItalian ? "Dashboard" : "Dashboard"}
+        </Link>
+      </div>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        titleDataTestId="heading-leads-pipeline"
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="border-0 bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-xs text-white">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
+
+      <div>
+        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div className="flex flex-wrap items-center gap-3 md:ml-auto md:justify-end">
             <Link href="/dashboard/leads">
               <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800" data-testid="button-table-view">
                 <LayoutGrid className="h-4 w-4 mr-2" />
@@ -290,7 +334,7 @@ export default function PipelinePage() {
           </div>
         </div>
 
-        <div className="mb-6 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+        <div className="mb-6 rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
           <div className="flex flex-wrap gap-6 justify-center md:justify-start">
             {columns.map(status => (
               <div key={status} className="flex items-center gap-2">
@@ -444,6 +488,6 @@ export default function PipelinePage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

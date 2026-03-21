@@ -57,7 +57,9 @@ Un prodotto che sia:
 
 **Fase B1 (listing & AI copy):** completata la linea **listings → refine → translate → titles → emotional → social → hashtags → followup-emails → video-scripts → agent-bio → pdf** (shell, header, toast per feature; PDF allineato a Starter+ in `DashboardPlanFeatures` e nav).
 
-**Prossimo:** **Fase B2** (CRM / lead tools) oppure debito **automations** duplicata + audit Fase 0 componenti condivisi.
+**Fase B2 (avviata):** `lead-score`, `leads/pipeline`, `leads/[id]` — `DashboardPageShell` / `DashboardPageHeader`, badge piano, toast `leadScoring` / `leadPipeline` / `leadDetail`.
+
+**Prossimo B2:** debito **automations** (`/automations` vs `/crm/automations`), eventuali altre pagine CRM; in parallelo audit Fase 0 componenti condivisi se utile.
 
 ---
 

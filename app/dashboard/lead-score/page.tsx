@@ -10,6 +10,17 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { useAPIErrorHandler } from '@/components/error-boundary';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import Link from 'next/link';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 import {
   Target,
   Flame,
@@ -25,6 +36,7 @@ import {
   Copy,
   Sparkles,
   TrendingUp,
+  ArrowLeft,
   ArrowRight,
   Mail,
   Phone,
@@ -97,6 +109,9 @@ const FACTOR_ICONS: Record<string, any> = {
 export default function LeadScorePage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
+  const feedbackLocale = isItalian ? 'it' : 'en';
+  const usage = useUsageLimits();
+  const { handleAPIError } = useAPIErrorHandler();
   const [mercato, setMercato] = useState<'italia' | 'usa'>('italia');
   const [messaggioLead, setMessaggioLead] = useState<string>('');
   const [tipoImmobile, setTipoImmobile] = useState<string>('appartamento');
@@ -183,20 +198,14 @@ export default function LeadScorePage() {
 
   const handleSubmit = async () => {
     if (!messaggioLead.trim()) {
-      toast({
-        title: t.required,
-        description: t.requiredMessage,
-        variant: "destructive"
-      });
+      const v = validationToast(feedbackLocale, 'leadScoring', t.requiredMessage);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
     if (messaggioLead.trim().length < 20) {
-      toast({
-        title: t.messageTooShort,
-        description: t.messageTooShortDesc,
-        variant: "destructive"
-      });
+      const v = validationToast(feedbackLocale, 'leadScoring', t.messageTooShortDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -213,14 +222,25 @@ export default function LeadScorePage() {
           tipoImmobile,
           tempistiche,
           budget: budget.trim() || undefined,
-          nomeLead: nomeLead.trim() || undefined
-        })
+          nomeLead: nomeLead.trim() || undefined,
+        }),
       });
 
-      const data: LeadScoreResponse = await response.json();
+      const data = (await response.json()) as LeadScoreResponse;
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || (isItalian ? "Errore durante l'analisi" : "Error during analysis"));
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'leadScoring',
+          {
+            status: response.status,
+            error: data.error,
+            message: data.message,
+          },
+          isItalian ? "Errore durante l'analisi" : 'Error during analysis'
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        return;
       }
 
       setResult(data.data || null);
@@ -229,26 +249,37 @@ export default function LeadScorePage() {
 
       toast({
         title: t.analysisDone,
-        description: data.cached ? t.cachedResult : t.analysisIn(Math.round((data.processingTimeMs || 0) / 1000))
+        description: data.cached
+          ? t.cachedResult
+          : t.analysisIn(Math.round((data.processingTimeMs || 0) / 1000)),
       });
-
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const net = networkFailureToast(feedbackLocale, 'leadScoring');
       toast({
-        title: "Errore",
-        description: error.message || "Si è verificato un errore durante l'analisi",
-        variant: "destructive"
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: t.copied,
-      description: t.copiedDesc(label)
-    });
+  const copyToClipboard = async (text: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: t.copied,
+        description: t.copiedDesc(label),
+      });
+    } catch {
+      const c = clipboardFailureToast(
+        feedbackLocale,
+        'leadScoring',
+        isItalian ? 'Impossibile copiare il testo' : 'Unable to copy text'
+      );
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
+    }
   };
 
   const getCategoryIcon = (categoria: string) => {
@@ -293,28 +324,39 @@ export default function LeadScorePage() {
     return 'text-red-400';
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950/30 to-slate-950 p-6">
-      <div className="max-w-7xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/30">
-              <Target className="w-8 h-8 text-cyan-400" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {t.pageTitle}
-            </h1>
-            <Badge className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-400 border-cyan-500/30">
-              🎯 Priority
-            </Badge>
-          </div>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            {t.pageSubtitle}
-          </p>
-        </div>
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? 'Agency'
+      : usage.plan === 'pro'
+        ? 'Pro'
+        : usage.plan === 'starter'
+          ? 'Starter'
+          : 'Free';
 
+  return (
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {isItalian ? 'Torna alla dashboard' : 'Back to dashboard'}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-lead-score"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <Badge className="border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-xs text-cyan-200">
+            🎯 Priority
+          </Badge>
+        }
+      />
+
+      <div className="space-y-8">
         {/* Input Form */}
         <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
@@ -741,6 +783,6 @@ export default function LeadScorePage() {
           </div>
         )}
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

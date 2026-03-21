@@ -17,7 +17,10 @@ export type ApiFeatureId =
   | 'followupEmails'
   | 'videoScripts'
   | 'agentBio'
-  | 'pdfSheets';
+  | 'pdfSheets'
+  | 'leadScoring'
+  | 'leadPipeline'
+  | 'leadDetail';
 
 export type ApiFailureInput = {
   status?: number;
@@ -39,6 +42,9 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   videoScripts: { it: 'Script video', en: 'Video scripts' },
   agentBio: { it: 'Bio agente', en: 'Agent bio' },
   pdfSheets: { it: 'Schede PDF', en: 'PDF sheets' },
+  leadScoring: { it: 'Lead scoring', en: 'Lead scoring' },
+  leadPipeline: { it: 'Pipeline lead', en: 'Lead pipeline' },
+  leadDetail: { it: 'Scheda lead', en: 'Lead record' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

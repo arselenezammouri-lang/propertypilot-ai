@@ -16,6 +16,15 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { fetchApi } from '@/lib/api/client';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+} from '@/lib/i18n/api-feature-feedback';
 import type { Lead, LeadEnrichmentResult, LeadNote } from '@/lib/types/database.types';
 import CommunicationsHub from './CommunicationsHub';
 
@@ -39,12 +48,25 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   const { toast } = useToast();
   const { locale } = useLocale();
   const isIt = locale === 'it';
+  const feedbackLocale = isIt ? 'it' : 'en';
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    toast({ title: isIt ? 'Copiato!' : 'Copied!', description: label || (isIt ? 'Testo copiato negli appunti' : 'Text copied to clipboard') });
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      toast({
+        title: isIt ? 'Copiato!' : 'Copied!',
+        description: label || (isIt ? 'Testo copiato negli appunti' : 'Text copied to clipboard'),
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const c = clipboardFailureToast(
+        feedbackLocale,
+        'leadDetail',
+        isIt ? 'Impossibile copiare il testo' : 'Unable to copy text'
+      );
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
+    }
   };
 
   return (
@@ -92,6 +114,8 @@ export default function LeadDetailPage() {
   const router = useRouter();
   const { locale } = useLocale();
   const isItalian = locale === 'it';
+  const feedbackLocale = isItalian ? 'it' : 'en';
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const leadId = params.id as string;
@@ -241,17 +265,29 @@ export default function LeadDetailPage() {
 
   const fetchLeadData = async () => {
     try {
-      const [leadRes, notesRes, enrichRes, logsRes] = await Promise.all([
-        fetch(`/api/leads/${leadId}`),
+      const leadApi = await fetchApi<Lead>(`/api/leads/${leadId}`);
+      if (!leadApi.success) {
+        if (leadApi.status === 401) {
+          router.push('/auth/login');
+          return;
+        }
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'leadDetail',
+          { status: leadApi.status, error: leadApi.error, message: leadApi.message },
+          t.loadError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        setLead(null);
+        return;
+      }
+      setLead(leadApi.data as Lead);
+
+      const [notesRes, enrichRes, logsRes] = await Promise.all([
         fetch(`/api/leads/add-note?lead_id=${leadId}`),
         fetch(`/api/leads/enrich?lead_id=${leadId}`),
         fetch(`/api/automations/execute-rule?lead_id=${leadId}&limit=10`),
       ]);
-
-      if (leadRes.ok) {
-        const leadData = await leadRes.json();
-        setLead(leadData.data);
-      }
 
       if (notesRes.ok) {
         const notesData = await notesRes.json();
@@ -272,8 +308,12 @@ export default function LeadDetailPage() {
       }
     } catch (error) {
       console.error('Error fetching lead data:', error);
-      const friendly = handleAPIError(error, t.loadError);
-      toast({ title: t.error, description: friendly, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'leadDetail');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -287,19 +327,38 @@ export default function LeadDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lead_id: leadId }),
       });
+      const body = (await response.json()) as {
+        data?: LeadEnrichmentResult;
+        cached?: boolean;
+        duration?: number;
+        error?: string;
+        message?: string;
+      };
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Errore nell\'arricchimento');
+      if (!response.ok || !body.data) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'leadDetail',
+          { status: response.status, error: body.error, message: body.message },
+          t.enrichError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        return;
       }
 
-      const result = await response.json();
-      setEnrichment(result.data);
-      setEnrichmentCached(result.cached);
-      toast({ title: t.analysisComplete, description: result.cached ? t.fromCacheDesc : t.analysisDone(result.duration) });
+      setEnrichment(body.data);
+      setEnrichmentCached(Boolean(body.cached));
+      toast({
+        title: t.analysisComplete,
+        description: body.cached ? t.fromCacheDesc : t.analysisDone(body.duration ?? 0),
+      });
     } catch (error) {
-      const friendly = handleAPIError(error, t.enrichError);
-      toast({ title: t.error, description: friendly, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'leadDetail');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setIsEnriching(false);
     }
@@ -307,62 +366,68 @@ export default function LeadDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-      </div>
+      <DashboardPageShell className="max-w-7xl">
+        <div className="flex min-h-[40vh] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+        </div>
+      </DashboardPageShell>
     );
   }
 
   if (!lead) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-        <div className="text-center text-white">
+      <DashboardPageShell className="max-w-7xl">
+        <div className="py-12 text-center text-white">
           <p>{t.notFound}</p>
           <Link href="/dashboard/leads">
             <Button className="mt-4">{t.backToList}</Button>
           </Link>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
-  const getScoreBadge = (score: number) => {
-    if (score >= 70) return { emoji: '🔥', label: 'Hot', color: 'bg-red-500' };
-    if (score >= 40) return { emoji: '⭐', label: 'Warm', color: 'bg-yellow-500' };
+  const getScoreBadge = (score: number | null) => {
+    const s = score ?? 0;
+    if (s >= 70) return { emoji: '🔥', label: 'Hot', color: 'bg-red-500' };
+    if (s >= 40) return { emoji: '⭐', label: 'Warm', color: 'bg-yellow-500' };
     return { emoji: '❄️', label: 'Cold', color: 'bg-blue-500' };
   };
 
   const scoreBadge = getScoreBadge(lead.lead_score);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard/leads" aria-label={t.backToList}>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/10"
-                data-testid="button-back"
-                aria-label={t.backToList}
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                {lead.nome}
-                <Badge className={`${scoreBadge.color} text-white`}>
-                  {scoreBadge.emoji} {lead.lead_score}
-                </Badge>
-              </h1>
-              <p className="text-slate-400">{t.headerSubtitle}</p>
-            </div>
-          </div>
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? 'Agency'
+      : usage.plan === 'pro'
+        ? 'Pro'
+        : usage.plan === 'starter'
+          ? 'Starter'
+          : 'Free';
 
-          <div className="flex items-center gap-3">
+  return (
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard/leads"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back"
+        aria-label={t.backToList}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backToLeads}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={lead.nome}
+        titleDataTestId="heading-lead-detail"
+        subtitle={t.headerSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={`${scoreBadge.color} text-white`}>
+              {scoreBadge.emoji} {lead.lead_score ?? '—'}
+            </Badge>
             <Button
               onClick={handleEnrichLead}
               disabled={isEnriching}
@@ -386,7 +451,6 @@ export default function LeadDetailPage() {
                 </>
               )}
             </Button>
-
             <Button
               variant="outline"
               size="sm"
@@ -394,10 +458,10 @@ export default function LeadDetailPage() {
               data-testid="button-followup-email"
               onClick={() => {
                 const params = new URLSearchParams({
-                  leadName: lead.nome || "",
-                  propertyTitle: (lead as any).property_title || "",
-                  propertyLocation: (lead as any).property_location || "",
-                  propertyPrice: (lead as any).property_price || "",
+                  leadName: lead.nome || '',
+                  propertyTitle: (lead as any).property_title || '',
+                  propertyLocation: (lead as any).property_location || '',
+                  propertyPrice: (lead as any).property_price || '',
                 });
                 router.push(`/dashboard/followup-emails?${params.toString()}`);
               }}
@@ -405,7 +469,10 @@ export default function LeadDetailPage() {
               {t.followupBtn}
             </Button>
           </div>
-        </div>
+        }
+      />
+
+      <div className="space-y-6">
         {/* Lead Info Card */}
         <Card className="bg-slate-800/50 border-slate-700">
           <CardHeader>
@@ -879,6 +946,6 @@ export default function LeadDetailPage() {
           </Card>
         )}
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
