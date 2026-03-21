@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -42,6 +42,15 @@ import {
 import Link from 'next/link';
 import { ProFeaturePaywall } from '@/components/demo-modal';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 
 interface StructuralAudit {
   titolo: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };
@@ -134,9 +143,11 @@ export default function AuditorPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
-  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
-  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const usage = useUsageLimits();
+  const userPlan = usage.plan as 'free' | 'starter' | 'pro' | 'agency';
+  const isLoadingPlan = usage.isLoading;
   const isItalian = locale === 'it';
+  const feedbackLocale = isItalian ? 'it' : 'en';
   const OBIETTIVI = getObiettivi(isItalian);
   const MERCATI = getMercati(isItalian);
   const TIPO_TRANSAZIONE_OPTIONS = getTipoTransazione(isItalian);
@@ -166,6 +177,7 @@ export default function AuditorPage() {
     heroSubtitle: isItalian
       ? 'Analisi professionale completa: struttura, SEO, emozioni, red flags e versione ottimizzata'
       : 'Complete professional analysis: structure, SEO, emotions, red flags, and optimized version',
+    auditPageTitle: isItalian ? 'Audit Immobiliare AI' : 'AI Real Estate Audit',
     paywallTitle: isItalian ? 'Audit Immobiliare AI' : 'AI Real Estate Audit',
     paywallDescription: isItalian
       ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'audit completo."
@@ -210,28 +222,27 @@ export default function AuditorPage() {
       ];
 
   const copyToClipboard = async (text: string, section: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedSection(section);
-    toast({ title: t.copied, description: t.copiedDesc });
-    setTimeout(() => setCopiedSection(null), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedSection(section);
+      toast({ title: t.copied, description: t.copiedDesc });
+      setTimeout(() => setCopiedSection(null), 2000);
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, 'listingAuditor', t.copiedDesc);
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
+    }
   };
 
   const handleAnalyze = async () => {
     if (inputMode === 'text' && (!textInput.trim() || textInput.trim().length < 50)) {
-      toast({
-        variant: 'destructive',
-        title: t.textTooShort,
-        description: t.minText,
-      });
+      const v = validationToast(feedbackLocale, 'listingAuditor', t.minText);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
     if (inputMode === 'url' && !urlInput.trim()) {
-      toast({
-        variant: 'destructive',
-        title: t.urlRequired,
-        description: t.urlRequiredDesc,
-      });
+      const v = validationToast(feedbackLocale, 'listingAuditor', t.urlRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -256,36 +267,42 @@ export default function AuditorPage() {
       let result;
       try {
         result = await response.json();
-      } catch (parseError) {
-        toast({
-          variant: 'destructive',
-          title: t.analysisError,
-          description: t.communicationError,
-          duration: 8000,
-        });
+      } catch {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'listingAuditor',
+          {},
+          t.communicationError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive', duration: 8000 });
         return;
       }
 
       if (!response.ok) {
-        // If 403, update user plan to free and show paywall
         if (response.status === 403) {
-          setUserPlan('free');
+          const fail = apiFailureToast(
+            feedbackLocale,
+            'listingAuditor',
+            { status: 403, error: result.error, message: result.message },
+            t.premiumRequiredDesc
+          );
           toast({
-            variant: 'destructive',
             title: t.premiumRequired,
-            description: result.message || result.error || t.premiumRequiredDesc,
+            description: fail.description,
+            variant: 'destructive',
             duration: 8000,
           });
           return;
         }
-        
-        const errorMessage = result.message || result.error || 'Errore durante l\'analisi';
-        toast({
-          variant: 'destructive',
-          title: t.analysisError,
-          description: result.suggestion ? `${errorMessage}\n\n💡 ${result.suggestion}` : errorMessage,
-          duration: 8000,
-        });
+
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'listingAuditor',
+          { status: response.status, error: result.error, message: result.message },
+          t.analysisError
+        );
+        const desc = result.suggestion ? `${fail.description}\n\n💡 ${result.suggestion}` : fail.description;
+        toast({ title: fail.title, description: desc, variant: 'destructive', duration: 8000 });
         return;
       }
 
@@ -297,11 +314,13 @@ export default function AuditorPage() {
           duration: 5000,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const net = networkFailureToast(feedbackLocale, 'listingAuditor');
+      const msg = error instanceof Error && error.message ? error.message : net.description;
       toast({
+        title: net.title,
+        description: msg || t.connectionFailed,
         variant: 'destructive',
-        title: t.analysisError,
-        description: error.message || t.connectionFailed,
         duration: 8000,
       });
     } finally {
@@ -354,55 +373,41 @@ export default function AuditorPage() {
     </Button>
   );
 
-  // Load user subscription plan
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        const response = await fetch('/api/user/subscription');
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-          setUserPlan(plan);
-        }
-      } catch (error) {
-        console.error('Error fetching subscription:', error);
-      } finally {
-        setIsLoadingPlan(false);
-      }
-    };
-    
-    fetchUserPlan();
-  }, []);
-
   const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-indigo-950 to-purple-950">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-      
-      <div className="relative container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6">
-          <Link href="/dashboard" className="inline-flex items-center text-blue-300 hover:text-blue-200 transition-colors">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t.back}
-          </Link>
-        </div>
+  const planBadgeLabel =
+    userPlan === 'agency'
+      ? 'Agency'
+      : userPlan === 'pro'
+        ? 'Pro'
+        : userPlan === 'starter'
+          ? 'Starter'
+          : 'Free';
 
-        <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-amber-500/20 border border-blue-400/30">
-            <Award className="h-8 w-8 text-amber-400" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-transparent">
-              Real Estate Audit AI
-            </h1>
-            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-              🔥 Expert
-            </Badge>
-          </div>
-          <p className="text-blue-200/80 text-lg max-w-2xl mx-auto">
-            Analisi professionale completa: struttura, SEO, emozioni, red flags e versione ottimizzata
-          </p>
-        </div>
+  return (
+    <DashboardPageShell className="relative max-w-7xl">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[url('/grid.svg')] opacity-10" aria-hidden />
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back-dashboard"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.auditPageTitle}
+        titleDataTestId="heading-listing-auditor"
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-500 text-xs text-white">
+            Expert
+          </Badge>
+        }
+      />
 
         <ProFeaturePaywall
           title={t.paywallTitle}
@@ -556,7 +561,6 @@ export default function AuditorPage() {
             </Button>
           </CardContent>
         </Card>
-        </ProFeaturePaywall>
 
         {auditResult && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -945,7 +949,7 @@ export default function AuditorPage() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+        </ProFeaturePaywall>
+    </DashboardPageShell>
   );
 }

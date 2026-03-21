@@ -22,7 +22,10 @@ export type ApiFeatureId =
   | 'leadPipeline'
   | 'leadDetail'
   | 'workflowAutomations'
-  | 'crmAutomationRules';
+  | 'crmAutomationRules'
+  | 'linkAnalysis'
+  | 'listingScraper'
+  | 'listingAuditor';
 
 export type ApiFailureInput = {
   status?: number;
@@ -49,6 +52,9 @@ const featureLabel: Record<ApiFeatureId, Record<FeedbackLocale, string>> = {
   leadDetail: { it: 'Scheda lead', en: 'Lead record' },
   workflowAutomations: { it: 'Workflow automazioni', en: 'Automation workflows' },
   crmAutomationRules: { it: 'Regole CRM', en: 'CRM automation rules' },
+  linkAnalysis: { it: 'Analisi da link', en: 'Link analysis' },
+  listingScraper: { it: 'Import annunci', en: 'Listing import' },
+  listingAuditor: { it: 'Audit annuncio', en: 'Listing audit' },
 };
 
 function label(feature: ApiFeatureId, locale: FeedbackLocale): string {

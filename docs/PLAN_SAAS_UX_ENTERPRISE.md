@@ -61,7 +61,9 @@ Un prodotto che sia:
 
 **Debito automations (chiuso in UX):** due prodotti distinti — `/dashboard/automations` (workflow) vs `/dashboard/crm/automations` (regole if/then); nav a due voci, link incrociati, matrice piani con feature `crm-automation-rules`, doc aggiornata.
 
-**Prossimo B2 / B3:** restanti route CRM o prospecting/map secondo inventario; audit Fase 0 componenti se utile.
+**Fase B3 (avviata):** `analyze`, `scraper`, `auditor` — shell + header + badge piano + ApiFeatureId (`linkAnalysis`, `listingScraper`, `listingAuditor`); auditor: paywall avvolge solo form + `useUsageLimits`.
+
+**Prossimo B3:** `prospecting`, `map`, `opportunities`, `autopilot`; poi B4 billing o audit Fase 0.
 
 ---
 

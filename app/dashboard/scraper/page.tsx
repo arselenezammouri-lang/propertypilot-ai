@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,19 +22,30 @@ import {
   TrendingUp,
   TrendingDown,
   Home,
-  Globe
+  Globe,
+  ArrowLeft
 } from 'lucide-react';
 import { ScrapedListing } from '@/lib/scrapers/types';
 import { GeneratedContent } from '@/lib/ai/generateListingContent';
 import { fetchApi } from '@/lib/api/client';
 import { useLocale } from "@/lib/i18n/locale-context";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
 
   const t = {
@@ -104,11 +116,8 @@ export default function ScraperPage() {
 
   const handleScrape = async () => {
     if (!url.trim()) {
-      toast({
-        title: t.urlRequired,
-        description: t.urlRequiredDesc,
-        variant: 'destructive',
-      });
+      const v = validationToast(feedbackLocale, "listingScraper", t.urlRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -124,12 +133,14 @@ export default function ScraperPage() {
 
       if (!res.success) {
         const suggestion = (res as { suggestion?: string }).suggestion;
-        toast({
-          title: 'Errore',
-          description: suggestion ? `${res.error ?? res.message}\n\n💡 ${suggestion}` : (res.error ?? res.message ?? t.scrapeError),
-          variant: 'destructive',
-          duration: 8000,
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "listingScraper",
+          { status: res.status, error: res.error, message: res.message },
+          t.scrapeError
+        );
+        const desc = suggestion ? `${fail.description}\n\n💡 ${suggestion}` : fail.description;
+        toast({ title: fail.title, description: desc, variant: "destructive", duration: 8000 });
         return;
       }
 
@@ -143,14 +154,13 @@ export default function ScraperPage() {
       });
       await handleGenerateAI(scrapedData);
 
-    } catch (error: any) {
-      // Catch only for network/parsing errors
+    } catch (error: unknown) {
       console.error('[SCRAPER UI] Error:', error);
-      const friendly = handleAPIError(error, t.scrapeError);
+      const net = networkFailureToast(feedbackLocale, "listingScraper");
       toast({
-        title: t.errorTitle,
-        description: friendly || t.networkError,
-        variant: 'destructive',
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
         duration: 8000,
       });
     } finally {
@@ -166,12 +176,13 @@ export default function ScraperPage() {
         body: JSON.stringify(data),
       });
       if (!res.success) {
-        toast({
-          title: t.aiErrorTitle,
-          description: (res.error ?? res.message ?? t.aiGenerationError),
-          variant: 'destructive',
-          duration: 8000,
-        });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "listingScraper",
+          { status: res.status, error: res.error, message: res.message },
+          t.aiGenerationError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive", duration: 8000 });
         return;
       }
       setGeneratedContent(res.data!);
@@ -181,13 +192,13 @@ export default function ScraperPage() {
         duration: 5000,
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[AI GENERATION] Error:', error);
-      const friendly = handleAPIError(error, t.aiGenerationError);
+      const net = networkFailureToast(feedbackLocale, "listingScraper");
       toast({
-        title: t.aiErrorTitle,
-        description: friendly || t.networkError,
-        variant: 'destructive',
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
         duration: 8000,
       });
     } finally {
@@ -197,11 +208,8 @@ export default function ScraperPage() {
 
   const handleSaveToLibrary = async () => {
     if (!scrapedData || !generatedContent) {
-      toast({
-        title: t.noData,
-        description: t.noDataDesc,
-        variant: 'destructive',
-      });
+      const v = validationToast(feedbackLocale, "listingScraper", t.noDataDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -219,7 +227,14 @@ export default function ScraperPage() {
       });
 
       if (!res.success) {
-        throw new Error(res.message ?? res.error ?? t.saveError);
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "listingScraper",
+          { status: res.status, error: res.error, message: res.message },
+          t.saveError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
       toast({
@@ -231,31 +246,50 @@ export default function ScraperPage() {
         router.push('/dashboard/listings');
       }, 1500);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('[SAVE] Error:', error);
-      const friendly = handleAPIError(error, t.saveError);
+      const net = networkFailureToast(feedbackLocale, "listingScraper");
       toast({
-        title: t.errorTitle,
-        description: friendly || t.saveGenericError,
-        variant: 'destructive',
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
     }
   };
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">
-          <Sparkles className="inline-block mr-2 h-8 w-8 text-primary" />
-          {t.pageTitle}
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          {t.pageDesc}
-        </p>
-      </div>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back-dashboard"
+        aria-label={isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {isItalian ? "Dashboard" : "Dashboard"}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-scraper"
+        subtitle={t.pageDesc}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Sparkles className="h-8 w-8 text-violet-400" aria-hidden />
+        }
+      />
 
       {/* URL Input */}
       <Card className="mb-8" data-testid="card-url-input">
@@ -592,6 +626,6 @@ export default function ScraperPage() {
           </div>
         </>
       )}
-    </div>
+    </DashboardPageShell>
   );
 }

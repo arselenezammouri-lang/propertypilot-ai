@@ -4,10 +4,8 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import { 
-  Home, 
   Link2, 
   Search,
   Loader2,
@@ -31,6 +29,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 interface ScrapedData {
   title: string;
@@ -71,6 +78,8 @@ export default function AnalyzePage() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
   const t = {
     enterUrl: isItalian ? "Inserisci un URL" : "Enter a URL",
@@ -125,11 +134,8 @@ export default function AnalyzePage() {
 
   const handleAnalyze = async () => {
     if (!url.trim()) {
-      toast({
-        title: t.enterUrl,
-        description: t.pasteUrl,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "linkAnalysis", t.pasteUrl);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -148,7 +154,15 @@ export default function AnalyzePage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || t.analysisError);
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "linkAnalysis",
+          { status: response.status, error: data.error, message: data.message },
+          t.analysisError
+        );
+        setError(fail.description);
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
       setScrapedData(data.scrapedData);
@@ -158,14 +172,11 @@ export default function AnalyzePage() {
         title: t.analysisDone,
         description: data.fromCache ? t.fromCache : t.newAnalysis,
       });
-    } catch (err: any) {
-      const friendly = handleAPIError(err, t.analysisError);
+    } catch (err: unknown) {
+      const net = networkFailureToast(feedbackLocale, "linkAnalysis");
+      const friendly = handleAPIError(err, net.description);
       setError(friendly);
-      toast({
-        title: t.error,
-        description: friendly,
-        variant: "destructive",
-      });
+      toast({ title: net.title, description: friendly, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -193,12 +204,9 @@ export default function AnalyzePage() {
           description: t.copiedToClipboard(label),
         });
       }
-    } catch (err) {
-      toast({
-        title: t.error,
-        description: t.copyFailed,
-        variant: "destructive",
-      });
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, "linkAnalysis", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -216,43 +224,41 @@ export default function AnalyzePage() {
     return "bg-red-500/20 border-red-500/30";
   };
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-ai-aurora rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <Home className="text-white" size={24} />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground font-medium">{t.headerSubtitle}</p>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <ThemeToggle />
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="border-royal-purple/30 hover:border-royal-purple hover:bg-royal-purple/10 transition-all" data-testid="button-back-dashboard" aria-label={t.back}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t.back}
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <div className="mb-10 md:mb-14 animate-fade-in-up">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4">
-            {t.heroTitleLead} <span className="gradient-text-purple">{t.heroTitleAccent}</span>{t.heroTitleTail ? ` ${t.heroTitleTail}` : ""}
-          </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground">
-            {t.heroSubtitle}
-          </p>
-        </div>
+  const heroTitle = `${t.heroTitleLead} ${t.heroTitleAccent}${t.heroTitleTail ? ` ${t.heroTitleTail}` : ""}`;
+
+  return (
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back-dashboard"
+        aria-label={t.back}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={heroTitle}
+        titleDataTestId="heading-analyze-link"
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge variant="outline" className="border-neon-aqua/40 text-xs text-neon-aqua">
+            {t.headerSubtitle}
+          </Badge>
+        }
+      />
 
         <div className="futuristic-card p-8 mb-8 animate-fade-in-up" data-testid="card-analyze-input">
           <div className="flex flex-col md:flex-row gap-4">
@@ -580,7 +586,6 @@ export default function AnalyzePage() {
             </Tabs>
           </div>
         )}
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

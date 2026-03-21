@@ -33,9 +33,9 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 | 11 | `/dashboard/video-scripts` | Contenuti | Pro | No | OK | Shell + toast Fase B1 |
 | 12 | `/dashboard/agent-bio` | Contenuti | Pro | No | OK | Shell + toast Fase B1 |
 | 13 | `/dashboard/pdf` | Contenuti | Starter+ | No | OK | Allineato a `DashboardPlanFeatures` + nav STARTER+; shell + toast |
-| 14 | `/dashboard/analyze` | Intelligence | Free | No | Medio | B3 |
-| 15 | `/dashboard/scraper` | Intelligence | Free | No | Medio | B3 |
-| 16 | `/dashboard/auditor` | Intelligence | Pro | **Sì** (`ProFeaturePaywall`) | Medio | B3 |
+| 14 | `/dashboard/analyze` | Intelligence | Free | No | OK | B3: shell + `linkAnalysis` toast |
+| 15 | `/dashboard/scraper` | Intelligence | Free | No | OK | B3: shell + `listingScraper` toast |
+| 16 | `/dashboard/auditor` | Intelligence | Pro | **Sì** (`ProFeaturePaywall`) | OK | B3: shell + `useUsageLimits` + `listingAuditor` toast |
 | 17 | `/dashboard/autopilot` | Intelligence | Agency | No | Medio | Verificare allineamento API/piano; badge AGENCY in nav |
 | 18 | `/dashboard/opportunities` | Lead / CRM | Pro ‡ | No | Medio | ‡ Non in `ALL_FEATURES`; trattare come PRO+ finché non c’è matrice unica |
 | 19 | `/dashboard/prospecting` | Lead / CRM | Pro | **Sì** | Shell | Funzioni Agency-only (es. reveal contatti) dentro pagina |
@@ -60,14 +60,14 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Priorità suggerite (Fase B)
 
-1. **B1 — Listing & AI copy (ordine implementazione consigliato)**  
-   **B1 listing/copy:** batch completato fino a `pdf`. Prossimo: B2 o altre route B1-adiacenti secondo piano.
+1. **B1 — Listing & AI copy**  
+   Completata fino a `pdf`.
 
 2. **B2 — CRM (avviata)**  
    **Fatto:** `lead-score`, `leads/pipeline`, `leads/[id]`; chiarite **workflow automazioni** vs **regole CRM** (nav, `DashboardPlanFeatures`, pagine, doc `AUTOMATIONS_VS_CRM_RULES.md`). **Prossimo:** altre route CRM / B3.
 
-3. **B3 — Prospecting & map**  
-   `prospecting`, `map`, `analyze`, `scraper`, `auditor`, `opportunities`, `autopilot`.
+3. **B3 — Prospecting & map (avviata)**  
+   **Fatto:** `analyze`, `scraper`, `auditor`. **Prossimo:** `prospecting`, `map`, `opportunities`, `autopilot`.
 
 4. **B4 — Billing & growth**  
    `billing`, `packages`, `referral`.

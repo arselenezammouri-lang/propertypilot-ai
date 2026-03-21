@@ -76,4 +76,9 @@ describe('B1 feature labels', () => {
     const r = apiFailureToast('it', 'workflowAutomations', { status: 403 }, 'x');
     expect(r.title).toContain('Workflow automazioni');
   });
+
+  it('includes link analysis label', () => {
+    const r = apiFailureToast('en', 'linkAnalysis', { status: 500 }, 'x');
+    expect(r.title).toContain('Link analysis');
+  });
 });
