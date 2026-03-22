@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +13,8 @@ import { fetchApi } from '@/lib/api/client';
 import { STRIPE_ONE_TIME_PACKAGES } from '@/lib/stripe/config';
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { formatCurrencyForLocale, formatDateForLocale } from "@/lib/i18n/intl";
+import type { Locale } from "@/lib/i18n/config";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
@@ -32,45 +34,32 @@ interface Purchase {
 
 function PackagesPageContent() {
   const { toast } = useToast();
-  const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
-  const billingT = getTranslation(locale as SupportedLocale).billing;
+  const { locale, currency } = useLocale();
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const billingT = useMemo(
+    () => getTranslation(locale as SupportedLocale).billing,
+    [locale]
+  );
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.packagesPage,
+    [locale]
+  );
+  const checkoutErrorRef = useRef(t.checkoutError);
+  checkoutErrorRef.current = t.checkoutError;
   const { plan, isLoading: planLoading } = useUsageLimits();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const [loadingPackage, setLoadingPackage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('packages');
 
-  const t = {
-    purchaseComplete: isItalian ? "Acquisto completato!" : "Purchase complete!",
-    purchaseCompleteDesc: isItalian ? "Grazie per aver acquistato Agency Boost. Trovi i dettagli nei tuoi acquisti." : "Thank you for purchasing Agency Boost. Find the details in your purchases.",
-    purchaseCanceled: isItalian ? "Acquisto annullato" : "Purchase canceled",
-    purchaseCanceledDesc: isItalian ? "Il pagamento è stato annullato. Puoi riprovare quando vuoi." : "The payment was canceled. You can try again whenever you want.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    checkoutError: isItalian ? "Impossibile avviare il checkout" : "Cannot start checkout",
-    pageTitle: isItalian ? "Pacchetti Premium" : "Premium Packages",
-    pageDesc: isItalian ? "Soluzioni complete per scalare la tua agenzia con l'AI" : "Complete solutions to scale your agency with AI",
-    tabPackages: isItalian ? "Pacchetti" : "Packages",
-    tabPurchases: isItalian ? "I Miei Acquisti" : "My Purchases",
-    oneTime: isItalian ? "una tantum" : "one-time",
-    setupComplete: isItalian ? "Setup Completo" : "Complete Setup",
-    onboarding: isItalian ? "Onboarding" : "Onboarding",
-    premiumSupport: isItalian ? "Supporto Premium" : "Premium Support",
-    included: isItalian ? "Incluso" : "Included",
-    purchasedOn: isItalian ? "Acquistato il" : "Purchased on",
-    active: isItalian ? "Attivo" : "Active",
-    processing: isItalian ? "Elaborazione..." : "Processing...",
-    buyAgencyBoost: isItalian ? "Acquista Agency Boost" : "Buy Agency Boost",
-    noPurchases: isItalian ? "Nessun acquisto" : "No purchases",
-    noPurchasesDesc: isItalian ? "Non hai ancora acquistato nessun pacchetto premium." : "You haven't purchased any premium packages yet.",
-    explorePackages: isItalian ? "Esplora i Pacchetti" : "Explore Packages",
-    packageScale: isItalian ? "Pacchetto Scala in 7 Giorni" : "Scale in 7 Days Package",
-    featureSetup: isItalian ? "Setup completo CRM + automazioni" : "Full CRM setup + automations",
-    featureLeads: isItalian ? "10 moduli acquisizione lead" : "10 lead acquisition modules",
-    featureFollowUp: isItalian ? "3 script follow-up personalizzati" : "3 personalized follow-up scripts",
-    featureTraining: isItalian ? "1 ora formazione video + Consulenza 1:1" : "1 hour video training + 1:1 consulting",
-  };
+  const planBadgeLabel =
+    plan === "agency"
+      ? t.planAgency
+      : plan === "pro"
+        ? t.planPro
+        : plan === "starter"
+          ? t.planStarter
+          : t.planFree;
 
   const { data: purchasesData, isLoading: loadingPurchases } = useQuery<{ purchases: Purchase[] }>({
     queryKey: ['/api/purchases'],
@@ -115,14 +104,14 @@ function PackagesPageContent() {
         method: 'POST',
         body: JSON.stringify({ packageId: 'boost' }),
       });
-      if (!res.success) throw new Error(res.error || res.message || t.checkoutError);
+      if (!res.success) throw new Error(res.error || res.message || checkoutErrorRef.current);
       if (res.data?.url) window.location.href = res.data.url;
     } catch (error) {
       console.error('Checkout error:', error);
       toast({
         variant: 'destructive',
         ...(error instanceof Error
-          ? apiFailureToast(feedbackLocale, "premiumPackages", {}, error.message || t.checkoutError)
+          ? apiFailureToast(feedbackLocale, "premiumPackages", {}, error.message || checkoutErrorRef.current)
           : networkFailureToast(feedbackLocale, "premiumPackages")),
       });
     } finally {
@@ -130,9 +119,16 @@ function PackagesPageContent() {
     }
   };
 
+  const purchaseStatusLabel = (status: string) => {
+    const s = status.toLowerCase();
+    if (s === "completed") return t.active;
+    if (s === "pending" || s === "processing") return t.statusPending;
+    if (s === "failed" || s === "canceled" || s === "cancelled") return t.statusFailed;
+    return status;
+  };
+
   const renderPurchaseCard = (purchase: Purchase) => {
     const deliverables = purchase.deliverables || {};
-    const used = purchase.deliverables_used || {};
     
     return (
       <Card key={purchase.id} className="border" data-testid={`purchase-${purchase.id}`}>
@@ -140,11 +136,12 @@ function PackagesPageContent() {
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{purchase.package_name}</CardTitle>
             <Badge variant={purchase.status === 'completed' ? 'default' : 'secondary'}>
-              {purchase.status === 'completed' ? t.active : purchase.status}
+              {purchaseStatusLabel(purchase.status)}
             </Badge>
           </div>
           <CardDescription>
-            {t.purchasedOn} {new Date(purchase.created_at).toLocaleDateString(isItalian ? 'it-IT' : 'en-US')}
+            {t.purchasedOn}{' '}
+            {formatDateForLocale(purchase.created_at, locale as Locale)}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -181,7 +178,7 @@ function PackagesPageContent() {
         titleDataTestId="heading-packages"
         subtitle={t.pageDesc}
         planBadge={
-          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+          !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
         }
       />
 
@@ -224,20 +221,20 @@ function PackagesPageContent() {
                   <Rocket className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <CardTitle className="text-2xl mt-3 gradient-text-gold">{boostPackage.name}</CardTitle>
-              <CardDescription className="text-sm">{boostPackage.tagline}</CardDescription>
+              <CardTitle className="text-2xl mt-3 gradient-text-gold">{t.boostName}</CardTitle>
+              <CardDescription className="text-sm">{t.boostTagline}</CardDescription>
             </CardHeader>
 
             <CardContent className="pb-4">
               <div className="flex items-baseline gap-1 mb-6">
                 <span className="text-4xl font-bold bg-gradient-to-r from-sunset-gold to-orange-500 bg-clip-text text-transparent">
-                  €{boostPackage.price}
+                  {formatCurrencyForLocale(boostPackage.price, locale as Locale, currency)}
                 </span>
                 <span className="text-muted-foreground text-sm">{t.oneTime}</span>
               </div>
 
               <ul className="space-y-3">
-                {boostPackage.features.map((feature, i) => (
+                {t.boostFeatures.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <Check className="h-5 w-5 mt-0.5 shrink-0 text-sunset-gold" />
                     <span className="text-sm text-muted-foreground">{feature}</span>

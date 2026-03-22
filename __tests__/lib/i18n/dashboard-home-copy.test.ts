@@ -190,4 +190,12 @@ describe('dashboard home copy (D1)', () => {
     expect(enR.whatsappMessage).toContain('PropertyPilot');
     expect(itR.planPro).toBe('Pro');
   });
+
+  it('packagesPage for IT/EN', () => {
+    const itPk = getTranslation('it').dashboard.packagesPage;
+    const enPk = getTranslation('en').dashboard.packagesPage;
+    expect(itPk.boostFeatures.length).toBe(3);
+    expect(enPk.boostTagline.length).toBeGreaterThan(5);
+    expect(itPk.statusPending).toContain('sospeso');
+  });
 });

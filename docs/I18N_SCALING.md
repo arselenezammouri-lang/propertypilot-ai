@@ -18,6 +18,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Agency Assistant (`/dashboard/agency-assistant`): `lib/i18n/agency-assistant-page-ui.ts` → `dashboard.agencyAssistantPage`.  
    - Perfect Copy (`/dashboard/perfect-copy`): `lib/i18n/perfect-copy-page-ui.ts` → `dashboard.perfectCopyPage`.  
    - Referral (`/dashboard/referral`): `lib/i18n/referral-page-ui.ts` → `dashboard.referralPage`.  
+   - Pacchetti premium (`/dashboard/packages`): `lib/i18n/packages-page-ui.ts` → `dashboard.packagesPage`.  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
@@ -64,6 +65,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 - `lib/i18n/agency-assistant-page-ui.ts` — chat assistente agenzia (IT/EN)  
 - `lib/i18n/perfect-copy-page-ui.ts` — Perfect Copy form + risultati (IT/EN)  
 - `lib/i18n/referral-page-ui.ts` — programma referral (IT/EN)  
+- `lib/i18n/packages-page-ui.ts` — pacchetti one-time + acquisti (IT/EN)  
 - `lib/i18n/locale-context.tsx` — `locale`, `currency`, `timezone`  
 - `lib/i18n/intl.ts` — formattazione numeri/date  
 - [DESIGN_UX_LOCALE.md](../DESIGN_UX_LOCALE.md) — principi UX locale
