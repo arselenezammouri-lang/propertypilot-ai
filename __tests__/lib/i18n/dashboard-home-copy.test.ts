@@ -208,4 +208,13 @@ describe('dashboard home copy (D1)', () => {
     expect(enP.statusUpdatedDesc).toContain('{label}');
     expect(itP.imageInsightTags.length).toBeGreaterThanOrEqual(4);
   });
+
+  it('analyzeLinkPage for IT/EN', () => {
+    const itA = getTranslation('it').dashboard.analyzeLinkPage;
+    const enA = getTranslation('en').dashboard.analyzeLinkPage;
+    expect(itA.copiedToClipboard).toContain('{label}');
+    expect(enA.heroTitleAccent.toLowerCase()).toContain('link');
+    expect(itA.copyTitleSnippetLabel).toContain('{n}');
+    expect(enA.badgeZillow).toContain('Zillow');
+  });
 });

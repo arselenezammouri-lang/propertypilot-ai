@@ -45,6 +45,8 @@ import {
   prospectingPageUiEn,
   prospectingPageUiIt,
 } from '@/lib/i18n/prospecting-page-ui';
+import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
+import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -244,6 +246,8 @@ export interface TranslationDictionary {
       packagesPage: PackagesPageUi;
       /** `/dashboard/prospecting` — Arbitrage Command Center */
       prospectingPage: ProspectingPageUi;
+      /** `/dashboard/analyze` — link analysis */
+      analyzeLinkPage: AnalyzeLinkPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1072,6 +1076,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       referralPage: referralPageUiIt,
       packagesPage: packagesPageUiIt,
       prospectingPage: prospectingPageUiIt,
+      analyzeLinkPage: analyzeLinkPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1909,6 +1914,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       referralPage: referralPageUiEn,
       packagesPage: packagesPageUiEn,
       prospectingPage: prospectingPageUiEn,
+      analyzeLinkPage: analyzeLinkPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
