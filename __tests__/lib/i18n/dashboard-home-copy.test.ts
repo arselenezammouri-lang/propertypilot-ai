@@ -28,10 +28,13 @@ describe('dashboard home copy (D1)', () => {
     expect(en.tableCells.voiceCallingPro.toLowerCase()).toMatch(/30/);
     expect(it.agencyBoost.cta.length).toBeGreaterThan(5);
     expect(en.agencyBoost.badgePremium.length).toBeGreaterThan(3);
+    expect(it.agencyBoost.productName.length).toBeGreaterThan(3);
+    expect(en.plans.free).toMatch(/free/i);
     const es = getTranslation('es').landing.pricing;
     const pt = getTranslation('pt').landing.pricing;
     expect(es.tableCells.multiUserAgency).toContain('10');
     expect(pt.agencyBoost.oneTimePayment.length).toBeGreaterThan(5);
+    expect(es.agencyBoost.productName.length).toBeGreaterThan(3);
   });
 
   it('marketing home hero aria, feature CTAs, search-engine step label (IT/EN; PT merge)', () => {

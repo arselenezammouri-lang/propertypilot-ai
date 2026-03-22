@@ -798,7 +798,7 @@ export default function PlatformPage() {
                     <th className="text-left p-4 text-gray-400 font-semibold text-sm">{t.landing.pricing.feature}</th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">FREE</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.free}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(0, selectedCurrency)}
                         </div>
@@ -807,7 +807,7 @@ export default function PlatformPage() {
                     </th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">STARTER</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.starter}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(197, "EUR", selectedCurrency), selectedCurrency)}
                         </div>
@@ -816,7 +816,7 @@ export default function PlatformPage() {
                     </th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">PRO</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.pro}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(497, "EUR", selectedCurrency), selectedCurrency)}
                         </div>
@@ -828,7 +828,7 @@ export default function PlatformPage() {
                         {t.landing.pricing.bestValue}
                       </div>
                       <div className="glass-card border-2 border-[#9333ea]/50 rounded-lg p-4 shadow-[0_0_30px_rgba(147,51,234,0.3)] relative">
-                        <div className="text-2xl font-bold text-white mb-1">AGENCY</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.agency}</div>
                         <div className="text-xs text-[#06b6d4] mb-1 font-semibold">{t.landing.pricing.agencySubtitle}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(897, "EUR", selectedCurrency), selectedCurrency)}
@@ -936,7 +936,7 @@ export default function PlatformPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles className="h-8 w-8 text-orange-400" />
-                    <h3 className="text-3xl font-bold text-white">Agency Boost</h3>
+                    <h3 className="text-3xl font-bold text-white">{t.landing.pricing.agencyBoost.productName}</h3>
                     <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-semibold rounded-full border border-orange-500/30">
                       {t.landing.pricing.agencyBoost.tierTitanium}
                     </span>
@@ -971,7 +971,7 @@ export default function PlatformPage() {
                   <Link href="/api/stripe/checkout-oneshot?package=boost">
                     <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold border-0 shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all active:scale-95 py-6 text-lg">
                       {t.landing.pricing.agencyBoost.cta}
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      <ArrowRight className={`${iconAfterButtonMarginSm} h-5 w-5`} />
                     </Button>
                   </Link>
                 </div>

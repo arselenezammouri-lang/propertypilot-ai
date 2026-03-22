@@ -938,6 +938,8 @@ export interface TranslationDictionary {
         voiceCallingPro: string;
       };
       agencyBoost: {
+        /** Product title next to tier badge (e.g. home pricing block) */
+        productName: string;
         badgePremium: string;
         tierTitanium: string;
         description: string;
@@ -1849,6 +1851,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/mese',
         },
         agencyBoost: {
+          productName: 'Agency Boost',
           badgePremium: 'SERVIZIO PREMIUM',
           tierTitanium: 'Titanium',
           description:
@@ -2767,6 +2770,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/month',
         },
         agencyBoost: {
+          productName: 'Agency Boost',
           badgePremium: 'PREMIUM SERVICE',
           tierTitanium: 'Titanium',
           description:
@@ -3129,6 +3133,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/mes',
         },
         agencyBoost: {
+          productName: 'Impulso Agency',
           badgePremium: 'SERVICIO PREMIUM',
           tierTitanium: 'Titanium',
           description:
@@ -3491,6 +3496,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/mois',
         },
         agencyBoost: {
+          productName: 'Boost Agency',
           badgePremium: 'SERVICE PREMIUM',
           tierTitanium: 'Titanium',
           description:
@@ -3853,6 +3859,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/Monat',
         },
         agencyBoost: {
+          productName: 'Agency Boost',
           badgePremium: 'PREMIUM-SERVICE',
           tierTitanium: 'Titanium',
           description:
@@ -4042,6 +4049,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/mês',
         },
         agencyBoost: {
+          productName: 'Impulso Agency',
           badgePremium: 'SERVIÇO PREMIUM',
           tierTitanium: 'Titanium',
           description:
@@ -4385,6 +4393,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           voiceCallingPro: '30/شهر',
         },
         agencyBoost: {
+          productName: 'Agency Boost',
           badgePremium: 'خدمة مميزة',
           tierTitanium: 'Titanium',
           description: 'حزمة إعداد جاهزة مع دعم مخصص وتجربة انضمام مميزة',

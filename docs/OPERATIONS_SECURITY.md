@@ -34,6 +34,18 @@ Coordinare con `API_ALLOWED_ORIGINS` e header `Origin` quando si testano form em
 
 ---
 
+## 2b. Rete applicativa: Edge middleware e rate limit
+
+Il traffico verso `/api/*` passa dal **middleware Edge** (`middleware.ts`):
+
+- **Bot guard** (UA vuoto / scanner): risposta `403` quando abilitato da env.
+- **Rate limit**: bucket **generale**, **AI costose** e opzionale **AI per utente** (Upstash Redis quando `UPSTASH_REDIS_REST_*` è configurato; altrimenti limite **in-memory** per istanza).
+- **Fail-open**: se Redis non è raggiungibile o non configurato, il codice tende a **non bloccare** il traffico legittimo (degradazione verso limiti in-memory o assenza di limite distribuito), così un outage Upstash non spegne il prodotto — a costo di meno protezione uniforme tra le repliche finché Redis non torna.
+
+**Operatività:** monitorare log `security_audit` con `action":"edge_rate_limit"`; in picchi anomali verificare quote Upstash e, se serve, stringere `EDGE_*_RATE_LIMIT_*` o aggiungere WAF (§1).
+
+---
+
 ## 3. Log e `security_audit` (JSON)
 
 In produzione, `SECURITY_AUDIT_LOG` è attivo di default. Ogni evento è **una riga JSON** su stdout (raccolta da Vercel Log Drain o UI).
