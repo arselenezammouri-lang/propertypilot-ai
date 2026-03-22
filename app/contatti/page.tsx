@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,7 @@ import { SiWhatsapp, SiLinkedin, SiX } from "react-icons/si";
 
 export default function ContattiPage() {
   const { locale, currency, setLocale, setCurrency } = useLocaleContext();
-  const t = getTranslation(locale as SupportedLocale);
+  const t = useMemo(() => getTranslation(locale as SupportedLocale), [locale]);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -80,7 +80,7 @@ export default function ContattiPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept-Language": locale === 'en' ? 'en' : 'it',
+          "Accept-Language": locale,
         },
         body: JSON.stringify(formData)
       });
@@ -121,7 +121,7 @@ export default function ContattiPage() {
               <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3" />
               <div className="hidden sm:block">
                 <h1 className="text-xl md:text-2xl font-bold gradient-text-purple">PropertyPilot AI</h1>
-                <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
+                <p className="text-xs text-muted-foreground">{t.contact.headerTagline}</p>
               </div>
             </Link>
             
@@ -195,7 +195,9 @@ export default function ContattiPage() {
               <p className="text-muted-foreground mb-6">
                 {t.contact?.demo?.desc ?? 'Discover how PropertyPilot AI can transform your real estate business. Book a free demo with our team.'}
               </p>
-              <a href="mailto:sales@propertypilotai.com?subject=Richiesta Demo PropertyPilot AI">
+              <a
+                href={`mailto:sales@propertypilotai.com?subject=${encodeURIComponent(t.contact.demoMailSubject)}`}
+              >
                 <Button className="neon-button w-full group" data-testid="button-request-demo">
                   <Sparkles className="mr-2 h-5 w-5" />
                   {t.contact?.demo?.cta ?? 'Book Free Demo'}
@@ -300,7 +302,11 @@ export default function ContattiPage() {
                     data-testid="input-message"
                   />
                   {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
-                  <p className="text-xs text-muted-foreground text-right">{formData.message.length}/10 caratteri minimi</p>
+                  <p className="text-xs text-muted-foreground text-right">
+                    {t.contact.minCharsCounter
+                      .replace("{current}", String(formData.message.length))
+                      .replace("{min}", "10")}
+                  </p>
                 </div>
 
                 <Button 
@@ -312,7 +318,7 @@ export default function ContattiPage() {
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                      Invio in corso...
+                      {t.contact.submitting}
                     </>
                   ) : (
                     <>
@@ -330,7 +336,7 @@ export default function ContattiPage() {
       <footer className="border-t border-silver-frost/30 bg-luxury-indigo/5 dark:bg-luxury-indigo/10 py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-muted-foreground">
-            &copy; 2025 PropertyPilot AI. Tutti i diritti riservati.
+            © {new Date().getFullYear()} PropertyPilot AI. {t.landing?.footer?.copyright}
           </p>
         </div>
       </footer>

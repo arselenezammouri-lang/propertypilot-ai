@@ -5,7 +5,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Book, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, ArrowRight } from "lucide-react";
+import {
+  Search,
+  Book,
+  Zap,
+  Phone,
+  Box,
+  Target,
+  Building2,
+  Map,
+  FileText,
+  Sparkles,
+  TrendingDown,
+  ArrowRight,
+  Users,
+  CreditCard,
+  Rocket,
+  Lightbulb,
+} from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
 
@@ -47,6 +64,44 @@ function getDocSections(it: boolean): DocSection[] {
         title: it ? 'Configura il tuo Workspace' : 'Set up your Workspace',
         description: it ? 'Personalizza la dashboard' : 'Customize your dashboard',
         slug: 'getting-started/workspace-setup',
+      },
+      {
+        id: 'perfect-copy-guide',
+        title: it ? 'Perfect Copy — guida rapida' : 'Perfect Copy — quick guide',
+        description: it
+          ? 'Campi del form, varianti e salvataggio in libreria'
+          : 'Form fields, variants, and saving to your library',
+        slug: 'getting-started/perfect-copy',
+      },
+    ],
+  },
+  {
+    id: 'crm',
+    title: it ? 'CRM & lead' : 'CRM & leads',
+    icon: <Users className="h-5 w-5" />,
+    articles: [
+      {
+        id: 'pipeline-guide',
+        title: it ? 'Pipeline lead (Kanban)' : 'Lead pipeline (Kanban)',
+        description: it
+          ? 'Trascina i lead tra le colonne e aggiorna lo stato'
+          : 'Drag leads between columns to update status',
+        slug: 'crm/pipeline',
+      },
+    ],
+  },
+  {
+    id: 'account',
+    title: it ? 'Account' : 'Account',
+    icon: <CreditCard className="h-5 w-5" />,
+    articles: [
+      {
+        id: 'billing-guide',
+        title: it ? 'Piano e fatturazione' : 'Plan and billing',
+        description: it
+          ? 'Upgrade, portale Stripe e stato abbonamento'
+          : 'Upgrades, Stripe portal, and subscription status',
+        slug: 'account/billing-guide',
       },
     ],
   },
@@ -148,17 +203,17 @@ export default function DocumentationPage() {
     searchPlaceholder: isItalian ? "Cerca nelle guide..." : "Search guides...",
     articleSingular: isItalian ? "articolo" : "article",
     articlePlural: isItalian ? "articoli" : "articles",
-    quickStartTitle: "🚀 Quick Start",
+    quickStartTitle: "Quick Start",
     quickStartDesc: isItalian
       ? "Nuovo su PropertyPilot? Inizia da qui."
       : "New to PropertyPilot? Start here.",
     quickStartBtn: isItalian ? "Inizia qui" : "Start here",
-    bestPracticesTitle: "💡 Best Practices",
+    bestPracticesTitle: "Best Practices",
     bestPracticesDesc: isItalian
       ? "Strategie avanzate per massimizzare i risultati."
       : "Advanced strategies to maximize results.",
     bestPracticesBtn: isItalian ? "Scopri strategie" : "Discover strategies",
-    goalsTitle: isItalian ? "🎯 Obiettivi" : "🎯 Goals",
+    goalsTitle: isItalian ? "Obiettivi" : "Goals",
     goalsDesc: isItalian
       ? "Come ottenere mandati con l'IA in 7 giorni."
       : "How to win mandates with AI in 7 days.",
@@ -247,7 +302,10 @@ export default function DocumentationPage() {
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           <Card className="border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">{t.quickStartTitle}</CardTitle>
+              <CardTitle className="text-lg text-white flex items-center gap-2">
+                <Rocket className="h-5 w-5 text-cyan-400 shrink-0" aria-hidden />
+                {t.quickStartTitle}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">
@@ -263,7 +321,10 @@ export default function DocumentationPage() {
 
           <Card className="border-purple-500/30 bg-gradient-to-br from-[#0a0a0a] to-purple-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">{t.bestPracticesTitle}</CardTitle>
+              <CardTitle className="text-lg text-white flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-purple-400 shrink-0" aria-hidden />
+                {t.bestPracticesTitle}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">
@@ -279,7 +340,10 @@ export default function DocumentationPage() {
 
           <Card className="border-green-500/30 bg-gradient-to-br from-[#0a0a0a] to-green-900/10">
             <CardHeader>
-              <CardTitle className="text-lg text-white">{t.goalsTitle}</CardTitle>
+              <CardTitle className="text-lg text-white flex items-center gap-2">
+                <Target className="h-5 w-5 text-green-400 shrink-0" aria-hidden />
+                {t.goalsTitle}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,16 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import {
   ArrowLeft,
   BellRing,
@@ -17,6 +27,7 @@ import {
   Zap,
   Check,
   Loader2,
+  Flame,
 } from "lucide-react";
 
 interface NotificationSettings {
@@ -29,56 +40,26 @@ interface NotificationSettings {
 export default function NotificationsSettingsPage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
 
-  const t = {
-    pageTitle: "AI Morning Intel",
-    pageSubtitle: isItalian
-      ? "Configura le tue notifiche giornaliere di intelligence"
-      : "Configure your daily intelligence notifications",
-    cardTitle: isItalian ? "Briefing Mattutino" : "Morning Briefing",
-    cardDesc: isItalian
-      ? "Ricevi ogni mattina le top 3 opportunità immobiliari della tua zona"
-      : "Receive the top 3 real estate opportunities in your area every morning",
-    enableLabel: isItalian ? "Attiva AI Morning Intel" : "Enable AI Morning Intel",
-    enableDesc: isItalian
-      ? "Ricevi un briefing quotidiano con le migliori opportunità"
-      : "Receive a daily briefing with the best opportunities",
-    emailLabel: isItalian ? "Notifica via Email" : "Email Notification",
-    emailDesc: isItalian ? "Ricevi il briefing nella tua casella email" : "Receive the briefing in your inbox",
-    whatsappLabel: isItalian ? "Notifica via WhatsApp" : "WhatsApp Notification",
-    whatsappDesc: isItalian ? "Ricevi il briefing direttamente su WhatsApp" : "Receive the briefing directly on WhatsApp",
-    timeLabel: isItalian ? "Orario del Briefing" : "Briefing Time",
-    timeDesc: isItalian
-      ? "Scegli l'orario in cui vuoi ricevere il briefing quotidiano"
-      : "Choose the time you want to receive the daily briefing",
-    sendTestIdle: isItalian ? "Invia Prova sul mio Cellulare" : "Send Test to My Phone",
-    sendTestLoading: isItalian ? "Invio in corso..." : "Sending...",
-    sendTestDesc: isItalian
-      ? "Ricevi subito un esempio di notifica per vedere quanto è professionale"
-      : "Receive a notification example right now to see how professional it looks",
-    previewTitle: isItalian ? "Anteprima Messaggio" : "Message Preview",
-    previewDesc: isItalian
-      ? "Ecco come apparirà il tuo briefing mattutino"
-      : "This is how your morning briefing will appear",
-    previewHeader: isItalian ? "🔥 TOP 3 OPPORTUNITÀ DI OGGI" : "🔥 TOP 3 OPPORTUNITIES TODAY",
-    previewFooter: isItalian
-      ? "Questi deal sono stati inviati anche a [X] agenzie partner nella tua zona. Affrettati!"
-      : "These deals have also been sent to [X] partner agencies in your area. Hurry!",
-    cancel: isItalian ? "Annulla" : "Cancel",
-    saveIdle: isItalian ? "Salva Impostazioni" : "Save Settings",
-    saveLoading: isItalian ? "Salvataggio..." : "Saving...",
-    // toasts
-    savedTitle: isItalian ? "Impostazioni salvate" : "Settings saved",
-    savedDesc: isItalian ? "Le tue preferenze di notifica sono state aggiornate" : "Your notification preferences have been updated",
-    errorTitle: isItalian ? "Errore" : "Error",
-    saveError: isItalian ? "Impossibile salvare le impostazioni" : "Unable to save settings",
-    connectionError: isItalian ? "Errore di connessione" : "Connection error",
-    testSentTitle: isItalian ? "Notifica di prova inviata!" : "Test notification sent!",
-    testSentDesc: isItalian ? "Controlla la tua email e WhatsApp" : "Check your email and WhatsApp",
-    testError: isItalian ? "Impossibile inviare la notifica di prova" : "Unable to send test notification",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.notificationsSettingsPage,
+    [locale]
+  );
+
+  const loadErrorRef = useRef(t.loadErrorGeneric);
+  loadErrorRef.current = t.loadErrorGeneric;
+
+  const planBadgeLabel =
+    plan === "agency"
+      ? t.planAgency
+      : plan === "pro"
+        ? t.planPro
+        : plan === "starter"
+          ? t.planStarter
+          : t.planFree;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
@@ -90,20 +71,31 @@ export default function NotificationsSettingsPage() {
   });
 
   useEffect(() => {
-    fetchSettings();
+    void fetchSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; loadErrorRef has latest copy
   }, []);
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch("/api/settings/notifications");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          setSettings(data.data);
-        }
+      const res = await fetchApi<NotificationSettings>("/api/settings/notifications");
+      if (res.success && res.data) {
+        setSettings(res.data);
+      } else if (!res.success) {
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            loadErrorRef.current
+          ),
+        });
       }
-    } catch (error) {
-      console.error("Error fetching settings:", error);
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setLoading(false);
     }
@@ -112,47 +104,68 @@ export default function NotificationsSettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch("/api/settings/notifications", {
+      const res = await fetchApi<unknown>("/api/settings/notifications", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.success) {
         toast({ title: t.savedTitle, description: t.savedDesc });
       } else {
-        toast({ title: t.errorTitle, description: data.error || t.saveError, variant: "destructive" });
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            t.saveError
+          ),
+        });
       }
-    } catch (error) {
-      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setSaving(false);
     }
   };
 
   const handleSendTest = async () => {
+    if (!settings.morning_briefing_email && !settings.morning_briefing_whatsapp) {
+      toast({
+        variant: "destructive",
+        ...validationToast(feedbackLocale, "morningIntelNotifications", t.testChannelsRequired),
+      });
+      return;
+    }
     setSendingTest(true);
     try {
-      const response = await fetch("/api/notifications/test", {
+      const res = await fetchApi<unknown>("/api/notifications/test", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: settings.morning_briefing_email,
           whatsapp: settings.morning_briefing_whatsapp,
         }),
       });
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.success) {
         toast({ title: t.testSentTitle, description: t.testSentDesc });
       } else {
-        toast({ title: t.errorTitle, description: data.error || t.testError, variant: "destructive" });
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "morningIntelNotifications",
+            { status: res.status, message: res.message, error: res.error },
+            t.testError
+          ),
+        });
       }
-    } catch (error) {
-      toast({ title: t.errorTitle, description: t.connectionError, variant: "destructive" });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "morningIntelNotifications"),
+      });
     } finally {
       setSendingTest(false);
     }
@@ -160,41 +173,48 @@ export default function NotificationsSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <Link href="/dashboard/settings/workspace">
-            <Button variant="ghost" size="icon" aria-label="Back">
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <BellRing className="h-8 w-8 shrink-0 text-purple-400" aria-hidden />
+            <span>{t.pageTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-notifications-settings"
+        subtitle={t.pageSubtitle}
+        planBadge={
+          !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
+        }
+        actions={
+          <Link href="/dashboard/settings/workspace" aria-label={t.backAria}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-11 min-h-11 w-11 touch-manipulation text-white/80 hover:text-white hover:bg-white/10"
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <BellRing className="h-8 w-8 text-purple-400" />
-              {t.pageTitle}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {t.pageSubtitle}
-            </p>
-          </div>
-        </div>
+        }
+      />
 
-        {/* Main Settings Card */}
-        <Card className="mb-6">
+      <div className="mx-auto max-w-4xl w-full">
+        <Card className="mb-6 border-white/10 bg-white/[0.03]">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <Zap className="h-5 w-5 text-cyan-400" />
               {t.cardTitle}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-white/60">
               {t.cardDesc}
             </CardDescription>
           </CardHeader>
@@ -315,20 +335,23 @@ export default function NotificationsSettingsPage() {
 
         {/* Preview Card */}
         {settings.morning_briefing_enabled && (
-          <Card>
+          <Card className="border-white/10 bg-white/[0.03]">
             <CardHeader>
-              <CardTitle>{t.previewTitle}</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-white">{t.previewTitle}</CardTitle>
+              <CardDescription className="text-white/60">
                 {t.previewDesc}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="bg-muted/50 rounded-lg p-4 space-y-3 font-mono text-sm">
-                <div className="font-bold text-purple-400">{t.previewHeader}</div>
+                <div className="flex items-center gap-2 font-bold text-purple-400">
+                  <Flame className="h-4 w-4 shrink-0 text-orange-400" aria-hidden />
+                  {t.previewHeader}
+                </div>
                 <div className="space-y-2 text-gray-300">
-                  <div>• [Link Report PDF 1] - Prezzo -20%</div>
-                  <div>• [Link Report PDF 2] - Urgenza Alta</div>
-                  <div>• [Link Report PDF 3] - Target Investitori</div>
+                  {t.previewSampleLines.map((line, i) => (
+                    <div key={i}>{line}</div>
+                  ))}
                 </div>
                 <div className="text-xs text-muted-foreground pt-2 border-t">
                   {t.previewFooter}
@@ -339,14 +362,18 @@ export default function NotificationsSettingsPage() {
         )}
 
         {/* Save Button */}
-        <div className="flex justify-end gap-3 mt-6">
-          <Button variant="outline" onClick={() => router.back()}>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button
+            variant="outline"
+            className="min-h-11 touch-manipulation border-white/20 bg-transparent text-white hover:bg-white/10"
+            onClick={() => router.back()}
+          >
             {t.cancel}
           </Button>
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
+            className="min-h-11 touch-manipulation bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
           >
             {saving ? (
               <>
@@ -362,7 +389,7 @@ export default function NotificationsSettingsPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 

@@ -3,16 +3,16 @@
  * Suggerisce la prossima azione ottimale per un immobile basandosi sul suo stato
  */
 
-export interface NextActionSuggestion {
-  action: string;
-  icon: string;
-  priority: "high" | "medium" | "low";
-  reasoning: string;
-  estimatedTime: string; // es: "2 min"
-}
+import {
+  buildLocalizedNextActionSuggestion,
+  type ProspectingNextActionUi,
+} from '@/lib/i18n/prospecting-next-action-ui';
+import type { NextActionIconKey, NextActionSuggestion } from '@/lib/ai/next-action-types';
+
+export type { NextActionIconKey, NextActionSuggestion } from '@/lib/ai/next-action-types';
 
 export interface ListingContext {
-  status: "new" | "analyzed" | "called" | "in_negotiation" | "mandate_taken";
+  status: 'new' | 'analyzed' | 'called' | 'in_negotiation' | 'mandate_taken';
   price_drop_percentage?: number | null;
   days_since_last_contact?: number;
   has_virtual_staging?: boolean;
@@ -22,92 +22,88 @@ export interface ListingContext {
 }
 
 /**
- * Genera suggerimento per la prossima azione
+ * Genera suggerimento per la prossima azione (copy dalla lingua UI dashboard).
  */
-export function suggestNextAction(context: ListingContext): NextActionSuggestion {
-  // PRIORITÀ ALTA: Price Drop rilevato
+export function suggestNextAction(
+  copy: ProspectingNextActionUi,
+  context: ListingContext
+): NextActionSuggestion {
   if (context.price_drop_percentage && context.price_drop_percentage > 0) {
-    return {
-      action: "Invia Report Aggiornato",
-      icon: "📊",
-      priority: "high",
-      reasoning: `Ribasso di ${context.price_drop_percentage.toFixed(0)}% rilevato. Il proprietario è probabilmente motivato.`,
-      estimatedTime: "2 min",
-    };
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'barChart',
+      priority: 'high',
+      minutes: 2,
+      block: 'priceDrop',
+      pct: Math.round(context.price_drop_percentage),
+    });
   }
 
-  // PRIORITÀ ALTA: Chiamato ma nessuna risposta dopo 48h
-  if (context.status === "called" && context.days_since_last_contact && context.days_since_last_contact >= 2) {
+  if (
+    context.status === 'called' &&
+    context.days_since_last_contact &&
+    context.days_since_last_contact >= 2
+  ) {
     if (context.has_virtual_staging) {
-      return {
-        action: "Manda WhatsApp 3D Vision",
-        icon: "📱",
-        priority: "high",
-        reasoning: "Sono passati 3 giorni dalla chiamata. Rinvitalizza l'interesse con la visione 3D.",
-        estimatedTime: "1 min",
-      };
-    } else {
-      return {
-        action: "Genera Virtual Staging e Invia",
-        icon: "🎨",
-        priority: "high",
-        reasoning: "Sono passati 3 giorni senza risposta. La visione 3D può riaccendere l'interesse.",
-        estimatedTime: "5 min",
-      };
+      return buildLocalizedNextActionSuggestion(copy, {
+        iconKey: 'smartphone',
+        priority: 'high',
+        minutes: 1,
+        block: 'whatsapp3d',
+      });
     }
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'palette',
+      priority: 'high',
+      minutes: 5,
+      block: 'virtualStagingSend',
+    });
   }
 
-  // PRIORITÀ ALTA: Urgenza alta e non ancora contattato
-  if (context.urgency_score && context.urgency_score >= 70 && context.status === "new") {
-    return {
-      action: "Lancia Chiamata Predator",
-      icon: "📞",
-      priority: "high",
-      reasoning: "Urgenza CRITICA rilevata. Il proprietario è probabilmente molto motivato.",
-      estimatedTime: "3 min",
-    };
+  if (context.urgency_score && context.urgency_score >= 70 && context.status === 'new') {
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'phone',
+      priority: 'high',
+      minutes: 3,
+      block: 'predatorCall',
+    });
   }
 
-  // PRIORITÀ MEDIA: Market Gap alto
-  if (context.market_gap && context.market_gap > 15 && context.status === "new") {
-    return {
-      action: "Genera Premium Report e Invia",
-      icon: "📄",
-      priority: "medium",
-      reasoning: `Opportunità di arbitraggio ${context.market_gap.toFixed(0)}%. Il report può convincere il proprietario.`,
-      estimatedTime: "3 min",
-    };
+  if (context.market_gap && context.market_gap > 15 && context.status === 'new') {
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'fileText',
+      priority: 'medium',
+      minutes: 3,
+      block: 'premiumReport',
+      pct: Math.round(context.market_gap),
+    });
   }
 
-  // PRIORITÀ MEDIA: In trattativa da più di 7 giorni
-  if (context.status === "in_negotiation" && context.days_since_last_contact && context.days_since_last_contact >= 7) {
-    return {
-      action: "Invia Follow-Up Emozionale",
-      icon: "💌",
-      priority: "medium",
-      reasoning: "La trattativa si sta allungando. Un follow-up emozionale può chiudere l'affare.",
-      estimatedTime: "2 min",
-    };
+  if (
+    context.status === 'in_negotiation' &&
+    context.days_since_last_contact &&
+    context.days_since_last_contact >= 7
+  ) {
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'mail',
+      priority: 'medium',
+      minutes: 2,
+      block: 'emotionalFollowUp',
+    });
   }
 
-  // PRIORITÀ BASSA: Nuovo listing
-  if (context.status === "new") {
-    return {
-      action: "Analizza con AI Briefing",
-      icon: "🔍",
-      priority: "low",
-      reasoning: "Nuovo immobile rilevato. Analizza vantaggi e difetti prima di procedere.",
-      estimatedTime: "1 min",
-    };
+  if (context.status === 'new') {
+    return buildLocalizedNextActionSuggestion(copy, {
+      iconKey: 'search',
+      priority: 'low',
+      minutes: 1,
+      block: 'aiBriefing',
+    });
   }
 
-  // Default: Nessuna azione urgente
-  return {
-    action: "Monitora e Attendi",
-    icon: "👁️",
-    priority: "low",
-    reasoning: "Nessuna azione urgente richiesta. Continua a monitorare.",
-    estimatedTime: "0 min",
-  };
+  return buildLocalizedNextActionSuggestion(copy, {
+    iconKey: 'eye',
+    priority: 'low',
+    minutes: 0,
+    block: 'monitor',
+  });
 }
-

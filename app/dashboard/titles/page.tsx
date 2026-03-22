@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,28 +10,35 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
-import { useAPIErrorHandler } from "@/components/error-boundary";
-import { 
-  Home, 
-  ArrowLeft, 
-  Copy, 
-  Check, 
+import { getTranslation } from "@/lib/i18n/dictionary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
+import {
+  Copy,
+  Check,
   Sparkles,
-  Building2,
-  Heart,
-  Crown,
   Loader2,
-  Sun,
-  Moon,
-  Zap,
-  Target,
-  Search,
   Star,
   TrendingUp,
-  MousePointerClick
+  Target,
+  Tag,
+  KeyRound,
+  Palmtree,
+  ArrowLeft,
+  MousePointerClick,
 } from "lucide-react";
+import {
+  getTitlesAbCategoryVisuals,
+  toneIconsForTitlesAb,
+} from "@/lib/i18n/titles-ab-page-ui";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import {
   Select,
   SelectContent,
@@ -66,141 +72,56 @@ interface FormData {
   tono: Tono;
 }
 
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
-
-const TIPO_IMMOBILE_OPTIONS = [
-  { value: "appartamento" as TipoImmobile, label: "Appartamento" },
-  { value: "casa" as TipoImmobile, label: "Casa" },
-  { value: "villa" as TipoImmobile, label: "Villa" },
-  { value: "locale" as TipoImmobile, label: "Locale Commerciale" },
-  { value: "ufficio" as TipoImmobile, label: "Ufficio" },
-  { value: "terreno" as TipoImmobile, label: "Terreno" },
-];
-
-const TONI_OPTIONS = [
-  { 
-    value: "professionale" as Tono, 
-    label: "Professionale", 
-    description: "Chiaro e informativo",
-    icon: Building2,
-    gradient: "from-blue-500 to-cyan-500"
-  },
-  { 
-    value: "emotivo" as Tono, 
-    label: "Emotivo", 
-    description: "Aspirazionale e coinvolgente",
-    icon: Heart,
-    gradient: "from-pink-500 to-rose-500"
-  },
-  { 
-    value: "luxury" as Tono, 
-    label: "Luxury", 
-    description: "Esclusivo e prestigioso",
-    icon: Crown,
-    gradient: "from-amber-500 to-yellow-500"
-  },
-];
-
-const TITLE_CATEGORIES = [
-  {
-    key: "titoli",
-    label: "Titoli Alto CTR",
-    description: "10 titoli ottimizzati per massimizzare i click",
-    icon: MousePointerClick,
-    gradient: "from-indigo-500 to-purple-500",
-    shadowColor: "shadow-indigo-500/20",
-    badge: "CTR +40%"
-  },
-  {
-    key: "clickbait",
-    label: "Clickbait Soft",
-    description: "Attirano curiosità senza essere spam",
-    icon: Zap,
-    gradient: "from-orange-500 to-red-500",
-    shadowColor: "shadow-orange-500/20",
-    badge: "Virale"
-  },
-  {
-    key: "luxury",
-    label: "Luxury",
-    description: "Per immobili di alto livello e clienti facoltosi",
-    icon: Crown,
-    gradient: "from-amber-500 to-yellow-500",
-    shadowColor: "shadow-amber-500/20",
-    badge: "Premium"
-  },
-  {
-    key: "seo",
-    label: "SEO Optimized",
-    description: "Ottimizzati per Google e portali immobiliari",
-    icon: Search,
-    gradient: "from-emerald-500 to-teal-500",
-    shadowColor: "shadow-emerald-500/20",
-    badge: "Ranking"
-  },
-];
-
 export default function TitlesPage() {
-  const router = useRouter();
   const { toast } = useToast();
-  const { theme, setTheme } = useTheme();
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
-  const { handleAPIError } = useAPIErrorHandler();
-  const t = {
-    generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    successTitle: isItalian ? "Titoli generati con successo!" : "Titles generated successfully!",
-    successDesc: isItalian
-      ? "19 titoli ad alto CTR sono pronti per essere utilizzati."
-      : "19 high-CTR titles are ready to use.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    locationRequired: isItalian ? "Località richiesta" : "Location required",
-    locationRequiredDesc: isItalian
-      ? "Inserisci la località dell'immobile"
-      : "Enter the property location",
-    pointsRequired: isItalian ? "Punti chiave richiesti" : "Key points required",
-    pointsRequiredDesc: isItalian
-      ? "Descrivi almeno i punti chiave dell'immobile (min 10 caratteri)"
-      : "Describe at least the key points of the property (min 10 characters)",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Titolo copiato negli appunti" : "Title copied to clipboard",
-    copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    appName: "PropertyPilot AI",
-    subtitleBadge: "CTR +40%",
-    headerLabel: isItalian ? "Titoli A/B" : "A/B Titles",
-    heroTitle: isItalian ? "Generatore Titoli A/B" : "A/B Title Generator",
-    heroDescription: isItalian
-      ? "Genera 19 titoli ad alto conversion rate ottimizzati per massimizzare i click sui tuoi annunci"
-      : "Generate 19 high-converting titles optimized to maximize clicks on your listings",
-    backToDashboard: isItalian ? "Dashboard" : "Dashboard",
-    propertyData: isItalian ? "Dati Immobile" : "Property Data",
-    propertyDataDesc: isItalian
-      ? "Inserisci le informazioni per generare titoli ottimizzati"
-      : "Enter the information to generate optimized titles",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
-    selectPropertyType: isItalian ? "Seleziona tipo" : "Select type",
-    locationLabel: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "Es: Milano Centro" : "e.g. Downtown Milan",
-    priceLabel: isItalian ? "Prezzo" : "Price",
-    pricePlaceholder: isItalian ? "€ 350.000" : "$ 350,000",
-    sizeLabel: isItalian ? "Superficie" : "Size",
-    sizePlaceholder: isItalian ? "120 mq" : "120 sqm",
-    roomsLabel: isItalian ? "Camere" : "Rooms",
-    roomsPlaceholder: isItalian ? "3" : "3",
-    keyPointsLabel: isItalian ? "Punti Chiave dell'Immobile *" : "Key Features of the Property *",
-    keyPointsPlaceholder: isItalian
-      ? "Descrivi le caratteristiche principali: balcone, garage, giardino, vista, ristrutturato, luminoso..."
-      : "Describe the main features: balcony, garage, garden, view, renovated, bright...",
-    toneLabel: isItalian ? "Tono dei Titoli" : "Title Tone",
-    generateButtonIdle: isItalian ? "Genera Titoli" : "Generate Titles",
-    generateButtonLoading: isItalian ? "Generazione titoli..." : "Generating titles...",
-  };
+  const feedbackLocale = isItalian ? "it" : "en";
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const tt = dash.transactionTypes;
+  const tipoTransazioneOptions = useMemo(
+    () =>
+      [
+        { value: "vendita", label: tt.vendita, Icon: Tag },
+        { value: "affitto", label: tt.affitto, Icon: KeyRound },
+        { value: "affitto_breve", label: tt.affitto_breve, Icon: Palmtree },
+      ] as const,
+    [tt]
+  );
+  const usage = useUsageLimits();
+  const tp = dash.titlesAbPage;
+  const t = tp;
+  const categoryVisuals = useMemo(() => getTitlesAbCategoryVisuals(), []);
+  const propertyTypeOptions = tp.propertyTypes;
+  const toniOptions = useMemo(
+    () =>
+      tp.tones.map((opt) => ({
+        value: opt.value as Tono,
+        label: opt.label,
+        description: opt.description,
+        icon: toneIconsForTitlesAb[opt.value],
+        gradient:
+          opt.value === "professionale"
+            ? "from-blue-500 to-cyan-500"
+            : opt.value === "emotivo"
+              ? "from-pink-500 to-rose-500"
+              : "from-amber-500 to-yellow-500",
+      })),
+    [tp.tones]
+  );
+  const titleCategories = useMemo(
+    () =>
+      tp.categories.map((c) => ({
+        key: c.key,
+        label: c.label,
+        description: c.description,
+        badge: c.badge,
+        icon: categoryVisuals.categoryIcons[c.key],
+        gradient: categoryVisuals.categoryGradients[c.key],
+        shadowColor: categoryVisuals.categoryShadows[c.key],
+      })),
+    [categoryVisuals, tp.categories]
+  );
   
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -216,21 +137,27 @@ export default function TitlesPage() {
   const [result, setResult] = useState<TitlesResponse | null>(null);
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? dash.planAgency
+      : usage.plan === "pro"
+        ? dash.planPro
+        : usage.plan === "starter"
+          ? dash.planStarter
+          : dash.planFree;
+
   const generateMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      const response = await fetch("/api/generate-titles", {
+      const res = await fetchApi<TitlesResponse>("/api/generate-titles", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
-      const json = await response.json();
-
-      if (!response.ok) {
-        throw new Error(json.error || t.generateError);
+      if (!res.success) {
+        const err = new Error(res.message || res.error || t.generateError) as Error & { status?: number };
+        err.status = res.status;
+        throw err;
       }
-      
-      return json as TitlesResponse;
+      return res.data as TitlesResponse;
     },
     onSuccess: (data) => {
       setResult(data);
@@ -239,11 +166,15 @@ export default function TitlesPage() {
         description: t.successDesc,
       });
     },
-    onError: (error: Error) => {
-      const friendly = handleAPIError(error, t.generateError);
+    onError: (error: Error & { status?: number }) => {
+      const fail = apiFailureToast(feedbackLocale, "titleGenerator", {
+        status: error.status,
+        message: error.message,
+        error: error.message,
+      }, t.generateError);
       toast({
-        title: t.errorTitle,
-        description: friendly,
+        title: fail.title,
+        description: fail.description,
         variant: "destructive",
       });
     },
@@ -253,20 +184,14 @@ export default function TitlesPage() {
     e.preventDefault();
     
     if (!formData.localita || formData.localita.length < 2) {
-      toast({
-        title: t.locationRequired,
-        description: t.locationRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "titleGenerator", t.locationRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
     if (!formData.puntiChiave || formData.puntiChiave.length < 10) {
-      toast({
-        title: t.pointsRequired,
-        description: t.pointsRequiredDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "titleGenerator", t.pointsRequiredDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     
@@ -282,12 +207,9 @@ export default function TitlesPage() {
         description: t.copiedDesc,
       });
       setTimeout(() => setCopiedTitle(null), 2000);
-    } catch (err) {
-      toast({
-        title: t.errorTitle,
-        description: t.copyFailedDesc,
-        variant: "destructive",
-      });
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, "titleGenerator", t.copyFailedDesc);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
@@ -321,64 +243,28 @@ export default function TitlesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
-                <Home className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {t.appName}
-                </span>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{t.headerLabel}</p>
-              </div>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-full"
-              data-testid="button-theme-toggle"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push("/dashboard")}
-              className="gap-2"
-              data-testid="button-back-dashboard"
-              aria-label={t.backToDashboard}
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t.backToDashboard}
-            </Button>
-          </div>
-        </div>
-      </header>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="button-back-dashboard"
+      >
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+        {t.backToDashboard}
+      </Link>
 
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-4xl font-bold">
-              <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                {t.heroTitle}
-              </span>
-            </h1>
-            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg shadow-green-500/25">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              {t.subtitleBadge}
-            </Badge>
-          </div>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            {t.heroDescription}
-          </p>
-        </div>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroDescription}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
+            <TrendingUp className="h-3 w-3 mr-1" />
+            {t.subtitleBadge}
+          </Badge>
+        }
+      />
 
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-6">
@@ -404,14 +290,17 @@ export default function TitlesPage() {
                         <SelectValue placeholder={t.selectTransaction} />
                       </SelectTrigger>
                       <SelectContent>
-                        {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            <span className="flex items-center gap-2">
-                              <span>{option.icon}</span>
-                              <span>{option.label}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
+                        {tipoTransazioneOptions.map((option) => {
+                          const TxIcon = option.Icon;
+                          return (
+                            <SelectItem key={option.value} value={option.value}>
+                              <span className="flex items-center gap-2">
+                                <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                                <span>{option.label}</span>
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
@@ -427,7 +316,7 @@ export default function TitlesPage() {
                           <SelectValue placeholder={t.selectPropertyType} />
                         </SelectTrigger>
                         <SelectContent>
-                          {TIPO_IMMOBILE_OPTIONS.map((option) => (
+                          {propertyTypeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -499,7 +388,7 @@ export default function TitlesPage() {
                   <div className="space-y-3">
                     <Label>{t.toneLabel}</Label>
                     <div className="grid grid-cols-3 gap-2">
-                      {TONI_OPTIONS.map((option) => {
+                      {toniOptions.map((option) => {
                         const Icon = option.icon;
                         return (
                           <button
@@ -536,12 +425,12 @@ export default function TitlesPage() {
                     {generateMutation.isPending ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Generazione titoli...
+                        {t.generateButtonLoading}
                       </>
                     ) : (
                       <>
                         <Sparkles className="h-5 w-5 mr-2" />
-                        Genera 19 Titoli A/B
+                        {t.generateButtonIdle}
                       </>
                     )}
                   </Button>
@@ -558,10 +447,10 @@ export default function TitlesPage() {
                     <MousePointerClick className="h-10 w-10 text-indigo-500" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    I tuoi titoli appariranno qui
+                    {t.emptyTitle}
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Compila il form e clicca "Genera 19 Titoli A/B" per creare titoli ad alto CTR
+                    {t.emptySubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -575,10 +464,10 @@ export default function TitlesPage() {
                     <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-indigo-500" />
                   </div>
                   <p className="mt-6 text-lg font-medium text-slate-700 dark:text-slate-300">
-                    Generazione titoli AI...
+                    {t.loadingTitle}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                    Stiamo creando 19 titoli ottimizzati per il massimo CTR
+                    {t.loadingSubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -590,7 +479,7 @@ export default function TitlesPage() {
                   <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
                     <CardTitle className="flex items-center gap-2">
                       <Star className="h-5 w-5 fill-current" />
-                      Miglior Titolo Consigliato
+                      {t.bestTitleHeading}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -620,7 +509,7 @@ export default function TitlesPage() {
                 </Card>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  {TITLE_CATEGORIES.map((category) => {
+                  {titleCategories.map((category) => {
                     const Icon = category.icon;
                     const titles = result[category.key as keyof typeof result] as string[];
                     
@@ -664,7 +553,6 @@ export default function TitlesPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

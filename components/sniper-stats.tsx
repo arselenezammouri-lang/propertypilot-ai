@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, TrendingDown, History, AlertTriangle } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 
 interface SniperStats {
@@ -17,26 +18,7 @@ export function SniperStats() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { handleAPIError } = useAPIErrorHandler();
-  const t = {
-    it: {
-      priceDropsToday: "Ribassi Oggi",
-      detected: "Rilevati",
-      expirations: "Scadenze",
-      opportunities: "Opportunità",
-      last48h: "Rilevati nelle ultime 48h",
-      offline120: "Immobili offline 120+ giorni",
-      loadError: "Impossibile caricare le statistiche Sniper.",
-    },
-    en: {
-      priceDropsToday: "Price Drops Today",
-      detected: "Detected",
-      expirations: "Expirations",
-      opportunities: "Opportunities",
-      last48h: "Detected in the last 48h",
-      offline120: "Properties offline 120+ days",
-      loadError: "Unable to load Sniper statistics.",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.sniperStats;
 
   const fetchStats = useCallback(async () => {
     try {
@@ -99,7 +81,7 @@ export function SniperStats() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
-            Sniper Stats
+            {t.title}
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -46,8 +46,9 @@ import {
   Sparkle,
   Loader2,
   Heart,
+  Lightbulb,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NextDynamic from "next/dynamic";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 
@@ -83,6 +84,16 @@ export default function PlatformPage() {
 
   // Get translations
   const t = getTranslation(currentLocale as SupportedLocale);
+
+  const iconAfterTextMargin = useMemo(
+    () => (currentLocale === "ar" ? "mr-3" : "ml-3"),
+    [currentLocale]
+  );
+
+  const iconAfterButtonMarginSm = useMemo(
+    () => (currentLocale === "ar" ? "mr-2" : "ml-2"),
+    [currentLocale]
+  );
 
   // Chiudi menu mobile quando si clicca fuori
   useEffect(() => {
@@ -293,7 +304,7 @@ export default function PlatformPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Link href="/auth/signup" aria-label="Sign up for PropertyPilot AI">
+              <Link href="/auth/signup" aria-label={t.landing.hero.signupAriaLabel}>
                 <Button 
                   size="lg" 
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] relative overflow-hidden group transition-all active:scale-95"
@@ -301,13 +312,13 @@ export default function PlatformPage() {
                 >
                   <span className="relative z-10 flex items-center">
                     {t.landing.hero.ctaStart}
-                    <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                    <ArrowRight className={`${iconAfterTextMargin} h-6 w-6`} />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#06b6d4] to-[#9333ea] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute inset-0 rounded-lg bg-[#06b6d4]/30 blur-2xl animate-pulse"></div>
                 </Button>
               </Link>
-              <Link href="/dashboard" aria-label="View demo dashboard">
+              <Link href="/dashboard" aria-label={t.landing.hero.demoDashboardAriaLabel}>
                 <Button 
                   size="lg" 
                   variant="outline" 
@@ -315,7 +326,7 @@ export default function PlatformPage() {
                   aria-label={t.landing.hero.ctaDemo}
                 >
                   {t.landing.hero.ctaDemo}
-                  <Play className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <Play className={`${iconAfterTextMargin} h-6 w-6`} />
                 </Button>
               </Link>
             </div>
@@ -324,25 +335,32 @@ export default function PlatformPage() {
             <div className="mt-20 fade-on-scroll">
               <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">{t.landing.hero.trustedBy}</p>
               <div className="flex items-center justify-center gap-8 flex-wrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="text-2xl font-bold text-gray-400">Idealista</div>
-                <div className="text-2xl font-bold text-gray-400">Immobiliare.it</div>
-                <div className="text-2xl font-bold text-gray-400">Zillow</div>
-                <div className="text-2xl font-bold text-gray-400">MLS</div>
+                {t.landing.hero.trustedPortalLogos.map((name) => (
+                  <div key={name} className="text-2xl font-bold text-gray-400">
+                    {name}
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">24/7</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.automation}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.automation}</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">1000+</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.listingsPerDay}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.listingsPerDay}</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">80%</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.conversionRate}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.conversionRate}</div>
               </div>
             </div>
@@ -380,7 +398,7 @@ export default function PlatformPage() {
                 description: t.landing.features.aiListing.description,
                 benefit: t.landing.features.aiListing.benefit,
                 cta: "/auth/signup",
-                ctaLabel: "Prova Gratis",
+                ctaLabel: t.landing.features.aiListing.cta,
               },
               {
                 icon: BarChart3,
@@ -388,7 +406,7 @@ export default function PlatformPage() {
                 description: t.landing.features.crmAI.description,
                 benefit: t.landing.features.crmAI.benefit,
                 cta: "/auth/signup?redirect=/dashboard/leads",
-                ctaLabel: "Vai al CRM",
+                ctaLabel: t.landing.features.crmAI.cta,
               },
               {
                 icon: Globe,
@@ -396,7 +414,7 @@ export default function PlatformPage() {
                 description: t.landing.features.globalReach.description,
                 benefit: t.landing.features.globalReach.benefit,
                 cta: "/auth/signup?redirect=/dashboard/prospecting",
-                ctaLabel: "Scopri Prospecting",
+                ctaLabel: t.landing.features.globalReach.cta,
               },
             ].map((feature, idx) => (
               <Card 
@@ -412,13 +430,17 @@ export default function PlatformPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm mb-4">
-                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm mb-4 flex items-start gap-2">
+                    <Lightbulb
+                      className="h-4 w-4 text-[#06b6d4] shrink-0 mt-0.5"
+                      aria-hidden
+                    />
+                    <p className="text-sm text-[#06b6d4] font-semibold">{feature.benefit}</p>
                   </div>
                   <Link href={feature.cta}>
                     <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#06b6d4] hover:opacity-90 text-white border-0">
                       {feature.ctaLabel}
-                      <ChevronRight className="ml-2 h-4 w-4" />
+                      <ChevronRight className={`${iconAfterButtonMarginSm} h-4 w-4`} />
                     </Button>
                   </Link>
                 </CardContent>
@@ -458,7 +480,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#9333ea]/10 flex items-center justify-center mb-4 border border-[#9333ea]/30">
                   <Radar className="h-8 w-8 text-[#9333ea] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 1</div>
+                <div className="text-xs font-bold text-[#9333ea] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "1")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step1.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -479,7 +503,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#06b6d4]/10 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
                   <Filter className="h-8 w-8 text-[#06b6d4] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 2</div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "2")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step2.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -491,7 +517,9 @@ export default function PlatformPage() {
                   <div className="flex-1 h-2 bg-[#06b6d4]/20 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-[#06b6d4] to-[#9333ea] rounded-full" style={{ width: "85%" }}></div>
                   </div>
-                  <span className="text-xs font-bold text-[#06b6d4]">85/100</span>
+                  <span className="text-xs font-bold text-[#06b6d4]">
+                    {t.landing.searchEngine.step2.demoScoreLabel.replace('{score}', '85').replace('{max}', '100')}
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">{t.landing.searchEngine.step2.status}</p>
               </CardContent>
@@ -503,7 +531,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#06b6d4]/20 flex items-center justify-center mb-4 border border-[#9333ea]/30">
                   <PhoneCall className="h-8 w-8 text-[#06b6d4] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 3</div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "3")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step3.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -533,7 +563,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#9333ea]/20 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
                   <CalendarCheck className="h-8 w-8 text-[#9333ea] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 4</div>
+                <div className="text-xs font-bold text-[#9333ea] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "4")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step4.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -554,8 +586,8 @@ export default function PlatformPage() {
           <div className="mt-12 text-center fade-on-scroll">
             <Link href="/auth/signup?redirect=/dashboard/prospecting">
               <Button size="lg" className="bg-gradient-to-r from-[#06b6d4] to-[#9333ea] hover:opacity-90 text-white border-0 px-10 py-6 text-lg">
-                Avvia il ciclo Scraper → Voice AI → CRM
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {t.landing.searchEngine.prospectingCycleCta}
+                <ArrowRight className={`${iconAfterButtonMarginSm} h-5 w-5`} />
               </Button>
             </Link>
           </div>
@@ -732,8 +764,12 @@ export default function PlatformPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm">
-                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm flex items-start gap-2">
+                    <Lightbulb
+                      className="h-4 w-4 text-[#06b6d4] shrink-0 mt-0.5"
+                      aria-hidden
+                    />
+                    <p className="text-sm text-[#06b6d4] font-semibold">{feature.benefit}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -780,7 +816,7 @@ export default function PlatformPage() {
                     <th className="text-left p-4 text-gray-400 font-semibold text-sm">{t.landing.pricing.feature}</th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">FREE</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.free}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(0, selectedCurrency)}
                         </div>
@@ -789,7 +825,7 @@ export default function PlatformPage() {
                     </th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">STARTER</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.starter}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(197, "EUR", selectedCurrency), selectedCurrency)}
                         </div>
@@ -798,7 +834,7 @@ export default function PlatformPage() {
                     </th>
                     <th className="text-center p-4">
                       <div className="glass-card border-white/10 rounded-lg p-4">
-                        <div className="text-2xl font-bold text-white mb-1">PRO</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.pro}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(497, "EUR", selectedCurrency), selectedCurrency)}
                         </div>
@@ -810,7 +846,7 @@ export default function PlatformPage() {
                         {t.landing.pricing.bestValue}
                       </div>
                       <div className="glass-card border-2 border-[#9333ea]/50 rounded-lg p-4 shadow-[0_0_30px_rgba(147,51,234,0.3)] relative">
-                        <div className="text-2xl font-bold text-white mb-1">AGENCY</div>
+                        <div className="text-2xl font-bold text-white mb-1">{t.landing.pricing.plans.agency}</div>
                         <div className="text-xs text-[#06b6d4] mb-1 font-semibold">{t.landing.pricing.agencySubtitle}</div>
                         <div className="text-3xl font-extrabold text-white mb-2">
                           {formatCurrency(convertCurrency(897, "EUR", selectedCurrency), selectedCurrency)}
@@ -838,13 +874,13 @@ export default function PlatformPage() {
                     { feature: t.landing.pricing.features.forms, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.whiteLabel, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.assistant, free: "—", starter: "—", pro: "✓", agency: "✓" },
-                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: currentLocale === "en" ? "Up to 10 agents" : currentLocale === "es" ? "Hasta 10 agentes" : currentLocale === "fr" ? "Jusqu'à 10 agents" : currentLocale === "de" ? "Bis zu 10 Agenten" : currentLocale === "ar" ? "حتى 10 وكلاء" : currentLocale === "pt" ? "Até 10 agentes" : "Fino a 10 agenti" },
+                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: t.landing.pricing.tableCells.multiUserAgency },
                     { feature: t.landing.pricing.features.roles, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.distribution, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.reports, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.multiOffice, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.auraVR, free: "—", starter: "—", pro: <span className="text-gray-400">{t.landing.pricing.plans.viewer}</span>, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
-                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: currentLocale === "en" ? "30/month" : currentLocale === "es" ? "30/mes" : currentLocale === "fr" ? "30/mois" : currentLocale === "de" ? "30/Monat" : currentLocale === "ar" ? "30/شهر" : currentLocale === "pt" ? "30/mês" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
+                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: t.landing.pricing.tableCells.voiceCallingPro, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
                     { feature: t.landing.pricing.features.messaging, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.manualOverride, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.humanOverride, free: "—", starter: "—", pro: "✓", agency: "✓" },
@@ -912,42 +948,32 @@ export default function PlatformPage() {
           <div className="mt-16 fade-on-scroll">
             <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent relative overflow-hidden border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.4),0_0_100px_rgba(251,191,36,0.2)] hover:shadow-[0_0_70px_rgba(245,158,11,0.6),0_0_120px_rgba(251,191,36,0.3)] transition-all duration-500 hover:border-amber-400/80 ring-2 ring-amber-400/30 ring-offset-2 ring-offset-[#000000] agency-boost-card">
               <div className="absolute -top-3 right-4 px-4 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full z-10 backdrop-blur-md border border-white/20">
-                PREMIUM SERVICE
+                {t.landing.pricing.agencyBoost.badgePremium}
               </div>
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles className="h-8 w-8 text-orange-400" />
-                    <h3 className="text-3xl font-bold text-white">Agency Boost</h3>
+                    <h3 className="text-3xl font-bold text-white">{t.landing.pricing.agencyBoost.productName}</h3>
                     <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-semibold rounded-full border border-orange-500/30">
-                      Titanium
+                      {t.landing.pricing.agencyBoost.tierTitanium}
                     </span>
                   </div>
                   <p className="text-gray-300 mb-6 text-lg">
-                    {currentLocale === "en" 
-                      ? "Done-for-you setup package with premium onboarding and dedicated support"
-                      : currentLocale === "es"
-                      ? 'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado'
-                      : currentLocale === "fr"
-                      ? 'Package de configuration "done-for-you" avec intégration premium et support dédié'
-                      : currentLocale === "de"
-                      ? "Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support"
-                      : currentLocale === "ar"
-                      ? "حزمة الإعداد الجاهزة مع الدعم المخصص"
-                      : 'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato'}
+                    {t.landing.pricing.agencyBoost.description}
                   </p>
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? 'Complete setup "done-for-you"' : currentLocale === "es" ? 'Configuración completa "done-for-you"' : currentLocale === "fr" ? 'Configuration complète "done-for-you"' : currentLocale === "de" ? 'Vollständige Einrichtung "done-for-you"' : currentLocale === "ar" ? "إعداد كامل جاهز" : 'Setup completo "done-for-you"'}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet1}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Guided implementation and onboarding" : currentLocale === "es" ? "Implementación y incorporación guiada" : currentLocale === "fr" ? "Implémentation et intégration guidées" : currentLocale === "de" ? "Geführte Implementierung und Onboarding" : currentLocale === "ar" ? "تنفيذ وإعداد موجه" : "Implementazione e onboarding guidato"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet2}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Premium support for launch" : currentLocale === "es" ? "Soporte premium para el lanzamiento" : currentLocale === "fr" ? "Support premium pour le lancement" : currentLocale === "de" ? "Premium-Support für den Start" : currentLocale === "ar" ? "دعم مميز للإطلاق" : "Supporto premium per il lancio"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet3}</span>
                     </li>
                   </ul>
                 </div>
@@ -957,13 +983,13 @@ export default function PlatformPage() {
                       {formatCurrency(convertCurrency(2497, "EUR", selectedCurrency), selectedCurrency)}
                     </div>
                     <div className="text-gray-400 font-light">
-                      {currentLocale === "en" ? "One-time payment" : currentLocale === "es" ? "Pago único" : currentLocale === "fr" ? "Paiement unique" : currentLocale === "de" ? "Einmalige Zahlung" : currentLocale === "ar" ? "دفعة واحدة" : "Pagamento una tantum"}
+                      {t.landing.pricing.agencyBoost.oneTimePayment}
                     </div>
                   </div>
                   <Link href="/api/stripe/checkout-oneshot?package=boost">
                     <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold border-0 shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all active:scale-95 py-6 text-lg">
-                      {currentLocale === "en" ? "Get Agency Boost" : currentLocale === "es" ? "Obtener Agency Boost" : currentLocale === "fr" ? "Obtenir Agency Boost" : currentLocale === "de" ? "Agency Boost erhalten" : currentLocale === "ar" ? "احصل على Agency Boost" : "Acquista Agency Boost"}
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      {t.landing.pricing.agencyBoost.cta}
+                      <ArrowRight className={`${iconAfterButtonMarginSm} h-5 w-5`} />
                     </Button>
                   </Link>
                 </div>
@@ -992,7 +1018,7 @@ export default function PlatformPage() {
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] transition-all active:scale-95"
                 >
                   {t.landing.cta.button}
-                  <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <ArrowRight className={`${iconAfterTextMargin} h-6 w-6`} />
                 </Button>
               </Link>
             </CardContent>

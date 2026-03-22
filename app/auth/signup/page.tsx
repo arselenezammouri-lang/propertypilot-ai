@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useCallback, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -14,8 +14,19 @@ import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { TurnstileWidget, getTurnstileSiteKey } from "@/components/turnstile-widget";
 
 function SignupClient() {
+  const turnstileSiteKey = useMemo(() => getTurnstileSiteKey(), []);
+  const turnstileRequired = turnstileSiteKey.length > 0;
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(() =>
+    turnstileRequired ? null : "dev-skip"
+  );
+  const [turnstileLoadFailed, setTurnstileLoadFailed] = useState(false);
+  const onTurnstileToken = useCallback((token: string | null) => {
+    setTurnstileToken(token);
+  }, []);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -48,6 +59,58 @@ function SignupClient() {
       });
       setLoading(false);
       return;
+    }
+
+    if (turnstileLoadFailed) {
+      toast({
+        title: t.auth.toast.error,
+        description: t.auth.toast.turnstileLoadFailed,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (turnstileRequired && !turnstileToken) {
+      toast({
+        title: t.auth.toast.error,
+        description: t.auth.toast.turnstileRequired,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (turnstileRequired && turnstileToken) {
+      try {
+        const vr = await fetch("/api/auth/verify-turnstile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: turnstileToken }),
+        });
+        const body = await vr.json().catch(() => ({}));
+        if (!vr.ok || !body.ok) {
+          const desc =
+            vr.status === 503 && body.error === "turnstile_misconfigured"
+              ? t.auth.toast.turnstileMisconfigured
+              : t.auth.toast.turnstileFailed;
+          toast({
+            title: t.auth.toast.error,
+            description: desc,
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+      } catch {
+        toast({
+          title: t.auth.toast.error,
+          description: t.auth.toast.turnstileFailed,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
     }
 
     if (selectedPlan && ['starter', 'pro', 'agency'].includes(selectedPlan)) {
@@ -290,10 +353,24 @@ function SignupClient() {
                 </ul>
               </div>
 
+              {turnstileRequired ? (
+                <TurnstileWidget
+                  siteKey={turnstileSiteKey}
+                  onToken={onTurnstileToken}
+                  theme="dark"
+                  className="flex justify-center min-h-[65px]"
+                  onLoadError={() => setTurnstileLoadFailed(true)}
+                />
+              ) : null}
+
               <Button 
                 type="submit" 
                 className="w-full h-11 text-base shadow-lg hover:shadow-xl transition-all" 
-                disabled={loading}
+                disabled={
+                  loading ||
+                  turnstileLoadFailed ||
+                  (turnstileRequired && !turnstileToken)
+                }
                 data-testid="button-signup"
               >
                 {loading ? (

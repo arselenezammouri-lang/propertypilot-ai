@@ -4,6 +4,7 @@ import { requireStripe } from '@/lib/stripe/config';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { logger } from '@/lib/utils/safe-logger';
 import { isFounderEmail } from '@/lib/utils/founder-access';
+import { isFounderSubscriptionPreviewAllowed } from '@/lib/utils/local-dev-host';
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ export async function GET(request: NextRequest) {
     if (!auth.ok) return auth.response;
     const { user, supabase } = auth;
 
-    if (isFounderEmail(user.email)) {
+    const host =
+      request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '';
+    if (isFounderEmail(user.email) && isFounderSubscriptionPreviewAllowed(host)) {
       return NextResponse.json({
         success: true,
         data: {
@@ -37,6 +40,7 @@ export async function GET(request: NextRequest) {
           cancel_at_period_end: false,
           stripe_verified: true,
           founder_override: true,
+          localhost_preview: true,
         },
       });
     }

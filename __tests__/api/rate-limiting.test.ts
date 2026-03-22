@@ -56,12 +56,11 @@ jest.mock('@/lib/utils/rate-limit', () => {
       return { allowed: true, remaining: 20 - data.count, resetAt: data.resetAt };
     }),
     
+    logGeneration: jest.fn(),
+    incrementGenerationCount: jest.fn(),
     getClientIp: jest.fn((request: any) => '127.0.0.1'),
   };
 });
-
-// Get the mocked functions
-const { checkUserRateLimit, checkIpRateLimit } = require('@/lib/utils/rate-limit');
 
 describe('Rate Limiting', () => {
   beforeEach(() => {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Hash, 
   Zap,
@@ -24,7 +35,10 @@ import {
   ArrowLeft,
   Lightbulb,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Tag,
+  KeyRound,
+  Palmtree,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -54,102 +68,35 @@ interface FormData {
 export default function HashtagsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
+  const feedbackLocale = isItalian ? "it" : "en";
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const tt = dash.transactionTypes;
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
 
-  const t = {
-    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    heroTitle: isItalian ? "Hashtag AI Generator" : "Hashtag AI Generator",
-    heroSubtitle: isItalian
-      ? "Genera hashtag ottimizzati per massimizzare il reach dei tuoi post"
-      : "Generate optimized hashtags to maximize the reach of your posts",
-    heroBadge: isItalian ? "⚡ Viral Booster AI" : "⚡ Viral Booster AI",
-    formTitle: isItalian ? "Dati Immobile" : "Property Data",
-    formSubtitle: isItalian
-      ? "Inserisci le informazioni per generare hashtag personalizzati"
-      : "Enter information to generate personalized hashtags",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    propertyTypeLabel: isItalian ? "Tipo di Immobile *" : "Property Type *",
-    propertyTypePlaceholder: isItalian ? "es. Attico con terrazzo" : "e.g. Attic with terrace",
-    locationLabel: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Milan Centre",
-    priceLabel: isItalian ? "Prezzo *" : "Price *",
-    pricePlaceholder: isItalian ? "es. €450.000" : "e.g. $450,000",
-    strengthsLabel: isItalian ? "Punti di Forza *" : "Key Strengths *",
-    strengthsPlaceholder: isItalian
-      ? "es. Vista panoramica, terrazzo 50mq, finiture di pregio..."
-      : "e.g. Panoramic view, 50sqm terrace, premium finishes...",
-    toneLabel: isItalian ? "Tono" : "Tone",
-    selectTone: isItalian ? "Seleziona tono" : "Select tone",
-    marketLabel: isItalian ? "Mercato" : "Market",
-    selectMarket: isItalian ? "Seleziona mercato" : "Select market",
-    generateIdle: isItalian ? "Genera 50+ Hashtag" : "Generate 50+ Hashtags",
-    generateLoading: isItalian ? "Generazione in corso..." : "Generating...",
-    emptyTitle: isItalian ? "Nessun hashtag generato" : "No hashtags generated",
-    emptySubtitle: isItalian
-      ? "Compila il form con i dati dell'immobile e clicca \"Genera\" per creare oltre 50 hashtag ottimizzati."
-      : "Fill the form with property data and click \"Generate\" to create over 50 optimized hashtags.",
-    loadingTitle: isItalian ? "Generazione in corso..." : "Generating...",
-    loadingSubtitle: isItalian
-      ? "Stiamo creando hashtag ottimizzati per il tuo immobile"
-      : "We are creating optimized hashtags for your property",
-    strategicTip: isItalian ? "Consiglio Strategico" : "Strategic Tip",
-    readyMixes: isItalian ? "Mix Pronti all'Uso" : "Ready-to-Use Mixes",
-    viralFocus: isItalian ? "Focus Virale" : "Viral Focus",
-    balanced: isItalian ? "Equilibrato" : "Balanced",
-    localFocus: isItalian ? "Focus Locale" : "Local Focus",
-    copyAll: isItalian ? "Copia Tutti" : "Copy All",
-    clickToCopy: isItalian ? "Clicca per copiare tutti gli hashtag" : "Click to copy all hashtags",
-    usaMarketMsg: isItalian
-      ? "Seleziona \"USA\" come mercato per generare hashtag americani"
-      : "Select \"USA\" as market to generate American hashtags",
-    // toasts
-    fieldRequired: isItalian ? "Campo obbligatorio" : "Required field",
-    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile (min 3 caratteri)" : "Enter property type (min 3 characters)",
-    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
-    priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
-    limitTitle: isItalian ? "Limite raggiunto" : "Limit reached",
-    limitDefault: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    accessDeniedDesc: isItalian ? "Devi effettuare il login per usare questa funzione." : "You must log in to use this feature.",
-    successTitle: isItalian ? "Hashtag generati con successo!" : "Hashtags generated successfully!",
-    successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    successDesc: isItalian ? "Oltre 50 hashtag pronti per i tuoi post" : "Over 50 hashtags ready for your posts",
-    errorTitle: isItalian ? "Errore" : "Error",
-    errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Hashtag copiati negli appunti" : "Hashtags copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    // tabs
-    tabVirali: isItalian ? "Virali" : "Viral",
-    tabNicchia: isItalian ? "Nicchia" : "Niche",
-    tabLocalSeo: "Local SEO",
-    tabUsa: "USA",
-    tabViraliDesc: isItalian ? "15 hashtag ad alto reach" : "15 high-reach hashtags",
-    tabNicchiaDesc: isItalian ? "15 hashtag specifici" : "15 specific hashtags",
-    tabLocalSeoDesc: isItalian ? "10 hashtag locali" : "10 local hashtags",
-    tabUsaDesc: isItalian ? "15 hashtag americani" : "15 American hashtags",
-    // category labels
-    catVirali: isItalian ? "Virali" : "Viral",
-    catNicchia: isItalian ? "di Nicchia" : "Niche",
-    catLocalSeo: "Local SEO",
-    catUsa: "USA",
-  };
+  const t = dash.hashtagsPage;
 
-  const tipoTransazioneOptions = [
-    { value: "vendita", label: isItalian ? "Vendita" : "Sale", icon: "🏷️" },
-    { value: "affitto", label: isItalian ? "Affitto" : "Rental", icon: "🔑" },
-    { value: "affitto_breve", label: isItalian ? "Affitto Breve / Turistico" : "Short-Term / Vacation Rental", icon: "🏖️" },
-  ];
+  const tipoTransazioneOptions = useMemo(
+    () =>
+      [
+        { value: "vendita" as const, label: tt.vendita, Icon: Tag },
+        { value: "affitto" as const, label: tt.affitto, Icon: KeyRound },
+        { value: "affitto_breve" as const, label: tt.affitto_breve, Icon: Palmtree },
+      ] as const,
+    [tt]
+  );
 
-  const hashtagTabs = [
-    { id: "virali", label: t.tabVirali, icon: TrendingUp, description: t.tabViraliDesc, color: "from-pink-500 to-rose-500" },
-    { id: "nicchia", label: t.tabNicchia, icon: Target, description: t.tabNicchiaDesc, color: "from-purple-500 to-indigo-500" },
-    { id: "localSeo", label: t.tabLocalSeo, icon: MapPin, description: t.tabLocalSeoDesc, color: "from-green-500 to-emerald-500" },
-    { id: "usa", label: t.tabUsa, icon: Globe, description: t.tabUsaDesc, color: "from-blue-500 to-cyan-500" },
-  ] as const;
+  const hashtagTabs = useMemo(
+    () =>
+      [
+        { id: "virali" as const, label: t.tabVirali, icon: TrendingUp, description: t.tabViraliDesc, color: "from-pink-500 to-rose-500" },
+        { id: "nicchia" as const, label: t.tabNicchia, icon: Target, description: t.tabNicchiaDesc, color: "from-purple-500 to-indigo-500" },
+        { id: "localSeo" as const, label: t.tabLocalSeo, icon: MapPin, description: t.tabLocalSeoDesc, color: "from-green-500 to-emerald-500" },
+        { id: "usa" as const, label: t.tabUsa, icon: Globe, description: t.tabUsaDesc, color: "from-blue-500 to-cyan-500" },
+      ] as const,
+    [t]
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<HashtagResult | null>(null);
@@ -172,19 +119,23 @@ export default function HashtagsPage() {
 
   const handleSubmit = async () => {
     if (!formData.propertyType.trim() || formData.propertyType.length < 3) {
-      toast({ title: t.fieldRequired, description: t.propertyTypeRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.propertyTypeRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.location.trim()) {
-      toast({ title: t.fieldRequired, description: t.locationRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.locationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.strengths.trim() || formData.strengths.length < 10) {
-      toast({ title: t.fieldRequired, description: t.strengthsRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.strengthsRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
     if (!formData.price.trim()) {
-      toast({ title: t.fieldRequired, description: t.priceRequired, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "hashtagGenerator", t.priceRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -192,32 +143,32 @@ export default function HashtagsPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/generate-hashtags", {
+      const res = await fetchApi<HashtagResult>("/api/generate-hashtags", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({ title: t.limitTitle, description: data.message || t.limitDefault, variant: "destructive" });
-          return;
-        }
-        if (response.status === 401) {
-          toast({ title: t.accessDenied, description: t.accessDeniedDesc, variant: "destructive" });
-          return;
-        }
-        throw new Error(data.error || t.errorGeneric);
+      if (!res.success) {
+        const fail = apiFailureToast(feedbackLocale, "hashtagGenerator", {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.errorGeneric);
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as HashtagResult;
       setResult(data);
       setActiveTab("virali");
       toast({ title: t.successTitle, description: data.cached ? t.successCached : t.successDesc });
     } catch (error) {
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: "destructive" });
+      const net = networkFailureToast(feedbackLocale, "hashtagGenerator");
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -230,8 +181,21 @@ export default function HashtagsPage() {
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: "destructive" });
+      const c = clipboardFailureToast(feedbackLocale, "hashtagGenerator", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
+  };
+
+  const hashtagCardTitle = (count: number, category: string) => {
+    const tpl =
+      category === "virali"
+        ? t.hashtagTitleVirali
+        : category === "nicchia"
+          ? t.hashtagTitleNicchia
+          : category === "localSeo"
+            ? t.hashtagTitleLocalSeo
+            : t.hashtagTitleUsa;
+    return tpl.replace("{count}", String(count));
   };
 
   const renderHashtagList = (hashtags: string[], category: string, gradient: string) => {
@@ -243,7 +207,7 @@ export default function HashtagsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg text-foreground">
-                {hashtags.length} Hashtag {category === 'virali' ? t.catVirali : category === 'nicchia' ? t.catNicchia : category === 'localSeo' ? t.catLocalSeo : t.catUsa}
+                {hashtagCardTitle(hashtags.length, category)}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
                 {t.clickToCopy}
@@ -291,7 +255,9 @@ export default function HashtagsPage() {
                 {mixName}
               </div>
               <div>
-                <CardTitle className="text-base">Mix {mixName}</CardTitle>
+                <CardTitle className="text-base">
+                  {t.mixTitleTemplate.replace("{label}", mixName)}
+                </CardTitle>
                 <CardDescription className="text-xs">{description}</CardDescription>
               </div>
             </div>
@@ -314,31 +280,37 @@ export default function HashtagsPage() {
     );
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.backToDashboard}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? dash.planAgency
+      : usage.plan === "pro"
+        ? dash.planPro
+        : usage.plan === "starter"
+          ? dash.planStarter
+          : dash.planFree;
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
-          <Hash className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
-            {t.heroTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.heroSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">
-          {t.heroBadge}
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+      >
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+        {t.backToDashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <Badge className="flex items-center gap-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 text-xs">
+            <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {t.heroBadge}
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-yellow-200 dark:border-yellow-800">
@@ -362,14 +334,17 @@ export default function HashtagsPage() {
                   <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipoTransazioneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {tipoTransazioneOptions.map((option) => {
+                    const TxIcon = option.Icon;
+                    return (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -433,10 +408,10 @@ export default function HashtagsPage() {
                     <SelectValue placeholder={t.selectTone} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="professionale">Professionale</SelectItem>
-                    <SelectItem value="emozionale">Emozionale</SelectItem>
-                    <SelectItem value="luxury">Luxury</SelectItem>
-                    <SelectItem value="virale">Virale</SelectItem>
+                    <SelectItem value="professionale">{t.toneProfessionale}</SelectItem>
+                    <SelectItem value="emozionale">{t.toneEmozionale}</SelectItem>
+                    <SelectItem value="luxury">{t.toneLuxury}</SelectItem>
+                    <SelectItem value="virale">{t.toneVirale}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -452,8 +427,8 @@ export default function HashtagsPage() {
                     <SelectValue placeholder={t.selectMarket} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="italy">🇮🇹 Italia</SelectItem>
-                    <SelectItem value="usa">🇺🇸 USA</SelectItem>
+                    <SelectItem value="italy">{t.marketItaly}</SelectItem>
+                    <SelectItem value="usa">{t.marketUsa}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -587,6 +562,6 @@ export default function HashtagsPage() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

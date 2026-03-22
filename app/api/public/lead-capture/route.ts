@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { getAppUrl } from '@/lib/env';
 import type { LeadCapturePayload } from '@/lib/types/database.types';
+import { mergeNoStoreHeaders, withApiSecurity } from '@/lib/utils/api-security';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,10 +22,11 @@ const CORS_HEADERS = {
 };
 
 function corsResponse(data: object, status: number) {
-  return NextResponse.json(data, { 
-    status, 
-    headers: CORS_HEADERS 
+  const res = NextResponse.json(data, {
+    status,
+    headers: CORS_HEADERS,
   });
+  return mergeNoStoreHeaders(res);
 }
 
 function checkRateLimit(apiKey: string): boolean {
@@ -44,7 +46,7 @@ function checkRateLimit(apiKey: string): boolean {
   return true;
 }
 
-export async function POST(request: NextRequest) {
+async function postLeadCapture(request: NextRequest) {
   try {
     const apiKey = request.headers.get('x-api-key') || request.headers.get('authorization')?.replace('Bearer ', '');
 
@@ -199,6 +201,11 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export const POST = withApiSecurity(postLeadCapture, {
+  allowedMethods: ['POST'],
+  originCheck: 'embed',
+});
 
 export async function OPTIONS() {
   return new NextResponse(null, {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,18 +12,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Sparkles, 
-  FileText, 
-  Link2, 
-  Award, 
-  TrendingUp, 
+import {
+  Sparkles,
+  FileText,
+  Link2,
+  Award,
+  TrendingUp,
   Search,
   AlertTriangle,
   Lightbulb,
   RefreshCw,
   Users,
-  Target,
   Loader2,
   Copy,
   Check,
@@ -37,11 +36,50 @@ import {
   CheckCircle2,
   XCircle,
   ArrowLeft,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Tag,
+  KeyRound,
+  Palmtree,
+  Rocket,
+  AlignLeft,
+  Target,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { ProFeaturePaywall } from '@/components/demo-modal';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import type {
+  ListingAuditorGoalKey,
+  ListingAuditorMarketKey,
+  ListingAuditorTransactionKey,
+  ListingAuditorTxIconKey,
+} from '@/lib/i18n/listing-auditor-page-ui';
+
+const AUDITOR_TX_ICON: Record<ListingAuditorTxIconKey, LucideIcon> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const STRUCTURAL_SECTION_ICON: Record<
+  'titolo' | 'apertura' | 'corpo' | 'callToAction',
+  LucideIcon
+> = {
+  titolo: FileText,
+  apertura: Rocket,
+  corpo: AlignLeft,
+  callToAction: Target,
+};
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
 
 interface StructuralAudit {
   titolo: { valutazione: string; punteggio: number; problemi: string[]; suggerimenti: string[] };
@@ -103,23 +141,12 @@ interface AuditResult {
   mercatoAnalisi: string;
 }
 
-const getObiettivi = (isItalian: boolean) => [
-  { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: ShoppingCart, description: isItalian ? 'Massimizza conversioni' : 'Maximize conversions' },
-  { value: 'seo', label: 'SEO', icon: Search, description: isItalian ? 'Visibilità portali' : 'Portal visibility' },
-  { value: 'luxury', label: 'Luxury', icon: Crown, description: isItalian ? 'Target alto spendente' : 'High-end target' },
-  { value: 'social', label: 'Social', icon: Share2, description: isItalian ? 'Engagement social' : 'Social engagement' },
-];
-
-const getMercati = (isItalian: boolean) => [
-  { value: 'italia', label: '🇮🇹 Italia', portali: 'Immobiliare, Idealista, Casa, Subito' },
-  { value: 'usa', label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
-];
-
-const getTipoTransazione = (isItalian: boolean) => [
-  { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
-  { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
-  { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
-];
+const GOAL_ICONS: Record<ListingAuditorGoalKey, typeof ShoppingCart> = {
+  vendita: ShoppingCart,
+  seo: Search,
+  luxury: Crown,
+  social: Share2,
+};
 
 export default function AuditorPage() {
   const { locale } = useLocaleContext();
@@ -128,110 +155,87 @@ export default function AuditorPage() {
   const [textInput, setTextInput] = useState('');
   const [urlInput, setUrlInput] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [mercato, setMercato] = useState<'italia' | 'usa'>('italia');
-  const [obiettivo, setObiettivo] = useState<'seo' | 'vendita' | 'luxury' | 'social'>('vendita');
-  const [tipoTransazione, setTipoTransazione] = useState<'vendita' | 'affitto' | 'affitto_breve'>('vendita');
+  const [mercato, setMercato] = useState<ListingAuditorMarketKey>('italia');
+  const [obiettivo, setObiettivo] = useState<ListingAuditorGoalKey>('vendita');
+  const [tipoTransazione, setTipoTransazione] = useState<ListingAuditorTransactionKey>('vendita');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
-  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
-  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const usage = useUsageLimits();
+  const userPlan = usage.plan as 'free' | 'starter' | 'pro' | 'agency';
+  const isLoadingPlan = usage.isLoading;
   const isItalian = locale === 'it';
-  const OBIETTIVI = getObiettivi(isItalian);
-  const MERCATI = getMercati(isItalian);
-  const TIPO_TRANSAZIONE_OPTIONS = getTipoTransazione(isItalian);
-  const t = {
-    copied: isItalian ? 'Copiato!' : 'Copied!',
-    copiedDesc: isItalian ? 'Testo copiato negli appunti' : 'Text copied to clipboard',
-    textTooShort: isItalian ? 'Testo insufficiente' : 'Text too short',
-    minText: isItalian ? 'Inserisci almeno 50 caratteri di testo' : 'Enter at least 50 characters of text',
-    urlRequired: isItalian ? 'URL richiesto' : 'URL required',
-    urlRequiredDesc: isItalian ? "Inserisci l'URL dell'annuncio da analizzare" : 'Enter the listing URL to analyze',
-    analysisError: isItalian ? "Errore durante l'analisi" : 'Error during analysis',
-    communicationError: isItalian ? 'Errore di comunicazione con il server. Riprova tra qualche secondo.' : 'Communication error with the server. Please try again in a few seconds.',
-    premiumRequired: isItalian ? 'Piano Premium richiesto' : 'Premium plan required',
-    premiumRequiredDesc: isItalian
-      ? "L'Audit Immobiliare AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : 'AI Real Estate Audit is a Premium feature. Upgrade your account to the PRO or AGENCY plan.',
-    analysisDone: isItalian ? 'Analisi completata!' : 'Analysis completed!',
-    qualityScore: isItalian ? 'Punteggio qualità' : 'Quality score',
-    connectionFailed: isItalian ? 'Impossibile connettersi al server.' : 'Unable to connect to the server.',
-    excellent: isItalian ? 'Eccellente' : 'Excellent',
-    great: isItalian ? 'Ottimo' : 'Great',
-    good: isItalian ? 'Buono' : 'Good',
-    fair: isItalian ? 'Discreto' : 'Fair',
-    passable: isItalian ? 'Sufficiente' : 'Passable',
-    needsWork: isItalian ? 'Da migliorare' : 'Needs improvement',
-    back: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
-    heroSubtitle: isItalian
-      ? 'Analisi professionale completa: struttura, SEO, emozioni, red flags e versione ottimizzata'
-      : 'Complete professional analysis: structure, SEO, emotions, red flags, and optimized version',
-    paywallTitle: isItalian ? 'Audit Immobiliare AI' : 'AI Real Estate Audit',
-    paywallDescription: isItalian
-      ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'audit completo."
-      : 'This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full audit.',
-    analyzeListing: isItalian ? 'Analizza il tuo Annuncio' : 'Analyze Your Listing',
-    analyzeListingDesc: isItalian ? 'Incolla il testo o inserisci l\'URL per ricevere un audit completo' : 'Paste the text or enter the URL to receive a full audit',
-    listingType: isItalian ? 'Tipo Annuncio' : 'Listing Type',
-    selectTransaction: isItalian ? 'Seleziona tipo transazione' : 'Select transaction type',
-    market: isItalian ? 'Mercato di riferimento' : 'Target market',
-    goal: isItalian ? 'Obiettivo principale' : 'Primary goal',
-    insertText: isItalian ? 'Inserisci Testo' : 'Paste Text',
-    listingUrl: isItalian ? 'URL Annuncio' : 'Listing URL',
-    textareaPlaceholder: isItalian ? "Incolla qui il testo completo dell'annuncio immobiliare (minimo 50 caratteri)..." : 'Paste the full property listing text here (minimum 50 characters)...',
-    characters: isItalian ? 'Caratteri' : 'Characters',
-    minimum: isItalian ? 'minimo' : 'minimum',
-    supported: isItalian ? 'Supportati' : 'Supported',
-    imageUrl: isItalian ? 'URL Immagine (opzionale)' : 'Image URL (optional)',
-    imagePlaceholder: isItalian ? 'https://esempio.com/immagine.jpg' : 'https://example.com/image.jpg',
-    analyzing: isItalian ? 'Analisi in corso... (30-60 sec)' : 'Analyzing... (30-60 sec)',
-    startAudit: isItalian ? 'Avvia Audit Completo' : 'Start Full Audit',
-  };
-  const mercatiOptions = isItalian
-    ? MERCATI
-    : [
-        { value: 'italia', label: '🇮🇹 Italy', portali: 'Immobiliare, Idealista, Casa, Subito' },
-        { value: 'usa', label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
-      ];
-  const obiettiviOptions = isItalian
-    ? OBIETTIVI
-    : [
-        { value: 'vendita', label: 'Sales', icon: ShoppingCart, description: 'Maximize conversions' },
-        { value: 'seo', label: 'SEO', icon: Search, description: 'Portal visibility' },
-        { value: 'luxury', label: 'Luxury', icon: Crown, description: 'High-spending audience' },
-        { value: 'social', label: 'Social', icon: Share2, description: 'Social engagement' },
-      ];
-  const tipoTransazioneOptions = isItalian
-    ? TIPO_TRANSAZIONE_OPTIONS
-    : [
-        { value: 'vendita', label: 'Sale', icon: '🏷️' },
-        { value: 'affitto', label: 'Rent', icon: '🔑' },
-        { value: 'affitto_breve', label: 'Short-term / Vacation Rental', icon: '🏖️' },
-      ];
+  const feedbackLocale = isItalian ? 'it' : 'en';
+
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.listingAuditorPage,
+    [locale]
+  );
+
+  const MERCATI = useMemo(
+    () =>
+      (['italia', 'usa'] as const).map((value) => ({
+        value,
+        label: t.markets[value].label,
+        portali: t.markets[value].portali,
+      })),
+    [t]
+  );
+
+  const OBIETTIVI = useMemo(
+    () =>
+      (['vendita', 'seo', 'luxury', 'social'] as const).map((value) => ({
+        value,
+        label: t.goals[value].label,
+        icon: GOAL_ICONS[value],
+        description: t.goals[value].description,
+      })),
+    [t]
+  );
+
+  const TIPO_TRANSAZIONE_OPTIONS = useMemo(
+    () =>
+      (['vendita', 'affitto', 'affitto_breve'] as const).map((value) => ({
+        value,
+        label: t.transactionTypes[value].label,
+        iconKey: t.transactionTypes[value].iconKey,
+      })),
+    [t]
+  );
+
+  const minTextRef = useRef(t.minText);
+  minTextRef.current = t.minText;
+  const urlRequiredDescRef = useRef(t.urlRequiredDesc);
+  urlRequiredDescRef.current = t.urlRequiredDesc;
+  const communicationErrorRef = useRef(t.communicationError);
+  communicationErrorRef.current = t.communicationError;
+  const premiumRequiredDescRef = useRef(t.premiumRequiredDesc);
+  premiumRequiredDescRef.current = t.premiumRequiredDesc;
+  const analysisErrorRef = useRef(t.analysisError);
+  analysisErrorRef.current = t.analysisError;
 
   const copyToClipboard = async (text: string, section: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopiedSection(section);
-    toast({ title: t.copied, description: t.copiedDesc });
-    setTimeout(() => setCopiedSection(null), 2000);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedSection(section);
+      toast({ title: t.copied, description: t.copiedDesc });
+      setTimeout(() => setCopiedSection(null), 2000);
+    } catch {
+      const c = clipboardFailureToast(feedbackLocale, 'listingAuditor', t.copyError);
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
+    }
   };
 
   const handleAnalyze = async () => {
     if (inputMode === 'text' && (!textInput.trim() || textInput.trim().length < 50)) {
-      toast({
-        variant: 'destructive',
-        title: t.textTooShort,
-        description: t.minText,
-      });
+      const v = validationToast(feedbackLocale, 'listingAuditor', minTextRef.current);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
     if (inputMode === 'url' && !urlInput.trim()) {
-      toast({
-        variant: 'destructive',
-        title: t.urlRequired,
-        description: t.urlRequiredDesc,
-      });
+      const v = validationToast(feedbackLocale, 'listingAuditor', urlRequiredDescRef.current);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -256,36 +260,44 @@ export default function AuditorPage() {
       let result;
       try {
         result = await response.json();
-      } catch (parseError) {
-        toast({
-          variant: 'destructive',
-          title: t.analysisError,
-          description: t.communicationError,
-          duration: 8000,
-        });
+      } catch {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'listingAuditor',
+          {},
+          communicationErrorRef.current
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive', duration: 8000 });
         return;
       }
 
       if (!response.ok) {
-        // If 403, update user plan to free and show paywall
         if (response.status === 403) {
-          setUserPlan('free');
+          const fail = apiFailureToast(
+            feedbackLocale,
+            'listingAuditor',
+            { status: 403, error: result.error, message: result.message },
+            premiumRequiredDescRef.current
+          );
           toast({
-            variant: 'destructive',
             title: t.premiumRequired,
-            description: result.message || result.error || t.premiumRequiredDesc,
+            description: fail.description,
+            variant: 'destructive',
             duration: 8000,
           });
           return;
         }
-        
-        const errorMessage = result.message || result.error || 'Errore durante l\'analisi';
-        toast({
-          variant: 'destructive',
-          title: t.analysisError,
-          description: result.suggestion ? `${errorMessage}\n\n💡 ${result.suggestion}` : errorMessage,
-          duration: 8000,
-        });
+
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'listingAuditor',
+          { status: response.status, error: result.error, message: result.message },
+          analysisErrorRef.current
+        );
+        const desc = result.suggestion
+          ? `${fail.description}\n\n${t.suggestionHint} ${result.suggestion}`
+          : fail.description;
+        toast({ title: fail.title, description: desc, variant: 'destructive', duration: 8000 });
         return;
       }
 
@@ -293,15 +305,19 @@ export default function AuditorPage() {
         setAuditResult(result.data);
         toast({
           title: t.analysisDone,
-          description: `${t.qualityScore}: ${result.data.qualityScore}/100`,
+          description: t.analysisDoneDetail
+            .replace('{qualityScore}', t.qualityScore)
+            .replace('{score}', String(result.data.qualityScore)),
           duration: 5000,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const net = networkFailureToast(feedbackLocale, 'listingAuditor');
+      const msg = error instanceof Error && error.message ? error.message : net.description;
       toast({
+        title: net.title,
+        description: msg || t.connectionFailed,
         variant: 'destructive',
-        title: t.analysisError,
-        description: error.message || t.connectionFailed,
         duration: 8000,
       });
     } finally {
@@ -354,55 +370,45 @@ export default function AuditorPage() {
     </Button>
   );
 
-  // Load user subscription plan
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        const response = await fetch('/api/user/subscription');
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-          setUserPlan(plan);
-        }
-      } catch (error) {
-        console.error('Error fetching subscription:', error);
-      } finally {
-        setIsLoadingPlan(false);
-      }
-    };
-    
-    fetchUserPlan();
-  }, []);
-
   const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-indigo-950 to-purple-950">
-      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-      
-      <div className="relative container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-6">
-          <Link href="/dashboard" className="inline-flex items-center text-blue-300 hover:text-blue-200 transition-colors">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t.back}
-          </Link>
-        </div>
+  const planBadgeLabel = useMemo(() => {
+    if (userPlan === 'agency') return t.planAgency;
+    if (userPlan === 'pro') return t.planPro;
+    if (userPlan === 'starter') return t.planStarter;
+    return t.planFree;
+  }, [userPlan, t]);
 
-        <div className="mb-10 text-center">
-          <div className="inline-flex items-center gap-3 mb-4 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-amber-500/20 border border-blue-400/30">
-            <Award className="h-8 w-8 text-amber-400" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-transparent">
-              Real Estate Audit AI
-            </h1>
-            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-              🔥 Expert
-            </Badge>
-          </div>
-          <p className="text-blue-200/80 text-lg max-w-2xl mx-auto">
-            Analisi professionale completa: struttura, SEO, emozioni, red flags e versione ottimizzata
-          </p>
-        </div>
+  const gravitaLabel = (g: string) => {
+    if (g === 'critica' || g === 'alta' || g === 'media') return t.gravita[g];
+    return g;
+  };
+
+  return (
+    <DashboardPageShell className="relative max-w-7xl">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[url('/grid.svg')] opacity-10" aria-hidden />
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back-dashboard"
+        aria-label={t.backAria}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.auditPageTitle}
+        titleDataTestId="heading-listing-auditor"
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        actions={
+          <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-500 text-xs text-white">
+            {t.expertBadge}
+          </Badge>
+        }
+      />
 
         <ProFeaturePaywall
           title={t.paywallTitle}
@@ -422,27 +428,30 @@ export default function AuditorPage() {
             <CardContent className="space-y-6">
             <div className="space-y-3 mb-6">
                 <Label className="text-blue-200">{t.listingType}</Label>
-                <Select value={tipoTransazione} onValueChange={(v) => setTipoTransazione(v as 'vendita' | 'affitto' | 'affitto_breve')}>
+                <Select value={tipoTransazione} onValueChange={(v) => setTipoTransazione(v as ListingAuditorTransactionKey)}>
                   <SelectTrigger className="bg-slate-800/50 border-blue-500/30 text-white" data-testid="select-tipo-transazione">
                     <SelectValue placeholder={t.selectTransaction} />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <span className="flex items-center gap-2">
-                          <span>{option.icon}</span>
-                          <span>{option.label}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
+                    {TIPO_TRANSAZIONE_OPTIONS.map((option) => {
+                      const TxIcon = AUDITOR_TX_ICON[option.iconKey];
+                      return (
+                        <SelectItem key={option.value} value={option.value}>
+                          <span className="flex items-center gap-2">
+                            <TxIcon className="h-4 w-4 shrink-0 text-blue-300" aria-hidden />
+                            <span>{option.label}</span>
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <Label className="text-blue-200">Mercato di riferimento</Label>
-                <Select value={mercato} onValueChange={(v) => setMercato(v as 'italia' | 'usa')}>
+                <Label className="text-blue-200">{t.market}</Label>
+                <Select value={mercato} onValueChange={(v) => setMercato(v as ListingAuditorMarketKey)}>
                   <SelectTrigger className="bg-slate-800/50 border-blue-500/30 text-white" data-testid="select-mercato">
                     <SelectValue />
                   </SelectTrigger>
@@ -460,8 +469,8 @@ export default function AuditorPage() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-blue-200">Obiettivo principale</Label>
-                <Select value={obiettivo} onValueChange={(v) => setObiettivo(v as 'seo' | 'vendita' | 'luxury' | 'social')}>
+                <Label className="text-blue-200">{t.goal}</Label>
+                <Select value={obiettivo} onValueChange={(v) => setObiettivo(v as ListingAuditorGoalKey)}>
                   <SelectTrigger className="bg-slate-800/50 border-blue-500/30 text-white" data-testid="select-obiettivo">
                     <SelectValue />
                   </SelectTrigger>
@@ -484,24 +493,24 @@ export default function AuditorPage() {
               <TabsList className="grid w-full grid-cols-2 bg-slate-800/50">
                 <TabsTrigger value="text" className="data-[state=active]:bg-blue-600" data-testid="tab-text">
                   <FileText className="h-4 w-4 mr-2" />
-                  Inserisci Testo
+                  {t.tabText}
                 </TabsTrigger>
                 <TabsTrigger value="url" className="data-[state=active]:bg-blue-600" data-testid="tab-url">
                   <Link2 className="h-4 w-4 mr-2" />
-                  URL Annuncio
+                  {t.tabUrl}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="text" className="space-y-4 mt-4">
                 <Textarea
                   data-testid="textarea-listing"
-                  placeholder="Incolla qui il testo completo dell'annuncio immobiliare (minimo 50 caratteri)..."
+                  placeholder={t.textareaPlaceholder}
                   className="min-h-[200px] resize-y bg-slate-800/50 border-blue-500/30 text-white placeholder:text-blue-200/40"
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                 />
                 <p className={`text-sm ${textInput.length < 50 ? 'text-amber-400' : 'text-blue-200/60'}`}>
-                  Caratteri: {textInput.length}/50 minimo
+                  {t.charactersProgress.replace('{count}', String(textInput.length))}
                 </p>
               </TabsContent>
 
@@ -509,13 +518,13 @@ export default function AuditorPage() {
                 <Input
                   data-testid="input-url"
                   type="url"
-                  placeholder="https://www.immobiliare.it/annunci/..."
+                  placeholder={t.urlPlaceholder}
                   className="bg-slate-800/50 border-blue-500/30 text-white placeholder:text-blue-200/40"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                 />
                 <p className="text-sm text-blue-200/60">
-                  Supportati: Immobiliare.it, Idealista.it, Casa.it, Subito.it, Zillow.com
+                  {t.urlSupportedHint}
                 </p>
               </TabsContent>
             </Tabs>
@@ -523,12 +532,12 @@ export default function AuditorPage() {
             <div className="space-y-3">
               <Label className="text-blue-200 flex items-center gap-2">
                 <ImageIcon className="h-4 w-4" />
-                URL Immagine (opzionale)
+                {t.imageUrl}
               </Label>
               <Input
                 data-testid="input-image-url"
                 type="url"
-                placeholder="https://esempio.com/immagine.jpg"
+                placeholder={t.imagePlaceholder}
                 className="bg-slate-800/50 border-blue-500/30 text-white placeholder:text-blue-200/40"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
@@ -545,18 +554,17 @@ export default function AuditorPage() {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                  Analisi in corso... (30-60 sec)
+                  {t.analyzing}
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-6 w-6" />
-                  Avvia Audit Completo
+                  {t.startAudit}
                 </>
               )}
             </Button>
           </CardContent>
         </Card>
-        </ProFeaturePaywall>
 
         {auditResult && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -564,12 +572,12 @@ export default function AuditorPage() {
               <CardContent className="pt-8 pb-8">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="text-center md:text-left">
-                    <p className="text-blue-200/60 text-sm uppercase tracking-wider mb-2">Punteggio Qualità</p>
+                    <p className="text-blue-200/60 text-sm uppercase tracking-wider mb-2">{t.qualityScoreHeading}</p>
                     <div className="flex items-baseline gap-3">
                       <span className={`text-7xl md:text-8xl font-black bg-gradient-to-r ${getScoreGradient(auditResult.qualityScore)} bg-clip-text text-transparent`} data-testid="text-quality-score">
                         {auditResult.qualityScore}
                       </span>
-                      <span className="text-3xl text-blue-200/40">/100</span>
+                      <span className="text-3xl text-blue-200/40">{t.outOf100}</span>
                     </div>
                     <Badge className={`mt-3 text-lg px-4 py-1 ${auditResult.qualityScore >= 80 ? 'bg-emerald-500/20 text-emerald-400' : auditResult.qualityScore >= 60 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}`}>
                       {getScoreLabel(auditResult.qualityScore)}
@@ -579,28 +587,28 @@ export default function AuditorPage() {
                   <div className="flex-1 max-w-md space-y-4">
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-blue-200">Struttura</span>
+                        <span className="text-blue-200">{t.breakdownStructure}</span>
                         <span className="text-amber-400 font-bold">{auditResult.scoreBreakdown.struttura}/25</span>
                       </div>
                       <Progress value={(auditResult.scoreBreakdown.struttura / 25) * 100} className="h-2 bg-slate-700" />
                     </div>
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-blue-200">SEO</span>
+                        <span className="text-blue-200">{t.breakdownSeo}</span>
                         <span className="text-amber-400 font-bold">{auditResult.scoreBreakdown.seo}/25</span>
                       </div>
                       <Progress value={(auditResult.scoreBreakdown.seo / 25) * 100} className="h-2 bg-slate-700" />
                     </div>
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-blue-200">Emozioni</span>
+                        <span className="text-blue-200">{t.breakdownEmotions}</span>
                         <span className="text-amber-400 font-bold">{auditResult.scoreBreakdown.emozioni}/25</span>
                       </div>
                       <Progress value={(auditResult.scoreBreakdown.emozioni / 25) * 100} className="h-2 bg-slate-700" />
                     </div>
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-blue-200">Persuasività</span>
+                        <span className="text-blue-200">{t.breakdownPersuasion}</span>
                         <span className="text-amber-400 font-bold">{auditResult.scoreBreakdown.persuasivita}/25</span>
                       </div>
                       <Progress value={(auditResult.scoreBreakdown.persuasivita / 25) * 100} className="h-2 bg-slate-700" />
@@ -614,17 +622,21 @@ export default function AuditorPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <TrendingUp className="h-6 w-6 text-blue-400" />
-                  Audit Strutturale
+                  {t.structuralAuditTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {(['titolo', 'apertura', 'corpo', 'callToAction'] as const).map((key) => {
                   const item = auditResult.structuralAudit[key];
-                  const labels = { titolo: '📌 Titolo', apertura: '🚀 Apertura', corpo: '📝 Corpo', callToAction: '🎯 Call to Action' };
+                  const labels = t.structuralSections;
+                  const SectionIcon = STRUCTURAL_SECTION_ICON[key];
                   return (
                     <div key={key} className="p-4 rounded-lg bg-slate-800/50 border border-blue-500/20">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-semibold text-blue-200">{labels[key]}</h4>
+                        <h4 className="flex items-center gap-2 font-semibold text-blue-200">
+                          <SectionIcon className="h-4 w-4 shrink-0 text-blue-400" aria-hidden />
+                          {labels[key]}
+                        </h4>
                         <Badge className={item.punteggio >= 7 ? 'bg-emerald-500/20 text-emerald-400' : item.punteggio >= 5 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
                           {item.punteggio}/10
                         </Badge>
@@ -632,7 +644,7 @@ export default function AuditorPage() {
                       <p className="text-sm text-blue-100/80 mb-3">{item.valutazione}</p>
                       {item.problemi?.length > 0 && (
                         <div className="mb-3">
-                          <p className="text-xs font-semibold text-red-400 mb-1">Problemi:</p>
+                          <p className="text-xs font-semibold text-red-400 mb-1">{t.problemsLabel}</p>
                           <ul className="text-sm text-red-300/80 space-y-1">
                             {item.problemi.map((p, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 shrink-0" />{p}</li>)}
                           </ul>
@@ -640,7 +652,7 @@ export default function AuditorPage() {
                       )}
                       {item.suggerimenti?.length > 0 && (
                         <div>
-                          <p className="text-xs font-semibold text-emerald-400 mb-1">Suggerimenti:</p>
+                          <p className="text-xs font-semibold text-emerald-400 mb-1">{t.suggestionsLabel}</p>
                           <ul className="text-sm text-emerald-300/80 space-y-1">
                             {item.suggerimenti.map((s, i) => <li key={i} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />{s}</li>)}
                           </ul>
@@ -657,7 +669,7 @@ export default function AuditorPage() {
                 <CardTitle className="flex items-center justify-between text-white">
                   <div className="flex items-center gap-3">
                     <Search className="h-6 w-6 text-emerald-400" />
-                    Audit SEO
+                    {t.seoAuditTitle}
                   </div>
                   <Badge className={auditResult.seoAudit.punteggioSEO >= 70 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}>
                     {auditResult.seoAudit.punteggioSEO}/100
@@ -669,7 +681,7 @@ export default function AuditorPage() {
                   <div className="p-4 rounded-lg bg-slate-800/50 border border-red-500/20">
                     <h4 className="font-semibold text-red-400 mb-3 flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4" />
-                      Keywords Mancanti
+                      {t.keywordsMissing}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {auditResult.seoAudit.keywordsMancanti?.map((kw, i) => (
@@ -680,7 +692,7 @@ export default function AuditorPage() {
                   <div className="p-4 rounded-lg bg-slate-800/50 border border-emerald-500/20">
                     <h4 className="font-semibold text-emerald-400 mb-3 flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4" />
-                      Keywords Presenti
+                      {t.keywordsPresent}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {auditResult.seoAudit.keywordsPresenti?.map((kw, i) => (
@@ -691,7 +703,7 @@ export default function AuditorPage() {
                 </div>
 
                 <div className="p-4 rounded-lg bg-slate-800/50 border border-blue-500/20">
-                  <h4 className="font-semibold text-blue-200 mb-2">Ottimizzazione H1</h4>
+                  <h4 className="font-semibold text-blue-200 mb-2">{t.h1Optimization}</h4>
                   <div className="flex items-center gap-2 mb-2">
                     {auditResult.seoAudit.ottimizzazioneH1?.presente ? (
                       <CheckCircle2 className="h-5 w-5 text-emerald-400" />
@@ -700,12 +712,18 @@ export default function AuditorPage() {
                     )}
                     <span className="text-sm text-blue-100/80">{auditResult.seoAudit.ottimizzazioneH1?.valutazione}</span>
                   </div>
-                  <p className="text-sm text-amber-300/80">💡 {auditResult.seoAudit.ottimizzazioneH1?.suggerimento}</p>
+                  <p className="flex items-start gap-2 text-sm text-amber-300/80">
+                    <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" aria-hidden />
+                    <span>
+                      <span className="font-medium">{t.suggestionHint}</span>{' '}
+                      {auditResult.seoAudit.ottimizzazioneH1?.suggerimento}
+                    </span>
+                  </p>
                 </div>
 
                 {auditResult.seoAudit.problemiLeggibilita?.length > 0 && (
                   <div className="p-4 rounded-lg bg-slate-800/50 border border-amber-500/20">
-                    <h4 className="font-semibold text-amber-400 mb-3">Problemi di Leggibilità</h4>
+                    <h4 className="font-semibold text-amber-400 mb-3">{t.readabilityIssues}</h4>
                     <ul className="space-y-2">
                       {auditResult.seoAudit.problemiLeggibilita.map((p, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-amber-200/80">
@@ -719,7 +737,7 @@ export default function AuditorPage() {
 
                 <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-emerald-400">Meta Description Consigliata</h4>
+                    <h4 className="font-semibold text-emerald-400">{t.recommendedMetaDescription}</h4>
                     <CopyButton text={auditResult.seoAudit.metaDescriptionConsigliata || ''} section="meta" />
                   </div>
                   <p className="text-sm text-emerald-100/90 italic">"{auditResult.seoAudit.metaDescriptionConsigliata}"</p>
@@ -732,23 +750,23 @@ export default function AuditorPage() {
                 <CardTitle className="flex items-center justify-between text-white">
                   <div className="flex items-center gap-3">
                     <Heart className="h-6 w-6 text-pink-400" />
-                    Audit Emozioni
+                    {t.emotionalAuditTitle}
                   </div>
                   <Badge className={auditResult.emotionalAudit.connessioneEmotiva >= 70 ? 'bg-pink-500/20 text-pink-400' : 'bg-amber-500/20 text-amber-400'}>
-                    Connessione: {auditResult.emotionalAudit.connessioneEmotiva}/100
+                    {t.connectionScore.replace('{score}', String(auditResult.emotionalAudit.connessioneEmotiva))}
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="p-4 rounded-lg bg-slate-800/50 border border-pink-500/20">
-                  <h4 className="font-semibold text-pink-200 mb-3">Analisi del Tono</h4>
+                  <h4 className="font-semibold text-pink-200 mb-3">{t.toneAnalysis}</h4>
                   <div className="grid md:grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-blue-200/60">Tono attuale:</span>
+                      <span className="text-blue-200/60">{t.currentTone}</span>
                       <p className="text-pink-300 font-medium">{auditResult.emotionalAudit.tono?.attuale}</p>
                     </div>
                     <div>
-                      <span className="text-blue-200/60">Tono ideale:</span>
+                      <span className="text-blue-200/60">{t.idealTone}</span>
                       <p className="text-emerald-300 font-medium">{auditResult.emotionalAudit.tono?.ideale}</p>
                     </div>
                   </div>
@@ -757,7 +775,7 @@ export default function AuditorPage() {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-lg bg-slate-800/50 border border-red-500/20">
-                    <h4 className="font-semibold text-red-400 mb-3">Punti Deboli Emotivi</h4>
+                    <h4 className="font-semibold text-red-400 mb-3">{t.emotionalWeaknesses}</h4>
                     <ul className="space-y-2">
                       {auditResult.emotionalAudit.puntiDeboli?.map((p, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-red-200/80">
@@ -768,7 +786,7 @@ export default function AuditorPage() {
                     </ul>
                   </div>
                   <div className="p-4 rounded-lg bg-slate-800/50 border border-amber-500/20">
-                    <h4 className="font-semibold text-amber-400 mb-3">Sensazioni Mancanti</h4>
+                    <h4 className="font-semibold text-amber-400 mb-3">{t.missingSensations}</h4>
                     <ul className="space-y-2">
                       {auditResult.emotionalAudit.sensazioniMancanti?.map((s, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm text-amber-200/80">
@@ -781,7 +799,7 @@ export default function AuditorPage() {
                 </div>
 
                 <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/30">
-                  <h4 className="font-semibold text-purple-400 mb-3">✨ Opportunità Narrative</h4>
+                  <h4 className="font-semibold text-purple-400 mb-3">{t.narrativeOpportunities}</h4>
                   <ul className="space-y-2">
                     {auditResult.emotionalAudit.opportunitaNarrative?.map((o, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm text-purple-200/90">
@@ -799,10 +817,10 @@ export default function AuditorPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-red-400">
                     <AlertTriangle className="h-6 w-6" />
-                    🚨 Critical Fixes (Red Flags)
+                    {t.redFlagsTitle}
                   </CardTitle>
                   <CardDescription className="text-red-200/60">
-                    Problemi urgenti da risolvere prima di pubblicare
+                    {t.redFlagsDesc}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -810,17 +828,17 @@ export default function AuditorPage() {
                     <div key={i} className={`p-4 rounded-lg border ${getGravitaColor(rf.gravita)}`}>
                       <div className="flex items-center gap-3 mb-2">
                         <Badge className={getGravitaColor(rf.gravita)}>
-                          {rf.gravita.toUpperCase()}
+                          {gravitaLabel(rf.gravita)}
                         </Badge>
                         <span className="font-semibold text-white">{rf.problema}</span>
                       </div>
                       <div className="grid md:grid-cols-2 gap-4 text-sm mt-3">
                         <div>
-                          <span className="text-emerald-400 font-medium">✅ Soluzione:</span>
+                          <span className="text-emerald-400 font-medium">{t.solutionLabel}</span>
                           <p className="text-emerald-200/80 mt-1">{rf.soluzione}</p>
                         </div>
                         <div>
-                          <span className="text-amber-400 font-medium">⚠️ Impatto se non risolto:</span>
+                          <span className="text-amber-400 font-medium">{t.impactIfUnresolved}</span>
                           <p className="text-amber-200/80 mt-1">{rf.impatto}</p>
                         </div>
                       </div>
@@ -834,7 +852,7 @@ export default function AuditorPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-white">
                   <Zap className="h-6 w-6 text-amber-400" />
-                  Suggerimenti AI Strategici
+                  {t.aiSuggestionsTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -847,7 +865,12 @@ export default function AuditorPage() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-amber-300 mb-1">{s.titolo}</h4>
                         <p className="text-sm text-blue-100/80 mb-2">{s.descrizione}</p>
-                        <p className="text-xs text-emerald-400">📈 Impatto previsto: {s.impattoPrevisto}</p>
+                        <p className="flex items-center gap-1.5 text-xs text-emerald-400">
+                          <TrendingUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          <span>
+                            {t.expectedImpactPrefix} {s.impattoPrevisto}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -860,7 +883,7 @@ export default function AuditorPage() {
                 <CardTitle className="flex items-center justify-between text-white">
                   <div className="flex items-center gap-3">
                     <RefreshCw className="h-6 w-6 text-purple-400" />
-                    Versione Ottimizzata (Mini Perfect Copy)
+                    {t.optimizedVersionTitle}
                   </div>
                   <CopyButton 
                     text={`${auditResult.optimizedVersion.titolo}\n\n${auditResult.optimizedVersion.descrizione}\n\n${auditResult.optimizedVersion.highlights.map(h => `• ${h}`).join('\n')}\n\n${auditResult.optimizedVersion.callToAction}`}
@@ -871,7 +894,7 @@ export default function AuditorPage() {
               <CardContent className="space-y-6">
                 <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/30">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-purple-300">Titolo Ottimizzato</span>
+                    <span className="text-sm font-medium text-purple-300">{t.optimizedTitleLabel}</span>
                     <CopyButton text={auditResult.optimizedVersion.titolo || ''} section="title" />
                   </div>
                   <p className="text-xl font-bold text-white">{auditResult.optimizedVersion.titolo}</p>
@@ -879,7 +902,7 @@ export default function AuditorPage() {
 
                 <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-blue-300">Descrizione</span>
+                    <span className="text-sm font-medium text-blue-300">{t.descriptionLabel}</span>
                     <CopyButton text={auditResult.optimizedVersion.descrizione || ''} section="description" />
                   </div>
                   <p className="text-blue-100/90 whitespace-pre-line leading-relaxed">{auditResult.optimizedVersion.descrizione}</p>
@@ -887,7 +910,7 @@ export default function AuditorPage() {
 
                 <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-emerald-300">Highlights</span>
+                    <span className="text-sm font-medium text-emerald-300">{t.highlightsLabel}</span>
                     <CopyButton text={auditResult.optimizedVersion.highlights?.join('\n') || ''} section="highlights" />
                   </div>
                   <ul className="space-y-2">
@@ -902,7 +925,7 @@ export default function AuditorPage() {
 
                 <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-amber-300">Call to Action</span>
+                    <span className="text-sm font-medium text-amber-300">{t.callToActionLabel}</span>
                     <CopyButton text={auditResult.optimizedVersion.callToAction || ''} section="cta" />
                   </div>
                   <p className="text-lg font-semibold text-amber-200">{auditResult.optimizedVersion.callToAction}</p>
@@ -910,7 +933,7 @@ export default function AuditorPage() {
 
                 <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-600/30">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-blue-200">Meta Description SEO</span>
+                    <span className="text-sm font-medium text-blue-200">{t.metaDescriptionSeoLabel}</span>
                     <CopyButton text={auditResult.optimizedVersion.metaDescription || ''} section="seo-meta" />
                   </div>
                   <p className="text-sm text-blue-100/80 italic">"{auditResult.optimizedVersion.metaDescription}"</p>
@@ -923,7 +946,7 @@ export default function AuditorPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-white">
                     <Users className="h-5 w-5 text-blue-400" />
-                    Target Acquirente
+                    {t.targetBuyerTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -935,7 +958,7 @@ export default function AuditorPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-white">
                     <Globe className="h-5 w-5 text-emerald-400" />
-                    Analisi di Mercato
+                    {t.marketAnalysisTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -945,7 +968,7 @@ export default function AuditorPage() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+        </ProFeaturePaywall>
+    </DashboardPageShell>
   );
 }

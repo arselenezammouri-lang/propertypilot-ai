@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, MessageSquare, TrendingUp } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 interface Stats3D {
   projects_3d_generated: number;
@@ -12,30 +13,15 @@ interface Stats3D {
   whatsapp_open_rate: number;
 }
 
+function formatOpenedOfSent(template: string, opened: number, sent: number): string {
+  return template.replace(/\{opened\}/g, String(opened)).replace(/\{sent\}/g, String(sent));
+}
+
 export function Dashboard3DStats() {
   const { locale } = useLocaleContext();
   const [stats, setStats] = useState<Stats3D | null>(null);
   const [loading, setLoading] = useState(true);
-  const t = {
-    it: {
-      projects3d: "Progetti 3D",
-      generated: "Generati",
-      whatsappOpen: "Apertura WhatsApp",
-      openRate: "Tasso di apertura",
-      aiViews: "Visioni AI generate",
-      openedOfSent: (opened: number, sent: number) => `${opened} aperti su ${sent} inviati`,
-      noMessages: "Nessun messaggio inviato ancora",
-    },
-    en: {
-      projects3d: "3D Projects",
-      generated: "Generated",
-      whatsappOpen: "WhatsApp Open Rate",
-      openRate: "Open rate",
-      aiViews: "AI views generated",
-      openedOfSent: (opened: number, sent: number) => `${opened} opened out of ${sent} sent`,
-      noMessages: "No messages sent yet",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.stats3d;
 
   useEffect(() => {
     fetch('/api/prospecting/stats-3d')
@@ -118,10 +104,9 @@ export function Dashboard3DStats() {
           </div>
         </div>
         <p className="text-base text-muted-foreground font-medium relative">
-          {stats.whatsapp_sent > 0 
-            ? t.openedOfSent(stats.whatsapp_opened, stats.whatsapp_sent)
-            : t.noMessages
-          }
+          {stats.whatsapp_sent > 0
+            ? formatOpenedOfSent(t.openedOfSent, stats.whatsapp_opened, stats.whatsapp_sent)
+            : t.noMessages}
         </p>
       </div>
     </>

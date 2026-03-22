@@ -12,13 +12,20 @@ import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
 import { getTranslation, SupportedLocale } from '@/lib/i18n/dictionary';
 import { formatCurrencyForLocale, formatDateForLocale } from '@/lib/i18n/intl';
 import { Locale } from '@/lib/i18n/config';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
+import { apiFailureToast } from '@/lib/i18n/api-feature-feedback';
 
 export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { locale, currency } = useLocaleContext();
+  const { locale, currency, timezone } = useLocaleContext();
+  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
   const translation = getTranslation(locale as SupportedLocale);
   const billingT = translation.billing;
+  const { plan: usagePlan, isLoading: usagePlanLoading } = useUsageLimits();
 
   const { data: subscriptionData, isLoading, error } = useQuery<{ success: boolean; data: Subscription }>({
     queryKey: ['/api/user/subscription'],
@@ -64,8 +71,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: translation.common.error,
-        description: error.message || billingT.cancelError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.cancelError),
         duration: 8000,
       });
     },
@@ -88,8 +94,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: translation.common.error,
-        description: error.message || billingT.reactivateError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.reactivateError),
         duration: 8000,
       });
     },
@@ -109,8 +114,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: translation.common.error,
-        description: error.message || billingT.portalError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.portalError),
         duration: 8000,
       });
     },
@@ -136,8 +140,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: translation.common.error,
-        description: error.message || billingT.startCheckoutError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.startCheckoutError),
         duration: 8000,
       });
     },
@@ -165,8 +168,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: billingT.upgradeErrorTitle,
-        description: error.message || billingT.upgradeError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.upgradeError),
         duration: 8000,
       });
     },
@@ -189,8 +191,7 @@ export default function BillingPage() {
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: translation.common.error,
-        description: error.message || billingT.startCheckoutError,
+        ...apiFailureToast(feedbackLocale, 'billingSubscription', {}, error.message || billingT.startCheckoutError),
         duration: 8000,
       });
     },
@@ -198,32 +199,46 @@ export default function BillingPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <DashboardPageShell className="flex min-h-[400px] items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-royal-purple" data-testid="loading-spinner" />
-      </div>
+      </DashboardPageShell>
     );
   }
 
   // Errore caricamento abbonamento: mostriamo piano Free e messaggio soft, senza bloccare
   if (error && !subscription) {
     return (
-      <div className="container max-w-6xl py-10 space-y-6">
-        <h1 className="text-4xl font-extrabold mb-3" data-testid="heading-billing">
-          {billingT.title} <span className="gradient-text-purple">{billingT.titleAccent}</span>
-        </h1>
-        <div className="futuristic-card p-6 border-orange-500/30 flex flex-col items-center justify-center min-h-[280px] gap-4">
-          <p className="text-muted-foreground text-center">
-            {locale === 'it' ? 'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.' : 'Unable to load subscription. Showing Free plan.'}
+      <DashboardPageShell>
+        <DashboardPageHeader
+          variant="dark"
+          title={
+            <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span>{billingT.title}</span>
+              <span className="gradient-text-purple">{billingT.titleAccent}</span>
+            </span>
+          }
+          titleDataTestId="heading-billing"
+          subtitle={billingT.subtitle}
+          contextualHelp={<ContextualHelpTrigger docSlug="account/billing-guide" />}
+          planBadge={
+            !usagePlanLoading
+              ? { label: usagePlan.toUpperCase(), variant: 'secondary' }
+              : undefined
+          }
+        />
+        <div className="futuristic-card max-w-6xl p-6 border-orange-500/30 flex flex-col items-center justify-center min-h-[280px] gap-4">
+          <p className="text-white/70 text-center">
+            {billingT.subscriptionFetchErrorBody}
           </p>
           <Button
             onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] })}
             variant="outline"
-            className="border-royal-purple/30"
+            className="min-h-11 touch-manipulation border-royal-purple/30"
           >
-            {locale === 'it' ? 'Riprova' : 'Retry'}
+            {billingT.retry}
           </Button>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
@@ -234,11 +249,38 @@ export default function BillingPage() {
     
     switch (currentPlan) {
       case 'starter':
-        return <Badge variant="default" className="bg-electric-blue text-white text-base px-4 py-1.5" data-testid="badge-status">🚀 Starter</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-electric-blue text-white text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Rocket className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgeStarter}
+          </Badge>
+        );
       case 'pro':
-        return <Badge variant="default" className="bg-sunset-gold text-black text-base px-4 py-1.5" data-testid="badge-status">⚡ Pro</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-sunset-gold text-black text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Zap className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgePro}
+          </Badge>
+        );
       case 'agency':
-        return <Badge variant="default" className="bg-royal-purple text-white text-base px-4 py-1.5" data-testid="badge-status">👑 Agency</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-royal-purple text-white text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Crown className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgeAgency}
+          </Badge>
+        );
       default:
         return <Badge variant="secondary" className="text-base px-4 py-1.5" data-testid="badge-status">{billingT.freePlanName}</Badge>;
     }
@@ -297,14 +339,32 @@ export default function BillingPage() {
   };
 
   return (
-    <div className="container max-w-6xl py-10 space-y-10 md:py-12 md:space-y-12">
-      <div className="text-center md:text-left animate-fade-in-up">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4" data-testid="heading-billing">
-          {billingT.title} <span className="gradient-text-purple">{billingT.titleAccent}</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground" data-testid="text-description">
-          {billingT.subtitle}
-        </p>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight">
+            <span className="text-white">{billingT.title}</span>
+            <span className="gradient-text-purple">{billingT.titleAccent}</span>
+          </span>
+        }
+        titleDataTestId="heading-billing"
+        subtitle={billingT.subtitle}
+        contextualHelp={<ContextualHelpTrigger docSlug="account/billing-guide" />}
+        planBadge={
+          !usagePlanLoading
+            ? { label: usagePlan.toUpperCase(), variant: 'secondary' }
+            : undefined
+        }
+        className="mb-6 md:mb-8"
+      />
+
+      <div
+        className="mb-8 flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/70"
+        data-testid="stripe-trust-banner"
+      >
+        <Shield className="h-5 w-5 shrink-0 text-neon-aqua mt-0.5" aria-hidden />
+        <p className="leading-relaxed">{billingT.stripeTrust}</p>
       </div>
 
       <div className={`futuristic-card p-8 md:p-10 ${theme.cardClass} hover-lift animate-fade-in-up delay-100 relative overflow-hidden`} data-testid="card-current-plan">
@@ -353,7 +413,7 @@ export default function BillingPage() {
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 <span className="text-muted-foreground font-medium">{billingT.nextRenewal}</span>
                 <span className="font-bold" data-testid="text-renewal-date">
-                  {formatDateForLocale(subscription.current_period_end, locale as Locale)}
+                  {formatDateForLocale(subscription.current_period_end, locale as Locale, timezone)}
                 </span>
               </div>
               {subscription.cancel_at_period_end && (
@@ -727,6 +787,6 @@ export default function BillingPage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

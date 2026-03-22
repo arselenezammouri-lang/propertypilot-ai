@@ -1,43 +1,19 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { redirect } from "next/navigation";
+import { cookies, headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DashboardProBanner } from "@/components/demo-modal";
 import NextDynamic from "next/dynamic";
-import { Loader2 } from "lucide-react";
-import { STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
+import { Plus } from "lucide-react";
 import Link from "next/link";
-import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
-import { 
-  Home, 
-  FileText, 
-  CreditCard, 
-  Settings, 
-  TrendingUp,
-  ArrowRight,
-  Zap,
-  Plus,
-  Link2,
-  Award,
-  Rocket,
-  Crown,
-  Target,
-  BarChart3,
-  Gift,
-  Share2,
-  MousePointerClick,
-  Globe,
-  User,
-  Users,
-  Mail,
-  Video,
-  Bot,
-  MessageSquare,
-  Check
-} from "lucide-react";
+import { DeferredMount } from "@/components/deferred-mount";
+import { DeferIdleMount } from "@/components/defer-idle-mount";
+import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
+import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 export const dynamic = 'force-dynamic';
 
@@ -64,10 +40,6 @@ const RegionalPortals = NextDynamic(() => import("@/components/regional-portals"
 
 const GlobalLiveFeed = NextDynamic(() => import("@/components/global-live-feed").then(mod => ({ default: mod.GlobalLiveFeed })), {
   loading: () => <div className="futuristic-card p-8 animate-pulse bg-card/50" />,
-  ssr: false,
-});
-
-const DashboardHelpButton = NextDynamic(() => import("@/components/dashboard-help-button").then(mod => ({ default: mod.DashboardHelpButton })), {
   ssr: false,
 });
 
@@ -101,7 +73,23 @@ const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").
   ssr: false,
 });
 
+const DashboardOnboardingChecklist = NextDynamic(
+  () => import("@/components/dashboard-onboarding-checklist").then((mod) => ({ default: mod.DashboardOnboardingChecklist })),
+  { ssr: false, loading: () => null }
+);
+
+const DASHBOARD_LOCALES: SupportedLocale[] = ["it", "en", "es", "fr", "de", "ar", "pt"];
+
 export default async function DashboardPage() {
+  const cookieStore = await cookies();
+  const rawLocale = cookieStore.get("propertypilot_locale")?.value;
+  const uiLocale: SupportedLocale =
+    rawLocale && DASHBOARD_LOCALES.includes(rawLocale as SupportedLocale)
+      ? (rawLocale as SupportedLocale)
+      : "it";
+  const homeCopy = getTranslation(uiLocale).dashboard;
+  const deferIt = uiLocale === "it";
+
   const supabase = await createClient();
   
   const { data: { user }, error } = await supabase.auth.getUser();
@@ -122,12 +110,14 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .single();
 
-  // Get current plan: prefer profile.subscription_plan (synced by Stripe webhook), fallback to subscription.status
-  const planValue = (profile as any)?.subscription_plan || subscription?.status || "free";
-  const currentPlan: "free" | "starter" | "pro" | "agency" = 
-    (planValue === "free" || planValue === "starter" || planValue === "pro" || planValue === "agency") 
-      ? planValue 
-      : "free";
+  // Piano UI: founder = agency (come /api/user/subscription), altrimenti DB
+  const rawPlan = (profile as { subscription_plan?: string } | null)?.subscription_plan
+    ?? subscription?.status
+    ?? "free";
+  const hdrs = await headers();
+  const host = hdrs.get("x-forwarded-host") ?? hdrs.get("host") ?? "";
+  const localDevHost = isFounderSubscriptionPreviewAllowed(host);
+  const currentPlan = resolveUiSubscriptionPlan(user.email, rawPlan, { localDevHost });
   
   const planLimits = {
     free: { listings: 5, used: 0 },
@@ -137,81 +127,167 @@ export default async function DashboardPage() {
   } as const;
 
   const limits = planLimits[currentPlan] || planLimits.free;
-  const showUpgradeBanner = currentPlan === "free" || currentPlan === "starter";
+
+  const planBadgeLabel =
+    currentPlan === "agency"
+      ? "Agency"
+      : currentPlan === "pro"
+        ? "Pro"
+        : currentPlan === "starter"
+          ? "Starter"
+          : "Free";
+
+  const deferLabel = (it: string, en: string) => (deferIt ? it : en);
 
   // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <div className="w-full py-8 md:py-12">
+        <DashboardPageHeader
+          title={homeCopy.commandCenterTitle}
+          subtitle={homeCopy.commandCenterSubtitle}
+          planBadge={{ label: planBadgeLabel, variant: "outline" }}
+          actions={
+            <Button
+              asChild
+              className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] text-white border-0 shadow-lg hover:opacity-95"
+            >
+              <Link href="/dashboard/listings">
+                <Plus className="h-4 w-4 mr-2" />
+                {homeCopy.newListingCta}
+              </Link>
+            </Button>
+          }
+        />
+
+        <DashboardOnboardingChecklist />
+
         {/* STATS GRID - Premium Futuristic Cards */}
         <section className="dashboard-section" aria-label="Piano e statistiche">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               <DashboardStatsCards currentPlan={currentPlan} limits={limits} />
               {(currentPlan === "pro" || currentPlan === "agency") && (
-                <Dashboard3DStats />
+                <DeferredMount
+                  minHeight="220px"
+                  rootMargin="320px 0px"
+                  loadingLabel={deferLabel("Caricamento statistiche 3D…", "Loading 3D stats…")}
+                >
+                  <Dashboard3DStats />
+                </DeferredMount>
               )}
             </div>
           </section>
 
           {/* 💰 PROFIT + REFERRAL + USAGE - Card uguale altezza */}
           <section className="dashboard-section" aria-label="ROI e utilizzo">
-            <div className="dashboard-card-row">
-              <div className="dashboard-card-equal">
-                <ProfitDashboard />
+            <DeferredMount
+              minHeight="min(320px, 70vh)"
+              rootMargin="480px 0px 240px 0px"
+              loadingLabel={deferLabel("Caricamento ROI e utilizzo…", "Loading ROI and usage…")}
+            >
+              <div className="dashboard-card-row">
+                <div className="dashboard-card-equal">
+                  <ProfitDashboard />
+                </div>
+                <div className="dashboard-card-equal">
+                  <ReferralSection />
+                </div>
+                <div className="dashboard-card-equal">
+                  <UsageIndicator />
+                </div>
               </div>
-              <div className="dashboard-card-equal">
-                <ReferralSection />
-              </div>
-              <div className="dashboard-card-equal">
-                <UsageIndicator />
-              </div>
-            </div>
+            </DeferredMount>
           </section>
 
           {/* 🌅 AI MORNING INTEL BRIEFING */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
             <section className="dashboard-section" aria-label="Morning briefing">
-              <MorningBriefingBox />
+              <DeferredMount
+                minHeight="200px"
+                rootMargin="400px 0px"
+                loadingLabel={deferLabel("Caricamento Morning Intel…", "Loading Morning Intel…")}
+              >
+                <MorningBriefingBox />
+              </DeferredMount>
             </section>
           )}
 
           {/* 🌍 REGIONAL PORTALS */}
           <section className="dashboard-section" aria-label="Portali regionali">
-            <RegionalPortals />
+            <DeferredMount
+              minHeight="160px"
+              rootMargin="400px 0px"
+              loadingLabel={deferLabel("Caricamento portali regionali…", "Loading regional portals…")}
+            >
+              <RegionalPortals />
+            </DeferredMount>
           </section>
 
           {/* 🌍 GLOBAL LIVE FEED */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
             <section className="dashboard-section" aria-label="Live feed">
-              <GlobalLiveFeed />
+              <DeferredMount
+                minHeight="240px"
+                rootMargin="400px 0px"
+                loadingLabel={deferLabel("Caricamento live feed…", "Loading live feed…")}
+              >
+                <GlobalLiveFeed />
+              </DeferredMount>
             </section>
           )}
 
           {/* 🎯 PIANO ATTUALE + 📋 TUTTI I PIANI */}
           <section className="dashboard-section" aria-label="Piani e prezzi">
-            <DashboardPlanCardsSection currentPlan={currentPlan} />
+            <DeferredMount
+              minHeight="380px"
+              rootMargin="520px 0px 240px 0px"
+              loadingLabel={deferLabel("Caricamento piani…", "Loading plans…")}
+            >
+              <DashboardPlanCardsSection currentPlan={currentPlan} />
+            </DeferredMount>
           </section>
 
           {/* 🚀 ALL TOOLS */}
           <section className="dashboard-section" aria-label="Strumenti e funzionalità">
-            <DashboardPlanFeatures currentPlan={currentPlan} />
+            <DeferredMount
+              minHeight="min(420px, 85vh)"
+              rootMargin="600px 0px 320px 0px"
+              loadingLabel={deferLabel("Caricamento strumenti…", "Loading tools…")}
+            >
+              <DashboardPlanFeatures currentPlan={currentPlan} />
+            </DeferredMount>
           </section>
 
           {/* 🎯 SNIPER STATS */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
             <section className="dashboard-section" aria-label="Statistiche sniper">
-              <SniperStats />
+              <DeferredMount
+                minHeight="200px"
+                rootMargin="400px 0px"
+                loadingLabel={deferLabel("Caricamento Price Sniper…", "Loading Price Sniper…")}
+              >
+                <SniperStats />
+              </DeferredMount>
             </section>
           )}
       </div>
 
-      <DashboardProTips />
+      <DeferredMount
+        minHeight="140px"
+        rootMargin="200px 0px"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        loadingLabel={deferLabel("Caricamento suggerimenti…", "Loading tips…")}
+      >
+        <DashboardProTips />
+      </DeferredMount>
 
-      {/* Aria Coach - Con limiti per piano FREE (1 ora/giorno) */}
-      <AriaCoach 
-        userName={profile?.full_name || undefined} 
-        userPlan={currentPlan as "free" | "starter" | "pro" | "agency"} 
-      />
+      {/* Aria Coach — caricato dopo idle per non competere con il primo paint (C5) */}
+      <DeferIdleMount delayMs={2500}>
+        <AriaCoach
+          userName={profile?.full_name || undefined}
+          userPlan={currentPlan as "free" | "starter" | "pro" | "agency"}
+        />
+      </DeferIdleMount>
     </>
   );
 }

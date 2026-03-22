@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,27 +15,29 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { ProFeaturePaywall } from "@/components/demo-modal";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { WorkflowAutomationTypeId } from "@/lib/i18n/workflow-automations-page-ui";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import {
+  apiFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
-import { 
-  Settings, 
-  Plus, 
-  Play, 
-  Pause, 
-  Trash2, 
-  Mail, 
-  Clock, 
+import {
+  Settings,
+  Plus,
+  Play,
+  Trash2,
+  Mail,
   Calendar,
-  Sparkles, 
   Loader2,
   ArrowLeft,
   RefreshCw,
   CheckCircle,
-  XCircle,
-  AlertCircle,
-  Zap,
   Share2,
-  FileText
 } from "lucide-react";
 import Link from "next/link";
 import type { Automation } from "@/lib/types/database.types";
@@ -57,118 +59,46 @@ interface FormData {
 }
 
 export default function AutomationsPage() {
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
+  const usage = useUsageLimits();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [executingId, setExecutingId] = useState<string | null>(null);
   const [resultDialog, setResultDialog] = useState<{ open: boolean; result: string | null }>({ open: false, result: null });
-  const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
-  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
-  const isItalian = locale === "it";
-  const t = {
-    premiumRequired: isItalian
-      ? "Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : "AI Automations are a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    success: isItalian ? "Successo!" : "Success!",
-    deleted: isItalian ? "Eliminata!" : "Deleted!",
-    executed: isItalian ? "Eseguita!" : "Executed!",
-    executionDone: isItalian ? "Automazione completata con successo" : "Automation completed successfully",
-    error: isItalian ? "Errore" : "Error",
-    enterName: isItalian ? "Inserisci un nome per l'automazione" : "Enter a name for the automation",
-    fillRequired: isItalian ? "Compila tutti i campi obbligatori" : "Fill in all required fields",
-    selectContent: isItalian ? "Seleziona almeno un tipo di contenuto" : "Select at least one content type",
-    active: isItalian ? "Attiva" : "Active",
-    paused: isItalian ? "In pausa" : "Paused",
-    completed: isItalian ? "Completata" : "Completed",
-    failed: isItalian ? "Fallita" : "Failed",
-    notAvailable: isItalian ? "N/A" : "N/A",
-    dashboard: "Dashboard",
-    pageTitle: isItalian ? "Automazioni AI" : "AI Automations",
-    pageSubtitle: isItalian ? "Automatizza le tue attività quotidiane" : "Automate your daily workflows",
-    newAutomation: isItalian ? "Nuova Automazione" : "New Automation",
-    createAutomation: isItalian ? "Crea Automazione" : "Create Automation",
-    configureAutomation: isItalian ? "Configura una nuova automazione per la tua agenzia" : "Configure a new automation for your agency",
-    selectAutomationType: isItalian ? "Seleziona il tipo di automazione:" : "Select the automation type:",
-    backToSelection: isItalian ? "Torna alla selezione" : "Back to selection",
-    automationName: isItalian ? "Nome Automazione *" : "Automation Name *",
-    automationNamePlaceholder: isItalian ? "Es. Follow-up Mario Rossi" : "E.g. Mario Rossi follow-up",
-    clientName: isItalian ? "Nome Cliente *" : "Client Name *",
-    clientEmail: isItalian ? "Email Cliente *" : "Client Email *",
-    propertyType: isItalian ? "Tipo Immobile" : "Property Type",
-    area: isItalian ? "Zona" : "Area",
-    emailType: isItalian ? "Tipo Email" : "Email Type",
-    selectType: isItalian ? "Seleziona tipo" : "Select type",
-    sendInHours: isItalian ? "Invio tra (ore)" : "Send in (hours)",
-    visitDate: isItalian ? "Data Visita *" : "Visit Date *",
-    reminderType: isItalian ? "Tipo Promemoria" : "Reminder Type",
-    select: isItalian ? "Seleziona" : "Select",
-    contentTypes: isItalian ? "Tipi di Contenuto *" : "Content Types *",
-    propertyFocus: isItalian ? "Focus Proprieta" : "Property Focus",
-    targetMarket: isItalian ? "Mercato Target" : "Target Market",
-    selectMarket: isItalian ? "Seleziona mercato" : "Select market",
-    repeat: isItalian ? "Ripetizione" : "Repeat",
-    selectRepeat: isItalian ? "Seleziona ripetizione" : "Select repeat",
-    creating: isItalian ? "Creazione in corso..." : "Creating...",
-    paywallTitle: isItalian ? "Automazioni AI" : "AI Automations",
-    paywallDescription: isItalian
-      ? "Questa funzionalita e disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare le automazioni complete."
-      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock full automations.",
-    noAutomations: isItalian ? "Nessuna automazione" : "No automations",
-    lastResult: isItalian ? "Ultimo Risultato:" : "Last Result:",
-    resultTitle: isItalian ? "Risultato Automazione" : "Automation Result",
-    close: isItalian ? "Chiudi" : "Close",
-    activeCount: (count: number) => isItalian ? `${count} attive` : `${count} active`,
-    yourAutomations: isItalian ? "Le Tue Automazioni" : "Your Automations",
-    yourAutomationsDesc: isItalian ? "Gestisci le automazioni attive per la tua agenzia" : "Manage active automations for your agency",
-    noAutomationDesc: isItalian ? "Crea la tua prima automazione per iniziare" : "Create your first automation to get started",
-    createFirstAutomation: isItalian ? "Crea Prima Automazione" : "Create First Automation",
-    daily: isItalian ? "Giornaliero" : "Daily",
-    weekly: isItalian ? "Settimanale" : "Weekly",
-    type: isItalian ? "Tipo" : "Type",
-    nextRun: isItalian ? "Prossima esecuzione" : "Next run",
-    lastRun: isItalian ? "Ultima esecuzione" : "Last run",
-    runs: isItalian ? "Esecuzioni" : "Runs",
-  };
-  const automationTypes = isItalian
-    ? [
-        { id: "followup", label: "Follow-up Automatico Lead", icon: Mail, description: "Invia email di follow-up automatiche ai tuoi lead", color: "from-blue-500 to-indigo-600" },
-        { id: "reminder", label: "Reminder Appuntamenti", icon: Calendar, description: "Promemoria automatici per visite immobiliari", color: "from-amber-500 to-orange-600" },
-        { id: "weekly-content", label: "Contenuti Settimanali", icon: Share2, description: "Genera automaticamente post social, newsletter e titoli", color: "from-emerald-500 to-teal-600" },
-      ]
-    : [
-        { id: "followup", label: "Automatic Lead Follow-up", icon: Mail, description: "Send automatic follow-up emails to your leads", color: "from-blue-500 to-indigo-600" },
-        { id: "reminder", label: "Appointment Reminders", icon: Calendar, description: "Automatic reminders for property visits", color: "from-amber-500 to-orange-600" },
-        { id: "weekly-content", label: "Weekly Content", icon: Share2, description: "Automatically generate social posts, newsletters, and titles", color: "from-emerald-500 to-teal-600" },
-      ];
-  const emailTypes = isItalian
-    ? [
-        { value: "immediate", label: "Risposta Immediata" },
-        { value: "24h", label: "Follow-up 24h" },
-        { value: "72h", label: "Follow-up 72h" },
-        { value: "appointment", label: "Appuntamento" },
-        { value: "post-visit", label: "Post-Visita" },
-        { value: "luxury", label: "Luxury Lead" },
-      ]
-    : [
-        { value: "immediate", label: "Immediate Response" },
-        { value: "24h", label: "24h Follow-up" },
-        { value: "72h", label: "72h Follow-up" },
-        { value: "appointment", label: "Appointment" },
-        { value: "post-visit", label: "Post-Visit" },
-        { value: "luxury", label: "Luxury Lead" },
-      ];
-  const repeatIntervals = isItalian
-    ? [
-        { value: "once", label: "Una volta" },
-        { value: "daily", label: "Giornaliero" },
-        { value: "weekly", label: "Settimanale" },
-      ]
-    : [
-        { value: "once", label: "Once" },
-        { value: "daily", label: "Daily" },
-        { value: "weekly", label: "Weekly" },
-      ];
+  const feedbackLocale = locale === "it" ? "it" : "en";
+
+  const ui = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.workflowAutomationsPage,
+    [locale]
+  );
+  const t = ui;
+  const premiumMsgRef = useRef(t.premiumRequired);
+  premiumMsgRef.current = t.premiumRequired;
+
+  const automationTypes = useMemo(() => {
+    const ids: WorkflowAutomationTypeId[] = ["followup", "reminder", "weekly-content"];
+    const icons = {
+      followup: Mail,
+      reminder: Calendar,
+      "weekly-content": Share2,
+    } as const;
+    const colors = {
+      followup: "from-blue-500 to-indigo-600",
+      reminder: "from-amber-500 to-orange-600",
+      "weekly-content": "from-emerald-500 to-teal-600",
+    } as const;
+    return ids.map((id) => ({
+      id,
+      label: ui.automationTypes[id].label,
+      description: ui.automationTypes[id].description,
+      icon: icons[id],
+      color: colors[id],
+    }));
+  }, [ui]);
+
+  const emailTypes = ui.emailTypes;
+  const repeatIntervals = ui.repeatIntervals;
 
   const [formData, setFormData] = useState<FormData>({
     type: "followup",
@@ -186,28 +116,18 @@ export default function AutomationsPage() {
     repeat_interval: "once",
   });
 
-  // Load user subscription plan
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      try {
-        const response = await fetch('/api/user/subscription');
-        const data = await response.json();
-        
-        if (data.success && data.data) {
-          const plan = (data.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-          setUserPlan(plan);
-        }
-      } catch (error) {
-        console.error('Error fetching subscription:', error);
-      } finally {
-        setIsLoadingPlan(false);
-      }
-    };
-    
-    fetchUserPlan();
-  }, []);
+  const userPlan = usage.plan as "free" | "starter" | "pro" | "agency";
+  const isLoadingPlan = usage.isLoading;
+  const isLocked = userPlan !== "pro" && userPlan !== "agency";
 
-  const isLocked = userPlan !== 'pro' && userPlan !== 'agency';
+  const planBadgeLabel =
+    userPlan === "agency"
+      ? t.planAgency
+      : userPlan === "pro"
+        ? t.planPro
+        : userPlan === "starter"
+          ? t.planStarter
+          : t.planFree;
 
   const { data: automationsData, isLoading } = useQuery<{ automations: Automation[] }>({
     queryKey: ["/api/automations"],
@@ -225,10 +145,8 @@ export default function AutomationsPage() {
       });
       const result = await response.json();
       
-      // If 403, update user plan to free and show error
       if (response.status === 403) {
-        setUserPlan('free');
-        throw new Error(result.message || result.error || t.premiumRequired);
+        throw new Error(result.message || result.error || premiumMsgRef.current);
       }
       
       if (!response.ok) throw new Error(result.error);
@@ -241,7 +159,13 @@ export default function AutomationsPage() {
       resetForm();
     },
     onError: (error: Error) => {
-      toast({ title: t.error, description: error.message, variant: "destructive" });
+      const r = apiFailureToast(
+        feedbackLocale,
+        "workflowAutomations",
+        { message: error.message },
+        error.message
+      );
+      toast({ title: r.title, description: r.description, variant: "destructive" });
     },
   });
 
@@ -261,7 +185,8 @@ export default function AutomationsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/automations"] });
     },
     onError: (error: Error) => {
-      toast({ title: t.error, description: error.message, variant: "destructive" });
+      const r = apiFailureToast(feedbackLocale, "workflowAutomations", { message: error.message }, error.message);
+      toast({ title: r.title, description: r.description, variant: "destructive" });
     },
   });
 
@@ -277,7 +202,8 @@ export default function AutomationsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/automations"] });
     },
     onError: (error: Error) => {
-      toast({ title: t.error, description: error.message, variant: "destructive" });
+      const r = apiFailureToast(feedbackLocale, "workflowAutomations", { message: error.message }, error.message);
+      toast({ title: r.title, description: r.description, variant: "destructive" });
     },
   });
 
@@ -299,7 +225,8 @@ export default function AutomationsPage() {
       setExecutingId(null);
     },
     onError: (error: Error) => {
-      toast({ title: t.error, description: error.message, variant: "destructive" });
+      const r = apiFailureToast(feedbackLocale, "workflowAutomations", { message: error.message }, error.message);
+      toast({ title: r.title, description: r.description, variant: "destructive" });
       setExecutingId(null);
     },
   });
@@ -325,7 +252,8 @@ export default function AutomationsPage() {
 
   const handleSubmit = () => {
     if (!formData.name.trim()) {
-      toast({ title: t.error, description: t.enterName, variant: "destructive" });
+      const v = validationToast(feedbackLocale, "workflowAutomations", t.enterName);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -333,7 +261,8 @@ export default function AutomationsPage() {
 
     if (formData.type === "followup") {
       if (!formData.client_name || !formData.client_email || !formData.property_type) {
-        toast({ title: t.error, description: t.fillRequired, variant: "destructive" });
+        const v = validationToast(feedbackLocale, "workflowAutomations", t.fillRequired);
+        toast({ title: v.title, description: v.description, variant: "destructive" });
         return;
       }
       payload = {
@@ -346,7 +275,8 @@ export default function AutomationsPage() {
       };
     } else if (formData.type === "reminder") {
       if (!formData.client_name || !formData.client_email || !formData.visit_date) {
-        toast({ title: t.error, description: t.fillRequired, variant: "destructive" });
+        const v = validationToast(feedbackLocale, "workflowAutomations", t.fillRequired);
+        toast({ title: v.title, description: v.description, variant: "destructive" });
         return;
       }
       payload = {
@@ -359,7 +289,8 @@ export default function AutomationsPage() {
       };
     } else if (formData.type === "weekly-content") {
       if (formData.content_types.length === 0) {
-        toast({ title: t.error, description: t.selectContent, variant: "destructive" });
+        const v = validationToast(feedbackLocale, "workflowAutomations", t.selectContent);
+        toast({ title: v.title, description: v.description, variant: "destructive" });
         return;
       }
       payload = {
@@ -412,34 +343,38 @@ export default function AutomationsPage() {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return t.notAvailable;
-    return formatDateTimeForLocale(dateString, locale as Locale);
+    return formatDateTimeForLocale(dateString, locale as Locale, timezone);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" data-testid="button-back" aria-label="Back to dashboard">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  {t.dashboard}
-                </Button>
-              </Link>
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-400 via-cyan-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-glow-aqua">
-                <Settings className="text-white" size={24} />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-teal-400 via-cyan-500 to-emerald-500 bg-clip-text text-transparent">
-                  {t.pageTitle}
-                </h1>
-                <p className="text-sm text-muted-foreground">{t.pageSubtitle}</p>
-              </div>
-            </div>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back"
+        aria-label={t.backAria}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.dashboard}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-workflow-automations"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" size="sm" className="border-white/20 text-white/90" asChild>
+              <Link href="/dashboard/crm/automations">{t.crmRulesLink}</Link>
+            </Button>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700" data-testid="button-create-automation">
+                <Button
+                  className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700"
+                  data-testid="button-create-automation"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   {t.newAutomation}
                 </Button>
@@ -501,7 +436,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="client_name">{t.clientName}</Label>
                               <Input
                                 id="client_name"
-                                placeholder="Mario Rossi"
+                                placeholder={t.placeholderClientName}
                                 value={formData.client_name}
                                 onChange={(e) => setFormData(prev => ({ ...prev, client_name: e.target.value }))}
                                 data-testid="input-client-name"
@@ -512,7 +447,7 @@ export default function AutomationsPage() {
                               <Input
                                 id="client_email"
                                 type="email"
-                                placeholder="mario@email.com"
+                                placeholder={t.placeholderClientEmail}
                                 value={formData.client_email}
                                 onChange={(e) => setFormData(prev => ({ ...prev, client_email: e.target.value }))}
                                 data-testid="input-client-email"
@@ -524,7 +459,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_type">{t.propertyType}</Label>
                               <Input
                                 id="property_type"
-                                placeholder="Appartamento, Villa..."
+                                placeholder={t.placeholderPropertyType}
                                 value={formData.property_type}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_type: e.target.value }))}
                                 data-testid="input-property-type"
@@ -534,7 +469,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_location">{t.area}</Label>
                               <Input
                                 id="property_location"
-                                placeholder="Milano Centro"
+                                placeholder={t.placeholderArea}
                                 value={formData.property_location}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_location: e.target.value }))}
                                 data-testid="input-property-location"
@@ -604,8 +539,8 @@ export default function AutomationsPage() {
                                   <SelectValue placeholder={t.select} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="3h">{isItalian ? "3 ore prima" : "3 hours before"}</SelectItem>
-                                  <SelectItem value="24h">{isItalian ? "24 ore prima" : "24 hours before"}</SelectItem>
+                                  <SelectItem value="3h">{t.reminder3hBefore}</SelectItem>
+                                  <SelectItem value="24h">{t.reminder24hBefore}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -619,9 +554,9 @@ export default function AutomationsPage() {
                             <Label className="mb-3 block">{t.contentTypes}</Label>
                             <div className="flex flex-wrap gap-2">
                               {[
-                                { value: "social_post", label: isItalian ? "Post Social" : "Social Posts" },
-                                { value: "newsletter", label: "Newsletter" },
-                                { value: "ab_titles", label: isItalian ? "Titoli A/B" : "A/B Titles" },
+                                { value: "social_post", label: t.contentSocialPost },
+                                { value: "newsletter", label: t.contentNewsletter },
+                                { value: "ab_titles", label: t.contentAbTitles },
                               ].map((item) => (
                                 <button
                                   key={item.value}
@@ -630,7 +565,7 @@ export default function AutomationsPage() {
                                     setFormData(prev => ({
                                       ...prev,
                                       content_types: prev.content_types.includes(item.value)
-                                        ? prev.content_types.filter(t => t !== item.value)
+                                        ? prev.content_types.filter((id) => id !== item.value)
                                         : [...prev.content_types, item.value]
                                     }));
                                   }}
@@ -651,7 +586,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_focus">{t.propertyFocus}</Label>
                               <Input
                                 id="property_focus"
-                                placeholder="Es. Ville di lusso"
+                                placeholder={t.placeholderPropertyFocus}
                                 value={formData.property_type}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_type: e.target.value }))}
                                 data-testid="input-property-focus"
@@ -667,9 +602,9 @@ export default function AutomationsPage() {
                                   <SelectValue placeholder={t.selectMarket} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="ita">{isItalian ? "Italia" : "Italy"}</SelectItem>
-                                  <SelectItem value="usa">USA</SelectItem>
-                                  <SelectItem value="international">{isItalian ? "Internazionale" : "International"}</SelectItem>
+                                  <SelectItem value="ita">{t.marketItaly}</SelectItem>
+                                  <SelectItem value="usa">{t.marketUsa}</SelectItem>
+                                  <SelectItem value="international">{t.marketInternational}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -710,7 +645,7 @@ export default function AutomationsPage() {
                         ) : (
                           <>
                             <Plus className="h-4 w-4 mr-2" />
-                            Crea Automazione
+                            {t.submitCreate}
                           </>
                         )}
                       </Button>
@@ -720,11 +655,12 @@ export default function AutomationsPage() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ProFeaturePaywall
+      <p className="mb-6 max-w-2xl text-sm text-white/55">{t.crmRulesHint}</p>
+
+      <ProFeaturePaywall
           title={t.paywallTitle}
           description={t.paywallDescription}
           isLocked={isLocked && !isLoadingPlan}
@@ -743,7 +679,9 @@ export default function AutomationsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{count}</div>
-                  <p className="text-sm text-muted-foreground">{t.activeCount(activeCount)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.activeCount.replace("{count}", String(activeCount))}
+                  </p>
                 </CardContent>
               </Card>
             );
@@ -800,7 +738,10 @@ export default function AutomationsPage() {
                             )}
                           </div>
                           <div className="text-sm text-muted-foreground space-y-1">
-                            <p>{t.type}: {automationTypes.find(t => t.id === automation.type)?.label}</p>
+                            <p>
+                              {t.type}:{" "}
+                              {automationTypes.find((at) => at.id === automation.type)?.label}
+                            </p>
                             {automation.next_run && (
                               <p>{t.nextRun}: {formatDate(automation.next_run)}</p>
                             )}
@@ -850,7 +791,7 @@ export default function AutomationsPage() {
                     </div>
                     {automation.last_result && (
                       <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs font-medium text-muted-foreground mb-1">Ultimo Risultato:</p>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">{t.lastResult}</p>
                         <p className="text-sm whitespace-pre-wrap">{automation.last_result.substring(0, 500)}{automation.last_result.length > 500 && "..."}</p>
                       </div>
                     )}
@@ -861,7 +802,6 @@ export default function AutomationsPage() {
           </CardContent>
         </Card>
         </ProFeaturePaywall>
-      </div>
 
       <Dialog open={resultDialog.open} onOpenChange={(open) => setResultDialog({ open, result: null })}>
         <DialogContent className="sm:max-w-[700px] max-h-[80vh] overflow-y-auto">
@@ -879,6 +819,6 @@ export default function AutomationsPage() {
           </Button>
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardPageShell>
   );
 }

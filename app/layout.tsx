@@ -10,9 +10,10 @@ import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
-import { ErrorBoundary } from "@/components/error-boundary";
+import { LocalizedErrorBoundary } from "@/components/error-boundary";
 import { CommandPalette } from "@/components/command-palette";
 import { DisableServiceWorker } from "@/components/disable-service-worker";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SkipToContent } from "@/components/skip-to-content";
 import { HtmlLangDir } from "@/components/html-lang-dir";
 import type { Locale } from "@/lib/i18n/config";
@@ -177,9 +178,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var h=typeof location!=='undefined'&&location.hostname;var l=h&&/^localhost$|^127\\.0\\.0\\.1$|^\\[::1\\]$|^::1$/i.test(h);if(!l||typeof navigator==='undefined'||!('serviceWorker'in navigator))return;navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});});if('caches'in window)caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});})();`,
+          }}
+        />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
-        <link rel="manifest" href="/manifest.json" />
+        {process.env.NODE_ENV === 'production' ? (
+          <link rel="manifest" href="/manifest.json" />
+        ) : null}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="PropertyPilot" />
@@ -204,14 +212,16 @@ export default function RootLayout({
               defaultTheme="dark"
               storageKey="propertypilot-theme"
             >
-              <PerformanceMonitor />
-              <DisableServiceWorker />
-              <ErrorBoundary>
-                {children}
-              </ErrorBoundary>
-              <Toaster />
-              <DemoModal />
-              <CommandPalette />
+              <TooltipProvider delayDuration={300} skipDelayDuration={0}>
+                <PerformanceMonitor />
+                <DisableServiceWorker />
+                <LocalizedErrorBoundary>
+                  {children}
+                </LocalizedErrorBoundary>
+                <Toaster />
+                <DemoModal />
+                <CommandPalette />
+              </TooltipProvider>
             </ThemeProvider>
           </LocaleProvider>
         </Providers>

@@ -1,6 +1,16 @@
 import { requireActiveSubscription, requireProOrAgencySubscription } from '@/lib/utils/subscription-check';
 import { STRIPE_PLANS } from '@/lib/stripe/config';
 
+jest.mock('next/headers', () => ({
+  headers: jest.fn(async () => ({
+    get: (name: string) => {
+      if (name === 'x-forwarded-host') return null;
+      if (name === 'host') return 'production.example.com';
+      return null;
+    },
+  })),
+}));
+
 // Mock Supabase service
 jest.mock('@/lib/supabase/service', () => ({
   supabaseService: {
