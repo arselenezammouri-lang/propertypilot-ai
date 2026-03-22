@@ -1,9 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useLocale } from '@/lib/i18n/locale-context';
 import Link from 'next/link';
-import { ArrowLeft, Globe, Languages, Sparkles, Copy, Check, Loader2, BookOpen, Lightbulb, Search } from 'lucide-react';
+import {
+  ArrowLeft,
+  Globe,
+  Languages,
+  Sparkles,
+  Copy,
+  Check,
+  Loader2,
+  BookOpen,
+  Lightbulb,
+  Search,
+  Tag,
+  KeyRound,
+  Palmtree,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,28 +37,20 @@ import {
   networkFailureToast,
   validationToast,
 } from '@/lib/i18n/api-feature-feedback';
+import { getTranslation } from '@/lib/i18n/dictionary';
+import type { TranslateListingTxIconKey } from '@/lib/i18n/translate-listing-page-ui';
 
-const LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', country: 'Francia' },
-  { code: 'es', name: 'Español', flag: '🇪🇸', country: 'Spagna' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪', country: 'Germania' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹', country: 'Portogallo' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹', country: 'Italia' },
-  { code: 'ar', name: 'العربية', flag: '🇦🇪', country: 'Paesi Arabi' },
-  { code: 'zh', name: '中文', flag: '🇨🇳', country: 'Cina' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺', country: 'Russia' },
-  { code: 'nl', name: 'Nederlands', flag: '🇳🇱', country: 'Paesi Bassi' },
-  { code: 'pl', name: 'Polski', flag: '🇵🇱', country: 'Polonia' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷', country: 'Turchia' },
-];
+const TRANSLATE_TX_ICON: Record<TranslateListingTxIconKey, typeof Tag> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
 
 
 interface TranslationResult {
   linguaTarget: {
     code: string;
     name: string;
-    flag: string;
     country: string;
   };
   tono: string;
@@ -63,66 +69,25 @@ export default function TranslatePage() {
   const isItalian = locale === 'it';
   const feedbackLocale = isItalian ? 'it' : 'en';
   const usage = useUsageLimits();
+  const t = useMemo(() => getTranslation(locale).dashboard.translateListingPage, [locale]);
 
-  const t = {
-    backToDashboard: isItalian ? 'Dashboard' : 'Dashboard',
-    heroTitle: isItalian ? 'Traduttore Multilingua AI' : 'AI Multilingual Translator',
-    heroBadge: '🌍 International Ready',
-    formTitle: isItalian ? 'Testo Originale' : 'Original Text',
-    formSubtitle: isItalian ? "Inserisci l'annuncio da tradurre" : 'Enter the listing to translate',
-    listingType: isItalian ? 'Tipo Annuncio' : 'Listing Type',
-    selectTransaction: isItalian ? 'Seleziona tipo transazione' : 'Select transaction type',
-    titleLabel: isItalian ? 'Titolo annuncio *' : 'Listing title *',
-    titlePlaceholder: isItalian ? 'Es: Splendido appartamento con vista mare' : 'e.g. Stunning apartment with sea view',
-    descriptionLabel: isItalian ? 'Descrizione *' : 'Description *',
-    descriptionPlaceholder: isItalian ? "Inserisci la descrizione completa dell'immobile..." : 'Enter the full property description...',
-    featuresLabel: isItalian ? 'Caratteristiche (opzionale)' : 'Features (optional)',
-    featuresPlaceholder: isItalian ? 'Es: 3 camere, 2 bagni, terrazzo, box auto...' : 'e.g. 3 beds, 2 baths, terrace, parking...',
-    targetLanguage: isItalian ? 'Lingua Target' : 'Target Language',
-    selectLanguage: isItalian ? 'Seleziona la lingua di destinazione' : 'Select the destination language',
-    toneLabel: isItalian ? 'Tono' : 'Tone',
-    toneStandardDesc: isItalian ? 'Professionale e chiaro' : 'Professional and clear',
-    toneLuxuryDesc: isItalian ? 'Esclusivo e prestigioso' : 'Exclusive and prestigious',
-    translateIdle: isItalian ? 'Traduci in' : 'Translate to',
-    translateLoading: isItalian ? 'Traduzione in corso...' : 'Translating...',
-    loadingText: isItalian ? 'Traduzione AI in corso...' : 'AI Translation in progress...',
-    loadingSubtext: isItalian ? "Sto adattando l'annuncio per" : 'Adapting the listing for',
-    emptyTitle: isItalian ? 'Pronto per tradurre' : 'Ready to translate',
-    emptySubtitle: isItalian ? 'Inserisci l\'annuncio, seleziona la lingua e il tono, poi clicca su "Traduci"' : 'Enter the listing, select language and tone, then click "Translate"',
-    moreLanguages: isItalian ? '+6 altre' : '+6 more',
-    resultTitle: isItalian ? 'Traduzione in' : 'Translation in',
-    market: isItalian ? 'Mercato:' : 'Market:',
-    tone: isItalian ? 'Tono:' : 'Tone:',
-    cache: 'Cache',
-    translatedTitle: isItalian ? 'Titolo Tradotto' : 'Translated Title',
-    originalLabel: isItalian ? 'Originale:' : 'Original:',
-    translatedDesc: isItalian ? 'Descrizione Tradotta' : 'Translated Description',
-    seoVersion: isItalian ? 'Versione SEO Ottimizzata' : 'SEO-Optimized Version',
-    seoOptimized: isItalian ? 'Ottimizzata per i motori di ricerca in' : 'Optimized for search engines in',
-    vocabTitle: isItalian ? 'Vocabolario Adattato' : 'Adapted Vocabulary',
-    vocabDesc: isItalian ? 'Terminologia immobiliare per' : 'Real estate terminology for',
-    culturalTitle: isItalian ? 'Note Culturali' : 'Cultural Notes',
-    culturalDesc: isItalian ? 'Adattamento per il mercato' : 'Adaptation for the market',
-    titleRequiredDesc: isItalian ? 'Inserisci un titolo di almeno 5 caratteri.' : 'Enter a title of at least 5 characters.',
-    descRequiredDesc: isItalian ? 'Inserisci una descrizione di almeno 20 caratteri.' : 'Enter a description of at least 20 characters.',
-    errorGeneric: isItalian ? 'Errore durante la traduzione' : 'Error during translation',
-    successTitle: isItalian ? 'Traduttore annunci — traduzione pronta' : 'Listing translator — translation ready',
-    successCached: isItalian ? 'Risultato caricato dalla cache.' : 'Result loaded from cache.',
-    copied: isItalian ? 'Copiato!' : 'Copied!',
-    copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
-    copyFailed: isItalian ? 'Impossibile copiare il testo.' : 'Unable to copy text.',
-  };
-
-  const tipoTransazioneOptions = [
-    { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
-    { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
-    { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
-  ];
-
-  const tones = [
-    { value: 'standard', label: 'Standard', description: t.toneStandardDesc, gradient: 'from-blue-500 to-cyan-500' },
-    { value: 'luxury', label: 'Luxury', description: t.toneLuxuryDesc, gradient: 'from-amber-500 to-yellow-400' },
-  ];
+  const tones = useMemo(
+    () => [
+      {
+        value: 'standard' as const,
+        label: t.toneStandard,
+        description: t.toneStandardDesc,
+        gradient: 'from-blue-500 to-cyan-500',
+      },
+      {
+        value: 'luxury' as const,
+        label: t.toneLuxury,
+        description: t.toneLuxuryDesc,
+        gradient: 'from-amber-500 to-yellow-400',
+      },
+    ],
+    [t.toneLuxury, t.toneLuxuryDesc, t.toneStandard, t.toneStandardDesc]
+  );
 
   const [tipoTransazione, setTipoTransazione] = useState('vendita');
   const [titolo, setTitolo] = useState('');
@@ -178,7 +143,9 @@ export default function TranslatePage() {
       setResult(data);
       toast({
         title: t.successTitle,
-        description: data.cached ? t.successCached : `${isItalian ? 'Annuncio tradotto in' : 'Listing translated to'} ${data.linguaTarget.name}.`,
+        description: data.cached
+          ? t.successCached
+          : t.successDescFresh.replace('{lang}', data.linguaTarget.name),
       });
     } catch (error) {
       const net = networkFailureToast(feedbackLocale, 'translateListing');
@@ -204,18 +171,19 @@ export default function TranslatePage() {
     }
   };
 
-  const selectedLangInfo = LANGUAGES.find(l => l.code === selectedLanguage);
+  const selectedLangInfo = t.targetLanguages.find((l) => l.code === selectedLanguage);
 
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
   const planBadgeLabel =
     usage.plan === 'agency'
-      ? 'Agency'
+      ? dash.planAgency
       : usage.plan === 'pro'
-        ? 'Pro'
+        ? dash.planPro
         : usage.plan === 'starter'
-          ? 'Starter'
-          : 'Free';
+          ? dash.planStarter
+          : dash.planFree;
 
-  const backLabel = isItalian ? 'Torna alla dashboard' : 'Back to dashboard';
+  const backLabel = t.backToDashboard;
 
   return (
     <DashboardPageShell className="max-w-6xl">
@@ -232,10 +200,11 @@ export default function TranslatePage() {
       <DashboardPageHeader
         variant="dark"
         title={t.heroTitle}
-        subtitle={isItalian ? 'Adatta titolo e descrizione al mercato di destinazione, con note culturali e SEO.' : 'Adapt title and description for the target market, with cultural notes and SEO.'}
+        subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
         actions={
-          <Badge className="bg-emerald-500/15 text-emerald-200 border border-emerald-500/30 text-xs">
+          <Badge className="inline-flex items-center gap-1.5 bg-emerald-500/15 text-emerald-200 border border-emerald-500/30 text-xs">
+            <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />
             {t.heroBadge}
           </Badge>
         }
@@ -264,14 +233,17 @@ export default function TranslatePage() {
                       <SelectValue placeholder={t.selectTransaction} />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipoTransazioneOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <span className="flex items-center gap-2">
-                            <span>{option.icon}</span>
-                            <span>{option.label}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
+                      {t.transactionOptions.map((option) => {
+                        const TxIcon = TRANSLATE_TX_ICON[option.iconKey];
+                        return (
+                          <SelectItem key={option.value} value={option.value}>
+                            <span className="flex items-center gap-2">
+                              <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                              <span>{option.label}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -328,7 +300,7 @@ export default function TranslatePage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {LANGUAGES.map((lang) => (
+                  {t.targetLanguages.map((lang) => (
                     <button
                       key={lang.code}
                       onClick={() => setSelectedLanguage(lang.code)}
@@ -339,7 +311,7 @@ export default function TranslatePage() {
                       }`}
                       data-testid={`button-lang-${lang.code}`}
                     >
-                      <span className="text-2xl">{lang.flag}</span>
+                      <Globe className="h-6 w-6 text-emerald-600 dark:text-emerald-400" aria-hidden />
                       <span className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate w-full text-center">
                         {lang.name}
                       </span>
@@ -393,7 +365,7 @@ export default function TranslatePage() {
               ) : (
                 <>
                   <Globe className="h-5 w-5 mr-2" />
-                  {t.translateIdle} {selectedLangInfo?.name} {selectedLangInfo?.flag}
+                  {t.translateIdle} {selectedLangInfo?.name ?? ''}
                 </>
               )}
             </Button>
@@ -439,9 +411,10 @@ export default function TranslatePage() {
                       </p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-2 mt-4">
-                      {LANGUAGES.slice(0, 6).map((lang) => (
-                        <span key={lang.code} className="px-3 py-1 rounded-full bg-white dark:bg-slate-800 text-sm border border-slate-200 dark:border-slate-700">
-                          {lang.flag} {lang.name}
+                      {t.targetLanguages.slice(0, 6).map((lang) => (
+                        <span key={lang.code} className="px-3 py-1 rounded-full bg-white dark:bg-slate-800 text-sm border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5">
+                          <Globe className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
+                          {lang.name}
                         </span>
                       ))}
                       <span className="px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-sm text-emerald-700 dark:text-emerald-300">
@@ -456,13 +429,14 @@ export default function TranslatePage() {
             {result && (
               <div className="space-y-6">
                 <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-cyan-500/10 border border-emerald-500/20">
-                  <span className="text-4xl">{result.linguaTarget.flag}</span>
+                  <Globe className="h-10 w-10 shrink-0 text-emerald-600 dark:text-emerald-400" aria-hidden />
                   <div>
                     <h2 className="text-xl font-bold text-emerald-700 dark:text-emerald-300">
                       {t.resultTitle} {result.linguaTarget.name}
                     </h2>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {t.market} {result.linguaTarget.country} • {t.tone} {result.tono === 'luxury' ? 'Luxury' : 'Standard'}
+                      {t.market} {result.linguaTarget.country} • {t.tone}{' '}
+                      {result.tono === 'luxury' ? t.toneValueLuxury : t.toneValueStandard}
                       {result.cached && ` • ${t.cache}`}
                     </p>
                   </div>
@@ -533,7 +507,7 @@ export default function TranslatePage() {
                           {t.seoVersion}
                         </CardTitle>
                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
-                          Ranking +50%
+                          {t.seoRankingBadge}
                         </span>
                       </div>
                       <Button

@@ -75,79 +75,7 @@ export default function HashtagsPage() {
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
 
-  const t = {
-    backToDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    heroTitle: isItalian ? "Hashtag AI Generator" : "Hashtag AI Generator",
-    heroSubtitle: isItalian
-      ? "Genera hashtag ottimizzati per massimizzare il reach dei tuoi post"
-      : "Generate optimized hashtags to maximize the reach of your posts",
-    heroBadge: isItalian ? "Viral Booster AI" : "Viral Booster AI",
-    formTitle: isItalian ? "Dati Immobile" : "Property Data",
-    formSubtitle: isItalian
-      ? "Inserisci le informazioni per generare hashtag personalizzati"
-      : "Enter information to generate personalized hashtags",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    propertyTypeLabel: isItalian ? "Tipo di Immobile *" : "Property Type *",
-    propertyTypePlaceholder: isItalian ? "es. Attico con terrazzo" : "e.g. Attic with terrace",
-    locationLabel: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Milan Centre",
-    priceLabel: isItalian ? "Prezzo *" : "Price *",
-    pricePlaceholder: isItalian ? "es. €450.000" : "e.g. $450,000",
-    strengthsLabel: isItalian ? "Punti di Forza *" : "Key Strengths *",
-    strengthsPlaceholder: isItalian
-      ? "es. Vista panoramica, terrazzo 50mq, finiture di pregio..."
-      : "e.g. Panoramic view, 50sqm terrace, premium finishes...",
-    toneLabel: isItalian ? "Tono" : "Tone",
-    selectTone: isItalian ? "Seleziona tono" : "Select tone",
-    marketLabel: isItalian ? "Mercato" : "Market",
-    selectMarket: isItalian ? "Seleziona mercato" : "Select market",
-    generateIdle: isItalian ? "Genera 50+ Hashtag" : "Generate 50+ Hashtags",
-    generateLoading: isItalian ? "Generazione in corso..." : "Generating...",
-    emptyTitle: isItalian ? "Nessun hashtag generato" : "No hashtags generated",
-    emptySubtitle: isItalian
-      ? "Compila il form con i dati dell'immobile e clicca \"Genera\" per creare oltre 50 hashtag ottimizzati."
-      : "Fill the form with property data and click \"Generate\" to create over 50 optimized hashtags.",
-    loadingTitle: isItalian ? "Generazione in corso..." : "Generating...",
-    loadingSubtitle: isItalian
-      ? "Stiamo creando hashtag ottimizzati per il tuo immobile"
-      : "We are creating optimized hashtags for your property",
-    strategicTip: isItalian ? "Consiglio Strategico" : "Strategic Tip",
-    readyMixes: isItalian ? "Mix Pronti all'Uso" : "Ready-to-Use Mixes",
-    viralFocus: isItalian ? "Focus Virale" : "Viral Focus",
-    balanced: isItalian ? "Equilibrato" : "Balanced",
-    localFocus: isItalian ? "Focus Locale" : "Local Focus",
-    copyAll: isItalian ? "Copia Tutti" : "Copy All",
-    clickToCopy: isItalian ? "Clicca per copiare tutti gli hashtag" : "Click to copy all hashtags",
-    usaMarketMsg: isItalian
-      ? "Seleziona \"USA\" come mercato per generare hashtag americani"
-      : "Select \"USA\" as market to generate American hashtags",
-    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile (min 3 caratteri)" : "Enter property type (min 3 characters)",
-    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
-    priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
-    successTitle: isItalian ? "Hashtag — set pronto" : "Hashtags — set ready",
-    successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    successDesc: isItalian ? "Oltre 50 hashtag pronti per i tuoi post" : "Over 50 hashtags ready for your posts",
-    errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Hashtag copiati negli appunti" : "Hashtags copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    // tabs
-    tabVirali: isItalian ? "Virali" : "Viral",
-    tabNicchia: isItalian ? "Nicchia" : "Niche",
-    tabLocalSeo: "Local SEO",
-    tabUsa: "USA",
-    tabViraliDesc: isItalian ? "15 hashtag ad alto reach" : "15 high-reach hashtags",
-    tabNicchiaDesc: isItalian ? "15 hashtag specifici" : "15 specific hashtags",
-    tabLocalSeoDesc: isItalian ? "10 hashtag locali" : "10 local hashtags",
-    tabUsaDesc: isItalian ? "15 hashtag americani" : "15 American hashtags",
-    // category labels
-    catVirali: isItalian ? "Virali" : "Viral",
-    catNicchia: isItalian ? "di Nicchia" : "Niche",
-    catLocalSeo: "Local SEO",
-    catUsa: "USA",
-  };
+  const t = dash.hashtagsPage;
 
   const tipoTransazioneOptions = useMemo(
     () =>
@@ -159,12 +87,16 @@ export default function HashtagsPage() {
     [tt]
   );
 
-  const hashtagTabs = [
-    { id: "virali", label: t.tabVirali, icon: TrendingUp, description: t.tabViraliDesc, color: "from-pink-500 to-rose-500" },
-    { id: "nicchia", label: t.tabNicchia, icon: Target, description: t.tabNicchiaDesc, color: "from-purple-500 to-indigo-500" },
-    { id: "localSeo", label: t.tabLocalSeo, icon: MapPin, description: t.tabLocalSeoDesc, color: "from-green-500 to-emerald-500" },
-    { id: "usa", label: t.tabUsa, icon: Globe, description: t.tabUsaDesc, color: "from-blue-500 to-cyan-500" },
-  ] as const;
+  const hashtagTabs = useMemo(
+    () =>
+      [
+        { id: "virali" as const, label: t.tabVirali, icon: TrendingUp, description: t.tabViraliDesc, color: "from-pink-500 to-rose-500" },
+        { id: "nicchia" as const, label: t.tabNicchia, icon: Target, description: t.tabNicchiaDesc, color: "from-purple-500 to-indigo-500" },
+        { id: "localSeo" as const, label: t.tabLocalSeo, icon: MapPin, description: t.tabLocalSeoDesc, color: "from-green-500 to-emerald-500" },
+        { id: "usa" as const, label: t.tabUsa, icon: Globe, description: t.tabUsaDesc, color: "from-blue-500 to-cyan-500" },
+      ] as const,
+    [t]
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<HashtagResult | null>(null);
@@ -254,6 +186,18 @@ export default function HashtagsPage() {
     }
   };
 
+  const hashtagCardTitle = (count: number, category: string) => {
+    const tpl =
+      category === "virali"
+        ? t.hashtagTitleVirali
+        : category === "nicchia"
+          ? t.hashtagTitleNicchia
+          : category === "localSeo"
+            ? t.hashtagTitleLocalSeo
+            : t.hashtagTitleUsa;
+    return tpl.replace("{count}", String(count));
+  };
+
   const renderHashtagList = (hashtags: string[], category: string, gradient: string) => {
     const hashtagText = hashtags.join(' ');
     
@@ -263,7 +207,7 @@ export default function HashtagsPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-lg text-foreground">
-                {hashtags.length} Hashtag {category === 'virali' ? t.catVirali : category === 'nicchia' ? t.catNicchia : category === 'localSeo' ? t.catLocalSeo : t.catUsa}
+                {hashtagCardTitle(hashtags.length, category)}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
                 {t.clickToCopy}
@@ -311,7 +255,9 @@ export default function HashtagsPage() {
                 {mixName}
               </div>
               <div>
-                <CardTitle className="text-base">Mix {mixName}</CardTitle>
+                <CardTitle className="text-base">
+                  {t.mixTitleTemplate.replace("{label}", mixName)}
+                </CardTitle>
                 <CardDescription className="text-xs">{description}</CardDescription>
               </div>
             </div>
@@ -349,7 +295,7 @@ export default function HashtagsPage() {
         href="/dashboard"
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
         {t.backToDashboard}
       </Link>
 
@@ -462,10 +408,10 @@ export default function HashtagsPage() {
                     <SelectValue placeholder={t.selectTone} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="professionale">Professionale</SelectItem>
-                    <SelectItem value="emozionale">Emozionale</SelectItem>
-                    <SelectItem value="luxury">Luxury</SelectItem>
-                    <SelectItem value="virale">Virale</SelectItem>
+                    <SelectItem value="professionale">{t.toneProfessionale}</SelectItem>
+                    <SelectItem value="emozionale">{t.toneEmozionale}</SelectItem>
+                    <SelectItem value="luxury">{t.toneLuxury}</SelectItem>
+                    <SelectItem value="virale">{t.toneVirale}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -481,8 +427,8 @@ export default function HashtagsPage() {
                     <SelectValue placeholder={t.selectMarket} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="italy">🇮🇹 Italia</SelectItem>
-                    <SelectItem value="usa">🇺🇸 USA</SelectItem>
+                    <SelectItem value="italy">{t.marketItaly}</SelectItem>
+                    <SelectItem value="usa">{t.marketUsa}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

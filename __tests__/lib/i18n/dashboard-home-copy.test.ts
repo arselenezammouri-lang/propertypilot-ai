@@ -425,6 +425,25 @@ describe('dashboard home copy (D1)', () => {
     expect(enA.connectionScore).toContain('{score}');
   });
 
+  it('refine, translate, listings library, titles, hashtags, social posts (IT/EN + ES native)', () => {
+    const itD = getTranslation('it').dashboard;
+    const enD = getTranslation('en').dashboard;
+    expect(itD.refineListingPage.transactionOptions[0].iconKey).toBe('tag');
+    expect(enD.translateListingPage.successDescFresh).toContain('{lang}');
+    expect(itD.listingsLibraryPage.sizeUnitSuffix).toBe('m²');
+    expect(enD.titlesAbPage.generateButtonIdle.toLowerCase()).toMatch(/19|a\/b|title/);
+    expect(itD.hashtagsPage.hashtagTitleVirali).toContain('{count}');
+    expect(enD.socialPostsPage.heroBadge).toContain('IG');
+
+    const es = getTranslation('es').dashboard;
+    expect(es.refineListingPage.pageTitle).toContain('Perfect Again');
+    expect(es.translateListingPage.heroTitle.toLowerCase()).toMatch(/traductor|multiling/);
+    expect(es.listingsLibraryPage.pageTitle.toLowerCase()).toMatch(/anuncios guardados/);
+    expect(es.titlesAbPage.heroTitle.toLowerCase()).toMatch(/título|generador/);
+    expect(es.hashtagsPage.marketItaly.toLowerCase()).toMatch(/italia/);
+    expect(es.socialPostsPage.heroBadge).toContain('TikTok');
+  });
+
   it('pendingCheckoutBanner and ariaLimitModal for IT/EN', () => {
     const itP = getTranslation('it').pendingCheckoutBanner;
     const enP = getTranslation('en').pendingCheckoutBanner;

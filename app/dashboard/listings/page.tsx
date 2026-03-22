@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -16,14 +16,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus } from 'lucide-react';
+import { Loader2, Trash2, Sparkles, Eye, Calendar, MapPin, Plus, ArrowLeft } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { SavedListing } from '@/lib/types/database.types';
 import { fetchApi } from '@/lib/api/client';
 import Link from 'next/link';
-import { format } from 'date-fns';
-import { it, enUS } from 'date-fns/locale';
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
+import { formatDateForLocale } from "@/lib/i18n/intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TableSkeleton } from '@/components/ui/skeleton-loaders';
@@ -54,71 +55,22 @@ export default function ListingsPage() {
   const [isCreateListingDialogOpen, setIsCreateListingDialogOpen] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
 
-  const t = {
-    successDeletedTitle: isItalian ? "Libreria annunci — Eliminato" : "Listing library — Removed",
-    deleted: isItalian ? "Annuncio eliminato" : "Listing deleted",
-    deletedDesc: isItalian ? "L'annuncio è stato eliminato con successo." : "The listing has been deleted successfully.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    deleteError: isItalian ? "Impossibile eliminare l'annuncio." : "Cannot delete the listing.",
-    successRegenTitle: isItalian ? "Libreria annunci — Contenuto aggiornato" : "Listing library — Content updated",
-    regenerated: isItalian ? "Contenuto rigenerato" : "Content regenerated",
-    regeneratedDesc: isItalian ? "Il contenuto AI è stato rigenerato con successo!" : "The AI content has been regenerated successfully!",
-    aiError: isItalian ? "Errore AI" : "AI Error",
-    regenError: isItalian ? "Impossibile rigenerare il contenuto." : "Cannot regenerate the content.",
-    loadError: isItalian ? "Impossibile caricare gli annunci" : "Cannot load listings",
-    loadErrorDesc: isItalian ? "Si è verificato un errore durante il caricamento della libreria. Riprova più tardi." : "An error occurred while loading the library. Try again later.",
-    contactSupport: isItalian ? "Se il problema persiste, contatta il supporto." : "If the problem persists, contact support.",
-    retryLoad: isItalian ? "Riprova caricamento" : "Retry loading",
-    pageTitle: isItalian ? "Annunci Salvati" : "Saved Listings",
-    pageDesc: isItalian ? "Gestisci la tua libreria di annunci generati con AI" : "Manage your AI-generated listings library",
-    emptyTitle: isItalian ? "Nessun annuncio salvato" : "No saved listings",
-    emptyDesc: isItalian ? "Gli annunci che generi con AI appariranno qui. Inizia a creare il tuo primo annuncio!" : "Listings you generate with AI will appear here. Start creating your first listing!",
-    createListing: isItalian ? "Crea Annuncio" : "Create Listing",
-    createdOn: isItalian ? "Creato il" : "Created on",
-    view: isItalian ? "Visualizza" : "View",
-    propertyDetails: isItalian ? "Dettagli Immobile" : "Property Details",
-    locality: isItalian ? "Località:" : "Location:",
-    type: isItalian ? "Tipologia:" : "Type:",
-    size: isItalian ? "Superficie:" : "Size:",
-    rooms: isItalian ? "Locali:" : "Rooms:",
-    price: isItalian ? "Prezzo:" : "Price:",
-    features: isItalian ? "Caratteristiche:" : "Features:",
-    generatedContent: isItalian ? "Contenuto Generato" : "Generated Content",
-    tabProfessional: isItalian ? "Professionale" : "Professional",
-    tabShort: isItalian ? "Breve" : "Short",
-    tabTitles: isItalian ? "Titoli" : "Titles",
-    tabEnglish: isItalian ? "Inglese" : "English",
-    roomsUnit: isItalian ? "locali" : "rooms",
-    regenerating: isItalian ? "Rigenerazione..." : "Regenerating...",
-    regenerate: isItalian ? "Rigenera Contenuto" : "Regenerate Content",
-    delete: isItalian ? "Elimina" : "Delete",
-    deleteConfirmTitle: isItalian ? "Elimina annuncio?" : "Delete listing?",
-    deleteConfirmDesc: isItalian
-      ? "L'annuncio verrà rimosso dalla libreria. Questa azione non può essere annullata."
-      : "The listing will be removed from your library. This action cannot be undone.",
-    deleting: isItalian ? "Eliminazione..." : "Deleting...",
-    createDialogTitle: isItalian ? "Crea Nuovo Annuncio" : "Create New Listing",
-    createDialogDesc: isItalian
-      ? "Scegli come vuoi iniziare: compilazione guidata o ricerca opportunità dal mercato."
-      : "Choose how to start: guided generation or market prospecting.",
-    createFromWorkspace: isItalian ? "Apri Workspace Generazione" : "Open Generation Workspace",
-    searchMarket: isItalian ? "Cerca sul Mercato" : "Search Market",
-    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-  };
+  const t = useMemo(() => getTranslation(locale).dashboard.listingsLibraryPage, [locale]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setPageReady(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
   const planBadgeLabel =
     usage.plan === 'agency'
-      ? 'Agency'
+      ? dash.planAgency
       : usage.plan === 'pro'
-        ? 'Pro'
+        ? dash.planPro
         : usage.plan === 'starter'
-          ? 'Starter'
-          : 'Free';
+          ? dash.planStarter
+          : dash.planFree;
 
   const { data: listingsData, isLoading, error, refetch } = useQuery<{ success: boolean; data: SavedListing[] }>({
     queryKey: ['/api/listings'],
@@ -207,7 +159,7 @@ export default function ListingsPage() {
           href="/dashboard"
           className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
         >
-          <span aria-hidden>←</span>
+          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
           {t.backDashboard}
         </Link>
         <DashboardPageHeader
@@ -243,7 +195,7 @@ export default function ListingsPage() {
           href="/dashboard"
           className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
         >
-          <span aria-hidden>←</span>
+          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
           {t.backDashboard}
         </Link>
         <DashboardPageHeader
@@ -275,7 +227,7 @@ export default function ListingsPage() {
         href="/dashboard"
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
       >
-        <span aria-hidden>←</span>
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
         {t.backDashboard}
       </Link>
 
@@ -312,7 +264,7 @@ export default function ListingsPage() {
                   icon: <Plus className="h-4 w-4" />,
                 },
                 {
-                  label: isItalian ? "Cerca sul Mercato" : "Search Market",
+                  label: t.searchMarket,
                   href: "/dashboard/prospecting",
                   variant: "outline",
                   icon: <Sparkles className="h-4 w-4" />,
@@ -336,7 +288,7 @@ export default function ListingsPage() {
                 </CardTitle>
                 <CardDescription className="flex items-center gap-2" data-testid={`text-date-${listing.id}`}>
                   <Calendar className="h-3 w-3" />
-                  {format(new Date(listing.created_at), 'dd MMM yyyy', { locale: isItalian ? it : enUS })}
+                  {formatDateForLocale(listing.created_at, locale as Locale)}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -362,7 +314,7 @@ export default function ListingsPage() {
                     )}
                     {listing.property_data.size && (
                       <span className="text-xs bg-muted px-2 py-1 rounded">
-                        {listing.property_data.size} m²
+                        {listing.property_data.size} {t.sizeUnitSuffix}
                       </span>
                     )}
                   </div>
@@ -416,7 +368,8 @@ export default function ListingsPage() {
           <DialogHeader>
             <DialogTitle data-testid="dialog-title">{selectedListing?.title}</DialogTitle>
             <DialogDescription data-testid="dialog-date">
-              {t.createdOn} {selectedListing && format(new Date(selectedListing.created_at), 'dd MMMM yyyy', { locale: isItalian ? it : enUS })}
+              {t.createdOn}{' '}
+              {selectedListing && formatDateForLocale(selectedListing.created_at, locale as Locale)}
             </DialogDescription>
           </DialogHeader>
 
@@ -553,7 +506,7 @@ export default function ListingsPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteMutation.isPending}>{isItalian ? "Annulla" : "Cancel"}</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>{t.cancelDialog}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();

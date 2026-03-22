@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { RefineListingToneIconKey, RefineListingTxIconKey } from "@/lib/i18n/refine-listing-page-ui";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
@@ -22,19 +24,22 @@ import {
   networkFailureToast,
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  Sparkles, 
+import {
+  Sparkles,
   Briefcase,
   Heart,
   Crown,
   Search,
-  Copy, 
-  Check, 
+  Copy,
+  Check,
   Loader2,
   ArrowLeft,
   AlertCircle,
   Wand2,
-  FileText
+  FileText,
+  Tag,
+  KeyRound,
+  Palmtree,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -54,6 +59,19 @@ interface RefineListingResult {
   analisiOriginale: string;
   cached?: boolean;
 }
+
+const REFINE_TX_ICON: Record<RefineListingTxIconKey, typeof Tag> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const REFINE_TONE_ICON: Record<RefineListingToneIconKey, typeof Briefcase> = {
+  briefcase: Briefcase,
+  heart: Heart,
+  crown: Crown,
+  search: Search,
+};
 
 interface FormData {
   tipoTransazione: string;
@@ -75,75 +93,43 @@ export default function RefineListingPage() {
   const [activeTab, setActiveTab] = useState("professional");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const t = {
-    textTooShortDesc: isItalian ? "L'annuncio originale deve avere almeno 50 caratteri" : "The original listing must be at least 50 characters",
-    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile" : "Enter the property type",
-    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    refineError: isItalian ? "Errore nel raffinamento" : "Refinement error",
-    successTitle: isItalian ? "Perfect Again — pronto" : "Perfect Again — ready",
-    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    ready4: isItalian ? "4 versioni migliorate pronte all'uso" : "4 improved versions ready to use",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    back: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    pageTitle: "Perfect Again AI",
-    pageSubtitle: isItalian ? "Raffina e migliora completamente i tuoi annunci esistenti" : "Refine and improve your existing listings",
-    listingToImprove: isItalian ? "Annuncio da Migliorare" : "Listing to Improve",
-    listingToImproveDesc: isItalian ? "Incolla il tuo annuncio esistente e lascia che l'AI lo perfezioni" : "Paste your existing listing and let AI perfect it",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    originalText: isItalian ? "Testo Annuncio Originale *" : "Original Listing Text *",
-    originalPlaceholder: isItalian ? "Incolla qui il tuo annuncio esistente che vuoi migliorare... (min 50 caratteri)" : "Paste your existing listing to improve... (min 50 characters)",
-    chars: isItalian ? "caratteri" : "characters",
-    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
-    propertyTypePlaceholder: isItalian ? "es. Appartamento" : "e.g. Apartment",
-    location: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Downtown",
-    preferredTone: isItalian ? "Tono Preferito" : "Preferred Tone",
-    selectTone: isItalian ? "Seleziona tono" : "Select tone",
-    refining: isItalian ? "Raffinamento in corso..." : "Refining...",
-    refineButton: isItalian ? "Perfeziona Annuncio" : "Perfect Listing",
-    noResult: isItalian ? "Nessun annuncio raffinato" : "No refined listing",
-    noResultDesc: isItalian ? 'Incolla il tuo annuncio esistente e clicca "Perfeziona" per generare 4 versioni migliorate: Professional, Emotional, Luxury e SEO.' : 'Paste your existing listing and click "Perfect" to generate 4 improved versions: Professional, Emotional, Luxury and SEO.',
-    version: isItalian ? "Versione" : "Version",
-    copyAll: isItalian ? "Copia Tutto" : "Copy All",
-    improvedTitle: isItalian ? "Titolo Migliorato" : "Improved Title",
-    improvedDesc: isItalian ? "Descrizione Migliorata" : "Improved Description",
-    highlights5: isItalian ? "✨ 5 Highlights" : "✨ 5 Highlights",
-    ctaImproved: isItalian ? "🎯 CTA Migliorata" : "🎯 Improved CTA",
-    metaSeo: isItalian ? "Meta Description SEO" : "Meta Description SEO",
-    originalAnalysis: isItalian ? "Analisi Annuncio Originale" : "Original Listing Analysis",
-    highlightsHeading: isItalian ? "HIGHLIGHTS:" : "HIGHLIGHTS:",
-    ctaHeading: isItalian ? "CTA:" : "CTA:",
-    metaHeading: isItalian ? "META DESCRIPTION:" : "META DESCRIPTION:",
-  };
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.refineListingPage;
 
-  const tipoTransazioneOptions = isItalian
-    ? [
-        { value: "vendita", label: "Vendita", icon: "🏷️" },
-        { value: "affitto", label: "Affitto", icon: "🔑" },
-        { value: "affitto_breve", label: "Affitto Breve / Turistico", icon: "🏖️" },
-      ]
-    : [
-        { value: "vendita", label: "Sale", icon: "🏷️" },
-        { value: "affitto", label: "Rent", icon: "🔑" },
-        { value: "affitto_breve", label: "Short-term / Vacation Rent", icon: "🏖️" },
-      ];
-
-  const refineTabs = isItalian
-    ? [
-        { id: "professional", label: "Professional", icon: Briefcase, description: "Autorevole e credibile", gradient: "from-blue-500 to-indigo-500" },
-        { id: "emotional", label: "Emotional", icon: Heart, description: "Coinvolgente ed evocativo", gradient: "from-rose-500 to-pink-500" },
-        { id: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e raffinato", gradient: "from-amber-500 to-yellow-500" },
-        { id: "seo", label: "SEO Boosted", icon: Search, description: "Ottimizzato per Google", gradient: "from-emerald-500 to-teal-500" },
-      ] as const
-    : [
-        { id: "professional", label: "Professional", icon: Briefcase, description: "Authoritative and credible", gradient: "from-blue-500 to-indigo-500" },
-        { id: "emotional", label: "Emotional", icon: Heart, description: "Engaging and evocative", gradient: "from-rose-500 to-pink-500" },
-        { id: "luxury", label: "Luxury", icon: Crown, description: "Exclusive and refined", gradient: "from-amber-500 to-yellow-500" },
-        { id: "seo", label: "SEO Boosted", icon: Search, description: "Optimized for Google", gradient: "from-emerald-500 to-teal-500" },
-      ] as const;
+  const refineTabs = useMemo(
+    () =>
+      [
+        {
+          id: "professional" as const,
+          label: t.refineTabs[0].label,
+          icon: Briefcase,
+          description: t.refineTabs[0].description,
+          gradient: "from-blue-500 to-indigo-500",
+        },
+        {
+          id: "emotional" as const,
+          label: t.refineTabs[1].label,
+          icon: Heart,
+          description: t.refineTabs[1].description,
+          gradient: "from-rose-500 to-pink-500",
+        },
+        {
+          id: "luxury" as const,
+          label: t.refineTabs[2].label,
+          icon: Crown,
+          description: t.refineTabs[2].description,
+          gradient: "from-amber-500 to-yellow-500",
+        },
+        {
+          id: "seo" as const,
+          label: t.refineTabs[3].label,
+          icon: Search,
+          description: t.refineTabs[3].description,
+          gradient: "from-emerald-500 to-teal-500",
+        },
+      ] as const,
+    [t.refineTabs]
+  );
 
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -232,9 +218,9 @@ export default function RefineListingPage() {
   const copyFullListing = (listing: RefinedListing, version: string) => {
     const fullText = `${listing.titolo}\n\n` +
       `${listing.descrizione}\n\n` +
-      `✨ ${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
-      `🎯 ${t.ctaHeading} ${listing.cta}\n\n` +
-      `📝 ${t.metaHeading}\n${listing.metaDescription}`;
+      `${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
+      `${t.ctaHeading} ${listing.cta}\n\n` +
+      `${t.metaHeading}\n${listing.metaDescription}`;
     
     copyToClipboard(fullText, `full-${version}`);
   };
@@ -382,12 +368,12 @@ export default function RefineListingPage() {
 
   const planBadgeLabel =
     usage.plan === "agency"
-      ? "Agency"
+      ? dash.planAgency
       : usage.plan === "pro"
-        ? "Pro"
+        ? dash.planPro
         : usage.plan === "starter"
-          ? "Starter"
-          : "Free";
+          ? dash.planStarter
+          : dash.planFree;
 
   return (
     <DashboardPageShell className="max-w-6xl">
@@ -406,8 +392,9 @@ export default function RefineListingPage() {
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
-          <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-xs">
-            ✨ Perfect Again AI
+          <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-xs">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {t.heroBadge}
           </Badge>
         }
       />
@@ -434,14 +421,17 @@ export default function RefineListingPage() {
                   <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipoTransazioneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {t.transactionOptions.map((option) => {
+                    const TxIcon = REFINE_TX_ICON[option.iconKey];
+                    return (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -497,10 +487,17 @@ export default function RefineListingPage() {
                   <SelectValue placeholder={t.selectTone} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="professional">💼 Professional</SelectItem>
-                  <SelectItem value="emotional">💗 Emotional</SelectItem>
-                  <SelectItem value="luxury">👑 Luxury</SelectItem>
-                  <SelectItem value="seo">🔍 SEO Boosted</SelectItem>
+                  {t.toneSelectItems.map((item) => {
+                    const ToneIcon = REFINE_TONE_ICON[item.iconKey];
+                    return (
+                      <SelectItem key={item.value} value={item.value}>
+                        <span className="flex items-center gap-2">
+                          <ToneIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{item.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>

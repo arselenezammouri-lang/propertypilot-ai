@@ -20,24 +20,24 @@ import {
   clipboardFailureToast,
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  Copy, 
-  Check, 
+import {
+  Copy,
+  Check,
   Sparkles,
-  Building2,
-  Heart,
-  Crown,
   Loader2,
-  Zap,
-  Target,
-  Search,
   Star,
   TrendingUp,
-  MousePointerClick,
+  Target,
   Tag,
   KeyRound,
   Palmtree,
+  ArrowLeft,
+  MousePointerClick,
 } from "lucide-react";
+import {
+  getTitlesAbCategoryVisuals,
+  toneIconsForTitlesAb,
+} from "@/lib/i18n/titles-ab-page-ui";
 import Link from "next/link";
 import {
   Select,
@@ -72,78 +72,6 @@ interface FormData {
   tono: Tono;
 }
 
-const TIPO_IMMOBILE_OPTIONS = [
-  { value: "appartamento" as TipoImmobile, label: "Appartamento" },
-  { value: "casa" as TipoImmobile, label: "Casa" },
-  { value: "villa" as TipoImmobile, label: "Villa" },
-  { value: "locale" as TipoImmobile, label: "Locale Commerciale" },
-  { value: "ufficio" as TipoImmobile, label: "Ufficio" },
-  { value: "terreno" as TipoImmobile, label: "Terreno" },
-];
-
-const TONI_OPTIONS = [
-  { 
-    value: "professionale" as Tono, 
-    label: "Professionale", 
-    description: "Chiaro e informativo",
-    icon: Building2,
-    gradient: "from-blue-500 to-cyan-500"
-  },
-  { 
-    value: "emotivo" as Tono, 
-    label: "Emotivo", 
-    description: "Aspirazionale e coinvolgente",
-    icon: Heart,
-    gradient: "from-pink-500 to-rose-500"
-  },
-  { 
-    value: "luxury" as Tono, 
-    label: "Luxury", 
-    description: "Esclusivo e prestigioso",
-    icon: Crown,
-    gradient: "from-amber-500 to-yellow-500"
-  },
-];
-
-const TITLE_CATEGORIES = [
-  {
-    key: "titoli",
-    label: "Titoli Alto CTR",
-    description: "10 titoli ottimizzati per massimizzare i click",
-    icon: MousePointerClick,
-    gradient: "from-indigo-500 to-purple-500",
-    shadowColor: "shadow-indigo-500/20",
-    badge: "CTR +40%"
-  },
-  {
-    key: "clickbait",
-    label: "Clickbait Soft",
-    description: "Attirano curiosità senza essere spam",
-    icon: Zap,
-    gradient: "from-orange-500 to-red-500",
-    shadowColor: "shadow-orange-500/20",
-    badge: "Virale"
-  },
-  {
-    key: "luxury",
-    label: "Luxury",
-    description: "Per immobili di alto livello e clienti facoltosi",
-    icon: Crown,
-    gradient: "from-amber-500 to-yellow-500",
-    shadowColor: "shadow-amber-500/20",
-    badge: "Premium"
-  },
-  {
-    key: "seo",
-    label: "SEO Optimized",
-    description: "Ottimizzati per Google e portali immobiliari",
-    icon: Search,
-    gradient: "from-emerald-500 to-teal-500",
-    shadowColor: "shadow-emerald-500/20",
-    badge: "Ranking"
-  },
-];
-
 export default function TitlesPage() {
   const { toast } = useToast();
   const { locale } = useLocaleContext();
@@ -161,51 +89,39 @@ export default function TitlesPage() {
     [tt]
   );
   const usage = useUsageLimits();
-  const t = {
-    generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    successTitle: isItalian ? "Titoli A/B — generazione pronta" : "A/B titles — generation ready",
-    successDesc: isItalian
-      ? "19 titoli ad alto CTR sono pronti per essere utilizzati."
-      : "19 high-CTR titles are ready to use.",
-    locationRequiredDesc: isItalian
-      ? "Inserisci la località dell'immobile"
-      : "Enter the property location",
-    pointsRequiredDesc: isItalian
-      ? "Descrivi almeno i punti chiave dell'immobile (min 10 caratteri)"
-      : "Describe at least the key points of the property (min 10 characters)",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Titolo copiato negli appunti" : "Title copied to clipboard",
-    copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    subtitleBadge: "CTR +40%",
-    heroTitle: isItalian ? "Generatore Titoli A/B" : "A/B Title Generator",
-    heroDescription: isItalian
-      ? "Genera 19 titoli ad alto conversion rate ottimizzati per massimizzare i click sui tuoi annunci"
-      : "Generate 19 high-converting titles optimized to maximize clicks on your listings",
-    backToDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    propertyData: isItalian ? "Dati Immobile" : "Property Data",
-    propertyDataDesc: isItalian
-      ? "Inserisci le informazioni per generare titoli ottimizzati"
-      : "Enter the information to generate optimized titles",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
-    selectPropertyType: isItalian ? "Seleziona tipo" : "Select type",
-    locationLabel: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "Es: Milano Centro" : "e.g. Downtown Milan",
-    priceLabel: isItalian ? "Prezzo" : "Price",
-    pricePlaceholder: isItalian ? "€ 350.000" : "$ 350,000",
-    sizeLabel: isItalian ? "Superficie" : "Size",
-    sizePlaceholder: isItalian ? "120 mq" : "120 sqm",
-    roomsLabel: isItalian ? "Camere" : "Rooms",
-    roomsPlaceholder: isItalian ? "3" : "3",
-    keyPointsLabel: isItalian ? "Punti Chiave dell'Immobile *" : "Key Features of the Property *",
-    keyPointsPlaceholder: isItalian
-      ? "Descrivi le caratteristiche principali: balcone, garage, giardino, vista, ristrutturato, luminoso..."
-      : "Describe the main features: balcony, garage, garden, view, renovated, bright...",
-    toneLabel: isItalian ? "Tono dei Titoli" : "Title Tone",
-    generateButtonIdle: isItalian ? "Genera Titoli" : "Generate Titles",
-    generateButtonLoading: isItalian ? "Generazione titoli..." : "Generating titles...",
-  };
+  const tp = dash.titlesAbPage;
+  const t = tp;
+  const categoryVisuals = useMemo(() => getTitlesAbCategoryVisuals(), []);
+  const propertyTypeOptions = tp.propertyTypes;
+  const toniOptions = useMemo(
+    () =>
+      tp.tones.map((opt) => ({
+        value: opt.value as Tono,
+        label: opt.label,
+        description: opt.description,
+        icon: toneIconsForTitlesAb[opt.value],
+        gradient:
+          opt.value === "professionale"
+            ? "from-blue-500 to-cyan-500"
+            : opt.value === "emotivo"
+              ? "from-pink-500 to-rose-500"
+              : "from-amber-500 to-yellow-500",
+      })),
+    [tp.tones]
+  );
+  const titleCategories = useMemo(
+    () =>
+      tp.categories.map((c) => ({
+        key: c.key,
+        label: c.label,
+        description: c.description,
+        badge: c.badge,
+        icon: categoryVisuals.categoryIcons[c.key],
+        gradient: categoryVisuals.categoryGradients[c.key],
+        shadowColor: categoryVisuals.categoryShadows[c.key],
+      })),
+    [categoryVisuals, tp.categories]
+  );
   
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -333,7 +249,7 @@ export default function TitlesPage() {
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
         data-testid="button-back-dashboard"
       >
-        <span aria-hidden>←</span>
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
         {t.backToDashboard}
       </Link>
 
@@ -400,7 +316,7 @@ export default function TitlesPage() {
                           <SelectValue placeholder={t.selectPropertyType} />
                         </SelectTrigger>
                         <SelectContent>
-                          {TIPO_IMMOBILE_OPTIONS.map((option) => (
+                          {propertyTypeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -472,7 +388,7 @@ export default function TitlesPage() {
                   <div className="space-y-3">
                     <Label>{t.toneLabel}</Label>
                     <div className="grid grid-cols-3 gap-2">
-                      {TONI_OPTIONS.map((option) => {
+                      {toniOptions.map((option) => {
                         const Icon = option.icon;
                         return (
                           <button
@@ -509,12 +425,12 @@ export default function TitlesPage() {
                     {generateMutation.isPending ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Generazione titoli...
+                        {t.generateButtonLoading}
                       </>
                     ) : (
                       <>
                         <Sparkles className="h-5 w-5 mr-2" />
-                        Genera 19 Titoli A/B
+                        {t.generateButtonIdle}
                       </>
                     )}
                   </Button>
@@ -531,10 +447,10 @@ export default function TitlesPage() {
                     <MousePointerClick className="h-10 w-10 text-indigo-500" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    I tuoi titoli appariranno qui
+                    {t.emptyTitle}
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                    Compila il form e clicca "Genera 19 Titoli A/B" per creare titoli ad alto CTR
+                    {t.emptySubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -548,10 +464,10 @@ export default function TitlesPage() {
                     <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-8 w-8 text-indigo-500" />
                   </div>
                   <p className="mt-6 text-lg font-medium text-slate-700 dark:text-slate-300">
-                    Generazione titoli AI...
+                    {t.loadingTitle}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                    Stiamo creando 19 titoli ottimizzati per il massimo CTR
+                    {t.loadingSubtitle}
                   </p>
                 </CardContent>
               </Card>
@@ -563,7 +479,7 @@ export default function TitlesPage() {
                   <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
                     <CardTitle className="flex items-center gap-2">
                       <Star className="h-5 w-5 fill-current" />
-                      Miglior Titolo Consigliato
+                      {t.bestTitleHeading}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-6">
@@ -593,7 +509,7 @@ export default function TitlesPage() {
                 </Card>
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  {TITLE_CATEGORIES.map((category) => {
+                  {titleCategories.map((category) => {
                     const Icon = category.icon;
                     const titles = result[category.key as keyof typeof result] as string[];
                     

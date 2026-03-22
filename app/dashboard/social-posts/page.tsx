@@ -21,25 +21,23 @@ import {
   clipboardFailureToast,
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  Instagram, 
-  Facebook, 
-  Hash, 
-  Video, 
-  Copy, 
-  Check, 
+import {
+  Instagram,
+  Facebook,
+  Hash,
+  Copy,
+  Check,
   Sparkles,
-  Building2,
-  Heart,
-  Crown,
-  AlignLeft,
-  AlignCenter,
-  AlignJustify,
   Loader2,
   Tag,
   KeyRound,
   Palmtree,
+  ArrowLeft,
 } from "lucide-react";
+import {
+  socialPostLengthIcons,
+  socialPostToneIcons,
+} from "@/lib/i18n/social-posts-page-ui";
 import { SiTiktok } from "react-icons/si";
 import Link from "next/link";
 
@@ -66,51 +64,6 @@ interface FormData {
   lunghezza: Lunghezza;
 }
 
-const TONI_OPTIONS = [
-  { 
-    value: "professionale" as Tono, 
-    label: "Professionale", 
-    description: "Formale e autorevole",
-    icon: Building2,
-    gradient: "from-blue-500 to-cyan-500"
-  },
-  { 
-    value: "emotivo" as Tono, 
-    label: "Emotivo", 
-    description: "Coinvolgente e caldo",
-    icon: Heart,
-    gradient: "from-pink-500 to-rose-500"
-  },
-  { 
-    value: "luxury" as Tono, 
-    label: "Luxury", 
-    description: "Esclusivo e raffinato",
-    icon: Crown,
-    gradient: "from-amber-500 to-yellow-500"
-  },
-];
-
-const LUNGHEZZA_OPTIONS = [
-  { 
-    value: "breve" as Lunghezza, 
-    label: "Breve", 
-    description: "30 parole IG",
-    icon: AlignLeft 
-  },
-  { 
-    value: "standard" as Lunghezza, 
-    label: "Standard", 
-    description: "60 parole IG",
-    icon: AlignCenter 
-  },
-  { 
-    value: "lunga" as Lunghezza, 
-    label: "Lunga", 
-    description: "100 parole IG",
-    icon: AlignJustify 
-  },
-];
-
 export default function SocialPostsPage() {
   const { toast } = useToast();
   const { locale } = useLocaleContext();
@@ -128,60 +81,33 @@ export default function SocialPostsPage() {
     [tt]
   );
   const usage = useUsageLimits();
-  const t = {
-    generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    successTitle: isItalian ? "Post social — contenuti pronti" : "Social posts — content ready",
-    successDesc: isItalian
-      ? "I tuoi contenuti social sono pronti per essere copiati."
-      : "Your social contents are ready to be copied.",
-    titleRequiredDesc: isItalian
-      ? "Inserisci un titolo di almeno 5 caratteri"
-      : "Enter a title with at least 5 characters",
-    descriptionRequiredDesc: isItalian
-      ? "Inserisci una descrizione di almeno 20 caratteri"
-      : "Enter a description with at least 20 characters",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailedDesc: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    heroTitle: isItalian ? "Generatore Post Social" : "Social Post Generator",
-    heroSubtitle: isItalian
-      ? "Crea contenuti virali per Instagram, Facebook e TikTok in pochi secondi"
-      : "Create viral content for Instagram, Facebook and TikTok in seconds",
-    formTitle: isItalian ? "Informazioni Immobile" : "Property Information",
-    formSubtitle: isItalian ? "Inserisci i dati per generare i post social" : "Enter data to generate social posts",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    titleLabel: isItalian ? "Titolo *" : "Title *",
-    titlePlaceholder: isItalian ? "Es: Villa di Lusso con Vista Mare" : "e.g. Luxury Villa with Sea View",
-    descriptionLabel: isItalian ? "Descrizione *" : "Description *",
-    descriptionPlaceholder: isItalian ? "Descrivi l'immobile in dettaglio..." : "Describe the property in detail...",
-    priceLabel: isItalian ? "Prezzo" : "Price",
-    pricePlaceholder: isItalian ? "€ 450.000" : "$ 450,000",
-    sizeLabel: isItalian ? "Superficie" : "Size",
-    sizePlaceholder: isItalian ? "120 mq" : "120 sqm",
-    roomsLabel: isItalian ? "Camere" : "Rooms",
-    roomsPlaceholder: isItalian ? "3" : "3",
-    bathsLabel: isItalian ? "Bagni" : "Bathrooms",
-    bathsPlaceholder: isItalian ? "2" : "2",
-    locationLabel: isItalian ? "Località" : "Location",
-    locationPlaceholder: isItalian ? "Milano" : "Miami",
-    toneLabel: isItalian ? "Tono del Messaggio" : "Message Tone",
-    lengthLabel: isItalian ? "Lunghezza" : "Length",
-    generateButtonIdle: isItalian ? "Genera Post Social" : "Generate Social Posts",
-    generateButtonLoading: isItalian ? "Generazione in corso..." : "Generating...",
-    emptyTitle: isItalian ? "I tuoi post appariranno qui" : "Your posts will appear here",
-    emptySubtitle: isItalian
-      ? "Compila il form e clicca \"Genera Post Social\" per creare contenuti virali"
-      : "Fill the form and click \"Generate Social Posts\" to create viral content",
-    instagramLabel: isItalian ? "Post Instagram" : "Instagram Post",
-    facebookLabel: isItalian ? "Post Facebook" : "Facebook Post",
-    tiktokLabel: isItalian ? "Script TikTok" : "TikTok Script",
-    hashtagsLabel: isItalian ? "Hashtag" : "Hashtags",
-    copyPost: isItalian ? "Copia Post" : "Copy Post",
-    copyScript: isItalian ? "Copia Script" : "Copy Script",
-    copyHashtagsLabel: isItalian ? "Copia Hashtag" : "Copy Hashtags",
-  };
+  const t = dash.socialPostsPage;
+  const toniOptions = useMemo(
+    () =>
+      t.tones.map((opt) => ({
+        value: opt.value as Tono,
+        label: opt.label,
+        description: opt.description,
+        icon: socialPostToneIcons[opt.value],
+        gradient:
+          opt.value === "professionale"
+            ? "from-blue-500 to-cyan-500"
+            : opt.value === "emotivo"
+              ? "from-pink-500 to-rose-500"
+              : "from-amber-500 to-yellow-500",
+      })),
+    [t.tones]
+  );
+  const lunghezzaOptions = useMemo(
+    () =>
+      t.lengths.map((opt) => ({
+        value: opt.value as Lunghezza,
+        label: opt.label,
+        description: opt.description,
+        icon: socialPostLengthIcons[opt.value],
+      })),
+    [t.lengths]
+  );
   
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -288,7 +214,7 @@ export default function SocialPostsPage() {
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
         data-testid="button-back-dashboard"
       >
-        <span aria-hidden>←</span>
+        <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
         {t.backDashboard}
       </Link>
 
@@ -299,7 +225,7 @@ export default function SocialPostsPage() {
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
           <Badge className="bg-pink-500/15 text-pink-100 border border-pink-500/30 text-xs">
-            IG · FB · TikTok
+            {t.heroBadge}
           </Badge>
         }
       />
@@ -433,7 +359,7 @@ export default function SocialPostsPage() {
                   <div className="space-y-4">
                     <Label>{t.toneLabel}</Label>
                     <div className="grid grid-cols-3 gap-3">
-                      {TONI_OPTIONS.map((option) => {
+                      {toniOptions.map((option) => {
                         const Icon = option.icon;
                         return (
                           <button
@@ -469,7 +395,7 @@ export default function SocialPostsPage() {
                   <div className="space-y-4">
                     <Label>{t.lengthLabel}</Label>
                     <div className="grid grid-cols-3 gap-3">
-                      {LUNGHEZZA_OPTIONS.map((option) => {
+                      {lunghezzaOptions.map((option) => {
                         const Icon = option.icon;
                         return (
                           <button
@@ -551,7 +477,7 @@ export default function SocialPostsPage() {
                     {t.generateButtonLoading}
                   </p>
                   <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                    {t.emptySubtitle}
+                    {t.generatingSubtitle}
                   </p>
                 </CardContent>
               </Card>
