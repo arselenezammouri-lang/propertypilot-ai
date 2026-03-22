@@ -15,6 +15,11 @@ import type { LeadPipelinePageUi } from '@/lib/i18n/lead-pipeline-page-ui';
 import { leadPipelinePageUiEn, leadPipelinePageUiIt } from '@/lib/i18n/lead-pipeline-page-ui';
 import type { CrmApiKeysPageUi } from '@/lib/i18n/crm-api-keys-page-ui';
 import { crmApiKeysPageUiEn, crmApiKeysPageUiIt } from '@/lib/i18n/crm-api-keys-page-ui';
+import type { CrmAutomationRulesPageUi } from '@/lib/i18n/crm-automation-rules-page-ui';
+import {
+  crmAutomationRulesPageUiEn,
+  crmAutomationRulesPageUiIt,
+} from '@/lib/i18n/crm-automation-rules-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -196,6 +201,8 @@ export interface TranslationDictionary {
       leadPipelinePage: LeadPipelinePageUi;
       /** `/dashboard/crm/settings` — API keys & embed */
       crmApiKeysPage: CrmApiKeysPageUi;
+      /** `/dashboard/crm/automations` — if/then CRM rules */
+      crmAutomationRulesPage: CrmAutomationRulesPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1015,6 +1022,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadsPage: leadsPageUiIt,
       leadPipelinePage: leadPipelinePageUiIt,
       crmApiKeysPage: crmApiKeysPageUiIt,
+      crmAutomationRulesPage: crmAutomationRulesPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1843,6 +1851,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadsPage: leadsPageUiEn,
       leadPipelinePage: leadPipelinePageUiEn,
       crmApiKeysPage: crmApiKeysPageUiEn,
+      crmAutomationRulesPage: crmAutomationRulesPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

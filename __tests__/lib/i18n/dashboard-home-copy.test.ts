@@ -127,4 +127,14 @@ describe('dashboard home copy (D1)', () => {
     expect(enC.deleteDialogBody).toContain('{name}');
     expect(itC.howToUseSteps.length).toBeGreaterThanOrEqual(4);
   });
+
+  it('crmAutomationRulesPage for IT/EN', () => {
+    const itR = getTranslation('it').dashboard.crmAutomationRulesPage;
+    const enR = getTranslation('en').dashboard.crmAutomationRulesPage;
+    expect(itR.tabRules).toContain('{count}');
+    expect(enR.executions).toContain('{count}');
+    expect(itR.triggers.new_lead.label).toMatch(/lead/i);
+    expect(enR.triggers.new_lead.label).toMatch(/lead/i);
+    expect(itR.howItWorksList.length).toBeGreaterThanOrEqual(4);
+  });
 });
