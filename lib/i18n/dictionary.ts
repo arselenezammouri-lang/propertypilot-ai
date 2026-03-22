@@ -3,6 +3,9 @@
  * Support: IT, EN, ES, FR, DE, PT, AR
  */
 
+import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
+import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
+
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
 export interface TranslationDictionary {
@@ -198,6 +201,8 @@ export interface TranslationDictionary {
         boostCustomConfig: string;
         buyAgencyBoost: string;
       };
+      /** Griglia "Tutti gli strumenti" (DashboardPlanFeatures) — IT/EN autorevoli; altre lingue da EN */
+      planFeatures: PlanFeaturesUi;
     };
 
   // Auth (Login / Signup)
@@ -854,6 +859,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         boostCustomConfig: 'Configurazione personalizzata',
         buyAgencyBoost: 'Acquista Agency Boost',
       },
+      planFeatures: planFeaturesUiIt,
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1508,6 +1514,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         boostCustomConfig: 'Custom configuration',
         buyAgencyBoost: 'Buy Agency Boost',
       },
+      planFeatures: planFeaturesUiEn,
     },
     auth: {
       backToHome: 'Back to home',

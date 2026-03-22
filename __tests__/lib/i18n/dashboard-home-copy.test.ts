@@ -51,4 +51,16 @@ describe('dashboard home copy (D1)', () => {
     expect(d.planCards.buyAgencyBoost).toContain('Agency Boost');
     expect(d.planCards.allFreeFeatures).toContain('Free');
   });
+
+  it('planFeatures (all-tools grid) for IT/EN and merge for ES', () => {
+    const it = getTranslation('it').dashboard.planFeatures;
+    const en = getTranslation('en').dashboard.planFeatures;
+    expect(it.chrome.plan).toBe('Piano');
+    expect(en.chrome.plan).toBe('Plan');
+    expect(it.items.generate.name).toContain('Annuncio');
+    expect(en.items.generate.name).toMatch(/listing/i);
+    const es = getTranslation('es').dashboard.planFeatures;
+    expect(es.chrome.plan).toBe('Plan');
+    expect(es.items.generate.name).toMatch(/listing/i);
+  });
 });

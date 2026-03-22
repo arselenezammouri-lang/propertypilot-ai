@@ -6,6 +6,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 
 1. **Single source of truth per le stringhe UI**  
    - Preferire `getTranslation(locale)` da `lib/i18n/dictionary.ts`.  
+   - Griglia “tutti gli strumenti” (`DashboardPlanFeatures`): copy in `lib/i18n/plan-features-ui.ts`, esposta come `dashboard.planFeatures` (chrome + `items` per `id` feature).  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
@@ -25,7 +26,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Per frasi con variabili usare template con segnaposto espliciti (`{opened}`, `{sent}`) e una piccola funzione di replace nel componente, oppure in futuro ICU / `next-intl`.
 
 6. **Naming delle chiavi**  
-   - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.morningBriefing`, ecc.  
+   - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.planFeatures`, `dashboard.morningBriefing`, ecc.  
    - Evitare chiavi troppo generiche (`title1`) senza contesto.
 
 ## Checklist per nuove feature
@@ -38,6 +39,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 ## Riferimenti
 
 - `lib/i18n/dictionary.ts` — dizionario e `getTranslation`  
+- `lib/i18n/plan-features-ui.ts` — copy griglia piani/feature (IT/EN)  
 - `lib/i18n/locale-context.tsx` — `locale`, `currency`, `timezone`  
 - `lib/i18n/intl.ts` — formattazione numeri/date  
 - [DESIGN_UX_LOCALE.md](../DESIGN_UX_LOCALE.md) — principi UX locale
