@@ -596,7 +596,9 @@ export default function TranslatePage() {
                       <ul className="space-y-2">
                         {result.noteCulturali.map((note, i) => (
                           <li key={i} className="text-sm text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                            <span className="text-teal-500 mt-1">💡</span>
+                            <span className="text-teal-500 mt-1 shrink-0" aria-hidden>
+                              •
+                            </span>
                             <span>{note}</span>
                           </li>
                         ))}

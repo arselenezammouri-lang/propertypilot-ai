@@ -624,11 +624,26 @@ export default function PerfectCopyPage() {
                     {t.emptySubtitle}
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-6">
-                    <Badge variant="secondary">📋 {t.tabPro}</Badge>
-                    <Badge variant="secondary">💖 {t.tabEmotivo}</Badge>
-                    <Badge variant="secondary">⚡ {t.tabBreve}</Badge>
-                    <Badge variant="secondary">🔍 {t.tabSeo}</Badge>
-                    <Badge variant="secondary">💎 {t.tabLuxury}</Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabPro}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Heart className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabEmotivo}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabBreve}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Search className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabSeo}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Gem className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabLuxury}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
