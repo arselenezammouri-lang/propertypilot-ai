@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, type ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { PropertyCategory } from "@/lib/utils/property-category";
@@ -76,9 +76,23 @@ import {
   User,
   Zap,
   Send,
+  Home,
+  Building2,
+  Globe,
+  ClipboardList,
+  Package,
+  Landmark,
+  Gem,
+  Flame,
+  BarChart3,
+  Smartphone,
+  Palette,
+  Mail,
+  Search,
+  Eye,
 } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { detectLocaleFromLocation, getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale, formatDateTimeForLocale } from "@/lib/i18n/intl";
 import type { Locale } from "@/lib/i18n/config";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
@@ -89,7 +103,13 @@ import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AuraVRGenerator } from "@/components/aura-vr-generator";
 import { GlobalStatsTicker } from "@/components/global-stats-ticker";
-import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
+import {
+  getProspectingPlatform,
+  PROSPECTING_PLATFORM_KEYS,
+  type ProspectingPlatformIconKey,
+} from "@/lib/i18n/prospecting-platforms";
+import { buildProspectingWhatsappMessage } from "@/lib/i18n/prospecting-whatsapp-outreach";
+import type { NextActionIconKey } from "@/lib/ai/next-action-suggestion";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -183,14 +203,42 @@ interface ProspectingFilter {
   listings_found_count: number;
 }
 
-const platformConfig: Record<string, { label: string; emoji: string }> = {
-  idealista: { label: 'Idealista', emoji: '🏠' },
-  immobiliare: { label: 'Immobiliare.it', emoji: '🏘️' },
-  zillow: { label: 'Zillow', emoji: '🇺🇸' },
-  mls: { label: 'MLS', emoji: '📋' },
-  subito: { label: 'Subito.it', emoji: '📦' },
-  casa: { label: 'Casa.it', emoji: '🏡' },
+const NEXT_ACTION_ICON: Record<
+  NextActionIconKey,
+  ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
+> = {
+  barChart: BarChart3,
+  smartphone: Smartphone,
+  palette: Palette,
+  phone: Phone,
+  fileText: FileText,
+  mail: Mail,
+  search: Search,
+  eye: Eye,
 };
+
+const PLATFORM_ICON: Record<
+  ProspectingPlatformIconKey,
+  ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
+> = {
+  home: Home,
+  building2: Building2,
+  globe: Globe,
+  clipboardList: ClipboardList,
+  package: Package,
+  landmark: Landmark,
+};
+
+function PlatformBadge({ sourcePlatform }: { sourcePlatform: string | null | undefined }) {
+  const p = getProspectingPlatform(sourcePlatform);
+  const Icon = PLATFORM_ICON[p.iconKey] ?? Home;
+  return (
+    <Badge variant="outline" className="inline-flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      <span>{p.label}</span>
+    </Badge>
+  );
+}
 
 export default function ProspectingPage() {
   const router = useRouter();
@@ -471,22 +519,17 @@ export default function ProspectingPage() {
     setSelectedListingForMessage(listing);
     setIsSmartMessageModalOpen(true);
 
-    // Genera messaggio WhatsApp persuasivo basato su lingua e caratteristiche
-    const locale = detectLocaleFromLocation(listing.location);
-    const yieldPercent = listing.price && listing.surface 
+    // Messaggio per il proprietario: lingua da location (non dalla UI dashboard)
+    const ownerLocale = detectLocaleFromLocation(listing.location);
+    const yieldPercent = listing.price && listing.surface
       ? ((listing.price / listing.surface) * 0.08).toFixed(1) // Stima yield 8%
       : null;
-    
-    const messages: Record<string, (listing: ExternalListing, yieldPercent: string | null) => string> = {
-      it: (l, y) => `Ciao! 👋 Ho visto il tuo immobile a ${l.location}. ${y ? `Il rendimento del ${y}% è pazzesco!` : 'Sembra un\'opportunità interessante!'} Sarebbe disponibile per una visita? Sono un agente qualificato e ho clienti interessati. 🏠✨`,
-      en: (l, y) => `Hi! 👋 I saw your property in ${l.location}. ${y ? `The ${y}% yield is amazing!` : 'It looks like an interesting opportunity!'} Would you be available for a viewing? I'm a qualified agent with interested clients. 🏠✨`,
-      es: (l, y) => `¡Hola! 👋 Vi tu propiedad en ${l.location}. ${y ? `¡El rendimiento del ${y}% es increíble!` : '¡Parece una oportunidad interesante!'} ¿Estarías disponible para una visita? Soy un agente cualificado con clientes interesados. 🏠✨`,
-      fr: (l, y) => `Bonjour! 👋 J'ai vu votre bien à ${l.location}. ${y ? `Le rendement de ${y}% est incroyable!` : 'Cela semble être une opportunité intéressante!'} Seriez-vous disponible pour une visite? Je suis un agent qualifié avec des clients intéressés. 🏠✨`,
-      de: (l, y) => `Hallo! 👋 Ich habe Ihre Immobilie in ${l.location} gesehen. ${y ? `Die Rendite von ${y}% ist erstaunlich!` : 'Es sieht nach einer interessanten Gelegenheit aus!'} Wären Sie für eine Besichtigung verfügbar? Ich bin ein qualifizierter Makler mit interessierten Kunden. 🏠✨`,
-      pt: (l, y) => `Olá! 👋 Vi seu imóvel em ${l.location}. ${y ? `O rendimento de ${y}% é incrível!` : 'Parece uma oportunidade interessante!'} Estaria disponível para uma visita? Sou um agente qualificado com clientes interessados. 🏠✨`,
-    };
 
-    const message = messages[locale]?.(listing, yieldPercent) || messages.en(listing, yieldPercent);
+    const message = buildProspectingWhatsappMessage(
+      ownerLocale,
+      listing.location,
+      yieldPercent
+    );
     setGeneratedMessage(message);
     
     toast({
@@ -749,11 +792,18 @@ export default function ProspectingPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t.allPlatforms}</SelectItem>
-                      {Object.entries(platformConfig).map(([key, config]) => (
-                        <SelectItem key={key} value={key}>
-                          {config.emoji} {config.label}
-                        </SelectItem>
-                      ))}
+                      {PROSPECTING_PLATFORM_KEYS.map((key) => {
+                        const p = getProspectingPlatform(key);
+                        const Icon = PLATFORM_ICON[p.iconKey] ?? Home;
+                        return (
+                          <SelectItem key={key} value={key}>
+                            <span className="flex items-center gap-2">
+                              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                              <span>{p.label}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -943,8 +993,6 @@ export default function ProspectingPage() {
                           })
                           .map((listing) => {
                           const status = statusConfig[listing.status] || statusConfig.new;
-                          const platform = platformConfig[listing.source_platform] || { label: listing.source_platform, emoji: '🏠' };
-
                           const leadScore = listing.lead_score ?? 0;
                           const isGoldLead = leadScore >= 85; // TOP DEAL threshold
                           const isEliteDeal = leadScore > 90; // ELITE DEAL (SOLDI)
@@ -966,12 +1014,14 @@ export default function ProspectingPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="truncate">{listing.title}</span>
                                     {isEliteDeal && (
-                                      <span className="diamond-soldi-badge">
+                                      <span className="diamond-soldi-badge inline-flex items-center gap-1">
+                                        <Gem className="h-3.5 w-3.5 shrink-0" aria-hidden />
                                         {t.eliteDealBadge}
                                       </span>
                                     )}
                                     {isGoldLead && !isEliteDeal && (
-                                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
+                                      <Badge className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
+                                        <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
                                         {t.topDealBadge}
                                       </Badge>
                                     )}
@@ -1097,9 +1147,7 @@ export default function ProspectingPage() {
                                 )}
                               </TableCell>
                               <TableCell>
-                                <Badge variant="outline">
-                                  {platform.emoji} {platform.label}
-                                </Badge>
+                                <PlatformBadge sourcePlatform={listing.source_platform} />
                               </TableCell>
                               <TableCell>
                                 <Select
@@ -1179,6 +1227,7 @@ export default function ProspectingPage() {
                                     market_gap: marketGap,
                                   });
 
+                                  const NextIcon = NEXT_ACTION_ICON[nextAction.iconKey];
                                   return (
                                     <Badge
                                       variant="outline"
@@ -1188,10 +1237,10 @@ export default function ProspectingPage() {
                                           : nextAction.priority === 'medium'
                                           ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 text-amber-700 dark:text-amber-400'
                                           : 'bg-gray-50 dark:bg-gray-950/30 border-gray-300 text-gray-700 dark:text-gray-400'
-                                      } text-xs cursor-help`}
+                                      } inline-flex items-center gap-1 text-xs cursor-help`}
                                       title={nextAction.reasoning}
                                     >
-                                      <span className="mr-1">{nextAction.icon}</span>
+                                      <NextIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                                       {nextAction.action}
                                     </Badge>
                                   );
@@ -1400,9 +1449,7 @@ export default function ProspectingPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{t.colPlatform}</p>
-                  <Badge>
-                    {platformConfig[selectedListing.source_platform]?.emoji || '🏠'} {platformConfig[selectedListing.source_platform]?.label || selectedListing.source_platform}
-                  </Badge>
+                  <PlatformBadge sourcePlatform={selectedListing.source_platform} />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{t.colStatus}</p>
