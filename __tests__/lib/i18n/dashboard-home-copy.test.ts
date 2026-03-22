@@ -164,4 +164,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itN.planPro).toBe('Pro');
     expect(enN.testChannelsRequired.toLowerCase()).toMatch(/email|whatsapp/);
   });
+
+  it('agencyAssistantPage for IT/EN', () => {
+    const itA = getTranslation('it').dashboard.agencyAssistantPage;
+    const enA = getTranslation('en').dashboard.agencyAssistantPage;
+    expect(itA.quickSuggestions.length).toBe(6);
+    expect(enA.quickSuggestions.every((q) => q.iconKey)).toBe(true);
+    expect(itA.title).toContain('Assistant');
+    expect(enA.backLink).toBe('Dashboard');
+  });
 });

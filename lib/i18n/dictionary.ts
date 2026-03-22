@@ -32,6 +32,8 @@ import {
   notificationsSettingsPageUiEn,
   notificationsSettingsPageUiIt,
 } from '@/lib/i18n/notifications-settings-page-ui';
+import type { AgencyAssistantPageUi } from '@/lib/i18n/agency-assistant-page-ui';
+import { agencyAssistantPageUiEn, agencyAssistantPageUiIt } from '@/lib/i18n/agency-assistant-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -221,6 +223,8 @@ export interface TranslationDictionary {
       agencyBrandingPage: AgencyBrandingPageUi;
       /** `/dashboard/settings/notifications` — Morning Intel */
       notificationsSettingsPage: NotificationsSettingsPageUi;
+      /** `/dashboard/agency-assistant` */
+      agencyAssistantPage: AgencyAssistantPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1044,6 +1048,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       workflowAutomationsPage: workflowAutomationsPageUiIt,
       agencyBrandingPage: agencyBrandingPageUiIt,
       notificationsSettingsPage: notificationsSettingsPageUiIt,
+      agencyAssistantPage: agencyAssistantPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1876,6 +1881,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       workflowAutomationsPage: workflowAutomationsPageUiEn,
       agencyBrandingPage: agencyBrandingPageUiEn,
       notificationsSettingsPage: notificationsSettingsPageUiEn,
+      agencyAssistantPage: agencyAssistantPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

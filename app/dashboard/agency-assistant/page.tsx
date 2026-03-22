@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { ProFeaturePaywall } from "@/components/demo-modal";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
+import { toIntlLocale } from "@/lib/i18n/intl";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { fetchApi } from "@/lib/api/client";
@@ -53,38 +56,14 @@ interface ChatResponse {
   error?: string;
 }
 
-const QUICK_SUGGESTIONS = [
-  { 
-    icon: FileText, 
-    text: "Genera un annuncio per questo immobile",
-    context: "copy"
-  },
-  { 
-    icon: Mail, 
-    text: "Crea un'email di follow-up",
-    context: "email"
-  },
-  { 
-    icon: MessageSquare, 
-    text: "Suggerisci post social",
-    context: "social"
-  },
-  { 
-    icon: Lightbulb, 
-    text: "Come usare Perfect Copy 2.0?",
-    context: "tutorial"
-  },
-  { 
-    icon: Video, 
-    text: "Consigli per video immobiliari",
-    context: "social"
-  },
-  { 
-    icon: Hash, 
-    text: "Migliori hashtag per Instagram",
-    context: "social"
-  },
-];
+const QUICK_ICON_BY_KEY = {
+  file: FileText,
+  mail: Mail,
+  message: MessageSquare,
+  lightbulb: Lightbulb,
+  video: Video,
+  hash: Hash,
+} as const;
 
 const FEATURE_ROUTES: Record<string, string> = {
   'perfect-copy': '/dashboard/perfect-copy',
@@ -114,8 +93,27 @@ export default function AgencyAssistantPage() {
   const { toast } = useToast();
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
   const { plan: usagePlan, isLoading: usagePlanLoading } = useUsageLimits();
-  const isItalian = locale === "it";
   const { handleAPIError } = useAPIErrorHandler();
+
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.agencyAssistantPage,
+    [locale]
+  );
+
+  const premiumRequiredRef = useRef(t.premiumRequired);
+  const responseErrorRef = useRef(t.responseError);
+  premiumRequiredRef.current = t.premiumRequired;
+  responseErrorRef.current = t.responseError;
+
+  const localizedQuickSuggestions = useMemo(
+    () =>
+      t.quickSuggestions.map((s) => ({
+        context: s.context,
+        text: s.text,
+        icon: QUICK_ICON_BY_KEY[s.iconKey],
+      })),
+    [t]
+  );
 
   useEffect(() => {
     if (usagePlanLoading) return;
@@ -126,46 +124,16 @@ export default function AgencyAssistantPage() {
       setUserPlan("free");
     }
   }, [usagePlan, usagePlanLoading]);
-  const localizedQuickSuggestions = isItalian
-    ? QUICK_SUGGESTIONS
-    : [
-        { icon: FileText, text: "Generate a listing for this property", context: "copy" },
-        { icon: Mail, text: "Create a follow-up email", context: "email" },
-        { icon: MessageSquare, text: "Suggest social posts", context: "social" },
-        { icon: Lightbulb, text: "How do I use Perfect Copy 2.0?", context: "tutorial" },
-        { icon: Video, text: "Tips for real estate videos", context: "social" },
-        { icon: Hash, text: "Best hashtags for Instagram", context: "social" },
-      ];
-  const t = {
-    error: isItalian ? "Errore" : "Error",
-    premiumRequired: isItalian
-      ? "L'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : "Agency Assistant AI is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    responseError: isItalian ? "Errore nella risposta" : "Response error",
-    title: "Agency Assistant AI",
-    subtitle: isItalian ? "Il tuo assistente immobiliare 24/7" : "Your real estate assistant 24/7",
-    aiActive: isItalian ? "AI Attivo" : "AI Active",
-    backAria: isItalian ? "Torna alla dashboard" : "Go back to dashboard",
-    paywallDescription: isItalian
-      ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'assistente AI completo."
-      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full AI assistant.",
-    introTitle: isItalian ? "Ciao! Sono il tuo Assistente AI" : "Hi! I am your AI Assistant",
-    introBody: isItalian
-      ? "Sono specializzato in copywriting immobiliare e conosco tutte le funzionalità di PropertyPilot AI. Chiedimi aiuto per annunci, email, post social, strategie di vendita e molto altro!"
-      : "I specialize in real estate copywriting and know every feature inside PropertyPilot AI. Ask me for help with listings, emails, social posts, sales strategy, and much more.",
-    quickStart: isItalian ? "Inizia con un suggerimento rapido" : "Start with a quick suggestion",
-    conversation: isItalian ? "Conversazione" : "Conversation",
-    messages: isItalian ? "messaggi" : "messages",
-    newChat: isItalian ? "Nuova chat" : "New chat",
-    emptyState: isItalian ? "Scrivi un messaggio per iniziare la conversazione" : "Write a message to start the conversation",
-    thinking: isItalian ? "Sto pensando..." : "Thinking...",
-    placeholder: isItalian ? "Scrivi un messaggio..." : "Write a message...",
-    sendAria: isItalian ? "Invia messaggio" : "Send message",
-    inputHint: isItalian
-      ? "Premi Invio per inviare • L'assistente conosce tutte le funzionalità di PropertyPilot AI"
-      : "Press Enter to send • The assistant knows all PropertyPilot AI features",
-  };
-  
+
+  const planBadgeLabel =
+    userPlan === "agency"
+      ? t.planAgency
+      : userPlan === "pro"
+        ? t.planPro
+        : userPlan === "starter"
+          ? t.planStarter
+          : t.planFree;
+
   // Agency Assistant AI is only for PRO and AGENCY plans
   const isLocked = userPlan === "free" || userPlan === "starter";
 
@@ -203,7 +171,7 @@ export default function AgencyAssistantPage() {
           setUserPlan("free");
         }
         const err = new Error(
-          res.message || res.error || t.responseError
+          res.message || res.error || responseErrorRef.current
         ) as Error & { status?: number };
         err.status = res.status;
         throw err;
@@ -211,7 +179,7 @@ export default function AgencyAssistantPage() {
 
       const data = res.data;
       if (!data?.message) {
-        const e = new Error(t.responseError) as Error & { status?: number };
+        const e = new Error(responseErrorRef.current) as Error & { status?: number };
         e.status = 500;
         throw e;
       }
@@ -236,7 +204,7 @@ export default function AgencyAssistantPage() {
           ...premiumFeatureToast(
             feedbackLocale,
             "agencyAssistantChat",
-            error.message || t.premiumRequired
+            error.message || premiumRequiredRef.current
           ),
         });
         return;
@@ -248,7 +216,7 @@ export default function AgencyAssistantPage() {
             feedbackLocale,
             "agencyAssistantChat",
             { status: st, message: error.message },
-            handleAPIError(error, t.responseError)
+            handleAPIError(error, responseErrorRef.current)
           ),
         });
         return;
@@ -324,7 +292,7 @@ export default function AgencyAssistantPage() {
         subtitle={t.subtitle}
         planBadge={
           !usagePlanLoading
-            ? { label: userPlan.toUpperCase(), variant: "secondary" }
+            ? { label: planBadgeLabel, variant: "secondary" }
             : undefined
         }
         actions={
@@ -341,7 +309,7 @@ export default function AgencyAssistantPage() {
                 data-testid="button-back-dashboard"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Dashboard
+                {t.backLink}
               </Button>
             </Link>
           </div>
@@ -469,7 +437,10 @@ export default function AgencyAssistantPage() {
                       )}
                       
                       <p className="text-xs text-muted-foreground mt-1 px-1">
-                        {message.timestamp.toLocaleTimeString(isItalian ? 'it-IT' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {message.timestamp.toLocaleTimeString(
+                          toIntlLocale(locale as Locale),
+                          { hour: '2-digit', minute: '2-digit' }
+                        )}
                       </p>
                     </div>
                     
