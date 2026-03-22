@@ -57,6 +57,10 @@ import {
   listingAuditorPageUiEn,
   listingAuditorPageUiIt,
 } from '@/lib/i18n/listing-auditor-page-ui';
+import type { TransactionTypeUi } from '@/lib/i18n/transaction-type-ui';
+import { transactionTypeUiEn, transactionTypeUiIt } from '@/lib/i18n/transaction-type-ui';
+import type { LeadScorePageUi } from '@/lib/i18n/lead-score-page-ui';
+import { leadScorePageUiEn, leadScorePageUiIt } from '@/lib/i18n/lead-score-page-ui';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -303,6 +307,10 @@ export interface TranslationDictionary {
       listingScraperPage: ListingScraperPageUi;
       /** `/dashboard/auditor` — AI listing audit */
       listingAuditorPage: ListingAuditorPageUi;
+      /** Sale / rent / short-term — shared by listing copy tools */
+      transactionTypes: TransactionTypeUi;
+      /** `/dashboard/lead-score` */
+      leadScorePage: LeadScorePageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1238,6 +1246,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       analyzeLinkPage: analyzeLinkPageUiIt,
       listingScraperPage: listingScraperPageUiIt,
       listingAuditorPage: listingAuditorPageUiIt,
+      transactionTypes: transactionTypeUiIt,
+      leadScorePage: leadScorePageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -2168,6 +2178,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       analyzeLinkPage: analyzeLinkPageUiEn,
       listingScraperPage: listingScraperPageUiEn,
       listingAuditorPage: listingAuditorPageUiEn,
+      transactionTypes: transactionTypeUiEn,
+      leadScorePage: leadScorePageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
