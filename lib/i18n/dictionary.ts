@@ -181,6 +181,18 @@ import { emotionalListingPageUiFr } from '@/lib/i18n/emotional-listing-locales-f
 import { emotionalListingPageUiDe } from '@/lib/i18n/emotional-listing-locales-de';
 import { emotionalListingPageUiPt } from '@/lib/i18n/emotional-listing-locales-pt';
 import { emotionalListingPageUiAr } from '@/lib/i18n/emotional-listing-locales-ar';
+import type { ProspectingModalsUiBundle } from '@/lib/i18n/prospecting-modals-ui';
+import {
+  prospectingModalsUiEn,
+  prospectingModalsUiIt,
+} from '@/lib/i18n/prospecting-modals-ui';
+import {
+  prospectingModalsUiAr,
+  prospectingModalsUiDe,
+  prospectingModalsUiEs,
+  prospectingModalsUiFr,
+  prospectingModalsUiPt,
+} from '@/lib/i18n/prospecting-modals-locales';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -747,7 +759,10 @@ export interface TranslationDictionary {
     calibrationTitle: string;
     calibrationDesc: string;
   };
-  
+
+  /** Prospecting modals (Sniper, Investment, WhatsApp) + X-Ray + Territory Commander chrome */
+  prospectingModals: ProspectingModalsUiBundle;
+
   // Demo page
   demo: {
     nav: { pricing: string; login: string; startFree: string };
@@ -1746,6 +1761,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'Calibrazione in corso',
       calibrationDesc: 'Riprova tra un istante.',
     },
+    prospectingModals: prospectingModalsUiIt,
     errors: {
       somethingWentWrong: 'Qualcosa è andato storto',
       unexpectedError: 'Si è verificato un errore imprevisto. Non ti preoccupare, i tuoi dati sono al sicuro.',
@@ -2731,6 +2747,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'Calibrating',
       calibrationDesc: 'Please try again in a moment.',
     },
+    prospectingModals: prospectingModalsUiEn,
     errors: {
       somethingWentWrong: 'Something went wrong',
       unexpectedError: 'An unexpected error occurred. Don\'t worry, your data is safe.',
@@ -3317,6 +3334,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'Calibrando',
       calibrationDesc: 'Inténtalo de nuevo en un momento.',
     },
+    prospectingModals: prospectingModalsUiEs,
     common: {
       copy: 'Copiar',
       share: 'Compartir',
@@ -3745,6 +3763,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'Calibrage en cours',
       calibrationDesc: 'Réessayez dans un instant.',
     },
+    prospectingModals: prospectingModalsUiFr,
     common: {
       copy: 'Copier',
       share: 'Partager',
@@ -4173,6 +4192,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'Kalibrierung läuft',
       calibrationDesc: 'Bitte versuchen Sie es gleich erneut.',
     },
+    prospectingModals: prospectingModalsUiDe,
     common: {
       copy: 'Kopieren',
       share: 'Teilen',
@@ -4603,6 +4623,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'A calibrar',
       calibrationDesc: 'Tente novamente dentro de instantes.',
     },
+    prospectingModals: prospectingModalsUiPt,
     common: {
       copy: 'Copiar',
       share: 'Compartilhar',
@@ -4839,6 +4860,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationTitle: 'جاري المعايرة',
       calibrationDesc: 'أعد المحاولة بعد لحظات.',
     },
+    prospectingModals: prospectingModalsUiAr,
     common: {
       copy: 'نسخ',
       share: 'مشاركة',
