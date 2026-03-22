@@ -129,6 +129,34 @@ export interface TranslationDictionary {
         unitSqft: string;
         unitSqm: string;
       };
+      profitDashboard: {
+        title: string;
+        hoursSaved: string;
+        hours: string;
+        perListing: string;
+        valueGenerated: string;
+        estimatedValue: string;
+        generatedListings: string;
+        amazing: string;
+        saved10Hours: string;
+      };
+      morningBriefing: {
+        na: string;
+        sent: string;
+        sentDesc: string;
+        error: string;
+        sendError: string;
+        connectionError: string;
+        title: string;
+        subtitle: string;
+        configure: string;
+        priceDown: string;
+        highUrgency: string;
+        target: string;
+        fomo: string;
+        partnerAgencies: string;
+        sendTest: string;
+      };
     };
 
   // Auth (Login / Signup)
@@ -717,6 +745,34 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         unitSqft: 'sq ft',
         unitSqm: 'm²',
       },
+      profitDashboard: {
+        title: 'Il Tuo ROI Questo Mese',
+        hoursSaved: 'Ore Risparmiate',
+        hours: 'ore',
+        perListing: 'min per annuncio',
+        valueGenerated: 'Valore Generato',
+        estimatedValue: 'annuncio stimato',
+        generatedListings: 'Annunci generati',
+        amazing: 'Fantastico!',
+        saved10Hours: 'Hai risparmiato più di 10 ore questo mese',
+      },
+      morningBriefing: {
+        na: 'N/A',
+        sent: 'Notifica di prova inviata!',
+        sentDesc: 'Controlla la tua email e WhatsApp',
+        error: 'Errore',
+        sendError: 'Impossibile inviare la notifica',
+        connectionError: 'Errore di connessione',
+        title: 'Il tuo Briefing di Oggi',
+        subtitle: 'Top 3 opportunità con Market Gap più alto (ultime 24h)',
+        configure: 'Configura',
+        priceDown: 'Prezzo',
+        highUrgency: 'Urgenza Alta',
+        target: 'Target',
+        fomo: 'Questi deal sono stati inviati anche a',
+        partnerAgencies: 'agenzie partner nella tua zona. Affrettati!',
+        sendTest: 'Invia Prova sul mio Cellulare',
+      },
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1302,6 +1358,34 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         regionGlobal: 'Global',
         unitSqft: 'sq ft',
         unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Your ROI This Month',
+        hoursSaved: 'Hours Saved',
+        hours: 'hrs',
+        perListing: 'min per listing',
+        valueGenerated: 'Value Generated',
+        estimatedValue: 'estimated per listing',
+        generatedListings: 'Listings generated',
+        amazing: 'Amazing!',
+        saved10Hours: 'You saved more than 10 hours this month',
+      },
+      morningBriefing: {
+        na: 'N/A',
+        sent: 'Test notification sent!',
+        sentDesc: 'Check your email and WhatsApp',
+        error: 'Error',
+        sendError: 'Unable to send notification',
+        connectionError: 'Connection error',
+        title: 'Your Briefing Today',
+        subtitle: 'Top 3 opportunities with the highest market gap (last 24h)',
+        configure: 'Configure',
+        priceDown: 'Price',
+        highUrgency: 'High Urgency',
+        target: 'Target',
+        fomo: 'These deals have also been sent to',
+        partnerAgencies: 'partner agencies in your area. Move fast!',
+        sendTest: 'Send Test to My Phone',
       },
     },
     auth: {

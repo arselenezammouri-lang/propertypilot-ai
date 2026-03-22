@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, TrendingUp, Sparkles, Target } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 
@@ -23,30 +24,7 @@ export function ProfitDashboard() {
     avgTimePerGeneration: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-  const t = {
-    it: {
-      title: "Il Tuo ROI Questo Mese",
-      hoursSaved: "Ore Risparmiate",
-      hours: "ore",
-      perListing: "min per annuncio",
-      valueGenerated: "Valore Generato",
-      estimatedValue: "annuncio stimato",
-      generatedListings: "Annunci generati",
-      amazing: "Fantastico!",
-      saved10Hours: "Hai risparmiato più di 10 ore questo mese",
-    },
-    en: {
-      title: "Your ROI This Month",
-      hoursSaved: "Hours Saved",
-      hours: "hrs",
-      perListing: "min per listing",
-      valueGenerated: "Value Generated",
-      estimatedValue: "estimated per listing",
-      generatedListings: "Listings generated",
-      amazing: "Amazing!",
-      saved10Hours: "You saved more than 10 hours this month",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.profitDashboard;
 
   useEffect(() => {
     fetchStats();

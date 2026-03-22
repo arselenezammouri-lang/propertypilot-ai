@@ -35,4 +35,13 @@ describe('dashboard home copy (D1)', () => {
     expect(d.regionalPortals.regionEurope).toBe('Europe');
     expect(d.regionalPortals.unitSqm).toBe('m²');
   });
+
+  it('profitDashboard and morningBriefing for IT/EN', () => {
+    const it = getTranslation('it').dashboard;
+    const en = getTranslation('en').dashboard;
+    expect(it.profitDashboard.title).toContain('ROI');
+    expect(en.profitDashboard.hours).toBe('hrs');
+    expect(it.morningBriefing.sendTest).toBeTruthy();
+    expect(en.morningBriefing.subtitle).toContain('market gap');
+  });
 });
