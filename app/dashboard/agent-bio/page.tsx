@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { AgentBioMercatoUi, AgentBioTonoUi } from "@/lib/i18n/agent-bio-page-ui";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -70,12 +72,15 @@ interface FormData {
   mercato: "italia" | "usa" | "internazionale";
 }
 
+type BioVariantKey = "professionale" | "emotiva" | "luxury" | "social" | "website";
+
 export default function AgentBioPage() {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale === "it" ? "it" : "en";
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.agentBioPage;
   const [formData, setFormData] = useState<FormData>({
     nomeAgente: "",
     nomeAgenzia: "",
@@ -92,74 +97,21 @@ export default function AgentBioPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("professionale");
   const { toast } = useToast();
-  const t = {
-    required: isItalian ? "Campo obbligatorio" : "Required field",
-    agentNameRequired: isItalian ? "Inserisci il nome dell'agente" : "Enter the agent name",
-    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
-    specializationRequired: isItalian ? "Inserisci almeno una specializzazione" : "Enter at least one specialization",
-    areaRequired: isItalian ? "Inserisci la zona operativa" : "Enter the service area",
-    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
-    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
-    generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    bioSuccess: isItalian ? "Bio generate con successo!" : "Bios generated successfully!",
-    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    readyVariants: isItalian ? "5 varianti pronte per l'uso" : "5 ready-to-use variants",
-    error: isItalian ? "Errore" : "Error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedText: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    copyAll: isItalian ? "Copia tutto" : "Copy all",
-    opening: isItalian ? "Frase di Apertura" : "Opening Line",
-    fullBio: isItalian ? "Bio Completa" : "Full Bio",
-    skills: isItalian ? "Skills & Punti di Forza" : "Skills & Strengths",
-    salesApproach: isItalian ? "Approccio di Vendita" : "Sales Approach",
-    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    pageSubtitle: isItalian ? "Genera biografie professionali per il tuo personal branding" : "Generate professional bios for your personal branding",
-    agentBranding: isItalian ? "Agent Branding AI" : "Agent Branding AI",
-    agentData: isItalian ? "Dati Agente" : "Agent Data",
-    agentDataDesc: isItalian ? "Inserisci le informazioni per generare 5 varianti di bio" : "Enter the information to generate 5 bio variants",
-    agentName: isItalian ? "Nome Agente" : "Agent Name",
-    agencyName: isItalian ? "Nome Agenzia" : "Agency Name",
-    experienceYears: isItalian ? "Anni di Esperienza" : "Years of Experience",
-    serviceArea: isItalian ? "Zona Operativa" : "Service Area",
-    specializations: isItalian ? "Specializzazioni" : "Specializations",
-    certifications: isItalian ? "Certificazioni / Premi (opzionale)" : "Certifications / Awards (optional)",
-    tone: isItalian ? "Tono della Bio" : "Bio Tone",
-    targetMarket: isItalian ? "Mercato Target" : "Target Market",
-    premiumIncluded: isItalian ? "5 Varianti Premium Incluse" : "5 Premium Variants Included",
-    premiumIncludedDesc: isItalian ? "Professionale, Emotiva, Luxury, Social e Website SEO" : "Professional, Emotional, Luxury, Social, and Website SEO",
-    generating: isItalian ? "Generazione in corso..." : "Generating...",
-    generate5: isItalian ? "Genera 5 Bio AI" : "Generate 5 AI Bios",
-    readyCreate: isItalian ? "Pronto a creare la tua Bio" : "Ready to create your bio",
-    readyCreateDesc: isItalian ? "Compila il form e genera 5 versioni professionali della tua biografia per sito web, social media e materiali di marketing." : "Fill in the form and generate 5 professional versions of your biography for website, social media, and marketing materials.",
-    generating5: isItalian ? "Generazione delle 5 bio in corso..." : "Generating 5 bios...",
-    waitTime: isItalian ? "Questo puo richiedere 15-30 secondi" : "This may take 15-30 seconds",
-    brandingTip: isItalian ? "Consiglio Personal Branding" : "Personal Branding Tip",
+
+  const toneIconMap: Record<AgentBioTonoUi, typeof Briefcase> = {
+    professionale: Briefcase,
+    amichevole: Heart,
+    luxury: Crown,
   };
-  const TONI = isItalian
-    ? [
-        { value: "professionale", label: "Professionale", icon: Briefcase, description: "Formale e autorevole" },
-        { value: "amichevole", label: "Amichevole", icon: Heart, description: "Caldo e accessibile" },
-        { value: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e sofisticato" },
-      ]
-    : [
-        { value: "professionale", label: "Professional", icon: Briefcase, description: "Formal and authoritative" },
-        { value: "amichevole", label: "Friendly", icon: Heart, description: "Warm and approachable" },
-        { value: "luxury", label: "Luxury", icon: Crown, description: "Exclusive and sophisticated" },
-      ];
-  const MERCATI = isItalian
-    ? [
-        { value: "italia", label: "🇮🇹 Italia", description: "Mercato italiano" },
-        { value: "usa", label: "🇺🇸 USA", description: "Mercato americano" },
-        { value: "internazionale", label: "🌍 Internazionale", description: "Clientela globale" },
-      ]
-    : [
-        { value: "italia", label: "🇮🇹 Italy", description: "Italian market" },
-        { value: "usa", label: "🇺🇸 USA", description: "American market" },
-        { value: "internazionale", label: "🌍 International", description: "Global audience" },
-      ];
+
+  const toniOptions = useMemo(
+    () =>
+      t.toneOptions.map((o) => ({
+        ...o,
+        icon: toneIconMap[o.value],
+      })),
+    [t]
+  );
 
   const handleSubmit = async () => {
     if (!formData.nomeAgente.trim()) {
@@ -240,19 +192,18 @@ export default function AgentBioPage() {
     }
   };
 
-  const copyFullBio = async (variant: BioVariant, variantName: string) => {
-    const fullText = `${variant.fraseApertura}\n\n${variant.bio}\n\n${variant.skillsPuntiForza.map(s => `• ${s}`).join('\n')}\n\n${variant.approccioVendita}\n\n${variant.cta}${variant.seoVersion ? `\n\n---\nSEO: ${variant.seoVersion}` : ''}`;
-    copyToClipboard(fullText, `full-${variantName}`);
+  const copyFullBio = async (variant: BioVariant, variantKey: BioVariantKey) => {
+    const fullText = `${variant.fraseApertura}\n\n${variant.bio}\n\n${variant.skillsPuntiForza.map(s => `• ${s}`).join('\n')}\n\n${variant.approccioVendita}\n\n${variant.cta}${variant.seoVersion ? `\n\n---\n${t.seoCopyPrefix} ${variant.seoVersion}` : ''}`;
+    copyToClipboard(fullText, `full-${variantKey}`);
   };
 
-  const getVariantIcon = (variant: string) => {
+  const getVariantIcon = (variant: BioVariantKey) => {
     switch (variant) {
       case "professionale": return <Briefcase className="h-4 w-4" />;
       case "emotiva": return <Heart className="h-4 w-4" />;
       case "luxury": return <Crown className="h-4 w-4" />;
       case "social": return <Instagram className="h-4 w-4" />;
       case "website": return <Globe className="h-4 w-4" />;
-      default: return <Sparkles className="h-4 w-4" />;
     }
   };
 
@@ -267,22 +218,22 @@ export default function AgentBioPage() {
     }
   };
 
-  const renderVariantCard = (variant: BioVariant, variantName: string, icon: JSX.Element, color: string) => (
+  const renderVariantCard = (variant: BioVariant, variantKey: BioVariantKey, icon: JSX.Element, color: string) => (
     <Card className={`border-${color}-200 dark:border-${color}-800`}>
       <CardHeader className={`bg-gradient-to-r from-${color}-50 to-${color}-100/50 dark:from-${color}-900/20 dark:to-${color}-800/10`}>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg capitalize">
             {icon}
-            Bio {variantName}
+            {t.bioCardTitlePrefix} {t.variantDisplayName[variantKey]}
           </CardTitle>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => copyFullBio(variant, variantName)}
+            onClick={() => copyFullBio(variant, variantKey)}
             className="flex items-center gap-1"
-            data-testid={`button-copy-full-${variantName}`}
+            data-testid={`button-copy-full-${variantKey}`}
           >
-            {copiedField === `full-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+            {copiedField === `full-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             {t.copyAll}
           </Button>
         </div>
@@ -294,11 +245,11 @@ export default function AgentBioPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => copyToClipboard(variant.fraseApertura, `apertura-${variantName}`)}
+              onClick={() => copyToClipboard(variant.fraseApertura, `apertura-${variantKey}`)}
               className="h-6 px-2"
-              data-testid={`button-copy-apertura-${variantName}`}
+              data-testid={`button-copy-apertura-${variantKey}`}
             >
-              {copiedField === `apertura-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedField === `apertura-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
           <p className={`text-lg font-semibold text-${color}-700 dark:text-${color}-300 italic`}>
@@ -312,11 +263,11 @@ export default function AgentBioPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => copyToClipboard(variant.bio, `bio-${variantName}`)}
+              onClick={() => copyToClipboard(variant.bio, `bio-${variantKey}`)}
               className="h-6 px-2"
-              data-testid={`button-copy-bio-${variantName}`}
+              data-testid={`button-copy-bio-${variantKey}`}
             >
-              {copiedField === `bio-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedField === `bio-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
           <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
@@ -330,11 +281,11 @@ export default function AgentBioPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => copyToClipboard(variant.skillsPuntiForza.map(s => `• ${s}`).join('\n'), `skills-${variantName}`)}
+              onClick={() => copyToClipboard(variant.skillsPuntiForza.map(s => `• ${s}`).join('\n'), `skills-${variantKey}`)}
               className="h-6 px-2"
-              data-testid={`button-copy-skills-${variantName}`}
+              data-testid={`button-copy-skills-${variantKey}`}
             >
-              {copiedField === `skills-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedField === `skills-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
           <ul className="space-y-1">
@@ -353,11 +304,11 @@ export default function AgentBioPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => copyToClipboard(variant.approccioVendita, `approccio-${variantName}`)}
+              onClick={() => copyToClipboard(variant.approccioVendita, `approccio-${variantKey}`)}
               className="h-6 px-2"
-              data-testid={`button-copy-approccio-${variantName}`}
+              data-testid={`button-copy-approccio-${variantKey}`}
             >
-              {copiedField === `approccio-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedField === `approccio-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
           <p className="text-muted-foreground italic">
@@ -367,15 +318,15 @@ export default function AgentBioPage() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium text-muted-foreground">Call-to-Action</Label>
+            <Label className="text-sm font-medium text-muted-foreground">{t.ctaLabel}</Label>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => copyToClipboard(variant.cta, `cta-${variantName}`)}
+              onClick={() => copyToClipboard(variant.cta, `cta-${variantKey}`)}
               className="h-6 px-2"
-              data-testid={`button-copy-cta-${variantName}`}
+              data-testid={`button-copy-cta-${variantKey}`}
             >
-              {copiedField === `cta-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+              {copiedField === `cta-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
             </Button>
           </div>
           <p className={`font-medium text-${color}-600 dark:text-${color}-400`}>
@@ -386,15 +337,15 @@ export default function AgentBioPage() {
         {variant.seoVersion && (
           <div className={`space-y-2 p-3 rounded-lg bg-${color}-50 dark:bg-${color}-900/20 border border-${color}-200 dark:border-${color}-800`}>
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-muted-foreground">Versione SEO</Label>
+              <Label className="text-sm font-medium text-muted-foreground">{t.seoVersionLabel}</Label>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard(variant.seoVersion!, `seo-${variantName}`)}
+                onClick={() => copyToClipboard(variant.seoVersion!, `seo-${variantKey}`)}
                 className="h-6 px-2"
-                data-testid={`button-copy-seo-${variantName}`}
+                data-testid={`button-copy-seo-${variantKey}`}
               >
-                {copiedField === `seo-${variantName}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                {copiedField === `seo-${variantKey}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -429,12 +380,13 @@ export default function AgentBioPage() {
 
       <DashboardPageHeader
         variant="dark"
-        title={isItalian ? "Agent BIO AI Creator" : "Agent BIO AI Creator"}
+        title={t.pageTitle}
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/90">
-            ✨ {t.agentBranding}
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/90">
+            <Sparkles className="h-3.5 w-3.5 text-sunset-gold shrink-0" aria-hidden />
+            {t.heroBadge}
           </span>
         }
       />
@@ -462,7 +414,7 @@ export default function AgentBioPage() {
                       id="nomeAgente"
                       value={formData.nomeAgente}
                       onChange={(e) => setFormData({ ...formData, nomeAgente: e.target.value })}
-                      placeholder="es. Marco Rossi"
+                      placeholder={t.agentNamePlaceholder}
                       data-testid="input-nome-agente"
                     />
                   </div>
@@ -475,7 +427,7 @@ export default function AgentBioPage() {
                       id="nomeAgenzia"
                       value={formData.nomeAgenzia}
                       onChange={(e) => setFormData({ ...formData, nomeAgenzia: e.target.value })}
-                      placeholder="es. Immobiliare Premium"
+                      placeholder={t.agencyNamePlaceholder}
                       data-testid="input-nome-agenzia"
                     />
                   </div>
@@ -503,7 +455,7 @@ export default function AgentBioPage() {
                       id="zonaOperativa"
                       value={formData.zonaOperativa}
                       onChange={(e) => setFormData({ ...formData, zonaOperativa: e.target.value })}
-                      placeholder="es. Milano Centro, Brianza"
+                      placeholder={t.serviceAreaPlaceholder}
                       data-testid="input-zona-operativa"
                     />
                   </div>
@@ -515,7 +467,7 @@ export default function AgentBioPage() {
                     id="specializzazioni"
                     value={formData.specializzazioni}
                     onChange={(e) => setFormData({ ...formData, specializzazioni: e.target.value })}
-                    placeholder="es. Immobili di lusso, Attici, Ville, Proprietà commerciali, Nuove costruzioni"
+                    placeholder={t.specializationsPlaceholder}
                     rows={2}
                     data-testid="input-specializzazioni"
                   />
@@ -530,7 +482,7 @@ export default function AgentBioPage() {
                     id="certificazioniPremi"
                     value={formData.certificazioniPremi}
                     onChange={(e) => setFormData({ ...formData, certificazioniPremi: e.target.value })}
-                    placeholder="es. Top Producer 2023, Certificato FIAIP, Luxury Property Specialist"
+                    placeholder={t.certificationsPlaceholder}
                     rows={2}
                     data-testid="input-certificazioni"
                   />
@@ -539,13 +491,15 @@ export default function AgentBioPage() {
                 <div className="space-y-2">
                   <Label>{t.tone}</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {TONI.map((tono) => {
+                    {toniOptions.map((tono) => {
                       const Icon = tono.icon;
                       return (
                         <button
                           key={tono.value}
                           type="button"
-                          onClick={() => setFormData({ ...formData, tono: tono.value as any })}
+                          onClick={() =>
+                            setFormData({ ...formData, tono: tono.value as FormData["tono"] })
+                          }
                           className={`p-3 rounded-lg border-2 transition-all text-left ${
                             formData.tono === tono.value
                               ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
@@ -568,16 +522,18 @@ export default function AgentBioPage() {
                   <Label>{t.targetMarket}</Label>
                   <Select
                     value={formData.mercato}
-                    onValueChange={(value) => setFormData({ ...formData, mercato: value as any })}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, mercato: value as AgentBioMercatoUi })
+                    }
                   >
                     <SelectTrigger data-testid="select-mercato">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {MERCATI.map((mercato) => (
+                      {t.marketOptions.map((mercato) => (
                         <SelectItem key={mercato.value} value={mercato.value}>
                           <span className="flex items-center gap-2">
-                            {mercato.label} - {mercato.description}
+                            {mercato.label} — {mercato.description}
                           </span>
                         </SelectItem>
                       ))}
@@ -663,23 +619,23 @@ export default function AgentBioPage() {
                   <TabsList className="grid w-full grid-cols-5 h-auto p-1" data-testid="tabs-variants">
                     <TabsTrigger value="professionale" className="flex flex-col gap-1 py-2 data-[state=active]:bg-indigo-100 dark:data-[state=active]:bg-indigo-900/30">
                       <Briefcase className="h-4 w-4" />
-                      <span className="text-xs">Pro</span>
+                      <span className="text-xs">{t.tabPro}</span>
                     </TabsTrigger>
                     <TabsTrigger value="emotiva" className="flex flex-col gap-1 py-2 data-[state=active]:bg-rose-100 dark:data-[state=active]:bg-rose-900/30">
                       <Heart className="h-4 w-4" />
-                      <span className="text-xs">Emotiva</span>
+                      <span className="text-xs">{t.tabEmotional}</span>
                     </TabsTrigger>
                     <TabsTrigger value="luxury" className="flex flex-col gap-1 py-2 data-[state=active]:bg-amber-100 dark:data-[state=active]:bg-amber-900/30">
                       <Crown className="h-4 w-4" />
-                      <span className="text-xs">Luxury</span>
+                      <span className="text-xs">{t.tabLuxury}</span>
                     </TabsTrigger>
                     <TabsTrigger value="social" className="flex flex-col gap-1 py-2 data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900/30">
                       <Instagram className="h-4 w-4" />
-                      <span className="text-xs">Social</span>
+                      <span className="text-xs">{t.tabSocial}</span>
                     </TabsTrigger>
                     <TabsTrigger value="website" className="flex flex-col gap-1 py-2 data-[state=active]:bg-cyan-100 dark:data-[state=active]:bg-cyan-900/30">
                       <Globe className="h-4 w-4" />
-                      <span className="text-xs">Website</span>
+                      <span className="text-xs">{t.tabWebsite}</span>
                     </TabsTrigger>
                   </TabsList>
 

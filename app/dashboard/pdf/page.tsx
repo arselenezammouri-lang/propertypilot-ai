@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,6 +41,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { PdfSheetPageUi } from "@/lib/i18n/pdf-sheet-page-ui";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -52,29 +54,38 @@ import {
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
 
-const pdfFormSchema = z.object({
-  title: z.string().min(1, "Il titolo è obbligatorio"),
-  description: z.string().min(10, "La descrizione deve avere almeno 10 caratteri"),
-  surface: z.string().optional(),
-  rooms: z.string().optional(),
-  bathrooms: z.string().optional(),
-  price: z.string().optional(),
-  address: z.string().optional(),
-  status: z.string().optional(),
-  propertyType: z.string().optional(),
-  floor: z.string().optional(),
-  energyClass: z.string().optional(),
-  yearBuilt: z.string().optional(),
-  parking: z.string().optional(),
-  heating: z.string().optional(),
-  aiRewrite: z.string().optional(),
-  agentName: z.string().optional(),
-  agentPhone: z.string().optional(),
-  agentEmail: z.string().optional(),
-  template: z.enum(["modern", "luxury"]).default("modern"),
-});
+function createPdfFormSchema(t: PdfSheetPageUi) {
+  return z.object({
+    title: z.string().min(1, t.zodTitleRequired),
+    description: z.string().min(10, t.zodDescriptionMin),
+    surface: z.string().optional(),
+    rooms: z.string().optional(),
+    bathrooms: z.string().optional(),
+    price: z.string().optional(),
+    address: z.string().optional(),
+    status: z.string().optional(),
+    propertyType: z.string().optional(),
+    floor: z.string().optional(),
+    energyClass: z.string().optional(),
+    yearBuilt: z.string().optional(),
+    parking: z.string().optional(),
+    heating: z.string().optional(),
+    aiRewrite: z.string().optional(),
+    agentName: z.string().optional(),
+    agentPhone: z.string().optional(),
+    agentEmail: z.string().optional(),
+    template: z.enum(["modern", "luxury"]).default("modern"),
+  });
+}
 
-type PdfFormData = z.infer<typeof pdfFormSchema>;
+type PdfFormData = z.infer<ReturnType<typeof createPdfFormSchema>>;
+
+type PdfApiSuccessPayload = {
+  success: boolean;
+  pdfBase64?: string;
+  fileName?: string;
+  error?: string;
+};
 
 interface AgencyBranding {
   id: number;
@@ -95,67 +106,16 @@ export default function PdfGeneratorPage() {
   const [generatedPdf, setGeneratedPdf] = useState<{ base64: string; fileName: string } | null>(null);
   const [useAgencyBranding, setUseAgencyBranding] = useState(false);
   const [agencyBranding, setAgencyBranding] = useState<AgencyBranding | null>(null);
-  const [loadingBranding, setLoadingBranding] = useState(true);
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale === "it" ? "it" : "en";
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
-
-  const t = {
-    pageTitle: isItalian ? "Scheda Immobile PDF" : "Property PDF Sheet",
-    pageSubtitle: isItalian ? "Crea schede professionali per i tuoi annunci" : "Create professional sheets for your listings",
-    backDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    // toasts
-    pdfGenerated: isItalian ? "PDF Generato!" : "PDF Generated!",
-    pdfGeneratedDesc: isItalian ? "La tua scheda immobile è pronta per il download." : "Your property sheet is ready for download.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    limitReached: isItalian ? "Limite raggiunto" : "Limit reached",
-    maxImages: isItalian ? "Puoi aggiungere massimo 6 immagini" : "You can add a maximum of 6 images",
-    invalidUrl: isItalian ? "URL non valido" : "Invalid URL",
-    invalidUrlDesc: isItalian ? "Inserisci un URL valido per l'immagine" : "Enter a valid URL for the image",
-    pdfError: isItalian ? "Errore durante la generazione del PDF" : "Error during PDF generation",
-    // form
-    templateSection: isItalian ? "Template" : "Template",
-    templateModern: isItalian ? "Moderno" : "Modern",
-    templateLuxury: isItalian ? "Luxury" : "Luxury",
-    propertyInfoSection: isItalian ? "Informazioni Immobile" : "Property Information",
-    titleLabel: isItalian ? "Titolo Annuncio *" : "Listing Title *",
-    titlePlaceholder: isItalian ? "es. Luminoso trilocale con terrazza" : "e.g. Bright 3-bedroom with terrace",
-    descLabel: isItalian ? "Descrizione *" : "Description *",
-    descPlaceholder: isItalian ? "Descrivi l'immobile in dettaglio..." : "Describe the property in detail...",
-    surfaceLabel: isItalian ? "Superficie (m²)" : "Surface (m²)",
-    roomsLabel: isItalian ? "Locali" : "Rooms",
-    bathroomsLabel: isItalian ? "Bagni" : "Bathrooms",
-    priceLabel: isItalian ? "Prezzo" : "Price",
-    addressLabel: isItalian ? "Indirizzo" : "Address",
-    statusLabel: isItalian ? "Stato" : "Status",
-    propertyTypeLabel: isItalian ? "Tipo Immobile" : "Property Type",
-    floorLabel: isItalian ? "Piano" : "Floor",
-    energyLabel: isItalian ? "Classe Energetica" : "Energy Class",
-    yearLabel: isItalian ? "Anno Costruzione" : "Year Built",
-    parkingLabel: isItalian ? "Parcheggio" : "Parking",
-    heatingLabel: isItalian ? "Riscaldamento" : "Heating",
-    imagesSection: isItalian ? "Immagini" : "Images",
-    addImagePlaceholder: "https://example.com/photo.jpg",
-    addImageBtn: isItalian ? "Aggiungi" : "Add",
-    aiRewriteSection: isItalian ? "Riscrittura AI (opzionale)" : "AI Rewrite (optional)",
-    aiRewriteLabel: isItalian ? "Testo da riscrivere con AI" : "Text to rewrite with AI",
-    agentSection: isItalian ? "Dati Agente" : "Agent Details",
-    agentNameLabel: isItalian ? "Nome Agente" : "Agent Name",
-    agentPhoneLabel: isItalian ? "Telefono" : "Phone",
-    agentEmailLabel: isItalian ? "Email" : "Email",
-    brandingSection: isItalian ? "Branding Agenzia" : "Agency Branding",
-    useBrandingLabel: isItalian ? "Usa branding agenzia (White Label)" : "Use agency branding (White Label)",
-    brandingLoadingLabel: isItalian ? "Caricamento branding..." : "Loading branding...",
-    generateBtn: isItalian ? "Genera PDF" : "Generate PDF",
-    generatingBtn: isItalian ? "Generazione..." : "Generating...",
-    downloadBtn: isItalian ? "Scarica PDF" : "Download PDF",
-    regenerateBtn: isItalian ? "Rigenera" : "Regenerate",
-    previewSection: isItalian ? "Anteprima PDF" : "PDF Preview",
-    previewReady: isItalian ? "PDF pronto per il download" : "PDF ready for download",
-  };
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.pdfSheetPage;
+  const pdfSchema = useMemo(() => createPdfFormSchema(t), [t]);
+  const pdfSchemaRef = useRef(pdfSchema);
+  pdfSchemaRef.current = pdfSchema;
 
   useEffect(() => {
     fetch("/api/agency-branding")
@@ -165,12 +125,12 @@ export default function PdfGeneratorPage() {
           setAgencyBranding(data.branding);
         }
       })
-      .catch(console.error)
-      .finally(() => setLoadingBranding(false));
+      .catch(console.error);
   }, []);
 
   const form = useForm<PdfFormData>({
-    resolver: zodResolver(pdfFormSchema),
+    resolver: async (values, ctx, opts) =>
+      zodResolver(pdfSchemaRef.current)(values, ctx, opts),
     defaultValues: {
       title: "",
       description: "",
@@ -224,7 +184,7 @@ export default function PdfGeneratorPage() {
 
       let res;
       try {
-        res = await fetchApi<PdfApiSuccess>("/api/generate-pdf", {
+        res = await fetchApi<PdfApiSuccessPayload>("/api/generate-pdf", {
           method: "POST",
           body: JSON.stringify(payload),
         });
@@ -336,7 +296,7 @@ export default function PdfGeneratorPage() {
     const first = Object.values(form.formState.errors)[0];
     const msg =
       (first?.message as string | undefined) ||
-      (isItalian ? "Controlla i campi obbligatori." : "Check required fields.");
+      t.checkRequiredFields;
     const v = validationToast(feedbackLocale, "pdfSheets", msg);
     toast({ title: v.title, description: v.description, variant: "destructive" });
   };
@@ -379,7 +339,7 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up" data-testid="card-template-selector">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-sunset-gold" />
-                    Scegli il Template
+                    {t.chooseTemplateHeading}
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div
@@ -396,8 +356,8 @@ export default function PdfGeneratorPage() {
                           <Building2 className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-electric-blue">Modern Real Estate</h4>
-                          <p className="text-xs text-muted-foreground">Professionale e moderno</p>
+                          <h4 className="font-bold text-electric-blue">{t.templateModernTitle}</h4>
+                          <p className="text-xs text-muted-foreground">{t.templateModernDesc}</p>
                         </div>
                       </div>
                       {selectedTemplate === "modern" && (
@@ -419,8 +379,8 @@ export default function PdfGeneratorPage() {
                           <Crown className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-sunset-gold">Luxury Premium</h4>
-                          <p className="text-xs text-muted-foreground">Elegante e raffinato</p>
+                          <h4 className="font-bold text-sunset-gold">{t.templateLuxuryTitle}</h4>
+                          <p className="text-xs text-muted-foreground">{t.templateLuxuryDesc}</p>
                         </div>
                       </div>
                       {selectedTemplate === "luxury" && (
@@ -433,7 +393,7 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up delay-50" data-testid="card-branding-mode">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <Palette className="h-5 w-5 text-indigo-500" />
-                    Branding PDF
+                    {t.brandingPdfHeading}
                   </h3>
                   
                   <div className="space-y-4">
@@ -443,12 +403,17 @@ export default function PdfGeneratorPage() {
                           <Building2 className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h4 className="font-semibold">Branding Agenzia (White Label)</h4>
+                          <h4 className="font-semibold">{t.brandingAgencyTitle}</h4>
                           <p className="text-sm text-muted-foreground">
                             {agencyBranding ? (
-                              <>Usa il brand di <span className="font-medium text-indigo-600">{agencyBranding.agency_name}</span></>
+                              <>
+                                {t.brandingUseAgencyWithName.replace(
+                                  "{name}",
+                                  agencyBranding.agency_name
+                                )}
+                              </>
                             ) : (
-                              "Configura prima il branding della tua agenzia"
+                              t.brandingConfigureFirst
                             )}
                           </p>
                         </div>
@@ -459,7 +424,7 @@ export default function PdfGeneratorPage() {
                           <Link href="/dashboard/agency-branding">
                             <Button variant="outline" size="sm" className="border-indigo-300">
                               <ExternalLink className="h-4 w-4 mr-1" />
-                              Configura
+                              {t.brandingConfigureCta}
                             </Button>
                           </Link>
                         )}
@@ -479,28 +444,28 @@ export default function PdfGeneratorPage() {
                             className="w-6 h-6 rounded border"
                             style={{ backgroundColor: agencyBranding.primary_color }}
                           />
-                          <span className="text-xs text-muted-foreground">Primario</span>
+                          <span className="text-xs text-muted-foreground">{t.colorPrimary}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <div 
                             className="w-6 h-6 rounded border"
                             style={{ backgroundColor: agencyBranding.secondary_color }}
                           />
-                          <span className="text-xs text-muted-foreground">Secondario</span>
+                          <span className="text-xs text-muted-foreground">{t.colorSecondary}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <div 
                             className="w-6 h-6 rounded border"
                             style={{ backgroundColor: agencyBranding.accent_color }}
                           />
-                          <span className="text-xs text-muted-foreground">Accento</span>
+                          <span className="text-xs text-muted-foreground">{t.colorAccent}</span>
                         </div>
                       </div>
                     )}
                     
                     {!useAgencyBranding && (
                       <p className="text-sm text-muted-foreground">
-                        Il PDF verrà generato con il branding PropertyPilot AI
+                        {t.brandingDefaultPropertyPilot}
                       </p>
                     )}
                   </div>
@@ -520,8 +485,8 @@ export default function PdfGeneratorPage() {
                         <FormItem>
                           <FormLabel>{t.titleLabel}</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder={isItalian ? "Es: Villa di Lusso con Vista Mare" : "e.g. Luxury Villa with Sea View"} 
+                            <Input
+                              placeholder={t.titlePlaceholder}
                               {...field} 
                               data-testid="input-title"
                             />
@@ -560,8 +525,8 @@ export default function PdfGeneratorPage() {
                             {t.aiRewriteSection}
                           </FormLabel>
                           <FormControl>
-                            <Textarea 
-                              placeholder={isItalian ? "Incolla qui la versione riscritta dall'AI..." : "Paste the AI rewritten version here..."}
+                            <Textarea
+                              placeholder={t.aiRewritePlaceholder}
                               className="min-h-[100px] border-sunset-gold/30"
                               {...field} 
                               data-testid="input-ai-rewrite"
@@ -576,7 +541,7 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up delay-150" data-testid="card-features">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <Ruler className="h-5 w-5 text-neon-aqua" />
-                    Caratteristiche
+                    {t.featuresSection}
                   </h3>
                   
                   <div className="grid md:grid-cols-3 gap-4">
@@ -589,7 +554,7 @@ export default function PdfGeneratorPage() {
                             <Award className="h-3 w-3" /> {t.priceLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="€ 450.000" {...field} data-testid="input-price" />
+                            <Input placeholder={t.pricePlaceholder} {...field} data-testid="input-price" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -601,10 +566,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Ruler className="h-3 w-3" /> Superficie
+                            <Ruler className="h-3 w-3" /> {t.surfaceLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="120 mq" {...field} data-testid="input-surface" />
+                            <Input placeholder={t.surfacePlaceholder} {...field} data-testid="input-surface" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -616,10 +581,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <BedDouble className="h-3 w-3" /> Locali
+                            <BedDouble className="h-3 w-3" /> {t.roomsLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="4 locali" {...field} data-testid="input-rooms" />
+                            <Input placeholder={t.roomsPlaceholder} {...field} data-testid="input-rooms" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -631,10 +596,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Bath className="h-3 w-3" /> Bagni
+                            <Bath className="h-3 w-3" /> {t.bathroomsLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="2 bagni" {...field} data-testid="input-bathrooms" />
+                            <Input placeholder={t.bathroomsPlaceholder} {...field} data-testid="input-bathrooms" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -646,10 +611,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Layers className="h-3 w-3" /> Piano
+                            <Layers className="h-3 w-3" /> {t.floorLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="3° piano" {...field} data-testid="input-floor" />
+                            <Input placeholder={t.floorPlaceholder} {...field} data-testid="input-floor" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -661,10 +626,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Building2 className="h-3 w-3" /> Tipologia
+                            <Building2 className="h-3 w-3" /> {t.propertyTypeShortLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Appartamento" {...field} data-testid="input-property-type" />
+                            <Input placeholder={t.propertyTypePlaceholder} {...field} data-testid="input-property-type" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -676,10 +641,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3" /> Indirizzo
+                            <MapPin className="h-3 w-3" /> {t.addressLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Via Roma, 15 - Milano" {...field} data-testid="input-address" />
+                            <Input placeholder={t.addressPlaceholder} {...field} data-testid="input-address" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -691,10 +656,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Zap className="h-3 w-3" /> Stato
+                            <Zap className="h-3 w-3" /> {t.statusLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Ottimo stato" {...field} data-testid="input-status" />
+                            <Input placeholder={t.statusPlaceholder} {...field} data-testid="input-status" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -706,10 +671,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Zap className="h-3 w-3" /> Classe Energetica
+                            <Zap className="h-3 w-3" /> {t.energyLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="A+" {...field} data-testid="input-energy-class" />
+                            <Input placeholder={t.energyPlaceholder} {...field} data-testid="input-energy-class" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -721,10 +686,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" /> Anno
+                            <Calendar className="h-3 w-3" /> {t.yearLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="2020" {...field} data-testid="input-year-built" />
+                            <Input placeholder={t.yearPlaceholder} {...field} data-testid="input-year-built" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -736,10 +701,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Thermometer className="h-3 w-3" /> Riscaldamento
+                            <Thermometer className="h-3 w-3" /> {t.heatingLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Autonomo" {...field} data-testid="input-heating" />
+                            <Input placeholder={t.heatingPlaceholder} {...field} data-testid="input-heating" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -751,10 +716,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Car className="h-3 w-3" /> Parcheggio
+                            <Car className="h-3 w-3" /> {t.parkingLabel}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Box auto" {...field} data-testid="input-parking" />
+                            <Input placeholder={t.parkingPlaceholder} {...field} data-testid="input-parking" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -765,13 +730,13 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up delay-200" data-testid="card-images">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <ImageIcon className="h-5 w-5 text-electric-blue" />
-                    Immagini (max 6)
+                    {t.imagesSection}
                   </h3>
                   
                   <div className="flex gap-2 mb-4">
                     <Input
                       type="url"
-                      placeholder="Incolla URL immagine..."
+                      placeholder={t.imageUrlPlaceholder}
                       value={newImageUrl}
                       onChange={(e) => setNewImageUrl(e.target.value)}
                       className="flex-1"
@@ -784,7 +749,7 @@ export default function PdfGeneratorPage() {
                       className="border-electric-blue/30 hover:border-electric-blue"
                       data-testid="button-add-image"
                     >
-                      Aggiungi
+                      {t.addImageBtn}
                     </Button>
                   </div>
 
@@ -795,10 +760,14 @@ export default function PdfGeneratorPage() {
                           {/* eslint-disable-next-line @next/next/no-img-element -- dynamic user-uploaded URLs */}
                           <img
                             src={url}
-                            alt={`Immagine ${index + 1}`}
+                            alt={t.imageAltTemplate.replace("{n}", String(index + 1))}
                             className="w-full h-24 object-cover rounded-lg border border-silver-frost/30"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="%23f0f0f0" width="100" height="100"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23999">Errore</text></svg>';
+                              (e.target as HTMLImageElement).src =
+                                'data:image/svg+xml,' +
+                                encodeURIComponent(
+                                  `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#f0f0f0" width="100" height="100"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#999">${t.imageLoadError}</text></svg>`
+                                );
                             }}
                           />
                           <button
@@ -816,7 +785,7 @@ export default function PdfGeneratorPage() {
                   
                   {imageUrls.length === 0 && (
                     <p className="text-muted-foreground text-sm text-center py-4">
-                      Aggiungi fino a 6 immagini per la scheda PDF
+                      {t.imagesEmptyHint}
                     </p>
                   )}
                 </div>
@@ -824,7 +793,7 @@ export default function PdfGeneratorPage() {
                 <div className="futuristic-card p-6 animate-fade-in-up delay-250" data-testid="card-agent-info">
                   <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                     <User className="h-5 w-5 text-royal-purple" />
-                    Info Agente (opzionale)
+                    {t.agentSectionHeading}
                   </h3>
                   
                   <div className="grid md:grid-cols-3 gap-4">
@@ -834,10 +803,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <User className="h-3 w-3" /> Nome
+                            <User className="h-3 w-3" /> {t.agentNameShort}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="Mario Rossi" {...field} data-testid="input-agent-name" />
+                            <Input placeholder={t.agentNamePlaceholder} {...field} data-testid="input-agent-name" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -849,10 +818,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" /> Telefono
+                            <Phone className="h-3 w-3" /> {t.agentPhoneShort}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="+39 333 1234567" {...field} data-testid="input-agent-phone" />
+                            <Input placeholder={t.agentPhonePlaceholder} {...field} data-testid="input-agent-phone" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -864,10 +833,10 @@ export default function PdfGeneratorPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" /> Email
+                            <Mail className="h-3 w-3" /> {t.agentEmailShort}
                           </FormLabel>
                           <FormControl>
-                            <Input placeholder="mario@agenzia.it" {...field} data-testid="input-agent-email" />
+                            <Input placeholder={t.agentEmailPlaceholder} {...field} data-testid="input-agent-email" />
                           </FormControl>
                         </FormItem>
                       )}
@@ -884,12 +853,12 @@ export default function PdfGeneratorPage() {
                   {generatePdfMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Generazione in corso...
+                      {t.generatingBtn}
                     </>
                   ) : (
                     <>
                       <FileText className="mr-2 h-5 w-5" />
-                      Genera Scheda PDF
+                      {t.generateBtn}
                     </>
                   )}
                 </Button>
@@ -905,9 +874,9 @@ export default function PdfGeneratorPage() {
                     <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-500 to-neon-aqua rounded-2xl flex items-center justify-center shadow-glow-aqua">
                       <CheckCircle className="h-8 w-8 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-green-500 mb-2">PDF Pronto!</h3>
+                    <h3 className="text-xl font-bold text-green-500 mb-2">{t.sidebarReadyTitle}</h3>
                     <p className="text-muted-foreground text-sm mb-4">
-                      La tua scheda immobile è stata generata con successo
+                      {t.sidebarReadyDesc}
                     </p>
                     <Button
                       onClick={downloadPdf}
@@ -915,7 +884,7 @@ export default function PdfGeneratorPage() {
                       data-testid="button-download-pdf"
                     >
                       <Download className="mr-2 h-5 w-5" />
-                      Scarica PDF
+                      {t.downloadBtn}
                     </Button>
                   </div>
                 </div>
@@ -925,9 +894,9 @@ export default function PdfGeneratorPage() {
                     <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-royal-purple/30 to-electric-blue/20 rounded-2xl flex items-center justify-center">
                       <FileText className="h-8 w-8 text-royal-purple" />
                     </div>
-                    <h3 className="text-lg font-bold mb-2 gradient-text-purple">Anteprima PDF</h3>
+                    <h3 className="text-lg font-bold mb-2 gradient-text-purple">{t.previewTitle}</h3>
                     <p className="text-muted-foreground text-sm">
-                      Compila i dati e genera la tua scheda PDF professionale
+                      {t.previewDesc}
                     </p>
                   </div>
                 </div>
@@ -936,24 +905,24 @@ export default function PdfGeneratorPage() {
               <div className="futuristic-card p-6 border-sunset-gold/30" data-testid="card-tips">
                 <h4 className="font-bold text-sunset-gold mb-3 flex items-center gap-2">
                   <Sparkles className="h-4 w-4" />
-                  Consigli Pro
+                  {t.proTipsTitle}
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Usa immagini di alta qualità (almeno 800px)</span>
+                    <span>{t.proTipHighRes}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>La prima immagine sarà l'hero principale</span>
+                    <span>{t.proTipFirstImage}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Aggiungi la versione AI per un impatto premium</span>
+                    <span>{t.proTipAiVersion}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <span>Il template Luxury è ideale per immobili di pregio</span>
+                    <span>{t.proTipLuxury}</span>
                   </li>
                 </ul>
               </div>

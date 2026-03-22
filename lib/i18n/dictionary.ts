@@ -153,6 +153,15 @@ import { leadScorePageUiFr } from '@/lib/i18n/lead-score-page-locales-fr';
 import { leadScorePageUiDe } from '@/lib/i18n/lead-score-page-locales-de';
 import { leadScorePageUiPt } from '@/lib/i18n/lead-score-page-locales-pt';
 import { leadScorePageUiAr } from '@/lib/i18n/lead-score-page-locales-ar';
+import type { PdfSheetPageUi } from '@/lib/i18n/pdf-sheet-page-ui';
+import { pdfSheetPageUiEn, pdfSheetPageUiIt } from '@/lib/i18n/pdf-sheet-page-ui';
+import type { AgentBioPageUi } from '@/lib/i18n/agent-bio-page-ui';
+import { agentBioPageUiEn, agentBioPageUiIt } from '@/lib/i18n/agent-bio-page-ui';
+import { pdfSheetPageUiEs, agentBioPageUiEs } from '@/lib/i18n/pdf-agent-bio-locales-es';
+import { pdfSheetPageUiFr, agentBioPageUiFr } from '@/lib/i18n/pdf-agent-bio-locales-fr';
+import { pdfSheetPageUiDe, agentBioPageUiDe } from '@/lib/i18n/pdf-agent-bio-locales-de';
+import { pdfSheetPageUiPt, agentBioPageUiPt } from '@/lib/i18n/pdf-agent-bio-locales-pt';
+import { pdfSheetPageUiAr, agentBioPageUiAr } from '@/lib/i18n/pdf-agent-bio-locales-ar';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -415,6 +424,10 @@ export interface TranslationDictionary {
       transactionTypes: TransactionTypeUi;
       /** `/dashboard/lead-score` */
       leadScorePage: LeadScorePageUi;
+      /** `/dashboard/pdf` */
+      pdfSheetPage: PdfSheetPageUi;
+      /** `/dashboard/agent-bio` */
+      agentBioPage: AgentBioPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1358,6 +1371,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       socialPostsPage: socialPostsPageUiIt,
       transactionTypes: transactionTypeUiIt,
       leadScorePage: leadScorePageUiIt,
+      pdfSheetPage: pdfSheetPageUiIt,
+      agentBioPage: agentBioPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -2296,6 +2311,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       socialPostsPage: socialPostsPageUiEn,
       transactionTypes: transactionTypeUiEn,
       leadScorePage: leadScorePageUiEn,
+      pdfSheetPage: pdfSheetPageUiEn,
+      agentBioPage: agentBioPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
@@ -3043,6 +3060,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...listingToolsLocalesEs,
       ...listingContentToolsLocalesEs,
       leadScorePage: leadScorePageUiEs,
+      pdfSheetPage: pdfSheetPageUiEs,
+      agentBioPage: agentBioPageUiEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3424,6 +3443,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...listingToolsLocalesFr,
       ...listingContentToolsLocalesFr,
       leadScorePage: leadScorePageUiFr,
+      pdfSheetPage: pdfSheetPageUiFr,
+      agentBioPage: agentBioPageUiFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3805,6 +3826,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...listingToolsLocalesDe,
       ...listingContentToolsLocalesDe,
       leadScorePage: leadScorePageUiDe,
+      pdfSheetPage: pdfSheetPageUiDe,
+      agentBioPage: agentBioPageUiDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4188,6 +4211,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...listingToolsLocalesPt,
       ...listingContentToolsLocalesPt,
       leadScorePage: leadScorePageUiPt,
+      pdfSheetPage: pdfSheetPageUiPt,
+      agentBioPage: agentBioPageUiPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4377,6 +4402,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...listingToolsLocalesAr,
       ...listingContentToolsLocalesAr,
       leadScorePage: leadScorePageUiAr,
+      pdfSheetPage: pdfSheetPageUiAr,
+      agentBioPage: agentBioPageUiAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
