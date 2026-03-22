@@ -113,17 +113,18 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
 
   const handleCopyLink = async () => {
     if (!vrLink) return;
+    const av = t.auraVR;
 
     try {
       await navigator.clipboard.writeText(vrLink);
       toast({
-        title: "Link copiato!",
-        description: "Il link VR è stato copiato negli appunti",
+        title: av.toast.copySuccessTitle,
+        description: av.toast.copySuccessDesc,
       });
-    } catch (error) {
+    } catch {
       toast({
-        title: "Errore",
-        description: "Impossibile copiare il link",
+        title: av.toast.copyErrorTitle,
+        description: av.toast.copyErrorDesc,
         variant: "destructive",
       });
     }
@@ -132,17 +133,7 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
   const handleShareWhatsApp = () => {
     if (!vrLink) return;
 
-    // Traduzioni messaggio WhatsApp VR
-    const vrMessages: Record<string, string> = {
-      it: `🏠 Ciao! Ho preparato un tour VR immersivo per te:\n\n${vrLink}\n\nApri il link sul tuo smartphone per esplorare l'immobile in realtà virtuale! 🥽`,
-      en: `🏠 Hi! I've prepared an immersive VR tour for you:\n\n${vrLink}\n\nOpen the link on your smartphone to explore the property in virtual reality! 🥽`,
-      es: `🏠 ¡Hola! He preparado un tour VR inmersivo para ti:\n\n${vrLink}\n\n¡Abre el enlace en tu smartphone para explorar la propiedad en realidad virtual! 🥽`,
-      fr: `🏠 Bonjour! J'ai préparé une visite VR immersive pour vous:\n\n${vrLink}\n\nOuvrez le lien sur votre smartphone pour explorer la propriété en réalité virtuelle! 🥽`,
-      de: `🏠 Hallo! Ich habe eine immersive VR-Tour für dich vorbereitet:\n\n${vrLink}\n\nÖffne den Link auf deinem Smartphone, um die Immobilie in Virtual Reality zu erkunden! 🥽`,
-      ar: `🏠 مرحباً! لقد أعددت جولة VR غامرة لك:\n\n${vrLink}\n\nافتح الرابط على هاتفك الذكي لاستكشاف العقار في الواقع الافتراضي! 🥽`,
-    };
-
-    const message = encodeURIComponent(vrMessages[detectedLocale] || vrMessages['it']);
+    const message = encodeURIComponent(t.auraVR.whatsappVrBody.replace("{link}", vrLink));
     const whatsappUrl = `https://wa.me/?text=${message}`;
     window.open(whatsappUrl, "_blank");
   };
@@ -274,10 +265,8 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
               {/* Triple-View Selection */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <h5 className="text-sm font-semibold text-white mb-2">Triple Perspective - Massimo Standard di Lusso</h5>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    Scegli la modalità di visualizzazione per il tuo tour VR
-                  </p>
+                  <h5 className="text-sm font-semibold text-white mb-2">{t.auraVR.tripleView.title}</h5>
+                  <p className="text-xs text-muted-foreground mb-4">{t.auraVR.tripleView.subtitle}</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -292,8 +281,8 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
                   >
                     <CardContent className="p-4 text-center space-y-2">
                       <MapPin className="h-8 w-8 text-[#06b6d4] mx-auto" />
-                      <h6 className="font-semibold text-sm text-white">Drone Mode</h6>
-                      <p className="text-xs text-muted-foreground">Vista aerea/satellite dell'area</p>
+                      <h6 className="font-semibold text-sm text-white">{t.auraVR.views.drone.title}</h6>
+                      <p className="text-xs text-muted-foreground">{t.auraVR.views.drone.description}</p>
                     </CardContent>
                   </Card>
 
@@ -308,8 +297,8 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
                   >
                     <CardContent className="p-4 text-center space-y-2">
                       <Navigation className="h-8 w-8 text-[#9333ea] mx-auto" />
-                      <h6 className="font-semibold text-sm text-white">Cinematic Walk</h6>
-                      <p className="text-xs text-muted-foreground">Percorso fluido tra le stanze</p>
+                      <h6 className="font-semibold text-sm text-white">{t.auraVR.views.cinematic.title}</h6>
+                      <p className="text-xs text-muted-foreground">{t.auraVR.views.cinematic.description}</p>
                     </CardContent>
                   </Card>
 
@@ -324,8 +313,8 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
                   >
                     <CardContent className="p-4 text-center space-y-2">
                       <RotateCw className="h-8 w-8 text-[#06b6d4] mx-auto" />
-                      <h6 className="font-semibold text-sm text-white">360° Panorama</h6>
-                      <p className="text-xs text-muted-foreground">Visualizzazione immersiva totale</p>
+                      <h6 className="font-semibold text-sm text-white">{t.auraVR.views.panorama.title}</h6>
+                      <p className="text-xs text-muted-foreground">{t.auraVR.views.panorama.description}</p>
                     </CardContent>
                   </Card>
                 </div>
@@ -343,13 +332,13 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
                       {selectedView === 'panorama' && <RotateCw className="h-16 w-16 text-[#06b6d4] mx-auto animate-spin-slow" />}
                       {!selectedView && <Globe className="h-16 w-16 text-[#06b6d4] mx-auto animate-spin-slow" />}
                       <p className="text-sm font-medium text-white">
-                        {selectedView === 'drone' && 'Drone Mode - Vista Aerea'}
-                        {selectedView === 'cinematic' && 'Cinematic Walk - Percorso Fluido'}
-                        {selectedView === 'panorama' && '360° Panorama - Immersione Totale'}
-                        {!selectedView && 'Tour VR Immersivo'}
+                        {selectedView === "drone" && t.auraVR.preview.drone}
+                        {selectedView === "cinematic" && t.auraVR.preview.cinematic}
+                        {selectedView === "panorama" && t.auraVR.preview.panorama}
+                        {!selectedView && t.auraVR.preview.default}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {listingTitle || "Immobile"}
+                        {listingTitle || t.auraVR.listingFallback}
                       </p>
                     </div>
                   </div>
@@ -394,12 +383,9 @@ export function AuraVRGenerator({ listingId, listingTitle, locale, location }: A
                       {t.auraVR.aria.message}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {t.auraVR.aria.stats} <span className="text-green-400 font-semibold">40% {detectedLocale === 'en' ? 'more visits' : detectedLocale === 'es' ? 'más de visitas' : detectedLocale === 'fr' ? 'de visites en plus' : detectedLocale === 'de' ? 'mehr Besuche' : detectedLocale === 'pt' ? 'mais visitas' : 'di visite in più'}</span>. 
-                      {t.auraVR.aria.action}
+                      {t.auraVR.aria.visitsSentence.replace("{pct}", "40")} {t.auraVR.aria.followUp}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      <span className="text-purple-400 font-semibold">Triple Perspective:</span> Drone Mode, Cinematic Walk e 360° Panorama - il massimo standard di lusso per tour VR immersivi.
-                    </p>
+                    <p className="text-xs text-muted-foreground mt-2 text-purple-200/90">{t.auraVR.aria.tripleNote}</p>
                   </div>
                 </div>
               </CardContent>

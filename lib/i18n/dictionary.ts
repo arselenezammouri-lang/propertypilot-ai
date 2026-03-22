@@ -700,9 +700,52 @@ export interface TranslationDictionary {
     };
     aria: {
       message: string;
-      stats: string;
-      action: string;
+      /** `{pct}` = numeric percent e.g. 40 */
+      visitsSentence: string;
+      followUp: string;
+      tripleNote: string;
     };
+    toast: {
+      copySuccessTitle: string;
+      copySuccessDesc: string;
+      copyErrorTitle: string;
+      copyErrorDesc: string;
+    };
+    tripleView: {
+      title: string;
+      subtitle: string;
+    };
+    views: {
+      drone: { title: string; description: string };
+      cinematic: { title: string; description: string };
+      panorama: { title: string; description: string };
+    };
+    preview: {
+      drone: string;
+      cinematic: string;
+      panorama: string;
+      default: string;
+    };
+    listingFallback: string;
+    /** WhatsApp share body; `{link}` */
+    whatsappVrBody: string;
+  };
+
+  /** Prospecting — AI Virtual Staging card */
+  virtualStaging: {
+    cardTitle: string;
+    sendWhatsApp: string;
+    originalPhoto: string;
+    afterVisionTitle: string;
+    afterVisionSubtitle: string;
+    generatePrompt: string;
+    generating: string;
+    generateCta: string;
+    successBanner: string;
+    premiumRequiredTitle: string;
+    premiumRequiredDesc: string;
+    calibrationTitle: string;
+    calibrationDesc: string;
   };
   
   // Demo page
@@ -1656,9 +1699,52 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Ottimo lavoro!',
-        stats: 'Questa scansione attirerà il',
-        action: 'di visite in più. Vuoi che la invii io ai tuoi lead caldi?',
+        visitsSentence: 'Questa scansione può aumentare le visite fino al {pct}%.',
+        followUp: 'Vuoi che la condivida con i lead più caldi?',
+        tripleNote:
+          'Prospettiva tripla: Drone, Cinematic Walk e 360° Panorama — standard premium per tour VR immersivi.',
       },
+      toast: {
+        copySuccessTitle: 'Link copiato',
+        copySuccessDesc: 'Il link VR è negli appunti.',
+        copyErrorTitle: 'Errore',
+        copyErrorDesc: 'Impossibile copiare il link.',
+      },
+      tripleView: {
+        title: 'Tripla prospettiva — standard luxury',
+        subtitle: 'Scegli la modalità di visualizzazione per il tour VR',
+      },
+      views: {
+        drone: { title: 'Modalità drone', description: 'Vista aerea / contesto dell’area' },
+        cinematic: { title: 'Cinematic walk', description: 'Percorso fluido tra gli ambienti' },
+        panorama: { title: 'Panorama 360°', description: 'Visualizzazione immersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aerea',
+        cinematic: 'Cinematic walk — percorso fluido',
+        panorama: '360° — immersione totale',
+        default: 'Tour VR immersivo',
+      },
+      listingFallback: 'Immobile',
+      whatsappVrBody:
+        'Ciao! Ecco un tour VR immersivo per te:\n\n{link}\n\nApri il link sullo smartphone per esplorare l’immobile.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Invia progetto via WhatsApp',
+      originalPhoto: 'Foto originale',
+      afterVisionTitle: 'Visione post-allestimento (AI)',
+      afterVisionSubtitle: 'Interno moderno di pregio',
+      generatePrompt: 'Genera la visione 3D per vedere il confronto',
+      generating: 'L’IA sta allestendo l’immobile…',
+      generateCta: 'Genera visione 3D',
+      successBanner:
+        'Visione 3D generata. Trascina lo slider per confrontare prima e dopo.',
+      premiumRequiredTitle: 'Piano Premium richiesto',
+      premiumRequiredDesc:
+        'Il Virtual Staging 3D è una funzione Premium. Passa al piano PRO o AGENCY per sbloccarlo.',
+      calibrationTitle: 'Calibrazione in corso',
+      calibrationDesc: 'Riprova tra un istante.',
     },
     errors: {
       somethingWentWrong: 'Qualcosa è andato storto',
@@ -2599,9 +2685,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Great work!',
-        stats: 'This scan will attract',
-        action: 'more visits. Would you like me to send it to your hot leads?',
+        visitsSentence: 'This scan can drive up to {pct}% more visits.',
+        followUp: 'Want me to share it with your hottest leads?',
+        tripleNote:
+          'Triple view: Drone, Cinematic Walk, and 360° Panorama — a premium standard for immersive VR tours.',
       },
+      toast: {
+        copySuccessTitle: 'Link copied',
+        copySuccessDesc: 'The VR link is on your clipboard.',
+        copyErrorTitle: 'Error',
+        copyErrorDesc: 'Could not copy the link.',
+      },
+      tripleView: {
+        title: 'Triple perspective — luxury standard',
+        subtitle: 'Choose how the VR tour is presented',
+      },
+      views: {
+        drone: { title: 'Drone mode', description: 'Aerial / area context' },
+        cinematic: { title: 'Cinematic walk', description: 'Smooth path through rooms' },
+        panorama: { title: '360° panorama', description: 'Full immersive view' },
+      },
+      preview: {
+        drone: 'Drone — aerial view',
+        cinematic: 'Cinematic walk — smooth path',
+        panorama: '360° — full immersion',
+        default: 'Immersive VR tour',
+      },
+      listingFallback: 'Property',
+      whatsappVrBody:
+        'Hi! Here is an immersive VR tour for you:\n\n{link}\n\nOpen the link on your phone to explore the property.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Send design via WhatsApp',
+      originalPhoto: 'Original photo',
+      afterVisionTitle: 'Post-staging vision (AI)',
+      afterVisionSubtitle: 'Modern luxury interior',
+      generatePrompt: 'Generate the 3D vision to see the comparison',
+      generating: 'AI is staging the property…',
+      generateCta: 'Generate 3D vision',
+      successBanner: '3D vision ready. Drag the slider to compare before and after.',
+      premiumRequiredTitle: 'Premium plan required',
+      premiumRequiredDesc:
+        '3D Virtual Staging is a Premium feature. Upgrade to PRO or AGENCY to unlock it.',
+      calibrationTitle: 'Calibrating',
+      calibrationDesc: 'Please try again in a moment.',
     },
     errors: {
       somethingWentWrong: 'Something went wrong',
@@ -3143,9 +3271,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: ¡Excelente trabajo!',
-        stats: 'Este escaneo atraerá un',
-        action: 'más de visitas. ¿Quieres que lo envíe a tus leads calientes?',
+        visitsSentence: 'Este escaneo puede aumentar las visitas hasta un {pct}%.',
+        followUp: '¿Quieres que lo comparta con tus leads más calientes?',
+        tripleNote:
+          'Triple vista: Drone, Cinematic Walk y 360° Panorama — estándar premium para tours VR inmersivos.',
       },
+      toast: {
+        copySuccessTitle: 'Enlace copiado',
+        copySuccessDesc: 'El enlace VR está en el portapapeles.',
+        copyErrorTitle: 'Error',
+        copyErrorDesc: 'No se pudo copiar el enlace.',
+      },
+      tripleView: {
+        title: 'Triple perspectiva — estándar luxury',
+        subtitle: 'Elige el modo de visualización del tour VR',
+      },
+      views: {
+        drone: { title: 'Modo drone', description: 'Vista aérea / contexto del área' },
+        cinematic: { title: 'Cinematic walk', description: 'Recorrido fluido entre estancias' },
+        panorama: { title: 'Panorama 360°', description: 'Vista inmersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aérea',
+        cinematic: 'Cinematic walk — recorrido fluido',
+        panorama: '360° — inmersión total',
+        default: 'Tour VR inmersivo',
+      },
+      listingFallback: 'Inmueble',
+      whatsappVrBody:
+        '¡Hola! Aquí tienes un tour VR inmersivo:\n\n{link}\n\nAbre el enlace en tu móvil para explorar la propiedad.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Enviar diseño por WhatsApp',
+      originalPhoto: 'Foto original',
+      afterVisionTitle: 'Visión post-amueblado (IA)',
+      afterVisionSubtitle: 'Interior moderno de lujo',
+      generatePrompt: 'Genera la visión 3D para ver la comparación',
+      generating: 'La IA está amueblando el inmueble…',
+      generateCta: 'Generar visión 3D',
+      successBanner: 'Visión 3D lista. Arrastra el control para comparar antes y después.',
+      premiumRequiredTitle: 'Plan Premium requerido',
+      premiumRequiredDesc:
+        'El Virtual Staging 3D es Premium. Actualiza a PRO o AGENCY para desbloquearlo.',
+      calibrationTitle: 'Calibrando',
+      calibrationDesc: 'Inténtalo de nuevo en un momento.',
     },
     common: {
       copy: 'Copiar',
@@ -3529,9 +3699,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Excellent travail!',
-        stats: 'Ce scan attirera',
-        action: 'de visites en plus. Voulez-vous que je l\'envoie à vos leads chauds?',
+        visitsSentence: 'Ce scan peut augmenter les visites jusqu’à {pct}%.',
+        followUp: 'Souhaitez-vous que je le partage avec vos leads les plus chauds ?',
+        tripleNote:
+          'Triple vue : Drone, Cinematic Walk et 360° Panorama — standard premium pour des tours VR immersifs.',
       },
+      toast: {
+        copySuccessTitle: 'Lien copié',
+        copySuccessDesc: 'Le lien VR est dans le presse-papiers.',
+        copyErrorTitle: 'Erreur',
+        copyErrorDesc: 'Impossible de copier le lien.',
+      },
+      tripleView: {
+        title: 'Triple perspective — standard luxury',
+        subtitle: 'Choisissez le mode d’affichage du tour VR',
+      },
+      views: {
+        drone: { title: 'Mode drone', description: 'Vue aérienne / contexte' },
+        cinematic: { title: 'Cinematic walk', description: 'Parcours fluide entre les pièces' },
+        panorama: { title: 'Panorama 360°', description: 'Vue immersive' },
+      },
+      preview: {
+        drone: 'Drone — vue aérienne',
+        cinematic: 'Cinematic walk — parcours fluide',
+        panorama: '360° — immersion totale',
+        default: 'Tour VR immersif',
+      },
+      listingFallback: 'Bien',
+      whatsappVrBody:
+        'Bonjour ! Voici une visite VR immersive :\n\n{link}\n\nOuvrez le lien sur votre smartphone pour explorer le bien.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Envoyer le projet par WhatsApp',
+      originalPhoto: 'Photo d’origine',
+      afterVisionTitle: 'Vision post-ameublement (IA)',
+      afterVisionSubtitle: 'Intérieur moderne haut de gamme',
+      generatePrompt: 'Générez la vision 3D pour comparer',
+      generating: 'L’IA aménage le bien…',
+      generateCta: 'Générer la vision 3D',
+      successBanner: 'Vision 3D prête. Faites glisser le curseur pour comparer avant/après.',
+      premiumRequiredTitle: 'Forfait Premium requis',
+      premiumRequiredDesc:
+        'Le Virtual Staging 3D est une fonction Premium. Passez à PRO ou AGENCY pour l’activer.',
+      calibrationTitle: 'Calibrage en cours',
+      calibrationDesc: 'Réessayez dans un instant.',
     },
     common: {
       copy: 'Copier',
@@ -3915,9 +4127,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Große Arbeit!',
-        stats: 'Dieser Scan wird',
-        action: 'mehr Besuche anziehen. Soll ich es an Ihre heißen Leads senden?',
+        visitsSentence: 'Dieser Scan kann die Besuche um bis zu {pct}% steigern.',
+        followUp: 'Soll ich ihn mit Ihren heißesten Leads teilen?',
+        tripleNote:
+          'Dreifachansicht: Drone, Cinematic Walk und 360°-Panorama — Premium-Standard für immersive VR-Touren.',
       },
+      toast: {
+        copySuccessTitle: 'Link kopiert',
+        copySuccessDesc: 'Der VR-Link liegt in der Zwischenablage.',
+        copyErrorTitle: 'Fehler',
+        copyErrorDesc: 'Link konnte nicht kopiert werden.',
+      },
+      tripleView: {
+        title: 'Dreifachperspektive — Luxury-Standard',
+        subtitle: 'Wählen Sie die Darstellung der VR-Tour',
+      },
+      views: {
+        drone: { title: 'Drohnenmodus', description: 'Luftbild / Umgebung' },
+        cinematic: { title: 'Cinematic Walk', description: 'Fließender Weg durch die Räume' },
+        panorama: { title: '360°-Panorama', description: 'Volle Immersion' },
+      },
+      preview: {
+        drone: 'Drohne — Luftansicht',
+        cinematic: 'Cinematic Walk — fließender Pfad',
+        panorama: '360° — volle Immersion',
+        default: 'Immersive VR-Tour',
+      },
+      listingFallback: 'Objekt',
+      whatsappVrBody:
+        'Hallo! Hier ist eine immersive VR-Tour für dich:\n\n{link}\n\nÖffne den Link auf dem Smartphone, um die Immobilie zu erkunden.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Entwurf per WhatsApp senden',
+      originalPhoto: 'Originalfoto',
+      afterVisionTitle: 'Vision nach Staging (KI)',
+      afterVisionSubtitle: 'Moderne Luxus-Innenansicht',
+      generatePrompt: '3D-Vision erzeugen, um Vorher/Nachher zu sehen',
+      generating: 'Die KI richtet die Immobilie ein…',
+      generateCta: '3D-Vision erzeugen',
+      successBanner: '3D-Vision bereit. Schieben Sie den Regler für den Vergleich.',
+      premiumRequiredTitle: 'Premium-Tarif erforderlich',
+      premiumRequiredDesc:
+        '3D Virtual Staging ist eine Premium-Funktion. Upgrade auf PRO oder AGENCY zum Freischalten.',
+      calibrationTitle: 'Kalibrierung läuft',
+      calibrationDesc: 'Bitte versuchen Sie es gleich erneut.',
     },
     common: {
       copy: 'Kopieren',
@@ -4303,9 +4557,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Ótimo trabalho!',
-        stats: 'Este scan atrairá',
-        action: 'mais visitas. Quer que eu envie para seus leads quentes?',
+        visitsSentence: 'Este scan pode aumentar as visitas em até {pct}%.',
+        followUp: 'Quer que eu partilhe com os seus leads mais quentes?',
+        tripleNote:
+          'Tripla perspetiva: Drone, Cinematic Walk e 360° Panorama — padrão premium para tours VR imersivos.',
       },
+      toast: {
+        copySuccessTitle: 'Link copiado',
+        copySuccessDesc: 'O link VR está na área de transferência.',
+        copyErrorTitle: 'Erro',
+        copyErrorDesc: 'Não foi possível copiar o link.',
+      },
+      tripleView: {
+        title: 'Tripla perspetiva — padrão luxury',
+        subtitle: 'Escolha o modo de visualização do tour VR',
+      },
+      views: {
+        drone: { title: 'Modo drone', description: 'Vista aérea / contexto' },
+        cinematic: { title: 'Cinematic walk', description: 'Percurso fluido pelos espaços' },
+        panorama: { title: 'Panorama 360°', description: 'Vista imersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aérea',
+        cinematic: 'Cinematic walk — percurso fluido',
+        panorama: '360° — imersão total',
+        default: 'Tour VR imersivo',
+      },
+      listingFallback: 'Imóvel',
+      whatsappVrBody:
+        'Olá! Aqui está um tour VR imersivo para si:\n\n{link}\n\nAbra o link no telemóvel para explorar o imóvel.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Enviar projeto via WhatsApp',
+      originalPhoto: 'Foto original',
+      afterVisionTitle: 'Visão pós-staging (IA)',
+      afterVisionSubtitle: 'Interior moderno de luxo',
+      generatePrompt: 'Gere a visão 3D para ver a comparação',
+      generating: 'A IA está a preparar o imóvel…',
+      generateCta: 'Gerar visão 3D',
+      successBanner: 'Visão 3D pronta. Arraste o controlo para comparar antes e depois.',
+      premiumRequiredTitle: 'Plano Premium necessário',
+      premiumRequiredDesc:
+        'O Virtual Staging 3D é Premium. Atualize para PRO ou AGENCY para desbloquear.',
+      calibrationTitle: 'A calibrar',
+      calibrationDesc: 'Tente novamente dentro de instantes.',
     },
     common: {
       copy: 'Copiar',
@@ -4497,9 +4793,51 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'آريا: عمل رائع!',
-        stats: 'هذا المسح سيجذب',
-        action: 'زيارات إضافية. هل تريد أن أرسله إلى عملائك المحتملين؟',
+        visitsSentence: 'قد يزيد هذا المسح من الزيارات حتى {pct}٪.',
+        followUp: 'هل تريد مشاركته مع أهم العملاء المحتملين؟',
+        tripleNote:
+          'منظور ثلاثي: Drone وCinematic Walk و360° Panorama — معيار مميز لجولات VR غامرة.',
       },
+      toast: {
+        copySuccessTitle: 'تم نسخ الرابط',
+        copySuccessDesc: 'رابط VR في الحافظة.',
+        copyErrorTitle: 'خطأ',
+        copyErrorDesc: 'تعذر نسخ الرابط.',
+      },
+      tripleView: {
+        title: 'منظور ثلاثي — معيار فاخر',
+        subtitle: 'اختر طريقة عرض الجولة',
+      },
+      views: {
+        drone: { title: 'وضع الطائرة', description: 'منظر جوي / السياق' },
+        cinematic: { title: 'Cinematic walk', description: 'مسار سلس بين الغرف' },
+        panorama: { title: 'بانوراما 360°', description: 'عرض غامر' },
+      },
+      preview: {
+        drone: 'Drone — منظر جوي',
+        cinematic: 'Cinematic walk — مسار سلس',
+        panorama: '360° — غمر كامل',
+        default: 'جولة VR غامرة',
+      },
+      listingFallback: 'عقار',
+      whatsappVrBody:
+        'مرحباً! إليك جولة VR غامرة:\n\n{link}\n\nافتح الرابط على هاتفك لاستكشاف العقار.',
+    },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'إرسال التصميم عبر واتساب',
+      originalPhoto: 'الصورة الأصلية',
+      afterVisionTitle: 'الرؤية بعد التجهيز (ذكاء اصطناعي)',
+      afterVisionSubtitle: 'داخلية عصرية فاخرة',
+      generatePrompt: 'أنشئ الرؤية ثلاثية الأبعاد للمقارنة',
+      generating: 'الذكاء الاصطناعي يجهز العقار…',
+      generateCta: 'إنشاء رؤية ثلاثية الأبعاد',
+      successBanner: 'الرؤية جاهزة. اسحب المنزلق للمقارنة قبل وبعد.',
+      premiumRequiredTitle: 'خطة Premium مطلوبة',
+      premiumRequiredDesc:
+        'التجهيز الافتراضي ثلاثي الأبعاد ميزة Premium. ترقية إلى PRO أو AGENCY للفتح.',
+      calibrationTitle: 'جاري المعايرة',
+      calibrationDesc: 'أعد المحاولة بعد لحظات.',
     },
     common: {
       copy: 'نسخ',
