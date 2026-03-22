@@ -58,6 +58,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatDateForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 import {
@@ -101,108 +102,34 @@ const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").th
   ssr: false,
 });
 
-const getStatusConfig = (isItalian: boolean): Record<LeadStatus, { label: string; color: string; bgColor: string }> => ({
-  new: { label: isItalian ? "Nuovo" : "New", color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
-  contacted: { label: isItalian ? "Contattato" : "Contacted", color: "text-yellow-600", bgColor: "bg-yellow-100 dark:bg-yellow-900/30" },
-  followup: { label: "Follow-Up", color: "text-purple-600", bgColor: "bg-purple-100 dark:bg-purple-900/30" },
-  closed: { label: isItalian ? "Chiuso" : "Closed", color: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30" },
-  lost: { label: isItalian ? "Perso" : "Lost", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },
-});
-
-const getPriorityConfig = (isItalian: boolean): Record<LeadPriority, { label: string; color: string; bgColor: string; emoji: string }> => ({
-  low: { label: isItalian ? "Bassa" : "Low", color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", emoji: "⬇️" },
-  medium: { label: isItalian ? "Media" : "Medium", color: "text-orange-600", bgColor: "bg-orange-100 dark:bg-orange-900/30", emoji: "➡️" },
-  high: { label: isItalian ? "Alta" : "High", color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", emoji: "🔥" },
-});
-
-const getMarketConfig = (isItalian: boolean): Record<LeadMarket, { label: string; emoji: string }> => ({
-  italy: { label: isItalian ? "Italia" : "Italy", emoji: "🇮🇹" },
-  usa: { label: "USA", emoji: "🇺🇸" },
-});
-
 export default function LeadsPage() {
   const router = useRouter();
   const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const usage = useUsageLimits();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
-  const statusConfig = getStatusConfig(isItalian);
-  const priorityConfig = getPriorityConfig(isItalian);
-  const marketConfig = getMarketConfig(isItalian);
-  const t = {
-    premiumRequired: isItalian ? "Piano Premium richiesto" : "Premium plan required",
-    premiumRequiredDesc: isItalian
-      ? "Il Lead Manager + AI e una funzionalita Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : "Lead Manager + AI is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    error: isItalian ? "Errore" : "Error",
-    loadingError: isItalian ? "Errore nel caricamento dei lead" : "Error loading leads",
-    connectionError: isItalian ? "Errore di connessione" : "Connection error",
-    nameRequired: isItalian ? "Il nome e obbligatorio" : "Name is required",
-    leadCreated: isItalian ? "Lead creato" : "Lead created",
-    leadCreatedDesc: (name: string) => isItalian ? `${name} e stato aggiunto con successo` : `${name} was added successfully`,
-    createError: isItalian ? "Errore nella creazione del lead" : "Error creating lead",
-    leadUpdated: isItalian ? "Lead aggiornato" : "Lead updated",
-    leadUpdatedDesc: (name: string) => isItalian ? `${name} e stato aggiornato` : `${name} was updated`,
-    updateError: isItalian ? "Errore nell'aggiornamento" : "Error updating lead",
-    leadDeleted: isItalian ? "Lead eliminato" : "Lead deleted",
-    leadDeletedDesc: (name: string) => isItalian ? `${name} e stato eliminato` : `${name} was deleted`,
-    deleteError: isItalian ? "Errore nell'eliminazione" : "Error deleting lead",
-    statusUpdated: isItalian ? "Stato aggiornato" : "Status updated",
-    statusUpdateError: isItalian ? "Errore nell'aggiornamento dello stato" : "Error updating status",
-    detailsError: isItalian ? "Errore nel caricamento dei dettagli" : "Error loading details",
-    noteError: isItalian ? "Errore nell'aggiunta della nota" : "Error adding note",
-    newLead: isItalian ? "Nuovo Lead" : "New Lead",
-    total: isItalian ? "Totali" : "Total",
-    status: isItalian ? "Stato" : "Status",
-    priority: isItalian ? "Priorita" : "Priority",
-    market: isItalian ? "Mercato" : "Market",
-    allStatuses: isItalian ? "Tutti gli stati" : "All statuses",
-    allPriorities: isItalian ? "Tutte le priorita" : "All priorities",
-    allMarkets: isItalian ? "Tutti i mercati" : "All markets",
-    noLeads: isItalian ? "Nessun lead trovato" : "No leads found",
-    adjustFilters: isItalian ? "Prova a modificare i filtri di ricerca" : "Try adjusting your search filters",
-    addFirstLead: isItalian ? "Inizia ad aggiungere i tuoi primi lead" : "Start by adding your first leads",
-    addLead: isItalian ? "Aggiungi Lead" : "Add Lead",
-    contacts: isItalian ? "Contatti" : "Contacts",
-    score: "Score",
-    date: isItalian ? "Data" : "Date",
-    actions: isItalian ? "Azioni" : "Actions",
-    leadManagerTitle: "Lead Manager + AI",
-    leadManagerDesc: isItalian
-      ? "Questa funzionalita e disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il CRM completo con pipeline, automazioni e AI."
-      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full CRM with pipeline, automations, and AI.",
-    pageSubtitle: isItalian
-      ? "CRM con pipeline, filtri e insight AI: uno spazio unico per qualificare e seguire ogni lead."
-      : "CRM with pipeline, filters, and AI insights — one place to qualify and follow every lead.",
-    searchPlaceholder: isItalian ? "Cerca per nome, email o telefono..." : "Search by name, email, or phone...",
-    noteAdded: isItalian ? "Nota aggiunta" : "Note added",
-    noteSaved: isItalian ? "La nota e stata salvata" : "The note has been saved",
-    delete: isItalian ? "Elimina" : "Delete",
-    addLeadInfo: isItalian ? "Inserisci le informazioni del nuovo lead" : "Enter the new lead information",
-    editLead: isItalian ? "Modifica Lead" : "Edit Lead",
-    editLeadInfo: isItalian ? "Modifica le informazioni del lead" : "Edit the lead information",
-    name: isItalian ? "Nome" : "Name",
-    phone: isItalian ? "Telefono" : "Phone",
-    leadMessage: isItalian ? "Messaggio del Lead" : "Lead Message",
-    leadMessagePlaceholder: isItalian ? "Inserisci il messaggio ricevuto dal lead..." : "Enter the message received from the lead...",
-    cancel: isItalian ? "Annulla" : "Cancel",
-    saveChanges: isItalian ? "Salva Modifiche" : "Save Changes",
-    leadDetails: isItalian ? "Dettagli Lead" : "Lead Details",
-    created: isItalian ? "Creato" : "Created",
-    updated: isItalian ? "Aggiornato" : "Updated",
-    notes: isItalian ? "Note" : "Notes",
-    areYouSure: isItalian ? "Sei sicuro?" : "Are you sure?",
-    deleteWarning: (name: string) => isItalian
-      ? `Stai per eliminare il lead "${name}". Questa azione non puo essere annullata.`
-      : `You are about to delete the lead "${name}". This action cannot be undone.`,
-    successLeadCreatedTitle: isItalian ? "CRM Lead — Lead aggiunto" : "Lead CRM — Lead added",
-    successLeadUpdatedTitle: isItalian ? "CRM Lead — Modifiche salvate" : "Lead CRM — Changes saved",
-    successLeadDeletedTitle: isItalian ? "CRM Lead — Lead eliminato" : "Lead CRM — Lead removed",
-    successStatusTitle: isItalian ? "CRM Lead — Stato aggiornato" : "Lead CRM — Status updated",
-    successNoteTitle: isItalian ? "CRM Lead — Nota salvata" : "Lead CRM — Note saved",
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const lp = getTranslation(locale as SupportedLocale).dashboard.leadsPage;
+
+  const statusConfig: Record<LeadStatus, { label: string; color: string; bgColor: string }> = {
+    new: { label: lp.statusNew, color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
+    contacted: { label: lp.statusContacted, color: "text-yellow-600", bgColor: "bg-yellow-100 dark:bg-yellow-900/30" },
+    followup: { label: lp.statusFollowup, color: "text-purple-600", bgColor: "bg-purple-100 dark:bg-purple-900/30" },
+    closed: { label: lp.statusClosed, color: "text-green-600", bgColor: "bg-green-100 dark:bg-green-900/30" },
+    lost: { label: lp.statusLost, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },
   };
-  const fallbackLeadName = isItalian ? "Lead In arrivo" : "Incoming Lead";
+
+  const priorityConfig: Record<LeadPriority, { label: string; color: string; bgColor: string; emoji: string }> = {
+    low: { label: lp.priorityLow, color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", emoji: "⬇️" },
+    medium: { label: lp.priorityMedium, color: "text-orange-600", bgColor: "bg-orange-100 dark:bg-orange-900/30", emoji: "➡️" },
+    high: { label: lp.priorityHigh, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", emoji: "🔥" },
+  };
+
+  const marketConfig: Record<LeadMarket, { label: string; emoji: string }> = {
+    italy: { label: lp.marketItaly, emoji: "🇮🇹" },
+    usa: { label: lp.marketUsa, emoji: "🇺🇸" },
+  };
+
+  const fallbackLeadName = lp.fallbackLeadName;
   const getLeadName = (name?: string | null) => {
     const cleaned = typeof name === "string" ? name.trim() : "";
     return cleaned.length > 0 ? cleaned : fallbackLeadName;
@@ -256,7 +183,7 @@ export default function LeadsPage() {
           const p = premiumFeatureToast(
             feedbackLocale,
             "leadManager",
-            res.message || res.error || t.premiumRequiredDesc
+            res.message || res.error || lp.premiumRequiredDesc
           );
           toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
@@ -265,7 +192,7 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.loadingError
+          lp.loadingError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
@@ -324,7 +251,7 @@ export default function LeadsPage() {
 
   const handleAddLead = async () => {
     if (!formData.nome.trim()) {
-      const v = validationToast(feedbackLocale, "leadManager", t.nameRequired);
+      const v = validationToast(feedbackLocale, "leadManager", lp.nameRequired);
       toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
@@ -342,7 +269,7 @@ export default function LeadsPage() {
           const p = premiumFeatureToast(
             feedbackLocale,
             "leadManager",
-            res.message || res.error || t.premiumRequiredDesc
+            res.message || res.error || lp.premiumRequiredDesc
           );
           toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
@@ -351,14 +278,14 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.createError
+          lp.createError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.successLeadCreatedTitle,
-        description: t.leadCreatedDesc(formData.nome),
+        title: lp.successLeadCreatedTitle,
+        description: lp.leadCreatedDesc.replace("{name}", formData.nome),
       });
       setIsAddModalOpen(false);
       setFormData({
@@ -392,14 +319,14 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.updateError
+          lp.updateError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.successLeadUpdatedTitle,
-        description: t.leadUpdatedDesc(formData.nome),
+        title: lp.successLeadUpdatedTitle,
+        description: lp.leadUpdatedDesc.replace("{name}", formData.nome),
       });
       setIsEditModalOpen(false);
       setSelectedLead(null);
@@ -422,14 +349,14 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.deleteError
+          lp.deleteError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.successLeadDeletedTitle,
-        description: t.leadDeletedDesc(getLeadName(selectedLead.nome)),
+        title: lp.successLeadDeletedTitle,
+        description: lp.leadDeletedDesc.replace("{name}", getLeadName(selectedLead.nome)),
       });
       setIsDeleteDialogOpen(false);
       setSelectedLead(null);
@@ -454,7 +381,7 @@ export default function LeadsPage() {
           const p = premiumFeatureToast(
             feedbackLocale,
             "leadManager",
-            res.message || res.error || t.premiumRequiredDesc
+            res.message || res.error || lp.premiumRequiredDesc
           );
           toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
@@ -463,14 +390,14 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.statusUpdateError
+          lp.statusUpdateError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.successStatusTitle,
-        description: res.data?.message ?? t.statusUpdated,
+        title: lp.successStatusTitle,
+        description: res.data?.message ?? lp.statusUpdated,
       });
       fetchLeads();
       if (isDetailModalOpen && selectedLead?.id === leadId) {
@@ -492,7 +419,7 @@ export default function LeadsPage() {
           const p = premiumFeatureToast(
             feedbackLocale,
             "leadManager",
-            res.message || res.error || t.premiumRequiredDesc
+            res.message || res.error || lp.premiumRequiredDesc
           );
           toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
@@ -501,7 +428,7 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.detailsError
+          lp.detailsError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
@@ -541,7 +468,7 @@ export default function LeadsPage() {
           const p = premiumFeatureToast(
             feedbackLocale,
             "leadManager",
-            res.message || res.error || t.premiumRequiredDesc
+            res.message || res.error || lp.premiumRequiredDesc
           );
           toast({ title: p.title, description: p.description, variant: "destructive" });
           return;
@@ -550,14 +477,14 @@ export default function LeadsPage() {
           feedbackLocale,
           "leadManager",
           { status: res.status, error: res.error, message: res.message },
-          t.noteError
+          lp.noteError
         );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
       toast({
-        title: t.successNoteTitle,
-        description: t.noteSaved,
+        title: lp.successNoteTitle,
+        description: lp.noteSaved,
       });
       setNewNote("");
       fetchLeadDetails(selectedLead.id);
@@ -621,13 +548,13 @@ export default function LeadsPage() {
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6 text-sm"
         >
           <ArrowLeft className="h-4 w-4" />
-          {isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+          {lp.backToDashboard}
         </Link>
 
         <DashboardPageHeader
           variant="dark"
-          title={t.leadManagerTitle}
-          subtitle={t.pageSubtitle}
+          title={lp.leadManagerTitle}
+          subtitle={lp.pageSubtitle}
           planBadge={{ label: planBadgeLabel, variant: "outline" }}
           actions={
             <div className="flex flex-wrap items-center gap-2">
@@ -660,22 +587,22 @@ export default function LeadsPage() {
                 data-testid="button-add-lead"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{t.newLead}</span>
+                <span className="hidden sm:inline">{lp.newLead}</span>
               </Button>
             </div>
           }
         />
 
         <ProFeaturePaywall
-          title={t.leadManagerTitle}
-          description={t.leadManagerDesc}
+          title={lp.leadManagerTitle}
+          description={lp.leadManagerDesc}
           isLocked={isLocked && !isLoadingPlan}
         >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card className="border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30">
             <CardContent className="p-4 text-center">
               <p className="text-3xl font-bold text-emerald-600">{statsData.total}</p>
-              <p className="text-sm text-muted-foreground">{t.total}</p>
+              <p className="text-sm text-muted-foreground">{lp.total}</p>
             </CardContent>
           </Card>
           <Card className={`${statusConfig.new.bgColor} border-0`}>
@@ -716,7 +643,7 @@ export default function LeadsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder={t.searchPlaceholder}
+                  placeholder={lp.searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -726,10 +653,10 @@ export default function LeadsPage() {
               <div className="flex gap-2 flex-wrap">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-status">
-                    <SelectValue placeholder={t.status} />
+                    <SelectValue placeholder={lp.status} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t.allStatuses}</SelectItem>
+                    <SelectItem value="all">{lp.allStatuses}</SelectItem>
                     {Object.entries(statusConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.label}</SelectItem>
                     ))}
@@ -737,10 +664,10 @@ export default function LeadsPage() {
                 </Select>
                 <Select value={priorityFilter} onValueChange={setPriorityFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-priority">
-                    <SelectValue placeholder={t.priority} />
+                    <SelectValue placeholder={lp.priority} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t.allPriorities}</SelectItem>
+                    <SelectItem value="all">{lp.allPriorities}</SelectItem>
                     {Object.entries(priorityConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
                     ))}
@@ -748,10 +675,10 @@ export default function LeadsPage() {
                 </Select>
                 <Select value={marketFilter} onValueChange={setMarketFilter}>
                   <SelectTrigger className="w-[140px]" data-testid="select-filter-market">
-                    <SelectValue placeholder={t.market} />
+                    <SelectValue placeholder={lp.market} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t.allMarkets}</SelectItem>
+                    <SelectItem value="all">{lp.allMarkets}</SelectItem>
                     {Object.entries(marketConfig).map(([key, config]) => (
                       <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
                     ))}
@@ -781,11 +708,11 @@ export default function LeadsPage() {
             ) : leads.length === 0 ? (
               <EmptyState
                 icon={<Users />}
-                title={t.noLeads}
+                title={lp.noLeads}
                 description={
                   searchQuery || statusFilter !== "all" || priorityFilter !== "all"
-                    ? t.adjustFilters
-                    : t.addFirstLead
+                    ? lp.adjustFilters
+                    : lp.addFirstLead
                 }
                 gradient="from-emerald-500/20 to-teal-500/20"
                 size="lg"
@@ -793,12 +720,12 @@ export default function LeadsPage() {
                   !(searchQuery || statusFilter !== "all" || priorityFilter !== "all")
                     ? [
                         {
-                          label: t.addLead,
+                          label: lp.addLead,
                           onClick: () => setIsAddModalOpen(true),
                           icon: <Plus className="h-4 w-4" />,
                         },
                         {
-                          label: isItalian ? "Pipeline Kanban" : "Kanban Pipeline",
+                          label: lp.pipelineKanban,
                           href: "/dashboard/leads/pipeline",
                           variant: "outline" as const,
                           icon: <Kanban className="h-4 w-4" />,
@@ -812,14 +739,14 @@ export default function LeadsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Lead</TableHead>
-                      <TableHead>{t.contacts}</TableHead>
-                      <TableHead>{t.status}</TableHead>
-                      <TableHead>{t.priority}</TableHead>
-                      <TableHead>{t.score}</TableHead>
-                      <TableHead>{t.market}</TableHead>
-                      <TableHead>{t.date}</TableHead>
-                      <TableHead className="text-right">{t.actions}</TableHead>
+                      <TableHead>{lp.tableColumnLead}</TableHead>
+                      <TableHead>{lp.contacts}</TableHead>
+                      <TableHead>{lp.status}</TableHead>
+                      <TableHead>{lp.priority}</TableHead>
+                      <TableHead>{lp.score}</TableHead>
+                      <TableHead>{lp.market}</TableHead>
+                      <TableHead>{lp.date}</TableHead>
+                      <TableHead className="text-right">{lp.actions}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -912,7 +839,7 @@ export default function LeadsPage() {
                         </TableCell>
                         <TableCell>
                           <div className="text-sm text-muted-foreground">
-                            {new Date(lead.created_at).toLocaleDateString("it-IT")}
+                            {formatDateForLocale(lead.created_at, locale as Locale, timezone)}
                           </div>
                         </TableCell>
                         <TableCell className="text-right">
@@ -953,7 +880,7 @@ export default function LeadsPage() {
                                 data-testid={`button-delete-${lead.id}`}
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                {t.delete}
+                                {lp.delete}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -974,15 +901,15 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Plus className="h-5 w-5 text-emerald-500" />
-              {t.newLead}
+              {lp.newLead}
             </DialogTitle>
             <DialogDescription>
-              {t.addLeadInfo}
+              {lp.addLeadInfo}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="nome">{t.name} *</Label>
+              <Label htmlFor="nome">{lp.name} *</Label>
               <Input
                 id="nome"
                 value={formData.nome}
@@ -1016,7 +943,7 @@ export default function LeadsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label>{t.priority}</Label>
+                <Label>{lp.priority}</Label>
                 <Select
                   value={formData.priorita}
                   onValueChange={(value) => setFormData({ ...formData, priorita: value as LeadPriority })}
@@ -1032,7 +959,7 @@ export default function LeadsPage() {
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label>{t.market}</Label>
+                <Label>{lp.market}</Label>
                 <Select
                   value={formData.market}
                   onValueChange={(value) => setFormData({ ...formData, market: value as LeadMarket })}
@@ -1049,12 +976,12 @@ export default function LeadsPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="messaggio">{t.leadMessage}</Label>
+              <Label htmlFor="messaggio">{lp.leadMessage}</Label>
               <Textarea
                 id="messaggio"
                 value={formData.messaggio}
                 onChange={(e) => setFormData({ ...formData, messaggio: e.target.value })}
-                placeholder={t.leadMessagePlaceholder}
+                placeholder={lp.leadMessagePlaceholder}
                 rows={4}
                 data-testid="textarea-lead-messaggio"
               />
@@ -1062,7 +989,7 @@ export default function LeadsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
-              {t.cancel}
+              {lp.cancel}
             </Button>
             <Button
               onClick={handleAddLead}
@@ -1071,7 +998,7 @@ export default function LeadsPage() {
               data-testid="button-submit-lead"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-              {t.addLead}
+              {lp.addLead}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1082,15 +1009,15 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Pencil className="h-5 w-5 text-emerald-500" />
-              {t.editLead}
+              {lp.editLead}
             </DialogTitle>
             <DialogDescription>
-              {t.editLeadInfo}
+              {lp.editLeadInfo}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="edit-nome">{t.name} *</Label>
+              <Label htmlFor="edit-nome">{lp.name} *</Label>
               <Input
                 id="edit-nome"
                 value={formData.nome}
@@ -1154,7 +1081,7 @@ export default function LeadsPage() {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="edit-messaggio">{t.leadMessage}</Label>
+              <Label htmlFor="edit-messaggio">{lp.leadMessage}</Label>
               <Textarea
                 id="edit-messaggio"
                 value={formData.messaggio}
@@ -1166,7 +1093,7 @@ export default function LeadsPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
-              {t.cancel}
+              {lp.cancel}
             </Button>
             <Button
               onClick={handleUpdateLead}
@@ -1175,7 +1102,7 @@ export default function LeadsPage() {
               data-testid="button-update-lead"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Pencil className="h-4 w-4 mr-2" />}
-              {t.saveChanges}
+              {lp.saveChanges}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1186,7 +1113,7 @@ export default function LeadsPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-emerald-500" />
-              {t.leadDetails}
+              {lp.leadDetails}
             </DialogTitle>
           </DialogHeader>
           {selectedLead && (
@@ -1232,11 +1159,11 @@ export default function LeadsPage() {
                   )}
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{t.created}: {formatDateForLocale(selectedLead.created_at, locale as Locale, timezone)}</span>
+                    <span>{lp.created}: {formatDateForLocale(selectedLead.created_at, locale as Locale, timezone)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{t.updated}: {formatDateForLocale(selectedLead.updated_at, locale as Locale, timezone)}</span>
+                    <span>{lp.updated}: {formatDateForLocale(selectedLead.updated_at, locale as Locale, timezone)}</span>
                   </div>
                 </div>
 
@@ -1246,7 +1173,7 @@ export default function LeadsPage() {
                     <div>
                       <h4 className="font-semibold mb-2 flex items-center gap-2">
                         <MessageSquare className="h-4 w-4" />
-                        {t.leadMessage}
+                        {lp.leadMessage}
                       </h4>
                       <p className="text-muted-foreground bg-muted p-4 rounded-lg whitespace-pre-wrap">
                         {selectedLead.messaggio}
@@ -1260,7 +1187,7 @@ export default function LeadsPage() {
                 <div>
                   <h4 className="font-semibold mb-4 flex items-center gap-2">
                     <StickyNote className="h-4 w-4" />
-                    {t.notes} ({leadDetails?.notes.length || 0})
+                    {lp.notes} ({leadDetails?.notes.length || 0})
                   </h4>
                   <div className="flex gap-2 mb-4">
                     <Textarea
@@ -1352,13 +1279,13 @@ export default function LeadsPage() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t.areYouSure}</AlertDialogTitle>
+            <AlertDialogTitle>{lp.areYouSure}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t.deleteWarning(getLeadName(selectedLead?.nome))}
+              {lp.deleteWarning.replace("{name}", getLeadName(selectedLead?.nome))}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{t.cancel}</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{lp.cancel}</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => { e.preventDefault(); handleDeleteLead(); }}
               disabled={isDeleting}
@@ -1370,7 +1297,7 @@ export default function LeadsPage() {
               ) : (
                 <Trash2 className="h-4 w-4 mr-2" />
               )}
-              {isDeleting ? (isItalian ? "Eliminazione..." : "Deleting...") : t.delete}
+              {isDeleting ? lp.deleting : lp.delete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -5,6 +5,8 @@
 
 import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
 import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
+import type { LeadsPageUi } from '@/lib/i18n/leads-page-ui';
+import { leadsPageUiEn, leadsPageUiIt } from '@/lib/i18n/leads-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -179,6 +181,13 @@ export interface TranslationDictionary {
           APAC: string;
           UTC: string;
         };
+      };
+      /** `/dashboard/leads` — Lead Manager + AI */
+      leadsPage: LeadsPageUi;
+      /** Badge temporaneo su mappa prospecting */
+      predatorLiveBadge: {
+        livePrefix: string;
+        predatorsOnline: string;
       };
       onboardingChecklist: {
         title: string;
@@ -986,6 +995,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           APAC: 'APAC',
           UTC: 'UTC',
         },
+      },
+      leadsPage: leadsPageUiIt,
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predatori online',
       },
       onboardingChecklist: {
         title: 'I tuoi primi 5 passi',
@@ -1805,6 +1819,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           APAC: 'APAC',
           UTC: 'UTC',
         },
+      },
+      leadsPage: leadsPageUiEn,
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predators online',
       },
       onboardingChecklist: {
         title: 'Your first 5 steps',

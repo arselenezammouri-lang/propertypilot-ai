@@ -92,4 +92,15 @@ describe('dashboard home copy (D1)', () => {
     expect(itW.trialDesc).toContain('{days}');
     expect(itW.modules.scraper.name).toBeTruthy();
   });
+
+  it('leadsPage and predatorLiveBadge for IT/EN', () => {
+    const itL = getTranslation('it').dashboard.leadsPage;
+    const enL = getTranslation('en').dashboard.leadsPage;
+    expect(itL.leadManagerTitle).toContain('Lead');
+    expect(enL.deleteWarning).toContain('{name}');
+    expect(itL.leadCreatedDesc).toContain('{name}');
+    const enB = getTranslation('en').dashboard.predatorLiveBadge;
+    expect(enB.livePrefix).toMatch(/LIVE/i);
+    expect(enB.predatorsOnline.toLowerCase()).toContain('predator');
+  });
 });
