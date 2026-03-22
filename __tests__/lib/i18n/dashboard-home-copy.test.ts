@@ -322,6 +322,8 @@ describe('dashboard home copy (D1)', () => {
     expect(itP.liveFeedAiCalling).toContain('{title}');
     expect(enP.statusUpdatedDesc).toContain('{label}');
     expect(itP.imageInsightTags.length).toBeGreaterThanOrEqual(4);
+    expect(itP.eliteDealBadge).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+    expect(enP.callNow.toUpperCase()).toContain('CALL');
   });
 
   it('analyzeLinkPage for IT/EN', () => {

@@ -34,7 +34,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Lead scoring (`/dashboard/lead-score`): `lib/i18n/lead-score-page-ui.ts` → `dashboard.leadScorePage` (badge categoria, mercato senza bandiere, cache, header “priorità”; icone Lucide al posto di emoji in badge template).  
    - Referral (`/dashboard/referral`): `lib/i18n/referral-page-ui.ts` → `dashboard.referralPage`.  
    - Pacchetti premium (`/dashboard/packages`): `lib/i18n/packages-page-ui.ts` → `dashboard.packagesPage`.  
-   - Prospecting / Arbitrage Command Center (`/dashboard/prospecting`): `lib/i18n/prospecting-page-ui.ts` → `dashboard.prospectingPage`.  
+   - Prospecting / Arbitrage Command Center (`/dashboard/prospecting`): `lib/i18n/prospecting-page-ui.ts` → `dashboard.prospectingPage`; portali in tabella/filtri: `lib/i18n/prospecting-platforms.ts` (icone Lucide, no emoji bandiere); messaggio WhatsApp precompilato per il proprietario: `lib/i18n/prospecting-whatsapp-outreach.ts` (lingua da `detectLocaleFromLocation`, testo senza emoji).  
    - Analisi da link (`/dashboard/analyze`): `lib/i18n/analyze-link-page-ui.ts` → `dashboard.analyzeLinkPage`.  
    - Scraper annunci (`/dashboard/scraper`): `lib/i18n/listing-scraper-page-ui.ts` → `dashboard.listingScraperPage`.  
    - Audit annuncio (`/dashboard/auditor`): `lib/i18n/listing-auditor-page-ui.ts` → `dashboard.listingAuditorPage`.  
