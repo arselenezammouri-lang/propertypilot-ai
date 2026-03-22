@@ -82,6 +82,10 @@ import type { TermsPolicyPageUi } from '@/lib/i18n/terms-policy-page-ui';
 import { termsPolicyPageUiEn, termsPolicyPageUiIt } from '@/lib/i18n/terms-policy-page-ui';
 import type { RefundPolicyPageUi } from '@/lib/i18n/refund-policy-page-ui';
 import { refundPolicyPageUiEn, refundPolicyPageUiIt } from '@/lib/i18n/refund-policy-page-ui';
+import type { BlogPostPageUi } from '@/lib/i18n/blog-post-page-ui';
+import { blogPostPageUiEn, blogPostPageUiIt } from '@/lib/i18n/blog-post-page-ui';
+import type { PricingPagePlansUi } from '@/lib/i18n/pricing-page-plans-ui';
+import { pricingPagePlansUiEn, pricingPagePlansUiIt } from '@/lib/i18n/pricing-page-plans-ui';
 import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
 import {
   commandPaletteExtrasEn,
@@ -573,6 +577,12 @@ export interface TranslationDictionary {
     validation: { nameMin: string; emailInvalid: string; messageMin: string; checkFields: string };
     toast: { successTitle: string; successDesc: string; errorTitle: string; errorDesc: string; validationTitle: string };
     home: string;
+    /** Subtitle under logo on /contatti (align with landing nav tagline) */
+    headerTagline: string;
+    demoMailSubject: string;
+    /** Message field counter: placeholders {current}, {min} */
+    minCharsCounter: string;
+    submitting: string;
   };
 
   // Error / 404 pages
@@ -683,6 +693,11 @@ export interface TranslationDictionary {
   termsPolicyPage: TermsPolicyPageUi;
   /** Legal: /refund */
   refundPolicyPage: RefundPolicyPageUi;
+
+  /** /blog/[slug] placeholder article */
+  blogPostPage: BlogPostPageUi;
+  /** /pricing plan cards + footer legal links */
+  pricingPagePlans: PricingPagePlansUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -1459,6 +1474,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       validation: { nameMin: 'Il nome deve avere almeno 2 caratteri', emailInvalid: "Inserisci un'email valida", messageMin: 'Il messaggio deve avere almeno 10 caratteri', checkFields: 'Controlla i campi evidenziati.' },
       toast: { successTitle: 'Messaggio inviato!', successDesc: 'Ti risponderemo entro 24 ore.', errorTitle: 'Errore', errorDesc: 'Impossibile inviare il messaggio. Riprova più tardi.', validationTitle: 'Errore di validazione' },
       home: 'Home',
+      headerTagline: 'Pilot Your Agency to the Next Level',
+      demoMailSubject: 'Richiesta demo PropertyPilot AI',
+      minCharsCounter: '{current}/{min} caratteri minimi',
+      submitting: 'Invio in corso…',
     },
     common: {
       copy: 'Copia',
@@ -1536,6 +1555,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     privacyPolicyPage: privacyPolicyPageUiIt,
     termsPolicyPage: termsPolicyPageUiIt,
     refundPolicyPage: refundPolicyPageUiIt,
+    blogPostPage: blogPostPageUiIt,
+    pricingPagePlans: pricingPagePlansUiIt,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
       boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -2315,6 +2336,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       validation: { nameMin: 'Name must be at least 2 characters', emailInvalid: 'Enter a valid email', messageMin: 'Message must be at least 10 characters', checkFields: 'Check the highlighted fields.' },
       toast: { successTitle: 'Message sent!', successDesc: 'We\'ll get back to you within 24 hours.', errorTitle: 'Error', errorDesc: 'Unable to send message. Please try again.', validationTitle: 'Validation error' },
       home: 'Home',
+      headerTagline: 'Pilot Your Agency to the Next Level',
+      demoMailSubject: 'PropertyPilot AI demo request',
+      minCharsCounter: '{current}/{min} minimum characters',
+      submitting: 'Sending…',
     },
     common: {
       copy: 'Copy',
@@ -2391,6 +2416,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     privacyPolicyPage: privacyPolicyPageUiEn,
     termsPolicyPage: termsPolicyPageUiEn,
     refundPolicyPage: refundPolicyPageUiEn,
+    blogPostPage: blogPostPageUiEn,
+    pricingPagePlans: pricingPagePlansUiEn,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',

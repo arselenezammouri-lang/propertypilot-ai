@@ -11,6 +11,18 @@ describe('dashboard home copy (D1)', () => {
     expect(es.generate).toBeTruthy();
   });
 
+  it('blog post page, pricing plans chrome, contact extras for IT/EN', () => {
+    const it = getTranslation('it');
+    const en = getTranslation('en');
+    expect(it.blogPostPage.backToBlog.length).toBeGreaterThan(3);
+    expect(it.blogPostPage.knownTitles['come-scrivere-annunci-che-convertono']).toContain('annunci');
+    expect(en.blogPostPage.knownTitles['come-scrivere-annunci-che-convertono']).toMatch(/listing/i);
+    expect(it.pricingPagePlans.starter.cta.length).toBeGreaterThan(3);
+    expect(en.pricingPagePlans.footerCopyright).toContain('{year}');
+    expect(it.contact.minCharsCounter).toContain('{current}');
+    expect(en.contact.demoMailSubject.toLowerCase()).toMatch(/demo|property/i);
+  });
+
   it('marketing and legal pages (IT/EN; ES merge EN)', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');
