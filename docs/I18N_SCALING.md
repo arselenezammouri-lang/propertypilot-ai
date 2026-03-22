@@ -23,8 +23,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (IT/EN); **ES/FR/DE/PT/AR** in `lib/i18n/leads-pipeline-locales.ts` (spread nel partial `dashboard` come prospecting).  
    - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage` (IT/EN); hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub` (IT/EN); **ES/FR/DE/PT/AR** in `lib/i18n/lead-detail-communications-locales.ts` (spread nel partial `dashboard` come leads/pipeline).  
    - Pipeline Kanban (`/dashboard/leads/pipeline`): `lib/i18n/lead-pipeline-page-ui.ts` → `dashboard.leadPipelinePage` (IT/EN; badge pipeline senza emoji); **ES–AR** nello stesso file `leads-pipeline-locales.ts`.  
-   - CRM API keys (`/dashboard/crm/settings`): `lib/i18n/crm-api-keys-page-ui.ts` → `dashboard.crmApiKeysPage` (include stringhe embed generate).  
-   - Regole automazione CRM (`/dashboard/crm/automations`): `lib/i18n/crm-automation-rules-page-ui.ts` → `dashboard.crmAutomationRulesPage`.  
+   - CRM API keys (`/dashboard/crm/settings`): `lib/i18n/crm-api-keys-page-ui.ts` → `dashboard.crmApiKeysPage` (IT/EN; badge header con icona `Key` nel componente, testo `pageBadge` senza emoji); **ES–AR** in `lib/i18n/crm-settings-automation-locales.ts`.  
+   - Regole automazione CRM (`/dashboard/crm/automations`): `lib/i18n/crm-automation-rules-page-ui.ts` → `dashboard.crmAutomationRulesPage` (trigger con `iconKey` Lucide, no emoji); **ES–AR** nello stesso `crm-settings-automation-locales.ts`.  
    - Workflow automazioni (`/dashboard/automations`): `lib/i18n/workflow-automations-page-ui.ts` → `dashboard.workflowAutomationsPage`.  
    - Branding agenzia / PDF white label (`/dashboard/agency-branding`): `lib/i18n/agency-branding-page-ui.ts` → `dashboard.agencyBrandingPage`.  
    - Notifiche Morning Intel (`/dashboard/settings/notifications`): `lib/i18n/notifications-settings-page-ui.ts` → `dashboard.notificationsSettingsPage`.  

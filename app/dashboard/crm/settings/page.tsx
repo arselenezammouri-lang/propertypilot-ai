@@ -300,7 +300,8 @@ export default function CRMSettingsPage() {
             <span className="bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
               {t.pageTitle}
             </span>
-            <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0 uppercase text-[10px] tracking-wider">
+            <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0 uppercase text-[10px] tracking-wider inline-flex items-center gap-1">
+              <Key className="h-3 w-3 shrink-0" aria-hidden />
               {t.pageBadge}
             </Badge>
           </span>

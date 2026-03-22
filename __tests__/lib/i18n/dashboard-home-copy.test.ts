@@ -268,7 +268,18 @@ describe('dashboard home copy (D1)', () => {
     expect(enR.executions).toContain('{count}');
     expect(itR.triggers.new_lead.label).toMatch(/lead/i);
     expect(enR.triggers.new_lead.label).toMatch(/lead/i);
+    expect(itR.triggers.new_lead.iconKey).toBe('userPlus');
+    expect(enR.triggers.email_sent.iconKey).toBe('mail');
     expect(itR.howItWorksList.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('crmApiKeysPage + crmAutomationRulesPage native ES/DE/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.crmApiKeysPage.leadsCaptured).toContain('{count}');
+    expect(es.crmAutomationRulesPage.tabRules).toContain('{count}');
+    expect(es.crmAutomationRulesPage.triggers.new_lead.iconKey).toBe('userPlus');
+    expect(getTranslation('de').dashboard.crmApiKeysPage.pageTitle.toLowerCase()).toMatch(/crm/);
+    expect(getTranslation('ar').dashboard.crmAutomationRulesPage.pageTitle.length).toBeGreaterThan(3);
   });
 
   it('workflowAutomationsPage for IT/EN', () => {

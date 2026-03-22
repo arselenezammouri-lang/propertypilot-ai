@@ -71,7 +71,7 @@ export type CrmApiKeysPageUi = {
 
 const it: CrmApiKeysPageUi = {
   pageTitle: 'Impostazioni CRM',
-  pageBadge: '🔑 API Key',
+  pageBadge: 'API Key',
   pageSubtitle: 'Gestisci le API key per i form di lead capture esterni',
   apiKeysTitle: 'API Key',
   apiKeysDesc: 'Crea chiavi API per integrare form di lead capture nel tuo sito',
@@ -150,7 +150,7 @@ const it: CrmApiKeysPageUi = {
 
 const en: CrmApiKeysPageUi = {
   pageTitle: 'CRM settings',
-  pageBadge: '🔑 API keys',
+  pageBadge: 'API keys',
   pageSubtitle: 'Manage API keys for external lead capture forms',
   apiKeysTitle: 'API keys',
   apiKeysDesc: 'Create API keys to integrate lead capture forms on your website',

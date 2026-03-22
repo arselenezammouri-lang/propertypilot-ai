@@ -73,6 +73,13 @@ import {
   leadDetailCommLocalesFr,
   leadDetailCommLocalesPt,
 } from '@/lib/i18n/lead-detail-communications-locales';
+import {
+  crmSettingsAutomationLocalesAr,
+  crmSettingsAutomationLocalesDe,
+  crmSettingsAutomationLocalesEs,
+  crmSettingsAutomationLocalesFr,
+  crmSettingsAutomationLocalesPt,
+} from '@/lib/i18n/crm-settings-automation-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2948,6 +2955,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...dashboardMapOppAutoEs,
       ...leadsPipelineLocalesEs,
       ...leadDetailCommLocalesEs,
+      ...crmSettingsAutomationLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3322,6 +3330,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...dashboardMapOppAutoFr,
       ...leadsPipelineLocalesFr,
       ...leadDetailCommLocalesFr,
+      ...crmSettingsAutomationLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3696,6 +3705,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...dashboardMapOppAutoDe,
       ...leadsPipelineLocalesDe,
       ...leadDetailCommLocalesDe,
+      ...crmSettingsAutomationLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4072,6 +4082,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...dashboardMapOppAutoPt,
       ...leadsPipelineLocalesPt,
       ...leadDetailCommLocalesPt,
+      ...crmSettingsAutomationLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4254,6 +4265,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...dashboardMapOppAutoAr,
       ...leadsPipelineLocalesAr,
       ...leadDetailCommLocalesAr,
+      ...crmSettingsAutomationLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

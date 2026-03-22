@@ -8,6 +8,17 @@ import type {
   AutomationTriggerType,
 } from '@/lib/types/database.types';
 
+/** Lucide icon keys for CRM rule triggers (no emoji — consistent across locales). */
+export type CrmAutomationTriggerIconKey =
+  | 'userPlus'
+  | 'barChart3'
+  | 'refreshCw'
+  | 'zap'
+  | 'globe'
+  | 'mail'
+  | 'messageSquare'
+  | 'smartphone';
+
 export type CrmAutomationRulesPageUi = {
   pageTitle: string;
   pageBadge: string;
@@ -73,7 +84,7 @@ export type CrmAutomationRulesPageUi = {
   deleteRuleAria: string;
   triggers: Record<
     AutomationTriggerType,
-    { label: string; description: string; icon: string }
+    { label: string; description: string; iconKey: CrmAutomationTriggerIconKey }
   >;
   operators: Record<AutomationConditionOperator, string>;
   actions: Record<
@@ -165,42 +176,42 @@ const it: CrmAutomationRulesPageUi = {
     new_lead: {
       label: 'Nuovo Lead',
       description: 'Quando arriva un nuovo lead',
-      icon: '🆕',
+      iconKey: 'userPlus',
     },
     score_updated: {
       label: 'Score Aggiornato',
       description: 'Quando il lead score cambia',
-      icon: '📊',
+      iconKey: 'barChart3',
     },
     status_changed: {
       label: 'Status Cambiato',
       description: 'Quando lo status del lead cambia',
-      icon: '🔄',
+      iconKey: 'refreshCw',
     },
     priority_changed: {
       label: 'Priorità Cambiata',
       description: 'Quando la priorità cambia',
-      icon: '⚡',
+      iconKey: 'zap',
     },
     market_changed: {
       label: 'Mercato Cambiato',
       description: 'Quando il mercato di riferimento cambia',
-      icon: '🌍',
+      iconKey: 'globe',
     },
     email_sent: {
       label: 'Email Inviata',
       description: "Quando viene inviata un'email al lead",
-      icon: '📧',
+      iconKey: 'mail',
     },
     whatsapp_sent: {
       label: 'WhatsApp Inviato',
       description: 'Quando viene inviato un messaggio WhatsApp',
-      icon: '💬',
+      iconKey: 'messageSquare',
     },
     sms_sent: {
       label: 'SMS Inviato',
       description: 'Quando viene inviato un SMS al lead',
-      icon: '📱',
+      iconKey: 'smartphone',
     },
   },
   operators: {
@@ -358,42 +369,42 @@ const en: CrmAutomationRulesPageUi = {
     new_lead: {
       label: 'New Lead',
       description: 'When a new lead arrives',
-      icon: '🆕',
+      iconKey: 'userPlus',
     },
     score_updated: {
       label: 'Score Updated',
       description: 'When the lead score changes',
-      icon: '📊',
+      iconKey: 'barChart3',
     },
     status_changed: {
       label: 'Status Changed',
       description: 'When the lead status changes',
-      icon: '🔄',
+      iconKey: 'refreshCw',
     },
     priority_changed: {
       label: 'Priority Changed',
       description: 'When the priority changes',
-      icon: '⚡',
+      iconKey: 'zap',
     },
     market_changed: {
       label: 'Market Changed',
       description: 'When the reference market changes',
-      icon: '🌍',
+      iconKey: 'globe',
     },
     email_sent: {
       label: 'Email Sent',
       description: 'When an email is sent to the lead',
-      icon: '📧',
+      iconKey: 'mail',
     },
     whatsapp_sent: {
       label: 'WhatsApp Sent',
       description: 'When a WhatsApp message is sent',
-      icon: '💬',
+      iconKey: 'messageSquare',
     },
     sms_sent: {
       label: 'SMS Sent',
       description: 'When an SMS is sent to the lead',
-      icon: '📱',
+      iconKey: 'smartphone',
     },
   },
   operators: {

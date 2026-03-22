@@ -18,7 +18,14 @@ import {
   Activity,
   AlertTriangle,
   Loader2,
+  UserPlus,
+  BarChart3,
+  Globe,
+  Mail,
+  MessageSquare,
+  Smartphone,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,13 +55,25 @@ import {
   networkFailureToast,
   validationToast,
 } from '@/lib/i18n/api-feature-feedback';
-import type { 
-  AutomationRule, 
-  AutomationTriggerType, 
+import type {
+  AutomationRule,
+  AutomationTriggerType,
   AutomationConditionOperator,
   AutomationActionType,
-  AutomationLog
+  AutomationLog,
 } from '@/lib/types/database.types';
+import type { CrmAutomationTriggerIconKey } from '@/lib/i18n/crm-automation-rules-page-ui';
+
+const CRM_TRIGGER_ICON_BY_KEY: Record<CrmAutomationTriggerIconKey, LucideIcon> = {
+  userPlus: UserPlus,
+  barChart3: BarChart3,
+  refreshCw: RefreshCw,
+  zap: Zap,
+  globe: Globe,
+  mail: Mail,
+  messageSquare: MessageSquare,
+  smartphone: Smartphone,
+};
 
 interface RuleFormData {
   name: string;
@@ -473,15 +492,18 @@ export default function AutomationCenterPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-white/10">
-                      {Object.entries(TRIGGER_LABELS).map(([key, { label, description, icon }]) => (
-                        <SelectItem key={key} value={key} className="text-white hover:bg-white/10">
-                          <span className="flex items-center gap-2">
-                            <span>{icon}</span>
-                            <span>{label}</span>
-                            <span className="text-white/40 text-xs">- {description}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
+                      {Object.entries(TRIGGER_LABELS).map(([key, { label, description, iconKey }]) => {
+                        const TriggerIcon = CRM_TRIGGER_ICON_BY_KEY[iconKey];
+                        return (
+                          <SelectItem key={key} value={key} className="text-white hover:bg-white/10">
+                            <span className="flex items-center gap-2">
+                              <TriggerIcon className="h-4 w-4 shrink-0 text-violet-300" aria-hidden />
+                              <span>{label}</span>
+                              <span className="text-white/40 text-xs">- {description}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -774,8 +796,19 @@ export default function AutomationCenterPage() {
                               <Badge className={rule.is_active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}>
                                 {rule.is_active ? t.active : t.inactive}
                               </Badge>
-                              <Badge className="bg-violet-500/20 text-violet-400">
-                                {TRIGGER_LABELS[rule.trigger_type]?.icon} {TRIGGER_LABELS[rule.trigger_type]?.label}
+                              <Badge className="bg-violet-500/20 text-violet-400 inline-flex items-center gap-1">
+                                {(() => {
+                                  const trig = TRIGGER_LABELS[rule.trigger_type];
+                                  const TriggerIcon = trig
+                                    ? CRM_TRIGGER_ICON_BY_KEY[trig.iconKey]
+                                    : Zap;
+                                  return (
+                                    <>
+                                      <TriggerIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                      {trig?.label}
+                                    </>
+                                  );
+                                })()}
                               </Badge>
                             </div>
                             {rule.description && (
