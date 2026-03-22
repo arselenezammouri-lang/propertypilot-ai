@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +35,10 @@ import {
   ArrowLeft,
   Lightbulb,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Tag,
+  KeyRound,
+  Palmtree,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -65,6 +69,8 @@ export default function HashtagsPage() {
   const { locale } = useLocale();
   const isItalian = locale === "it";
   const feedbackLocale = isItalian ? "it" : "en";
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const tt = dash.transactionTypes;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
@@ -75,7 +81,7 @@ export default function HashtagsPage() {
     heroSubtitle: isItalian
       ? "Genera hashtag ottimizzati per massimizzare il reach dei tuoi post"
       : "Generate optimized hashtags to maximize the reach of your posts",
-    heroBadge: isItalian ? "⚡ Viral Booster AI" : "⚡ Viral Booster AI",
+    heroBadge: isItalian ? "Viral Booster AI" : "Viral Booster AI",
     formTitle: isItalian ? "Dati Immobile" : "Property Data",
     formSubtitle: isItalian
       ? "Inserisci le informazioni per generare hashtag personalizzati"
@@ -143,11 +149,15 @@ export default function HashtagsPage() {
     catUsa: "USA",
   };
 
-  const tipoTransazioneOptions = [
-    { value: "vendita", label: isItalian ? "Vendita" : "Sale", icon: "🏷️" },
-    { value: "affitto", label: isItalian ? "Affitto" : "Rental", icon: "🔑" },
-    { value: "affitto_breve", label: isItalian ? "Affitto Breve / Turistico" : "Short-Term / Vacation Rental", icon: "🏖️" },
-  ];
+  const tipoTransazioneOptions = useMemo(
+    () =>
+      [
+        { value: "vendita" as const, label: tt.vendita, Icon: Tag },
+        { value: "affitto" as const, label: tt.affitto, Icon: KeyRound },
+        { value: "affitto_breve" as const, label: tt.affitto_breve, Icon: Palmtree },
+      ] as const,
+    [tt]
+  );
 
   const hashtagTabs = [
     { id: "virali", label: t.tabVirali, icon: TrendingUp, description: t.tabViraliDesc, color: "from-pink-500 to-rose-500" },
@@ -326,12 +336,12 @@ export default function HashtagsPage() {
 
   const planBadgeLabel =
     usage.plan === "agency"
-      ? "Agency"
+      ? dash.planAgency
       : usage.plan === "pro"
-        ? "Pro"
+        ? dash.planPro
         : usage.plan === "starter"
-          ? "Starter"
-          : "Free";
+          ? dash.planStarter
+          : dash.planFree;
 
   return (
     <DashboardPageShell className="max-w-6xl">
@@ -349,7 +359,8 @@ export default function HashtagsPage() {
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
-          <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 text-xs">
+          <Badge className="flex items-center gap-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 text-xs">
+            <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
             {t.heroBadge}
           </Badge>
         }
@@ -377,14 +388,17 @@ export default function HashtagsPage() {
                   <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipoTransazioneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {tipoTransazioneOptions.map((option) => {
+                    const TxIcon = option.Icon;
+                    return (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>

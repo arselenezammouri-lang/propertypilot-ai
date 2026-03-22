@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { getTranslation } from '@/lib/i18n/dictionary';
 import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
@@ -35,6 +36,7 @@ import {
   AlertTriangle,
   Copy,
   Sparkles,
+  Zap,
   TrendingUp,
   ArrowLeft,
   ArrowRight,
@@ -110,6 +112,7 @@ export default function LeadScorePage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === 'it';
   const feedbackLocale = isItalian ? 'it' : 'en';
+  const lsp = useMemo(() => getTranslation(locale).dashboard.leadScorePage, [locale]);
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
   const [mercato, setMercato] = useState<'italia' | 'usa'>('italia');
@@ -174,17 +177,14 @@ export default function LeadScorePage() {
     perfectCopy: isItalian ? "Suggerimenti Perfect Copy" : "Perfect Copy Suggestions",
     perfectCopyDesc: isItalian ? "Contenuti consigliati per aumentare le conversioni con questo lead" : "Suggested content to increase conversions with this lead",
     newAnalysis: isItalian ? "Nuova Analisi" : "New Analysis",
-    cacheBadge: isItalian ? "⚡ Risultato dalla cache (24h)" : "⚡ Result from cache (24h)",
   };
-  const marketOptions = isItalian
-    ? [
-        { value: 'italia', label: '🇮🇹 Italia' },
-        { value: 'usa', label: '🇺🇸 USA' },
-      ]
-    : [
-        { value: 'italia', label: '🇮🇹 Italy' },
-        { value: 'usa', label: '🇺🇸 USA' },
-      ];
+  const marketOptions = useMemo(
+    () => [
+      { value: 'italia' as const, label: lsp.marketItaly },
+      { value: 'usa' as const, label: lsp.marketUsa },
+    ],
+    [lsp.marketItaly, lsp.marketUsa]
+  );
   const propertyTypes = isItalian
     ? [
         ['appartamento', 'Appartamento'], ['villa', 'Villa'], ['attico', 'Attico'], ['loft', 'Loft'], ['ufficio', 'Ufficio'], ['locale_commerciale', 'Locale Commerciale'], ['terreno', 'Terreno'], ['altro', 'Altro']
@@ -302,10 +302,14 @@ export default function LeadScorePage() {
 
   const getCategoryBadge = (categoria: string, label: string) => {
     switch (categoria) {
-      case 'hot': return { label: label || 'HOT LEAD 🔥', color: 'bg-red-500/20 text-red-400 border-red-500/30' };
-      case 'warm': return { label: label || 'WARM LEAD ⭐', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
-      case 'cold': return { label: label || 'COLD LEAD ❄️', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
-      default: return { label: 'LEAD', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
+      case 'hot':
+        return { label: label || lsp.categoryHot, color: 'bg-red-500/20 text-red-400 border-red-500/30' };
+      case 'warm':
+        return { label: label || lsp.categoryWarm, color: 'bg-orange-500/20 text-orange-400 border-orange-500/30' };
+      case 'cold':
+        return { label: label || lsp.categoryCold, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' };
+      default:
+        return { label: lsp.categoryDefault, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' };
     }
   };
 
@@ -326,12 +330,12 @@ export default function LeadScorePage() {
 
   const planBadgeLabel =
     usage.plan === 'agency'
-      ? 'Agency'
+      ? lsp.planAgency
       : usage.plan === 'pro'
-        ? 'Pro'
+        ? lsp.planPro
         : usage.plan === 'starter'
-          ? 'Starter'
-          : 'Free';
+          ? lsp.planStarter
+          : lsp.planFree;
 
   return (
     <DashboardPageShell className="max-w-7xl">
@@ -340,7 +344,7 @@ export default function LeadScorePage() {
         className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
       >
         <ArrowLeft className="h-4 w-4" />
-        {isItalian ? 'Torna alla dashboard' : 'Back to dashboard'}
+        {lsp.backToDashboard}
       </Link>
 
       <DashboardPageHeader
@@ -350,8 +354,9 @@ export default function LeadScorePage() {
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
         actions={
-          <Badge className="border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-xs text-cyan-200">
-            🎯 Priority
+          <Badge className="flex items-center gap-1 border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-xs text-cyan-200">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {lsp.headerPriorityBadge}
           </Badge>
         }
       />
@@ -536,8 +541,9 @@ export default function LeadScorePage() {
                     </div>
                     
                     {cached && (
-                      <Badge className="mt-4 bg-purple-500/20 text-purple-400 border-purple-500/30">
-                        {t.cacheBadge}
+                      <Badge className="mt-4 flex items-center gap-1 bg-purple-500/20 text-purple-400 border-purple-500/30">
+                        <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {lsp.cacheBadge}
                       </Badge>
                     )}
                   </div>
@@ -646,8 +652,9 @@ export default function LeadScorePage() {
                   {/* Risposta Breve */}
                   <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-4">
-                      <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                        ⚡ {t.quickReply}
+                      <Badge className="flex items-center gap-1 bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                        <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {t.quickReply}
                       </Badge>
                       <Button
                         variant="ghost"
@@ -684,8 +691,9 @@ export default function LeadScorePage() {
                   {/* Risposta Lunga/Professionale */}
                   <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
                     <div className="flex items-center justify-between mb-4">
-                      <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-                        📧 {t.professionalReply}
+                      <Badge className="flex items-center gap-1 bg-purple-500/20 text-purple-400 border-purple-500/30">
+                        <Mail className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                        {t.professionalReply}
                       </Badge>
                       <Button
                         variant="ghost"

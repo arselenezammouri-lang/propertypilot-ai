@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
@@ -32,7 +33,10 @@ import {
   Search,
   Star,
   TrendingUp,
-  MousePointerClick
+  MousePointerClick,
+  Tag,
+  KeyRound,
+  Palmtree,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -67,12 +71,6 @@ interface FormData {
   puntiChiave: string;
   tono: Tono;
 }
-
-const TIPO_TRANSAZIONE_OPTIONS = [
-  { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-  { value: 'affitto', label: 'Affitto', icon: '🔑' },
-  { value: 'affitto_breve', label: 'Affitto Breve / Turistico', icon: '🏖️' },
-];
 
 const TIPO_IMMOBILE_OPTIONS = [
   { value: "appartamento" as TipoImmobile, label: "Appartamento" },
@@ -151,6 +149,17 @@ export default function TitlesPage() {
   const { locale } = useLocaleContext();
   const isItalian = locale === "it";
   const feedbackLocale = isItalian ? "it" : "en";
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const tt = dash.transactionTypes;
+  const tipoTransazioneOptions = useMemo(
+    () =>
+      [
+        { value: "vendita", label: tt.vendita, Icon: Tag },
+        { value: "affitto", label: tt.affitto, Icon: KeyRound },
+        { value: "affitto_breve", label: tt.affitto_breve, Icon: Palmtree },
+      ] as const,
+    [tt]
+  );
   const usage = useUsageLimits();
   const t = {
     generateError: isItalian ? "Errore nella generazione" : "Generation error",
@@ -214,12 +223,12 @@ export default function TitlesPage() {
 
   const planBadgeLabel =
     usage.plan === "agency"
-      ? "Agency"
+      ? dash.planAgency
       : usage.plan === "pro"
-        ? "Pro"
+        ? dash.planPro
         : usage.plan === "starter"
-          ? "Starter"
-          : "Free";
+          ? dash.planStarter
+          : dash.planFree;
 
   const generateMutation = useMutation({
     mutationFn: async (data: FormData) => {
@@ -365,14 +374,17 @@ export default function TitlesPage() {
                         <SelectValue placeholder={t.selectTransaction} />
                       </SelectTrigger>
                       <SelectContent>
-                        {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            <span className="flex items-center gap-2">
-                              <span>{option.icon}</span>
-                              <span>{option.label}</span>
-                            </span>
-                          </SelectItem>
-                        ))}
+                        {tipoTransazioneOptions.map((option) => {
+                          const TxIcon = option.Icon;
+                          return (
+                            <SelectItem key={option.value} value={option.value}>
+                              <span className="flex items-center gap-2">
+                                <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                                <span>{option.label}</span>
+                              </span>
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
