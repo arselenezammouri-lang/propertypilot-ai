@@ -3,11 +3,30 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { 
-  ArrowLeft, User, Mail, Phone, MessageSquare, Calendar, 
-  Target, DollarSign, Home, AlertTriangle, 
-  UserCircle, Sparkles, Copy, Check, Loader2,
-  Brain, Shield, Zap, Clock, RefreshCw
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  MessageSquare,
+  Calendar,
+  Target,
+  DollarSign,
+  Home,
+  AlertTriangle,
+  UserCircle,
+  Sparkles,
+  Copy,
+  Check,
+  Loader2,
+  Brain,
+  Shield,
+  Zap,
+  Clock,
+  RefreshCw,
+  Flame,
+  Star,
+  Snowflake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -274,12 +293,13 @@ export default function LeadDetailPage() {
 
   const getScoreBadge = (score: number | null) => {
     const s = score ?? 0;
-    if (s >= 70) return { emoji: '🔥', label: t.scoreHot, color: 'bg-red-500' };
-    if (s >= 40) return { emoji: '⭐', label: t.scoreWarm, color: 'bg-yellow-500' };
-    return { emoji: '❄️', label: t.scoreCold, color: 'bg-blue-500' };
+    if (s >= 70) return { Icon: Flame, label: t.scoreHot, color: 'bg-red-500' };
+    if (s >= 40) return { Icon: Star, label: t.scoreWarm, color: 'bg-yellow-500' };
+    return { Icon: Snowflake, label: t.scoreCold, color: 'bg-blue-500' };
   };
 
   const scoreBadge = getScoreBadge(lead.lead_score);
+  const ScoreTierIcon = scoreBadge.Icon;
 
   const planBadgeLabel =
     usage.plan === 'agency'
@@ -310,8 +330,9 @@ export default function LeadDetailPage() {
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className={`${scoreBadge.color} text-white`}>
-              {scoreBadge.emoji} {lead.lead_score ?? '—'}
+            <Badge className={`${scoreBadge.color} text-white gap-1.5`}>
+              <ScoreTierIcon className="h-4 w-4 shrink-0" aria-hidden />
+              {lead.lead_score ?? '—'}
             </Badge>
             <Button
               onClick={handleEnrichLead}

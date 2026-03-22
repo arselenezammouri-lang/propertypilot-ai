@@ -84,6 +84,13 @@ export type LeadsPageUi = {
   priorityHigh: string;
   marketItaly: string;
   marketUsa: string;
+  /** Table / filters: short market code (no flag emoji) */
+  marketItalyCode: string;
+  marketUsaCode: string;
+  /** Lead row badge when score > 90 */
+  badgeRevenueOpportunity: string;
+  /** Lead row badge when score 85–90 */
+  badgeTopDeal: string;
 };
 
 const it: LeadsPageUi = {
@@ -168,6 +175,10 @@ const it: LeadsPageUi = {
   priorityHigh: 'Alta',
   marketItaly: 'Italia',
   marketUsa: 'USA',
+  marketItalyCode: 'IT',
+  marketUsaCode: 'US',
+  badgeRevenueOpportunity: 'Soldi',
+  badgeTopDeal: 'TOP DEAL',
 };
 
 const en: LeadsPageUi = {
@@ -250,6 +261,10 @@ const en: LeadsPageUi = {
   priorityHigh: 'High',
   marketItaly: 'Italy',
   marketUsa: 'USA',
+  marketItalyCode: 'IT',
+  marketUsaCode: 'US',
+  badgeRevenueOpportunity: 'Revenue',
+  badgeTopDeal: 'TOP DEAL',
 };
 
 export const leadsPageUiIt = it;

@@ -85,6 +85,10 @@ import {
   ChevronRight,
   Sparkles,
   Kanban,
+  ArrowDown,
+  ArrowRight,
+  Flame,
+  Gem,
 } from "lucide-react";
 import { Lead, LeadNote, LeadStatusHistory, LeadPriority, LeadStatus, LeadMarket } from "@/lib/types/database.types";
 import { fetchApi } from "@/lib/api/client";
@@ -118,15 +122,23 @@ export default function LeadsPage() {
     lost: { label: lp.statusLost, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30" },
   };
 
-  const priorityConfig: Record<LeadPriority, { label: string; color: string; bgColor: string; emoji: string }> = {
-    low: { label: lp.priorityLow, color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", emoji: "⬇️" },
-    medium: { label: lp.priorityMedium, color: "text-orange-600", bgColor: "bg-orange-100 dark:bg-orange-900/30", emoji: "➡️" },
-    high: { label: lp.priorityHigh, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", emoji: "🔥" },
+  const priorityConfig: Record<
+    LeadPriority,
+    { label: string; color: string; bgColor: string; Icon: typeof ArrowDown }
+  > = {
+    low: { label: lp.priorityLow, color: "text-gray-600", bgColor: "bg-gray-100 dark:bg-gray-800", Icon: ArrowDown },
+    medium: {
+      label: lp.priorityMedium,
+      color: "text-orange-600",
+      bgColor: "bg-orange-100 dark:bg-orange-900/30",
+      Icon: ArrowRight,
+    },
+    high: { label: lp.priorityHigh, color: "text-red-600", bgColor: "bg-red-100 dark:bg-red-900/30", Icon: Flame },
   };
 
-  const marketConfig: Record<LeadMarket, { label: string; emoji: string }> = {
-    italy: { label: lp.marketItaly, emoji: "🇮🇹" },
-    usa: { label: lp.marketUsa, emoji: "🇺🇸" },
+  const marketConfig: Record<LeadMarket, { label: string; code: string }> = {
+    italy: { label: lp.marketItaly, code: lp.marketItalyCode },
+    usa: { label: lp.marketUsa, code: lp.marketUsaCode },
   };
 
   const fallbackLeadName = lp.fallbackLeadName;
@@ -668,9 +680,17 @@ export default function LeadsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{lp.allPriorities}</SelectItem>
-                    {Object.entries(priorityConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
-                    ))}
+                    {Object.entries(priorityConfig).map(([key, config]) => {
+                      const PIcon = config.Icon;
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <span className="flex items-center gap-2">
+                            <PIcon className="h-4 w-4 shrink-0" aria-hidden />
+                            {config.label}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
                 <Select value={marketFilter} onValueChange={setMarketFilter}>
@@ -680,7 +700,12 @@ export default function LeadsPage() {
                   <SelectContent>
                     <SelectItem value="all">{lp.allMarkets}</SelectItem>
                     {Object.entries(marketConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
+                      <SelectItem key={key} value={key}>
+                        <span className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{config.code}</span>
+                          {config.label}
+                        </span>
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -766,13 +791,15 @@ export default function LeadsPage() {
                           <div className="flex items-center gap-2">
                             <div className="font-medium">{getLeadName(lead.nome)}</div>
                             {lead.lead_score > 90 && (
-                              <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
-                                💎 SOLDI
+                              <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50 gap-1">
+                                <Gem className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                {lp.badgeRevenueOpportunity}
                               </Badge>
                             )}
                             {lead.lead_score >= 85 && lead.lead_score <= 90 && (
-                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-2 py-0.5 animate-pulse shadow-lg">
-                                🔥 TOP DEAL
+                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-2 py-0.5 animate-pulse shadow-lg gap-1">
+                                <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                {lp.badgeTopDeal}
                               </Badge>
                             )}
                           </div>
@@ -820,8 +847,18 @@ export default function LeadsPage() {
                           </Select>
                         </TableCell>
                         <TableCell>
-                          <Badge className={`${priorityConfig[lead.priorita].bgColor} ${priorityConfig[lead.priorita].color} border-0`}>
-                            {priorityConfig[lead.priorita].emoji} {priorityConfig[lead.priorita].label}
+                          <Badge
+                            className={`${priorityConfig[lead.priorita].bgColor} ${priorityConfig[lead.priorita].color} border-0 gap-1`}
+                          >
+                            {(() => {
+                              const PIcon = priorityConfig[lead.priorita].Icon;
+                              return (
+                                <>
+                                  <PIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                  {priorityConfig[lead.priorita].label}
+                                </>
+                              );
+                            })()}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -835,7 +872,12 @@ export default function LeadsPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          <span>{marketConfig[lead.market].emoji}</span>
+                          <span
+                            className="inline-flex min-w-[2.25rem] items-center justify-center rounded border border-muted-foreground/30 px-1.5 py-0.5 font-mono text-xs font-semibold text-muted-foreground"
+                            title={marketConfig[lead.market].label}
+                          >
+                            {marketConfig[lead.market].code}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="text-sm text-muted-foreground">
@@ -952,9 +994,17 @@ export default function LeadsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(priorityConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
-                    ))}
+                    {Object.entries(priorityConfig).map(([key, config]) => {
+                      const PIcon = config.Icon;
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <span className="flex items-center gap-2">
+                            <PIcon className="h-4 w-4 shrink-0" aria-hidden />
+                            {config.label}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -969,7 +1019,12 @@ export default function LeadsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(marketConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
+                      <SelectItem key={key} value={key}>
+                        <span className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{config.code}</span>
+                          {config.label}
+                        </span>
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1057,9 +1112,17 @@ export default function LeadsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(priorityConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
-                    ))}
+                    {Object.entries(priorityConfig).map(([key, config]) => {
+                      const PIcon = config.Icon;
+                      return (
+                        <SelectItem key={key} value={key}>
+                          <span className="flex items-center gap-2">
+                            <PIcon className="h-4 w-4 shrink-0" aria-hidden />
+                            {config.label}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -1074,7 +1137,12 @@ export default function LeadsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {Object.entries(marketConfig).map(([key, config]) => (
-                      <SelectItem key={key} value={key}>{config.emoji} {config.label}</SelectItem>
+                      <SelectItem key={key} value={key}>
+                        <span className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{config.code}</span>
+                          {config.label}
+                        </span>
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -1126,11 +1194,22 @@ export default function LeadsPage() {
                       <Badge className={`${statusConfig[selectedLead.status].bgColor} ${statusConfig[selectedLead.status].color} border-0`}>
                         {statusConfig[selectedLead.status].label}
                       </Badge>
-                      <Badge className={`${priorityConfig[selectedLead.priorita].bgColor} ${priorityConfig[selectedLead.priorita].color} border-0`}>
-                        {priorityConfig[selectedLead.priorita].emoji} {priorityConfig[selectedLead.priorita].label}
+                      <Badge
+                        className={`${priorityConfig[selectedLead.priorita].bgColor} ${priorityConfig[selectedLead.priorita].color} border-0 gap-1`}
+                      >
+                        {(() => {
+                          const PIcon = priorityConfig[selectedLead.priorita].Icon;
+                          return (
+                            <>
+                              <PIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                              {priorityConfig[selectedLead.priorita].label}
+                            </>
+                          );
+                        })()}
                       </Badge>
-                      <Badge variant="outline">
-                        {marketConfig[selectedLead.market].emoji} {marketConfig[selectedLead.market].label}
+                      <Badge variant="outline" className="gap-1.5">
+                        <span className="font-mono text-xs">{marketConfig[selectedLead.market].code}</span>
+                        {marketConfig[selectedLead.market].label}
                       </Badge>
                     </div>
                   </div>

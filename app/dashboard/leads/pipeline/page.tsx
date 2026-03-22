@@ -19,17 +19,21 @@ import {
   apiFailureToast,
   networkFailureToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  ArrowLeft, 
-  Users, 
-  Target, 
-  Phone, 
-  Mail, 
+import {
+  ArrowLeft,
+  Users,
+  Target,
+  Phone,
+  Mail,
   GripVertical,
   ExternalLink,
   Sparkles,
   RefreshCw,
-  LayoutGrid
+  LayoutGrid,
+  Flame,
+  Star,
+  Snowflake,
+  HelpCircle,
 } from "lucide-react";
 
 interface Lead {
@@ -57,11 +61,17 @@ function getScoreColor(score: number | null): string {
   return 'text-red-400';
 }
 
-function getScoreBadge(score: number | null): string {
-  if (score === null || score === 0) return '❓';
-  if (score >= 80) return '🔥';
-  if (score >= 50) return '⭐';
-  return '❄️';
+function ScoreTierGlyph({ score }: { score: number | null }) {
+  if (score === null || score === 0) {
+    return <HelpCircle className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />;
+  }
+  if (score >= 80) {
+    return <Flame className="h-4 w-4 text-emerald-400 shrink-0" aria-hidden />;
+  }
+  if (score >= 50) {
+    return <Star className="h-4 w-4 text-yellow-400 shrink-0 fill-yellow-400" aria-hidden />;
+  }
+  return <Snowflake className="h-4 w-4 text-red-400 shrink-0" aria-hidden />;
 }
 
 export default function PipelinePage() {
@@ -389,7 +399,7 @@ export default function PipelinePage() {
                           <span className={`text-sm font-bold ${getScoreColor(lead.lead_score)}`}>
                             {lead.lead_score}/100
                           </span>
-                          <span className="text-lg">{getScoreBadge(lead.lead_score)}</span>
+                          <ScoreTierGlyph score={lead.lead_score} />
                         </div>
                       )}
 
@@ -450,19 +460,19 @@ export default function PipelinePage() {
         <div className="mt-8 p-4 rounded-xl bg-slate-800/30 border border-slate-700/50">
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-400">🔥</span>
+              <Flame className="h-4 w-4 text-emerald-400 shrink-0" aria-hidden />
               <span>{t.legendHot}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-yellow-400">⭐</span>
+              <Star className="h-4 w-4 text-yellow-400 shrink-0 fill-yellow-400" aria-hidden />
               <span>{t.legendWarm}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-red-400">❄️</span>
+              <Snowflake className="h-4 w-4 text-red-400 shrink-0" aria-hidden />
               <span>{t.legendCold}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span>❓</span>
+              <HelpCircle className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />
               <span>{t.notAnalyzed}</span>
             </div>
           </div>

@@ -680,6 +680,10 @@ export interface TranslationDictionary {
     /** Soft error when GET /api/user/subscription fails (billing page) */
     subscriptionFetchErrorBody: string;
     retry: string;
+    /** Status badge on billing page (no emoji) */
+    planBadgeStarter: string;
+    planBadgePro: string;
+    planBadgeAgency: string;
   };
 
   /** Pending Stripe checkout banner (localStorage pendingPlan / pendingPackage) */
@@ -1632,6 +1636,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       subscriptionFetchErrorBody:
         'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.',
       retry: 'Riprova',
+      planBadgeStarter: 'Starter',
+      planBadgePro: 'Pro',
+      planBadgeAgency: 'Agency',
     },
     pendingCheckoutBanner: pendingCheckoutUiIt,
     ariaLimitModal: ariaLimitModalUiIt,
@@ -2558,6 +2565,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         'Secure payments powered by Stripe. Cards, payment methods, and invoices are managed in the Stripe customer portal.',
       subscriptionFetchErrorBody: 'Unable to load subscription. Showing Free plan.',
       retry: 'Retry',
+      planBadgeStarter: 'Starter',
+      planBadgePro: 'Pro',
+      planBadgeAgency: 'Agency',
     },
     pendingCheckoutBanner: pendingCheckoutUiEn,
     ariaLimitModal: ariaLimitModalUiEn,

@@ -249,11 +249,38 @@ export default function BillingPage() {
     
     switch (currentPlan) {
       case 'starter':
-        return <Badge variant="default" className="bg-electric-blue text-white text-base px-4 py-1.5" data-testid="badge-status">🚀 Starter</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-electric-blue text-white text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Rocket className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgeStarter}
+          </Badge>
+        );
       case 'pro':
-        return <Badge variant="default" className="bg-sunset-gold text-black text-base px-4 py-1.5" data-testid="badge-status">⚡ Pro</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-sunset-gold text-black text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Zap className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgePro}
+          </Badge>
+        );
       case 'agency':
-        return <Badge variant="default" className="bg-royal-purple text-white text-base px-4 py-1.5" data-testid="badge-status">👑 Agency</Badge>;
+        return (
+          <Badge
+            variant="default"
+            className="bg-royal-purple text-white text-base px-4 py-1.5 gap-2"
+            data-testid="badge-status"
+          >
+            <Crown className="h-4 w-4 shrink-0" aria-hidden />
+            {billingT.planBadgeAgency}
+          </Badge>
+        );
       default:
         return <Badge variant="secondary" className="text-base px-4 py-1.5" data-testid="badge-status">{billingT.freePlanName}</Badge>;
     }

@@ -198,6 +198,8 @@ describe('dashboard home copy (D1)', () => {
     const enB = getTranslation('en').billing;
     expect(itB.retry).toBe('Riprova');
     expect(enB.subscriptionFetchErrorBody).toContain('Free');
+    expect(enB.planBadgeStarter).toMatch(/Starter/i);
+    expect(itB.planBadgeAgency).toMatch(/Agency/i);
     const itW = getTranslation('it').dashboard.workspacePage;
     expect(itW.heroTitle).toContain('Control');
     expect(itW.trialDesc).toContain('{days}');
@@ -208,6 +210,8 @@ describe('dashboard home copy (D1)', () => {
     const itL = getTranslation('it').dashboard.leadsPage;
     const enL = getTranslation('en').dashboard.leadsPage;
     expect(itL.leadManagerTitle).toContain('Lead');
+    expect(itL.marketItalyCode).toBe('IT');
+    expect(enL.badgeTopDeal).toMatch(/TOP/i);
     expect(enL.deleteWarning).toContain('{name}');
     expect(itL.leadCreatedDesc).toContain('{name}');
     const enB = getTranslation('en').dashboard.predatorLiveBadge;
