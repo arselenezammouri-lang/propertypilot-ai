@@ -67,6 +67,21 @@ import type { WelcomeTourUi } from '@/lib/i18n/welcome-tour-ui';
 import { welcomeTourUiEn, welcomeTourUiIt } from '@/lib/i18n/welcome-tour-ui';
 import type { OnboardingWizardUi } from '@/lib/i18n/onboarding-wizard-ui';
 import { onboardingWizardUiEn, onboardingWizardUiIt } from '@/lib/i18n/onboarding-wizard-ui';
+import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
+import {
+  marketingAboutUiEn,
+  marketingAboutUiIt,
+  marketingBlogUiEn,
+  marketingBlogUiIt,
+  marketingFeaturesUiEn,
+  marketingFeaturesUiIt,
+} from '@/lib/i18n/marketing-pages-ui';
+import type { PrivacyPolicyPageUi } from '@/lib/i18n/privacy-policy-page-ui';
+import { privacyPolicyPageUiEn, privacyPolicyPageUiIt } from '@/lib/i18n/privacy-policy-page-ui';
+import type { TermsPolicyPageUi } from '@/lib/i18n/terms-policy-page-ui';
+import { termsPolicyPageUiEn, termsPolicyPageUiIt } from '@/lib/i18n/terms-policy-page-ui';
+import type { RefundPolicyPageUi } from '@/lib/i18n/refund-policy-page-ui';
+import { refundPolicyPageUiEn, refundPolicyPageUiIt } from '@/lib/i18n/refund-policy-page-ui';
 import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
 import {
   commandPaletteExtrasEn,
@@ -655,6 +670,19 @@ export interface TranslationDictionary {
   welcomeTour: WelcomeTourUi;
   /** Optional multi-step onboarding wizard */
   onboardingWizard: OnboardingWizardUi;
+
+  /** Public marketing: /about */
+  marketingAbout: MarketingAboutUi;
+  /** Public marketing: /blog */
+  marketingBlog: MarketingBlogUi;
+  /** Public marketing: /features */
+  marketingFeatures: MarketingFeaturesUi;
+  /** Legal: /privacy */
+  privacyPolicyPage: PrivacyPolicyPageUi;
+  /** Legal: /terms */
+  termsPolicyPage: TermsPolicyPageUi;
+  /** Legal: /refund */
+  refundPolicyPage: RefundPolicyPageUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -1502,6 +1530,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errorBoundaryModule: errorBoundaryModuleUiIt,
     welcomeTour: welcomeTourUiIt,
     onboardingWizard: onboardingWizardUiIt,
+    marketingAbout: marketingAboutUiIt,
+    marketingBlog: marketingBlogUiIt,
+    marketingFeatures: marketingFeaturesUiIt,
+    privacyPolicyPage: privacyPolicyPageUiIt,
+    termsPolicyPage: termsPolicyPageUiIt,
+    refundPolicyPage: refundPolicyPageUiIt,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
       boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -2351,6 +2385,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errorBoundaryModule: errorBoundaryModuleUiEn,
     welcomeTour: welcomeTourUiEn,
     onboardingWizard: onboardingWizardUiEn,
+    marketingAbout: marketingAboutUiEn,
+    marketingBlog: marketingBlogUiEn,
+    marketingFeatures: marketingFeaturesUiEn,
+    privacyPolicyPage: privacyPolicyPageUiEn,
+    termsPolicyPage: termsPolicyPageUiEn,
+    refundPolicyPage: refundPolicyPageUiEn,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',

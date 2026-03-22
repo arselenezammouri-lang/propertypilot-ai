@@ -1,175 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { RefreshCw, Clock, CheckCircle, AlertTriangle, Mail, CreditCard, XCircle } from "lucide-react";
 
 export function RefundPageContent() {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-
-  const copy = isItalian
-    ? {
-        title: "Politica di",
-        highlight: "Rimborso",
-        updated: "Ultimo aggiornamento: Dicembre 2024",
-        guaranteeTitle: "La Nostra Garanzia",
-        guaranteeBodyStart: "Siamo sicuri della qualita di PropertyPilot AI. Per questo offriamo una",
-        guaranteeBodyStrong: "garanzia soddisfatti o rimborsati di 14 giorni",
-        guaranteeBodyEnd: "su tutti i nuovi abbonamenti. Se non sei soddisfatto, ti rimborsiamo senza fare domande.",
-        trialTitle: "1. Periodo di Prova e Rimborso",
-        freeTrialTitle: "Prova Gratuita 7 Giorni",
-        freeTrialBody: "Tutti i piani includono 7 giorni di prova gratuita. Nessuna carta di credito richiesta per iniziare. Puoi annullare in qualsiasi momento durante il periodo di prova senza alcun addebito.",
-        guarantee14Title: "Garanzia 14 Giorni",
-        guarantee14Body: "Se dopo la prova attivi un abbonamento e non sei soddisfatto, puoi richiedere un rimborso completo entro 14 giorni dalla data del primo pagamento.",
-        conditionsTitle: "2. Condizioni per il Rimborso",
-        conditionsIntro: "Per ottenere un rimborso devi:",
-        conditions: [
-          "Richiedere il rimborso entro 14 giorni dal primo pagamento",
-          "Essere alla prima sottoscrizione (non si applica ai rinnovi)",
-          "Non aver violato i Termini di Servizio",
-          "Contattarci via email con la richiesta",
-        ],
-        nonRefundableTitle: "3. Casi Non Rimborsabili",
-        nonRefundableIntro: "Il rimborso non e applicabile nei seguenti casi:",
-        nonRefundable: [
-          "Richiesta dopo 14 giorni dal pagamento",
-          "Rinnovi automatici (puoi cancellare prima del rinnovo)",
-          "Pacchetto Agency Boost (servizio one-time gia erogato)",
-          "Account sospesi per violazione dei termini",
-          "Abbonamenti precedenti gia rimborsati",
-        ],
-        cancelTitle: "4. Cancellazione Abbonamento",
-        cancelIntro: "Puoi cancellare il tuo abbonamento in qualsiasi momento:",
-        cancelSteps: [
-          "Accedi alla tua Dashboard",
-          'Vai alla sezione "Billing" o "Abbonamento"',
-          'Clicca su "Cancella Abbonamento"',
-          "Conferma la cancellazione",
-        ],
-        cancelImportant: "Importante:",
-        cancelImportantBody: "La cancellazione avra effetto alla fine del periodo di fatturazione corrente. Continuerai ad avere accesso al servizio fino a quella data.",
-        processTitle: "5. Processo di Rimborso",
-        process: [
-          {
-            step: "1",
-            title: "Invia la Richiesta",
-            body: 'Contattaci via email con oggetto "Richiesta Rimborso" specificando il tuo account.',
-          },
-          {
-            step: "2",
-            title: "Verifica",
-            body: "Verificheremo che la richiesta rispetti le condizioni (1-2 giorni lavorativi).",
-          },
-          {
-            step: "3",
-            title: "Elaborazione",
-            body: "Il rimborso viene elaborato tramite Stripe (5-10 giorni per apparire sul conto).",
-          },
-          {
-            step: "✓",
-            title: "Completato",
-            body: "Riceverai conferma via email quando il rimborso sara processato.",
-          },
-        ],
-        boostTitle: "6. Agency Boost - Politica Speciale",
-        boostIntro: "Il pacchetto",
-        boostBody: "e un servizio one-time di implementazione personalizzata. Data la natura del servizio:",
-        boostRules: [
-          "Non e rimborsabile una volta iniziata l'implementazione",
-          "E possibile annullare entro 48 ore dall'ordine se il lavoro non e ancora iniziato",
-          "Eventuali problemi verranno risolti con supporto aggiuntivo gratuito",
-        ],
-        contactTitle: "7. Contattaci",
-        contactIntro: "Per richieste di rimborso o domande:",
-        refundEmail: "Email rimborsi:",
-        supportEmail: "Supporto generale:",
-        contactOutro: "Rispondiamo a tutte le richieste entro 24-48 ore lavorative.",
-        terms: "Termini e Condizioni",
-        privacy: "Privacy Policy",
-        pricing: "Vedi i Piani",
-      }
-    : {
-        title: "Refund",
-        highlight: "Policy",
-        updated: "Last updated: December 2024",
-        guaranteeTitle: "Our Guarantee",
-        guaranteeBodyStart: "We are confident in the quality of PropertyPilot AI. That is why we offer a",
-        guaranteeBodyStrong: "14-day money-back guarantee",
-        guaranteeBodyEnd: "on all new subscriptions. If you are not satisfied, we will refund you with no hassle.",
-        trialTitle: "1. Trial and Refund Window",
-        freeTrialTitle: "7-Day Free Trial",
-        freeTrialBody: "All plans include a 7-day free trial. No credit card required to get started. You can cancel at any time during the trial period with no charge.",
-        guarantee14Title: "14-Day Guarantee",
-        guarantee14Body: "If you activate a subscription after the trial and you are not satisfied, you can request a full refund within 14 days of the first payment date.",
-        conditionsTitle: "2. Refund Conditions",
-        conditionsIntro: "To obtain a refund you must:",
-        conditions: [
-          "Request the refund within 14 days of the first payment",
-          "Be on your first subscription term (renewals are excluded)",
-          "Not have violated the Terms of Service",
-          "Contact us by email with the request",
-        ],
-        nonRefundableTitle: "3. Non-Refundable Cases",
-        nonRefundableIntro: "Refunds do not apply in the following cases:",
-        nonRefundable: [
-          "Request submitted after 14 days from payment",
-          "Automatic renewals (you can cancel before renewal)",
-          "Agency Boost package (one-time service already delivered)",
-          "Accounts suspended for terms violations",
-          "Previous subscriptions already refunded",
-        ],
-        cancelTitle: "4. Subscription Cancellation",
-        cancelIntro: "You can cancel your subscription at any time:",
-        cancelSteps: [
-          "Log in to your dashboard",
-          'Go to the "Billing" or "Subscription" section',
-          'Click "Cancel Subscription"',
-          "Confirm the cancellation",
-        ],
-        cancelImportant: "Important:",
-        cancelImportantBody: "Cancellation takes effect at the end of the current billing period. You will keep access to the service until that date.",
-        processTitle: "5. Refund Process",
-        process: [
-          {
-            step: "1",
-            title: "Send the Request",
-            body: 'Contact us by email with the subject "Refund Request" and specify your account.',
-          },
-          {
-            step: "2",
-            title: "Verification",
-            body: "We will verify that the request meets the conditions (1-2 business days).",
-          },
-          {
-            step: "3",
-            title: "Processing",
-            body: "The refund is processed through Stripe (5-10 days to appear in your account).",
-          },
-          {
-            step: "✓",
-            title: "Completed",
-            body: "You will receive an email confirmation when the refund has been processed.",
-          },
-        ],
-        boostTitle: "6. Agency Boost - Special Policy",
-        boostIntro: "The",
-        boostBody: "package is a one-time personalized implementation service. Because of the nature of the service:",
-        boostRules: [
-          "It is not refundable once implementation has started",
-          "It can be canceled within 48 hours of the order if work has not started yet",
-          "Any delivery issues will be resolved with additional support at no extra cost",
-        ],
-        contactTitle: "7. Contact Us",
-        contactIntro: "For refund requests or questions:",
-        refundEmail: "Refund email:",
-        supportEmail: "General support:",
-        contactOutro: "We reply to all requests within 24-48 business hours.",
-        terms: "Terms and Conditions",
-        privacy: "Privacy Policy",
-        pricing: "View Pricing",
-      };
+  const copy = useMemo(() => getTranslation(locale as SupportedLocale).refundPolicyPage, [locale]);
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -180,7 +20,10 @@ export function RefundPageContent() {
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold" data-testid="heading-refund">
-              {copy.title} <span className="bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] bg-clip-text text-transparent">{copy.highlight}</span>
+              {copy.title}{" "}
+              <span className="bg-gradient-to-r from-[#fbbf24] to-[#f59e0b] bg-clip-text text-transparent">
+                {copy.highlight}
+              </span>
             </h1>
             <p className="text-white/60">{copy.updated}</p>
           </div>
@@ -268,7 +111,11 @@ export function RefundPageContent() {
           <div className="space-y-4">
             {copy.process.map((item) => (
               <div key={`${item.step}-${item.title}`} className="flex items-start gap-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${item.step === "✓" ? "bg-neon-aqua/20 text-neon-aqua" : "bg-royal-purple/20 text-royal-purple"}`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                    item.step === "✓" ? "bg-neon-aqua/20 text-neon-aqua" : "bg-royal-purple/20 text-royal-purple"
+                  }`}
+                >
                   {item.step}
                 </div>
                 <div>
@@ -286,7 +133,7 @@ export function RefundPageContent() {
             {copy.boostTitle}
           </h2>
           <p className="text-muted-foreground leading-relaxed">
-            {copy.boostIntro} <strong>Agency Boost (EUR 2,497)</strong> {copy.boostBody}
+            {copy.boostIntro} <strong>{copy.boostProductLabel}</strong> {copy.boostBody}
           </p>
           <ul className="list-disc list-inside text-muted-foreground mt-4 space-y-2">
             {copy.boostRules.map((item) => (
@@ -333,9 +180,7 @@ export function RefundPageContent() {
           </Button>
         </Link>
         <Link href="/pricing">
-          <Button className="neon-button gap-2">
-            {copy.pricing}
-          </Button>
+          <Button className="neon-button gap-2">{copy.pricing}</Button>
         </Link>
       </div>
     </main>

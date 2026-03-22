@@ -11,6 +11,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Error boundary / `useAPIErrorHandler`: `errorBoundaryModule` — `lib/i18n/error-boundary-ui.ts`.  
    - Welcome tour (primo accesso dashboard): `welcomeTour` — `lib/i18n/welcome-tour-ui.ts`.  
    - Onboarding wizard (flag env): `onboardingWizard` — `lib/i18n/onboarding-wizard-ui.ts`.  
+   - Marketing pubblico: `marketingAbout`, `marketingBlog`, `marketingFeatures` — `lib/i18n/marketing-pages-ui.ts`.  
+   - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.  
    - Griglia “tutti gli strumenti” (`DashboardPlanFeatures`): copy in `lib/i18n/plan-features-ui.ts`, esposta come `dashboard.planFeatures` (chrome + `items` per `id` feature).  
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (placeholder `{name}` dove serve).  
    - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage`; hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub`.  

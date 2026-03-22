@@ -11,6 +11,19 @@ describe('dashboard home copy (D1)', () => {
     expect(es.generate).toBeTruthy();
   });
 
+  it('marketing and legal pages (IT/EN; ES merge EN)', () => {
+    const it = getTranslation('it');
+    const en = getTranslation('en');
+    expect(it.marketingAbout.title).toContain('Chi');
+    expect(en.marketingAbout.title).toMatch(/About/i);
+    expect(it.marketingBlog.posts.length).toBe(3);
+    expect(it.marketingFeatures.features.length).toBe(12);
+    expect(it.privacyPolicyPage.sections.length).toBe(10);
+    expect(en.termsPolicyPage.sections[0].title).toMatch(/Acceptance/i);
+    expect(it.refundPolicyPage.guaranteeBodyStrong.length).toBeGreaterThan(5);
+    expect(getTranslation('es').marketingBlog.subtitle).toBe(en.marketingBlog.subtitle);
+  });
+
   it('errorBoundaryModule, welcomeTour, onboardingWizard for IT/EN; ES inherits EN', () => {
     const itE = getTranslation('it').errorBoundaryModule;
     const enE = getTranslation('en').errorBoundaryModule;
