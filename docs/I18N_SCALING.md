@@ -36,9 +36,9 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Referral (`/dashboard/referral`): `lib/i18n/referral-page-ui.ts` → `dashboard.referralPage` (IT/EN); **ES–AR** in `assistant-referral-perfect-copy-locales.ts`.  
    - Pacchetti premium (`/dashboard/packages`): `lib/i18n/packages-page-ui.ts` → `dashboard.packagesPage` (IT/EN); **ES–AR** in `branding-notifications-packages-locales.ts`.  
    - Prospecting / Arbitrage Command Center (`/dashboard/prospecting`): `dashboard.prospectingPage` — **IT/EN** in `lib/i18n/prospecting-page-ui.ts`; **ES/FR/DE/PT/AR** intere in `lib/i18n/prospecting-page-ui-locales.ts` (collegate in `dictionary.ts` sotto `translations.*.dashboard.prospectingPage`, merge profondo col resto EN); `nextAction` incluso in ogni bundle; logica `lib/ai/next-action-suggestion.ts`; tipi `lib/ai/next-action-types.ts`; portali `lib/i18n/prospecting-platforms.ts`; WhatsApp proprietario `lib/i18n/prospecting-whatsapp-outreach.ts`.  
-   - Analisi da link (`/dashboard/analyze`): `lib/i18n/analyze-link-page-ui.ts` → `dashboard.analyzeLinkPage`.  
-   - Scraper annunci (`/dashboard/scraper`): `lib/i18n/listing-scraper-page-ui.ts` → `dashboard.listingScraperPage`.  
-   - Audit annuncio (`/dashboard/auditor`): `lib/i18n/listing-auditor-page-ui.ts` → `dashboard.listingAuditorPage`.  
+   - Analisi da link (`/dashboard/analyze`): `lib/i18n/analyze-link-page-ui.ts` → `dashboard.analyzeLinkPage` (IT/EN); **ES–AR** in `lib/i18n/listing-tools-locales-*.ts` (spread nel `dashboard` per locale).  
+   - Scraper annunci (`/dashboard/scraper`): `lib/i18n/listing-scraper-page-ui.ts` → `dashboard.listingScraperPage` (IT/EN; `suggestionHint` testuale, no emoji); **ES–AR** negli stessi file `listing-tools-locales-*.ts`.  
+   - Audit annuncio (`/dashboard/auditor`): `lib/i18n/listing-auditor-page-ui.ts` → `dashboard.listingAuditorPage` (IT/EN; tipo transazione `iconKey` + Lucide in pagina; sezioni strutturali senza emoji nei testi); **ES–AR** in `listing-tools-locales-*.ts`.  
    - Banner checkout in sospeso (`PendingCheckoutBanner`): `lib/i18n/pending-checkout-ui.ts` → `pendingCheckoutBanner` (prezzi da `STRIPE_*` + `formatCurrencyForLocale` + `billing.perMonth`).  
    - Modal limite utilizzo (`AriaLimitModal`): `lib/i18n/aria-limit-modal-ui.ts` → `ariaLimitModal` (prezzo upgrade da `STRIPE_PLANS[next].price`).  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.

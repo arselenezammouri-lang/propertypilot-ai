@@ -7,6 +7,9 @@ export type ListingAuditorGoalKey = 'vendita' | 'seo' | 'luxury' | 'social';
 export type ListingAuditorMarketKey = 'italia' | 'usa';
 export type ListingAuditorTransactionKey = 'vendita' | 'affitto' | 'affitto_breve';
 
+/** Lucide keys for transaction type row (aligned with Perfect Copy). */
+export type ListingAuditorTxIconKey = 'tag' | 'keyRound' | 'palmtree';
+
 export type ListingAuditorPageUi = {
   copied: string;
   copiedDesc: string;
@@ -112,7 +115,7 @@ export type ListingAuditorPageUi = {
   markets: Record<ListingAuditorMarketKey, { label: string; portali: string }>;
   transactionTypes: Record<
     ListingAuditorTransactionKey,
-    { label: string; icon: string }
+    { label: string; iconKey: ListingAuditorTxIconKey }
   >;
 };
 
@@ -172,7 +175,7 @@ const it: ListingAuditorPageUi = {
   planPro: 'Pro',
   planStarter: 'Starter',
   planFree: 'Free',
-  suggestionHint: '💡',
+  suggestionHint: 'Suggerimento:',
   qualityScoreHeading: 'Punteggio qualità',
   outOf100: '/100',
   breakdownStructure: 'Struttura',
@@ -181,10 +184,10 @@ const it: ListingAuditorPageUi = {
   breakdownPersuasion: 'Persuasività',
   structuralAuditTitle: 'Audit strutturale',
   structuralSections: {
-    titolo: '📌 Titolo',
-    apertura: '🚀 Apertura',
-    corpo: '📝 Corpo',
-    callToAction: '🎯 Call to action',
+    titolo: 'Titolo',
+    apertura: 'Apertura',
+    corpo: 'Corpo',
+    callToAction: 'Call to action',
   },
   problemsLabel: 'Problemi:',
   suggestionsLabel: 'Suggerimenti:',
@@ -201,14 +204,14 @@ const it: ListingAuditorPageUi = {
   idealTone: 'Tono ideale:',
   emotionalWeaknesses: 'Punti deboli emotivi',
   missingSensations: 'Sensazioni mancanti',
-  narrativeOpportunities: '✨ Opportunità narrative',
-  redFlagsTitle: '🚨 Interventi critici (red flag)',
+  narrativeOpportunities: 'Opportunità narrative',
+  redFlagsTitle: 'Interventi critici (red flag)',
   redFlagsDesc: 'Problemi urgenti da risolvere prima di pubblicare',
   gravita: { critica: 'Critica', alta: 'Alta', media: 'Media' },
-  solutionLabel: '✅ Soluzione:',
-  impactIfUnresolved: '⚠️ Impatto se non risolto:',
+  solutionLabel: 'Soluzione:',
+  impactIfUnresolved: 'Impatto se non risolto:',
   aiSuggestionsTitle: 'Suggerimenti AI strategici',
-  expectedImpactPrefix: '📈 Impatto previsto:',
+  expectedImpactPrefix: 'Impatto previsto:',
   optimizedVersionTitle: 'Versione ottimizzata (mini Perfect Copy)',
   optimizedTitleLabel: 'Titolo ottimizzato',
   descriptionLabel: 'Descrizione',
@@ -224,13 +227,13 @@ const it: ListingAuditorPageUi = {
     social: { label: 'Social', description: 'Engagement social' },
   },
   markets: {
-    italia: { label: '🇮🇹 Italia', portali: 'Immobiliare, Idealista, Casa, Subito' },
-    usa: { label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
+    italia: { label: 'Italia', portali: 'Immobiliare, Idealista, Casa, Subito' },
+    usa: { label: 'USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
   },
   transactionTypes: {
-    vendita: { label: 'Vendita', icon: '🏷️' },
-    affitto: { label: 'Affitto', icon: '🔑' },
-    affitto_breve: { label: 'Affitto breve / turistico', icon: '🏖️' },
+    vendita: { label: 'Vendita', iconKey: 'tag' },
+    affitto: { label: 'Affitto', iconKey: 'keyRound' },
+    affitto_breve: { label: 'Affitto breve / turistico', iconKey: 'palmtree' },
   },
 };
 
@@ -289,7 +292,7 @@ const en: ListingAuditorPageUi = {
   planPro: 'Pro',
   planStarter: 'Starter',
   planFree: 'Free',
-  suggestionHint: '💡',
+  suggestionHint: 'Tip:',
   qualityScoreHeading: 'Quality score',
   outOf100: '/100',
   breakdownStructure: 'Structure',
@@ -298,10 +301,10 @@ const en: ListingAuditorPageUi = {
   breakdownPersuasion: 'Persuasion',
   structuralAuditTitle: 'Structural audit',
   structuralSections: {
-    titolo: '📌 Title',
-    apertura: '🚀 Opening',
-    corpo: '📝 Body',
-    callToAction: '🎯 Call to action',
+    titolo: 'Title',
+    apertura: 'Opening',
+    corpo: 'Body',
+    callToAction: 'Call to action',
   },
   problemsLabel: 'Issues:',
   suggestionsLabel: 'Suggestions:',
@@ -318,14 +321,14 @@ const en: ListingAuditorPageUi = {
   idealTone: 'Ideal tone:',
   emotionalWeaknesses: 'Emotional weaknesses',
   missingSensations: 'Missing sensations',
-  narrativeOpportunities: '✨ Narrative opportunities',
-  redFlagsTitle: '🚨 Critical fixes (red flags)',
+  narrativeOpportunities: 'Narrative opportunities',
+  redFlagsTitle: 'Critical fixes (red flags)',
   redFlagsDesc: 'Urgent issues to fix before publishing',
   gravita: { critica: 'Critical', alta: 'High', media: 'Medium' },
-  solutionLabel: '✅ Fix:',
-  impactIfUnresolved: '⚠️ Impact if ignored:',
+  solutionLabel: 'Fix:',
+  impactIfUnresolved: 'Impact if ignored:',
   aiSuggestionsTitle: 'Strategic AI suggestions',
-  expectedImpactPrefix: '📈 Expected impact:',
+  expectedImpactPrefix: 'Expected impact:',
   optimizedVersionTitle: 'Optimized version (mini Perfect Copy)',
   optimizedTitleLabel: 'Optimized title',
   descriptionLabel: 'Description',
@@ -341,13 +344,13 @@ const en: ListingAuditorPageUi = {
     social: { label: 'Social', description: 'Social engagement' },
   },
   markets: {
-    italia: { label: '🇮🇹 Italy', portali: 'Immobiliare, Idealista, Casa, Subito' },
-    usa: { label: '🇺🇸 USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
+    italia: { label: 'Italy', portali: 'Immobiliare, Idealista, Casa, Subito' },
+    usa: { label: 'USA', portali: 'Zillow, Realtor, Redfin, Trulia' },
   },
   transactionTypes: {
-    vendita: { label: 'Sale', icon: '🏷️' },
-    affitto: { label: 'Rent', icon: '🔑' },
-    affitto_breve: { label: 'Short-term / vacation rental', icon: '🏖️' },
+    vendita: { label: 'Sale', iconKey: 'tag' },
+    affitto: { label: 'Rent', iconKey: 'keyRound' },
+    affitto_breve: { label: 'Short-term / vacation rental', iconKey: 'palmtree' },
   },
 };
 

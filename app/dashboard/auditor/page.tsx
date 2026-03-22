@@ -12,12 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Sparkles, 
-  FileText, 
-  Link2, 
-  Award, 
-  TrendingUp, 
+import {
+  Sparkles,
+  FileText,
+  Link2,
+  Award,
+  TrendingUp,
   Search,
   AlertTriangle,
   Lightbulb,
@@ -36,8 +36,15 @@ import {
   CheckCircle2,
   XCircle,
   ArrowLeft,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Tag,
+  KeyRound,
+  Palmtree,
+  Rocket,
+  AlignLeft,
+  Target,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { ProFeaturePaywall } from '@/components/demo-modal';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
@@ -46,7 +53,24 @@ import type {
   ListingAuditorGoalKey,
   ListingAuditorMarketKey,
   ListingAuditorTransactionKey,
+  ListingAuditorTxIconKey,
 } from '@/lib/i18n/listing-auditor-page-ui';
+
+const AUDITOR_TX_ICON: Record<ListingAuditorTxIconKey, LucideIcon> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const STRUCTURAL_SECTION_ICON: Record<
+  'titolo' | 'apertura' | 'corpo' | 'callToAction',
+  LucideIcon
+> = {
+  titolo: FileText,
+  apertura: Rocket,
+  corpo: AlignLeft,
+  callToAction: Target,
+};
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
@@ -174,7 +198,7 @@ export default function AuditorPage() {
       (['vendita', 'affitto', 'affitto_breve'] as const).map((value) => ({
         value,
         label: t.transactionTypes[value].label,
-        icon: t.transactionTypes[value].icon,
+        iconKey: t.transactionTypes[value].iconKey,
       })),
     [t]
   );
@@ -409,14 +433,17 @@ export default function AuditorPage() {
                     <SelectValue placeholder={t.selectTransaction} />
                   </SelectTrigger>
                   <SelectContent>
-                    {TIPO_TRANSAZIONE_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <span className="flex items-center gap-2">
-                          <span>{option.icon}</span>
-                          <span>{option.label}</span>
-                        </span>
-                      </SelectItem>
-                    ))}
+                    {TIPO_TRANSAZIONE_OPTIONS.map((option) => {
+                      const TxIcon = AUDITOR_TX_ICON[option.iconKey];
+                      return (
+                        <SelectItem key={option.value} value={option.value}>
+                          <span className="flex items-center gap-2">
+                            <TxIcon className="h-4 w-4 shrink-0 text-blue-300" aria-hidden />
+                            <span>{option.label}</span>
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -602,10 +629,14 @@ export default function AuditorPage() {
                 {(['titolo', 'apertura', 'corpo', 'callToAction'] as const).map((key) => {
                   const item = auditResult.structuralAudit[key];
                   const labels = t.structuralSections;
+                  const SectionIcon = STRUCTURAL_SECTION_ICON[key];
                   return (
                     <div key={key} className="p-4 rounded-lg bg-slate-800/50 border border-blue-500/20">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-semibold text-blue-200">{labels[key]}</h4>
+                        <h4 className="flex items-center gap-2 font-semibold text-blue-200">
+                          <SectionIcon className="h-4 w-4 shrink-0 text-blue-400" aria-hidden />
+                          {labels[key]}
+                        </h4>
                         <Badge className={item.punteggio >= 7 ? 'bg-emerald-500/20 text-emerald-400' : item.punteggio >= 5 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'}>
                           {item.punteggio}/10
                         </Badge>
@@ -681,7 +712,13 @@ export default function AuditorPage() {
                     )}
                     <span className="text-sm text-blue-100/80">{auditResult.seoAudit.ottimizzazioneH1?.valutazione}</span>
                   </div>
-                  <p className="text-sm text-amber-300/80">{t.suggestionHint} {auditResult.seoAudit.ottimizzazioneH1?.suggerimento}</p>
+                  <p className="flex items-start gap-2 text-sm text-amber-300/80">
+                    <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" aria-hidden />
+                    <span>
+                      <span className="font-medium">{t.suggestionHint}</span>{' '}
+                      {auditResult.seoAudit.ottimizzazioneH1?.suggerimento}
+                    </span>
+                  </p>
                 </div>
 
                 {auditResult.seoAudit.problemiLeggibilita?.length > 0 && (
@@ -828,7 +865,12 @@ export default function AuditorPage() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-amber-300 mb-1">{s.titolo}</h4>
                         <p className="text-sm text-blue-100/80 mb-2">{s.descrizione}</p>
-                        <p className="text-xs text-emerald-400">{t.expectedImpactPrefix} {s.impattoPrevisto}</p>
+                        <p className="flex items-center gap-1.5 text-xs text-emerald-400">
+                          <TrendingUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          <span>
+                            {t.expectedImpactPrefix} {s.impattoPrevisto}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </div>
