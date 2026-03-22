@@ -361,4 +361,17 @@ describe('dashboard home copy (D1)', () => {
     expect(itM.desc).toContain('{used}');
     expect(enM.upgrades.free.features.length).toBe(3);
   });
+
+  it('transactionTypes + leadScorePage (IT/EN; ES merges EN)', () => {
+    const itD = getTranslation('it').dashboard;
+    const enD = getTranslation('en').dashboard;
+    expect(itD.transactionTypes.vendita).toMatch(/Vendita/i);
+    expect(enD.transactionTypes.affitto_breve.toLowerCase()).toMatch(/short|vacation|rental/);
+    expect(itD.leadScorePage.marketItaly).toMatch(/Italia/i);
+    expect(enD.leadScorePage.categoryHot.toLowerCase()).toMatch(/hot/);
+    expect(itD.leadScorePage.headerPriorityBadge.length).toBeGreaterThan(3);
+    const esD = getTranslation('es').dashboard;
+    expect(esD.transactionTypes.vendita).toBe(enD.transactionTypes.vendita);
+    expect(esD.leadScorePage.cacheBadge).toBe(enD.leadScorePage.cacheBadge);
+  });
 });
