@@ -25,7 +25,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Pipeline Kanban (`/dashboard/leads/pipeline`): `lib/i18n/lead-pipeline-page-ui.ts` → `dashboard.leadPipelinePage` (IT/EN; badge pipeline senza emoji); **ES–AR** nello stesso file `leads-pipeline-locales.ts`.  
    - CRM API keys (`/dashboard/crm/settings`): `lib/i18n/crm-api-keys-page-ui.ts` → `dashboard.crmApiKeysPage` (IT/EN; badge header con icona `Key` nel componente, testo `pageBadge` senza emoji); **ES–AR** in `lib/i18n/crm-settings-automation-locales.ts`.  
    - Regole automazione CRM (`/dashboard/crm/automations`): `lib/i18n/crm-automation-rules-page-ui.ts` → `dashboard.crmAutomationRulesPage` (trigger con `iconKey` Lucide, no emoji); **ES–AR** nello stesso `crm-settings-automation-locales.ts`.  
-   - Workflow automazioni (`/dashboard/automations`): `lib/i18n/workflow-automations-page-ui.ts` → `dashboard.workflowAutomationsPage`.  
+   - Workflow automazioni (`/dashboard/automations`): `lib/i18n/workflow-automations-page-ui.ts` → `dashboard.workflowAutomationsPage` (IT/EN); **ES–AR** in `lib/i18n/workflow-automations-locales.ts` (spread nel partial `dashboard`).  
    - Branding agenzia / PDF white label (`/dashboard/agency-branding`): `lib/i18n/agency-branding-page-ui.ts` → `dashboard.agencyBrandingPage`.  
    - Notifiche Morning Intel (`/dashboard/settings/notifications`): `lib/i18n/notifications-settings-page-ui.ts` → `dashboard.notificationsSettingsPage`.  
    - Agency Assistant (`/dashboard/agency-assistant`): `lib/i18n/agency-assistant-page-ui.ts` → `dashboard.agencyAssistantPage`.  

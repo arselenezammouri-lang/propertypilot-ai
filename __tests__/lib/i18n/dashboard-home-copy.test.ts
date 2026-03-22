@@ -291,6 +291,14 @@ describe('dashboard home copy (D1)', () => {
     expect(enW.repeatIntervals.map((x) => x.value)).toEqual(['once', 'daily', 'weekly']);
   });
 
+  it('workflowAutomationsPage native ES/FR/AR', () => {
+    const es = getTranslation('es').dashboard.workflowAutomationsPage;
+    expect(es.crmRulesLink.toLowerCase()).toMatch(/crm/);
+    expect(es.pageSubtitle.length).toBeGreaterThan(40);
+    expect(getTranslation('fr').dashboard.workflowAutomationsPage.submitCreate.length).toBeGreaterThan(5);
+    expect(getTranslation('ar').dashboard.workflowAutomationsPage.yourAutomations.length).toBeGreaterThan(3);
+  });
+
   it('agencyBrandingPage for IT/EN', () => {
     const itB = getTranslation('it').dashboard.agencyBrandingPage;
     const enB = getTranslation('en').dashboard.agencyBrandingPage;

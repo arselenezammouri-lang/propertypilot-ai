@@ -80,6 +80,13 @@ import {
   crmSettingsAutomationLocalesFr,
   crmSettingsAutomationLocalesPt,
 } from '@/lib/i18n/crm-settings-automation-locales';
+import {
+  workflowAutomationsLocalesAr,
+  workflowAutomationsLocalesDe,
+  workflowAutomationsLocalesEs,
+  workflowAutomationsLocalesFr,
+  workflowAutomationsLocalesPt,
+} from '@/lib/i18n/workflow-automations-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2956,6 +2963,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadsPipelineLocalesEs,
       ...leadDetailCommLocalesEs,
       ...crmSettingsAutomationLocalesEs,
+      ...workflowAutomationsLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3331,6 +3339,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadsPipelineLocalesFr,
       ...leadDetailCommLocalesFr,
       ...crmSettingsAutomationLocalesFr,
+      ...workflowAutomationsLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3706,6 +3715,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadsPipelineLocalesDe,
       ...leadDetailCommLocalesDe,
       ...crmSettingsAutomationLocalesDe,
+      ...workflowAutomationsLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4083,6 +4093,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadsPipelineLocalesPt,
       ...leadDetailCommLocalesPt,
       ...crmSettingsAutomationLocalesPt,
+      ...workflowAutomationsLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4266,6 +4277,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadsPipelineLocalesAr,
       ...leadDetailCommLocalesAr,
       ...crmSettingsAutomationLocalesAr,
+      ...workflowAutomationsLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
