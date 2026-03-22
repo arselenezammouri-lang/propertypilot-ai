@@ -46,6 +46,7 @@ import {
   Sparkle,
   Loader2,
   Heart,
+  Lightbulb,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import NextDynamic from "next/dynamic";
@@ -429,8 +430,12 @@ export default function PlatformPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm mb-4">
-                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm mb-4 flex items-start gap-2">
+                    <Lightbulb
+                      className="h-4 w-4 text-[#06b6d4] shrink-0 mt-0.5"
+                      aria-hidden
+                    />
+                    <p className="text-sm text-[#06b6d4] font-semibold">{feature.benefit}</p>
                   </div>
                   <Link href={feature.cta}>
                     <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#06b6d4] hover:opacity-90 text-white border-0">
@@ -759,8 +764,12 @@ export default function PlatformPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-400 mb-4">{feature.description}</p>
-                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm">
-                    <p className="text-sm text-[#06b6d4] font-semibold">💡 {feature.benefit}</p>
+                  <div className="bg-[#9333ea]/10 rounded-lg p-3 border border-[#9333ea]/20 backdrop-blur-sm flex items-start gap-2">
+                    <Lightbulb
+                      className="h-4 w-4 text-[#06b6d4] shrink-0 mt-0.5"
+                      aria-hidden
+                    />
+                    <p className="text-sm text-[#06b6d4] font-semibold">{feature.benefit}</p>
                   </div>
                 </CardContent>
               </Card>
