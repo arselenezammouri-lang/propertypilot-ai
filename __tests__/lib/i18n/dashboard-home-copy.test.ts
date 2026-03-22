@@ -227,6 +227,14 @@ describe('dashboard home copy (D1)', () => {
     expect(enH.historyToggle).toContain('{count}');
   });
 
+  it('leadDetailPage + communicationsHub native ES/FR/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.leadDetailPage.enrichStart.toLowerCase()).toMatch(/ia|ai/);
+    expect(es.communicationsHub.generateWithAI.toLowerCase()).toMatch(/ia|ai/);
+    expect(getTranslation('fr').dashboard.leadDetailPage.backToLeads.toLowerCase()).toMatch(/lead/);
+    expect(getTranslation('ar').dashboard.communicationsHub.hubTitle.length).toBeGreaterThan(2);
+  });
+
   it('leadPipelinePage for IT/EN', () => {
     const itP = getTranslation('it').dashboard.leadPipelinePage;
     const enP = getTranslation('en').dashboard.leadPipelinePage;

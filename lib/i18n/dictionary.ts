@@ -66,6 +66,13 @@ import {
   leadsPipelineLocalesFr,
   leadsPipelineLocalesPt,
 } from '@/lib/i18n/leads-pipeline-locales';
+import {
+  leadDetailCommLocalesAr,
+  leadDetailCommLocalesDe,
+  leadDetailCommLocalesEs,
+  leadDetailCommLocalesFr,
+  leadDetailCommLocalesPt,
+} from '@/lib/i18n/lead-detail-communications-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2940,6 +2947,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiEs,
       ...dashboardMapOppAutoEs,
       ...leadsPipelineLocalesEs,
+      ...leadDetailCommLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3313,6 +3321,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiFr,
       ...dashboardMapOppAutoFr,
       ...leadsPipelineLocalesFr,
+      ...leadDetailCommLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3686,6 +3695,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiDe,
       ...dashboardMapOppAutoDe,
       ...leadsPipelineLocalesDe,
+      ...leadDetailCommLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4061,6 +4071,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiPt,
       ...dashboardMapOppAutoPt,
       ...leadsPipelineLocalesPt,
+      ...leadDetailCommLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4242,6 +4253,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiAr,
       ...dashboardMapOppAutoAr,
       ...leadsPipelineLocalesAr,
+      ...leadDetailCommLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
