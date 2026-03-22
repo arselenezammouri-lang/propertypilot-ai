@@ -162,6 +162,15 @@ import { pdfSheetPageUiFr, agentBioPageUiFr } from '@/lib/i18n/pdf-agent-bio-loc
 import { pdfSheetPageUiDe, agentBioPageUiDe } from '@/lib/i18n/pdf-agent-bio-locales-de';
 import { pdfSheetPageUiPt, agentBioPageUiPt } from '@/lib/i18n/pdf-agent-bio-locales-pt';
 import { pdfSheetPageUiAr, agentBioPageUiAr } from '@/lib/i18n/pdf-agent-bio-locales-ar';
+import type { VideoScriptsPageUi } from '@/lib/i18n/video-scripts-page-ui';
+import { videoScriptsPageUiEn, videoScriptsPageUiIt } from '@/lib/i18n/video-scripts-page-ui';
+import type { FollowupEmailsPageUi } from '@/lib/i18n/followup-emails-page-ui';
+import { followupEmailsPageUiEn, followupEmailsPageUiIt } from '@/lib/i18n/followup-emails-page-ui';
+import { videoScriptsPageUiEs, followupEmailsPageUiEs } from '@/lib/i18n/video-followup-locales-es';
+import { videoScriptsPageUiFr, followupEmailsPageUiFr } from '@/lib/i18n/video-followup-locales-fr';
+import { videoScriptsPageUiDe, followupEmailsPageUiDe } from '@/lib/i18n/video-followup-locales-de';
+import { videoScriptsPageUiPt, followupEmailsPageUiPt } from '@/lib/i18n/video-followup-locales-pt';
+import { videoScriptsPageUiAr, followupEmailsPageUiAr } from '@/lib/i18n/video-followup-locales-ar';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -428,6 +437,10 @@ export interface TranslationDictionary {
       pdfSheetPage: PdfSheetPageUi;
       /** `/dashboard/agent-bio` */
       agentBioPage: AgentBioPageUi;
+      /** `/dashboard/video-scripts` */
+      videoScriptsPage: VideoScriptsPageUi;
+      /** `/dashboard/followup-emails` */
+      followupEmailsPage: FollowupEmailsPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1373,6 +1386,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiIt,
       pdfSheetPage: pdfSheetPageUiIt,
       agentBioPage: agentBioPageUiIt,
+      videoScriptsPage: videoScriptsPageUiIt,
+      followupEmailsPage: followupEmailsPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -2313,6 +2328,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiEn,
       pdfSheetPage: pdfSheetPageUiEn,
       agentBioPage: agentBioPageUiEn,
+      videoScriptsPage: videoScriptsPageUiEn,
+      followupEmailsPage: followupEmailsPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
@@ -3062,6 +3079,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiEs,
       pdfSheetPage: pdfSheetPageUiEs,
       agentBioPage: agentBioPageUiEs,
+      videoScriptsPage: videoScriptsPageUiEs,
+      followupEmailsPage: followupEmailsPageUiEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3445,6 +3464,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiFr,
       pdfSheetPage: pdfSheetPageUiFr,
       agentBioPage: agentBioPageUiFr,
+      videoScriptsPage: videoScriptsPageUiFr,
+      followupEmailsPage: followupEmailsPageUiFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3828,6 +3849,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiDe,
       pdfSheetPage: pdfSheetPageUiDe,
       agentBioPage: agentBioPageUiDe,
+      videoScriptsPage: videoScriptsPageUiDe,
+      followupEmailsPage: followupEmailsPageUiDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4213,6 +4236,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiPt,
       pdfSheetPage: pdfSheetPageUiPt,
       agentBioPage: agentBioPageUiPt,
+      videoScriptsPage: videoScriptsPageUiPt,
+      followupEmailsPage: followupEmailsPageUiPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4404,6 +4429,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadScorePage: leadScorePageUiAr,
       pdfSheetPage: pdfSheetPageUiAr,
       agentBioPage: agentBioPageUiAr,
+      videoScriptsPage: videoScriptsPageUiAr,
+      followupEmailsPage: followupEmailsPageUiAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

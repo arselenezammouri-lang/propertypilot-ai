@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { FollowupEmailTabId, FollowupEmailTone } from "@/lib/i18n/followup-emails-page-ui";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -22,22 +24,22 @@ import {
   networkFailureToast,
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  Mail, 
-  Clock, 
-  Calendar, 
-  Home,
+import {
+  Mail,
+  Clock,
+  Calendar,
   Crown,
   Eye,
-  Sparkles, 
-  Copy, 
-  Check, 
+  Sparkles,
+  Copy,
+  Check,
   Loader2,
   ArrowLeft,
   Lightbulb,
   Zap,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 interface EmailVariant {
@@ -68,17 +70,25 @@ interface FormData {
   propertyLocation: string;
   propertyPrice: string;
   reasonOfInterest: string;
-  tone: "professionale" | "amichevole" | "luxury";
+  tone: FollowupEmailTone;
 }
 
 interface FollowUpEmailsPageProps {
   searchParams?: Record<string, string | string[] | undefined>;
 }
 
+const FOLLOWUP_TAB_ICON: Record<FollowupEmailTabId, LucideIcon> = {
+  immediateResponse: Zap,
+  followUp24h: Clock,
+  followUp72h: Clock,
+  appointmentScheduling: Calendar,
+  postVisit: Eye,
+  luxuryLeadFollowUp: Crown,
+};
+
 export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageProps) {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale === "it" ? "it" : "en";
   const usage = useUsageLimits();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -87,72 +97,17 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showLongVersion, setShowLongVersion] = useState(false);
   const { handleAPIError } = useAPIErrorHandler();
-  const t = {
-    required: isItalian ? "Campo obbligatorio" : "Required field",
-    leadNameRequired: isItalian ? "Inserisci il nome del lead" : "Enter the lead name",
-    agentNameRequired: isItalian ? "Inserisci il nome dell'agente" : "Enter the agent name",
-    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
-    propertyTitleRequired: isItalian ? "Inserisci il titolo dell'immobile" : "Enter the property title",
-    propertyLocationRequired: isItalian ? "Inserisci la localita dell'immobile" : "Enter the property location",
-    propertyPriceRequired: isItalian ? "Inserisci il prezzo dell'immobile" : "Enter the property price",
-    reasonRequired: isItalian ? "Descrivi il motivo di interesse del lead (min 10 caratteri)" : "Describe the lead's reason of interest (min 10 characters)",
-    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
-    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
-    generateError: isItalian ? "Errore nella generazione" : "Generation error",
-    success: isItalian ? "Email generate con successo!" : "Emails generated successfully!",
-    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    ready6: isItalian ? "6 email pronte per l'uso" : "6 emails ready to use",
-    error: isItalian ? "Errore" : "Error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedText: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    subjectLabel: isItalian ? "Oggetto" : "Subject",
-    psLabel: "P.S.",
-    standardVersion: isItalian ? "Versione Standard" : "Standard Version",
-    longVersion: isItalian ? "Versione Lunga" : "Long Version",
-    copyEmail: isItalian ? "Copia Email" : "Copy Email",
-    emailTextLong: isItalian ? "Testo Email (Versione Lunga)" : "Email Text (Long Version)",
-    emailText: isItalian ? "Testo Email" : "Email Text",
-    shortVersion: isItalian ? "Versione Breve (WhatsApp/SMS)" : "Short Version (WhatsApp/SMS)",
-    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    pageSubtitle: isItalian ? "Genera 6 email professionali per convertire i tuoi lead immobiliari" : "Generate 6 professional emails to convert your real estate leads",
-    leadName: isItalian ? "Nome Lead *" : "Lead Name *",
-    agentName: isItalian ? "Nome Agente *" : "Agent Name *",
-    agencyName: isItalian ? "Nome Agenzia *" : "Agency Name *",
-    propertyTitle: isItalian ? "Titolo Immobile *" : "Property Title *",
-    propertyLocation: isItalian ? "Localita *" : "Location *",
-    propertyPrice: isItalian ? "Prezzo *" : "Price *",
-    reasonInterest: isItalian ? "Motivo di Interesse *" : "Reason of Interest *",
-    tone: isItalian ? "Tono delle Email" : "Email Tone",
-    generating: isItalian ? "Generazione in corso..." : "Generating...",
-    generate6: isItalian ? "Genera 6 Email Follow-Up" : "Generate 6 Follow-Up Emails",
-    noResultTitle: isItalian ? "Nessuna email generata" : "No emails generated yet",
-    readyTitle: isItalian ? "Pronto a generare le tue email" : "Ready to generate your emails",
-    readyDesc: isItalian ? 'Compila il form con i dati del lead e clicca "Genera" per creare 6 email professionali personalizzate.' : 'Fill in the form with the lead details and click "Generate" to create 6 personalized professional emails.',
-    generatingTitle: isItalian ? "Generazione in corso..." : "Generation in progress...",
-    generatingDesc: isItalian ? "Stiamo creando 6 email personalizzate per il tuo lead" : "We're creating 6 personalized emails for your lead",
-    convertTip: isItalian ? "Consiglio per Convertire questo Lead" : "Tip to Convert This Lead",
-    ctaLabel: isItalian ? "Invito all'azione" : "Call-to-Action",
-  };
-  const emailTypes = isItalian
-    ? [
-        { id: "immediateResponse", label: "Risposta Immediata", icon: Zap, description: "Entro 1 ora" },
-        { id: "followUp24h", label: "Follow-Up 24h", icon: Clock, description: "Dopo 24 ore" },
-        { id: "followUp72h", label: "Follow-Up 72h", icon: Clock, description: "Dopo 72 ore" },
-        { id: "appointmentScheduling", label: "Appuntamento", icon: Calendar, description: "Fissa visita" },
-        { id: "postVisit", label: "Post-Visita", icon: Eye, description: "Dopo la visita" },
-        { id: "luxuryLeadFollowUp", label: "Luxury Lead", icon: Crown, description: "Clienti VIP" },
-      ]
-    : [
-        { id: "immediateResponse", label: "Immediate Response", icon: Zap, description: "Within 1 hour" },
-        { id: "followUp24h", label: "24h Follow-Up", icon: Clock, description: "After 24 hours" },
-        { id: "followUp72h", label: "72h Follow-Up", icon: Clock, description: "After 72 hours" },
-        { id: "appointmentScheduling", label: "Appointment", icon: Calendar, description: "Book a visit" },
-        { id: "postVisit", label: "Post-Visit", icon: Eye, description: "After the visit" },
-        { id: "luxuryLeadFollowUp", label: "Luxury Lead", icon: Crown, description: "VIP clients" },
-      ];
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.followupEmailsPage;
+
+  const emailTypes = useMemo(
+    () =>
+      t.emailTypes.map((e) => ({
+        ...e,
+        icon: FOLLOWUP_TAB_ICON[e.id],
+      })),
+    [t.emailTypes]
+  );
 
   const [formData, setFormData] = useState<FormData>({
     leadName: "",
@@ -173,7 +128,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
       return Array.isArray(value) ? value[0] : value || "";
     };
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       leadName: getParam("leadName") || prev.leadName,
       propertyTitle: getParam("propertyTitle") || prev.propertyTitle,
@@ -183,7 +138,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
   }, [searchParams]);
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
@@ -285,18 +240,18 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
 
   const copyFullEmail = async (email: EmailVariant, emailType: string) => {
     const version = showLongVersion ? email.versioneLunga : email.testoEmail;
-    const fullText = `${t.subjectLabel}: ${email.oggetto}\n\n${version}\n\n${email.cta}${email.ps ? `\n\n${t.psLabel} ${email.ps}` : ''}`;
+    const fullText = `${t.subjectLabel}: ${email.oggetto}\n\n${version}\n\n${email.cta}${email.ps ? `\n\n${t.psLabel} ${email.ps}` : ""}`;
     copyToClipboard(fullText, `full-${emailType}`);
   };
 
   const getEmailTypeInfo = (type: string) => {
-    return emailTypes.find(t => t.id === type) || emailTypes[0];
+    return emailTypes.find((e) => e.id === type) || emailTypes[0];
   };
 
   const renderEmailCard = (email: EmailVariant, emailType: string) => {
     const typeInfo = getEmailTypeInfo(emailType);
     const Icon = typeInfo.icon;
-    
+
     return (
       <Card className="border-orange-200 dark:border-orange-800">
         <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
@@ -347,9 +302,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
                 {copiedField === `oggetto-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
-            <p className="text-lg font-semibold text-orange-700 dark:text-orange-300">
-              {email.oggetto}
-            </p>
+            <p className="text-lg font-semibold text-orange-700 dark:text-orange-300">{email.oggetto}</p>
           </div>
 
           <div className="space-y-2">
@@ -360,10 +313,9 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard(
-                  showLongVersion ? email.versioneLunga : email.testoEmail, 
-                  `testo-${emailType}`
-                )}
+                onClick={() =>
+                  copyToClipboard(showLongVersion ? email.versioneLunga : email.testoEmail, `testo-${emailType}`)
+                }
                 className="h-6 px-2"
                 data-testid={`button-copy-testo-${emailType}`}
               >
@@ -397,23 +349,23 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
             </div>
 
             {email.ps && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium text-muted-foreground">{t.psLabel}</Label>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(email.ps!, `ps-${emailType}`)}
-                  className="h-6 px-2"
-                  data-testid={`button-copy-ps-${emailType}`}
-                >
-                  {copiedField === `ps-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                </Button>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium text-muted-foreground">{t.psLabel}</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(email.ps!, `ps-${emailType}`)}
+                    className="h-6 px-2"
+                    data-testid={`button-copy-ps-${emailType}`}
+                  >
+                    {copiedField === `ps-${emailType}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                  </Button>
+                </div>
+                <p className="text-sm italic text-muted-foreground bg-muted/30 p-2 rounded">
+                  {t.psLabel} {email.ps}
+                </p>
               </div>
-              <p className="text-sm italic text-muted-foreground bg-muted/30 p-2 rounded">
-                {t.psLabel} {email.ps}
-              </p>
-            </div>
             )}
           </div>
 
@@ -463,12 +415,12 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
 
       <DashboardPageHeader
         variant="dark"
-        title="Follow-Up Email AI"
+        title={t.pageTitle}
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
           <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0 text-xs">
-            Lead Converter AI
+            {t.heroBadge}
           </Badge>
         }
       />
@@ -478,18 +430,16 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
           <CardHeader className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-orange-600" />
-              {isItalian ? "Dati del Lead" : "Lead Data"}
+              {t.formCardTitle}
             </CardTitle>
-            <CardDescription>
-              {isItalian ? "Inserisci le informazioni per generare email personalizzate" : "Enter the information to generate personalized emails"}
-            </CardDescription>
+            <CardDescription>{t.formCardDesc}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
               <Label htmlFor="leadName">{t.leadName}</Label>
               <Input
                 id="leadName"
-                placeholder={isItalian ? "es. Marco Rossi" : "e.g. John Smith"}
+                placeholder={t.leadNamePlaceholder}
                 value={formData.leadName}
                 onChange={(e) => handleInputChange("leadName", e.target.value)}
                 data-testid="input-lead-name"
@@ -500,7 +450,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Label htmlFor="agentName">{t.agentName}</Label>
               <Input
                 id="agentName"
-                placeholder={isItalian ? "es. Anna Bianchi" : "e.g. Anna Brown"}
+                placeholder={t.agentNamePlaceholder}
                 value={formData.agentName}
                 onChange={(e) => handleInputChange("agentName", e.target.value)}
                 data-testid="input-agent-name"
@@ -511,7 +461,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Label htmlFor="agencyName">{t.agencyName}</Label>
               <Input
                 id="agencyName"
-                placeholder={isItalian ? "es. Immobiliare Milano" : "e.g. Prime Realty"}
+                placeholder={t.agencyNamePlaceholder}
                 value={formData.agencyName}
                 onChange={(e) => handleInputChange("agencyName", e.target.value)}
                 data-testid="input-agency-name"
@@ -522,7 +472,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Label htmlFor="propertyTitle">{t.propertyTitle}</Label>
               <Input
                 id="propertyTitle"
-                placeholder={isItalian ? "es. Attico con terrazzo panoramico" : "e.g. Penthouse with panoramic terrace"}
+                placeholder={t.propertyTitlePlaceholder}
                 value={formData.propertyTitle}
                 onChange={(e) => handleInputChange("propertyTitle", e.target.value)}
                 data-testid="input-property-title"
@@ -534,7 +484,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
                 <Label htmlFor="propertyLocation">{t.propertyLocation}</Label>
                 <Input
                   id="propertyLocation"
-                  placeholder={isItalian ? "es. Milano Centro" : "e.g. Downtown Miami"}
+                  placeholder={t.propertyLocationPlaceholder}
                   value={formData.propertyLocation}
                   onChange={(e) => handleInputChange("propertyLocation", e.target.value)}
                   data-testid="input-property-location"
@@ -544,7 +494,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
                 <Label htmlFor="propertyPrice">{t.propertyPrice}</Label>
                 <Input
                   id="propertyPrice"
-                  placeholder={isItalian ? "es. €450.000" : "e.g. $450,000"}
+                  placeholder={t.propertyPricePlaceholder}
                   value={formData.propertyPrice}
                   onChange={(e) => handleInputChange("propertyPrice", e.target.value)}
                   data-testid="input-property-price"
@@ -556,11 +506,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Label htmlFor="reasonOfInterest">{t.reasonInterest}</Label>
               <Textarea
                 id="reasonOfInterest"
-                placeholder={
-                  isItalian
-                    ? "es. Il cliente cerca un attico in zona centrale per uso abitativo, ha visitato il portale e richiesto info..."
-                    : "e.g. The client is looking for a central penthouse for residential use, visited the portal and requested info..."
-                }
+                placeholder={t.reasonPlaceholder}
                 value={formData.reasonOfInterest}
                 onChange={(e) => handleInputChange("reasonOfInterest", e.target.value)}
                 rows={3}
@@ -572,17 +518,17 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Label htmlFor="tone">{t.tone}</Label>
               <Select
                 value={formData.tone}
-                onValueChange={(value: "professionale" | "amichevole" | "luxury") => 
-                  handleInputChange("tone", value)
-                }
+                onValueChange={(value: FollowupEmailTone) => handleInputChange("tone", value)}
               >
                 <SelectTrigger data-testid="select-tone">
-                  <SelectValue placeholder={isItalian ? "Seleziona tono" : "Select tone"} />
+                  <SelectValue placeholder={t.selectTone} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="professionale">{isItalian ? "Professionale" : "Professional"}</SelectItem>
-                  <SelectItem value="amichevole">{isItalian ? "Amichevole" : "Friendly"}</SelectItem>
-                  <SelectItem value="luxury">Luxury</SelectItem>
+                  {t.toneOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -612,13 +558,9 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
           {!result && !isLoading && (
             <Card className="border-dashed border-2 border-muted">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <Mail className="h-16 w-16 text-muted-foreground/50 mb-4" />
-                <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  {t.noResultTitle}
-                </h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {t.readyDesc}
-                </p>
+                <Mail className="h-16 w-16 text-muted-foreground/50 mb-4" aria-hidden />
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">{t.noResultTitle}</h3>
+                <p className="text-sm text-muted-foreground max-w-md">{t.readyDesc}</p>
               </CardContent>
             </Card>
           )}
@@ -626,11 +568,9 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
           {isLoading && (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <Loader2 className="h-12 w-12 text-orange-500 animate-spin mb-4" />
+                <Loader2 className="h-12 w-12 text-orange-500 animate-spin mb-4" aria-hidden />
                 <h3 className="text-lg font-medium mb-2">{t.generatingTitle}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t.generatingDesc}
-                </p>
+                <p className="text-sm text-muted-foreground">{t.generatingDesc}</p>
               </CardContent>
             </Card>
           )}
@@ -641,14 +581,10 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
                 <Card className="border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20">
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-3">
-                      <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" aria-hidden />
                       <div>
-                        <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          {t.convertTip}
-                        </h4>
-                        <p className="text-sm text-amber-700 dark:text-amber-300">
-                          {result.consiglioConversione}
-                        </p>
+                        <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">{t.convertTip}</h4>
+                        <p className="text-sm text-amber-700 dark:text-amber-300">{result.consiglioConversione}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -658,7 +594,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-3 lg:grid-cols-6 gap-1 h-auto p-1">
                   {emailTypes.map((type) => {
-                    const Icon = type.icon;
+                    const TabIcon = type.icon;
                     return (
                       <TabsTrigger
                         key={type.id}
@@ -666,8 +602,8 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
                         className="flex flex-col items-center gap-1 py-2 px-2 text-xs data-[state=active]:bg-orange-100 dark:data-[state=active]:bg-orange-900/30"
                         data-testid={`tab-${type.id}`}
                       >
-                        <Icon className="h-4 w-4" />
-                        <span className="hidden sm:inline">{type.label.split(' ')[0]}</span>
+                        <TabIcon className="h-4 w-4" />
+                        <span className="hidden sm:inline">{type.label.split(" ")[0]}</span>
                       </TabsTrigger>
                     );
                   })}
