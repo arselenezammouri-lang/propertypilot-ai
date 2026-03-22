@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PropertyPilotLogo } from "@/components/logo";
@@ -15,7 +16,7 @@ import { Rocket } from "lucide-react";
  */
 export function MarketingNavHeader() {
   const { locale: currentLocale, currency, setLocale, setCurrency } = useLocaleContext();
-  const t = getTranslation(currentLocale as SupportedLocale);
+  const t = useMemo(() => getTranslation(currentLocale as SupportedLocale), [currentLocale]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.08] backdrop-blur-xl bg-[#000000]/95">
@@ -27,9 +28,7 @@ export function MarketingNavHeader() {
               <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent block">
                 PropertyPilot AI
               </span>
-              <span className="text-xs text-gray-400 hidden sm:block">
-                Pilot Your Agency to the Next Level
-              </span>
+              <span className="text-xs text-gray-400 hidden sm:block">{t.landing.nav.tagline}</span>
             </div>
           </Link>
 

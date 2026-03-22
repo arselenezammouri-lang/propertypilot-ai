@@ -16,6 +16,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Blog articolo: `blogPostPage` — `lib/i18n/blog-post-page-ui.ts` (`/blog/[slug]`).  
    - Pricing: oltre a `landing.pricingPage`, card piani + footer link — `pricingPagePlans` in `lib/i18n/pricing-page-plans-ui.ts`.  
    - Contatti: chiavi extra in `contact` (`headerTagline`, `demoMailSubject`, `minCharsCounter`, `submitting`).  
+   - Demo (`/demo`): `demo` include `testimonialsList`, `trustStats`, `finalCta`, `whatsappPrefill`, `calendlyIframeTitle`, `footerCopyrightLine`.  
+   - Header blog/diamond: `DiamondPageHeader` usa `landing.nav.tagline` e `errors.backToHome`; `MarketingNavHeader` tagline sotto logo da `landing.nav.tagline`.  
    - Griglia “tutti gli strumenti” (`DashboardPlanFeatures`): copy in `lib/i18n/plan-features-ui.ts`, esposta come `dashboard.planFeatures` (chrome + `items` per `id` feature).  
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (placeholder `{name}` dove serve).  
    - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage`; hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub`.  

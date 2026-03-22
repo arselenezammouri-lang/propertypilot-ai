@@ -560,10 +560,28 @@ export interface TranslationDictionary {
     nav: { pricing: string; login: string; startFree: string };
     hero: { badge: string; title: string; subtitle: string };
     calendly: { chooseDate: string; demoFree: string; preferContact: string; whatsapp: string; sendEmail: string };
+    /** `wa.me` pre-filled message */
+    whatsappPrefill: string;
+    calendlyIframeTitle: string;
     valuePoints: { sectionTitle: string; sectionSubtitle: string; bookNow: string };
     valuePointsList: Array<{ title: string; description: string }>;
     testimonials: { title: string; subtitle: string };
+    testimonialsList: Array<{ name: string; role: string; quote: string }>;
+    trustStats: Array<{
+      iconKey: 'clock' | 'shield' | 'users' | 'trendingUp';
+      value: string;
+      label: string;
+    }>;
+    finalCta: {
+      titleLead: string;
+      titleAccent: string;
+      titleTail: string;
+      subtitle: string;
+      bookDemo: string;
+    };
     footer: { home: string; pricing: string; contact: string; login: string };
+    /** `© {year} PropertyPilot AI. {rights}` */
+    footerCopyrightLine: string;
   };
 
   // Contact page
@@ -1452,6 +1470,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       nav: { pricing: 'Prezzi', login: 'Login', startFree: 'Inizia Gratis' },
       hero: { badge: 'Prenota in 30 secondi', title: 'Prenota una Demo Gratuita', subtitle: 'Scopri come PropertyPilot AI può trasformare la tua agenzia immobiliare. 30 minuti con un nostro esperto per vedere la piattaforma in azione.' },
       calendly: { chooseDate: 'Scegli Data e Ora', demoFree: 'Demo gratuita di 30 minuti', preferContact: 'Preferisci contattarci direttamente?', whatsapp: 'Scrivi su WhatsApp', sendEmail: 'Invia Email' },
+      whatsappPrefill: 'Ciao! Vorrei prenotare una demo di PropertyPilot AI.',
+      calendlyIframeTitle: 'Prenota demo PropertyPilot AI',
       valuePoints: { sectionTitle: 'Cosa scoprirai nella Demo', sectionSubtitle: 'Una panoramica completa delle funzionalità che renderanno la tua agenzia più efficiente.', bookNow: 'Prenota Ora la Tua Demo' },
       valuePointsList: [
         { title: 'AI Generativa Avanzata', description: 'Crea annunci professionali, titoli A/B, descrizioni SEO e contenuti marketing in pochi secondi.' },
@@ -1462,7 +1482,40 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         { title: 'Branding Personalizzato', description: 'PDF white-label, schede immobili professionali e materiali con il tuo brand.' },
       ],
       testimonials: { title: 'Cosa dicono i nostri Clienti', subtitle: 'Agenti e agenzie che hanno già trasformato il loro business con PropertyPilot AI' },
+      testimonialsList: [
+        {
+          name: 'Marco R.',
+          role: 'Agente immobiliare, Milano',
+          quote:
+            'PropertyPilot AI ha rivoluzionato il mio modo di lavorare. Creo annunci in 30 secondi invece di 30 minuti.',
+        },
+        {
+          name: 'Laura B.',
+          role: 'Titolare agenzia, Roma',
+          quote: 'Il CRM e le automazioni mi hanno fatto risparmiare ore ogni settimana. Lo consiglio a tutti!',
+        },
+        {
+          name: 'Giuseppe T.',
+          role: 'Property manager, Napoli',
+          quote: 'Finalmente una piattaforma italiana che capisce le nostre esigenze. Supporto eccezionale.',
+        },
+      ],
+      trustStats: [
+        { iconKey: 'clock', value: '30 min', label: 'Demo gratuita' },
+        { iconKey: 'shield', value: '100%', label: 'Senza impegno' },
+        { iconKey: 'users', value: '500+', label: 'Clienti soddisfatti' },
+        { iconKey: 'trendingUp', value: '+40%', label: 'Produttività media' },
+      ],
+      finalCta: {
+        titleLead: 'Pronto a ',
+        titleAccent: 'Trasformare',
+        titleTail: ' la tua agenzia?',
+        subtitle:
+          'Prenota ora la tua demo gratuita e scopri come PropertyPilot AI può moltiplicare le tue vendite.',
+        bookDemo: 'Prenota demo gratuita',
+      },
       footer: { home: 'Home', pricing: 'Prezzi', contact: 'Contatti', login: 'Login' },
+      footerCopyrightLine: '© {year} PropertyPilot AI. {rights}',
     },
     contact: {
       title: 'Contattaci',
@@ -2314,6 +2367,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       nav: { pricing: 'Pricing', login: 'Login', startFree: 'Start Free' },
       hero: { badge: 'Book in 30 seconds', title: 'Book a Free Demo', subtitle: 'Discover how PropertyPilot AI can transform your real estate agency. 30 minutes with our expert to see the platform in action.' },
       calendly: { chooseDate: 'Choose Date & Time', demoFree: 'Free 30-minute demo', preferContact: 'Prefer to contact us directly?', whatsapp: 'WhatsApp', sendEmail: 'Send Email' },
+      whatsappPrefill: 'Hello! I would like to book a PropertyPilot AI demo.',
+      calendlyIframeTitle: 'Book PropertyPilot AI demo',
       valuePoints: { sectionTitle: 'What You\'ll Discover in the Demo', sectionSubtitle: 'A complete overview of the features that will make your agency more efficient.', bookNow: 'Book Your Demo Now' },
       valuePointsList: [
         { title: 'Advanced Generative AI', description: 'Create professional listings, A/B titles, SEO descriptions and marketing content in seconds.' },
@@ -2324,7 +2379,40 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         { title: 'Custom Branding', description: 'White-label PDFs, professional property sheets and materials with your brand.' },
       ],
       testimonials: { title: 'What Our Customers Say', subtitle: 'Agents and agencies who have already transformed their business with PropertyPilot AI' },
+      testimonialsList: [
+        {
+          name: 'Marco R.',
+          role: 'Real estate agent, Milan',
+          quote:
+            'PropertyPilot AI completely changed the way I work. I now create listings in 30 seconds instead of 30 minutes.',
+        },
+        {
+          name: 'Laura B.',
+          role: 'Agency owner, Rome',
+          quote: 'The CRM and automations save me hours every week. I recommend it to every serious agency.',
+        },
+        {
+          name: 'Giuseppe T.',
+          role: 'Property manager, Naples',
+          quote: 'Finally, a platform that understands what agencies really need. Exceptional support.',
+        },
+      ],
+      trustStats: [
+        { iconKey: 'clock', value: '30 min', label: 'Free demo' },
+        { iconKey: 'shield', value: '100%', label: 'No commitment' },
+        { iconKey: 'users', value: '500+', label: 'Happy customers' },
+        { iconKey: 'trendingUp', value: '+40%', label: 'Average productivity' },
+      ],
+      finalCta: {
+        titleLead: 'Ready to ',
+        titleAccent: 'Transform',
+        titleTail: ' your agency?',
+        subtitle:
+          'Book your free demo now and discover how PropertyPilot AI can multiply your sales.',
+        bookDemo: 'Book free demo',
+      },
       footer: { home: 'Home', pricing: 'Pricing', contact: 'Contact', login: 'Login' },
+      footerCopyrightLine: '© {year} PropertyPilot AI. {rights}',
     },
     contact: {
       title: 'Contact Us',

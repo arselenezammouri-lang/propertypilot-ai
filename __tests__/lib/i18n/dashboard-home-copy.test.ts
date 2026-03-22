@@ -11,6 +11,16 @@ describe('dashboard home copy (D1)', () => {
     expect(es.generate).toBeTruthy();
   });
 
+  it('demo page extended keys for IT/EN', () => {
+    const it = getTranslation('it').demo;
+    const en = getTranslation('en').demo;
+    expect(it.testimonialsList.length).toBe(3);
+    expect(it.trustStats[0].iconKey).toBe('clock');
+    expect(en.finalCta.titleAccent.length).toBeGreaterThan(2);
+    expect(it.whatsappPrefill).toContain('PropertyPilot');
+    expect(en.footerCopyrightLine).toContain('{year}');
+  });
+
   it('blog post page, pricing plans chrome, contact extras for IT/EN', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');
