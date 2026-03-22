@@ -345,6 +345,18 @@ describe('dashboard home copy (D1)', () => {
     expect(enP.copyPackTitle).toBe('TITLE');
     expect(itP.copyPackTitle).toBe('TITOLO');
     expect(itP.toni.length).toBe(3);
+    expect(itP.tipoTransazione[0].iconKey).toBe('tag');
+    expect(itP.targetCliente[0].iconKey).toBe('users');
+    expect(itP.heroBadge).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+  });
+
+  it('agencyAssistant + referral + perfectCopy native ES/FR/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.agencyAssistantPage.title).toContain('Assistant');
+    expect(es.referralPage.programTitle.toLowerCase()).toMatch(/refer|programa/);
+    expect(es.perfectCopyPage.copyPackTitle).toBe('TÍTULO');
+    expect(getTranslation('fr').dashboard.perfectCopyPage.heroBadge.length).toBeGreaterThan(5);
+    expect(getTranslation('ar').dashboard.referralPage.step1Title.length).toBeGreaterThan(3);
   });
 
   it('referralPage for IT/EN', () => {

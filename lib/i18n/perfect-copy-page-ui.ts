@@ -1,6 +1,20 @@
 /** Copy for `/dashboard/perfect-copy`. IT + EN. Form values match API payloads. */
 export type PerfectCopySelectOption = { value: string; label: string };
-export type PerfectCopyIconOption = PerfectCopySelectOption & { icon: string };
+/** Lucide icon keys for select rows (no emoji — stable across locales). */
+export type PerfectCopyTransactionIconKey = 'tag' | 'keyRound' | 'palmtree';
+export type PerfectCopyTargetIconKey =
+  | 'users'
+  | 'heart'
+  | 'trendingUp'
+  | 'graduationCap'
+  | 'briefcase'
+  | 'umbrella'
+  | 'gem'
+  | 'globe'
+  | 'plane'
+  | 'building';
+export type PerfectCopyIconOption = PerfectCopySelectOption & { iconKey: PerfectCopyTransactionIconKey };
+export type PerfectCopyTargetOption = PerfectCopySelectOption & { iconKey: PerfectCopyTargetIconKey };
 export type PerfectCopyToneOption = PerfectCopySelectOption & { description: string };
 
 export type PerfectCopyPageUi = {
@@ -71,7 +85,7 @@ export type PerfectCopyPageUi = {
   planFree: string;
   tipoTransazione: PerfectCopyIconOption[];
   tipiImmobile: PerfectCopySelectOption[];
-  targetCliente: PerfectCopyIconOption[];
+  targetCliente: PerfectCopyTargetOption[];
   toni: PerfectCopyToneOption[];
   portali: PerfectCopySelectOption[];
 };
@@ -80,7 +94,7 @@ const it: PerfectCopyPageUi = {
   backToDashboard: 'Torna alla dashboard',
   backAria: 'Torna alla dashboard',
   heroTitle: 'Perfect Real Estate Copy 2.0',
-  heroBadge: '🚀 Power feature',
+  heroBadge: 'Funzione avanzata',
   heroSubtitle: 'Genera 5 varianti professionali del tuo annuncio in un click',
   formTitle: 'Dati immobile',
   formSubtitle: 'Inserisci i dettagli per generare annunci perfetti',
@@ -150,9 +164,9 @@ const it: PerfectCopyPageUi = {
   planStarter: 'Starter',
   planFree: 'Free',
   tipoTransazione: [
-    { value: 'vendita', label: 'Vendita', icon: '🏷️' },
-    { value: 'affitto', label: 'Affitto', icon: '🔑' },
-    { value: 'affitto_breve', label: 'Affitto breve / turistico', icon: '🏖️' },
+    { value: 'vendita', label: 'Vendita', iconKey: 'tag' },
+    { value: 'affitto', label: 'Affitto', iconKey: 'keyRound' },
+    { value: 'affitto_breve', label: 'Affitto breve / turistico', iconKey: 'palmtree' },
   ],
   tipiImmobile: [
     { value: 'appartamento', label: 'Appartamento' },
@@ -172,16 +186,16 @@ const it: PerfectCopyPageUi = {
     { value: 'garage', label: 'Garage / box' },
   ],
   targetCliente: [
-    { value: 'famiglie', label: 'Famiglie', icon: '👨‍👩‍👧‍👦' },
-    { value: 'giovani_coppie', label: 'Giovani coppie', icon: '💑' },
-    { value: 'investitori', label: 'Investitori', icon: '📈' },
-    { value: 'studenti', label: 'Studenti / universitari', icon: '🎓' },
-    { value: 'professionisti', label: 'Professionisti / lavoratori', icon: '💼' },
-    { value: 'pensionati', label: 'Pensionati', icon: '🏖️' },
-    { value: 'luxury', label: 'Clientela luxury', icon: '💎' },
-    { value: 'stranieri', label: 'Clienti stranieri', icon: '🌍' },
-    { value: 'turisti', label: 'Turisti / vacanzieri', icon: '✈️' },
-    { value: 'aziende', label: 'Aziende / corporate', icon: '🏢' },
+    { value: 'famiglie', label: 'Famiglie', iconKey: 'users' },
+    { value: 'giovani_coppie', label: 'Giovani coppie', iconKey: 'heart' },
+    { value: 'investitori', label: 'Investitori', iconKey: 'trendingUp' },
+    { value: 'studenti', label: 'Studenti / universitari', iconKey: 'graduationCap' },
+    { value: 'professionisti', label: 'Professionisti / lavoratori', iconKey: 'briefcase' },
+    { value: 'pensionati', label: 'Pensionati', iconKey: 'umbrella' },
+    { value: 'luxury', label: 'Clientela luxury', iconKey: 'gem' },
+    { value: 'stranieri', label: 'Clienti stranieri', iconKey: 'globe' },
+    { value: 'turisti', label: 'Turisti / vacanzieri', iconKey: 'plane' },
+    { value: 'aziende', label: 'Aziende / corporate', iconKey: 'building' },
   ],
   toni: [
     {
@@ -214,7 +228,7 @@ const en: PerfectCopyPageUi = {
   backToDashboard: 'Back to dashboard',
   backAria: 'Back to dashboard',
   heroTitle: 'Perfect Real Estate Copy 2.0',
-  heroBadge: '🚀 Power feature',
+  heroBadge: 'Power feature',
   heroSubtitle: 'Generate 5 professional variants of your listing in one click',
   formTitle: 'Property data',
   formSubtitle: 'Enter details to generate perfect listings',
@@ -283,9 +297,9 @@ const en: PerfectCopyPageUi = {
   planStarter: 'Starter',
   planFree: 'Free',
   tipoTransazione: [
-    { value: 'vendita', label: 'Sale', icon: '🏷️' },
-    { value: 'affitto', label: 'Rental', icon: '🔑' },
-    { value: 'affitto_breve', label: 'Short-term / vacation rental', icon: '🏖️' },
+    { value: 'vendita', label: 'Sale', iconKey: 'tag' },
+    { value: 'affitto', label: 'Rental', iconKey: 'keyRound' },
+    { value: 'affitto_breve', label: 'Short-term / vacation rental', iconKey: 'palmtree' },
   ],
   tipiImmobile: [
     { value: 'appartamento', label: 'Apartment' },
@@ -305,16 +319,16 @@ const en: PerfectCopyPageUi = {
     { value: 'garage', label: 'Garage / parking' },
   ],
   targetCliente: [
-    { value: 'famiglie', label: 'Families', icon: '👨‍👩‍👧‍👦' },
-    { value: 'giovani_coppie', label: 'Young couples', icon: '💑' },
-    { value: 'investitori', label: 'Investors', icon: '📈' },
-    { value: 'studenti', label: 'Students', icon: '🎓' },
-    { value: 'professionisti', label: 'Professionals', icon: '💼' },
-    { value: 'pensionati', label: 'Retirees', icon: '🏖️' },
-    { value: 'luxury', label: 'Luxury clients', icon: '💎' },
-    { value: 'stranieri', label: 'Foreign buyers', icon: '🌍' },
-    { value: 'turisti', label: 'Tourists / vacationers', icon: '✈️' },
-    { value: 'aziende', label: 'Companies / corporate', icon: '🏢' },
+    { value: 'famiglie', label: 'Families', iconKey: 'users' },
+    { value: 'giovani_coppie', label: 'Young couples', iconKey: 'heart' },
+    { value: 'investitori', label: 'Investors', iconKey: 'trendingUp' },
+    { value: 'studenti', label: 'Students', iconKey: 'graduationCap' },
+    { value: 'professionisti', label: 'Professionals', iconKey: 'briefcase' },
+    { value: 'pensionati', label: 'Retirees', iconKey: 'umbrella' },
+    { value: 'luxury', label: 'Luxury clients', iconKey: 'gem' },
+    { value: 'stranieri', label: 'Foreign buyers', iconKey: 'globe' },
+    { value: 'turisti', label: 'Tourists / vacationers', iconKey: 'plane' },
+    { value: 'aziende', label: 'Companies / corporate', iconKey: 'building' },
   ],
   toni: [
     {

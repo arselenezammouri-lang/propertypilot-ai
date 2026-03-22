@@ -26,15 +26,16 @@ import {
   networkFailureToast,
   validationToast,
 } from '@/lib/i18n/api-feature-feedback';
-import { 
-  Sparkles, 
-  Loader2, 
-  Copy, 
-  Check, 
-  Building2, 
-  MapPin, 
-  Users, 
-  Wallet, 
+import {
+  Sparkles,
+  Loader2,
+  Copy,
+  Check,
+  Building2,
+  Building,
+  MapPin,
+  Users,
+  Wallet,
   Megaphone,
   Target,
   Search,
@@ -44,8 +45,42 @@ import {
   Heart,
   Zap,
   Gem,
-  ArrowLeft
+  ArrowLeft,
+  Rocket,
+  Tag,
+  KeyRound,
+  Palmtree,
+  TrendingUp,
+  GraduationCap,
+  Briefcase,
+  Umbrella,
+  Globe,
+  Plane,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type {
+  PerfectCopyTargetIconKey,
+  PerfectCopyTransactionIconKey,
+} from '@/lib/i18n/perfect-copy-page-ui';
+
+const PERFECT_COPY_TX_ICON: Record<PerfectCopyTransactionIconKey, LucideIcon> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const PERFECT_COPY_TARGET_ICON: Record<PerfectCopyTargetIconKey, LucideIcon> = {
+  users: Users,
+  heart: Heart,
+  trendingUp: TrendingUp,
+  graduationCap: GraduationCap,
+  briefcase: Briefcase,
+  umbrella: Umbrella,
+  gem: Gem,
+  globe: Globe,
+  plane: Plane,
+  building: Building,
+};
 import Link from 'next/link';
 
 interface CopyVariant {
@@ -388,7 +423,8 @@ export default function PerfectCopyPage() {
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
         contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
-          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+          <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+            <Rocket className="h-3.5 w-3.5 shrink-0" aria-hidden />
             {t.heroBadge}
           </Badge>
         }
@@ -424,11 +460,17 @@ export default function PerfectCopyPage() {
                       <SelectValue placeholder={t.selectListingType} />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipoTransazione.map((tipo) => (
-                        <SelectItem key={tipo.value} value={tipo.value}>
-                          {tipo.icon} {tipo.label}
-                        </SelectItem>
-                      ))}
+                      {tipoTransazione.map((tipo) => {
+                        const TxIcon = PERFECT_COPY_TX_ICON[tipo.iconKey];
+                        return (
+                          <SelectItem key={tipo.value} value={tipo.value}>
+                            <span className="flex items-center gap-2">
+                              <TxIcon className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+                              {tipo.label}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -513,11 +555,17 @@ export default function PerfectCopyPage() {
                       <SelectValue placeholder={t.selectTarget} />
                     </SelectTrigger>
                     <SelectContent>
-                      {targetCliente.map((target) => (
-                        <SelectItem key={target.value} value={target.value}>
-                          {target.icon} {target.label}
-                        </SelectItem>
-                      ))}
+                      {targetCliente.map((target) => {
+                        const TgIcon = PERFECT_COPY_TARGET_ICON[target.iconKey];
+                        return (
+                          <SelectItem key={target.value} value={target.value}>
+                            <span className="flex items-center gap-2">
+                              <TgIcon className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+                              {target.label}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>

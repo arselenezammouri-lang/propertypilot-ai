@@ -94,6 +94,13 @@ import {
   brandingNotificationsPackagesLocalesFr,
   brandingNotificationsPackagesLocalesPt,
 } from '@/lib/i18n/branding-notifications-packages-locales';
+import {
+  assistantReferralPerfectCopyLocalesAr,
+  assistantReferralPerfectCopyLocalesDe,
+  assistantReferralPerfectCopyLocalesEs,
+  assistantReferralPerfectCopyLocalesFr,
+  assistantReferralPerfectCopyLocalesPt,
+} from '@/lib/i18n/assistant-referral-perfect-copy-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2972,6 +2979,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...crmSettingsAutomationLocalesEs,
       ...workflowAutomationsLocalesEs,
       ...brandingNotificationsPackagesLocalesEs,
+      ...assistantReferralPerfectCopyLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3349,6 +3357,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...crmSettingsAutomationLocalesFr,
       ...workflowAutomationsLocalesFr,
       ...brandingNotificationsPackagesLocalesFr,
+      ...assistantReferralPerfectCopyLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3726,6 +3735,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...crmSettingsAutomationLocalesDe,
       ...workflowAutomationsLocalesDe,
       ...brandingNotificationsPackagesLocalesDe,
+      ...assistantReferralPerfectCopyLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4105,6 +4115,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...crmSettingsAutomationLocalesPt,
       ...workflowAutomationsLocalesPt,
       ...brandingNotificationsPackagesLocalesPt,
+      ...assistantReferralPerfectCopyLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4290,6 +4301,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...crmSettingsAutomationLocalesAr,
       ...workflowAutomationsLocalesAr,
       ...brandingNotificationsPackagesLocalesAr,
+      ...assistantReferralPerfectCopyLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
