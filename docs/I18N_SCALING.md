@@ -14,6 +14,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Regole automazione CRM (`/dashboard/crm/automations`): `lib/i18n/crm-automation-rules-page-ui.ts` → `dashboard.crmAutomationRulesPage`.  
    - Workflow automazioni (`/dashboard/automations`): `lib/i18n/workflow-automations-page-ui.ts` → `dashboard.workflowAutomationsPage`.  
    - Branding agenzia / PDF white label (`/dashboard/agency-branding`): `lib/i18n/agency-branding-page-ui.ts` → `dashboard.agencyBrandingPage`.  
+   - Notifiche Morning Intel (`/dashboard/settings/notifications`): `lib/i18n/notifications-settings-page-ui.ts` → `dashboard.notificationsSettingsPage`.  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
@@ -56,6 +57,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 - `lib/i18n/crm-automation-rules-page-ui.ts` — regole if/then CRM (IT/EN)  
 - `lib/i18n/workflow-automations-page-ui.ts` — workflow follow-up / reminder / contenuti (IT/EN)  
 - `lib/i18n/agency-branding-page-ui.ts` — branding PDF white label (IT/EN)  
+- `lib/i18n/notifications-settings-page-ui.ts` — AI Morning Intel / impostazioni notifiche (IT/EN)  
 - `lib/i18n/locale-context.tsx` — `locale`, `currency`, `timezone`  
 - `lib/i18n/intl.ts` — formattazione numeri/date  
 - [DESIGN_UX_LOCALE.md](../DESIGN_UX_LOCALE.md) — principi UX locale

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
@@ -38,61 +39,26 @@ interface NotificationSettings {
 export default function NotificationsSettingsPage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
 
-  const t = {
-    pageTitle: "AI Morning Intel",
-    pageSubtitle: isItalian
-      ? "Configura le tue notifiche giornaliere di intelligence"
-      : "Configure your daily intelligence notifications",
-    cardTitle: isItalian ? "Briefing Mattutino" : "Morning Briefing",
-    cardDesc: isItalian
-      ? "Ricevi ogni mattina le top 3 opportunità immobiliari della tua zona"
-      : "Receive the top 3 real estate opportunities in your area every morning",
-    enableLabel: isItalian ? "Attiva AI Morning Intel" : "Enable AI Morning Intel",
-    enableDesc: isItalian
-      ? "Ricevi un briefing quotidiano con le migliori opportunità"
-      : "Receive a daily briefing with the best opportunities",
-    emailLabel: isItalian ? "Notifica via Email" : "Email Notification",
-    emailDesc: isItalian ? "Ricevi il briefing nella tua casella email" : "Receive the briefing in your inbox",
-    whatsappLabel: isItalian ? "Notifica via WhatsApp" : "WhatsApp Notification",
-    whatsappDesc: isItalian ? "Ricevi il briefing direttamente su WhatsApp" : "Receive the briefing directly on WhatsApp",
-    timeLabel: isItalian ? "Orario del Briefing" : "Briefing Time",
-    timeDesc: isItalian
-      ? "Scegli l'orario in cui vuoi ricevere il briefing quotidiano"
-      : "Choose the time you want to receive the daily briefing",
-    sendTestIdle: isItalian ? "Invia Prova sul mio Cellulare" : "Send Test to My Phone",
-    sendTestLoading: isItalian ? "Invio in corso..." : "Sending...",
-    sendTestDesc: isItalian
-      ? "Ricevi subito un esempio di notifica per vedere quanto è professionale"
-      : "Receive a notification example right now to see how professional it looks",
-    previewTitle: isItalian ? "Anteprima Messaggio" : "Message Preview",
-    previewDesc: isItalian
-      ? "Ecco come apparirà il tuo briefing mattutino"
-      : "This is how your morning briefing will appear",
-    previewHeader: isItalian ? "🔥 TOP 3 OPPORTUNITÀ DI OGGI" : "🔥 TOP 3 OPPORTUNITIES TODAY",
-    previewFooter: isItalian
-      ? "Questi deal sono stati inviati anche a [X] agenzie partner nella tua zona. Affrettati!"
-      : "These deals have also been sent to [X] partner agencies in your area. Hurry!",
-    cancel: isItalian ? "Annulla" : "Cancel",
-    saveIdle: isItalian ? "Salva Impostazioni" : "Save Settings",
-    saveLoading: isItalian ? "Salvataggio..." : "Saving...",
-    // toasts
-    savedTitle: isItalian ? "Impostazioni salvate" : "Settings saved",
-    savedDesc: isItalian ? "Le tue preferenze di notifica sono state aggiornate" : "Your notification preferences have been updated",
-    errorTitle: isItalian ? "Errore" : "Error",
-    saveError: isItalian ? "Impossibile salvare le impostazioni" : "Unable to save settings",
-    connectionError: isItalian ? "Errore di connessione" : "Connection error",
-    testSentTitle: isItalian ? "Notifica di prova inviata!" : "Test notification sent!",
-    testSentDesc: isItalian ? "Controlla la tua email e WhatsApp" : "Check your email and WhatsApp",
-    testError: isItalian ? "Impossibile inviare la notifica di prova" : "Unable to send test notification",
-    testChannelsRequired: isItalian
-      ? "Attiva almeno Email o WhatsApp per inviare una prova."
-      : "Enable at least Email or WhatsApp to send a test.",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.notificationsSettingsPage,
+    [locale]
+  );
+
+  const loadErrorRef = useRef(t.loadErrorGeneric);
+  loadErrorRef.current = t.loadErrorGeneric;
+
+  const planBadgeLabel =
+    plan === "agency"
+      ? t.planAgency
+      : plan === "pro"
+        ? t.planPro
+        : plan === "starter"
+          ? t.planStarter
+          : t.planFree;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [sendingTest, setSendingTest] = useState(false);
@@ -105,7 +71,7 @@ export default function NotificationsSettingsPage() {
 
   useEffect(() => {
     void fetchSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; loadErrorRef has latest copy
   }, []);
 
   const fetchSettings = async () => {
@@ -120,7 +86,7 @@ export default function NotificationsSettingsPage() {
             feedbackLocale,
             "morningIntelNotifications",
             { status: res.status, message: res.message, error: res.error },
-            isItalian ? "Impossibile caricare le notifiche." : "Could not load notification settings."
+            loadErrorRef.current
           ),
         });
       }
@@ -225,10 +191,10 @@ export default function NotificationsSettingsPage() {
         titleDataTestId="heading-notifications-settings"
         subtitle={t.pageSubtitle}
         planBadge={
-          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+          !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
         }
         actions={
-          <Link href="/dashboard/settings/workspace" aria-label={isItalian ? "Indietro" : "Back"}>
+          <Link href="/dashboard/settings/workspace" aria-label={t.backAria}>
             <Button
               variant="ghost"
               size="icon"
@@ -379,9 +345,9 @@ export default function NotificationsSettingsPage() {
               <div className="bg-muted/50 rounded-lg p-4 space-y-3 font-mono text-sm">
                 <div className="font-bold text-purple-400">{t.previewHeader}</div>
                 <div className="space-y-2 text-gray-300">
-                  <div>• [Link Report PDF 1] - Prezzo -20%</div>
-                  <div>• [Link Report PDF 2] - Urgenza Alta</div>
-                  <div>• [Link Report PDF 3] - Target Investitori</div>
+                  {t.previewSampleLines.map((line, i) => (
+                    <div key={i}>{line}</div>
+                  ))}
                 </div>
                 <div className="text-xs text-muted-foreground pt-2 border-t">
                   {t.previewFooter}

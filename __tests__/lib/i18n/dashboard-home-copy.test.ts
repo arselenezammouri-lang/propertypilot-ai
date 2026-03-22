@@ -155,4 +155,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itB.loadErrorGeneric.length).toBeGreaterThan(5);
     expect(enB.emailLabel.toLowerCase()).toContain('mail');
   });
+
+  it('notificationsSettingsPage for IT/EN', () => {
+    const itN = getTranslation('it').dashboard.notificationsSettingsPage;
+    const enN = getTranslation('en').dashboard.notificationsSettingsPage;
+    expect(itN.previewSampleLines.length).toBe(3);
+    expect(enN.previewHeader).toContain('TOP 3');
+    expect(itN.planPro).toBe('Pro');
+    expect(enN.testChannelsRequired.toLowerCase()).toMatch(/email|whatsapp/);
+  });
 });

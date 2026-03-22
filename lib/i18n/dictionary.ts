@@ -27,6 +27,11 @@ import {
 } from '@/lib/i18n/workflow-automations-page-ui';
 import type { AgencyBrandingPageUi } from '@/lib/i18n/agency-branding-page-ui';
 import { agencyBrandingPageUiEn, agencyBrandingPageUiIt } from '@/lib/i18n/agency-branding-page-ui';
+import type { NotificationsSettingsPageUi } from '@/lib/i18n/notifications-settings-page-ui';
+import {
+  notificationsSettingsPageUiEn,
+  notificationsSettingsPageUiIt,
+} from '@/lib/i18n/notifications-settings-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -214,6 +219,8 @@ export interface TranslationDictionary {
       workflowAutomationsPage: WorkflowAutomationsPageUi;
       /** `/dashboard/agency-branding` — white-label PDF */
       agencyBrandingPage: AgencyBrandingPageUi;
+      /** `/dashboard/settings/notifications` — Morning Intel */
+      notificationsSettingsPage: NotificationsSettingsPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1036,6 +1043,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       crmAutomationRulesPage: crmAutomationRulesPageUiIt,
       workflowAutomationsPage: workflowAutomationsPageUiIt,
       agencyBrandingPage: agencyBrandingPageUiIt,
+      notificationsSettingsPage: notificationsSettingsPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1867,6 +1875,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       crmAutomationRulesPage: crmAutomationRulesPageUiEn,
       workflowAutomationsPage: workflowAutomationsPageUiEn,
       agencyBrandingPage: agencyBrandingPageUiEn,
+      notificationsSettingsPage: notificationsSettingsPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
