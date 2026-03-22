@@ -552,10 +552,3 @@ const en: ProspectingPageUi = {
 
 export const prospectingPageUiIt = it;
 export const prospectingPageUiEn = en;
-
-/** EN prospecting page + `nextAction` sostituito — per merge parziale ES/FR/DE/PT/AR nel dizionario. */
-export function prospectingPageUiWithNextAction(
-  nextAction: ProspectingNextActionUi
-): ProspectingPageUi {
-  return { ...en, nextAction };
-}

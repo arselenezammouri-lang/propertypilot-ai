@@ -326,13 +326,15 @@ describe('dashboard home copy (D1)', () => {
     expect(enP.callNow.toUpperCase()).toContain('CALL');
     expect(itP.nextAction.priceDrop.reasoning).toContain('{pct}');
     expect(enP.nextAction.estMinutes).toContain('{n}');
-    const esNa = getTranslation('es').dashboard.prospectingPage.nextAction;
-    expect(esNa.monitor.action).not.toBe(enP.nextAction.monitor.action);
-    expect(esNa.priceDrop.action.toLowerCase()).toMatch(/informe|reporte/);
-    const frNa = getTranslation('fr').dashboard.prospectingPage.nextAction;
-    expect(frNa.estMinutes).toContain('{n}');
-    expect(getTranslation('de').dashboard.prospectingPage.nextAction.est0).toMatch(/0/);
-    expect(getTranslation('ar').dashboard.prospectingPage.nextAction.monitor.action.length).toBeGreaterThan(3);
+    const esP = getTranslation('es').dashboard.prospectingPage;
+    expect(esP.heroTitle.toLowerCase()).toMatch(/arbitr|comando|centro/);
+    expect(esP.nextAction.monitor.action).not.toBe(enP.nextAction.monitor.action);
+    expect(esP.nextAction.priceDrop.action.toLowerCase()).toMatch(/informe|reporte/);
+    const frP = getTranslation('fr').dashboard.prospectingPage;
+    expect(frP.nextAction.estMinutes).toContain('{n}');
+    expect(frP.colNextAction.toLowerCase()).toMatch(/action|prochaine/);
+    expect(getTranslation('de').dashboard.prospectingPage.heroTitle).toMatch(/Arbitrage|Kommando/i);
+    expect(getTranslation('ar').dashboard.prospectingPage.colNextAction.length).toBeGreaterThan(3);
   });
 
   it('analyzeLinkPage for IT/EN', () => {

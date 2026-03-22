@@ -44,15 +44,14 @@ import type { ProspectingPageUi } from '@/lib/i18n/prospecting-page-ui';
 import {
   prospectingPageUiEn,
   prospectingPageUiIt,
-  prospectingPageUiWithNextAction,
 } from '@/lib/i18n/prospecting-page-ui';
 import {
-  prospectingNextActionUiAr,
-  prospectingNextActionUiDe,
-  prospectingNextActionUiEs,
-  prospectingNextActionUiFr,
-  prospectingNextActionUiPt,
-} from '@/lib/i18n/prospecting-next-action-ui';
+  prospectingPageUiAr,
+  prospectingPageUiDe,
+  prospectingPageUiEs,
+  prospectingPageUiFr,
+  prospectingPageUiPt,
+} from '@/lib/i18n/prospecting-page-ui-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2924,7 +2923,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Pasar a Starter',
       upgradeToPro: 'Pasar a Pro',
       upgradeToAgency: 'Pasar a Agency',
-      prospectingPage: prospectingPageUiWithNextAction(prospectingNextActionUiEs),
+      prospectingPage: prospectingPageUiEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3295,7 +3294,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Passer à Starter',
       upgradeToPro: 'Passer à Pro',
       upgradeToAgency: 'Passer à Agency',
-      prospectingPage: prospectingPageUiWithNextAction(prospectingNextActionUiFr),
+      prospectingPage: prospectingPageUiFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3666,6 +3665,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Auf Starter upgraden',
       upgradeToPro: 'Auf Pro upgraden',
       upgradeToAgency: 'Auf Agency upgraden',
+      prospectingPage: prospectingPageUiDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4038,6 +4038,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Mudar para Starter',
       upgradeToPro: 'Mudar para Pro',
       upgradeToAgency: 'Mudar para Agency',
+      prospectingPage: prospectingPageUiPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4216,6 +4217,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'الترقية إلى Starter',
       upgradeToPro: 'الترقية إلى Pro',
       upgradeToAgency: 'الترقية إلى Agency',
+      prospectingPage: prospectingPageUiAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
