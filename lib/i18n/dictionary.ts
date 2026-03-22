@@ -148,6 +148,11 @@ import type { TransactionTypeUi } from '@/lib/i18n/transaction-type-ui';
 import { transactionTypeUiEn, transactionTypeUiIt } from '@/lib/i18n/transaction-type-ui';
 import type { LeadScorePageUi } from '@/lib/i18n/lead-score-page-ui';
 import { leadScorePageUiEn, leadScorePageUiIt } from '@/lib/i18n/lead-score-page-ui';
+import { leadScorePageUiEs } from '@/lib/i18n/lead-score-page-locales-es';
+import { leadScorePageUiFr } from '@/lib/i18n/lead-score-page-locales-fr';
+import { leadScorePageUiDe } from '@/lib/i18n/lead-score-page-locales-de';
+import { leadScorePageUiPt } from '@/lib/i18n/lead-score-page-locales-pt';
+import { leadScorePageUiAr } from '@/lib/i18n/lead-score-page-locales-ar';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -3037,6 +3042,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...assistantReferralPerfectCopyLocalesEs,
       ...listingToolsLocalesEs,
       ...listingContentToolsLocalesEs,
+      leadScorePage: leadScorePageUiEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3417,6 +3423,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...assistantReferralPerfectCopyLocalesFr,
       ...listingToolsLocalesFr,
       ...listingContentToolsLocalesFr,
+      leadScorePage: leadScorePageUiFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3797,6 +3804,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...assistantReferralPerfectCopyLocalesDe,
       ...listingToolsLocalesDe,
       ...listingContentToolsLocalesDe,
+      leadScorePage: leadScorePageUiDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4179,6 +4187,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...assistantReferralPerfectCopyLocalesPt,
       ...listingToolsLocalesPt,
       ...listingContentToolsLocalesPt,
+      leadScorePage: leadScorePageUiPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4367,6 +4376,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...assistantReferralPerfectCopyLocalesAr,
       ...listingToolsLocalesAr,
       ...listingContentToolsLocalesAr,
+      leadScorePage: leadScorePageUiAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
