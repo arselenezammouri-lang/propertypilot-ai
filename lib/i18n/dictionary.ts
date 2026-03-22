@@ -118,6 +118,32 @@ import {
   listingAuditorPageUiEn,
   listingAuditorPageUiIt,
 } from '@/lib/i18n/listing-auditor-page-ui';
+import type { RefineListingPageUi } from '@/lib/i18n/refine-listing-page-ui';
+import {
+  refineListingPageUiEn,
+  refineListingPageUiIt,
+} from '@/lib/i18n/refine-listing-page-ui';
+import type { TranslateListingPageUi } from '@/lib/i18n/translate-listing-page-ui';
+import {
+  translateListingPageUiEn,
+  translateListingPageUiIt,
+} from '@/lib/i18n/translate-listing-page-ui';
+import type { ListingsLibraryPageUi } from '@/lib/i18n/listings-library-page-ui';
+import {
+  listingsLibraryPageUiEn,
+  listingsLibraryPageUiIt,
+} from '@/lib/i18n/listings-library-page-ui';
+import type { TitlesAbPageUi } from '@/lib/i18n/titles-ab-page-ui';
+import { titlesAbPageUiEn, titlesAbPageUiIt } from '@/lib/i18n/titles-ab-page-ui';
+import type { HashtagsPageUi } from '@/lib/i18n/hashtags-page-ui';
+import { hashtagsPageUiEn, hashtagsPageUiIt } from '@/lib/i18n/hashtags-page-ui';
+import type { SocialPostsPageUi } from '@/lib/i18n/social-posts-page-ui';
+import { socialPostsPageUiEn, socialPostsPageUiIt } from '@/lib/i18n/social-posts-page-ui';
+import { listingContentToolsLocalesEs } from '@/lib/i18n/listing-content-tools-locales-es';
+import { listingContentToolsLocalesFr } from '@/lib/i18n/listing-content-tools-locales-fr';
+import { listingContentToolsLocalesDe } from '@/lib/i18n/listing-content-tools-locales-de';
+import { listingContentToolsLocalesPt } from '@/lib/i18n/listing-content-tools-locales-pt';
+import { listingContentToolsLocalesAr } from '@/lib/i18n/listing-content-tools-locales-ar';
 import type { TransactionTypeUi } from '@/lib/i18n/transaction-type-ui';
 import { transactionTypeUiEn, transactionTypeUiIt } from '@/lib/i18n/transaction-type-ui';
 import type { LeadScorePageUi } from '@/lib/i18n/lead-score-page-ui';
@@ -368,6 +394,18 @@ export interface TranslationDictionary {
       listingScraperPage: ListingScraperPageUi;
       /** `/dashboard/auditor` — AI listing audit */
       listingAuditorPage: ListingAuditorPageUi;
+      /** `/dashboard/refine-listing` — Perfect Again */
+      refineListingPage: RefineListingPageUi;
+      /** `/dashboard/translate` */
+      translateListingPage: TranslateListingPageUi;
+      /** `/dashboard/listings` */
+      listingsLibraryPage: ListingsLibraryPageUi;
+      /** `/dashboard/titles` — A/B titles */
+      titlesAbPage: TitlesAbPageUi;
+      /** `/dashboard/hashtags` */
+      hashtagsPage: HashtagsPageUi;
+      /** `/dashboard/social-posts` */
+      socialPostsPage: SocialPostsPageUi;
       /** Sale / rent / short-term — shared by listing copy tools */
       transactionTypes: TransactionTypeUi;
       /** `/dashboard/lead-score` */
@@ -1307,6 +1345,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       analyzeLinkPage: analyzeLinkPageUiIt,
       listingScraperPage: listingScraperPageUiIt,
       listingAuditorPage: listingAuditorPageUiIt,
+      refineListingPage: refineListingPageUiIt,
+      translateListingPage: translateListingPageUiIt,
+      listingsLibraryPage: listingsLibraryPageUiIt,
+      titlesAbPage: titlesAbPageUiIt,
+      hashtagsPage: hashtagsPageUiIt,
+      socialPostsPage: socialPostsPageUiIt,
       transactionTypes: transactionTypeUiIt,
       leadScorePage: leadScorePageUiIt,
       leadDetailPage: leadDetailPageUiIt,
@@ -2239,6 +2283,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       analyzeLinkPage: analyzeLinkPageUiEn,
       listingScraperPage: listingScraperPageUiEn,
       listingAuditorPage: listingAuditorPageUiEn,
+      refineListingPage: refineListingPageUiEn,
+      translateListingPage: translateListingPageUiEn,
+      listingsLibraryPage: listingsLibraryPageUiEn,
+      titlesAbPage: titlesAbPageUiEn,
+      hashtagsPage: hashtagsPageUiEn,
+      socialPostsPage: socialPostsPageUiEn,
       transactionTypes: transactionTypeUiEn,
       leadScorePage: leadScorePageUiEn,
       leadDetailPage: leadDetailPageUiEn,
@@ -2986,6 +3036,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...brandingNotificationsPackagesLocalesEs,
       ...assistantReferralPerfectCopyLocalesEs,
       ...listingToolsLocalesEs,
+      ...listingContentToolsLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3365,6 +3416,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...brandingNotificationsPackagesLocalesFr,
       ...assistantReferralPerfectCopyLocalesFr,
       ...listingToolsLocalesFr,
+      ...listingContentToolsLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3744,6 +3796,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...brandingNotificationsPackagesLocalesDe,
       ...assistantReferralPerfectCopyLocalesDe,
       ...listingToolsLocalesDe,
+      ...listingContentToolsLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4125,6 +4178,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...brandingNotificationsPackagesLocalesPt,
       ...assistantReferralPerfectCopyLocalesPt,
       ...listingToolsLocalesPt,
+      ...listingContentToolsLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4312,6 +4366,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...brandingNotificationsPackagesLocalesAr,
       ...assistantReferralPerfectCopyLocalesAr,
       ...listingToolsLocalesAr,
+      ...listingContentToolsLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
