@@ -79,9 +79,9 @@ interface MapMarker {
 export default function PredatorMapPage() {
   const { toast } = useToast();
   const { locale, currency } = useLocaleContext();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const t = getTranslation(locale as SupportedLocale).dashboard;
+  const mp = t.mapPage;
   const [listings, setListings] = useState<ExternalListing[]>([]);
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
@@ -153,10 +153,7 @@ export default function PredatorMapPage() {
     } catch (error: unknown) {
       console.error('Error fetching listings:', error);
       setListings([]);
-      const friendly = handleAPIError(
-        error,
-        isItalian ? "Errore nel caricamento delle liste" : "Error loading map data"
-      );
+      const friendly = handleAPIError(error, mp.loadError);
       toast({
         ...apiFailureToast(feedbackLocale, "predatorMap", {}, friendly),
         variant: "destructive",
@@ -164,7 +161,7 @@ export default function PredatorMapPage() {
     } finally {
       setLoading(false);
     }
-  }, [handleAPIError, isItalian, feedbackLocale, toast]);
+  }, [handleAPIError, feedbackLocale, toast, mp.loadError]);
 
   useEffect(() => {
     if (!isMapLocked) fetchListings();
@@ -249,9 +246,7 @@ export default function PredatorMapPage() {
       if (data.success) {
         toast({
           title: t.mapCallLaunched,
-          description: isItalian
-            ? "La chiamata AI è stata avviata con successo"
-            : "AI call started successfully",
+          description: mp.callStartedDesc,
         });
         fetchListings();
       } else {
@@ -293,22 +288,18 @@ export default function PredatorMapPage() {
       <DashboardPageShell>
         <DashboardPageHeader
           variant="dark"
-          title={isItalian ? "Mappa Territorio AI" : "AI Territory Map"}
+          title={t.mapTitle}
           titleDataTestId="heading-predator-map"
-          subtitle={
-            isItalian
-              ? "Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond."
-              : "Available on Agency plan only. Unlock the map and all Diamond features."
-          }
+          subtitle={mp.paywallSubtitle}
           planBadge={{ label: usagePlan.toUpperCase(), variant: "secondary" }}
           actions={
             <div className="flex flex-wrap gap-2 min-h-11 touch-manipulation">
-              <Link href="/dashboard/prospecting" aria-label={isItalian ? "Torna al Prospecting" : "Back to Prospecting"}>
+              <Link href="/dashboard/prospecting" aria-label={mp.backToProspecting}>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
-                  aria-label={isItalian ? "Indietro" : "Back"}
+                  aria-label={mp.backAria}
                 >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -324,12 +315,10 @@ export default function PredatorMapPage() {
               </div>
               <div>
                 <CardTitle className="text-xl text-white">
-                  {isItalian ? "Mappa Territorio AI" : "AI Territory Map"}
+                  {t.mapTitle}
                 </CardTitle>
                 <CardDescription className="text-gray-400 mt-1">
-                  {isItalian
-                    ? "Disponibile solo con piano Agency."
-                    : "Available on Agency plan only."}
+                  {mp.paywallCardDesc}
                 </CardDescription>
               </div>
             </div>
@@ -337,13 +326,13 @@ export default function PredatorMapPage() {
           <CardContent>
             <Link href="/dashboard/billing">
               <Button className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-royal-purple to-sunset-gold hover:opacity-90">
-                {isItalian ? "Sblocca con Agency" : "Upgrade to Agency"}
+                {mp.unlockAgency}
               </Button>
             </Link>
             <Link href="/dashboard/prospecting">
               <Button variant="ghost" className="w-full mt-2 min-h-11 touch-manipulation text-gray-400">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {isItalian ? "Torna al Prospecting" : "Back to Prospecting"}
+                {mp.backToProspecting}
               </Button>
             </Link>
           </CardContent>
@@ -360,7 +349,7 @@ export default function PredatorMapPage() {
           <span className="inline-flex items-center gap-2">
             <Zap className="h-6 w-6 shrink-0 text-cyan-400" aria-hidden />
             <span className="hidden sm:inline">{t.mapTitle}</span>
-            <span className="sm:hidden">{t.mapTitle.replace(" Command", "")}</span>
+            <span className="sm:hidden">{mp.mapTitleShort}</span>
           </span>
         }
         titleDataTestId="heading-predator-map"
@@ -369,12 +358,12 @@ export default function PredatorMapPage() {
         className="mb-4 md:mb-6 pb-4"
         actions={
           <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 min-h-11 touch-manipulation">
-            <Link href="/dashboard/prospecting" aria-label={isItalian ? "Torna al Prospecting" : "Back to Prospecting"}>
+            <Link href="/dashboard/prospecting" aria-label={mp.backToProspecting}>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
-                aria-label={isItalian ? "Indietro" : "Back"}
+                aria-label={mp.backAria}
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -382,14 +371,14 @@ export default function PredatorMapPage() {
             <div className="flex items-center gap-2">
               <Switch checked={showGhostListings} onCheckedChange={setShowGhostListings} />
               <span className="text-xs sm:text-sm text-white/80 hidden sm:inline">{t.mapGhostListings}</span>
-              <span className="text-xs sm:text-sm text-white/80 sm:hidden">Ghost</span>
+              <span className="text-xs sm:text-sm text-white/80 sm:hidden">{mp.ghostShort}</span>
             </div>
             <div className="flex items-center gap-2">
               <Switch checked={topDealsOnly} onCheckedChange={setTopDealsOnly} />
               <span className="text-xs sm:text-sm text-white/80 hidden sm:inline">
-                {isItalian ? "Solo TOP DEAL" : "Top deals only"}
+                {mp.topDealsOnly}
               </span>
-              <span className="text-xs sm:text-sm text-white/80 sm:hidden">TOP</span>
+              <span className="text-xs sm:text-sm text-white/80 sm:hidden">{mp.topDealsOnlyShort}</span>
             </div>
             <Button
               onClick={fetchListings}
@@ -461,17 +450,17 @@ export default function PredatorMapPage() {
               {/* KPI sintetici */}
               <div className="pt-2 mt-1 border-t border-purple-500/30 space-y-1">
                 <p className="text-[10px] text-gray-400 flex justify-between">
-                  <span>{locale === "it" ? "Immobili mappati" : "Mapped listings"}</span>
+                  <span>{mp.kpiMappedListings}</span>
                   <span className="font-semibold text-gray-100">{markers.length}</span>
                 </p>
                 <p className="text-[10px] text-gray-400 flex justify-between">
-                  <span>{locale === "it" ? "Top Deals" : "Top deals"}</span>
+                  <span>{mp.kpiTopDeals}</span>
                   <span className="font-semibold text-emerald-400">
                     {markers.filter(m => m.marketGap && m.marketGap > 15).length}
                   </span>
                 </p>
                 <p className="text-[10px] text-gray-400 flex justify-between">
-                  <span>{locale === "it" ? "Alta urgenza" : "High urgency"}</span>
+                  <span>{mp.kpiHighUrgency}</span>
                   <span className="font-semibold text-red-400">
                     {markers.filter(m => m.urgencyScore >= 70).length}
                   </span>
@@ -515,10 +504,10 @@ export default function PredatorMapPage() {
                     <p className="font-semibold text-white">{marker.listing.title}</p>
                     <p className="text-gray-400">{formatPrice(marker.listing.price)}</p>
                     {isTopDeal && (
-                      <Badge className="bg-green-500 text-white text-xs mt-1">TOP DEAL</Badge>
+                      <Badge className="bg-green-500 text-white text-xs mt-1">{mp.badgeTopDeal}</Badge>
                     )}
                     {isHighUrgency && (
-                      <Badge className="bg-red-500 text-white text-xs mt-1">HIGH URGENCY</Badge>
+                      <Badge className="bg-red-500 text-white text-xs mt-1">{mp.badgeHighUrgency}</Badge>
                     )}
                   </div>
                 </div>
@@ -537,16 +526,10 @@ export default function PredatorMapPage() {
               <div className="text-center">
                 <MapPin className="h-16 w-16 text-gray-600 mx-auto mb-4" />
                 <p className="text-gray-400 text-lg">
-                  {isItalian ? "Nessun immobile trovato" : "No listings found"}
+                  {mp.emptyNoListings}
                 </p>
                 <p className="text-gray-500 text-sm mt-2">
-                  {showGhostListings
-                    ? isItalian
-                      ? "Nessun Ghost Listing disponibile"
-                      : "No ghost listings available"
-                    : isItalian
-                      ? "Attiva il filtro Ghost Listings per vedere più opzioni"
-                      : "Enable Ghost Listings to see more options"}
+                  {showGhostListings ? mp.emptyNoGhosts : mp.emptyEnableGhostHint}
                 </p>
               </div>
             </div>
@@ -568,7 +551,7 @@ export default function PredatorMapPage() {
                   size="icon"
                   onClick={() => setSelectedMarker(null)}
                   className="text-gray-400 hover:text-white"
-                  aria-label={locale === "it" ? "Chiudi dettaglio" : "Close detail"}
+                  aria-label={mp.closeDetailAria}
                 >
                   <X className="h-5 w-5" />
                 </Button>
@@ -579,7 +562,7 @@ export default function PredatorMapPage() {
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
                     <Zap className="h-4 w-4 text-red-400" />
-                    Urgency Score
+                    {mp.urgencyScoreTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -597,7 +580,7 @@ export default function PredatorMapPage() {
                   {selectedMarker.daysOnMarket > 90 && (
                     <div className="mt-2 flex items-center gap-2 text-xs text-gray-400">
                       <Clock className="h-3 w-3" />
-                      <span>Ghost Listing: {selectedMarker.daysOnMarket} giorni sul mercato</span>
+                      <span>{mp.ghostListingDays.replace('{days}', String(selectedMarker.daysOnMarket))}</span>
                     </div>
                   )}
                 </CardContent>
@@ -609,14 +592,14 @@ export default function PredatorMapPage() {
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
                       <TrendingDown className="h-4 w-4 text-green-400" />
-                      GAP DI MERCATO
+                      {mp.marketGapTitle}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold text-green-400">
                       -{selectedMarker.marketGap.toFixed(0)}%
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">vs Media Zona</p>
+                    <p className="text-xs text-gray-400 mt-1">{mp.marketGapVsArea}</p>
                   </CardContent>
                 </Card>
               )}
@@ -633,7 +616,7 @@ export default function PredatorMapPage() {
               {/* Mini Anteprima 3D */}
               <div className="border-t border-purple-500/30 pt-6">
                 <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                  Anteprima 3D
+                  {mp.preview3dTitle}
                 </h3>
                 <AIVirtualStaging listing={selectedMarker.listing} />
               </div>
@@ -641,7 +624,7 @@ export default function PredatorMapPage() {
               {/* Azioni Rapide */}
               <div className="border-t border-purple-500/30 pt-6 space-y-3">
                 <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-                  Azioni Rapide
+                  {mp.quickActionsTitle}
                 </h3>
                 
                 <Button
@@ -652,7 +635,7 @@ export default function PredatorMapPage() {
                   {callingListingId === selectedMarker.listing.id ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Chiamata in corso...
+                      {mp.callingInProgress}
                     </>
                   ) : (
                     <>
@@ -668,7 +651,7 @@ export default function PredatorMapPage() {
                   className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  Invia WhatsApp Progetto
+                  {mp.whatsappProjectCta}
                 </Button>
               </div>
 
@@ -680,7 +663,7 @@ export default function PredatorMapPage() {
                   rel="noopener noreferrer"
                   className="text-sm text-cyan-400 hover:text-cyan-300 underline"
                 >
-                  Vedi annuncio originale →
+                  {mp.viewOriginalListing}
                 </a>
               </div>
             </div>

@@ -53,6 +53,38 @@ export interface TranslationDictionary {
       mapCallLaunched: string;
       mapCallError: string;
       mapLanciaChiamata: string;
+      /** Predator / territory map page (`/dashboard/map`) */
+      mapPage: {
+        loadError: string;
+        callStartedDesc: string;
+        paywallSubtitle: string;
+        paywallCardDesc: string;
+        unlockAgency: string;
+        backToProspecting: string;
+        backAria: string;
+        topDealsOnly: string;
+        topDealsOnlyShort: string;
+        ghostShort: string;
+        mapTitleShort: string;
+        kpiMappedListings: string;
+        kpiTopDeals: string;
+        kpiHighUrgency: string;
+        emptyNoListings: string;
+        emptyNoGhosts: string;
+        emptyEnableGhostHint: string;
+        closeDetailAria: string;
+        badgeTopDeal: string;
+        badgeHighUrgency: string;
+        urgencyScoreTitle: string;
+        ghostListingDays: string;
+        marketGapTitle: string;
+        marketGapVsArea: string;
+        preview3dTitle: string;
+        quickActionsTitle: string;
+        callingInProgress: string;
+        whatsappProjectCta: string;
+        viewOriginalListing: string;
+      };
       onboardingChecklist: {
         title: string;
         subtitle: string;
@@ -695,6 +727,38 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Chiamata avviata',
       mapCallError: 'Errore nell\'avvio della chiamata',
       mapLanciaChiamata: 'Lancia Chiamata Predator',
+      mapPage: {
+        loadError: 'Errore nel caricamento delle liste',
+        callStartedDesc: 'La chiamata AI è stata avviata con successo',
+        paywallSubtitle:
+          'Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond.',
+        paywallCardDesc: 'Disponibile solo con piano Agency.',
+        unlockAgency: 'Sblocca con Agency',
+        backToProspecting: 'Torna al Prospecting',
+        backAria: 'Indietro',
+        topDealsOnly: 'Solo TOP DEAL',
+        topDealsOnlyShort: 'TOP',
+        ghostShort: 'Ghost',
+        mapTitleShort: 'Predator Map',
+        kpiMappedListings: 'Immobili mappati',
+        kpiTopDeals: 'Top Deals',
+        kpiHighUrgency: 'Alta urgenza',
+        emptyNoListings: 'Nessun immobile trovato',
+        emptyNoGhosts: 'Nessun Ghost Listing disponibile',
+        emptyEnableGhostHint: 'Attiva il filtro Ghost Listings per vedere più opzioni',
+        closeDetailAria: 'Chiudi dettaglio',
+        badgeTopDeal: 'TOP DEAL',
+        badgeHighUrgency: 'HIGH URGENCY',
+        urgencyScoreTitle: 'Urgency Score',
+        ghostListingDays: 'Ghost Listing: {days} giorni sul mercato',
+        marketGapTitle: 'GAP DI MERCATO',
+        marketGapVsArea: 'vs Media Zona',
+        preview3dTitle: 'Anteprima 3D',
+        quickActionsTitle: 'Azioni Rapide',
+        callingInProgress: 'Chiamata in corso...',
+        whatsappProjectCta: 'Invia WhatsApp Progetto',
+        viewOriginalListing: 'Vedi annuncio originale →',
+      },
       onboardingChecklist: {
         title: 'I tuoi primi 5 passi',
         subtitle: 'Completa questa checklist per sbloccare valore subito. Puoi nasconderla quando vuoi: i progressi restano salvati su questo browser.',
@@ -1350,6 +1414,38 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Call started',
       mapCallError: 'Error starting call',
       mapLanciaChiamata: 'Launch Predator Call',
+      mapPage: {
+        loadError: 'Error loading map data',
+        callStartedDesc: 'AI call started successfully',
+        paywallSubtitle:
+          'Available on Agency plan only. Unlock the map and all Diamond features.',
+        paywallCardDesc: 'Available on Agency plan only.',
+        unlockAgency: 'Upgrade to Agency',
+        backToProspecting: 'Back to Prospecting',
+        backAria: 'Back',
+        topDealsOnly: 'Top deals only',
+        topDealsOnlyShort: 'TOP',
+        ghostShort: 'Ghost',
+        mapTitleShort: 'Predator Map',
+        kpiMappedListings: 'Mapped listings',
+        kpiTopDeals: 'Top deals',
+        kpiHighUrgency: 'High urgency',
+        emptyNoListings: 'No listings found',
+        emptyNoGhosts: 'No ghost listings available',
+        emptyEnableGhostHint: 'Enable Ghost Listings to see more options',
+        closeDetailAria: 'Close detail',
+        badgeTopDeal: 'TOP DEAL',
+        badgeHighUrgency: 'HIGH URGENCY',
+        urgencyScoreTitle: 'Urgency score',
+        ghostListingDays: 'Ghost listing: {days} days on market',
+        marketGapTitle: 'Market gap',
+        marketGapVsArea: 'vs area average',
+        preview3dTitle: '3D preview',
+        quickActionsTitle: 'Quick actions',
+        callingInProgress: 'Calling…',
+        whatsappProjectCta: 'Send WhatsApp project',
+        viewOriginalListing: 'View original listing →',
+      },
       onboardingChecklist: {
         title: 'Your first 5 steps',
         subtitle: 'Complete this checklist to get value fast. You can hide it anytime — progress is saved in this browser.',

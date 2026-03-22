@@ -63,4 +63,11 @@ describe('dashboard home copy (D1)', () => {
     expect(es.chrome.plan).toBe('Plan');
     expect(es.items.generate.name).toMatch(/listing/i);
   });
+
+  it('mapPage keys for EN and placeholder in ghostListingDays', () => {
+    const en = getTranslation('en').dashboard.mapPage;
+    expect(en.loadError).toContain('map');
+    expect(en.ghostListingDays).toContain('{days}');
+    expect(en.marketGapTitle.toLowerCase()).toContain('market');
+  });
 });
