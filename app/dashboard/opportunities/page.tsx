@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 import { useToast } from "@/hooks/use-toast";
@@ -30,56 +31,12 @@ export default function OpportunitiesPage() {
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
   const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const t = getTranslation(locale as SupportedLocale).dashboard.opportunitiesPage;
   const [type, setType] = useState<"underpriced" | "old" | "uncontacted">("underpriced");
   const [days, setDays] = useState(14);
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<Opportunity[]>([]);
-
-  const t = {
-    it: {
-      title: "Radar Opportunità",
-      subtitle: "Trova immobili sotto-prezzo, annunci vecchi o mai contattati per nuovi mandati.",
-      type: "Tipo opportunità",
-      underpriced: "Sotto-prezzo",
-      old: "Annunci vecchi",
-      uncontacted: "Mai contattati",
-      city: "Città (opzionale)",
-      cityPlaceholder: "Milano",
-      oldDays: "Vecchi da almeno (giorni)",
-      loading: "Caricamento...",
-      refresh: "Aggiorna",
-      results: "Risultati",
-      noResults: "Nessuna opportunità trovata con i filtri correnti.",
-      selectListing: "Seleziona un annuncio per aprire i dettagli.",
-      loadingResults: "Caricamento opportunità...",
-      loadFailed: "Impossibile caricare le opportunità.",
-      unknown: "sconosciuto",
-      status: "Stato",
-      na: "n.d.",
-    },
-    en: {
-      title: "Opportunity Radar",
-      subtitle: "Find underpriced properties, old listings, or never-contacted owners for new mandates.",
-      type: "Opportunity type",
-      underpriced: "Underpriced",
-      old: "Old listings",
-      uncontacted: "Never contacted",
-      city: "City (optional)",
-      cityPlaceholder: "Milan",
-      oldDays: "Older than (days)",
-      loading: "Loading...",
-      refresh: "Refresh",
-      results: "Results",
-      noResults: "No opportunities found with the current filters.",
-      selectListing: "Select a listing to open details.",
-      loadingResults: "Loading opportunities...",
-      loadFailed: "Could not load opportunities.",
-      unknown: "unknown",
-      status: "Status",
-      na: "n/a",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     void load();
@@ -140,14 +97,8 @@ export default function OpportunitiesPage() {
       />
       <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle className="text-white">
-            {locale === "it" ? "Filtri ricerca" : "Search filters"}
-          </CardTitle>
-          <CardDescription className="text-white/60">
-            {locale === "it"
-              ? "Affina il tipo di opportunità e la zona."
-              : "Refine opportunity type and area."}
-          </CardDescription>
+          <CardTitle className="text-white">{t.filtersTitle}</CardTitle>
+          <CardDescription className="text-white/60">{t.filtersDescription}</CardDescription>
         </CardHeader>
         <CardContent className="grid md:grid-cols-3 gap-4">
           <div>

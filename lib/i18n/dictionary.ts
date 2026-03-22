@@ -85,6 +85,58 @@ export interface TranslationDictionary {
         whatsappProjectCta: string;
         viewOriginalListing: string;
       };
+      /** `/dashboard/opportunities` */
+      opportunitiesPage: {
+        title: string;
+        subtitle: string;
+        type: string;
+        underpriced: string;
+        old: string;
+        uncontacted: string;
+        city: string;
+        cityPlaceholder: string;
+        oldDays: string;
+        loading: string;
+        refresh: string;
+        results: string;
+        noResults: string;
+        selectListing: string;
+        loadingResults: string;
+        loadFailed: string;
+        unknown: string;
+        status: string;
+        na: string;
+        filtersTitle: string;
+        filtersDescription: string;
+      };
+      /** `/dashboard/autopilot` */
+      autopilotPage: {
+        title: string;
+        subtitle: string;
+        active: string;
+        rulePlaceholder: string;
+        city: string;
+        region: string;
+        minPrice: string;
+        maxPrice: string;
+        runHour: string;
+        dailyLimit: string;
+        saving: string;
+        save: string;
+        lastRuns: string;
+        noRuns: string;
+        opportunities: string;
+        leads: string;
+        recentActions: string;
+        noActions: string;
+        defaultRule: string;
+        loadError: string;
+        saveSuccess: string;
+        saveError: string;
+        saveToastTitle: string;
+        configCardTitle: string;
+        configCardDescription: string;
+      };
       onboardingChecklist: {
         title: string;
         subtitle: string;
@@ -758,6 +810,58 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         callingInProgress: 'Chiamata in corso...',
         whatsappProjectCta: 'Invia WhatsApp Progetto',
         viewOriginalListing: 'Vedi annuncio originale →',
+      },
+      opportunitiesPage: {
+        title: 'Radar Opportunità',
+        subtitle:
+          'Trova immobili sotto-prezzo, annunci vecchi o mai contattati per nuovi mandati.',
+        type: 'Tipo opportunità',
+        underpriced: 'Sotto-prezzo',
+        old: 'Annunci vecchi',
+        uncontacted: 'Mai contattati',
+        city: 'Città (opzionale)',
+        cityPlaceholder: 'Milano',
+        oldDays: 'Vecchi da almeno (giorni)',
+        loading: 'Caricamento...',
+        refresh: 'Aggiorna',
+        results: 'Risultati',
+        noResults: 'Nessuna opportunità trovata con i filtri correnti.',
+        selectListing: 'Seleziona un annuncio per aprire i dettagli.',
+        loadingResults: 'Caricamento opportunità...',
+        loadFailed: 'Impossibile caricare le opportunità.',
+        unknown: 'sconosciuto',
+        status: 'Stato',
+        na: 'n.d.',
+        filtersTitle: 'Filtri ricerca',
+        filtersDescription: 'Affina il tipo di opportunità e la zona.',
+      },
+      autopilotPage: {
+        title: 'Autopilot Mandati 24/7',
+        subtitle:
+          'Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.',
+        active: 'Autopilot attivo',
+        rulePlaceholder: 'Nome regola (es. Mandati Milano Centro)',
+        city: 'Città',
+        region: 'Regione/Provincia',
+        minPrice: 'Prezzo minimo',
+        maxPrice: 'Prezzo massimo',
+        runHour: 'Ora di esecuzione (UTC)',
+        dailyLimit: 'Max nuovi lead al giorno',
+        saving: 'Salvataggio...',
+        save: 'Salva regola Autopilot',
+        lastRuns: 'Ultimi run',
+        noRuns: 'Nessun run registrato.',
+        opportunities: 'opportunità',
+        leads: 'lead',
+        recentActions: 'Azioni recenti',
+        noActions: 'Nessuna azione registrata.',
+        defaultRule: 'Autopilot Mandati',
+        loadError: 'Impossibile caricare la configurazione Autopilot.',
+        saveSuccess: 'Regola Autopilot salvata',
+        saveError: 'Errore nel salvataggio della regola Autopilot.',
+        saveToastTitle: 'Autopilot mandati',
+        configCardTitle: 'Configurazione regola',
+        configCardDescription: 'Attiva Autopilot, zone e limiti giornalieri.',
       },
       onboardingChecklist: {
         title: 'I tuoi primi 5 passi',
@@ -1445,6 +1549,58 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         callingInProgress: 'Calling…',
         whatsappProjectCta: 'Send WhatsApp project',
         viewOriginalListing: 'View original listing →',
+      },
+      opportunitiesPage: {
+        title: 'Opportunity Radar',
+        subtitle:
+          'Find underpriced properties, old listings, or never-contacted owners for new mandates.',
+        type: 'Opportunity type',
+        underpriced: 'Underpriced',
+        old: 'Old listings',
+        uncontacted: 'Never contacted',
+        city: 'City (optional)',
+        cityPlaceholder: 'Milan',
+        oldDays: 'Older than (days)',
+        loading: 'Loading...',
+        refresh: 'Refresh',
+        results: 'Results',
+        noResults: 'No opportunities found with the current filters.',
+        selectListing: 'Select a listing to open details.',
+        loadingResults: 'Loading opportunities...',
+        loadFailed: 'Could not load opportunities.',
+        unknown: 'unknown',
+        status: 'Status',
+        na: 'n/a',
+        filtersTitle: 'Search filters',
+        filtersDescription: 'Refine opportunity type and area.',
+      },
+      autopilotPage: {
+        title: 'Mandate Autopilot 24/7',
+        subtitle:
+          'Scraper and Voice AI work every day to find new mandates and create leads automatically.',
+        active: 'Autopilot enabled',
+        rulePlaceholder: 'Rule name (e.g. Milan Center Mandates)',
+        city: 'City',
+        region: 'Region/Province',
+        minPrice: 'Minimum price',
+        maxPrice: 'Maximum price',
+        runHour: 'Run time (UTC)',
+        dailyLimit: 'Max new leads per day',
+        saving: 'Saving...',
+        save: 'Save Autopilot rule',
+        lastRuns: 'Latest runs',
+        noRuns: 'No runs recorded.',
+        opportunities: 'opportunities',
+        leads: 'leads',
+        recentActions: 'Recent actions',
+        noActions: 'No actions recorded.',
+        defaultRule: 'Mandate Autopilot',
+        loadError: 'Unable to load Autopilot configuration.',
+        saveSuccess: 'Autopilot rule saved',
+        saveError: 'Error while saving Autopilot rule.',
+        saveToastTitle: 'Mandate autopilot',
+        configCardTitle: 'Rule configuration',
+        configCardDescription: 'Enable Autopilot, areas, and daily limits.',
       },
       onboardingChecklist: {
         title: 'Your first 5 steps',

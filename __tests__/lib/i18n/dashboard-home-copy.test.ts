@@ -70,4 +70,15 @@ describe('dashboard home copy (D1)', () => {
     expect(en.ghostListingDays).toContain('{days}');
     expect(en.marketGapTitle.toLowerCase()).toContain('market');
   });
+
+  it('opportunitiesPage and autopilotPage for IT/EN', () => {
+    const itO = getTranslation('it').dashboard.opportunitiesPage;
+    const enO = getTranslation('en').dashboard.opportunitiesPage;
+    expect(itO.filtersTitle).toContain('Filtri');
+    expect(enO.filtersTitle.toLowerCase()).toContain('filter');
+    const itA = getTranslation('it').dashboard.autopilotPage;
+    const enA = getTranslation('en').dashboard.autopilotPage;
+    expect(itA.saveToastTitle).toBeTruthy();
+    expect(enA.configCardTitle).toContain('Rule');
+  });
 });

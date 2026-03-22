@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 import { useToast } from "@/hooks/use-toast";
@@ -35,62 +36,12 @@ export default function AutopilotPage() {
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
   const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const t = getTranslation(locale as SupportedLocale).dashboard.autopilotPage;
   const [rule, setRule] = useState<AutopilotRule | null>(null);
   const [runs, setRuns] = useState<any[]>([]);
   const [actions, setActions] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const { handleAPIError } = useAPIErrorHandler();
-
-  const t = {
-    it: {
-      title: "Autopilot Mandati 24/7",
-      subtitle: "Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.",
-      active: "Autopilot attivo",
-      rulePlaceholder: "Nome regola (es. Mandati Milano Centro)",
-      city: "Città",
-      region: "Regione/Provincia",
-      minPrice: "Prezzo minimo",
-      maxPrice: "Prezzo massimo",
-      runHour: "Ora di esecuzione (UTC)",
-      dailyLimit: "Max nuovi lead al giorno",
-      saving: "Salvataggio...",
-      save: "Salva regola Autopilot",
-      lastRuns: "Ultimi run",
-      noRuns: "Nessun run registrato.",
-      opportunities: "opportunità",
-      leads: "lead",
-      recentActions: "Azioni recenti",
-      noActions: "Nessuna azione registrata.",
-      defaultRule: "Autopilot Mandati",
-      loadError: "Impossibile caricare la configurazione Autopilot.",
-      saveSuccess: "Regola Autopilot salvata",
-      saveError: "Errore nel salvataggio della regola Autopilot.",
-    },
-    en: {
-      title: "Mandate Autopilot 24/7",
-      subtitle: "Scraper and Voice AI work every day to find new mandates and create leads automatically.",
-      active: "Autopilot enabled",
-      rulePlaceholder: "Rule name (e.g. Milan Center Mandates)",
-      city: "City",
-      region: "Region/Province",
-      minPrice: "Minimum price",
-      maxPrice: "Maximum price",
-      runHour: "Run time (UTC)",
-      dailyLimit: "Max new leads per day",
-      saving: "Saving...",
-      save: "Save Autopilot rule",
-      lastRuns: "Latest runs",
-      noRuns: "No runs recorded.",
-      opportunities: "opportunities",
-      leads: "leads",
-      recentActions: "Recent actions",
-      noActions: "No actions recorded.",
-      defaultRule: "Mandate Autopilot",
-      loadError: "Unable to load Autopilot configuration.",
-      saveSuccess: "Autopilot rule saved",
-      saveError: "Error while saving Autopilot rule.",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     const loadData = async () => {
@@ -175,7 +126,7 @@ export default function AutopilotPage() {
         setRule(data as AutopilotRule);
       }
       toast({
-        title: locale === "it" ? "Autopilot mandati" : "Mandate autopilot",
+        title: t.saveToastTitle,
         description: t.saveSuccess,
       });
     } catch (error: unknown) {
@@ -203,14 +154,8 @@ export default function AutopilotPage() {
       <div className="max-w-5xl space-y-8">
       <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle className="text-white">
-            {locale === "it" ? "Configurazione regola" : "Rule configuration"}
-          </CardTitle>
-          <CardDescription className="text-white/60">
-            {locale === "it"
-              ? "Attiva Autopilot, zone e limiti giornalieri."
-              : "Enable Autopilot, areas, and daily limits."}
-          </CardDescription>
+          <CardTitle className="text-white">{t.configCardTitle}</CardTitle>
+          <CardDescription className="text-white/60">{t.configCardDescription}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {rule && (
