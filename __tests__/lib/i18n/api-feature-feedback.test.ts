@@ -12,6 +12,12 @@ describe('apiFailureToast', () => {
     expect(r.description.toLowerCase()).toContain('session');
   });
 
+  it('maps 401 to Spanish copy when locale is es', () => {
+    const r = apiFailureToast('es', 'perfectCopy', { status: 401 }, 'fallback');
+    expect(r.title).toMatch(/sesión|inicio/i);
+    expect(r.description.toLowerCase()).toMatch(/sesión|inicia/);
+  });
+
   it('maps 429 to rate limit copy', () => {
     const r = apiFailureToast('it', 'leadManager', { status: 429 }, 'x');
     expect(r.title).toContain('Limite');
@@ -89,6 +95,7 @@ describe('B1 feature labels', () => {
     expect(apiFailureToast('en', 'predatorMap', { status: 429 }, 'x').title).toContain(
       'Territory map'
     );
+    expect(apiFailureToast('es', 'predatorMap', { status: 429 }, 'x').title).toContain('territorio');
   });
 
   it('includes billing label', () => {

@@ -1,0 +1,486 @@
+/**
+ * Toast chrome for API/network errors — all dashboard locales (D1).
+ * Feature short names stay mostly EN/product; sentences fully localized.
+ */
+
+import type { Locale } from '@/lib/i18n/config';
+import type { ApiFeatureId } from '@/lib/i18n/api-feedback-types';
+
+export type ApiFeedbackLocale = Locale;
+
+export type ApiFeedbackChrome = {
+  title401: (feature: string) => string;
+  desc401: string;
+  title429: (feature: string) => string;
+  desc429: string;
+  title404: (feature: string) => string;
+  desc404: string;
+  title502: (feature: string) => string;
+  desc502: string;
+  title5xx: (feature: string) => string;
+  desc5xx: string;
+  titleGeneric: (feature: string) => string;
+  persistSuffix: string;
+  titleNetwork: (feature: string) => string;
+  descNetwork: string;
+  titleValidation: (feature: string) => string;
+  titlePremium: (feature: string) => string;
+  titleClipboard: (feature: string) => string;
+};
+
+export const API_FEEDBACK_CHROME: Record<ApiFeedbackLocale, ApiFeedbackChrome> = {
+  it: {
+    title401: (L) => `${L} — Accesso richiesto`,
+    desc401: 'Sessione scaduta o non valida. Effettua di nuovo l’accesso e riprova.',
+    title429: (L) => `${L} — Limite richieste`,
+    desc429: 'Troppe richieste in poco tempo. Attendi un minuto e riprova.',
+    title404: (L) => `${L} — Non trovato`,
+    desc404: 'La risorsa non esiste o non è più disponibile. Aggiorna la pagina.',
+    title502: (L) => `${L} — Servizio in pausa`,
+    desc502: 'Il servizio non risponde. Riprova tra qualche minuto.',
+    title5xx: (L) => `${L} — Errore server`,
+    desc5xx: 'Problema temporaneo lato server. Riprova tra poco.',
+    titleGeneric: (L) => `${L} — Operazione non riuscita`,
+    persistSuffix: ' Se continua, aggiorna la pagina.',
+    titleNetwork: (L) => `${L} — Connessione`,
+    descNetwork:
+      'Controlla la connessione e riprova. Se sei offline, torna online prima di continuare.',
+    titleValidation: (L) => `${L} — Controlla il modulo`,
+    titlePremium: (L) => `${L} — Piano richiesto`,
+    titleClipboard: (L) => `${L} — Copia negli appunti`,
+  },
+  en: {
+    title401: (L) => `${L} — Sign-in required`,
+    desc401: 'Your session expired or is invalid. Sign in again and try again.',
+    title429: (L) => `${L} — Rate limit`,
+    desc429: 'Too many requests in a short window. Wait a minute and try again.',
+    title404: (L) => `${L} — Not found`,
+    desc404: 'The resource is missing or no longer available. Refresh the page.',
+    title502: (L) => `${L} — Service unavailable`,
+    desc502: 'The service is not responding. Please try again in a few minutes.',
+    title5xx: (L) => `${L} — Server error`,
+    desc5xx: 'A temporary server issue occurred. Please try again shortly.',
+    titleGeneric: (L) => `${L} — Could not complete`,
+    persistSuffix: ' If it persists, refresh the page.',
+    titleNetwork: (L) => `${L} — Connection`,
+    descNetwork: 'Check your connection and try again. If you are offline, reconnect first.',
+    titleValidation: (L) => `${L} — Check the form`,
+    titlePremium: (L) => `${L} — Plan required`,
+    titleClipboard: (L) => `${L} — Clipboard`,
+  },
+  es: {
+    title401: (L) => `${L} — Inicio de sesión requerido`,
+    desc401: 'Tu sesión caducó o no es válida. Vuelve a iniciar sesión e inténtalo de nuevo.',
+    title429: (L) => `${L} — Límite de solicitudes`,
+    desc429: 'Demasiadas solicitudes en poco tiempo. Espera un minuto e inténtalo de nuevo.',
+    title404: (L) => `${L} — No encontrado`,
+    desc404: 'El recurso no existe o ya no está disponible. Actualiza la página.',
+    title502: (L) => `${L} — Servicio no disponible`,
+    desc502: 'El servicio no responde. Inténtalo de nuevo en unos minutos.',
+    title5xx: (L) => `${L} — Error del servidor`,
+    desc5xx: 'Problema temporal en el servidor. Inténtalo de nuevo en breve.',
+    titleGeneric: (L) => `${L} — No se pudo completar`,
+    persistSuffix: ' Si continúa, actualiza la página.',
+    titleNetwork: (L) => `${L} — Conexión`,
+    descNetwork:
+      'Comprueba tu conexión e inténtalo de nuevo. Si estás sin conexión, vuelve a estar en línea.',
+    titleValidation: (L) => `${L} — Revisa el formulario`,
+    titlePremium: (L) => `${L} — Plan requerido`,
+    titleClipboard: (L) => `${L} — Portapapeles`,
+  },
+  fr: {
+    title401: (L) => `${L} — Connexion requise`,
+    desc401: 'Votre session a expiré ou est invalide. Reconnectez-vous et réessayez.',
+    title429: (L) => `${L} — Limite de requêtes`,
+    desc429: 'Trop de requêtes en peu de temps. Attendez une minute et réessayez.',
+    title404: (L) => `${L} — Introuvable`,
+    desc404: 'La ressource est absente ou n’est plus disponible. Actualisez la page.',
+    title502: (L) => `${L} — Service indisponible`,
+    desc502: 'Le service ne répond pas. Réessayez dans quelques minutes.',
+    title5xx: (L) => `${L} — Erreur serveur`,
+    desc5xx: 'Problème temporaire côté serveur. Réessayez sous peu.',
+    titleGeneric: (L) => `${L} — Action impossible`,
+    persistSuffix: ' Si le problème persiste, actualisez la page.',
+    titleNetwork: (L) => `${L} — Connexion`,
+    descNetwork:
+      'Vérifiez votre connexion et réessayez. Si vous êtes hors ligne, reconnectez-vous d’abord.',
+    titleValidation: (L) => `${L} — Vérifiez le formulaire`,
+    titlePremium: (L) => `${L} — Forfait requis`,
+    titleClipboard: (L) => `${L} — Presse-papiers`,
+  },
+  de: {
+    title401: (L) => `${L} — Anmeldung erforderlich`,
+    desc401: 'Ihre Sitzung ist abgelaufen oder ungültig. Melden Sie sich erneut an.',
+    title429: (L) => `${L} — Anfragelimit`,
+    desc429: 'Zu viele Anfragen in kurzer Zeit. Warten Sie eine Minute und versuchen Sie es erneut.',
+    title404: (L) => `${L} — Nicht gefunden`,
+    desc404: 'Die Ressource fehlt oder ist nicht mehr verfügbar. Seite aktualisieren.',
+    title502: (L) => `${L} — Dienst nicht verfügbar`,
+    desc502: 'Der Dienst antwortet nicht. Bitte in einigen Minuten erneut versuchen.',
+    title5xx: (L) => `${L} — Serverfehler`,
+    desc5xx: 'Vorübergehendes Serverproblem. Bitte kurz warten und erneut versuchen.',
+    titleGeneric: (L) => `${L} — Konnte nicht abgeschlossen werden`,
+    persistSuffix: ' Wenn es weitergeht, Seite aktualisieren.',
+    titleNetwork: (L) => `${L} — Verbindung`,
+    descNetwork:
+      'Verbindung prüfen und erneut versuchen. Wenn Sie offline sind, zuerst wieder verbinden.',
+    titleValidation: (L) => `${L} — Formular prüfen`,
+    titlePremium: (L) => `${L} — Tarif erforderlich`,
+    titleClipboard: (L) => `${L} — Zwischenablage`,
+  },
+  pt: {
+    title401: (L) => `${L} — Início de sessão necessário`,
+    desc401: 'A sua sessão expirou ou é inválida. Inicie sessão novamente e tente outra vez.',
+    title429: (L) => `${L} — Limite de pedidos`,
+    desc429: 'Demasiados pedidos num curto período. Aguarde um minuto e tente novamente.',
+    title404: (L) => `${L} — Não encontrado`,
+    desc404: 'O recurso não existe ou já não está disponível. Atualize a página.',
+    title502: (L) => `${L} — Serviço indisponível`,
+    desc502: 'O serviço não responde. Tente novamente dentro de alguns minutos.',
+    title5xx: (L) => `${L} — Erro do servidor`,
+    desc5xx: 'Problema temporário no servidor. Tente novamente em breve.',
+    titleGeneric: (L) => `${L} — Não foi possível concluir`,
+    persistSuffix: ' Se persistir, atualize a página.',
+    titleNetwork: (L) => `${L} — Ligação`,
+    descNetwork:
+      'Verifique a ligação e tente novamente. Se estiver offline, volte a ficar online primeiro.',
+    titleValidation: (L) => `${L} — Verifique o formulário`,
+    titlePremium: (L) => `${L} — Plano necessário`,
+    titleClipboard: (L) => `${L} — Área de transferência`,
+  },
+  ar: {
+    title401: (L) => `${L} — مطلوب تسجيل الدخول`,
+    desc401: 'انتهت صلاحية الجلسة أو أنها غير صالحة. سجّل الدخول مجدداً وحاول مرة أخرى.',
+    title429: (L) => `${L} — حد الطلبات`,
+    desc429: 'طلبات كثيرة في وقت قصير. انتظر دقيقة ثم أعد المحاولة.',
+    title404: (L) => `${L} — غير موجود`,
+    desc404: 'المورد غير موجود أو لم يعد متاحاً. حدّث الصفحة.',
+    title502: (L) => `${L} — الخدمة غير متاحة`,
+    desc502: 'الخدمة لا تستجيب. أعد المحاولة خلال دقائق.',
+    title5xx: (L) => `${L} — خطأ في الخادم`,
+    desc5xx: 'مشكلة مؤقتة في الخادم. أعد المحاولة قريباً.',
+    titleGeneric: (L) => `${L} — تعذر الإكمال`,
+    persistSuffix: ' إذا استمر الأمر، حدّث الصفحة.',
+    titleNetwork: (L) => `${L} — الاتصال`,
+    descNetwork: 'تحقق من الاتصال وحاول مرة أخرى. إذا كنت غير متصل، أعد الاتصال أولاً.',
+    titleValidation: (L) => `${L} — راجع النموذج`,
+    titlePremium: (L) => `${L} — الخطة مطلوبة`,
+    titleClipboard: (L) => `${L} — الحافظة`,
+  },
+};
+
+function normalizeFeedbackLocale(locale: string): ApiFeedbackLocale {
+  const l = locale as ApiFeedbackLocale;
+  if (l in API_FEEDBACK_CHROME) return l;
+  return 'en';
+}
+
+export function getApiFeedbackChrome(locale: string): ApiFeedbackChrome {
+  return API_FEEDBACK_CHROME[normalizeFeedbackLocale(locale)];
+}
+
+const API_FEATURE_LABELS: Record<ApiFeatureId, Record<Locale, string>> = {
+  perfectCopy: {
+    it: 'Perfect Copy',
+    en: 'Perfect Copy',
+    es: 'Perfect Copy',
+    fr: 'Perfect Copy',
+    de: 'Perfect Copy',
+    pt: 'Perfect Copy',
+    ar: 'Perfect Copy',
+  },
+  leadManager: {
+    it: 'CRM Lead',
+    en: 'Lead CRM',
+    es: 'CRM de leads',
+    fr: 'CRM leads',
+    de: 'Lead-CRM',
+    pt: 'CRM de leads',
+    ar: 'إدارة العملاء المحتملين',
+  },
+  listingsLibrary: {
+    it: 'Libreria annunci',
+    en: 'Listing library',
+    es: 'Biblioteca de anuncios',
+    fr: 'Bibliothèque d’annonces',
+    de: 'Anzeigenbibliothek',
+    pt: 'Biblioteca de anúncios',
+    ar: 'مكتبة الإعلانات',
+  },
+  refineListing: {
+    it: 'Perfect Again',
+    en: 'Perfect Again',
+    es: 'Perfect Again',
+    fr: 'Perfect Again',
+    de: 'Perfect Again',
+    pt: 'Perfect Again',
+    ar: 'Perfect Again',
+  },
+  translateListing: {
+    it: 'Traduttore annunci',
+    en: 'Listing translator',
+    es: 'Traductor de anuncios',
+    fr: 'Traduction d’annonces',
+    de: 'Anzeigen-Übersetzer',
+    pt: 'Tradutor de anúncios',
+    ar: 'مترجم الإعلانات',
+  },
+  titleGenerator: {
+    it: 'Titoli A/B',
+    en: 'A/B titles',
+    es: 'Títulos A/B',
+    fr: 'Titres A/B',
+    de: 'A/B-Titel',
+    pt: 'Títulos A/B',
+    ar: 'عناوين A/B',
+  },
+  emotionalListing: {
+    it: 'Annuncio emozionale',
+    en: 'Emotional listing',
+    es: 'Anuncio emocional',
+    fr: 'Annonce émotionnelle',
+    de: 'Emotionale Anzeige',
+    pt: 'Anúncio emocional',
+    ar: 'إعلان عاطفي',
+  },
+  socialPosts: {
+    it: 'Post social',
+    en: 'Social posts',
+    es: 'Publicaciones sociales',
+    fr: 'Posts réseaux sociaux',
+    de: 'Social-Media-Posts',
+    pt: 'Posts sociais',
+    ar: 'منشورات التواصل',
+  },
+  hashtagGenerator: {
+    it: 'Hashtag',
+    en: 'Hashtags',
+    es: 'Hashtags',
+    fr: 'Hashtags',
+    de: 'Hashtags',
+    pt: 'Hashtags',
+    ar: 'الوسوم',
+  },
+  followupEmails: {
+    it: 'Follow-up email',
+    en: 'Follow-up emails',
+    es: 'Emails de seguimiento',
+    fr: 'E-mails de relance',
+    de: 'Follow-up-E-Mails',
+    pt: 'E-mails de acompanhamento',
+    ar: 'رسائل المتابعة',
+  },
+  videoScripts: {
+    it: 'Script video',
+    en: 'Video scripts',
+    es: 'Guiones de vídeo',
+    fr: 'Scripts vidéo',
+    de: 'Video-Skripte',
+    pt: 'Roteiros de vídeo',
+    ar: 'نصوص الفيديو',
+  },
+  agentBio: {
+    it: 'Bio agente',
+    en: 'Agent bio',
+    es: 'Biografía del agente',
+    fr: 'Bio agent',
+    de: 'Makler-Bio',
+    pt: 'Bio do agente',
+    ar: 'سيرة الوكيل',
+  },
+  pdfSheets: {
+    it: 'Schede PDF',
+    en: 'PDF sheets',
+    es: 'Fichas PDF',
+    fr: 'Fiches PDF',
+    de: 'PDF-Blätter',
+    pt: 'Fichas PDF',
+    ar: 'أوراق PDF',
+  },
+  leadScoring: {
+    it: 'Lead scoring',
+    en: 'Lead scoring',
+    es: 'Puntuación de leads',
+    fr: 'Scoring de leads',
+    de: 'Lead-Scoring',
+    pt: 'Pontuação de leads',
+    ar: 'تسجيل العملاء المحتملين',
+  },
+  leadPipeline: {
+    it: 'Pipeline lead',
+    en: 'Lead pipeline',
+    es: 'Pipeline de leads',
+    fr: 'Pipeline leads',
+    de: 'Lead-Pipeline',
+    pt: 'Pipeline de leads',
+    ar: 'مسار العملاء',
+  },
+  leadDetail: {
+    it: 'Scheda lead',
+    en: 'Lead record',
+    es: 'Ficha del lead',
+    fr: 'Fiche lead',
+    de: 'Lead-Akte',
+    pt: 'Ficha do lead',
+    ar: 'سجل العميل المحتمل',
+  },
+  workflowAutomations: {
+    it: 'Workflow automazioni',
+    en: 'Automation workflows',
+    es: 'Automatizaciones',
+    fr: 'Automatisations',
+    de: 'Automatisierungs-Workflows',
+    pt: 'Automações',
+    ar: 'أتمتة سير العمل',
+  },
+  crmAutomationRules: {
+    it: 'Regole CRM',
+    en: 'CRM automation rules',
+    es: 'Reglas de automatización CRM',
+    fr: 'Règles d’automatisation CRM',
+    de: 'CRM-Automatisierungsregeln',
+    pt: 'Regras de automação CRM',
+    ar: 'قواعد أتمتة CRM',
+  },
+  linkAnalysis: {
+    it: 'Analisi da link',
+    en: 'Link analysis',
+    es: 'Análisis por enlace',
+    fr: 'Analyse par lien',
+    de: 'Link-Analyse',
+    pt: 'Análise por link',
+    ar: 'تحليل الرابط',
+  },
+  listingScraper: {
+    it: 'Import annunci',
+    en: 'Listing import',
+    es: 'Importar anuncios',
+    fr: 'Import d’annonces',
+    de: 'Anzeigen-Import',
+    pt: 'Importar anúncios',
+    ar: 'استيراد الإعلانات',
+  },
+  listingAuditor: {
+    it: 'Audit annuncio',
+    en: 'Listing audit',
+    es: 'Auditoría de anuncio',
+    fr: 'Audit d’annonce',
+    de: 'Anzeigen-Audit',
+    pt: 'Auditoria de anúncio',
+    ar: 'مراجعة الإعلان',
+  },
+  prospectingCommand: {
+    it: 'Prospecting',
+    en: 'Prospecting',
+    es: 'Prospección',
+    fr: 'Prospection',
+    de: 'Akquise',
+    pt: 'Prospecção',
+    ar: 'الاستكشاف',
+  },
+  predatorMap: {
+    it: 'Mappa territorio',
+    en: 'Territory map',
+    es: 'Mapa de territorio',
+    fr: 'Carte du territoire',
+    de: 'Gebietskarte',
+    pt: 'Mapa de território',
+    ar: 'خريطة الإقليم',
+  },
+  opportunityRadar: {
+    it: 'Radar opportunità',
+    en: 'Opportunity radar',
+    es: 'Radar de oportunidades',
+    fr: 'Radar d’opportunités',
+    de: 'Chancen-Radar',
+    pt: 'Radar de oportunidades',
+    ar: 'رادار الفرص',
+  },
+  mandateAutopilot: {
+    it: 'Autopilot mandati',
+    en: 'Mandate autopilot',
+    es: 'Autopilot de mandatos',
+    fr: 'Autopilot mandats',
+    de: 'Mandats-Autopilot',
+    pt: 'Autopilot de mandatos',
+    ar: 'الطيار الآلي للتفويضات',
+  },
+  billingSubscription: {
+    it: 'Abbonamento',
+    en: 'Subscription',
+    es: 'Suscripción',
+    fr: 'Abonnement',
+    de: 'Abonnement',
+    pt: 'Subscrição',
+    ar: 'الاشتراك',
+  },
+  premiumPackages: {
+    it: 'Pacchetti premium',
+    en: 'Premium packages',
+    es: 'Paquetes premium',
+    fr: 'Forfaits premium',
+    de: 'Premium-Pakete',
+    pt: 'Pacotes premium',
+    ar: 'باقات مميزة',
+  },
+  referralProgram: {
+    it: 'Programma referral',
+    en: 'Referral program',
+    es: 'Programa de referidos',
+    fr: 'Programme de parrainage',
+    de: 'Empfehlungsprogramm',
+    pt: 'Programa de referência',
+    ar: 'برنامج الإحالة',
+  },
+  agencyAssistantChat: {
+    it: 'Assistente agenzia',
+    en: 'Agency assistant',
+    es: 'Asistente de agencia',
+    fr: 'Assistant agence',
+    de: 'Agentur-Assistent',
+    pt: 'Assistente da agência',
+    ar: 'مساعد الوكالة',
+  },
+  crmLeadCapture: {
+    it: 'Capture lead (sito)',
+    en: 'Lead capture (site)',
+    es: 'Captación de leads (web)',
+    fr: 'Capture de leads (site)',
+    de: 'Lead-Erfassung (Website)',
+    pt: 'Captação de leads (site)',
+    ar: 'جذب العملاء (الموقع)',
+  },
+  workspaceModules: {
+    it: 'Moduli workspace',
+    en: 'Workspace modules',
+    es: 'Módulos del espacio de trabajo',
+    fr: 'Modules workspace',
+    de: 'Workspace-Module',
+    pt: 'Módulos do workspace',
+    ar: 'وحدات مساحة العمل',
+  },
+  morningIntelNotifications: {
+    it: 'AI Morning Intel',
+    en: 'AI Morning Intel',
+    es: 'AI Morning Intel',
+    fr: 'AI Morning Intel',
+    de: 'AI Morning Intel',
+    pt: 'AI Morning Intel',
+    ar: 'ذكاء الصباح',
+  },
+  agencyBrandingWhiteLabel: {
+    it: 'Branding agenzia',
+    en: 'Agency branding',
+    es: 'Marca de agencia',
+    fr: 'Branding agence',
+    de: 'Agentur-Branding',
+    pt: 'Marca da agência',
+    ar: 'هوية الوكالة',
+  },
+};
+
+export function featureLabelForLocale(feature: ApiFeatureId, locale: string): string {
+  const loc = normalizeFeedbackLocale(locale);
+  const row = API_FEATURE_LABELS[feature];
+  return row[loc] ?? row.en;
+}
