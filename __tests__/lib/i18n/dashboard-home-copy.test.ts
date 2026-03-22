@@ -11,6 +11,17 @@ describe('dashboard home copy (D1)', () => {
     expect(es.generate).toBeTruthy();
   });
 
+  it('errorBoundaryModule, welcomeTour, onboardingWizard for IT/EN; ES inherits EN', () => {
+    const itE = getTranslation('it').errorBoundaryModule;
+    const enE = getTranslation('en').errorBoundaryModule;
+    expect(itE.boundary.title).toContain('storto');
+    expect(enE.apiHandler.rateLimitError.toLowerCase()).toMatch(/request|too many/i);
+    const wt = getTranslation('it').welcomeTour;
+    expect(wt.dealLabel).toContain('{n}');
+    expect(getTranslation('en').onboardingWizard.steps[0].title).toMatch(/PropertyPilot/i);
+    expect(getTranslation('es').welcomeTour.welcomeTitle).toBe(getTranslation('en').welcomeTour.welcomeTitle);
+  });
+
   it('dashboardNav and commandPaletteExtras for IT/EN; ES inherits EN nav', () => {
     const itNav = getTranslation('it').dashboardNav;
     const enNav = getTranslation('en').dashboardNav;

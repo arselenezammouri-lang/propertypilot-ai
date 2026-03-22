@@ -1,43 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Sparkles, Globe, TrendingDown, Zap, Gift, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 interface ScanStep {
   id: string;
   label: string;
   icon: React.ReactNode;
   duration: number;
-}
-
-function getScanSteps(isIt: boolean): ScanStep[] {
-  return [
-    {
-      id: "sync",
-      label: isIt ? "Sincronizzazione con i portali globali..." : "Syncing with global portals...",
-      icon: <Globe className="h-5 w-5" />,
-      duration: 2000,
-    },
-    {
-      id: "arbitrage",
-      label: isIt ? "Analisi Arbitraggio in corso..." : "Running Arbitrage Analysis...",
-      icon: <TrendingDown className="h-5 w-5" />,
-      duration: 2000,
-    },
-    {
-      id: "radar",
-      label: isIt ? "Radar Competitor attivato..." : "Competitor Radar activated...",
-      icon: <Sparkles className="h-5 w-5" />,
-      duration: 2000,
-    },
-  ];
 }
 
 export function WelcomeTour() {
@@ -47,23 +24,16 @@ export function WelcomeTour() {
   const [showGift, setShowGift] = useState(false);
   const router = useRouter();
   const { locale } = useLocale();
-  const isIt = locale !== 'en';
-  const scanSteps = getScanSteps(isIt);
+  const t = useMemo(() => getTranslation(locale as SupportedLocale).welcomeTour, [locale]);
 
-  const t = {
-    welcomeTitle: isIt ? "Benvenuto nel Futuro del Real Estate" : "Welcome to the Future of Real Estate",
-    preparingDesc: isIt ? "Stiamo preparando il tuo Command Center" : "We're preparing your Command Center",
-    dealsFound: isIt
-      ? <>Trovati <span className="text-cyan-400">3 Deal Oro</span> nella tua zona</>
-      : <>Found <span className="text-cyan-400">3 Gold Deals</span> in your area</>,
-    dealsDesc: isIt
-      ? "Il sistema ha già scansionato i portali e trovato opportunità con Market Gap significativo"
-      : "The system has already scanned the portals and found opportunities with significant Market Gap",
-    dealLabel: (n: number) => isIt ? `Deal #${n}` : `Deal #${n}`,
-    unlockBtn: isIt
-      ? "Clicca per sbloccare la tua prima provvigione"
-      : "Click to unlock your first commission",
-  };
+  const scanSteps: ScanStep[] = useMemo(
+    () => [
+      { id: "sync", label: t.scanSync, icon: <Globe className="h-5 w-5" />, duration: 2000 },
+      { id: "arbitrage", label: t.scanArbitrage, icon: <TrendingDown className="h-5 w-5" />, duration: 2000 },
+      { id: "radar", label: t.scanRadar, icon: <Sparkles className="h-5 w-5" />, duration: 2000 },
+    ],
+    [t]
+  );
 
   const startScanAnimation = useCallback(() => {
     let totalDuration = 0;
@@ -77,7 +47,6 @@ export function WelcomeTour() {
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100);
       setProgress(newProgress);
 
-      // Aggiorna step corrente
       let stepElapsed = 0;
       for (let i = 0; i < scanSteps.length; i++) {
         stepElapsed += scanSteps[i].duration;
@@ -97,7 +66,6 @@ export function WelcomeTour() {
   }, [scanSteps]);
 
   useEffect(() => {
-    // Controlla se è il primo accesso (usa localStorage)
     const hasSeenWelcome = localStorage.getItem("propertypilot_welcome_seen");
     if (!hasSeenWelcome) {
       setIsOpen(true);
@@ -128,19 +96,17 @@ export function WelcomeTour() {
               size="icon"
               onClick={handleClose}
               className="text-gray-400 hover:text-white"
-              aria-label="Close"
+              aria-label={t.closeAria}
+              type="button"
             >
               <X className="h-5 w-5" />
             </Button>
           </div>
-          <DialogDescription className="text-lg text-gray-300">
-            {t.preparingDesc}
-          </DialogDescription>
+          <DialogDescription className="text-lg text-gray-300">{t.preparingDesc}</DialogDescription>
         </DialogHeader>
 
         {!showGift ? (
           <div className="space-y-6 py-6">
-            {/* Circular Progress */}
             <div className="flex justify-center">
               <div className="relative w-32 h-32">
                 <svg className="transform -rotate-90 w-32 h-32">
@@ -174,7 +140,6 @@ export function WelcomeTour() {
               </div>
             </div>
 
-            {/* Current Step */}
             <div className="text-center space-y-4">
               <div className="flex items-center justify-center gap-3 text-purple-400">
                 {scanSteps[currentStep]?.icon}
@@ -182,7 +147,6 @@ export function WelcomeTour() {
               </div>
             </div>
 
-            {/* Steps List */}
             <div className="space-y-3">
               {scanSteps.map((step, idx) => (
                 <div
@@ -191,8 +155,8 @@ export function WelcomeTour() {
                     idx < currentStep
                       ? "bg-green-500/10 border-green-500/30"
                       : idx === currentStep
-                      ? "bg-purple-500/10 border-purple-500/30"
-                      : "bg-white/[0.04] border-white/10"
+                        ? "bg-purple-500/10 border-purple-500/30"
+                        : "bg-white/[0.04] border-white/10"
                   }`}
                 >
                   {idx < currentStep ? (
@@ -205,8 +169,8 @@ export function WelcomeTour() {
                       idx < currentStep
                         ? "text-green-400"
                         : idx === currentStep
-                        ? "text-purple-400"
-                        : "text-gray-400"
+                          ? "text-purple-400"
+                          : "text-gray-400"
                     }`}
                   >
                     {step.label}
@@ -225,11 +189,11 @@ export function WelcomeTour() {
 
             <div className="space-y-4">
               <h3 className="text-2xl font-bold text-white">
-                {t.dealsFound}
+                {t.dealsFoundLead}
+                <span className="text-cyan-400">{t.dealsFoundHighlight}</span>
+                {t.dealsFoundTail}
               </h3>
-              <p className="text-gray-300 text-lg">
-                {t.dealsDesc}
-              </p>
+              <p className="text-gray-300 text-lg">{t.dealsDesc}</p>
 
               <div className="grid grid-cols-3 gap-4 mt-6">
                 {[1, 2, 3].map((deal) => (
@@ -238,10 +202,9 @@ export function WelcomeTour() {
                     className="p-4 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg"
                   >
                     <Badge className="bg-green-500 text-white mb-2">
-                      <TrendingDown className="h-3 w-3 mr-1" />
-                      -{15 + deal * 3}%
+                      <TrendingDown className="h-3 w-3 mr-1" />-{15 + deal * 3}%
                     </Badge>
-                    <p className="text-xs text-gray-400 mt-2">{t.dealLabel(deal)}</p>
+                    <p className="text-xs text-gray-400 mt-2">{t.dealLabel.replace("{n}", String(deal))}</p>
                   </div>
                 ))}
               </div>
@@ -251,6 +214,7 @@ export function WelcomeTour() {
                   <Button
                     onClick={handleUnlockGift}
                     className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white font-bold text-lg px-8 py-6"
+                    type="button"
                   >
                     <Zap className="h-5 w-5 mr-2" />
                     {t.unlockBtn}
@@ -264,4 +228,3 @@ export function WelcomeTour() {
     </Dialog>
   );
 }
-

@@ -61,6 +61,12 @@ import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
 import { ariaLimitModalUiEn, ariaLimitModalUiIt } from '@/lib/i18n/aria-limit-modal-ui';
+import type { ErrorBoundaryModuleUi } from '@/lib/i18n/error-boundary-ui';
+import { errorBoundaryModuleUiEn, errorBoundaryModuleUiIt } from '@/lib/i18n/error-boundary-ui';
+import type { WelcomeTourUi } from '@/lib/i18n/welcome-tour-ui';
+import { welcomeTourUiEn, welcomeTourUiIt } from '@/lib/i18n/welcome-tour-ui';
+import type { OnboardingWizardUi } from '@/lib/i18n/onboarding-wizard-ui';
+import { onboardingWizardUiEn, onboardingWizardUiIt } from '@/lib/i18n/onboarding-wizard-ui';
 import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
 import {
   commandPaletteExtrasEn,
@@ -642,6 +648,13 @@ export interface TranslationDictionary {
   dashboardNav: DashboardNavUi;
   /** Command palette quick links + doc guides (keywords for search) */
   commandPaletteExtras: CommandPaletteExtraStrings;
+
+  /** React error boundary + useAPIErrorHandler messages */
+  errorBoundaryModule: ErrorBoundaryModuleUi;
+  /** First-login welcome tour modal (dashboard) */
+  welcomeTour: WelcomeTourUi;
+  /** Optional multi-step onboarding wizard */
+  onboardingWizard: OnboardingWizardUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -1486,6 +1499,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiIt,
     dashboardNav: dashboardNavUiIt,
     commandPaletteExtras: commandPaletteExtrasIt,
+    errorBoundaryModule: errorBoundaryModuleUiIt,
+    welcomeTour: welcomeTourUiIt,
+    onboardingWizard: onboardingWizardUiIt,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
       boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -2332,6 +2348,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiEn,
     dashboardNav: dashboardNavUiEn,
     commandPaletteExtras: commandPaletteExtrasEn,
+    errorBoundaryModule: errorBoundaryModuleUiEn,
+    welcomeTour: welcomeTourUiEn,
+    onboardingWizard: onboardingWizardUiEn,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',

@@ -8,6 +8,9 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Preferire `getTranslation(locale)` da `lib/i18n/dictionary.ts`.  
    - Header dashboard (`components/dashboard-header.tsx`): `dashboard.navAriaLabel`, `dashboard.commandPaletteOpenAria`, `dashboard.commandPalettePlaceholder`, oltre a `generate` / `signOut`.  
    - Nav condivisa (sidebar, drawer mobile, command palette): `dashboardNav` + `commandPaletteExtras` in `dictionary.ts` — copy in `lib/i18n/dashboard-nav-ui.ts`; struttura route in `lib/dashboard/nav-config.tsx`.  
+   - Error boundary / `useAPIErrorHandler`: `errorBoundaryModule` — `lib/i18n/error-boundary-ui.ts`.  
+   - Welcome tour (primo accesso dashboard): `welcomeTour` — `lib/i18n/welcome-tour-ui.ts`.  
+   - Onboarding wizard (flag env): `onboardingWizard` — `lib/i18n/onboarding-wizard-ui.ts`.  
    - Griglia “tutti gli strumenti” (`DashboardPlanFeatures`): copy in `lib/i18n/plan-features-ui.ts`, esposta come `dashboard.planFeatures` (chrome + `items` per `id` feature).  
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (placeholder `{name}` dove serve).  
    - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage`; hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub`.  
