@@ -235,4 +235,15 @@ describe('dashboard home copy (D1)', () => {
     expect(itA.gravita.critica.length).toBeGreaterThan(2);
     expect(enA.connectionScore).toContain('{score}');
   });
+
+  it('pendingCheckoutBanner and ariaLimitModal for IT/EN', () => {
+    const itP = getTranslation('it').pendingCheckoutBanner;
+    const enP = getTranslation('en').pendingCheckoutBanner;
+    expect(itP.activateDesc).toContain('{name}');
+    expect(enP.syncPlan).toContain('{plan}');
+    const itM = getTranslation('it').ariaLimitModal;
+    const enM = getTranslation('en').ariaLimitModal;
+    expect(itM.desc).toContain('{used}');
+    expect(enM.upgrades.free.features.length).toBe(3);
+  });
 });

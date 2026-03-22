@@ -57,6 +57,10 @@ import {
   listingAuditorPageUiEn,
   listingAuditorPageUiIt,
 } from '@/lib/i18n/listing-auditor-page-ui';
+import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
+import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
+import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
+import { ariaLimitModalUiEn, ariaLimitModalUiIt } from '@/lib/i18n/aria-limit-modal-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -616,6 +620,11 @@ export interface TranslationDictionary {
     subscriptionFetchErrorBody: string;
     retry: string;
   };
+
+  /** Pending Stripe checkout banner (localStorage pendingPlan / pendingPackage) */
+  pendingCheckoutBanner: PendingCheckoutUi;
+  /** Usage limit upsell modal (Aria) */
+  ariaLimitModal: AriaLimitModalUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -1453,6 +1462,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.',
       retry: 'Riprova',
     },
+    pendingCheckoutBanner: pendingCheckoutUiIt,
+    ariaLimitModal: ariaLimitModalUiIt,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
       boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -2292,6 +2303,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       subscriptionFetchErrorBody: 'Unable to load subscription. Showing Free plan.',
       retry: 'Retry',
     },
+    pendingCheckoutBanner: pendingCheckoutUiEn,
+    ariaLimitModal: ariaLimitModalUiEn,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',

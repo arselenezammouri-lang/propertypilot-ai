@@ -23,6 +23,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Analisi da link (`/dashboard/analyze`): `lib/i18n/analyze-link-page-ui.ts` → `dashboard.analyzeLinkPage`.  
    - Scraper annunci (`/dashboard/scraper`): `lib/i18n/listing-scraper-page-ui.ts` → `dashboard.listingScraperPage`.  
    - Audit annuncio (`/dashboard/auditor`): `lib/i18n/listing-auditor-page-ui.ts` → `dashboard.listingAuditorPage`.  
+   - Banner checkout in sospeso (`PendingCheckoutBanner`): `lib/i18n/pending-checkout-ui.ts` → `pendingCheckoutBanner` (prezzi da `STRIPE_*` + `formatCurrencyForLocale` + `billing.perMonth`).  
+   - Modal limite utilizzo (`AriaLimitModal`): `lib/i18n/aria-limit-modal-ui.ts` → `ariaLimitModal` (prezzo upgrade da `STRIPE_PLANS[next].price`).  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
