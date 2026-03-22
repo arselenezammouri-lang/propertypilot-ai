@@ -455,7 +455,7 @@ describe('dashboard home copy (D1)', () => {
     expect(enM.upgrades.free.features.length).toBe(3);
   });
 
-  it('transactionTypes + leadScorePage (IT/EN; ES merges EN)', () => {
+  it('transactionTypes + leadScorePage (IT/EN; ES native bundle)', () => {
     const itD = getTranslation('it').dashboard;
     const enD = getTranslation('en').dashboard;
     expect(itD.transactionTypes.vendita).toMatch(/Vendita/i);
@@ -463,10 +463,14 @@ describe('dashboard home copy (D1)', () => {
     expect(itD.leadScorePage.marketItaly).toMatch(/Italia/i);
     expect(enD.leadScorePage.categoryHot.toLowerCase()).toMatch(/hot/);
     expect(itD.leadScorePage.headerPriorityBadge.length).toBeGreaterThan(3);
+    expect(itD.leadScorePage.analysisInSeconds).toContain('{seconds}');
+    expect(enD.leadScorePage.factorLabels['Urgenza Percepita'].toLowerCase()).toMatch(/perceived|urgency/);
     const esD = getTranslation('es').dashboard;
     expect(esD.transactionTypes.vendita.toLowerCase()).toMatch(/venta/);
     expect(esD.transactionTypes.vendita).not.toBe(enD.transactionTypes.vendita);
-    expect(esD.leadScorePage.cacheBadge).toBe(enD.leadScorePage.cacheBadge);
+    expect(esD.leadScorePage.pageTitle.toLowerCase()).toMatch(/lead|scoring/);
+    expect(esD.leadScorePage.cacheBadge.toLowerCase()).toMatch(/caché|cache/);
+    expect(esD.leadScorePage.cacheBadge).not.toBe(enD.leadScorePage.cacheBadge);
   });
 
   it('mapPage + opportunities + autopilot native for ES/FR/DE/PT/AR', () => {
