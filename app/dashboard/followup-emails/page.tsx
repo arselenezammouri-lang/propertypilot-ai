@@ -88,7 +88,7 @@ const FOLLOWUP_TAB_ICON: Record<FollowupEmailTabId, LucideIcon> = {
 
 export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageProps) {
   const { locale } = useLocaleContext();
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);

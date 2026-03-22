@@ -108,7 +108,7 @@ export default function PdfGeneratorPage() {
   const [agencyBranding, setAgencyBranding] = useState<AgencyBranding | null>(null);
   const { toast } = useToast();
   const { locale } = useLocale();
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
   const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);

@@ -77,7 +77,7 @@ function ScoreTierGlyph({ score }: { score: number | null }) {
 export default function PipelinePage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const t = useMemo(
     () => getTranslation(locale as SupportedLocale).dashboard.leadPipelinePage,
     [locale],

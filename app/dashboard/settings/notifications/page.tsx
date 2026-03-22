@@ -40,7 +40,7 @@ interface NotificationSettings {
 export default function NotificationsSettingsPage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
 

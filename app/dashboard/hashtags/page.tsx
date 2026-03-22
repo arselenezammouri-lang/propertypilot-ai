@@ -67,8 +67,7 @@ interface FormData {
 
 export default function HashtagsPage() {
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale;
   const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
   const tt = dash.transactionTypes;
   const usage = useUsageLimits();

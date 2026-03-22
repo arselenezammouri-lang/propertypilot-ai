@@ -44,8 +44,7 @@ export default function ScraperPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isItalian = locale === 'it';
-  const feedbackLocale = isItalian ? 'it' : 'en';
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
 

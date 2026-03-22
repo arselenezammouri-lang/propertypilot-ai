@@ -237,7 +237,7 @@ export default function ProspectingPage() {
   const router = useRouter();
   const { locale, currency, timezone } = useLocale();
   /** api-feature-feedback supports only it|en; non-IT dashboard locales use EN chrome */
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const { toast } = useToast();
   const { plan: usagePlan, isLoading: usagePlanLoading, refresh: refreshUsagePlan } = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();

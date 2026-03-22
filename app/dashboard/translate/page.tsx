@@ -66,8 +66,7 @@ interface TranslationResult {
 
 export default function TranslatePage() {
   const { locale } = useLocale();
-  const isItalian = locale === 'it';
-  const feedbackLocale = isItalian ? 'it' : 'en';
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const t = useMemo(() => getTranslation(locale).dashboard.translateListingPage, [locale]);
 

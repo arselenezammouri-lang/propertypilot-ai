@@ -88,7 +88,7 @@ const SCRIPT_TAB_ICON: Record<VideoScriptTabId, LucideIcon> = {
 
 export default function VideoScriptsPage() {
   const { locale } = useLocale();
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();

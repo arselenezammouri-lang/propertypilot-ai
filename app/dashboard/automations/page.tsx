@@ -66,7 +66,7 @@ export default function AutomationsPage() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [executingId, setExecutingId] = useState<string | null>(null);
   const [resultDialog, setResultDialog] = useState<{ open: boolean; result: string | null }>({ open: false, result: null });
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
 
   const ui = useMemo(
     () => getTranslation(locale as SupportedLocale).dashboard.workflowAutomationsPage,

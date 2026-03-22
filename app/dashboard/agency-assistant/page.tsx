@@ -84,7 +84,7 @@ const FEATURE_ROUTES: Record<string, string> = {
 
 export default function AgencyAssistantPage() {
   const { locale } = useLocaleContext();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [currentContext, setCurrentContext] = useState<string>("general");

@@ -22,7 +22,7 @@ export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { locale, currency, timezone } = useLocaleContext();
-  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const feedbackLocale = locale;
   const translation = getTranslation(locale as SupportedLocale);
   const billingT = translation.billing;
   const { plan: usagePlan, isLoading: usagePlanLoading } = useUsageLimits();

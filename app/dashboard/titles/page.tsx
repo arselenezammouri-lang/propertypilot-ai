@@ -75,8 +75,7 @@ interface FormData {
 export default function TitlesPage() {
   const { toast } = useToast();
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale;
   const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
   const tt = dash.transactionTypes;
   const tipoTransazioneOptions = useMemo(

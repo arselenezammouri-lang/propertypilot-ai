@@ -35,7 +35,7 @@ export default function AutopilotPage() {
   const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const t = getTranslation(locale as SupportedLocale).dashboard.autopilotPage;
   const [rule, setRule] = useState<AutopilotRule | null>(null);
   const [runs, setRuns] = useState<any[]>([]);

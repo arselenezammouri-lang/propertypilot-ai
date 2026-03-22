@@ -108,7 +108,7 @@ const VARIANT_TAB_ICON: Record<EmotionalListingVariantId, LucideIcon> = {
 
 export default function EmotionalListingPage() {
   const { locale } = useLocale();
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();

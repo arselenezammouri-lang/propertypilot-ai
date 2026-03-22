@@ -99,7 +99,7 @@ const initialFormData: RuleFormData = {
 
 export default function AutomationCenterPage() {
   const { locale, timezone } = useLocale();
-  const feedbackLocale = locale === 'it' ? 'it' : 'en';
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();

@@ -30,7 +30,7 @@ export default function OpportunitiesPage() {
   const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const t = getTranslation(locale as SupportedLocale).dashboard.opportunitiesPage;
   const [type, setType] = useState<"underpriced" | "old" | "uncontacted">("underpriced");
   const [days, setDays] = useState(14);

@@ -24,7 +24,7 @@ import {
 export default function ReferralPage() {
   const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const billingT = useMemo(
     () => getTranslation(locale as SupportedLocale).billing,
     [locale]

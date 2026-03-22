@@ -164,8 +164,7 @@ export default function AuditorPage() {
   const usage = useUsageLimits();
   const userPlan = usage.plan as 'free' | 'starter' | 'pro' | 'agency';
   const isLoadingPlan = usage.isLoading;
-  const isItalian = locale === 'it';
-  const feedbackLocale = isItalian ? 'it' : 'en';
+  const feedbackLocale = locale;
 
   const t = useMemo(
     () => getTranslation(locale as SupportedLocale).dashboard.listingAuditorPage,

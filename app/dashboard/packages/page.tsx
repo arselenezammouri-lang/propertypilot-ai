@@ -35,7 +35,7 @@ interface Purchase {
 function PackagesPageContent() {
   const { toast } = useToast();
   const { locale, currency } = useLocale();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const billingT = useMemo(
     () => getTranslation(locale as SupportedLocale).billing,
     [locale]

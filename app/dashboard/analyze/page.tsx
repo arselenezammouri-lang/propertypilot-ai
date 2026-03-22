@@ -77,8 +77,7 @@ export default function AnalyzePage() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
 

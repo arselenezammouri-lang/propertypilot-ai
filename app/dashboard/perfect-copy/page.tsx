@@ -105,7 +105,7 @@ interface PerfectCopyResult {
 
 export default function PerfectCopyPage() {
   const { locale } = useLocale();
-  const feedbackLocale = locale === 'it' ? 'it' : 'en';
+  const feedbackLocale = locale;
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const usage = useUsageLimits();

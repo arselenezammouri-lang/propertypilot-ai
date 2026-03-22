@@ -511,6 +511,11 @@ export interface TranslationDictionary {
         infixStaging: string;
         priceDropLine: string;
       };
+      /** GlobalLiveFeed header chrome (dashboard home) */
+      liveNetwork: {
+        cardTitle: string;
+        liveBadge: string;
+      };
       /** Suggerimenti in fondo alla dashboard */
       proTips: {
         ariaSection: string;
@@ -1521,6 +1526,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         infixStaging: 'generato per immobile a',
         priceDropLine: 'Price Drop Sniper attivato a',
       },
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live Network',
+        liveBadge: 'LIVE',
+      },
       proTips: {
         ariaSection: 'Suggerimenti Pro',
         title: 'Suggerimenti Pro per Annunci Migliori',
@@ -2508,6 +2517,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         infixStaging: 'generated for property in',
         priceDropLine: 'Price Drop Sniper activated in',
       },
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live Network',
+        liveBadge: 'LIVE',
+      },
       proTips: {
         ariaSection: 'Pro Tips',
         title: 'Pro Tips for Better Listings',
@@ -3241,6 +3254,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiEs,
       followupEmailsPage: followupEmailsPageUiEs,
       emotionalListingPage: emotionalListingPageUiEs,
+      liveNetwork: {
+        cardTitle: 'Red en vivo PropertyPilot',
+        liveBadge: 'EN VIVO',
+      },
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3670,6 +3687,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiFr,
       followupEmailsPage: followupEmailsPageUiFr,
       emotionalListingPage: emotionalListingPageUiFr,
+      liveNetwork: {
+        cardTitle: 'Réseau en direct PropertyPilot',
+        liveBadge: 'EN DIRECT',
+      },
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4099,6 +4120,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiDe,
       followupEmailsPage: followupEmailsPageUiDe,
       emotionalListingPage: emotionalListingPageUiDe,
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live-Netzwerk',
+        liveBadge: 'LIVE',
+      },
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4530,6 +4555,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiPt,
       followupEmailsPage: followupEmailsPageUiPt,
       emotionalListingPage: emotionalListingPageUiPt,
+      liveNetwork: {
+        cardTitle: 'Rede ao vivo PropertyPilot',
+        liveBadge: 'AO VIVO',
+      },
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4767,6 +4796,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiAr,
       followupEmailsPage: followupEmailsPageUiAr,
       emotionalListingPage: emotionalListingPageUiAr,
+      liveNetwork: {
+        cardTitle: 'شبكة PropertyPilot المباشرة',
+        liveBadge: 'مباشر',
+      },
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

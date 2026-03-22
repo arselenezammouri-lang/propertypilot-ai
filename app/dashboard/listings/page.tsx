@@ -45,8 +45,7 @@ function errWithStatus(message: string, status?: number): Error & { status?: num
 export default function ListingsPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? 'it' : 'en';
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const [pageReady, setPageReady] = useState(false);
   const queryClient = useQueryClient();

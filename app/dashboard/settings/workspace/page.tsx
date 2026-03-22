@@ -46,7 +46,7 @@ interface WorkspaceModule {
 
 export default function WorkspaceSettingsPage() {
   const { locale, currency, timezone, setLocale, setCurrency, setTimezone } = useLocale();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const t = getTranslation(locale as SupportedLocale).dashboard.workspacePage;
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();

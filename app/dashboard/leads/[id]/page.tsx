@@ -69,7 +69,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const { locale } = useLocale();
-  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const feedbackLocale = locale;
   const ld = getTranslation(locale as SupportedLocale).dashboard.leadDetailPage;
 
   const handleCopy = async () => {
@@ -131,7 +131,7 @@ export default function LeadDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { locale, timezone } = useLocale();
-  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const feedbackLocale = locale;
   const t = getTranslation(locale as SupportedLocale).dashboard.leadDetailPage;
   const usage = useUsageLimits();
   const { toast } = useToast();

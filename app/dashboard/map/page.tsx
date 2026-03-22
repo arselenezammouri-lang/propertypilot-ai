@@ -79,7 +79,7 @@ interface MapMarker {
 export default function PredatorMapPage() {
   const { toast } = useToast();
   const { locale, currency } = useLocaleContext();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const t = getTranslation(locale as SupportedLocale).dashboard;
   const mp = t.mapPage;
   const [listings, setListings] = useState<ExternalListing[]>([]);

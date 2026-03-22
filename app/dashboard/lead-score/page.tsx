@@ -108,7 +108,7 @@ const FACTOR_ICONS: Record<LeadScoreFactorApiName, typeof Clock> = {
 
 export default function LeadScorePage() {
   const { locale } = useLocaleContext();
-  const feedbackLocale = locale === 'it' ? 'it' : 'en';
+  const feedbackLocale = locale;
   const lsp = useMemo(() => getTranslation(locale).dashboard.leadScorePage, [locale]);
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();

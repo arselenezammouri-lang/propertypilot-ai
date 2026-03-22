@@ -111,7 +111,7 @@ export default function LeadsPage() {
   const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
   const usage = useUsageLimits();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const lp = getTranslation(locale as SupportedLocale).dashboard.leadsPage;
 
   const statusConfig: Record<LeadStatus, { label: string; color: string; bgColor: string }> = {

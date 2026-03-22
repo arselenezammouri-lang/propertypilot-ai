@@ -83,8 +83,7 @@ interface FormData {
 
 export default function RefineListingPage() {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();

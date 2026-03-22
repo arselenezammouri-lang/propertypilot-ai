@@ -66,7 +66,7 @@ interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
 
 export default function CRMSettingsPage() {
   const { locale, timezone } = useLocale();
-  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const feedbackLocale = locale;
   const t = useMemo(
     () => getTranslation(locale as SupportedLocale).dashboard.crmApiKeysPage,
     [locale],

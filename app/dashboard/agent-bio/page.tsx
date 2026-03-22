@@ -76,7 +76,7 @@ type BioVariantKey = "professionale" | "emotiva" | "luxury" | "social" | "websit
 
 export default function AgentBioPage() {
   const { locale } = useLocaleContext();
-  const feedbackLocale = locale === "it" ? "it" : "en";
+  const feedbackLocale = locale;
   const usage = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
   const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);

@@ -52,7 +52,7 @@ interface AgencyBranding {
 export default function AgencyBrandingPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
-  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const feedbackLocale = locale;
   const { plan, isLoading: planLoading } = useUsageLimits();
   const [isLoading, setIsLoading] = useState(true);
 
