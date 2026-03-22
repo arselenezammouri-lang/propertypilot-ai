@@ -226,4 +226,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itS.suggestionHint).toBeTruthy();
     expect(enS.saveToLibrary.toLowerCase()).toContain('library');
   });
+
+  it('listingAuditorPage for IT/EN', () => {
+    const itA = getTranslation('it').dashboard.listingAuditorPage;
+    const enA = getTranslation('en').dashboard.listingAuditorPage;
+    expect(itA.analysisDoneDetail).toContain('{score}');
+    expect(enA.auditPageTitle.toLowerCase()).toContain('audit');
+    expect(itA.gravita.critica.length).toBeGreaterThan(2);
+    expect(enA.connectionScore).toContain('{score}');
+  });
 });

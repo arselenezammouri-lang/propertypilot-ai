@@ -22,6 +22,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Prospecting / Arbitrage Command Center (`/dashboard/prospecting`): `lib/i18n/prospecting-page-ui.ts` → `dashboard.prospectingPage`.  
    - Analisi da link (`/dashboard/analyze`): `lib/i18n/analyze-link-page-ui.ts` → `dashboard.analyzeLinkPage`.  
    - Scraper annunci (`/dashboard/scraper`): `lib/i18n/listing-scraper-page-ui.ts` → `dashboard.listingScraperPage`.  
+   - Audit annuncio (`/dashboard/auditor`): `lib/i18n/listing-auditor-page-ui.ts` → `dashboard.listingAuditorPage`.  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  

@@ -52,6 +52,11 @@ import {
   listingScraperPageUiEn,
   listingScraperPageUiIt,
 } from '@/lib/i18n/listing-scraper-page-ui';
+import type { ListingAuditorPageUi } from '@/lib/i18n/listing-auditor-page-ui';
+import {
+  listingAuditorPageUiEn,
+  listingAuditorPageUiIt,
+} from '@/lib/i18n/listing-auditor-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -255,6 +260,8 @@ export interface TranslationDictionary {
       analyzeLinkPage: AnalyzeLinkPageUi;
       /** `/dashboard/scraper` — listing import + AI pack */
       listingScraperPage: ListingScraperPageUi;
+      /** `/dashboard/auditor` — AI listing audit */
+      listingAuditorPage: ListingAuditorPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1085,6 +1092,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiIt,
       analyzeLinkPage: analyzeLinkPageUiIt,
       listingScraperPage: listingScraperPageUiIt,
+      listingAuditorPage: listingAuditorPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1924,6 +1932,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       prospectingPage: prospectingPageUiEn,
       analyzeLinkPage: analyzeLinkPageUiEn,
       listingScraperPage: listingScraperPageUiEn,
+      listingAuditorPage: listingAuditorPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
