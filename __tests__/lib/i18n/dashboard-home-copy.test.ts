@@ -119,4 +119,12 @@ describe('dashboard home copy (D1)', () => {
     expect(enP.automationRules).toContain('{count}');
     expect(enP.legendHot).toContain('Hot');
   });
+
+  it('crmApiKeysPage for IT/EN', () => {
+    const itC = getTranslation('it').dashboard.crmApiKeysPage;
+    const enC = getTranslation('en').dashboard.crmApiKeysPage;
+    expect(itC.leadsCaptured).toContain('{count}');
+    expect(enC.deleteDialogBody).toContain('{name}');
+    expect(itC.howToUseSteps.length).toBeGreaterThanOrEqual(4);
+  });
 });

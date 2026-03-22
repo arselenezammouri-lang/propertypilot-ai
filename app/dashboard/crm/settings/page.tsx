@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +22,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import { formatDateForLocale } from '@/lib/i18n/intl';
+import type { Locale } from '@/lib/i18n/config';
 import { 
   Key, 
   Plus, 
@@ -62,99 +65,15 @@ interface MaskedApiKey extends Omit<UserApiKey, 'api_key'> {
 }
 
 export default function CRMSettingsPage() {
-  const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const { locale, timezone } = useLocale();
+  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.crmApiKeysPage,
+    [locale],
+  );
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { plan, isLoading: planLoading } = useUsageLimits();
-
-  const t = {
-    pageTitle: "CRM Settings",
-    pageBadge: "🔑 API Keys",
-    pageSubtitle: isItalian
-      ? "Gestisci le API keys per i form di lead capture esterni"
-      : "Manage API keys for external lead capture forms",
-    apiKeysTitle: "API Keys",
-    apiKeysDesc: isItalian
-      ? "Crea chiavi API per integrare form di lead capture nel tuo sito"
-      : "Create API keys to integrate lead capture forms on your website",
-    newApiKey: isItalian ? "Nuova API Key" : "New API Key",
-    dialogCreateTitle: isItalian ? "Crea Nuova API Key" : "Create New API Key",
-    dialogCreateDesc: isItalian
-      ? "Configura una nuova chiave per catturare lead dal tuo sito"
-      : "Configure a new key to capture leads from your website",
-    keyCreatedSuccess: isItalian ? "API Key creata con successo!" : "API Key created successfully!",
-    keyCreatedHint: isItalian
-      ? "Copia questa chiave ora. Non sarà più visibile in seguito."
-      : "Copy this key now. It won't be visible again.",
-    done: isItalian ? "Fatto" : "Done",
-    keyNameLabel: isItalian ? "Nome API Key *" : "API Key Name *",
-    keyNamePlaceholder: isItalian ? "es. Form Sito Web, Landing Page..." : "e.g. Website Form, Landing Page...",
-    defaultMarket: isItalian ? "Mercato Default" : "Default Market",
-    autoLeadScore: isItalian ? "Lead Score Automatico" : "Auto Lead Score",
-    autoLeadScoreDesc: isItalian ? "Analizza automaticamente ogni lead con AI" : "Automatically analyze each lead with AI",
-    autoFollowup: isItalian ? "Follow-up Automatico" : "Auto Follow-up",
-    autoFollowupDesc: isItalian ? "Invia email di follow-up AI automatiche" : "Send automatic AI follow-up emails",
-    cancel: isItalian ? "Annulla" : "Cancel",
-    createApiKey: isItalian ? "Crea API Key" : "Create API Key",
-    noKeys: isItalian ? "Nessuna API key creata" : "No API keys created",
-    noKeysHint: isItalian
-      ? "Crea la tua prima chiave per iniziare a catturare lead"
-      : "Create your first key to start capturing leads",
-    active: isItalian ? "Attiva" : "Active",
-    inactive: isItalian ? "Disattivata" : "Inactive",
-    leadsCaptured: (n: number) => isItalian ? `${n} leads catturati` : `${n} leads captured`,
-    lastUsed: isItalian ? "Ultimo uso:" : "Last used:",
-    delete: isItalian ? "Elimina" : "Delete",
-    deleteConfirm: isItalian
-      ? "Sei sicuro di voler eliminare questa API key?"
-      : "Are you sure you want to delete this API key?",
-    embedCode: isItalian ? "Codice Embed Form" : "Embed Form Code",
-    embedCodeDesc: isItalian
-      ? "Copia questo codice e incollalo nel tuo sito web"
-      : "Copy this code and paste it into your website",
-    copy: isItalian ? "Copia" : "Copy",
-    howToUse: isItalian ? "Come usare:" : "How to use:",
-    howToUseSteps: isItalian
-      ? [
-          "Copia il codice sopra",
-          "Incollalo prima del tag </body> del tuo sito",
-          'Il form apparirà nel div con id "propertypilot-lead-form"',
-          "I lead saranno automaticamente salvati nel tuo CRM",
-        ]
-      : [
-          "Copy the code above",
-          "Paste it before the </body> tag on your website",
-          'The form will appear in the div with id "propertypilot-lead-form"',
-          "Leads will be automatically saved to your CRM",
-        ],
-    securityTitle: isItalian ? "Sicurezza API" : "API Security",
-    securityDesc: isItalian ? "Informazioni importanti sulla sicurezza" : "Important security information",
-    securityItems: isItalian
-      ? [
-          "Le API keys sono visibili solo al momento della creazione",
-          "Rate limit: 30 richieste al minuto per API key",
-          "CORS abilitato per richieste cross-origin",
-        ]
-      : [
-          "API keys are only visible at the moment of creation",
-          "Rate limit: 30 requests per minute per API key",
-          "CORS enabled for cross-origin requests",
-        ],
-    securityWarning: isItalian
-      ? "Non condividere le chiavi API in repository pubblici"
-      : "Do not share API keys in public repositories",
-    // toasts
-    keyCreatedTitle: isItalian ? "API Key creata!" : "API Key created!",
-    keyCreatedDesc: isItalian
-      ? "Copia la chiave ora, non sarà più visibile in seguito."
-      : "Copy the key now, it won't be visible later.",
-    keyUpdated: isItalian ? "API Key aggiornata" : "API Key updated",
-    keyDeleted: isItalian ? "API Key eliminata" : "API Key deleted",
-    copied: isItalian ? "Copiato negli appunti!" : "Copied to clipboard!",
-    keyNameRequired: isItalian ? "Inserisci un nome per la API key" : "Enter a name for the API key",
-  };
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
@@ -177,7 +96,7 @@ export default function CRMSettingsPage() {
         method: 'POST',
         body: JSON.stringify(data)
       });
-      if (!res.success) throw new Error(res.error || res.message || 'Errore nella creazione');
+      if (!res.success) throw new Error(res.error || res.message || t.createKeyError);
       return res.data as { apiKey: { api_key: string } };
     },
     onSuccess: (data) => {
@@ -202,7 +121,7 @@ export default function CRMSettingsPage() {
         method: 'PATCH',
         body: JSON.stringify({ id, ...updates })
       });
-      if (!res.success) throw new Error(res.error || res.message || 'Errore nell\'aggiornamento');
+      if (!res.success) throw new Error(res.error || res.message || t.updateKeyError);
       return res.data;
     },
     onSuccess: () => {
@@ -250,7 +169,7 @@ export default function CRMSettingsPage() {
         ...clipboardFailureToast(
           feedbackLocale,
           'crmLeadCapture',
-          isItalian ? 'Impossibile copiare negli appunti.' : 'Could not copy to clipboard.'
+          t.clipboardCopyFailed
         ),
       });
     }
@@ -274,27 +193,34 @@ export default function CRMSettingsPage() {
 
   const getEmbedCode = (apiKey: string) => {
     const appUrl = getBaseUrl();
+    const labelsJson = JSON.stringify({
+      nome: t.embedLabelNome,
+      email: t.embedLabelEmail,
+      telefono: t.embedLabelTelefono,
+      messaggio: t.embedLabelMessaggio,
+      submit: t.embedSubmit,
+    });
+    const thanksJs = JSON.stringify(t.embedAlertThanks);
+    const errPrefixJs = JSON.stringify(t.embedAlertError);
+    const networkJs = JSON.stringify(t.embedAlertNetwork);
+    const consoleErrJs = JSON.stringify(t.embedConsoleError);
+    const apiKeyJs = JSON.stringify(apiKey);
+    const endpointJs = JSON.stringify(`${appUrl}/api/public/lead-capture`);
     return `<!-- PropertyPilot AI Lead Capture Form -->
 <div id="propertypilot-lead-form"></div>
 <script>
 (function() {
   var config = {
-    apiKey: '${apiKey}',
-    endpoint: '${appUrl}/api/public/lead-capture',
+    apiKey: ${apiKeyJs},
+    endpoint: ${endpointJs},
     formId: 'propertypilot-lead-form',
     theme: 'dark', // 'light' or 'dark'
-    labels: {
-      nome: 'Nome e Cognome',
-      email: 'Email',
-      telefono: 'Telefono',
-      messaggio: 'Messaggio',
-      submit: 'Invia Richiesta'
-    },
+    labels: ${labelsJson},
     onSuccess: function(_response) {
       // Lead captured successfully
     },
     onError: function(error) {
-      console.error('Errore:', error);
+      console.error(${consoleErrJs}, error);
     }
   };
 
@@ -348,15 +274,15 @@ export default function CRMSettingsPage() {
       if (result.success) {
         config.onSuccess(result);
         e.target.reset();
-        alert('Grazie! Ti contatteremo presto.');
+        alert(${thanksJs});
       } else {
         config.onError(result.error);
-        alert('Errore: ' + result.error);
+        alert(${errPrefixJs} + result.error);
       }
     })
     .catch(function(err) {
       config.onError(err);
-      alert('Errore di connessione. Riprova.');
+      alert(${networkJs});
     });
   });
 })();
@@ -385,7 +311,7 @@ export default function CRMSettingsPage() {
           !planLoading ? { label: plan.toUpperCase(), variant: 'secondary' } : undefined
         }
         actions={
-          <Link href="/dashboard/leads" aria-label={isItalian ? 'Indietro' : 'Back'}>
+          <Link href="/dashboard/leads" aria-label={t.backAria}>
             <Button
               variant="ghost"
               size="icon"
@@ -453,7 +379,7 @@ export default function CRMSettingsPage() {
                             onClick={() => copyToClipboard(newlyCreatedKey)}
                             className="border-emerald-500/50 hover:bg-emerald-500/10"
                             data-testid="button-copy-new-key"
-                            aria-label="Copy API key"
+                            aria-label={t.copyKeyAria}
                           >
                             <Copy className="h-4 w-4 text-emerald-400" />
                           </Button>
@@ -491,8 +417,8 @@ export default function CRMSettingsPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-600">
-                            <SelectItem value="italy">🇮🇹 Italia</SelectItem>
-                            <SelectItem value="usa">🇺🇸 USA</SelectItem>
+                            <SelectItem value="italy">🇮🇹 {t.marketItaly}</SelectItem>
+                            <SelectItem value="usa">🇺🇸 {t.marketUsa}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -606,23 +532,24 @@ export default function CRMSettingsPage() {
                         <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
                           <span className="flex items-center gap-1">
                             <Globe className="h-3.5 w-3.5" />
-                            {t.leadsCaptured(key.leads_captured)}
+                            {t.leadsCaptured.replace('{count}', String(key.leads_captured))}
                           </span>
                           {key.auto_lead_score && (
                             <span className="flex items-center gap-1 text-cyan-400">
                               <Sparkles className="h-3.5 w-3.5" />
-                              Auto Score
+                              {t.autoScoreBadge}
                             </span>
                           )}
                           {key.auto_followup && (
                             <span className="flex items-center gap-1 text-amber-400">
                               <Zap className="h-3.5 w-3.5" />
-                              Auto Follow-up
+                              {t.autoFollowupBadge}
                             </span>
                           )}
                           {key.last_used_at && (
                             <span>
-                              {t.lastUsed} {new Date(key.last_used_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}
+                              {t.lastUsed}{' '}
+                              {formatDateForLocale(key.last_used_at, locale as Locale, timezone)}
                             </span>
                           )}
                         </div>
@@ -640,7 +567,7 @@ export default function CRMSettingsPage() {
                           data-testid={`button-embed-${key.id}`}
                         >
                           <Code className="h-4 w-4 mr-1" />
-                          Embed
+                          {t.embedButton}
                         </Button>
                         
                         <Switch
@@ -658,7 +585,7 @@ export default function CRMSettingsPage() {
                           disabled={deleteKeyMutation.isPending}
                           className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                           data-testid={`button-delete-${key.id}`}
-                          aria-label="Delete API key"
+                          aria-label={t.deleteKeyAria}
                         >
                           {deleteKeyMutation.isPending && keyToDelete?.id === key.id ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -741,9 +668,11 @@ export default function CRMSettingsPage() {
         <AlertDialog open={!!keyToDelete} onOpenChange={(open) => !open && setKeyToDelete(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{isItalian ? 'Elimina API Key?' : 'Delete API Key?'}</AlertDialogTitle>
+              <AlertDialogTitle>{t.deleteDialogTitle}</AlertDialogTitle>
               <AlertDialogDescription>
-                {keyToDelete ? (isItalian ? `Sei sicuro di voler eliminare "${keyToDelete.name}"? I form che la usano smetteranno di funzionare.` : `Are you sure you want to delete "${keyToDelete.name}"? Forms using it will stop working.`) : ''}
+                {keyToDelete
+                  ? t.deleteDialogBody.replace('{name}', keyToDelete.name)
+                  : ''}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -762,7 +691,7 @@ export default function CRMSettingsPage() {
                 ) : (
                   <Trash2 className="h-4 w-4 mr-2" />
                 )}
-                {deleteKeyMutation.isPending ? (isItalian ? 'Eliminazione...' : 'Deleting...') : t.delete}
+                {deleteKeyMutation.isPending ? t.deleting : t.delete}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

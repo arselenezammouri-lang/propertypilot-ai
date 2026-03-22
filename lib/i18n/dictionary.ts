@@ -13,6 +13,8 @@ import type { CommunicationsHubUi } from '@/lib/i18n/communications-hub-ui';
 import { communicationsHubUiEn, communicationsHubUiIt } from '@/lib/i18n/communications-hub-ui';
 import type { LeadPipelinePageUi } from '@/lib/i18n/lead-pipeline-page-ui';
 import { leadPipelinePageUiEn, leadPipelinePageUiIt } from '@/lib/i18n/lead-pipeline-page-ui';
+import type { CrmApiKeysPageUi } from '@/lib/i18n/crm-api-keys-page-ui';
+import { crmApiKeysPageUiEn, crmApiKeysPageUiIt } from '@/lib/i18n/crm-api-keys-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -192,6 +194,8 @@ export interface TranslationDictionary {
       leadsPage: LeadsPageUi;
       /** `/dashboard/leads/pipeline` — Kanban */
       leadPipelinePage: LeadPipelinePageUi;
+      /** `/dashboard/crm/settings` — API keys & embed */
+      crmApiKeysPage: CrmApiKeysPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1010,6 +1014,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       leadsPage: leadsPageUiIt,
       leadPipelinePage: leadPipelinePageUiIt,
+      crmApiKeysPage: crmApiKeysPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1837,6 +1842,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       leadsPage: leadsPageUiEn,
       leadPipelinePage: leadPipelinePageUiEn,
+      crmApiKeysPage: crmApiKeysPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

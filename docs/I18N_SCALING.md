@@ -10,6 +10,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (placeholder `{name}` dove serve).  
    - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage`; hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub`.  
    - Pipeline Kanban (`/dashboard/leads/pipeline`): `lib/i18n/lead-pipeline-page-ui.ts` → `dashboard.leadPipelinePage`.  
+   - CRM API keys (`/dashboard/crm/settings`): `lib/i18n/crm-api-keys-page-ui.ts` → `dashboard.crmApiKeysPage` (include stringhe embed generate).  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
@@ -48,6 +49,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 - `lib/i18n/lead-detail-page-ui.ts` — dettaglio lead (IT/EN)  
 - `lib/i18n/communications-hub-ui.ts` — Communication Hub nel dettaglio (IT/EN)  
 - `lib/i18n/lead-pipeline-page-ui.ts` — pipeline Kanban lead (IT/EN)  
+- `lib/i18n/crm-api-keys-page-ui.ts` — CRM settings / API key + embed (IT/EN)  
 - `lib/i18n/locale-context.tsx` — `locale`, `currency`, `timezone`  
 - `lib/i18n/intl.ts` — formattazione numeri/date  
 - [DESIGN_UX_LOCALE.md](../DESIGN_UX_LOCALE.md) — principi UX locale
