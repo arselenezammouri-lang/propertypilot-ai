@@ -13,6 +13,7 @@ import { DeferredMount } from "@/components/deferred-mount";
 import { DeferIdleMount } from "@/components/defer-idle-mount";
 import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
 import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 export const dynamic = 'force-dynamic';
 
@@ -77,10 +78,17 @@ const DashboardOnboardingChecklist = NextDynamic(
   { ssr: false, loading: () => null }
 );
 
+const DASHBOARD_LOCALES: SupportedLocale[] = ["it", "en", "es", "fr", "de", "ar", "pt"];
+
 export default async function DashboardPage() {
   const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("propertypilot_locale")?.value ?? "it";
-  const isDashboardIt = localeCookie === "it";
+  const rawLocale = cookieStore.get("propertypilot_locale")?.value;
+  const uiLocale: SupportedLocale =
+    rawLocale && DASHBOARD_LOCALES.includes(rawLocale as SupportedLocale)
+      ? (rawLocale as SupportedLocale)
+      : "it";
+  const homeCopy = getTranslation(uiLocale).dashboard;
+  const deferIt = uiLocale === "it";
 
   const supabase = await createClient();
   
@@ -129,15 +137,15 @@ export default async function DashboardPage() {
           ? "Starter"
           : "Free";
 
-  const deferLabel = (it: string, en: string) => (isDashboardIt ? it : en);
+  const deferLabel = (it: string, en: string) => (deferIt ? it : en);
 
   // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
     <>
       <div className="w-full py-8 md:py-12">
         <DashboardPageHeader
-          title="Command Center"
-          subtitle="Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto."
+          title={homeCopy.commandCenterTitle}
+          subtitle={homeCopy.commandCenterSubtitle}
           planBadge={{ label: planBadgeLabel, variant: "outline" }}
           actions={
             <Button
@@ -146,7 +154,7 @@ export default async function DashboardPage() {
             >
               <Link href="/dashboard/listings">
                 <Plus className="h-4 w-4 mr-2" />
-                Nuovo annuncio
+                {homeCopy.newListingCta}
               </Link>
             </Button>
           }

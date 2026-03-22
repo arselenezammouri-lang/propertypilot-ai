@@ -45,9 +45,12 @@ Copia da `.env.example` e verifica su **Vercel → Project → Settings → Envi
 - [ ] Form contatti `/api/contact` da **solo** il tuo dominio (con `API_STRICT_BROWSER_ORIGIN=true`)
 - [ ] Lead capture embed: test da dominio in `API_EMBED_ALLOWED_ORIGINS`
 - [ ] Log Vercel: cerca righe `"type":"security_audit"` per eventi edge (bot, rate limit) e origine rifiutata
+- [ ] **Smoke staging** — seguire [SMOKE_STAGING.md](./SMOKE_STAGING.md) (checklist manuale + opzionale `npm run smoke:public` con `PLAYWRIGHT_BASE_URL`)
 
 ## 5. Documentazione correlata
 
+- [SMOKE_STAGING.md](./SMOKE_STAGING.md) — smoke test dopo deploy (Preview / Production)
+- [D3_BETA_FEEDBACK.md](./D3_BETA_FEEDBACK.md) — guida sessioni beta (Fase D3)
 - [SECURITY_HARDENING.md](./SECURITY_HARDENING.md)
 - [OPERATIONS_SECURITY.md](./OPERATIONS_SECURITY.md) — WAF, log drain, Dependabot, audit npm
 - [SETUP.md](./SETUP.md)

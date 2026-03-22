@@ -70,6 +70,10 @@ export interface TranslationDictionary {
         openGuideTooltip: string;
         fieldHintAria: string;
       };
+      /** Home /dashboard — Fase D1 (IT/EN in repo; altre lingue → merge da EN) */
+      commandCenterTitle: string;
+      commandCenterSubtitle: string;
+      newListingCta: string;
     };
 
   // Auth (Login / Signup)
@@ -602,6 +606,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         openGuideTooltip: 'Apre la documentazione per questa funzione (nuova scheda).',
         fieldHintAria: 'Suggerimento sul campo',
       },
+      commandCenterTitle: 'Command Center',
+      commandCenterSubtitle:
+        'Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto.',
+      newListingCta: 'Nuovo annuncio',
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1132,6 +1140,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         openGuideTooltip: 'Opens documentation for this feature (new tab).',
         fieldHintAria: 'Field hint',
       },
+      commandCenterTitle: 'Command Center',
+      commandCenterSubtitle:
+        'Your plan, usage, and AI tools for listings, leads, and prospecting — in one place.',
+      newListingCta: 'New listing',
     },
     auth: {
       backToHome: 'Back to home',

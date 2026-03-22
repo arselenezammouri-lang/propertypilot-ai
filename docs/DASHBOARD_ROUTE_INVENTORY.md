@@ -82,7 +82,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 
 ## Prossimi passi “sempre qualcosa da fare” (autonomo)
 
-- **Fase D:** go-live (copy IT/EN, [VERCEL_DEPLOY_CHECKLIST](./VERCEL_DEPLOY_CHECKLIST.md), smoke).  
+- **Fase D:** estendere copy dizionario ad altre pagine ancora hardcoded IT; eseguire smoke reale su staging ([SMOKE_STAGING](./SMOKE_STAGING.md)).  
 - **C5 (fatto):** home dashboard — `DeferredMount` / `DeferIdleMount` (`components/deferred-mount.tsx`, `defer-idle-mount.tsx`).  
 - **C4 (fatto):** workspace settings — lingua/valuta (`LocaleCurrencySelector`) + fuso orario; date dashboard usano `timezone` dal contesto.  
 - **C3 (fatto):** command palette con **Collegamenti veloci** + **Guide** (`lib/dashboard/command-palette-extras.tsx`).  

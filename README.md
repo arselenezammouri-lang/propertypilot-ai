@@ -61,6 +61,8 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 - [Design & UX (locale, benchmark internazionali)](./DESIGN_UX_LOCALE.md) - Principi enterprise, checklist per feature, allineamento al design system
 - [Security hardening](./docs/SECURITY_HARDENING.md) - Middleware anti-abuso, header, limiti e cosa demandare a WAF / Cloudflare
 - [Checklist deploy Vercel](./docs/VERCEL_DEPLOY_CHECKLIST.md) - Variabili ambiente, Origin, Turnstile, verifiche post-deploy
+- [Smoke staging / preview](./docs/SMOKE_STAGING.md) - Checklist dopo deploy + `npm run smoke:public`
+- [Feedback beta (sessioni guidate)](./docs/D3_BETA_FEEDBACK.md) - Fase D3, compiti reali
 - [Operations & security](./docs/OPERATIONS_SECURITY.md) - WAF Vercel, log `security_audit`, Dependabot, rotazione segreti
 - [Piano UX & struttura enterprise](./docs/PLAN_SAAS_UX_ENTERPRISE.md) - Roadmap design moderno, shell dashboard, verticali per area
 - [Inventario route dashboard (Fase 0)](./docs/DASHBOARD_ROUTE_INVENTORY.md) - URL, JTBD, piano, gate UI, priorità B1–B6
