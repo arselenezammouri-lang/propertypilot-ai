@@ -753,7 +753,15 @@ export interface TranslationDictionary {
         ctaStart: string;
         ctaDemo: string;
         trustedBy: string;
+        /** Brand names / portal logos row (fixed order on home) */
+        trustedPortalLogos: [string, string, string, string];
         stats: {
+          automation: string;
+          listingsPerDay: string;
+          conversionRate: string;
+        };
+        /** Hero stat figures (e.g. 24/7, 1000+, 80%) */
+        statsValues: {
           automation: string;
           listingsPerDay: string;
           conversionRate: string;
@@ -804,6 +812,8 @@ export interface TranslationDictionary {
         title: string;
         description: string;
         status: string;
+        /** Demo UI label, placeholders {score} {max} */
+        demoScoreLabel: string;
       };
       step3: {
         title: string;
@@ -1671,10 +1681,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Inizia Gratis',
         ctaDemo: 'Vedi Demo',
         trustedBy: 'Compatibile con i principali portali',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automazione',
           listingsPerDay: 'Annunci/Giorno',
           conversionRate: 'Conversion Rate',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
         },
         signupAriaLabel: 'Registrati su PropertyPilot AI',
         demoDashboardAriaLabel: 'Apri la demo della dashboard',
@@ -1718,6 +1734,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrazione IA',
           description: 'Ogni annuncio riceve un Lead Score AI (0-100). Solo i "TOP DEAL" (80+) vengono selezionati per le chiamate.',
           status: 'TOP DEAL rilevato',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Chiamata Automatica',
@@ -2590,10 +2607,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Start Free',
         ctaDemo: 'View Demo',
         trustedBy: 'Compatible with major portals',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automation',
           listingsPerDay: 'Listings/Day',
           conversionRate: 'Conversion Rate',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
         },
         signupAriaLabel: 'Sign up for PropertyPilot AI',
         demoDashboardAriaLabel: 'View the demo dashboard',
@@ -2637,6 +2660,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'AI Filtering',
           description: 'Each listing receives an AI Lead Score (0-100). Only "TOP DEAL" (80+) are selected for calls.',
           status: 'TOP DEAL detected',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Automatic Call',
@@ -2953,10 +2977,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Empezar Gratis',
         ctaDemo: 'Ver Demo',
         trustedBy: 'Compatible con los principales portales',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatización',
           listingsPerDay: 'Anuncios/Día',
           conversionRate: 'Tasa de Conversión',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
         },
         signupAriaLabel: 'Regístrate en PropertyPilot AI',
         demoDashboardAriaLabel: 'Ver la demo del panel',
@@ -3000,6 +3030,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrado IA',
           description: 'Cada anuncio recibe una Puntuación de Lead IA (0-100). Solo los "TOP DEAL" (80+) se seleccionan para llamadas.',
           status: 'TOP DEAL detectado',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Llamada Automática',
@@ -3316,10 +3347,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Commencer Gratuitement',
         ctaDemo: 'Voir la Démo',
         trustedBy: 'Compatible avec les principaux portails',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatisation',
           listingsPerDay: 'Annonces/Jour',
           conversionRate: 'Taux de Conversion',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
         },
         signupAriaLabel: 'Créer un compte PropertyPilot AI',
         demoDashboardAriaLabel: 'Voir la démo du tableau de bord',
@@ -3363,6 +3400,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrage IA',
           description: 'Chaque annonce reçoit un Score de Lead IA (0-100). Seuls les "TOP DEAL" (80+) sont sélectionnés pour les appels.',
           status: 'TOP DEAL détecté',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Appel Automatique',
@@ -3679,10 +3717,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Kostenlos Starten',
         ctaDemo: 'Demo Ansehen',
         trustedBy: 'Kompatibel mit führenden Portalen',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatisierung',
           listingsPerDay: 'Anzeigen/Tag',
           conversionRate: 'Konversionsrate',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
         },
         signupAriaLabel: 'Bei PropertyPilot AI registrieren',
         demoDashboardAriaLabel: 'Demo-Dashboard ansehen',
@@ -3726,6 +3770,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'KI-Filterung',
           description: 'Jede Anzeige erhält einen KI-Lead-Score (0-100). Nur "TOP DEAL" (80+) werden für Anrufe ausgewählt.',
           status: 'TOP DEAL erkannt',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Automatischer Anruf',
@@ -4027,6 +4072,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       hero: {
         signupAriaLabel: 'Registar-se no PropertyPilot AI',
         demoDashboardAriaLabel: 'Ver a demo do painel',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
       },
       features: {
         aiListing: {
@@ -4042,6 +4093,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       searchEngine: {
         stepLabel: 'PASSO {n}',
         prospectingCycleCta: 'Iniciar o ciclo Scraper → Voice AI → CRM',
+        step2: {
+          demoScoreLabel: '{score}/{max}',
+        },
       },
       pricing: {
         tableCells: {
@@ -4213,10 +4267,16 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'ابدأ مجاناً',
         ctaDemo: 'شاهد العرض التوضيحي',
         trustedBy: 'متوافق مع البوابات الرئيسية',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'الأتمتة',
           listingsPerDay: 'إعلان/يوم',
           conversionRate: 'معدل التحويل',
+        },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80٪',
         },
         signupAriaLabel: 'التسجيل في PropertyPilot AI',
         demoDashboardAriaLabel: 'عرض لوحة التحكم التجريبية',
@@ -4260,6 +4320,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'التصفية الذكية',
           description: 'يحصل كل إعلان على تقييم عميل محتمل ذكي (0-100). يتم اختيار "الصفقات المميزة" (80+) فقط للمكالمات.',
           status: 'تم اكتشاف صفقة مميزة',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'المكالمة التلقائية',

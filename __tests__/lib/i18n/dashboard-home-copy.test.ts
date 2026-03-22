@@ -51,6 +51,17 @@ describe('dashboard home copy (D1)', () => {
     expect(pt.searchEngine.stepLabel).toContain('{n}');
   });
 
+  it('marketing home trusted logos, hero stat values, step2 demo score label', () => {
+    const it = getTranslation('it').landing;
+    expect(it.hero.trustedPortalLogos).toHaveLength(4);
+    expect(it.hero.trustedPortalLogos[0]).toMatch(/Idealista/i);
+    expect(it.hero.statsValues.automation).toContain('24');
+    expect(it.hero.statsValues.conversionRate.length).toBeGreaterThan(0);
+    expect(it.searchEngine.step2.demoScoreLabel).toContain('{score}');
+    const ar = getTranslation('ar').landing;
+    expect(ar.hero.statsValues.conversionRate).toContain('80');
+  });
+
   it('blog post page, pricing plans chrome, contact extras for IT/EN', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');

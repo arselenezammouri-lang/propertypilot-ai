@@ -334,25 +334,32 @@ export default function PlatformPage() {
             <div className="mt-20 fade-on-scroll">
               <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">{t.landing.hero.trustedBy}</p>
               <div className="flex items-center justify-center gap-8 flex-wrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="text-2xl font-bold text-gray-400">Idealista</div>
-                <div className="text-2xl font-bold text-gray-400">Immobiliare.it</div>
-                <div className="text-2xl font-bold text-gray-400">Zillow</div>
-                <div className="text-2xl font-bold text-gray-400">MLS</div>
+                {t.landing.hero.trustedPortalLogos.map((name) => (
+                  <div key={name} className="text-2xl font-bold text-gray-400">
+                    {name}
+                  </div>
+                ))}
               </div>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">24/7</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.automation}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.automation}</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">1000+</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.listingsPerDay}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.listingsPerDay}</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">80%</div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-[#06b6d4] to-[#9333ea] bg-clip-text text-transparent">
+                  {t.landing.hero.statsValues.conversionRate}
+                </div>
                 <div className="text-sm text-gray-400 mt-2">{t.landing.hero.stats.conversionRate}</div>
               </div>
             </div>
@@ -505,7 +512,9 @@ export default function PlatformPage() {
                   <div className="flex-1 h-2 bg-[#06b6d4]/20 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-[#06b6d4] to-[#9333ea] rounded-full" style={{ width: "85%" }}></div>
                   </div>
-                  <span className="text-xs font-bold text-[#06b6d4]">85/100</span>
+                  <span className="text-xs font-bold text-[#06b6d4]">
+                    {t.landing.searchEngine.step2.demoScoreLabel.replace('{score}', '85').replace('{max}', '100')}
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">{t.landing.searchEngine.step2.status}</p>
               </CardContent>
