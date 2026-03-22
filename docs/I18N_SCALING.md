@@ -8,6 +8,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Preferire `getTranslation(locale)` da `lib/i18n/dictionary.ts`.  
    - Griglia “tutti gli strumenti” (`DashboardPlanFeatures`): copy in `lib/i18n/plan-features-ui.ts`, esposta come `dashboard.planFeatures` (chrome + `items` per `id` feature).  
    - Lead Manager (`/dashboard/leads`): `lib/i18n/leads-page-ui.ts` → `dashboard.leadsPage` (placeholder `{name}` dove serve).  
+   - Dettaglio lead (`/dashboard/leads/[id]`): `lib/i18n/lead-detail-page-ui.ts` → `dashboard.leadDetailPage`; hub messaggi: `lib/i18n/communications-hub-ui.ts` → `dashboard.communicationsHub`.  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
@@ -43,6 +44,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 - `lib/i18n/dictionary.ts` — dizionario e `getTranslation`  
 - `lib/i18n/plan-features-ui.ts` — copy griglia piani/feature (IT/EN)  
 - `lib/i18n/leads-page-ui.ts` — copy Lead Manager (IT/EN)  
+- `lib/i18n/lead-detail-page-ui.ts` — dettaglio lead (IT/EN)  
+- `lib/i18n/communications-hub-ui.ts` — Communication Hub nel dettaglio (IT/EN)  
 - `lib/i18n/locale-context.tsx` — `locale`, `currency`, `timezone`  
 - `lib/i18n/intl.ts` — formattazione numeri/date  
 - [DESIGN_UX_LOCALE.md](../DESIGN_UX_LOCALE.md) — principi UX locale

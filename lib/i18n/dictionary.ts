@@ -7,6 +7,10 @@ import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
 import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
 import type { LeadsPageUi } from '@/lib/i18n/leads-page-ui';
 import { leadsPageUiEn, leadsPageUiIt } from '@/lib/i18n/leads-page-ui';
+import type { LeadDetailPageUi } from '@/lib/i18n/lead-detail-page-ui';
+import { leadDetailPageUiEn, leadDetailPageUiIt } from '@/lib/i18n/lead-detail-page-ui';
+import type { CommunicationsHubUi } from '@/lib/i18n/communications-hub-ui';
+import { communicationsHubUiEn, communicationsHubUiIt } from '@/lib/i18n/communications-hub-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -184,6 +188,10 @@ export interface TranslationDictionary {
       };
       /** `/dashboard/leads` — Lead Manager + AI */
       leadsPage: LeadsPageUi;
+      /** `/dashboard/leads/[id]` */
+      leadDetailPage: LeadDetailPageUi;
+      /** Hub comunicazioni nel dettaglio lead */
+      communicationsHub: CommunicationsHubUi;
       /** Badge temporaneo su mappa prospecting */
       predatorLiveBadge: {
         livePrefix: string;
@@ -997,6 +1005,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
       leadsPage: leadsPageUiIt,
+      leadDetailPage: leadDetailPageUiIt,
+      communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
         livePrefix: 'LIVE:',
         predatorsOnline: 'Predatori online',
@@ -1821,6 +1831,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
       leadsPage: leadsPageUiEn,
+      leadDetailPage: leadDetailPageUiEn,
+      communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
         livePrefix: 'LIVE:',
         predatorsOnline: 'Predators online',

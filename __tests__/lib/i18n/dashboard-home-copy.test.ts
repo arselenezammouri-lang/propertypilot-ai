@@ -103,4 +103,12 @@ describe('dashboard home copy (D1)', () => {
     expect(enB.livePrefix).toMatch(/LIVE/i);
     expect(enB.predatorsOnline.toLowerCase()).toContain('predator');
   });
+
+  it('leadDetailPage and communicationsHub for IT/EN', () => {
+    const itD = getTranslation('it').dashboard.leadDetailPage;
+    expect(itD.analysisDone).toContain('{ms}');
+    const enH = getTranslation('en').dashboard.communicationsHub;
+    expect(enH.newMessage).toContain('{channel}');
+    expect(enH.historyToggle).toContain('{count}');
+  });
 });

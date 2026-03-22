@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, User, Mail, Phone, MessageSquare, Calendar, 
-  TrendingUp, Target, DollarSign, Home, AlertTriangle, 
-  UserCircle, Lightbulb, Sparkles, Copy, Check, Loader2,
+  Target, DollarSign, Home, AlertTriangle, 
+  UserCircle, Sparkles, Copy, Check, Loader2,
   Brain, Shield, Zap, Clock, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,9 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import { formatDateForLocale, formatDateTimeForLocale } from '@/lib/i18n/intl';
+import type { Locale } from '@/lib/i18n/config';
 import { fetchApi } from '@/lib/api/client';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
@@ -47,24 +50,20 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isIt = locale === 'it';
-  const feedbackLocale = isIt ? 'it' : 'en';
+  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const ld = getTranslation(locale as SupportedLocale).dashboard.leadDetailPage;
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       toast({
-        title: isIt ? 'Copiato!' : 'Copied!',
-        description: label || (isIt ? 'Testo copiato negli appunti' : 'Text copied to clipboard'),
+        title: ld.copySuccessTitle,
+        description: label || ld.copySuccessDesc,
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      const c = clipboardFailureToast(
-        feedbackLocale,
-        'leadDetail',
-        isIt ? 'Impossibile copiare il testo' : 'Unable to copy text'
-      );
+      const c = clipboardFailureToast(feedbackLocale, 'leadDetail', ld.clipboardFailureDesc);
       toast({ title: c.title, description: c.description, variant: 'destructive' });
     }
   };
@@ -112,142 +111,26 @@ function EnrichmentSection({
 export default function LeadDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { locale } = useLocale();
-  const isItalian = locale === 'it';
-  const feedbackLocale = isItalian ? 'it' : 'en';
+  const { locale, timezone } = useLocale();
+  const feedbackLocale = (locale === 'it' ? 'it' : 'en') as 'it' | 'en';
+  const t = getTranslation(locale as SupportedLocale).dashboard.leadDetailPage;
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const leadId = params.id as string;
 
   const statusLabels: Record<string, string> = {
-    new: isItalian ? 'Nuovo' : 'New',
-    contacted: isItalian ? 'Contattato' : 'Contacted',
-    followup: 'Follow-up',
-    closed: isItalian ? 'Chiuso' : 'Closed',
-    lost: isItalian ? 'Perso' : 'Lost',
+    new: t.statusNew,
+    contacted: t.statusContacted,
+    followup: t.statusFollowup,
+    closed: t.statusClosed,
+    lost: t.statusLost,
   };
 
   const priorityLabels: Record<string, string> = {
-    low: isItalian ? 'Bassa' : 'Low',
-    medium: isItalian ? 'Media' : 'Medium',
-    high: isItalian ? 'Alta' : 'High',
-  };
-
-  const t = {
-    backToLeads: isItalian ? 'Torna ai Lead' : 'Back to Leads',
-    headerSubtitle: 'CRM 2.5 - Smart Lead Capture + AI',
-    analyzeBtn: isItalian ? 'Analisi in corso...' : 'Analyzing...',
-    regenerateBtn: isItalian ? 'Rigenera Analisi AI' : 'Regenerate AI Analysis',
-    enrichBtn: isItalian ? 'Arricchisci Lead con AI' : 'Enrich Lead with AI',
-    leadInfoTitle: isItalian ? 'Informazioni Lead' : 'Lead Information',
-    followupBtn: isItalian ? 'Email di Follow-up AI' : 'Follow-up Email AI',
-    noEmail: isItalian ? 'Non fornita' : 'Not provided',
-    noPhone: isItalian ? 'Non fornito' : 'Not provided',
-    fromCache: isItalian ? 'Dalla cache (24h)' : 'From cache (24h)',
-    aiInsightsTitle: 'AI Lead Insights',
-    notFound: isItalian ? 'Lead non trovato' : 'Lead not found',
-    backToList: isItalian ? 'Torna alla lista' : 'Back to list',
-    // enrichment sections
-    psychoTitle: isItalian ? 'Profilo Psicografico' : 'Psychographic Profile',
-    buyerType: isItalian ? 'Tipo Acquirente:' : 'Buyer Type:',
-    motivations: isItalian ? 'Motivazioni:' : 'Motivations:',
-    decisionStyle: isItalian ? 'Stile Decisionale:' : 'Decision Style:',
-    painPoints: 'Pain Points:',
-    preferenceTitle: isItalian ? 'Preferenze Immobiliari' : 'Property Preferences',
-    propertyType: isItalian ? 'Tipo Immobile:' : 'Property Type:',
-    budget: 'Budget:',
-    timeline: isItalian ? 'Timeline:' : 'Timeline:',
-    location: isItalian ? 'Zona Preferita:' : 'Preferred Area:',
-    priorityFeatures: isItalian ? 'Caratteristiche Prioritarie:' : 'Priority Features:',
-    scoringTitle: isItalian ? 'Scoring & Priorità' : 'Scoring & Priority',
-    score: 'Score:',
-    priority: isItalian ? 'Priorità:' : 'Priority:',
-    urgency: isItalian ? 'Urgenza:' : 'Urgency:',
-    conversionProb: isItalian ? 'P. Conversione:' : 'Conv. Probability:',
-    strongPoints: isItalian ? 'Punti Forti:' : 'Strong Points:',
-    weakPoints: isItalian ? 'Punti Deboli:' : 'Weak Points:',
-    strategyTitle: isItalian ? 'Strategia Consigliata' : 'Recommended Strategy',
-    approach: isItalian ? 'Approccio:' : 'Approach:',
-    talkingPoints: isItalian ? 'Punti Chiave:' : 'Key Points:',
-    objections: isItalian ? 'Obiezioni Previste:' : 'Expected Objections:',
-    proposedProps: isItalian ? 'Immobili da Proporre:' : 'Properties to Propose:',
-    notesTitle: isItalian ? 'Note & Attività' : 'Notes & Activities',
-    noNotes: isItalian ? 'Nessuna nota ancora' : 'No notes yet',
-    automationsTitle: isItalian ? 'Log Automazioni' : 'Automation Logs',
-    noAutomations: isItalian ? 'Nessuna automazione eseguita' : 'No automations executed',
-    aiActivityTitle:
-      locale === 'es'
-        ? 'Actividad de IA en este lead'
-        : locale === 'fr'
-        ? "Activité IA sur ce lead"
-        : locale === 'pt'
-        ? 'Atividade de IA neste lead'
-        : locale === 'ar'
-        ? 'نشاط الذكاء الاصطناعي لهذا العميل المحتمل'
-        : isItalian
-        ? 'Attività AI su questo lead'
-        : 'AI Activity on this lead',
-    aiActivityDesc:
-      locale === 'es'
-        ? 'Resumen de análisis, automatizaciones y acciones de IA relacionadas con este lead.'
-        : locale === 'fr'
-        ? "Résumé des analyses, automatisations et actions IA liées à ce lead."
-        : locale === 'pt'
-        ? 'Resumo de análises, automações e ações de IA relacionadas a este lead.'
-        : locale === 'ar'
-        ? 'ملخص التحليلات والأتمتة وإجراءات الذكاء الاصطناعي المرتبطة بهذا العميل المحتمل.'
-        : isItalian
-        ? 'Riepilogo di analisi, automazioni e azioni AI collegate a questo lead.'
-        : 'Summary of analysis, automations and AI actions related to this lead.',
-    aiActivityEnrichment:
-      locale === 'es'
-        ? 'Análisis Lead Insights completado'
-        : locale === 'fr'
-        ? 'Analyse Lead Insights terminée'
-        : locale === 'pt'
-        ? 'Análise Lead Insights concluída'
-        : locale === 'ar'
-        ? 'تم إكمال تحليل Lead Insights'
-        : isItalian
-        ? 'Analisi Lead Insights completata'
-        : 'Lead Insights analysis completed',
-    aiActivityFromCache:
-      locale === 'es'
-        ? 'dato recuperado de caché'
-        : locale === 'fr'
-        ? 'donnée récupérée du cache'
-        : locale === 'pt'
-        ? 'dado recuperado do cache'
-        : locale === 'ar'
-        ? 'البيانات من الذاكرة المؤقتة'
-        : isItalian
-        ? 'dato recuperato da cache'
-        : 'data retrieved from cache',
-    aiActivityNoEvents:
-      locale === 'es'
-        ? 'Ninguna actividad de IA registrada todavía.'
-        : locale === 'fr'
-        ? "Aucune activité IA enregistrée pour l'instant."
-        : locale === 'pt'
-        ? 'Ainda não há atividade de IA registada.'
-        : locale === 'ar'
-        ? 'لا يوجد نشاط للذكاء الاصطناعي حتى الآن.'
-        : isItalian
-        ? 'Nessuna attività AI registrata finora.'
-        : 'No AI activity recorded yet.',
-    success: isItalian ? 'Successo' : 'Success',
-    error: isItalian ? 'Errore' : 'Error',
-    ruleLabel: isItalian ? 'Regola' : 'Rule',
-    triggerLabel: isItalian ? 'Trigger:' : 'Trigger:',
-    // toasts
-    loadError: isItalian ? 'Impossibile caricare i dati del lead' : 'Cannot load lead data',
-    enrichError: isItalian ? "Errore nell'arricchimento del lead" : 'Error enriching lead',
-    analysisComplete: isItalian ? 'Analisi completata!' : 'Analysis complete!',
-    fromCacheDesc: isItalian ? 'Dati recuperati dalla cache' : 'Data retrieved from cache',
-    analysisDone: (ms: number) => isItalian ? `Analisi AI completata in ${ms}ms` : `AI analysis completed in ${ms}ms`,
-    copied: isItalian ? 'Copiato!' : 'Copied!',
-    copiedDesc: isItalian ? 'Testo copiato negli appunti' : 'Text copied to clipboard',
+    low: t.priorityLow,
+    medium: t.priorityMedium,
+    high: t.priorityHigh,
   };
 
   const [lead, setLead] = useState<Lead | null>(null);
@@ -350,7 +233,9 @@ export default function LeadDetailPage() {
       setEnrichmentCached(Boolean(body.cached));
       toast({
         title: t.analysisComplete,
-        description: body.cached ? t.fromCacheDesc : t.analysisDone(body.duration ?? 0),
+        description: body.cached
+          ? t.fromCacheDesc
+          : t.analysisDone.replace('{ms}', String(body.duration ?? 0)),
       });
     } catch (error) {
       const net = networkFailureToast(feedbackLocale, 'leadDetail');
@@ -389,9 +274,9 @@ export default function LeadDetailPage() {
 
   const getScoreBadge = (score: number | null) => {
     const s = score ?? 0;
-    if (s >= 70) return { emoji: '🔥', label: 'Hot', color: 'bg-red-500' };
-    if (s >= 40) return { emoji: '⭐', label: 'Warm', color: 'bg-yellow-500' };
-    return { emoji: '❄️', label: 'Cold', color: 'bg-blue-500' };
+    if (s >= 70) return { emoji: '🔥', label: t.scoreHot, color: 'bg-red-500' };
+    if (s >= 40) return { emoji: '⭐', label: t.scoreWarm, color: 'bg-yellow-500' };
+    return { emoji: '❄️', label: t.scoreCold, color: 'bg-blue-500' };
   };
 
   const scoreBadge = getScoreBadge(lead.lead_score);
@@ -500,7 +385,7 @@ export default function LeadDetailPage() {
             </div>
             <div className="flex items-center gap-3 text-slate-300">
               <Calendar className="h-4 w-4 text-emerald-500" />
-              <span>{new Date(lead.created_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}</span>
+              <span>{formatDateForLocale(lead.created_at, locale as Locale, timezone)}</span>
             </div>
             {lead.messaggio && (
               <div className="col-span-full">
@@ -570,7 +455,7 @@ export default function LeadDetailPage() {
 
               {/* Probabilità Chiusura */}
               <EnrichmentSection 
-                title={t.conversionProb} 
+                title={t.scoringTitle} 
                 icon={Target}
                 gradient="bg-gradient-to-br from-emerald-600/90 to-teal-700/90"
               >
@@ -606,7 +491,7 @@ export default function LeadDetailPage() {
 
               {/* Budget Analysis */}
               <EnrichmentSection 
-                title={t.budget} 
+                title={t.budgetSectionTitle} 
                 icon={DollarSign}
                 gradient="bg-gradient-to-br from-amber-600/90 to-orange-700/90"
               >
@@ -614,11 +499,11 @@ export default function LeadDetailPage() {
                   <div className="text-2xl font-bold">{enrichment.budget_analysis.fascia_prezzo}</div>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="font-semibold block">{isItalian ? 'Capacità:' : 'Capacity:'}</span>
+                      <span className="font-semibold block">{t.budgetCapacity}</span>
                       {enrichment.budget_analysis.capacita_investimento}
                     </div>
                     <div>
-                      <span className="font-semibold block">{isItalian ? 'Flessibilità:' : 'Flexibility:'}</span>
+                      <span className="font-semibold block">{t.budgetFlexibility}</span>
                       {enrichment.budget_analysis.flessibilita_budget}
                     </div>
                   </div>
@@ -635,8 +520,8 @@ export default function LeadDetailPage() {
                   <div>
                     <span className="font-semibold block mb-1">{t.propertyType}</span>
                     <div className="flex flex-wrap gap-1">
-                      {enrichment.fascia_immobile.tipologie_consigliate.map((t, i) => (
-                        <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{t}</Badge>
+                      {enrichment.fascia_immobile.tipologie_consigliate.map((typ, i) => (
+                        <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{typ}</Badge>
                       ))}
                     </div>
                   </div>
@@ -661,7 +546,7 @@ export default function LeadDetailPage() {
 
               {/* Buyer Persona */}
               <EnrichmentSection 
-                title="Buyer Persona" 
+                title={t.buyerPersonaTitle} 
                 icon={UserCircle}
                 gradient="bg-gradient-to-br from-pink-600/90 to-rose-700/90"
               >
@@ -672,12 +557,12 @@ export default function LeadDetailPage() {
                   </div>
                   <p className="text-sm italic">{enrichment.buyer_persona.descrizione_breve}</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div><span className="font-semibold">{isItalian ? 'Età:' : 'Age:'}</span> {enrichment.buyer_persona.eta_stimata}</div>
-                    <div><span className="font-semibold">{isItalian ? 'Professione:' : 'Profession:'}</span> {enrichment.buyer_persona.professione_probabile}</div>
-                    <div className="col-span-2"><span className="font-semibold">{isItalian ? 'Famiglia:' : 'Family:'}</span> {enrichment.buyer_persona.situazione_familiare}</div>
+                    <div><span className="font-semibold">{t.ageLabel}</span> {enrichment.buyer_persona.eta_stimata}</div>
+                    <div><span className="font-semibold">{t.professionLabel}</span> {enrichment.buyer_persona.professione_probabile}</div>
+                    <div className="col-span-2"><span className="font-semibold">{t.familyLabel}</span> {enrichment.buyer_persona.situazione_familiare}</div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">{isItalian ? 'Valori Chiave:' : 'Key Values:'}</span>
+                    <span className="font-semibold block mb-1">{t.keyValuesLabel}</span>
                     <div className="flex flex-wrap gap-1">
                       {enrichment.buyer_persona.valori_chiave.map((v, i) => (
                         <Badge key={i} variant="secondary" className="bg-white/20 text-white text-xs">{v}</Badge>
@@ -685,10 +570,10 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <span className="font-semibold block mb-1">{isItalian ? 'Trigger Acquisto:' : 'Purchase Triggers:'}</span>
+                    <span className="font-semibold block mb-1">{t.purchaseTriggersLabel}</span>
                     <ul className="list-disc list-inside text-sm">
-                      {enrichment.buyer_persona.trigger_acquisto.map((t, i) => (
-                        <li key={i}>{t}</li>
+                      {enrichment.buyer_persona.trigger_acquisto.map((trig, i) => (
+                        <li key={i}>{trig}</li>
                       ))}
                     </ul>
                   </div>
@@ -708,8 +593,8 @@ export default function LeadDetailPage() {
                   </div>
                   <p className="text-sm bg-white/10 p-2 rounded">{enrichment.strategia_followup.approccio_consigliato}</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div><span className="font-semibold">{isItalian ? 'Frequenza:' : 'Frequency:'}</span> {enrichment.strategia_followup.frequenza_contatto}</div>
-                    <div><span className="font-semibold">{isItalian ? 'Canale:' : 'Channel:'}</span> {enrichment.strategia_followup.canale_preferito}</div>
+                    <div><span className="font-semibold">{t.strategyFrequency}</span> {enrichment.strategia_followup.frequenza_contatto}</div>
+                    <div><span className="font-semibold">{t.strategyChannel}</span> {enrichment.strategia_followup.canale_preferito}</div>
                   </div>
                   <div>
                     <span className="font-semibold block mb-1">{t.talkingPoints}</span>
@@ -728,10 +613,10 @@ export default function LeadDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-white">
                   <AlertTriangle className="h-5 w-5" />
-                  {isItalian ? 'Obiezioni Probabili e Risposte AI' : 'Likely Objections & AI Responses'}
+                  {t.objectionsCardTitle}
                 </CardTitle>
                 <CardDescription className="text-white/70">
-                  {isItalian ? 'Anticipa le obiezioni e preparati con risposte efficaci' : 'Anticipate objections and prepare effective responses'}
+                  {t.objectionsCardDesc}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -751,10 +636,10 @@ export default function LeadDetailPage() {
                         <CopyButton text={ob.risposta_suggerita} label={`obiezione-${i}`} />
                       </div>
                         <div className="text-white/90 text-sm">
-                        <span className="font-semibold text-green-300">{isItalian ? 'Risposta:' : 'Answer:'}</span> {ob.risposta_suggerita}
+                        <span className="font-semibold text-green-300">{t.answerLabel}</span> {ob.risposta_suggerita}
                       </div>
                       <div className="text-white/70 text-xs">
-                        <span className="font-semibold">{isItalian ? 'Strategia:' : 'Strategy:'}</span> {ob.strategia}
+                        <span className="font-semibold">{t.strategyShortLabel}</span> {ob.strategia}
                       </div>
                     </div>
                   ))}
@@ -769,13 +654,16 @@ export default function LeadDetailPage() {
                   <div className="flex items-center gap-4">
                     <Shield className="h-8 w-8 text-emerald-500" />
                     <div>
-                      <p className="text-slate-400 text-sm">{isItalian ? 'Punteggio Qualità Lead' : 'Lead Quality Score'}</p>
+                      <p className="text-slate-400 text-sm">{t.leadQualityScore}</p>
                       <p className="text-2xl font-bold text-white">{enrichment.punteggio_qualita.score}/100</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-slate-300">{enrichment.punteggio_qualita.interpretazione}</p>
-                    <p className="text-slate-500 text-sm">{isItalian ? 'Generato:' : 'Generated:'} {new Date(enrichment.generato_il).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}</p>
+                    <p className="text-slate-500 text-sm">
+                      {t.generatedLabel}{' '}
+                      {formatDateTimeForLocale(enrichment.generato_il, locale as Locale, timezone)}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -786,12 +674,10 @@ export default function LeadDetailPage() {
             <CardContent className="py-12 text-center">
               <Sparkles className="h-12 w-12 text-violet-500 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
-                {isItalian ? "Arricchisci questo Lead con l'AI" : 'Enrich this Lead with AI'}
+                {t.enrichEmptyTitle}
               </h3>
               <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                {isItalian
-                  ? 'Ottieni un profilo psicografico completo, probabilità di chiusura, budget stimato, obiezioni probabili con risposte pronte e una strategia di follow-up personalizzata.'
-                  : 'Get a complete psychographic profile, closing probability, estimated budget, likely objections with ready answers, and a personalized follow-up strategy.'}
+                {t.enrichEmptyDesc}
               </p>
               <Button
                 onClick={handleEnrichLead}
@@ -803,12 +689,12 @@ export default function LeadDetailPage() {
                 {isEnriching ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    {isItalian ? 'Analisi AI in corso...' : 'AI analysis in progress...'}
+                    {t.enrichAnalyzing}
                   </>
                 ) : (
                   <>
                     <Brain className="mr-2 h-5 w-5" />
-                    {isItalian ? 'Avvia Analisi AI' : 'Start AI Analysis'}
+                    {t.enrichStart}
                   </>
                 )}
               </Button>
@@ -835,7 +721,7 @@ export default function LeadDetailPage() {
                   <div>
                     <p className="text-slate-200">{t.aiActivityEnrichment}</p>
                     <p className="text-xs text-slate-500">
-                      {new Date(enrichment.generato_il).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                      {formatDateTimeForLocale(enrichment.generato_il, locale as Locale, timezone)}
                       {enrichmentCached ? ` • ${t.aiActivityFromCache}` : ""}
                     </p>
                   </div>
@@ -848,7 +734,7 @@ export default function LeadDetailPage() {
                       <span className="mt-1">⚡</span>
                       <div>
                         <p className="text-xs text-slate-500">
-                          {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                          {formatDateTimeForLocale(log.created_at, locale as Locale, timezone)}
                         </p>
                         <p className="text-sm">
                           {log.automations_rules?.name || t.ruleLabel} • {log.trigger_type}
@@ -859,13 +745,7 @@ export default function LeadDetailPage() {
                   {automationLogs.length > 3 && (
                     <p className="text-xs text-slate-500">
                       +{automationLogs.length - 3}{" "}
-                      {locale === "es"
-                        ? "acciones de IA más..."
-                        : locale === "ar"
-                        ? "إجراءات إضافية للذكاء الاصطناعي..."
-                        : isItalian
-                        ? "altre azioni AI..."
-                        : "more AI actions..."}
+                      {t.moreAiActions.replace('{count}', String(automationLogs.length - 3))}
                     </p>
                   )}
                 </div>
@@ -882,11 +762,11 @@ export default function LeadDetailPage() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <Zap className="h-5 w-5 text-violet-400" />
-                {isItalian ? 'Automazioni Applicate' : 'Applied Automations'} ({automationLogs.length})
+                {t.appliedAutomationsTitle} ({automationLogs.length})
                 <Badge className="bg-violet-500/20 text-violet-300 text-xs">CRM 3.0</Badge>
               </CardTitle>
               <CardDescription className="text-slate-400">
-                {isItalian ? 'Storico delle regole di automazione eseguite su questo lead' : 'History of automation rules executed on this lead'}
+                {t.appliedAutomationsDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -905,10 +785,14 @@ export default function LeadDetailPage() {
                         {log.automations_rules?.name || t.ruleLabel}
                       </p>
                       <p className="text-slate-400 text-xs">
-                        {t.triggerLabel} {log.trigger_type === 'status_changed' ? (isItalian ? 'Status cambiato' : 'Status changed') :
-                                 log.trigger_type === 'new_lead' ? (isItalian ? 'Nuovo lead' : 'New lead') :
-                                 log.trigger_type === 'score_updated' ? (isItalian ? 'Score aggiornato' : 'Score updated') :
-                                 log.trigger_type}
+                        {t.triggerLabel}{' '}
+                        {log.trigger_type === 'status_changed'
+                          ? t.triggerStatusChanged
+                          : log.trigger_type === 'new_lead'
+                            ? t.triggerNewLead
+                            : log.trigger_type === 'score_updated'
+                              ? t.triggerScoreUpdated
+                              : log.trigger_type}
                       </p>
                       {log.error_message && (
                         <p className="text-red-400 text-xs mt-1">{log.error_message}</p>
@@ -916,7 +800,7 @@ export default function LeadDetailPage() {
                     </div>
                   </div>
                   <span className="text-slate-500 text-xs">
-                    {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                    {formatDateTimeForLocale(log.created_at, locale as Locale, timezone)}
                   </span>
                 </div>
               ))}
@@ -938,7 +822,7 @@ export default function LeadDetailPage() {
                 <div key={note.id} className="bg-slate-900/50 p-3 rounded-lg">
                   <p className="text-slate-300 text-sm">{note.nota}</p>
                   <p className="text-slate-500 text-xs mt-1">
-                    {new Date(note.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                    {formatDateTimeForLocale(note.created_at, locale as Locale, timezone)}
                   </p>
                 </div>
               ))}
