@@ -59,7 +59,7 @@ const it: NotificationsSettingsPageUi = {
     'Ricevi subito un esempio di notifica per vedere quanto è professionale',
   previewTitle: 'Anteprima messaggio',
   previewDesc: 'Ecco come apparirà il tuo briefing mattutino',
-  previewHeader: '🔥 TOP 3 OPPORTUNITÀ DI OGGI',
+  previewHeader: 'TOP 3 OPPORTUNITÀ DI OGGI',
   previewSampleLines: [
     '• [Link report PDF 1] — Prezzo −20%',
     '• [Link report PDF 2] — Urgenza alta',
@@ -105,7 +105,7 @@ const en: NotificationsSettingsPageUi = {
     'Get a sample notification now to see how professional it looks',
   previewTitle: 'Message preview',
   previewDesc: 'This is how your morning briefing will appear',
-  previewHeader: '🔥 TOP 3 OPPORTUNITIES TODAY',
+  previewHeader: 'TOP 3 OPPORTUNITIES TODAY',
   previewSampleLines: [
     '• [PDF report link 1] — Price −20%',
     '• [PDF report link 2] — High urgency',

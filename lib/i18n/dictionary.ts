@@ -87,6 +87,13 @@ import {
   workflowAutomationsLocalesFr,
   workflowAutomationsLocalesPt,
 } from '@/lib/i18n/workflow-automations-locales';
+import {
+  brandingNotificationsPackagesLocalesAr,
+  brandingNotificationsPackagesLocalesDe,
+  brandingNotificationsPackagesLocalesEs,
+  brandingNotificationsPackagesLocalesFr,
+  brandingNotificationsPackagesLocalesPt,
+} from '@/lib/i18n/branding-notifications-packages-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2964,6 +2971,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadDetailCommLocalesEs,
       ...crmSettingsAutomationLocalesEs,
       ...workflowAutomationsLocalesEs,
+      ...brandingNotificationsPackagesLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3340,6 +3348,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadDetailCommLocalesFr,
       ...crmSettingsAutomationLocalesFr,
       ...workflowAutomationsLocalesFr,
+      ...brandingNotificationsPackagesLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3716,6 +3725,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadDetailCommLocalesDe,
       ...crmSettingsAutomationLocalesDe,
       ...workflowAutomationsLocalesDe,
+      ...brandingNotificationsPackagesLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4094,6 +4104,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadDetailCommLocalesPt,
       ...crmSettingsAutomationLocalesPt,
       ...workflowAutomationsLocalesPt,
+      ...brandingNotificationsPackagesLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4278,6 +4289,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       ...leadDetailCommLocalesAr,
       ...crmSettingsAutomationLocalesAr,
       ...workflowAutomationsLocalesAr,
+      ...brandingNotificationsPackagesLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

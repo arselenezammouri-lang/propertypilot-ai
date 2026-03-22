@@ -244,7 +244,8 @@ export default function AgencyBrandingPage() {
       />
 
       <div className="mb-6 flex justify-end">
-        <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
+        <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
+          <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
           {t.badgeWhiteLabel}
         </Badge>
       </div>

@@ -4,7 +4,7 @@ export type AgencyBrandingPageUi = {
   backAria: string;
   pageTitle: string;
   pageSubtitle: string;
-  /** Badge in page chrome (emoji + label) */
+  /** Badge in page chrome (icon in layout + this label) */
   badgeWhiteLabel: string;
   agencyInfoTitle: string;
   agencyInfoDesc: string;
@@ -57,7 +57,7 @@ const it: AgencyBrandingPageUi = {
   backAria: 'Torna alla dashboard',
   pageTitle: 'Branding agenzia',
   pageSubtitle: 'Personalizza le schede PDF con il tuo brand white label',
-  badgeWhiteLabel: '🏢 White label',
+  badgeWhiteLabel: 'White label',
   agencyInfoTitle: 'Informazioni agenzia',
   agencyInfoDesc: 'Dati base della tua agenzia immobiliare',
   agencyNameLabel: 'Nome agenzia *',
@@ -113,7 +113,7 @@ const en: AgencyBrandingPageUi = {
   backAria: 'Back to dashboard',
   pageTitle: 'Agency branding',
   pageSubtitle: 'Customize PDF sheets with your white-label brand',
-  badgeWhiteLabel: '🏢 White label',
+  badgeWhiteLabel: 'White label',
   agencyInfoTitle: 'Agency information',
   agencyInfoDesc: 'Basic data for your real estate agency',
   agencyNameLabel: 'Agency name *',

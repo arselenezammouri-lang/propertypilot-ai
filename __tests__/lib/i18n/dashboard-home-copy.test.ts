@@ -306,6 +306,8 @@ describe('dashboard home copy (D1)', () => {
     expect(enB.previewPriceSample).toMatch(/\$|€/);
     expect(itB.loadErrorGeneric.length).toBeGreaterThan(5);
     expect(enB.emailLabel.toLowerCase()).toContain('mail');
+    expect(itB.badgeWhiteLabel).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+    expect(enB.badgeWhiteLabel.toLowerCase()).toContain('white');
   });
 
   it('notificationsSettingsPage for IT/EN', () => {
@@ -313,8 +315,18 @@ describe('dashboard home copy (D1)', () => {
     const enN = getTranslation('en').dashboard.notificationsSettingsPage;
     expect(itN.previewSampleLines.length).toBe(3);
     expect(enN.previewHeader).toContain('TOP 3');
+    expect(itN.previewHeader).not.toMatch(/🔥/);
     expect(itN.planPro).toBe('Pro');
     expect(enN.testChannelsRequired.toLowerCase()).toMatch(/email|whatsapp/);
+  });
+
+  it('agencyBranding + notifications + packages native ES/DE/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.agencyBrandingPage.pageTitle.length).toBeGreaterThan(5);
+    expect(es.notificationsSettingsPage.previewHeader).toContain('TOP 3');
+    expect(es.packagesPage.boostTagline.length).toBeGreaterThan(8);
+    expect(getTranslation('de').dashboard.packagesPage.tabPackages.length).toBeGreaterThan(3);
+    expect(getTranslation('ar').dashboard.notificationsSettingsPage.cardTitle.length).toBeGreaterThan(3);
   });
 
   it('agencyAssistantPage for IT/EN', () => {

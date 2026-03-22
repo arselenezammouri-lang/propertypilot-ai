@@ -27,6 +27,7 @@ import {
   Zap,
   Check,
   Loader2,
+  Flame,
 } from "lucide-react";
 
 interface NotificationSettings {
@@ -343,7 +344,10 @@ export default function NotificationsSettingsPage() {
             </CardHeader>
             <CardContent>
               <div className="bg-muted/50 rounded-lg p-4 space-y-3 font-mono text-sm">
-                <div className="font-bold text-purple-400">{t.previewHeader}</div>
+                <div className="flex items-center gap-2 font-bold text-purple-400">
+                  <Flame className="h-4 w-4 shrink-0 text-orange-400" aria-hidden />
+                  {t.previewHeader}
+                </div>
                 <div className="space-y-2 text-gray-300">
                   {t.previewSampleLines.map((line, i) => (
                     <div key={i}>{line}</div>
