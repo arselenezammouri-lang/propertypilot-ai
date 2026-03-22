@@ -228,14 +228,14 @@ export default function BillingPage() {
         />
         <div className="futuristic-card max-w-6xl p-6 border-orange-500/30 flex flex-col items-center justify-center min-h-[280px] gap-4">
           <p className="text-white/70 text-center">
-            {locale === 'it' ? 'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.' : 'Unable to load subscription. Showing Free plan.'}
+            {billingT.subscriptionFetchErrorBody}
           </p>
           <Button
             onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/user/subscription'] })}
             variant="outline"
             className="min-h-11 touch-manipulation border-royal-purple/30"
           >
-            {locale === 'it' ? 'Riprova' : 'Retry'}
+            {billingT.retry}
           </Button>
         </div>
       </DashboardPageShell>

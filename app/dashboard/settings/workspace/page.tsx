@@ -19,6 +19,7 @@ import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { DASHBOARD_TIMEZONE_OPTIONS, type DashboardTimezone } from "@/lib/i18n/timezones";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import type { Locale } from "@/lib/i18n/config";
@@ -45,64 +46,12 @@ interface WorkspaceModule {
 
 export default function WorkspaceSettingsPage() {
   const { locale, currency, timezone, setLocale, setCurrency, setTimezone } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const t = getTranslation(locale as SupportedLocale).dashboard.workspacePage;
   const { toast } = useToast();
   const { plan, isLoading: planLoading } = useUsageLimits();
 
-  const t = {
-    loading: isItalian ? "Caricamento impostazioni..." : "Loading settings...",
-    heroTitle: "Feature Control Center",
-    heroSubtitle: isItalian ? "Personalizza la tua dashboard attivando o disattivando i moduli" : "Customize your dashboard by enabling or disabling modules",
-    trialActive: isItalian ? "Trial Attivo" : "Trial Active",
-    trialDesc: (days: number) => isItalian
-      ? `Hai accesso a tutti i moduli per i prossimi ${days} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.`
-      : `You have access to all modules for the next ${days} days. After the trial, only the modules in your plan will be available.`,
-    howItWorks: isItalian ? "💡 Come funziona" : "💡 How it works",
-    howItWorksList: isItalian
-      ? [
-          "I moduli disattivati scompariranno dalla barra laterale della dashboard",
-          "Durante il trial, tutti i moduli sono disponibili",
-          "Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati",
-          "Le impostazioni vengono salvate automaticamente",
-        ]
-      : [
-          "Disabled modules will disappear from the dashboard sidebar",
-          "During the trial, all modules are available",
-          "After the trial, only modules included in your plan can be enabled",
-          "Settings are saved automatically",
-        ],
-    prefsTitle: isItalian ? "Lingua, valuta e fuso orario" : "Language, currency & timezone",
-    prefsSubtitle: isItalian
-      ? "Stesse preferenze dell’header: qui le imposti in un unico posto. Il fuso orario influisce su date e orari nella dashboard (es. fatturazione, automazioni)."
-      : "Same choices as the header — manage them in one place. Timezone affects dates and times across the dashboard (billing, automations, etc.).",
-    timezoneLabel: isItalian ? "Fuso orario" : "Time zone",
-    timezoneHint: isItalian
-      ? "Salvato su questo browser. Se il tuo fuso non è in elenco, scegli UTC e segnala al supporto."
-      : "Saved in this browser. If your zone is missing, pick UTC and contact support.",
-    previewLabel: isItalian ? "Anteprima ora locale" : "Local time preview",
-    insufficientPlan: isItalian ? "Piano insufficiente" : "Insufficient plan",
-    insufficientPlanDesc: (plan: string) => isItalian
-      ? `Questo modulo richiede il piano ${plan}. Aggiorna il tuo account.`
-      : `This module requires the ${plan} plan. Upgrade your account.`,
-    moduleUpdated: isItalian ? "Modulo aggiornato" : "Module updated",
-    moduleEnabled: isItalian ? "attivato" : "enabled",
-    moduleDisabled: isItalian ? "disattivato" : "disabled",
-    errorTitle: isItalian ? "Errore" : "Error",
-    saveError: isItalian ? "Impossibile salvare le impostazioni." : "Unable to save settings.",
-    // module names
-    modules: {
-      scraper: { name: isItalian ? "Scraper Globale" : "Global Scraper", desc: isItalian ? "Scansione automatica di Idealista, Zillow, Immobiliare.it" : "Automatic scanning of Idealista, Zillow, Immobiliare.it" },
-      ai_voice: { name: "AI Voice Calling", desc: isItalian ? "Chiamate automatiche con Bland AI" : "Automatic calls with Bland AI" },
-      "3d_staging": { name: "3D Virtual Staging", desc: isItalian ? "Generazione visioni 3D post-ristrutturazione" : "3D visualization generation post-renovation" },
-      price_sniper: { name: "Price Drop Sniper", desc: isItalian ? "Rilevamento automatico ribassi di prezzo" : "Automatic price drop detection" },
-      commercial: { name: "Commercial Intelligence", desc: isItalian ? "Analisi immobili commerciali e Business Features" : "Commercial property analysis and Business Features" },
-      territory_map: { name: "Territory Commander", desc: isItalian ? "Mappa tattica e analisi territorio" : "Tactical map and territory analysis" },
-      smart_briefing: { name: "AI Smart Briefing", desc: isItalian ? "Riassunto automatico vantaggi/difetti/target" : "Automatic summary of pros/cons/target" },
-      xray_vision: { name: "AI X-Ray Vision", desc: isItalian ? "Analisi tecnica immagini per difetti/pregi" : "Technical image analysis for defects/features" },
-      competitor_radar: { name: "Competitor Radar", desc: isItalian ? "Rilevamento mandati in scadenza" : "Expiring mandate detection" },
-    } as Record<string, { name: string; desc: string }>,
-  };
+  const trialDays = 7;
 
   const [modules, setModules] = useState<WorkspaceModule[]>([]);
   const [isTrial, setIsTrial] = useState(false);
@@ -110,14 +59,15 @@ export default function WorkspaceSettingsPage() {
   const [saving, setSaving] = useState(false);
 
   const timezoneGroups = useMemo(() => {
+    const regions = getTranslation(locale as SupportedLocale).dashboard.workspacePage.timezoneRegions;
     const labels: Record<string, string> = {
-      EU: isItalian ? "Europa" : "Europe",
-      US: isItalian ? "Stati Uniti" : "United States",
-      NA: isItalian ? "Nord America" : "North America",
-      LATAM: "LATAM",
-      ME: isItalian ? "Medio Oriente" : "Middle East",
-      APAC: "APAC",
-      UTC: "UTC",
+      EU: regions.EU,
+      US: regions.US,
+      NA: regions.NA,
+      LATAM: regions.LATAM,
+      ME: regions.ME,
+      APAC: regions.APAC,
+      UTC: regions.UTC,
     };
     const byRegion = new Map<string, (typeof DASHBOARD_TIMEZONE_OPTIONS)[number][]>();
     for (const opt of DASHBOARD_TIMEZONE_OPTIONS) {
@@ -130,7 +80,7 @@ export default function WorkspaceSettingsPage() {
       label: labels[region] ?? region,
       opts,
     }));
-  }, [isItalian]);
+  }, [locale]);
 
   const timePreview = useMemo(
     () => formatDateTimeForLocale(new Date(), locale as Locale, timezone),
@@ -138,6 +88,7 @@ export default function WorkspaceSettingsPage() {
   );
 
   useEffect(() => {
+    const wp = getTranslation(locale as SupportedLocale).dashboard.workspacePage;
     const loadWorkspaceSettings = async () => {
       try {
         const supabase = createClient();
@@ -167,21 +118,21 @@ export default function WorkspaceSettingsPage() {
           const enabledModules = workspace?.enabled_modules || [];
 
           const moduleList = [
-            { id: 'scraper', icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'ai_voice', icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: '3d_staging', icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'price_sniper', icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'commercial', icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
-            { id: 'territory_map', icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'smart_briefing', icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'xray_vision', icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-            { id: 'competitor_radar', icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'scraper' as const, icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'ai_voice' as const, icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: '3d_staging' as const, icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'price_sniper' as const, icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'commercial' as const, icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
+            { id: 'territory_map' as const, icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'smart_briefing' as const, icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'xray_vision' as const, icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'competitor_radar' as const, icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
           ];
 
           const allModules: WorkspaceModule[] = moduleList.map((m) => ({
             id: m.id,
-            name: t.modules[m.id]?.name || m.id,
-            description: t.modules[m.id]?.desc || '',
+            name: wp.modules[m.id].name,
+            description: wp.modules[m.id].desc,
             icon: m.icon,
             requiredPlan: m.requiredPlan,
             enabled: enabledModules.includes(m.id) || (inTrial && !enabledModules.includes(m.id)),
@@ -234,7 +185,7 @@ export default function WorkspaceSettingsPage() {
             ...premiumFeatureToast(
               feedbackLocale,
               "workspaceModules",
-              t.insufficientPlanDesc(workspaceModule.requiredPlan)
+              t.insufficientPlanDesc.replace("{plan}", workspaceModule.requiredPlan)
             ),
           });
           return;
@@ -320,7 +271,8 @@ export default function WorkspaceSettingsPage() {
       {isTrial ? (
         <div className="mb-8 rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 p-4">
           <p className="text-sm text-purple-200">
-            <strong>{t.trialActive}</strong> — {t.trialDesc(7)}
+            <strong>{t.trialActive}</strong> —{" "}
+            {t.trialDesc.replace("{days}", String(trialDays))}
           </p>
         </div>
       ) : null}
@@ -401,7 +353,7 @@ export default function WorkspaceSettingsPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold text-white">{module.name}</h3>
                         {module.trialEnabled && (
-                          <Badge className="bg-cyan-500 text-white text-xs">Trial</Badge>
+                          <Badge className="bg-cyan-500 text-white text-xs">{t.trialBadge}</Badge>
                         )}
                         <Badge
                           variant="outline"
@@ -437,7 +389,7 @@ export default function WorkspaceSettingsPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-gray-300">
-              {t.howItWorksList.map((item, i) => (
+              {t.howItWorksBullets.map((item, i) => (
                 <li key={i}>• {item}</li>
               ))}
             </ul>

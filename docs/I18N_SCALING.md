@@ -26,7 +26,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Per frasi con variabili usare template con segnaposto espliciti (`{opened}`, `{sent}`) e una piccola funzione di replace nel componente, oppure in futuro ICU / `next-intl`.
 
 6. **Naming delle chiavi**  
-   - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.planFeatures`, `dashboard.mapPage`, `dashboard.opportunitiesPage`, `dashboard.autopilotPage`, `dashboard.morningBriefing`, ecc.  
+   - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.planFeatures`, `dashboard.mapPage`, `dashboard.opportunitiesPage`, `dashboard.autopilotPage`, `dashboard.workspacePage`, `dashboard.morningBriefing`, ecc.  
+   - Messaggi billing condivisi: `billing.subscriptionFetchErrorBody`, `billing.retry`.  
    - Evitare chiavi troppo generiche (`title1`) senza contesto.
 
 ## Checklist per nuove feature

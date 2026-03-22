@@ -81,4 +81,15 @@ describe('dashboard home copy (D1)', () => {
     expect(itA.saveToastTitle).toBeTruthy();
     expect(enA.configCardTitle).toContain('Rule');
   });
+
+  it('billing fetch error + workspacePage for IT/EN', () => {
+    const itB = getTranslation('it').billing;
+    const enB = getTranslation('en').billing;
+    expect(itB.retry).toBe('Riprova');
+    expect(enB.subscriptionFetchErrorBody).toContain('Free');
+    const itW = getTranslation('it').dashboard.workspacePage;
+    expect(itW.heroTitle).toContain('Control');
+    expect(itW.trialDesc).toContain('{days}');
+    expect(itW.modules.scraper.name).toBeTruthy();
+  });
 });

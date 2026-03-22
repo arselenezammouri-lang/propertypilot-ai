@@ -137,6 +137,49 @@ export interface TranslationDictionary {
         configCardTitle: string;
         configCardDescription: string;
       };
+      /** `/dashboard/settings/workspace` — moduli e preferenze */
+      workspacePage: {
+        loading: string;
+        heroTitle: string;
+        heroSubtitle: string;
+        trialActive: string;
+        trialDesc: string;
+        howItWorks: string;
+        howItWorksBullets: string[];
+        prefsTitle: string;
+        prefsSubtitle: string;
+        timezoneLabel: string;
+        timezoneHint: string;
+        previewLabel: string;
+        insufficientPlan: string;
+        insufficientPlanDesc: string;
+        moduleUpdated: string;
+        moduleEnabled: string;
+        moduleDisabled: string;
+        errorTitle: string;
+        saveError: string;
+        trialBadge: string;
+        modules: {
+          scraper: { name: string; desc: string };
+          ai_voice: { name: string; desc: string };
+          '3d_staging': { name: string; desc: string };
+          price_sniper: { name: string; desc: string };
+          commercial: { name: string; desc: string };
+          territory_map: { name: string; desc: string };
+          smart_briefing: { name: string; desc: string };
+          xray_vision: { name: string; desc: string };
+          competitor_radar: { name: string; desc: string };
+        };
+        timezoneRegions: {
+          EU: string;
+          US: string;
+          NA: string;
+          LATAM: string;
+          ME: string;
+          APAC: string;
+          UTC: string;
+        };
+      };
       onboardingChecklist: {
         title: string;
         subtitle: string;
@@ -478,6 +521,9 @@ export interface TranslationDictionary {
     upgradeToAgency: string;
     /** Trust line — Stripe handles cards & Customer Portal */
     stripeTrust: string;
+    /** Soft error when GET /api/user/subscription fails (billing page) */
+    subscriptionFetchErrorBody: string;
+    retry: string;
   };
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
@@ -863,6 +909,84 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         configCardTitle: 'Configurazione regola',
         configCardDescription: 'Attiva Autopilot, zone e limiti giornalieri.',
       },
+      workspacePage: {
+        loading: 'Caricamento impostazioni...',
+        heroTitle: 'Feature Control Center',
+        heroSubtitle:
+          'Personalizza la tua dashboard attivando o disattivando i moduli',
+        trialActive: 'Trial Attivo',
+        trialDesc:
+          'Hai accesso a tutti i moduli per i prossimi {days} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.',
+        howItWorks: '💡 Come funziona',
+        howItWorksBullets: [
+          'I moduli disattivati scompariranno dalla barra laterale della dashboard',
+          'Durante il trial, tutti i moduli sono disponibili',
+          'Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati',
+          'Le impostazioni vengono salvate automaticamente',
+        ],
+        prefsTitle: 'Lingua, valuta e fuso orario',
+        prefsSubtitle:
+          'Stesse preferenze dell’header: qui le imposti in un unico posto. Il fuso orario influisce su date e orari nella dashboard (es. fatturazione, automazioni).',
+        timezoneLabel: 'Fuso orario',
+        timezoneHint:
+          'Salvato su questo browser. Se il tuo fuso non è in elenco, scegli UTC e segnala al supporto.',
+        previewLabel: 'Anteprima ora locale',
+        insufficientPlan: 'Piano insufficiente',
+        insufficientPlanDesc: 'Questo modulo richiede il piano {plan}. Aggiorna il tuo account.',
+        moduleUpdated: 'Modulo aggiornato',
+        moduleEnabled: 'attivato',
+        moduleDisabled: 'disattivato',
+        errorTitle: 'Errore',
+        saveError: 'Impossibile salvare le impostazioni.',
+        trialBadge: 'Trial',
+        modules: {
+          scraper: {
+            name: 'Scraper Globale',
+            desc: 'Scansione automatica di Idealista, Zillow, Immobiliare.it',
+          },
+          ai_voice: {
+            name: 'AI Voice Calling',
+            desc: 'Chiamate automatiche con Bland AI',
+          },
+          '3d_staging': {
+            name: '3D Virtual Staging',
+            desc: 'Generazione visioni 3D post-ristrutturazione',
+          },
+          price_sniper: {
+            name: 'Price Drop Sniper',
+            desc: 'Rilevamento automatico ribassi di prezzo',
+          },
+          commercial: {
+            name: 'Commercial Intelligence',
+            desc: 'Analisi immobili commerciali e Business Features',
+          },
+          territory_map: {
+            name: 'Territory Commander',
+            desc: 'Mappa tattica e analisi territorio',
+          },
+          smart_briefing: {
+            name: 'AI Smart Briefing',
+            desc: 'Riassunto automatico vantaggi/difetti/target',
+          },
+          xray_vision: {
+            name: 'AI X-Ray Vision',
+            desc: 'Analisi tecnica immagini per difetti/pregi',
+          },
+          competitor_radar: {
+            name: 'Competitor Radar',
+            desc: 'Rilevamento mandati in scadenza',
+          },
+        },
+        timezoneRegions: {
+          EU: 'Europa',
+          US: 'Stati Uniti',
+          NA: 'Nord America',
+          LATAM: 'LATAM',
+          ME: 'Medio Oriente',
+          APAC: 'APAC',
+          UTC: 'UTC',
+        },
+      },
       onboardingChecklist: {
         title: 'I tuoi primi 5 passi',
         subtitle: 'Completa questa checklist per sbloccare valore subito. Puoi nasconderla quando vuoi: i progressi restano salvati su questo browser.',
@@ -1213,6 +1337,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Upgrade a Agency',
       stripeTrust:
         'Pagamenti sicuri elaborati da Stripe. Carte, metodi di pagamento e fatture si gestiscono nel portale cliente Stripe.',
+      subscriptionFetchErrorBody:
+        'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.',
+      retry: 'Riprova',
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
@@ -1602,6 +1729,83 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         configCardTitle: 'Rule configuration',
         configCardDescription: 'Enable Autopilot, areas, and daily limits.',
       },
+      workspacePage: {
+        loading: 'Loading settings...',
+        heroTitle: 'Feature Control Center',
+        heroSubtitle: 'Customize your dashboard by enabling or disabling modules',
+        trialActive: 'Trial active',
+        trialDesc:
+          'You have access to all modules for the next {days} days. After the trial, only the modules in your plan will be available.',
+        howItWorks: '💡 How it works',
+        howItWorksBullets: [
+          'Disabled modules will disappear from the dashboard sidebar',
+          'During the trial, all modules are available',
+          'After the trial, only modules included in your plan can be enabled',
+          'Settings are saved automatically',
+        ],
+        prefsTitle: 'Language, currency & timezone',
+        prefsSubtitle:
+          'Same choices as the header — manage them in one place. Timezone affects dates and times across the dashboard (billing, automations, etc.).',
+        timezoneLabel: 'Time zone',
+        timezoneHint:
+          'Saved in this browser. If your zone is missing, pick UTC and contact support.',
+        previewLabel: 'Local time preview',
+        insufficientPlan: 'Insufficient plan',
+        insufficientPlanDesc: 'This module requires the {plan} plan. Upgrade your account.',
+        moduleUpdated: 'Module updated',
+        moduleEnabled: 'enabled',
+        moduleDisabled: 'disabled',
+        errorTitle: 'Error',
+        saveError: 'Unable to save settings.',
+        trialBadge: 'Trial',
+        modules: {
+          scraper: {
+            name: 'Global Scraper',
+            desc: 'Automatic scanning of Idealista, Zillow, Immobiliare.it',
+          },
+          ai_voice: {
+            name: 'AI Voice Calling',
+            desc: 'Automatic calls with Bland AI',
+          },
+          '3d_staging': {
+            name: '3D Virtual Staging',
+            desc: '3D visualization generation post-renovation',
+          },
+          price_sniper: {
+            name: 'Price Drop Sniper',
+            desc: 'Automatic price drop detection',
+          },
+          commercial: {
+            name: 'Commercial Intelligence',
+            desc: 'Commercial property analysis and Business Features',
+          },
+          territory_map: {
+            name: 'Territory Commander',
+            desc: 'Tactical map and territory analysis',
+          },
+          smart_briefing: {
+            name: 'AI Smart Briefing',
+            desc: 'Automatic summary of pros/cons/target',
+          },
+          xray_vision: {
+            name: 'AI X-Ray Vision',
+            desc: 'Technical image analysis for defects/features',
+          },
+          competitor_radar: {
+            name: 'Competitor Radar',
+            desc: 'Expiring mandate detection',
+          },
+        },
+        timezoneRegions: {
+          EU: 'Europe',
+          US: 'United States',
+          NA: 'North America',
+          LATAM: 'LATAM',
+          ME: 'Middle East',
+          APAC: 'APAC',
+          UTC: 'UTC',
+        },
+      },
       onboardingChecklist: {
         title: 'Your first 5 steps',
         subtitle: 'Complete this checklist to get value fast. You can hide it anytime — progress is saved in this browser.',
@@ -1952,6 +2156,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Upgrade to Agency',
       stripeTrust:
         'Secure payments powered by Stripe. Cards, payment methods, and invoices are managed in the Stripe customer portal.',
+      subscriptionFetchErrorBody: 'Unable to load subscription. Showing Free plan.',
+      retry: 'Retry',
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
