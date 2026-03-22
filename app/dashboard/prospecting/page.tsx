@@ -236,8 +236,8 @@ function PlatformBadge({ sourcePlatform }: { sourcePlatform: string | null | und
 export default function ProspectingPage() {
   const router = useRouter();
   const { locale, currency, timezone } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  /** api-feature-feedback supports only it|en; non-IT dashboard locales use EN chrome */
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const { toast } = useToast();
   const { plan: usagePlan, isLoading: usagePlanLoading, refresh: refreshUsagePlan } = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();

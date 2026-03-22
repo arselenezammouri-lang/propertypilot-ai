@@ -14,6 +14,12 @@ describe('prospectingModals dictionary', () => {
     const m = getTranslation('en').prospectingModals.investmentAnalysis;
     expect(m.exportHeader).toMatch(/INVESTMENT/i);
   });
+
+  it('premium investor report has placeholders in DE', () => {
+    const pir = getTranslation('de').prospectingModals.premiumInvestorReport;
+    expect(pir.opportunityLine).toContain('{pct}');
+    expect(pir.htmlFooterGenerated).toContain('{date}');
+  });
 });
 
 describe('territory analysis i18n', () => {
