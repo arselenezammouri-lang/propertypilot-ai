@@ -59,6 +59,13 @@ import {
   dashboardMapOppAutoFr,
   dashboardMapOppAutoPt,
 } from '@/lib/i18n/dashboard-map-opportunity-autopilot-locales';
+import {
+  leadsPipelineLocalesAr,
+  leadsPipelineLocalesDe,
+  leadsPipelineLocalesEs,
+  leadsPipelineLocalesFr,
+  leadsPipelineLocalesPt,
+} from '@/lib/i18n/leads-pipeline-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2932,6 +2939,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Pasar a Agency',
       prospectingPage: prospectingPageUiEs,
       ...dashboardMapOppAutoEs,
+      ...leadsPipelineLocalesEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3304,6 +3312,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Passer à Agency',
       prospectingPage: prospectingPageUiFr,
       ...dashboardMapOppAutoFr,
+      ...leadsPipelineLocalesFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3676,6 +3685,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Auf Agency upgraden',
       prospectingPage: prospectingPageUiDe,
       ...dashboardMapOppAutoDe,
+      ...leadsPipelineLocalesDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4050,6 +4060,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'Mudar para Agency',
       prospectingPage: prospectingPageUiPt,
       ...dashboardMapOppAutoPt,
+      ...leadsPipelineLocalesPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4230,6 +4241,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToAgency: 'الترقية إلى Agency',
       prospectingPage: prospectingPageUiAr,
       ...dashboardMapOppAutoAr,
+      ...leadsPipelineLocalesAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

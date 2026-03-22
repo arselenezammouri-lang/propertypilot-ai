@@ -233,6 +233,16 @@ describe('dashboard home copy (D1)', () => {
     expect(itP.movedTo).toContain('{label}');
     expect(enP.automationRules).toContain('{count}');
     expect(enP.legendHot).toContain('Hot');
+    expect(itP.heroBadge).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+    expect(enP.automationApplied).not.toMatch(/⚡/);
+  });
+
+  it('leadsPage + leadPipelinePage native ES/FR/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.leadsPage.addLead.toLowerCase()).toMatch(/lead|añadir/);
+    expect(es.leadPipelinePage.heroSubtitle.toLowerCase()).toMatch(/arrastr|columna/);
+    expect(getTranslation('fr').dashboard.leadsPage.marketItaly).toMatch(/Italie/i);
+    expect(getTranslation('ar').dashboard.leadPipelinePage.dashboardLink.length).toBeGreaterThan(2);
   });
 
   it('crmApiKeysPage for IT/EN', () => {
