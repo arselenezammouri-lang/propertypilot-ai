@@ -182,4 +182,12 @@ describe('dashboard home copy (D1)', () => {
     expect(itP.copyPackTitle).toBe('TITOLO');
     expect(itP.toni.length).toBe(3);
   });
+
+  it('referralPage for IT/EN', () => {
+    const itR = getTranslation('it').dashboard.referralPage;
+    const enR = getTranslation('en').dashboard.referralPage;
+    expect(itR.loadError.length).toBeGreaterThan(5);
+    expect(enR.whatsappMessage).toContain('PropertyPilot');
+    expect(itR.planPro).toBe('Pro');
+  });
 });

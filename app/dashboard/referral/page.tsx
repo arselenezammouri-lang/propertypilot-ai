@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,18 @@ export default function ReferralPage() {
   const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
   const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
-  const billingT = getTranslation(locale as SupportedLocale).billing;
+  const billingT = useMemo(
+    () => getTranslation(locale as SupportedLocale).billing,
+    [locale]
+  );
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.referralPage,
+    [locale]
+  );
+  const loadErrorRef = useRef(t.loadError);
+  const clipboardErrRef = useRef(t.clipboardCopyError);
+  loadErrorRef.current = t.loadError;
+  clipboardErrRef.current = t.clipboardCopyError;
   const { plan, isLoading: planLoading } = useUsageLimits();
   const [referralCode, setReferralCode] = useState<string>("");
   const [referralLinkFromApi, setReferralLinkFromApi] = useState<string | null>(null);
@@ -35,40 +46,14 @@ export default function ReferralPage() {
     discountsEarned: 0,
     potentialEarnings: 0,
   });
-  const isItalian = locale === "it";
-  const t = {
-    copied: isItalian ? "Link copiato!" : "Link copied!",
-    copiedDesc: isItalian ? "Il link di referral e stato copiato negli appunti." : "The referral link has been copied to your clipboard.",
-    programTitle: isItalian ? "Referral Program" : "Referral Program",
-    programSubtitle: isItalian
-      ? "Invita un'altra agenzia e ricevi uno sconto del 20% sul tuo prossimo rinnovo"
-      : "Invite another agency and receive a 20% discount on your next renewal",
-    uniqueLink: isItalian ? "Il tuo Link Unico" : "Your Unique Link",
-    uniqueLinkDesc: isItalian
-      ? "Condividi questo link con altre agenzie. Quando si iscrivono al piano PRO o AGENCY, ricevi il 20% di sconto sul tuo prossimo rinnovo."
-      : "Share this link with other agencies. When they subscribe to the PRO or AGENCY plan, you receive a 20% discount on your next renewal.",
-    shareWhatsapp: isItalian ? "Condividi su WhatsApp" : "Share on WhatsApp",
-    invitedFriends: isItalian ? "Amici Invitati" : "Friends Invited",
-    registeredAgencies: isItalian ? "Agenzie registrate" : "Registered agencies",
-    discountsEarned: isItalian ? "Sconti Maturati" : "Discounts Earned",
-    totalDiscount: isItalian ? "Sconto totale accumulato" : "Total discount accumulated",
-    potentialEarnings: isItalian ? "Guadagno Potenziale" : "Potential Earnings",
-    futureValue: isItalian ? "Valore sconti futuri" : "Future discount value",
-    howItWorks: isItalian ? "Come Funziona" : "How It Works",
-    step1Title: isItalian ? "Condividi il tuo link" : "Share your link",
-    step1Desc: isItalian ? "Invita altre agenzie usando il link unico o WhatsApp." : "Invite other agencies using your unique link or WhatsApp.",
-    step2Title: isItalian ? "Si iscrivono al piano PRO o AGENCY" : "They subscribe to the PRO or AGENCY plan",
-    step2Desc: isItalian
-      ? "Quando un'amica si iscrive a un piano a pagamento, il sistema la registra automaticamente."
-      : "When a referred agency subscribes to a paid plan, the system records it automatically.",
-    step3Title: isItalian ? "Ricevi il 20% di sconto" : "Receive a 20% discount",
-    step3Desc: isItalian
-      ? "Lo sconto viene applicato automaticamente al tuo prossimo rinnovo. Puoi accumulare piu sconti!"
-      : "The discount is automatically applied to your next renewal. You can accumulate multiple discounts!",
-    whatsappMessage: isItalian
-      ? "Ciao! Ho trovato PropertyPilot AI, la piattaforma che sta rivoluzionando il settore immobiliare. Con l'IA puoi generare annunci, trovare deal e ottenere mandati 24/7. Provala anche tu usando il mio link:"
-      : "Hi! I found PropertyPilot AI, the platform helping real estate agencies generate listings, find deals, and win mandates 24/7. Try it using my link:",
-  };
+  const planBadgeLabel =
+    plan === "agency"
+      ? t.planAgency
+      : plan === "pro"
+        ? t.planPro
+        : plan === "starter"
+          ? t.planStarter
+          : t.planFree;
 
   const loadReferralData = useCallback(async () => {
     try {
@@ -84,7 +69,7 @@ export default function ReferralPage() {
             feedbackLocale,
             "referralProgram",
             { status: res.status, message: res.message, error: res.error },
-            isItalian ? "Impossibile caricare il referral." : "Could not load referral data."
+            loadErrorRef.current
           ),
         });
         return;
@@ -104,7 +89,7 @@ export default function ReferralPage() {
         ...networkFailureToast(feedbackLocale, "referralProgram"),
       });
     }
-  }, [feedbackLocale, isItalian, toast]);
+  }, [feedbackLocale, toast]);
 
   useEffect(() => {
     void loadReferralData();
@@ -134,7 +119,7 @@ export default function ReferralPage() {
         ...clipboardFailureToast(
           feedbackLocale,
           "referralProgram",
-          isItalian ? "Impossibile copiare il link." : "Could not copy the link."
+          clipboardErrRef.current
         ),
       });
     }
@@ -162,7 +147,7 @@ export default function ReferralPage() {
         titleDataTestId="heading-referral"
         subtitle={t.programSubtitle}
         planBadge={
-          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+          !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
         }
       />
 
@@ -197,7 +182,7 @@ export default function ReferralPage() {
                 variant="outline"
                 size="icon"
                 className="min-h-11 min-w-11 touch-manipulation border-amber-500/30 hover:bg-amber-500/10"
-                aria-label={copied ? (isItalian ? "Copiato" : "Copied") : (isItalian ? "Copia link" : "Copy link")}
+                aria-label={copied ? t.copiedAria : t.copyLinkAria}
               >
                 {copied ? (
                   <Check className="h-4 w-4 text-green-400" />
