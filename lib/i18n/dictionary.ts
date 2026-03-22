@@ -25,6 +25,8 @@ import {
   workflowAutomationsPageUiEn,
   workflowAutomationsPageUiIt,
 } from '@/lib/i18n/workflow-automations-page-ui';
+import type { AgencyBrandingPageUi } from '@/lib/i18n/agency-branding-page-ui';
+import { agencyBrandingPageUiEn, agencyBrandingPageUiIt } from '@/lib/i18n/agency-branding-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -210,6 +212,8 @@ export interface TranslationDictionary {
       crmAutomationRulesPage: CrmAutomationRulesPageUi;
       /** `/dashboard/automations` — scheduled workflows */
       workflowAutomationsPage: WorkflowAutomationsPageUi;
+      /** `/dashboard/agency-branding` — white-label PDF */
+      agencyBrandingPage: AgencyBrandingPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1031,6 +1035,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       crmApiKeysPage: crmApiKeysPageUiIt,
       crmAutomationRulesPage: crmAutomationRulesPageUiIt,
       workflowAutomationsPage: workflowAutomationsPageUiIt,
+      agencyBrandingPage: agencyBrandingPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1861,6 +1866,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       crmApiKeysPage: crmApiKeysPageUiEn,
       crmAutomationRulesPage: crmAutomationRulesPageUiEn,
       workflowAutomationsPage: workflowAutomationsPageUiEn,
+      agencyBrandingPage: agencyBrandingPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

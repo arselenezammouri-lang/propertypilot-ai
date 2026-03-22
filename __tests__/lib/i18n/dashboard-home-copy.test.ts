@@ -146,4 +146,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itW.emailTypes.length).toBeGreaterThanOrEqual(6);
     expect(enW.repeatIntervals.map((x) => x.value)).toEqual(['once', 'daily', 'weekly']);
   });
+
+  it('agencyBrandingPage for IT/EN', () => {
+    const itB = getTranslation('it').dashboard.agencyBrandingPage;
+    const enB = getTranslation('en').dashboard.agencyBrandingPage;
+    expect(itB.previewFeatures.length).toBe(3);
+    expect(enB.previewPriceSample).toMatch(/\$|€/);
+    expect(itB.loadErrorGeneric.length).toBeGreaterThan(5);
+    expect(enB.emailLabel.toLowerCase()).toContain('mail');
+  });
 });

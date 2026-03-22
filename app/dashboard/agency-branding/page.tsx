@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 interface AgencyBranding {
   id: number;
@@ -51,55 +52,19 @@ interface AgencyBranding {
 export default function AgencyBrandingPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = (isItalian ? "it" : "en") as "it" | "en";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
   const { plan, isLoading: planLoading } = useUsageLimits();
   const [isLoading, setIsLoading] = useState(true);
 
-  const t = {
-    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    pageTitle: isItalian ? "Branding Agenzia" : "Agency Branding",
-    pageSubtitle: isItalian ? "Personalizza le schede PDF con il tuo brand White Label" : "Customize PDF sheets with your White Label brand",
-    agencyInfoTitle: isItalian ? "Informazioni Agenzia" : "Agency Information",
-    agencyInfoDesc: isItalian ? "Dati base della tua agenzia immobiliare" : "Basic data for your real estate agency",
-    agencyNameLabel: isItalian ? "Nome Agenzia *" : "Agency Name *",
-    agencyNamePlaceholder: isItalian ? "es. Immobiliare Rossi" : "e.g. Rossi Real Estate",
-    logoUrlLabel: isItalian ? "URL Logo (opzionale)" : "Logo URL (optional)",
-    logoUrlHelper: isItalian ? "Inserisci l'URL del logo della tua agenzia (formato PNG o JPG consigliato)" : "Enter your agency logo URL (PNG or JPG format recommended)",
-    websiteLabel: isItalian ? "Sito Web (opzionale)" : "Website (optional)",
-    websitePlaceholder: isItalian ? "https://www.tuaagenzia.it" : "https://www.youragency.com",
-    contactsTitle: isItalian ? "Contatti" : "Contacts",
-    contactsDesc: isItalian ? "Informazioni di contatto per le schede PDF" : "Contact information for PDF sheets",
-    contactNameLabel: isItalian ? "Nome Referente" : "Contact Name",
-    contactNamePlaceholder: isItalian ? "es. Mario Rossi" : "e.g. John Smith",
-    phoneLabel: isItalian ? "Telefono" : "Phone",
-    phonePlaceholder: isItalian ? "+39 02 1234567" : "+1 555 1234567",
-    emailPlaceholder: isItalian ? "info@agenzia.it" : "info@agency.com",
-    colorsTitle: isItalian ? "Colori Brand" : "Brand Colors",
-    colorsDesc: isItalian ? "Personalizza i colori delle tue schede PDF" : "Customize the colors of your PDF sheets",
-    primaryColor: isItalian ? "Colore Primario" : "Primary Color",
-    secondaryColor: isItalian ? "Colore Secondario" : "Secondary Color",
-    accentColor: isItalian ? "Colore Accento" : "Accent Color",
-    saving: isItalian ? "Salvataggio..." : "Saving...",
-    updateBranding: isItalian ? "Aggiorna Branding" : "Update Branding",
-    saveBranding: isItalian ? "Salva Branding" : "Save Branding",
-    previewTitle: isItalian ? "Anteprima Scheda PDF" : "PDF Sheet Preview",
-    previewDesc: isItalian ? "Ecco come apparirà la tua scheda White Label" : "Here's how your White Label sheet will look",
-    previewPropertyTitle: isItalian ? "Titolo Immobile" : "Property Title",
-    previewAgencyName: isItalian ? "Nome Agenzia" : "Agency Name",
-    previewContact: isItalian ? "Nome Referente" : "Contact Name",
-    previewPhone: isItalian ? "+39 000 0000000" : "+1 000 0000000",
-    previewWebsite: isItalian ? "www.agenzia.it" : "www.agency.com",
-    previewDesc2: isItalian ? "Splendido appartamento in zona centrale, luminoso e ristrutturato con finiture di pregio. Ideale per famiglie..." : "Splendid apartment in central area, bright and renovated with quality finishes. Ideal for families...",
-    brandingConfigured: isItalian ? "Branding configurato - Usa \"White Label\" nella generazione PDF" : "Branding configured - Use \"White Label\" in PDF generation",
-    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
-    saved: isItalian ? "Branding salvato!" : "Branding saved!",
-    savedDesc: isItalian ? "Il profilo della tua agenzia è stato salvato con successo." : "Your agency profile has been saved successfully.",
-    saveError: isItalian ? "Errore nel salvataggio" : "Save error",
-    loadForbidden: isItalian
-      ? "Il branding white-label richiede piano PRO o AGENCY con pagamento attivo."
-      : "White-label branding requires an active PRO or AGENCY plan with confirmed billing.",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.agencyBrandingPage,
+    [locale]
+  );
+
+  const loadForbiddenRef = useRef(t.loadForbidden);
+  const loadErrorGenericRef = useRef(t.loadErrorGeneric);
+  loadForbiddenRef.current = t.loadForbidden;
+  loadErrorGenericRef.current = t.loadErrorGeneric;
   const [isSaving, setIsSaving] = useState(false);
   const [hasExisting, setHasExisting] = useState(false);
 
@@ -126,7 +91,7 @@ export default function AgencyBrandingPage() {
               ...premiumFeatureToast(
                 feedbackLocale,
                 "agencyBrandingWhiteLabel",
-                res.message || res.error || t.loadForbidden
+                res.message || res.error || loadForbiddenRef.current
               ),
             });
           } else {
@@ -136,7 +101,7 @@ export default function AgencyBrandingPage() {
                 feedbackLocale,
                 "agencyBrandingWhiteLabel",
                 { status: res.status, message: res.message, error: res.error },
-                isItalian ? "Impossibile caricare il branding." : "Could not load branding."
+                loadErrorGenericRef.current
               ),
             });
           }
@@ -167,7 +132,7 @@ export default function AgencyBrandingPage() {
       }
     };
     void loadBranding();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; t/feedback stable enough for toast
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; refs carry latest copy for toasts
   }, []);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
@@ -205,7 +170,7 @@ export default function AgencyBrandingPage() {
             ...premiumFeatureToast(
               feedbackLocale,
               "agencyBrandingWhiteLabel",
-              res.message || res.error || t.loadForbidden
+              res.message || res.error || loadForbiddenRef.current
             ),
           });
           return;
@@ -265,7 +230,11 @@ export default function AgencyBrandingPage() {
           !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
         }
         actions={
-          <Link href="/dashboard" className="text-sm text-white/70 hover:text-white">
+          <Link
+            href="/dashboard"
+            className="text-sm text-white/70 hover:text-white"
+            aria-label={t.backAria}
+          >
             <span className="inline-flex min-h-11 items-center gap-2 touch-manipulation">
               <ArrowLeft className="h-4 w-4" />
               {t.backToDashboard}
@@ -276,7 +245,7 @@ export default function AgencyBrandingPage() {
 
       <div className="mb-6 flex justify-end">
         <Badge className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
-          🏢 White Label
+          {t.badgeWhiteLabel}
         </Badge>
       </div>
 
@@ -312,7 +281,7 @@ export default function AgencyBrandingPage() {
                 <Input
                   id="logo_url"
                   type="url"
-                  placeholder="https://example.com/logo.png"
+                  placeholder={t.logoUrlPlaceholder}
                   value={formData.logo_url}
                   onChange={(e) => handleInputChange("logo_url", e.target.value)}
                   data-testid="input-logo-url"
@@ -381,7 +350,7 @@ export default function AgencyBrandingPage() {
                 <div className="space-y-2">
                   <Label htmlFor="contact_email" className="flex items-center gap-2">
                     <Mail className="h-4 w-4" />
-                    Email
+                    {t.emailLabel}
                   </Label>
                   <Input
                     id="contact_email"
@@ -513,7 +482,7 @@ export default function AgencyBrandingPage() {
                     // eslint-disable-next-line @next/next/no-img-element -- dynamic logo URL from form
                     <img
                       src={formData.logo_url}
-                      alt="Logo"
+                      alt={t.logoAlt}
                       className="h-8 w-auto object-contain bg-white rounded p-1"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
@@ -528,7 +497,7 @@ export default function AgencyBrandingPage() {
                     className="text-xs font-medium px-2 py-1 rounded"
                     style={{ backgroundColor: formData.secondary_color, color: '#fff' }}
                   >
-                    White Label
+                    {t.previewRibbon}
                   </div>
                 </div>
 
@@ -547,11 +516,11 @@ export default function AgencyBrandingPage() {
                     className="text-xl font-bold"
                     style={{ color: formData.secondary_color }}
                   >
-                    €350.000
+                    {t.previewPriceSample}
                   </p>
-                  
+
                   <div className="mt-3 grid grid-cols-3 gap-2">
-                    {["100 mq", "3 locali", "2 bagni"].map((feature, i) => (
+                    {t.previewFeatures.map((feature, i) => (
                       <div 
                         key={i}
                         className="text-center p-2 rounded text-xs"
