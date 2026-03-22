@@ -1,6 +1,16 @@
 import { getTranslation } from '@/lib/i18n/dictionary';
 
 describe('dashboard home copy (D1)', () => {
+  it('dashboard header chrome keys for IT/EN and ES merge from EN', () => {
+    const it = getTranslation('it').dashboard;
+    const en = getTranslation('en').dashboard;
+    expect(it.navAriaLabel.length).toBeGreaterThan(3);
+    expect(en.commandPaletteOpenAria.toLowerCase()).toMatch(/search|quick|open/i);
+    const es = getTranslation('es').dashboard;
+    expect(es.navAriaLabel).toBe(en.navAriaLabel);
+    expect(es.generate).toBeTruthy();
+  });
+
   it('it and en expose command center strings', () => {
     const it = getTranslation('it').dashboard;
     const en = getTranslation('en').dashboard;

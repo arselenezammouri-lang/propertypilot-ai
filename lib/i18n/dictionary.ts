@@ -74,6 +74,11 @@ export interface TranslationDictionary {
       success: string;
       generate: string;
       signOut: string;
+      /** Header: `<nav aria-label>` */
+      navAriaLabel: string;
+      /** Header: command palette trigger button */
+      commandPaletteOpenAria: string;
+      commandPalettePlaceholder: string;
       currentPlan: string;
       dashboardAI: string;
       thisMonth: string;
@@ -890,6 +895,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       success: 'Successo',
       generate: 'Genera',
       signOut: 'Esci',
+      navAriaLabel: 'Navigazione principale',
+      commandPaletteOpenAria: 'Apri ricerca rapida',
+      commandPalettePlaceholder: 'Cerca…',
       currentPlan: 'Piano Attuale',
       dashboardAI: 'Dashboard AI',
       thisMonth: 'Questo Mese',
@@ -1733,6 +1741,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       success: 'Success',
       generate: 'Generate',
       signOut: 'Sign Out',
+      navAriaLabel: 'Main navigation',
+      commandPaletteOpenAria: 'Open quick search',
+      commandPalettePlaceholder: 'Search…',
       currentPlan: 'Current Plan',
       dashboardAI: 'Dashboard AI',
       thisMonth: 'This Month',
