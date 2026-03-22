@@ -47,6 +47,11 @@ import {
 } from '@/lib/i18n/prospecting-page-ui';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
+import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
+import {
+  listingScraperPageUiEn,
+  listingScraperPageUiIt,
+} from '@/lib/i18n/listing-scraper-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -248,6 +253,8 @@ export interface TranslationDictionary {
       prospectingPage: ProspectingPageUi;
       /** `/dashboard/analyze` — link analysis */
       analyzeLinkPage: AnalyzeLinkPageUi;
+      /** `/dashboard/scraper` — listing import + AI pack */
+      listingScraperPage: ListingScraperPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1077,6 +1084,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       packagesPage: packagesPageUiIt,
       prospectingPage: prospectingPageUiIt,
       analyzeLinkPage: analyzeLinkPageUiIt,
+      listingScraperPage: listingScraperPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1915,6 +1923,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       packagesPage: packagesPageUiEn,
       prospectingPage: prospectingPageUiEn,
       analyzeLinkPage: analyzeLinkPageUiEn,
+      listingScraperPage: listingScraperPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

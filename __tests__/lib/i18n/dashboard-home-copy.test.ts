@@ -217,4 +217,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itA.copyTitleSnippetLabel).toContain('{n}');
     expect(enA.badgeZillow).toContain('Zillow');
   });
+
+  it('listingScraperPage for IT/EN', () => {
+    const itS = getTranslation('it').dashboard.listingScraperPage;
+    const enS = getTranslation('en').dashboard.listingScraperPage;
+    expect(itS.moreFeatures).toContain('{n}');
+    expect(enS.pageTitle.toLowerCase()).toContain('listing');
+    expect(itS.suggestionHint).toBeTruthy();
+    expect(enS.saveToLibrary.toLowerCase()).toContain('library');
+  });
 });
