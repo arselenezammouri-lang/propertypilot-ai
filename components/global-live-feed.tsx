@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Activity, Globe, Zap } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 
@@ -62,25 +62,7 @@ export function GlobalLiveFeed() {
   const { locale, timezone } = useLocaleContext();
   const [activities, setActivities] = useState<LiveActivity[]>([]);
   const [activeLocations, setActiveLocations] = useState<Set<string>>(new Set());
-  const router = useRouter();
-  const t = {
-    it: {
-      deal: "Deal Oro",
-      call: "Chiamata AI",
-      staging: "Virtual Staging",
-      priceDrop: "Price Drop",
-      subtitle: "Attività globale in tempo reale",
-      cta: "Sei parte di un network globale di elite. Non restare indietro.",
-    },
-    en: {
-      deal: "Golden Deal",
-      call: "AI Call",
-      staging: "Virtual Staging",
-      priceDrop: "Price Drop",
-      subtitle: "Global real-time activity",
-      cta: "You are part of a global elite network. Do not fall behind.",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.liveFeed;
 
   useEffect(() => {
     // Genera attività iniziale
@@ -108,10 +90,10 @@ export function GlobalLiveFeed() {
     const activityType = activityTypes[Math.floor(Math.random() * activityTypes.length)];
 
     const messages = {
-      deal: `${t.deal} ${locale === "it" ? "rilevato a" : "detected in"} ${city.name}`,
-      call: `${t.call} ${locale === "it" ? "fissata con successo a" : "successfully scheduled in"} ${city.name}`,
-      staging: `${t.staging} ${locale === "it" ? "generato per immobile a" : "generated for property in"} ${city.name}`,
-      price_drop: `Price Drop Sniper attivato a ${city.name}`,
+      deal: `${t.deal} ${t.infixDeal} ${city.name}`,
+      call: `${t.call} ${t.infixCall} ${city.name}`,
+      staging: `${t.staging} ${t.infixStaging} ${city.name}`,
+      price_drop: `${t.priceDropLine} ${city.name}`,
     };
 
     const newActivity: LiveActivity = {

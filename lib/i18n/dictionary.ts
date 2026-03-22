@@ -74,6 +74,28 @@ export interface TranslationDictionary {
       commandCenterTitle: string;
       commandCenterSubtitle: string;
       newListingCta: string;
+      /** Live feed widget (dashboard home) */
+      liveFeed: {
+        deal: string;
+        call: string;
+        staging: string;
+        priceDrop: string;
+        subtitle: string;
+        cta: string;
+        infixDeal: string;
+        infixCall: string;
+        infixStaging: string;
+        priceDropLine: string;
+      };
+      /** Suggerimenti in fondo alla dashboard */
+      proTips: {
+        ariaSection: string;
+        title: string;
+        tip1: string;
+        tip2: string;
+        tip3: string;
+      };
+      docsHubOpen: string;
     };
 
   // Auth (Login / Signup)
@@ -610,6 +632,26 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto.',
       newListingCta: 'Nuovo annuncio',
+      liveFeed: {
+        deal: 'Deal Oro',
+        call: 'Chiamata AI',
+        staging: 'Virtual Staging',
+        priceDrop: 'Price Drop',
+        subtitle: 'Attività globale in tempo reale',
+        cta: 'Sei parte di un network globale di elite. Non restare indietro.',
+        infixDeal: 'rilevato a',
+        infixCall: 'fissata con successo a',
+        infixStaging: 'generato per immobile a',
+        priceDropLine: 'Price Drop Sniper attivato a',
+      },
+      proTips: {
+        ariaSection: 'Suggerimenti Pro',
+        title: 'Suggerimenti Pro per Annunci Migliori',
+        tip1: 'Includi dettagli specifici su posizione, servizi e caratteristiche uniche',
+        tip2: 'Usa metrature accurate e numero stanze per risultati AI migliori',
+        tip3: 'Genera più versioni e scegli quella che si adatta meglio alle tue esigenze',
+      },
+      docsHubOpen: 'Apri Documentation Hub',
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1144,6 +1186,26 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Your plan, usage, and AI tools for listings, leads, and prospecting — in one place.',
       newListingCta: 'New listing',
+      liveFeed: {
+        deal: 'Golden Deal',
+        call: 'AI Call',
+        staging: 'Virtual Staging',
+        priceDrop: 'Price Drop',
+        subtitle: 'Global real-time activity',
+        cta: 'You are part of a global elite network. Do not fall behind.',
+        infixDeal: 'detected in',
+        infixCall: 'successfully scheduled in',
+        infixStaging: 'generated for property in',
+        priceDropLine: 'Price Drop Sniper activated in',
+      },
+      proTips: {
+        ariaSection: 'Pro Tips',
+        title: 'Pro Tips for Better Listings',
+        tip1: 'Include specific details about location, amenities, and unique features',
+        tip2: 'Use accurate square footage and room count for better AI results',
+        tip3: 'Generate multiple versions and choose the one that best fits your needs',
+      },
+      docsHubOpen: 'Open Documentation Hub',
     },
     auth: {
       backToHome: 'Back to home',

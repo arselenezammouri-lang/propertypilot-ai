@@ -2,27 +2,17 @@
 
 import { Sparkles } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 export function DashboardProTips() {
   const { locale } = useLocaleContext();
-
-  const t = {
-    it: {
-      title: "Suggerimenti Pro per Annunci Migliori",
-      tip1: "Includi dettagli specifici su posizione, servizi e caratteristiche uniche",
-      tip2: "Usa metrature accurate e numero stanze per risultati AI migliori",
-      tip3: "Genera più versioni e scegli quella che si adatta meglio alle tue esigenze",
-    },
-    en: {
-      title: "Pro Tips for Better Listings",
-      tip1: "Include specific details about location, amenities, and unique features",
-      tip2: "Use accurate square footage and room count for better AI results",
-      tip3: "Generate multiple versions and choose the one that best fits your needs",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.proTips;
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12" aria-label={locale === "it" ? "Suggerimenti Pro" : "Pro Tips"}>
+    <section
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
+      aria-label={t.ariaSection}
+    >
       <div className="futuristic-card p-8 md:p-10 bg-gradient-to-br from-royal-purple/10 to-electric-blue/5 border-royal-purple/30 animate-fade-in-up delay-600">
         <div className="flex items-start space-x-5">
           <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-royal-purple/30 to-electric-blue/20 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-glow-purple">

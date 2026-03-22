@@ -122,7 +122,7 @@ Per **ogni** area applicare la checklist in [DESIGN_UX_LOCALE.md §5](../DESIGN_
 | D2 | [VERCEL_DEPLOY_CHECKLIST.md](./VERCEL_DEPLOY_CHECKLIST.md) + smoke test su staging |
 | D3 | Raccolta feedback founder + 1–2 utenti beta su **compiti reali** (non “mi piace il colore”) |
 
-**Stato D1 (parziale):** home `/dashboard` — titolo, sottotitolo e CTA “nuovo annuncio” da `getTranslation(locale)` (`dashboard.commandCenterTitle`, `commandCenterSubtitle`, `newListingCta` in `lib/i18n/dictionary.ts` per IT/EN; ES/FR/… via deep merge su EN). Etichette `DeferredMount` allineate al cookie `propertypilot_locale` (non solo IT/EN).
+**Stato D1 (parziale):** home `/dashboard` — titolo, sottotitolo e CTA da dizionario; componenti **GlobalLiveFeed**, **DashboardProTips**, **DashboardHelpButton** usano `dashboard.liveFeed`, `dashboard.proTips`, `dashboard.docsHubOpen` (`getTranslation`). IT/EN in repo; altre lingue → merge su EN. Etichette `DeferredMount` dal cookie `propertypilot_locale`.
 
 **Stato D2:** [SMOKE_STAGING.md](./SMOKE_STAGING.md) (checklist manuale post-deploy); script `npm run smoke:public` (Playwright `e2e/smoke-public.spec.ts`, `PLAYWRIGHT_BASE_URL`); voce aggiunta in [VERCEL_DEPLOY_CHECKLIST.md](./VERCEL_DEPLOY_CHECKLIST.md).
 

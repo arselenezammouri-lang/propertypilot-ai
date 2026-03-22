@@ -17,4 +17,14 @@ describe('dashboard home copy (D1)', () => {
     expect(es.commandCenterTitle).toBeTruthy();
     expect(es.newListingCta).toBeTruthy();
   });
+
+  it('liveFeed and proTips exist for it and en', () => {
+    const it = getTranslation('it').dashboard;
+    const en = getTranslation('en').dashboard;
+    expect(it.liveFeed.priceDropLine).toContain('Price Drop');
+    expect(en.liveFeed.infixDeal).toBe('detected in');
+    expect(it.proTips.title).toBeTruthy();
+    expect(en.proTips.ariaSection).toBe('Pro Tips');
+    expect(it.docsHubOpen).toContain('Documentation');
+  });
 });
