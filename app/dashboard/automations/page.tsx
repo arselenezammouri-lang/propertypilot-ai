@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { ProFeaturePaywall } from "@/components/demo-modal";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { WorkflowAutomationTypeId } from "@/lib/i18n/workflow-automations-page-ui";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
@@ -24,25 +26,18 @@ import {
 } from "@/lib/i18n/api-feature-feedback";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
-import { 
-  Settings, 
-  Plus, 
-  Play, 
-  Pause, 
-  Trash2, 
-  Mail, 
-  Clock, 
+import {
+  Settings,
+  Plus,
+  Play,
+  Trash2,
+  Mail,
   Calendar,
-  Sparkles, 
   Loader2,
   ArrowLeft,
   RefreshCw,
   CheckCircle,
-  XCircle,
-  AlertCircle,
-  Zap,
   Share2,
-  FileText
 } from "lucide-react";
 import Link from "next/link";
 import type { Automation } from "@/lib/types/database.types";
@@ -71,117 +66,39 @@ export default function AutomationsPage() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [executingId, setExecutingId] = useState<string | null>(null);
   const [resultDialog, setResultDialog] = useState<{ open: boolean; result: string | null }>({ open: false, result: null });
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
-  const t = {
-    premiumRequired: isItalian
-      ? "Le Automazioni AI sono una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : "AI Automations are a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    success: isItalian ? "Successo!" : "Success!",
-    deleted: isItalian ? "Eliminata!" : "Deleted!",
-    executed: isItalian ? "Eseguita!" : "Executed!",
-    executionDone: isItalian ? "Automazione completata con successo" : "Automation completed successfully",
-    error: isItalian ? "Errore" : "Error",
-    enterName: isItalian ? "Inserisci un nome per l'automazione" : "Enter a name for the automation",
-    fillRequired: isItalian ? "Compila tutti i campi obbligatori" : "Fill in all required fields",
-    selectContent: isItalian ? "Seleziona almeno un tipo di contenuto" : "Select at least one content type",
-    active: isItalian ? "Attiva" : "Active",
-    paused: isItalian ? "In pausa" : "Paused",
-    completed: isItalian ? "Completata" : "Completed",
-    failed: isItalian ? "Fallita" : "Failed",
-    notAvailable: isItalian ? "N/A" : "N/A",
-    dashboard: "Dashboard",
-    pageTitle: isItalian ? "Workflow automazioni" : "Automation workflows",
-    pageSubtitle: isItalian
-      ? "Follow-up pianificati, reminder visite e contenuti ricorrenti — distinto dalle regole if/then sul CRM."
-      : "Scheduled follow-ups, visit reminders, and recurring content — separate from CRM if/then rules.",
-    crmRulesLink: isItalian ? "Regole CRM (if/then)" : "CRM rules (if/then)",
-    crmRulesHint: isItalian
-      ? "Per trigger su eventi lead (nuovo lead, cambio stato, score), usa le regole CRM."
-      : "For triggers on lead events (new lead, status change, score), use CRM rules.",
-    newAutomation: isItalian ? "Nuova Automazione" : "New Automation",
-    createAutomation: isItalian ? "Crea Automazione" : "Create Automation",
-    configureAutomation: isItalian ? "Configura una nuova automazione per la tua agenzia" : "Configure a new automation for your agency",
-    selectAutomationType: isItalian ? "Seleziona il tipo di automazione:" : "Select the automation type:",
-    backToSelection: isItalian ? "Torna alla selezione" : "Back to selection",
-    automationName: isItalian ? "Nome Automazione *" : "Automation Name *",
-    automationNamePlaceholder: isItalian ? "Es. Follow-up Mario Rossi" : "E.g. Mario Rossi follow-up",
-    clientName: isItalian ? "Nome Cliente *" : "Client Name *",
-    clientEmail: isItalian ? "Email Cliente *" : "Client Email *",
-    propertyType: isItalian ? "Tipo Immobile" : "Property Type",
-    area: isItalian ? "Zona" : "Area",
-    emailType: isItalian ? "Tipo Email" : "Email Type",
-    selectType: isItalian ? "Seleziona tipo" : "Select type",
-    sendInHours: isItalian ? "Invio tra (ore)" : "Send in (hours)",
-    visitDate: isItalian ? "Data Visita *" : "Visit Date *",
-    reminderType: isItalian ? "Tipo Promemoria" : "Reminder Type",
-    select: isItalian ? "Seleziona" : "Select",
-    contentTypes: isItalian ? "Tipi di Contenuto *" : "Content Types *",
-    propertyFocus: isItalian ? "Focus Proprieta" : "Property Focus",
-    targetMarket: isItalian ? "Mercato Target" : "Target Market",
-    selectMarket: isItalian ? "Seleziona mercato" : "Select market",
-    repeat: isItalian ? "Ripetizione" : "Repeat",
-    selectRepeat: isItalian ? "Seleziona ripetizione" : "Select repeat",
-    creating: isItalian ? "Creazione in corso..." : "Creating...",
-    paywallTitle: isItalian ? "Workflow automazioni" : "Automation workflows",
-    paywallDescription: isItalian
-      ? "Questa funzionalita e disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare le automazioni complete."
-      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock full automations.",
-    noAutomations: isItalian ? "Nessuna automazione" : "No automations",
-    lastResult: isItalian ? "Ultimo Risultato:" : "Last Result:",
-    resultTitle: isItalian ? "Risultato Automazione" : "Automation Result",
-    close: isItalian ? "Chiudi" : "Close",
-    activeCount: (count: number) => isItalian ? `${count} attive` : `${count} active`,
-    yourAutomations: isItalian ? "Le Tue Automazioni" : "Your Automations",
-    yourAutomationsDesc: isItalian ? "Gestisci le automazioni attive per la tua agenzia" : "Manage active automations for your agency",
-    noAutomationDesc: isItalian ? "Crea la tua prima automazione per iniziare" : "Create your first automation to get started",
-    createFirstAutomation: isItalian ? "Crea Prima Automazione" : "Create First Automation",
-    daily: isItalian ? "Giornaliero" : "Daily",
-    weekly: isItalian ? "Settimanale" : "Weekly",
-    type: isItalian ? "Tipo" : "Type",
-    nextRun: isItalian ? "Prossima esecuzione" : "Next run",
-    lastRun: isItalian ? "Ultima esecuzione" : "Last run",
-    runs: isItalian ? "Esecuzioni" : "Runs",
-  };
-  const automationTypes = isItalian
-    ? [
-        { id: "followup", label: "Follow-up Automatico Lead", icon: Mail, description: "Invia email di follow-up automatiche ai tuoi lead", color: "from-blue-500 to-indigo-600" },
-        { id: "reminder", label: "Reminder Appuntamenti", icon: Calendar, description: "Promemoria automatici per visite immobiliari", color: "from-amber-500 to-orange-600" },
-        { id: "weekly-content", label: "Contenuti Settimanali", icon: Share2, description: "Genera automaticamente post social, newsletter e titoli", color: "from-emerald-500 to-teal-600" },
-      ]
-    : [
-        { id: "followup", label: "Automatic Lead Follow-up", icon: Mail, description: "Send automatic follow-up emails to your leads", color: "from-blue-500 to-indigo-600" },
-        { id: "reminder", label: "Appointment Reminders", icon: Calendar, description: "Automatic reminders for property visits", color: "from-amber-500 to-orange-600" },
-        { id: "weekly-content", label: "Weekly Content", icon: Share2, description: "Automatically generate social posts, newsletters, and titles", color: "from-emerald-500 to-teal-600" },
-      ];
-  const emailTypes = isItalian
-    ? [
-        { value: "immediate", label: "Risposta Immediata" },
-        { value: "24h", label: "Follow-up 24h" },
-        { value: "72h", label: "Follow-up 72h" },
-        { value: "appointment", label: "Appuntamento" },
-        { value: "post-visit", label: "Post-Visita" },
-        { value: "luxury", label: "Luxury Lead" },
-      ]
-    : [
-        { value: "immediate", label: "Immediate Response" },
-        { value: "24h", label: "24h Follow-up" },
-        { value: "72h", label: "72h Follow-up" },
-        { value: "appointment", label: "Appointment" },
-        { value: "post-visit", label: "Post-Visit" },
-        { value: "luxury", label: "Luxury Lead" },
-      ];
-  const repeatIntervals = isItalian
-    ? [
-        { value: "once", label: "Una volta" },
-        { value: "daily", label: "Giornaliero" },
-        { value: "weekly", label: "Settimanale" },
-      ]
-    : [
-        { value: "once", label: "Once" },
-        { value: "daily", label: "Daily" },
-        { value: "weekly", label: "Weekly" },
-      ];
+  const feedbackLocale = locale === "it" ? "it" : "en";
+
+  const ui = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.workflowAutomationsPage,
+    [locale]
+  );
+  const t = ui;
+  const premiumMsgRef = useRef(t.premiumRequired);
+  premiumMsgRef.current = t.premiumRequired;
+
+  const automationTypes = useMemo(() => {
+    const ids: WorkflowAutomationTypeId[] = ["followup", "reminder", "weekly-content"];
+    const icons = {
+      followup: Mail,
+      reminder: Calendar,
+      "weekly-content": Share2,
+    } as const;
+    const colors = {
+      followup: "from-blue-500 to-indigo-600",
+      reminder: "from-amber-500 to-orange-600",
+      "weekly-content": "from-emerald-500 to-teal-600",
+    } as const;
+    return ids.map((id) => ({
+      id,
+      label: ui.automationTypes[id].label,
+      description: ui.automationTypes[id].description,
+      icon: icons[id],
+      color: colors[id],
+    }));
+  }, [ui]);
+
+  const emailTypes = ui.emailTypes;
+  const repeatIntervals = ui.repeatIntervals;
 
   const [formData, setFormData] = useState<FormData>({
     type: "followup",
@@ -205,12 +122,12 @@ export default function AutomationsPage() {
 
   const planBadgeLabel =
     userPlan === "agency"
-      ? "Agency"
+      ? t.planAgency
       : userPlan === "pro"
-        ? "Pro"
+        ? t.planPro
         : userPlan === "starter"
-          ? "Starter"
-          : "Free";
+          ? t.planStarter
+          : t.planFree;
 
   const { data: automationsData, isLoading } = useQuery<{ automations: Automation[] }>({
     queryKey: ["/api/automations"],
@@ -229,7 +146,7 @@ export default function AutomationsPage() {
       const result = await response.json();
       
       if (response.status === 403) {
-        throw new Error(result.message || result.error || t.premiumRequired);
+        throw new Error(result.message || result.error || premiumMsgRef.current);
       }
       
       if (!response.ok) throw new Error(result.error);
@@ -435,7 +352,7 @@ export default function AutomationsPage() {
         href="/dashboard"
         className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
         data-testid="button-back"
-        aria-label="Back to dashboard"
+        aria-label={t.backAria}
       >
         <ArrowLeft className="h-4 w-4" />
         {t.dashboard}
@@ -519,7 +436,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="client_name">{t.clientName}</Label>
                               <Input
                                 id="client_name"
-                                placeholder="Mario Rossi"
+                                placeholder={t.placeholderClientName}
                                 value={formData.client_name}
                                 onChange={(e) => setFormData(prev => ({ ...prev, client_name: e.target.value }))}
                                 data-testid="input-client-name"
@@ -530,7 +447,7 @@ export default function AutomationsPage() {
                               <Input
                                 id="client_email"
                                 type="email"
-                                placeholder="mario@email.com"
+                                placeholder={t.placeholderClientEmail}
                                 value={formData.client_email}
                                 onChange={(e) => setFormData(prev => ({ ...prev, client_email: e.target.value }))}
                                 data-testid="input-client-email"
@@ -542,7 +459,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_type">{t.propertyType}</Label>
                               <Input
                                 id="property_type"
-                                placeholder="Appartamento, Villa..."
+                                placeholder={t.placeholderPropertyType}
                                 value={formData.property_type}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_type: e.target.value }))}
                                 data-testid="input-property-type"
@@ -552,7 +469,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_location">{t.area}</Label>
                               <Input
                                 id="property_location"
-                                placeholder="Milano Centro"
+                                placeholder={t.placeholderArea}
                                 value={formData.property_location}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_location: e.target.value }))}
                                 data-testid="input-property-location"
@@ -622,8 +539,8 @@ export default function AutomationsPage() {
                                   <SelectValue placeholder={t.select} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="3h">{isItalian ? "3 ore prima" : "3 hours before"}</SelectItem>
-                                  <SelectItem value="24h">{isItalian ? "24 ore prima" : "24 hours before"}</SelectItem>
+                                  <SelectItem value="3h">{t.reminder3hBefore}</SelectItem>
+                                  <SelectItem value="24h">{t.reminder24hBefore}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -637,9 +554,9 @@ export default function AutomationsPage() {
                             <Label className="mb-3 block">{t.contentTypes}</Label>
                             <div className="flex flex-wrap gap-2">
                               {[
-                                { value: "social_post", label: isItalian ? "Post Social" : "Social Posts" },
-                                { value: "newsletter", label: "Newsletter" },
-                                { value: "ab_titles", label: isItalian ? "Titoli A/B" : "A/B Titles" },
+                                { value: "social_post", label: t.contentSocialPost },
+                                { value: "newsletter", label: t.contentNewsletter },
+                                { value: "ab_titles", label: t.contentAbTitles },
                               ].map((item) => (
                                 <button
                                   key={item.value}
@@ -648,7 +565,7 @@ export default function AutomationsPage() {
                                     setFormData(prev => ({
                                       ...prev,
                                       content_types: prev.content_types.includes(item.value)
-                                        ? prev.content_types.filter(t => t !== item.value)
+                                        ? prev.content_types.filter((id) => id !== item.value)
                                         : [...prev.content_types, item.value]
                                     }));
                                   }}
@@ -669,7 +586,7 @@ export default function AutomationsPage() {
                               <Label htmlFor="property_focus">{t.propertyFocus}</Label>
                               <Input
                                 id="property_focus"
-                                placeholder="Es. Ville di lusso"
+                                placeholder={t.placeholderPropertyFocus}
                                 value={formData.property_type}
                                 onChange={(e) => setFormData(prev => ({ ...prev, property_type: e.target.value }))}
                                 data-testid="input-property-focus"
@@ -685,9 +602,9 @@ export default function AutomationsPage() {
                                   <SelectValue placeholder={t.selectMarket} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="ita">{isItalian ? "Italia" : "Italy"}</SelectItem>
-                                  <SelectItem value="usa">USA</SelectItem>
-                                  <SelectItem value="international">{isItalian ? "Internazionale" : "International"}</SelectItem>
+                                  <SelectItem value="ita">{t.marketItaly}</SelectItem>
+                                  <SelectItem value="usa">{t.marketUsa}</SelectItem>
+                                  <SelectItem value="international">{t.marketInternational}</SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
@@ -728,7 +645,7 @@ export default function AutomationsPage() {
                         ) : (
                           <>
                             <Plus className="h-4 w-4 mr-2" />
-                            Crea Automazione
+                            {t.submitCreate}
                           </>
                         )}
                       </Button>
@@ -762,7 +679,9 @@ export default function AutomationsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{count}</div>
-                  <p className="text-sm text-muted-foreground">{t.activeCount(activeCount)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t.activeCount.replace("{count}", String(activeCount))}
+                  </p>
                 </CardContent>
               </Card>
             );
@@ -819,7 +738,10 @@ export default function AutomationsPage() {
                             )}
                           </div>
                           <div className="text-sm text-muted-foreground space-y-1">
-                            <p>{t.type}: {automationTypes.find(t => t.id === automation.type)?.label}</p>
+                            <p>
+                              {t.type}:{" "}
+                              {automationTypes.find((at) => at.id === automation.type)?.label}
+                            </p>
                             {automation.next_run && (
                               <p>{t.nextRun}: {formatDate(automation.next_run)}</p>
                             )}
@@ -869,7 +791,7 @@ export default function AutomationsPage() {
                     </div>
                     {automation.last_result && (
                       <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs font-medium text-muted-foreground mb-1">Ultimo Risultato:</p>
+                        <p className="text-xs font-medium text-muted-foreground mb-1">{t.lastResult}</p>
                         <p className="text-sm whitespace-pre-wrap">{automation.last_result.substring(0, 500)}{automation.last_result.length > 500 && "..."}</p>
                       </div>
                     )}

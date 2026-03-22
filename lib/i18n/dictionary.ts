@@ -20,6 +20,11 @@ import {
   crmAutomationRulesPageUiEn,
   crmAutomationRulesPageUiIt,
 } from '@/lib/i18n/crm-automation-rules-page-ui';
+import type { WorkflowAutomationsPageUi } from '@/lib/i18n/workflow-automations-page-ui';
+import {
+  workflowAutomationsPageUiEn,
+  workflowAutomationsPageUiIt,
+} from '@/lib/i18n/workflow-automations-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -203,6 +208,8 @@ export interface TranslationDictionary {
       crmApiKeysPage: CrmApiKeysPageUi;
       /** `/dashboard/crm/automations` — if/then CRM rules */
       crmAutomationRulesPage: CrmAutomationRulesPageUi;
+      /** `/dashboard/automations` — scheduled workflows */
+      workflowAutomationsPage: WorkflowAutomationsPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1023,6 +1030,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadPipelinePage: leadPipelinePageUiIt,
       crmApiKeysPage: crmApiKeysPageUiIt,
       crmAutomationRulesPage: crmAutomationRulesPageUiIt,
+      workflowAutomationsPage: workflowAutomationsPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1852,6 +1860,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       leadPipelinePage: leadPipelinePageUiEn,
       crmApiKeysPage: crmApiKeysPageUiEn,
       crmAutomationRulesPage: crmAutomationRulesPageUiEn,
+      workflowAutomationsPage: workflowAutomationsPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

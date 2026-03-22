@@ -137,4 +137,13 @@ describe('dashboard home copy (D1)', () => {
     expect(enR.triggers.new_lead.label).toMatch(/lead/i);
     expect(itR.howItWorksList.length).toBeGreaterThanOrEqual(4);
   });
+
+  it('workflowAutomationsPage for IT/EN', () => {
+    const itW = getTranslation('it').dashboard.workflowAutomationsPage;
+    const enW = getTranslation('en').dashboard.workflowAutomationsPage;
+    expect(itW.activeCount).toContain('{count}');
+    expect(enW.automationTypes.followup.label.length).toBeGreaterThan(3);
+    expect(itW.emailTypes.length).toBeGreaterThanOrEqual(6);
+    expect(enW.repeatIntervals.map((x) => x.value)).toEqual(['once', 'daily', 'weekly']);
+  });
 });
