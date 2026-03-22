@@ -198,4 +198,14 @@ describe('dashboard home copy (D1)', () => {
     expect(enPk.boostTagline.length).toBeGreaterThan(5);
     expect(itPk.statusPending).toContain('sospeso');
   });
+
+  it('prospectingPage for IT/EN', () => {
+    const itP = getTranslation('it').dashboard.prospectingPage;
+    const enP = getTranslation('en').dashboard.prospectingPage;
+    expect(itP.callsRemaining).toContain('{n}');
+    expect(enP.callsRemaining).toContain('{n}');
+    expect(itP.liveFeedAiCalling).toContain('{title}');
+    expect(enP.statusUpdatedDesc).toContain('{label}');
+    expect(itP.imageInsightTags.length).toBeGreaterThanOrEqual(4);
+  });
 });

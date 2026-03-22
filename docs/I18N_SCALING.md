@@ -19,6 +19,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Perfect Copy (`/dashboard/perfect-copy`): `lib/i18n/perfect-copy-page-ui.ts` → `dashboard.perfectCopyPage`.  
    - Referral (`/dashboard/referral`): `lib/i18n/referral-page-ui.ts` → `dashboard.referralPage`.  
    - Pacchetti premium (`/dashboard/packages`): `lib/i18n/packages-page-ui.ts` → `dashboard.packagesPage`.  
+   - Prospecting / Arbitrage Command Center (`/dashboard/prospecting`): `lib/i18n/prospecting-page-ui.ts` → `dashboard.prospectingPage`.  
    - Evitare oggetti `it: { … } / en: { … }` inline nei componenti: non scalano a ES/FR/DE/PT/AR e rompono il merge profondo.
 
 2. **Lingue supportate**  
