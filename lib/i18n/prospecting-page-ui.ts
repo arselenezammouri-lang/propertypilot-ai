@@ -1,5 +1,11 @@
 /** Copy for `/dashboard/prospecting` — Arbitrage Command Center. IT + EN. */
 
+import type { ProspectingNextActionUi } from '@/lib/i18n/prospecting-next-action-ui';
+import {
+  prospectingNextActionUiEn,
+  prospectingNextActionUiIt,
+} from '@/lib/i18n/prospecting-next-action-ui';
+
 export type ProspectingStatusRowLabels = {
   new: string;
   analyzed: string;
@@ -170,6 +176,8 @@ export type ProspectingPageUi = {
   priceNa: string;
   /** Mock AI photo tags (UI preview) */
   imageInsightTags: string[];
+  /** Next-action column (localized) */
+  nextAction: ProspectingNextActionUi;
 };
 
 const it: ProspectingPageUi = {
@@ -355,6 +363,7 @@ const it: ProspectingPageUi = {
     'Impianto elettrico datato',
     'Tetto in buone condizioni',
   ],
+  nextAction: prospectingNextActionUiIt,
 };
 
 const en: ProspectingPageUi = {
@@ -536,6 +545,7 @@ const en: ProspectingPageUi = {
     'Dated electrical',
     'Roof in good condition',
   ],
+  nextAction: prospectingNextActionUiEn,
 };
 
 export const prospectingPageUiIt = it;

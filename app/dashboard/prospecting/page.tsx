@@ -109,7 +109,7 @@ import {
   type ProspectingPlatformIconKey,
 } from "@/lib/i18n/prospecting-platforms";
 import { buildProspectingWhatsappMessage } from "@/lib/i18n/prospecting-whatsapp-outreach";
-import type { NextActionIconKey } from "@/lib/ai/next-action-suggestion";
+import type { NextActionIconKey } from "@/lib/ai/next-action-types";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -1215,7 +1215,7 @@ export default function ProspectingPage() {
                                     ? Math.floor((new Date().getTime() - new Date(listing.updated_at).getTime()) / (1000 * 60 * 60 * 24))
                                     : 0;
                                   
-                                  const nextAction = suggestNextAction({
+                                  const nextAction = suggestNextAction(t.nextAction, {
                                     status: listing.status === 'new' ? 'new' :
                                             listing.status === 'called' ? 'called' :
                                             listing.status === 'appointment_set' ? 'in_negotiation' :

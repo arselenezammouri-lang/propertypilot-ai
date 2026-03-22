@@ -324,6 +324,11 @@ describe('dashboard home copy (D1)', () => {
     expect(itP.imageInsightTags.length).toBeGreaterThanOrEqual(4);
     expect(itP.eliteDealBadge).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
     expect(enP.callNow.toUpperCase()).toContain('CALL');
+    expect(itP.nextAction.priceDrop.reasoning).toContain('{pct}');
+    expect(enP.nextAction.estMinutes).toContain('{n}');
+    expect(getTranslation('es').dashboard.prospectingPage.nextAction.monitor.action).toBe(
+      enP.nextAction.monitor.action
+    );
   });
 
   it('analyzeLinkPage for IT/EN', () => {
