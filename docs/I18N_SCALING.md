@@ -30,7 +30,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Notifiche Morning Intel (`/dashboard/settings/notifications`): `lib/i18n/notifications-settings-page-ui.ts` → `dashboard.notificationsSettingsPage`.  
    - Agency Assistant (`/dashboard/agency-assistant`): `lib/i18n/agency-assistant-page-ui.ts` → `dashboard.agencyAssistantPage`.  
    - Perfect Copy (`/dashboard/perfect-copy`): `lib/i18n/perfect-copy-page-ui.ts` → `dashboard.perfectCopyPage`.  
-   - **Tipi transazione** (vendita / affitto / breve): `lib/i18n/transaction-type-ui.ts` → `dashboard.transactionTypes` — condiviso da **Hashtag**, **Titoli A/B**, **Post social** (icone Lucide nel select, no emoji).  
+   - **Tipi transazione** (vendita / affitto / breve): `lib/i18n/transaction-type-ui.ts` → `dashboard.transactionTypes` — condiviso da **Hashtag**, **Titoli A/B**, **Post social**; IT/EN nel modulo, **ES/FR/DE/PT/AR** negli stessi file + `dictionary` (merge).  
+   - **Mappa Predator + Opportunity Radar + Autopilot**: `lib/i18n/dashboard-map-opportunity-autopilot-locales.ts` — `mapTitle`…`mapLanciaChiamata`, `mapPage`, `opportunitiesPage`, `autopilotPage`, `transactionTypes` per ES/FR/DE/PT/AR applicati con spread nel partial `translations.*.dashboard`.  
    - Lead scoring (`/dashboard/lead-score`): `lib/i18n/lead-score-page-ui.ts` → `dashboard.leadScorePage` (badge categoria, mercato senza bandiere, cache, header “priorità”; icone Lucide al posto di emoji in badge template).  
    - Referral (`/dashboard/referral`): `lib/i18n/referral-page-ui.ts` → `dashboard.referralPage`.  
    - Pacchetti premium (`/dashboard/packages`): `lib/i18n/packages-page-ui.ts` → `dashboard.packagesPage`.  

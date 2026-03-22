@@ -384,7 +384,21 @@ describe('dashboard home copy (D1)', () => {
     expect(enD.leadScorePage.categoryHot.toLowerCase()).toMatch(/hot/);
     expect(itD.leadScorePage.headerPriorityBadge.length).toBeGreaterThan(3);
     const esD = getTranslation('es').dashboard;
-    expect(esD.transactionTypes.vendita).toBe(enD.transactionTypes.vendita);
+    expect(esD.transactionTypes.vendita.toLowerCase()).toMatch(/venta/);
+    expect(esD.transactionTypes.vendita).not.toBe(enD.transactionTypes.vendita);
     expect(esD.leadScorePage.cacheBadge).toBe(enD.leadScorePage.cacheBadge);
+  });
+
+  it('mapPage + opportunities + autopilot native for ES/FR/DE/PT/AR', () => {
+    const es = getTranslation('es').dashboard;
+    expect(es.mapPage.paywallSubtitle.toLowerCase()).toMatch(/agency|plan/);
+    expect(es.opportunitiesPage.title.toLowerCase()).toMatch(/radar|oportunidad/);
+    expect(es.autopilotPage.title.toLowerCase()).toMatch(/autopilot|mandat/);
+    expect(getTranslation('fr').dashboard.mapPage.backToProspecting.toLowerCase()).toMatch(
+      /prospecting|retour/
+    );
+    expect(getTranslation('de').dashboard.opportunitiesPage.cityPlaceholder).toBe('Berlin');
+    expect(getTranslation('pt').dashboard.transactionTypes.affitto.toLowerCase()).toMatch(/arrend/);
+    expect(getTranslation('ar').dashboard.mapPage.unlockAgency.length).toBeGreaterThan(3);
   });
 });

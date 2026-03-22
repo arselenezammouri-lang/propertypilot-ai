@@ -52,6 +52,13 @@ import {
   prospectingPageUiFr,
   prospectingPageUiPt,
 } from '@/lib/i18n/prospecting-page-ui-locales';
+import {
+  dashboardMapOppAutoAr,
+  dashboardMapOppAutoDe,
+  dashboardMapOppAutoEs,
+  dashboardMapOppAutoFr,
+  dashboardMapOppAutoPt,
+} from '@/lib/i18n/dashboard-map-opportunity-autopilot-locales';
 import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
 import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
 import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
@@ -2924,6 +2931,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Pasar a Pro',
       upgradeToAgency: 'Pasar a Agency',
       prospectingPage: prospectingPageUiEs,
+      ...dashboardMapOppAutoEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3295,6 +3303,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Passer à Pro',
       upgradeToAgency: 'Passer à Agency',
       prospectingPage: prospectingPageUiFr,
+      ...dashboardMapOppAutoFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3666,6 +3675,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Auf Pro upgraden',
       upgradeToAgency: 'Auf Agency upgraden',
       prospectingPage: prospectingPageUiDe,
+      ...dashboardMapOppAutoDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4039,6 +4049,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'Mudar para Pro',
       upgradeToAgency: 'Mudar para Agency',
       prospectingPage: prospectingPageUiPt,
+      ...dashboardMapOppAutoPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4218,6 +4229,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToPro: 'الترقية إلى Pro',
       upgradeToAgency: 'الترقية إلى Agency',
       prospectingPage: prospectingPageUiAr,
+      ...dashboardMapOppAutoAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
