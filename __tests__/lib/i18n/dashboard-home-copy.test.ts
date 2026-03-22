@@ -111,4 +111,12 @@ describe('dashboard home copy (D1)', () => {
     expect(enH.newMessage).toContain('{channel}');
     expect(enH.historyToggle).toContain('{count}');
   });
+
+  it('leadPipelinePage for IT/EN', () => {
+    const itP = getTranslation('it').dashboard.leadPipelinePage;
+    const enP = getTranslation('en').dashboard.leadPipelinePage;
+    expect(itP.movedTo).toContain('{label}');
+    expect(enP.automationRules).toContain('{count}');
+    expect(enP.legendHot).toContain('Hot');
+  });
 });

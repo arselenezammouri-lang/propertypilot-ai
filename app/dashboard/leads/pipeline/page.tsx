@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
@@ -66,40 +67,14 @@ function getScoreBadge(score: number | null): string {
 export default function PipelinePage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = (locale === "it" ? "it" : "en") as "it" | "en";
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.leadPipelinePage,
+    [locale],
+  );
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
-
-  const t = useMemo(() => ({
-    loadingPipeline: isItalian ? "Caricamento pipeline..." : "Loading pipeline...",
-    heroTitle: isItalian ? "Pipeline Leads" : "Leads Pipeline",
-    heroBadge: "🧠 CRM 2.5",
-    heroSubtitle: isItalian
-      ? "Trascina i lead tra le colonne per aggiornare lo stato"
-      : "Drag leads between columns to update their status",
-    tableView: isItalian ? "Vista Tabella" : "Table View",
-    refresh: isItalian ? "Aggiorna" : "Refresh",
-    noLeads: isItalian ? "Nessun lead" : "No leads",
-    openLead: isItalian ? "Apri Lead" : "Open Lead",
-    notAnalyzed: isItalian ? "Non analizzato" : "Not analyzed",
-    errorTitle: isItalian ? "Errore" : "Error",
-    loadError: isItalian ? "Impossibile caricare i lead" : "Cannot load leads",
-    statusUpdated: isItalian ? "Stato aggiornato" : "Status updated",
-    movedTo: (label: string) => isItalian ? `Lead spostato in "${label}"` : `Lead moved to "${label}"`,
-    automationApplied: isItalian ? "⚡ Automazione applicata" : "⚡ Automation applied",
-    automationRules: (n: number) => isItalian ? `${n} regola/e eseguita/e` : `${n} rule(s) executed`,
-    updateError: isItalian ? "Impossibile aggiornare lo stato del lead" : "Cannot update lead status",
-    statusNew: isItalian ? "Nuovi" : "New",
-    statusContacted: isItalian ? "Contattati" : "Contacted",
-    statusFollowup: "Follow-up",
-    statusClosed: isItalian ? "Chiusi" : "Closed",
-    statusLost: isItalian ? "Persi" : "Lost",
-    priorityLow: isItalian ? "Bassa" : "Low",
-    priorityMedium: isItalian ? "Media" : "Medium",
-    priorityHigh: isItalian ? "Alta" : "High",
-  }), [isItalian]);
 
   const statusConfig: Record<StatusColumn, { label: string; color: string; bgColor: string; borderColor: string }> = {
     new: { label: t.statusNew, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
@@ -218,7 +193,7 @@ export default function PipelinePage() {
 
       toast({
         title: t.statusUpdated,
-        description: body.message || t.movedTo(statusConfig[newStatus].label),
+        description: body.message || t.movedTo.replace("{label}", statusConfig[newStatus].label),
       });
 
       fetch('/api/automations/execute-rule', {
@@ -234,7 +209,10 @@ export default function PipelinePage() {
         if (autoRes.ok) {
           const autoData = await autoRes.json();
           if (autoData.executed > 0) {
-            toast({ title: t.automationApplied, description: t.automationRules(autoData.executed) });
+            toast({
+              title: t.automationApplied,
+              description: t.automationRules.replace("{count}", String(autoData.executed)),
+            });
             fetchLeads();
           }
         }
@@ -293,10 +271,10 @@ export default function PipelinePage() {
           href="/dashboard"
           className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
           data-testid="button-back-dashboard"
-          aria-label={isItalian ? "Torna alla dashboard" : "Back to dashboard"}
+          aria-label={t.backToDashboardAria}
         >
           <ArrowLeft className="h-4 w-4" />
-          {isItalian ? "Dashboard" : "Dashboard"}
+          {t.dashboardLink}
         </Link>
       </div>
 
@@ -473,15 +451,15 @@ export default function PipelinePage() {
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400">
             <div className="flex items-center gap-2">
               <span className="text-emerald-400">🔥</span>
-              <span>Score 80-100 (Hot)</span>
+              <span>{t.legendHot}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-yellow-400">⭐</span>
-              <span>Score 50-79 (Warm)</span>
+              <span>{t.legendWarm}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-red-400">❄️</span>
-              <span>Score 0-49 (Cold)</span>
+              <span>{t.legendCold}</span>
             </div>
             <div className="flex items-center gap-2">
               <span>❓</span>
