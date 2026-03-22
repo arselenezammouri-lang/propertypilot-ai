@@ -838,13 +838,13 @@ export default function PlatformPage() {
                     { feature: t.landing.pricing.features.forms, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.whiteLabel, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.assistant, free: "—", starter: "—", pro: "✓", agency: "✓" },
-                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: currentLocale === "en" ? "Up to 10 agents" : currentLocale === "es" ? "Hasta 10 agentes" : currentLocale === "fr" ? "Jusqu'à 10 agents" : currentLocale === "de" ? "Bis zu 10 Agenten" : currentLocale === "ar" ? "حتى 10 وكلاء" : currentLocale === "pt" ? "Até 10 agentes" : "Fino a 10 agenti" },
+                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: t.landing.pricing.tableCells.multiUserAgency },
                     { feature: t.landing.pricing.features.roles, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.distribution, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.reports, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.multiOffice, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.auraVR, free: "—", starter: "—", pro: <span className="text-gray-400">{t.landing.pricing.plans.viewer}</span>, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
-                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: currentLocale === "en" ? "30/month" : currentLocale === "es" ? "30/mes" : currentLocale === "fr" ? "30/mois" : currentLocale === "de" ? "30/Monat" : currentLocale === "ar" ? "30/شهر" : currentLocale === "pt" ? "30/mês" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
+                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: t.landing.pricing.tableCells.voiceCallingPro, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
                     { feature: t.landing.pricing.features.messaging, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.manualOverride, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.humanOverride, free: "—", starter: "—", pro: "✓", agency: "✓" },
@@ -912,7 +912,7 @@ export default function PlatformPage() {
           <div className="mt-16 fade-on-scroll">
             <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent relative overflow-hidden border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.4),0_0_100px_rgba(251,191,36,0.2)] hover:shadow-[0_0_70px_rgba(245,158,11,0.6),0_0_120px_rgba(251,191,36,0.3)] transition-all duration-500 hover:border-amber-400/80 ring-2 ring-amber-400/30 ring-offset-2 ring-offset-[#000000] agency-boost-card">
               <div className="absolute -top-3 right-4 px-4 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full z-10 backdrop-blur-md border border-white/20">
-                PREMIUM SERVICE
+                {t.landing.pricing.agencyBoost.badgePremium}
               </div>
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div>
@@ -920,34 +920,24 @@ export default function PlatformPage() {
                     <Sparkles className="h-8 w-8 text-orange-400" />
                     <h3 className="text-3xl font-bold text-white">Agency Boost</h3>
                     <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-semibold rounded-full border border-orange-500/30">
-                      Titanium
+                      {t.landing.pricing.agencyBoost.tierTitanium}
                     </span>
                   </div>
                   <p className="text-gray-300 mb-6 text-lg">
-                    {currentLocale === "en" 
-                      ? "Done-for-you setup package with premium onboarding and dedicated support"
-                      : currentLocale === "es"
-                      ? 'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado'
-                      : currentLocale === "fr"
-                      ? 'Package de configuration "done-for-you" avec intégration premium et support dédié'
-                      : currentLocale === "de"
-                      ? "Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support"
-                      : currentLocale === "ar"
-                      ? "حزمة الإعداد الجاهزة مع الدعم المخصص"
-                      : 'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato'}
+                    {t.landing.pricing.agencyBoost.description}
                   </p>
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? 'Complete setup "done-for-you"' : currentLocale === "es" ? 'Configuración completa "done-for-you"' : currentLocale === "fr" ? 'Configuration complète "done-for-you"' : currentLocale === "de" ? 'Vollständige Einrichtung "done-for-you"' : currentLocale === "ar" ? "إعداد كامل جاهز" : 'Setup completo "done-for-you"'}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet1}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Guided implementation and onboarding" : currentLocale === "es" ? "Implementación y incorporación guiada" : currentLocale === "fr" ? "Implémentation et intégration guidées" : currentLocale === "de" ? "Geführte Implementierung und Onboarding" : currentLocale === "ar" ? "تنفيذ وإعداد موجه" : "Implementazione e onboarding guidato"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet2}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{currentLocale === "en" ? "Premium support for launch" : currentLocale === "es" ? "Soporte premium para el lanzamiento" : currentLocale === "fr" ? "Support premium pour le lancement" : currentLocale === "de" ? "Premium-Support für den Start" : currentLocale === "ar" ? "دعم مميز للإطلاق" : "Supporto premium per il lancio"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet3}</span>
                     </li>
                   </ul>
                 </div>
@@ -957,12 +947,12 @@ export default function PlatformPage() {
                       {formatCurrency(convertCurrency(2497, "EUR", selectedCurrency), selectedCurrency)}
                     </div>
                     <div className="text-gray-400 font-light">
-                      {currentLocale === "en" ? "One-time payment" : currentLocale === "es" ? "Pago único" : currentLocale === "fr" ? "Paiement unique" : currentLocale === "de" ? "Einmalige Zahlung" : currentLocale === "ar" ? "دفعة واحدة" : "Pagamento una tantum"}
+                      {t.landing.pricing.agencyBoost.oneTimePayment}
                     </div>
                   </div>
                   <Link href="/api/stripe/checkout-oneshot?package=boost">
                     <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold border-0 shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all active:scale-95 py-6 text-lg">
-                      {currentLocale === "en" ? "Get Agency Boost" : currentLocale === "es" ? "Obtener Agency Boost" : currentLocale === "fr" ? "Obtenir Agency Boost" : currentLocale === "de" ? "Agency Boost erhalten" : currentLocale === "ar" ? "احصل على Agency Boost" : "Acquista Agency Boost"}
+                      {t.landing.pricing.agencyBoost.cta}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>

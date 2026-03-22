@@ -921,6 +921,21 @@ export interface TranslationDictionary {
         choosePro: string;
         chooseAgency: string;
       };
+      /** Home pricing table — localized cell text (not ✓/—/numbers) */
+      tableCells: {
+        multiUserAgency: string;
+        voiceCallingPro: string;
+      };
+      agencyBoost: {
+        badgePremium: string;
+        tierTitanium: string;
+        description: string;
+        bullet1: string;
+        bullet2: string;
+        bullet3: string;
+        oneTimePayment: string;
+        cta: string;
+      };
     };
     cta: {
       title: string;
@@ -1810,6 +1825,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           chooseStarter: 'Scegli Starter',
           choosePro: 'Scegli Pro',
           chooseAgency: 'Scegli Agency',
+        },
+        tableCells: {
+          multiUserAgency: 'Fino a 10 agenti',
+          voiceCallingPro: '30/mese',
+        },
+        agencyBoost: {
+          badgePremium: 'SERVIZIO PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato',
+          bullet1: 'Setup completo "done-for-you"',
+          bullet2: 'Implementazione e onboarding guidato',
+          bullet3: 'Supporto premium per il lancio',
+          oneTimePayment: 'Pagamento una tantum',
+          cta: 'Acquista Agency Boost',
         },
       },
       cta: {
@@ -2707,6 +2737,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Choose Pro',
           chooseAgency: 'Choose Agency',
         },
+        tableCells: {
+          multiUserAgency: 'Up to 10 agents',
+          voiceCallingPro: '30/month',
+        },
+        agencyBoost: {
+          badgePremium: 'PREMIUM SERVICE',
+          tierTitanium: 'Titanium',
+          description:
+            'Done-for-you setup package with premium onboarding and dedicated support',
+          bullet1: 'Complete setup "done-for-you"',
+          bullet2: 'Guided implementation and onboarding',
+          bullet3: 'Premium support for launch',
+          oneTimePayment: 'One-time payment',
+          cta: 'Get Agency Boost',
+        },
       },
       cta: {
         title: 'Ready to multiply your business?',
@@ -3046,6 +3091,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           chooseStarter: 'Elegir Starter',
           choosePro: 'Elegir Pro',
           chooseAgency: 'Elegir Agency',
+        },
+        tableCells: {
+          multiUserAgency: 'Hasta 10 agentes',
+          voiceCallingPro: '30/mes',
+        },
+        agencyBoost: {
+          badgePremium: 'SERVICIO PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado',
+          bullet1: 'Configuración completa "done-for-you"',
+          bullet2: 'Implementación y incorporación guiada',
+          bullet3: 'Soporte premium para el lanzamiento',
+          oneTimePayment: 'Pago único',
+          cta: 'Obtener Agency Boost',
         },
       },
       cta: {
@@ -3387,6 +3447,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Choisir Pro',
           chooseAgency: 'Choisir Agency',
         },
+        tableCells: {
+          multiUserAgency: "Jusqu'à 10 agents",
+          voiceCallingPro: '30/mois',
+        },
+        agencyBoost: {
+          badgePremium: 'SERVICE PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Package de configuration "done-for-you" avec intégration premium et support dédié',
+          bullet1: 'Configuration complète "done-for-you"',
+          bullet2: 'Implémentation et intégration guidées',
+          bullet3: 'Support premium pour le lancement',
+          oneTimePayment: 'Paiement unique',
+          cta: 'Obtenir Agency Boost',
+        },
       },
       cta: {
         title: 'Prêt à multiplier vos affaires?',
@@ -3727,6 +3802,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Pro Wählen',
           chooseAgency: 'Agency Wählen',
         },
+        tableCells: {
+          multiUserAgency: 'Bis zu 10 Agenten',
+          voiceCallingPro: '30/Monat',
+        },
+        agencyBoost: {
+          badgePremium: 'PREMIUM-SERVICE',
+          tierTitanium: 'Titanium',
+          description:
+            'Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support',
+          bullet1: 'Vollständige Einrichtung "done-for-you"',
+          bullet2: 'Geführte Implementierung und Onboarding',
+          bullet3: 'Premium-Support für den Start',
+          oneTimePayment: 'Einmalige Zahlung',
+          cta: 'Agency Boost erhalten',
+        },
       },
       cta: {
         title: 'Bereit, Ihr Geschäft zu multiplizieren?',
@@ -3881,6 +3971,23 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       view: 'Visualizar',
     },
     landing: {
+      pricing: {
+        tableCells: {
+          multiUserAgency: 'Até 10 agentes',
+          voiceCallingPro: '30/mês',
+        },
+        agencyBoost: {
+          badgePremium: 'SERVIÇO PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Pacote de configuração "done-for-you" com onboarding premium e suporte dedicado',
+          bullet1: 'Configuração completa "done-for-you"',
+          bullet2: 'Implementação e onboarding guiados',
+          bullet3: 'Suporte premium para o lançamento',
+          oneTimePayment: 'Pagamento único',
+          cta: 'Obter Agency Boost',
+        },
+      },
       pricingPage: {
         badge: 'Preços Transparentes',
         mainTitle: 'Escolha o Plano',
@@ -4200,6 +4307,20 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           chooseStarter: 'اختر Starter',
           choosePro: 'اختر Pro',
           chooseAgency: 'اختر Agency',
+        },
+        tableCells: {
+          multiUserAgency: 'حتى 10 وكلاء',
+          voiceCallingPro: '30/شهر',
+        },
+        agencyBoost: {
+          badgePremium: 'خدمة مميزة',
+          tierTitanium: 'Titanium',
+          description: 'حزمة إعداد جاهزة مع دعم مخصص وتجربة انضمام مميزة',
+          bullet1: 'إعداد كامل جاهز',
+          bullet2: 'تنفيذ وإعداد موجه',
+          bullet3: 'دعم مميز للإطلاق',
+          oneTimePayment: 'دفعة واحدة',
+          cta: 'احصل على Agency Boost',
         },
       },
       cta: {

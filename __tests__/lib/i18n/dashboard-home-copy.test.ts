@@ -21,6 +21,19 @@ describe('dashboard home copy (D1)', () => {
     expect(en.footerCopyrightLine).toContain('{year}');
   });
 
+  it('marketing home pricing table cells + Agency Boost (IT/EN; ES/PT localized)', () => {
+    const it = getTranslation('it').landing.pricing;
+    const en = getTranslation('en').landing.pricing;
+    expect(it.tableCells.multiUserAgency).toContain('10');
+    expect(en.tableCells.voiceCallingPro.toLowerCase()).toMatch(/30/);
+    expect(it.agencyBoost.cta.length).toBeGreaterThan(5);
+    expect(en.agencyBoost.badgePremium.length).toBeGreaterThan(3);
+    const es = getTranslation('es').landing.pricing;
+    const pt = getTranslation('pt').landing.pricing;
+    expect(es.tableCells.multiUserAgency).toContain('10');
+    expect(pt.agencyBoost.oneTimePayment.length).toBeGreaterThan(5);
+  });
+
   it('blog post page, pricing plans chrome, contact extras for IT/EN', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');
