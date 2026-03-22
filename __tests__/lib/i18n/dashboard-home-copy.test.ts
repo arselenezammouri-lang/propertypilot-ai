@@ -34,6 +34,20 @@ describe('dashboard home copy (D1)', () => {
     expect(pt.agencyBoost.oneTimePayment.length).toBeGreaterThan(5);
   });
 
+  it('marketing home hero aria, feature CTAs, search-engine step label (IT/EN; PT merge)', () => {
+    const it = getTranslation('it').landing;
+    const en = getTranslation('en').landing;
+    expect(it.hero.signupAriaLabel.length).toBeGreaterThan(10);
+    expect(en.hero.demoDashboardAriaLabel.toLowerCase()).toMatch(/demo|dashboard/i);
+    expect(it.features.aiListing.cta.length).toBeGreaterThan(3);
+    expect(en.features.crmAI.cta.length).toBeGreaterThan(3);
+    expect(it.searchEngine.stepLabel).toContain('{n}');
+    expect(en.searchEngine.prospectingCycleCta).toMatch(/Scraper|Voice|CRM/i);
+    const pt = getTranslation('pt').landing;
+    expect(pt.hero.signupAriaLabel.length).toBeGreaterThan(8);
+    expect(pt.searchEngine.stepLabel).toContain('{n}');
+  });
+
   it('blog post page, pricing plans chrome, contact extras for IT/EN', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');

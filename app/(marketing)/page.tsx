@@ -47,7 +47,7 @@ import {
   Loader2,
   Heart,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NextDynamic from "next/dynamic";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 
@@ -83,6 +83,16 @@ export default function PlatformPage() {
 
   // Get translations
   const t = getTranslation(currentLocale as SupportedLocale);
+
+  const iconAfterTextMargin = useMemo(
+    () => (currentLocale === "ar" ? "mr-3" : "ml-3"),
+    [currentLocale]
+  );
+
+  const iconAfterButtonMarginSm = useMemo(
+    () => (currentLocale === "ar" ? "mr-2" : "ml-2"),
+    [currentLocale]
+  );
 
   // Chiudi menu mobile quando si clicca fuori
   useEffect(() => {
@@ -293,7 +303,7 @@ export default function PlatformPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Link href="/auth/signup" aria-label="Sign up for PropertyPilot AI">
+              <Link href="/auth/signup" aria-label={t.landing.hero.signupAriaLabel}>
                 <Button 
                   size="lg" 
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] relative overflow-hidden group transition-all active:scale-95"
@@ -301,13 +311,13 @@ export default function PlatformPage() {
                 >
                   <span className="relative z-10 flex items-center">
                     {t.landing.hero.ctaStart}
-                    <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                    <ArrowRight className={`${iconAfterTextMargin} h-6 w-6`} />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#06b6d4] to-[#9333ea] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute inset-0 rounded-lg bg-[#06b6d4]/30 blur-2xl animate-pulse"></div>
                 </Button>
               </Link>
-              <Link href="/dashboard" aria-label="View demo dashboard">
+              <Link href="/dashboard" aria-label={t.landing.hero.demoDashboardAriaLabel}>
                 <Button 
                   size="lg" 
                   variant="outline" 
@@ -315,7 +325,7 @@ export default function PlatformPage() {
                   aria-label={t.landing.hero.ctaDemo}
                 >
                   {t.landing.hero.ctaDemo}
-                  <Play className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <Play className={`${iconAfterTextMargin} h-6 w-6`} />
                 </Button>
               </Link>
             </div>
@@ -380,7 +390,7 @@ export default function PlatformPage() {
                 description: t.landing.features.aiListing.description,
                 benefit: t.landing.features.aiListing.benefit,
                 cta: "/auth/signup",
-                ctaLabel: "Prova Gratis",
+                ctaLabel: t.landing.features.aiListing.cta,
               },
               {
                 icon: BarChart3,
@@ -388,7 +398,7 @@ export default function PlatformPage() {
                 description: t.landing.features.crmAI.description,
                 benefit: t.landing.features.crmAI.benefit,
                 cta: "/auth/signup?redirect=/dashboard/leads",
-                ctaLabel: "Vai al CRM",
+                ctaLabel: t.landing.features.crmAI.cta,
               },
               {
                 icon: Globe,
@@ -396,7 +406,7 @@ export default function PlatformPage() {
                 description: t.landing.features.globalReach.description,
                 benefit: t.landing.features.globalReach.benefit,
                 cta: "/auth/signup?redirect=/dashboard/prospecting",
-                ctaLabel: "Scopri Prospecting",
+                ctaLabel: t.landing.features.globalReach.cta,
               },
             ].map((feature, idx) => (
               <Card 
@@ -418,7 +428,7 @@ export default function PlatformPage() {
                   <Link href={feature.cta}>
                     <Button className="w-full bg-gradient-to-r from-[#9333ea] to-[#06b6d4] hover:opacity-90 text-white border-0">
                       {feature.ctaLabel}
-                      <ChevronRight className="ml-2 h-4 w-4" />
+                      <ChevronRight className={`${iconAfterButtonMarginSm} h-4 w-4`} />
                     </Button>
                   </Link>
                 </CardContent>
@@ -458,7 +468,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#9333ea]/10 flex items-center justify-center mb-4 border border-[#9333ea]/30">
                   <Radar className="h-8 w-8 text-[#9333ea] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 1</div>
+                <div className="text-xs font-bold text-[#9333ea] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "1")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step1.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -479,7 +491,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#06b6d4]/10 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
                   <Filter className="h-8 w-8 text-[#06b6d4] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 2</div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "2")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step2.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -503,7 +517,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#9333ea]/30 to-[#06b6d4]/20 flex items-center justify-center mb-4 border border-[#9333ea]/30">
                   <PhoneCall className="h-8 w-8 text-[#06b6d4] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#06b6d4] mb-2">STEP 3</div>
+                <div className="text-xs font-bold text-[#06b6d4] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "3")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step3.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -533,7 +549,9 @@ export default function PlatformPage() {
                 <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#06b6d4]/30 to-[#9333ea]/20 flex items-center justify-center mb-4 border border-[#06b6d4]/30">
                   <CalendarCheck className="h-8 w-8 text-[#9333ea] animate-pulse" />
                 </div>
-                <div className="text-xs font-bold text-[#9333ea] mb-2">STEP 4</div>
+                <div className="text-xs font-bold text-[#9333ea] mb-2">
+                  {t.landing.searchEngine.stepLabel.replace("{n}", "4")}
+                </div>
                 <CardTitle className="text-xl text-white">{t.landing.searchEngine.step4.title}</CardTitle>
               </CardHeader>
               <CardContent>
@@ -554,8 +572,8 @@ export default function PlatformPage() {
           <div className="mt-12 text-center fade-on-scroll">
             <Link href="/auth/signup?redirect=/dashboard/prospecting">
               <Button size="lg" className="bg-gradient-to-r from-[#06b6d4] to-[#9333ea] hover:opacity-90 text-white border-0 px-10 py-6 text-lg">
-                Avvia il ciclo Scraper → Voice AI → CRM
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {t.landing.searchEngine.prospectingCycleCta}
+                <ArrowRight className={`${iconAfterButtonMarginSm} h-5 w-5`} />
               </Button>
             </Link>
           </div>
@@ -982,7 +1000,7 @@ export default function PlatformPage() {
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] transition-all active:scale-95"
                 >
                   {t.landing.cta.button}
-                  <ArrowRight className={`${currentLocale === "ar" ? "mr-3" : "ml-3"} h-6 w-6`} />
+                  <ArrowRight className={`${iconAfterTextMargin} h-6 w-6`} />
                 </Button>
               </Link>
             </CardContent>

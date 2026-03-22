@@ -758,6 +758,10 @@ export interface TranslationDictionary {
           listingsPerDay: string;
           conversionRate: string;
         };
+        /** Home marketing: `<Link>` aria-label signup hero */
+        signupAriaLabel: string;
+        /** Home marketing: `<Link>` aria-label demo dashboard hero */
+        demoDashboardAriaLabel: string;
       };
     features: {
       title: string;
@@ -766,16 +770,19 @@ export interface TranslationDictionary {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
       crmAI: {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
       globalReach: {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
     };
       searchEngine: {
@@ -784,6 +791,10 @@ export interface TranslationDictionary {
         exclusive: string;
         exclusiveInPlan: string;
         benefit: string;
+        /** Bento step badge, e.g. "STEP {n}" or "PASSO {n}" */
+        stepLabel: string;
+        /** CTA under search-engine bento grid */
+        prospectingCycleCta: string;
       step1: {
         title: string;
         description: string;
@@ -1663,6 +1674,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'Annunci/Giorno',
           conversionRate: 'Conversion Rate',
         },
+        signupAriaLabel: 'Registrati su PropertyPilot AI',
+        demoDashboardAriaLabel: 'Apri la demo della dashboard',
       },
       features: {
         title: 'Why PropertyPilot AI?',
@@ -1671,16 +1684,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'AI Listing Engine',
           description: 'Genera annunci professionali in secondi con stili personalizzati (Luxury, Investment, Standard Pro). Multi-lingua e ottimizzato per Zillow, Idealista, Immobiliare.',
           benefit: 'Risparmia 5 ore a settimana su scrittura annunci',
+          cta: 'Prova gratis',
         },
         crmAI: {
           title: 'CRM AI Intelligence',
           description: 'Lead Scoring automatico, follow-up AI multi-canale (WhatsApp, Email, SMS). Categorizza lead HOT/WARM/COLD e suggerisce azioni prioritarie.',
           benefit: 'Aumenta conversioni del 40% con prioritizzazione AI',
+          cta: 'Vai al CRM',
         },
         globalReach: {
           title: 'Global Reach',
           description: 'Operiamo su USA (Zillow, MLS), Italia (Idealista, Immobiliare), Spagna (Idealista.es). Terminologia localizzata e formati di mercato.',
           benefit: 'Espandi il tuo business in 3 continenti',
+          cta: 'Scopri Prospecting',
         },
       },
       searchEngine: {
@@ -1689,6 +1705,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'ESCLUSIVAMENTE',
         exclusiveInPlan: 'nel piano AGENCY',
         benefit: 'Risparmia 20 ore di telefonate a settimana',
+        stepLabel: 'PASSO {n}',
+        prospectingCycleCta: 'Avvia il ciclo Scraper → Voice AI → CRM',
         step1: {
           title: 'Scansione Globale',
           description: "L'AI scansiona automaticamente Idealista, Immobiliare, Zillow e MLS 24/7, trovando migliaia di annunci ogni giorno.",
@@ -2574,6 +2592,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'Listings/Day',
           conversionRate: 'Conversion Rate',
         },
+        signupAriaLabel: 'Sign up for PropertyPilot AI',
+        demoDashboardAriaLabel: 'View the demo dashboard',
       },
       features: {
         title: 'Why PropertyPilot AI?',
@@ -2582,16 +2602,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'AI Listing Engine',
           description: 'Generate professional listings in seconds with custom styles (Luxury, Investment, Standard Pro). Multi-language and optimized for Zillow, Idealista, Immobiliare.',
           benefit: 'Save 5 hours per week on listing writing',
+          cta: 'Try free',
         },
         crmAI: {
           title: 'CRM AI Intelligence',
           description: 'Automatic Lead Scoring, multi-channel AI follow-up (WhatsApp, Email, SMS). Categorizes HOT/WARM/COLD leads and suggests priority actions.',
           benefit: 'Increase conversions by 40% with AI prioritization',
+          cta: 'Go to CRM',
         },
         globalReach: {
           title: 'Global Reach',
           description: 'We operate in USA (Zillow, MLS), Italy (Idealista, Immobiliare), Spain (Idealista.es). Localized terminology and market formats.',
           benefit: 'Expand your business across 3 continents',
+          cta: 'Explore Prospecting',
         },
       },
       searchEngine: {
@@ -2600,6 +2623,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVELY',
         exclusiveInPlan: 'in the AGENCY plan',
         benefit: 'Save 20 hours of phone calls per week',
+        stepLabel: 'STEP {n}',
+        prospectingCycleCta: 'Start the Scraper → Voice AI → CRM loop',
         step1: {
           title: 'Global Scan',
           description: 'AI automatically scans Idealista, Immobiliare, Zillow, and MLS 24/7, finding thousands of listings every day.',
@@ -2929,6 +2954,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'Anuncios/Día',
           conversionRate: 'Tasa de Conversión',
         },
+        signupAriaLabel: 'Regístrate en PropertyPilot AI',
+        demoDashboardAriaLabel: 'Ver la demo del panel',
       },
       features: {
         title: '¿Por qué PropertyPilot AI?',
@@ -2937,16 +2964,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Motor de Anuncios IA',
           description: 'Genera anuncios profesionales en segundos con estilos personalizados (Lujo, Inversión, Estándar Pro). Multiidioma y optimizado para Zillow, Idealista, Immobiliare.',
           benefit: 'Ahorra 5 horas a la semana en escritura de anuncios',
+          cta: 'Prueba gratis',
         },
         crmAI: {
           title: 'Inteligencia CRM IA',
           description: 'Puntuación de Leads automática, seguimiento IA multicanal (WhatsApp, Email, SMS). Categoriza leads CALIENTES/TIBIOS/FRÍOS y sugiere acciones prioritarias.',
           benefit: 'Aumenta conversiones en un 40% con priorización IA',
+          cta: 'Ir al CRM',
         },
         globalReach: {
           title: 'Alcance Global',
           description: 'Operamos en USA (Zillow, MLS), Italia (Idealista, Immobiliare), España (Idealista.es). Terminología localizada y formatos de mercado.',
           benefit: 'Expande tu negocio en 3 continentes',
+          cta: 'Descubre Prospecting',
         },
       },
       searchEngine: {
@@ -2955,6 +2985,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVAMENTE',
         exclusiveInPlan: 'en el plan AGENCY',
         benefit: 'Ahorra 20 horas de llamadas telefónicas a la semana',
+        stepLabel: 'PASO {n}',
+        prospectingCycleCta: 'Inicia el ciclo Scraper → Voice AI → CRM',
         step1: {
           title: 'Escaneo Global',
           description: 'La IA escanea automáticamente Idealista, Immobiliare, Zillow y MLS 24/7, encontrando miles de anuncios cada día.',
@@ -3284,6 +3316,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'Annonces/Jour',
           conversionRate: 'Taux de Conversion',
         },
+        signupAriaLabel: 'Créer un compte PropertyPilot AI',
+        demoDashboardAriaLabel: 'Voir la démo du tableau de bord',
       },
       features: {
         title: 'Pourquoi PropertyPilot AI?',
@@ -3292,16 +3326,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Moteur d\'Annonces IA',
           description: 'Générez des annonces professionnelles en secondes avec des styles personnalisés (Luxe, Investissement, Standard Pro). Multilingue et optimisé pour Zillow, Idealista, Immobiliare.',
           benefit: 'Économisez 5 heures par semaine sur l\'écriture d\'annonces',
+          cta: 'Essayer gratuitement',
         },
         crmAI: {
           title: 'Intelligence CRM IA',
           description: 'Scoring de Leads automatique, suivi IA multicanal (WhatsApp, Email, SMS). Catégorise les leads CHAUD/TIÈDE/FROID et suggère des actions prioritaires.',
           benefit: 'Augmentez les conversions de 40% avec la priorisation IA',
+          cta: 'Aller au CRM',
         },
         globalReach: {
           title: 'Portée Mondiale',
           description: 'Nous opérons aux USA (Zillow, MLS), en Italie (Idealista, Immobiliare), en Espagne (Idealista.es). Terminologie localisée et formats de marché.',
           benefit: 'Développez votre activité sur 3 continents',
+          cta: 'Découvrir le Prospecting',
         },
       },
       searchEngine: {
@@ -3310,6 +3347,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVEMENT',
         exclusiveInPlan: 'dans le plan AGENCY',
         benefit: 'Économisez 20 heures d\'appels téléphoniques par semaine',
+        stepLabel: 'ÉTAPE {n}',
+        prospectingCycleCta: 'Lancer la boucle Scraper → Voice AI → CRM',
         step1: {
           title: 'Scan Global',
           description: 'L\'IA scanne automatiquement Idealista, Immobiliare, Zillow et MLS 24/7, trouvant des milliers d\'annonces chaque jour.',
@@ -3639,6 +3678,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'Anzeigen/Tag',
           conversionRate: 'Konversionsrate',
         },
+        signupAriaLabel: 'Bei PropertyPilot AI registrieren',
+        demoDashboardAriaLabel: 'Demo-Dashboard ansehen',
       },
       features: {
         title: 'Warum PropertyPilot AI?',
@@ -3647,16 +3688,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'KI-Anzeigen-Engine',
           description: 'Erstellen Sie professionelle Anzeigen in Sekunden mit benutzerdefinierten Stilen (Luxus, Investition, Standard Pro). Mehrsprachig und optimiert für Zillow, Idealista, Immobiliare.',
           benefit: 'Sparen Sie 5 Stunden pro Woche beim Schreiben von Anzeigen',
+          cta: 'Kostenlos testen',
         },
         crmAI: {
           title: 'CRM-KI-Intelligenz',
           description: 'Automatisches Lead-Scoring, mehrkanaliges KI-Follow-up (WhatsApp, E-Mail, SMS). Kategorisiert HEISSE/WARME/KALTE Leads und schlägt Prioritätsaktionen vor.',
           benefit: 'Steigern Sie Conversions um 40% mit KI-Priorisierung',
+          cta: 'Zum CRM',
         },
         globalReach: {
           title: 'Globale Reichweite',
           description: 'Wir operieren in den USA (Zillow, MLS), Italien (Idealista, Immobiliare), Spanien (Idealista.es). Lokalisierte Terminologie und Marktformate.',
           benefit: 'Erweitern Sie Ihr Geschäft auf 3 Kontinenten',
+          cta: 'Prospecting entdecken',
         },
       },
       searchEngine: {
@@ -3665,6 +3709,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'AUSSCHLIESSLICH',
         exclusiveInPlan: 'im AGENCY-Plan',
         benefit: 'Sparen Sie 20 Stunden Telefonanrufe pro Woche',
+        stepLabel: 'SCHRITT {n}',
+        prospectingCycleCta: 'Scraper → Voice AI → CRM Schleife starten',
         step1: {
           title: 'Globale Suche',
           description: 'Die KI scannt automatisch Idealista, Immobiliare, Zillow und MLS 24/7 und findet täglich Tausende von Anzeigen.',
@@ -3971,6 +4017,25 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       view: 'Visualizar',
     },
     landing: {
+      hero: {
+        signupAriaLabel: 'Registar-se no PropertyPilot AI',
+        demoDashboardAriaLabel: 'Ver a demo do painel',
+      },
+      features: {
+        aiListing: {
+          cta: 'Experimentar grátis',
+        },
+        crmAI: {
+          cta: 'Ir para o CRM',
+        },
+        globalReach: {
+          cta: 'Descobrir Prospecting',
+        },
+      },
+      searchEngine: {
+        stepLabel: 'PASSO {n}',
+        prospectingCycleCta: 'Iniciar o ciclo Scraper → Voice AI → CRM',
+      },
       pricing: {
         tableCells: {
           multiUserAgency: 'Até 10 agentes',
@@ -4145,6 +4210,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           listingsPerDay: 'إعلان/يوم',
           conversionRate: 'معدل التحويل',
         },
+        signupAriaLabel: 'التسجيل في PropertyPilot AI',
+        demoDashboardAriaLabel: 'عرض لوحة التحكم التجريبية',
       },
       features: {
         title: 'لماذا PropertyPilot AI?',
@@ -4153,16 +4220,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'محرك الإعلانات الذكي',
           description: 'أنشئ إعلانات احترافية في ثوانٍ بأنماط مخصصة (الفاخر، الاستثماري، الاحترافي القياسي). متعدد اللغات ومحسّن لـ Zillow و Idealista و Immobiliare.',
           benefit: 'وفر 5 ساعات أسبوعياً في كتابة الإعلانات',
+          cta: 'جرّب مجاناً',
         },
         crmAI: {
           title: 'ذكاء CRM الذكي',
           description: 'تقييم العملاء المحتملين تلقائياً، متابعة ذكية متعددة القنوات (واتساب، بريد إلكتروني، رسائل نصية). تصنف العملاء المحتملين الساخنين/الدافئين/الباردين وتقترح إجراءات أولوية.',
           benefit: 'زِد التحويلات بنسبة 40% مع تحديد الأولويات الذكي',
+          cta: 'اذهب إلى CRM',
         },
         globalReach: {
           title: 'الوصول العالمي',
           description: 'نعمل في الولايات المتحدة (Zillow و MLS) وإيطاليا (Idealista و Immobiliare) وإسبانيا (Idealista.es). مصطلحات محلية وأشكال سوق.',
           benefit: 'وسّع عملك في 3 قارات',
+          cta: 'اكتشف الاستطلاع',
         },
       },
       searchEngine: {
@@ -4171,6 +4241,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'حصرياً',
         exclusiveInPlan: 'في خطة AGENCY',
         benefit: 'وفر 20 ساعة من المكالمات الهاتفية أسبوعياً',
+        stepLabel: 'الخطوة {n}',
+        prospectingCycleCta: 'ابدأ دورة Scraper → Voice AI → CRM',
         step1: {
           title: 'المسح الشامل',
           description: 'يُمسح الذكي تلقائياً Idealista و Immobiliare و Zillow و MLS على مدار الساعة، ويجد آلاف الإعلانات كل يوم.',
