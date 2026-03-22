@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
@@ -69,12 +70,19 @@ interface PerfectCopyResult {
 
 export default function PerfectCopyPage() {
   const { locale } = useLocale();
-  const isItalian = locale === 'it';
+  const feedbackLocale = locale === 'it' ? 'it' : 'en';
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const usage = useUsageLimits();
   const [pageReady, setPageReady] = useState(false);
-  const feedbackLocale = isItalian ? 'it' : 'en';
+
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.perfectCopyPage,
+    [locale]
+  );
+
+  const errorGenericRef = useRef(t.errorGeneric);
+  errorGenericRef.current = t.errorGeneric;
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setPageReady(true));
@@ -83,138 +91,14 @@ export default function PerfectCopyPage() {
 
   const planBadgeLabel =
     usage.plan === 'agency'
-      ? 'Agency'
+      ? t.planAgency
       : usage.plan === 'pro'
-        ? 'Pro'
+        ? t.planPro
         : usage.plan === 'starter'
-          ? 'Starter'
-          : 'Free';
+          ? t.planStarter
+          : t.planFree;
 
-  const t = {
-    backToDashboard: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
-    heroTitle: isItalian ? 'Perfect Real Estate Copy 2.0' : 'Perfect Real Estate Copy 2.0',
-    heroBadge: isItalian ? '🚀 Power Feature' : '🚀 Power Feature',
-    heroSubtitle: isItalian
-      ? 'Genera 5 varianti professionali del tuo annuncio in un click'
-      : 'Generate 5 professional variants of your listing in one click',
-    formTitle: isItalian ? 'Dati Immobile' : 'Property Data',
-    formSubtitle: isItalian ? 'Inserisci i dettagli per generare annunci perfetti' : 'Enter details to generate perfect listings',
-    listingTypeLabel: isItalian ? 'Tipo Annuncio *' : 'Listing Type *',
-    selectListingType: isItalian ? 'Vendita o Affitto?' : 'Sale or Rental?',
-    propertyTypeLabel: isItalian ? 'Tipo Immobile *' : 'Property Type *',
-    selectPropertyType: isItalian ? 'Seleziona tipo' : 'Select type',
-    locationLabel: isItalian ? 'Zona/Località *' : 'Area/Location *',
-    locationPlaceholder: isItalian ? 'Es: Centro Storico, Milano' : 'e.g. Downtown, Miami',
-    featuresLabel: isItalian ? 'Caratteristiche Principali *' : 'Main Features *',
-    featuresPlaceholder: isItalian
-      ? 'Es: 120mq, 3 camere, 2 bagni, terrazzo, box auto, ristrutturato 2023...'
-      : 'e.g. 120sqm, 3 beds, 2 baths, terrace, parking, renovated 2023...',
-    strengthsLabel: isItalian ? 'Punti di Forza' : 'Key Strengths',
-    strengthsPlaceholder: isItalian
-      ? 'Es: Vista panoramica, silenzioso, luminoso, vicino metro...'
-      : 'e.g. Panoramic view, quiet, bright, near subway...',
-    targetLabel: isItalian ? 'Target Cliente *' : 'Target Client *',
-    selectTarget: isItalian ? 'Seleziona target' : 'Select target',
-    priceLabel: isItalian ? 'Fascia di Prezzo' : 'Price Range',
-    pricePlaceholder: isItalian ? 'Es: €350.000 - €400.000' : 'e.g. $350,000 - $400,000',
-    toneLabel: isItalian ? 'Tono Principale' : 'Main Tone',
-    portalLabel: isItalian ? 'Portale Target' : 'Target Portal',
-    featuresHelp: isItalian
-      ? 'Includi metratura, distribuzione, piano, bagno, balcone/terrazzo, anno ristrutturazione, classe energetica: l’AI userà questi dettagli per bullet e titoli credibili.'
-      : 'Include sqm, layout, floor, bathrooms, balcony/terrace, renovation year, energy class — the AI uses these for credible bullets and headlines.',
-    targetHelp: isItalian
-      ? 'Il target orienta tono e promesse: un investitore vuole rendimento e dati; una famiglia vuole spazi e vicinanza a scuole/verde.'
-      : 'Target shapes tone and promises: investors want yield and data; families want space and schools/green nearby.',
-    variantsIncluded: isItalian ? '5 Varianti Premium Incluse' : '5 Premium Variants Included',
-    variantsDesc: isItalian ? 'Professionale, Emotivo, Breve, SEO e Luxury' : 'Professional, Emotional, Brief, SEO and Luxury',
-    generateIdle: isItalian ? 'Genera 5 Varianti' : 'Generate 5 Variants',
-    generateLoading: isItalian ? 'Generazione in corso...' : 'Generating...',
-    emptyTitle: isItalian ? 'Il tuo annuncio perfetto ti aspetta' : 'Your perfect listing awaits',
-    emptySubtitle: isItalian
-      ? 'Compila il form e genera automaticamente 5 varianti professionali: Professionale, Emotivo, Breve, SEO e Luxury.'
-      : 'Fill the form and automatically generate 5 professional variants: Professional, Emotional, Brief, SEO and Luxury.',
-    loadingTitle: isItalian ? 'Generazione AI in corso...' : 'AI Generation in progress...',
-    loadingSubtitle: isItalian ? 'Stiamo creando 5 varianti ottimizzate del tuo annuncio' : 'We are creating 5 optimized variants of your listing',
-    expertTip: isItalian ? "Consiglio dell'Esperto" : 'Expert Tip',
-    portalAdaptation: isItalian ? 'Adattamento portale:' : 'Portal adaptation:',
-    copyAll: isItalian ? 'Copia Tutto' : 'Copy All',
-    sectionTitle: isItalian ? 'Titolo' : 'Title',
-    sectionDesc: isItalian ? 'Descrizione Completa' : 'Full Description',
-    sectionHighlights: 'Highlights',
-    sectionWhy: isItalian ? 'Perché Comprarlo' : 'Why Buy It',
-    sectionCta: 'Call to Action',
-    sectionMeta: 'Meta Description SEO',
-    metaChars: isItalian ? 'caratteri' : 'characters',
-    tabPro: isItalian ? 'Pro' : 'Pro',
-    tabEmotivo: isItalian ? 'Emotivo' : 'Emotional',
-    tabBreve: isItalian ? 'Breve' : 'Brief',
-    tabSeo: 'SEO',
-    tabLuxury: 'Luxury',
-    // toasts
-    requiredFieldsDesc: isItalian
-      ? 'Compila tipo immobile, zona, caratteristiche e target cliente.'
-      : 'Fill in property type, location, features and target client.',
-    errorGeneric: isItalian ? 'Errore durante la generazione' : 'Error during generation',
-    successTitle: isItalian ? 'Perfect Copy — annunci pronti' : 'Perfect Copy — listings ready',
-    successDesc: isItalian
-      ? 'Tutte le varianti sono pronte. Scegli una scheda e copia il testo dove ti serve.'
-      : 'All variants are ready. Pick a tab and copy the text wherever you need it.',
-    copied: isItalian ? 'Copiato!' : 'Copied!',
-    copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
-    copyFailed: isItalian ? 'Impossibile copiare. Riprova.' : 'Unable to copy. Try again.',
-  };
-
-  const tipoTransazione = [
-    { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
-    { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
-    { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
-  ];
-
-  const tipiImmobile = [
-    { value: 'appartamento', label: isItalian ? 'Appartamento' : 'Apartment' },
-    { value: 'casa', label: isItalian ? 'Casa Indipendente' : 'Detached House' },
-    { value: 'villa', label: 'Villa' },
-    { value: 'attico', label: isItalian ? 'Attico' : 'Penthouse' },
-    { value: 'loft', label: 'Loft' },
-    { value: 'bilocale', label: isItalian ? 'Bilocale' : '1-Bedroom Apt' },
-    { value: 'trilocale', label: isItalian ? 'Trilocale' : '2-Bedroom Apt' },
-    { value: 'monolocale', label: isItalian ? 'Monolocale' : 'Studio' },
-    { value: 'rustico', label: isItalian ? 'Rustico' : 'Rustic' },
-    { value: 'casale', label: isItalian ? 'Casale' : 'Farmhouse' },
-    { value: 'palazzo', label: isItalian ? 'Palazzo' : 'Palace / Building' },
-    { value: 'locale_commerciale', label: isItalian ? 'Locale Commerciale' : 'Commercial Space' },
-    { value: 'ufficio', label: isItalian ? 'Ufficio' : 'Office' },
-    { value: 'terreno', label: isItalian ? 'Terreno' : 'Land' },
-    { value: 'garage', label: 'Garage/Box' },
-  ];
-
-  const targetCliente = [
-    { value: 'famiglie', label: isItalian ? 'Famiglie' : 'Families', icon: '👨‍👩‍👧‍👦' },
-    { value: 'giovani_coppie', label: isItalian ? 'Giovani Coppie' : 'Young Couples', icon: '💑' },
-    { value: 'investitori', label: isItalian ? 'Investitori' : 'Investors', icon: '📈' },
-    { value: 'studenti', label: isItalian ? 'Studenti / Universitari' : 'Students', icon: '🎓' },
-    { value: 'professionisti', label: isItalian ? 'Professionisti / Lavoratori' : 'Professionals', icon: '💼' },
-    { value: 'pensionati', label: isItalian ? 'Pensionati' : 'Retirees', icon: '🏖️' },
-    { value: 'luxury', label: isItalian ? 'Clientela Luxury' : 'Luxury Clients', icon: '💎' },
-    { value: 'stranieri', label: isItalian ? 'Clienti Stranieri' : 'Foreign Buyers', icon: '🌍' },
-    { value: 'turisti', label: isItalian ? 'Turisti / Vacanzieri' : 'Tourists / Vacationers', icon: '✈️' },
-    { value: 'aziende', label: isItalian ? 'Aziende / Corporate' : 'Companies / Corporate', icon: '🏢' },
-  ];
-
-  const toni = [
-    { value: 'professionale', label: isItalian ? 'Professionale' : 'Professional', description: isItalian ? 'Formale e informativo' : 'Formal and informative' },
-    { value: 'emotivo', label: isItalian ? 'Emotivo' : 'Emotional', description: isItalian ? 'Coinvolgente e aspirazionale' : 'Engaging and aspirational' },
-    { value: 'luxury', label: 'Luxury', description: isItalian ? 'Esclusivo e prestigioso' : 'Exclusive and prestigious' },
-  ];
-
-  const portali = [
-    { value: 'generico', label: isItalian ? 'Generico (tutti i portali)' : 'Generic (all portals)' },
-    { value: 'immobiliare', label: 'Immobiliare.it' },
-    { value: 'idealista', label: 'Idealista.it' },
-    { value: 'casa', label: 'Casa.it' },
-    { value: 'subito', label: 'Subito.it' },
-    { value: 'zillow', label: 'Zillow.com (USA)' },
-  ];
+  const { tipoTransazione, tipiImmobile, targetCliente, toni, portali } = t;
 
   const [isLoading, setIsLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -253,7 +137,7 @@ export default function PerfectCopyPage() {
           status: res.status,
           error: res.error,
           message: res.message,
-        }, t.errorGeneric);
+        }, errorGenericRef.current);
         toast({ title: fail.title, description: fail.description, variant: 'destructive' });
         return;
       }
@@ -283,11 +167,11 @@ export default function PerfectCopyPage() {
   };
 
   const copyFullVariant = (variant: CopyVariant, name: string) => {
-    const fullText = `TITOLO:\n${variant.titolo}\n\nDESCRIZIONE:\n${variant.descrizione}\n\nHIGHLIGHTS:\n${variant.highlights.map(h => `• ${h}`).join('\n')}\n\nPERCHÉ COMPRARLO:\n${variant.perchéComprarlo.map(p => `• ${p}`).join('\n')}\n\nCALL TO ACTION:\n${variant.cta}\n\nMETA DESCRIPTION SEO:\n${variant.metaDescription}`;
+    const fullText = `${t.copyPackTitle}:\n${variant.titolo}\n\n${t.copyPackDescription}:\n${variant.descrizione}\n\n${t.copyPackHighlights}:\n${variant.highlights.map((h) => `• ${h}`).join('\n')}\n\n${t.copyPackWhyBuy}:\n${variant.perchéComprarlo.map((p) => `• ${p}`).join('\n')}\n\n${t.copyPackCta}:\n${variant.cta}\n\n${t.copyPackMeta}:\n${variant.metaDescription}`;
     copyToClipboard(fullText, `full-${name}`);
   };
 
-  const renderVariantCard = (variant: CopyVariant, name: string, icon: React.ReactNode, color: string) => (
+  const renderVariantCard = (variant: CopyVariant, name: string, icon: ReactNode, color: string) => (
     <div className="space-y-4" data-testid={`variant-${name}`}>
       <div className="flex justify-end">
         <Button
@@ -491,6 +375,7 @@ export default function PerfectCopyPage() {
         href="/dashboard"
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
         data-testid="link-back-dashboard"
+        aria-label={t.backAria}
       >
         <ArrowLeft className="h-4 w-4" />
         {t.backToDashboard}

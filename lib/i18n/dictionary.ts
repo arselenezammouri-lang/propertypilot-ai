@@ -34,6 +34,8 @@ import {
 } from '@/lib/i18n/notifications-settings-page-ui';
 import type { AgencyAssistantPageUi } from '@/lib/i18n/agency-assistant-page-ui';
 import { agencyAssistantPageUiEn, agencyAssistantPageUiIt } from '@/lib/i18n/agency-assistant-page-ui';
+import type { PerfectCopyPageUi } from '@/lib/i18n/perfect-copy-page-ui';
+import { perfectCopyPageUiEn, perfectCopyPageUiIt } from '@/lib/i18n/perfect-copy-page-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -225,6 +227,8 @@ export interface TranslationDictionary {
       notificationsSettingsPage: NotificationsSettingsPageUi;
       /** `/dashboard/agency-assistant` */
       agencyAssistantPage: AgencyAssistantPageUi;
+      /** `/dashboard/perfect-copy` */
+      perfectCopyPage: PerfectCopyPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1049,6 +1053,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agencyBrandingPage: agencyBrandingPageUiIt,
       notificationsSettingsPage: notificationsSettingsPageUiIt,
       agencyAssistantPage: agencyAssistantPageUiIt,
+      perfectCopyPage: perfectCopyPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -1882,6 +1887,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agencyBrandingPage: agencyBrandingPageUiEn,
       notificationsSettingsPage: notificationsSettingsPageUiEn,
       agencyAssistantPage: agencyAssistantPageUiEn,
+      perfectCopyPage: perfectCopyPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {

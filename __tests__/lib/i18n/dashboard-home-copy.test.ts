@@ -173,4 +173,13 @@ describe('dashboard home copy (D1)', () => {
     expect(itA.title).toContain('Assistant');
     expect(enA.backLink).toBe('Dashboard');
   });
+
+  it('perfectCopyPage for IT/EN', () => {
+    const itP = getTranslation('it').dashboard.perfectCopyPage;
+    const enP = getTranslation('en').dashboard.perfectCopyPage;
+    expect(itP.tipiImmobile.length).toBeGreaterThanOrEqual(15);
+    expect(enP.copyPackTitle).toBe('TITLE');
+    expect(itP.copyPackTitle).toBe('TITOLO');
+    expect(itP.toni.length).toBe(3);
+  });
 });
