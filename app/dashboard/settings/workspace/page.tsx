@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
-import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown, Clock } from "lucide-react";
+import { Settings, Zap, Phone, Box, Target, Building2, Map as MapIcon, FileText, Sparkles, TrendingDown, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
@@ -69,7 +69,7 @@ export default function WorkspaceSettingsPage() {
       APAC: regions.APAC,
       UTC: regions.UTC,
     };
-    const byRegion = new Map<string, (typeof DASHBOARD_TIMEZONE_OPTIONS)[number][]>();
+    const byRegion = new globalThis.Map<string, (typeof DASHBOARD_TIMEZONE_OPTIONS)[number][]>();
     for (const opt of DASHBOARD_TIMEZONE_OPTIONS) {
       const list = byRegion.get(opt.region) ?? [];
       list.push(opt);
@@ -123,7 +123,7 @@ export default function WorkspaceSettingsPage() {
             { id: '3d_staging' as const, icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
             { id: 'price_sniper' as const, icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
             { id: 'commercial' as const, icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
-            { id: 'territory_map' as const, icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'territory_map' as const, icon: <MapIcon className="h-5 w-5" />, requiredPlan: 'PRO' as const },
             { id: 'smart_briefing' as const, icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
             { id: 'xray_vision' as const, icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
             { id: 'competitor_radar' as const, icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },

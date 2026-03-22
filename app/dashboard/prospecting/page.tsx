@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef, type ComponentType } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { PropertyCategory } from "@/lib/utils/property-category";
@@ -88,9 +88,8 @@ import {
   Smartphone,
   Palette,
   Mail,
-  Search,
-  Eye,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { detectLocaleFromLocation, getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale, formatDateTimeForLocale } from "@/lib/i18n/intl";
@@ -203,10 +202,7 @@ interface ProspectingFilter {
   listings_found_count: number;
 }
 
-const NEXT_ACTION_ICON: Record<
-  NextActionIconKey,
-  ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
-> = {
+const NEXT_ACTION_ICON: Record<NextActionIconKey, LucideIcon> = {
   barChart: BarChart3,
   smartphone: Smartphone,
   palette: Palette,
@@ -217,10 +213,7 @@ const NEXT_ACTION_ICON: Record<
   eye: Eye,
 };
 
-const PLATFORM_ICON: Record<
-  ProspectingPlatformIconKey,
-  ComponentType<{ className?: string; 'aria-hidden'?: boolean }>
-> = {
+const PLATFORM_ICON: Record<ProspectingPlatformIconKey, LucideIcon> = {
   home: Home,
   building2: Building2,
   globe: Globe,

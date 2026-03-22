@@ -557,11 +557,22 @@ export default function AutomationCenterPage() {
                           <SelectValue placeholder={t.selectValue} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-white/10">
-                          {FIELD_OPTIONS.find(f => f.value === formData.condition_field)?.options?.map((opt) => (
-                            <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
-                              {formatConditionValue(formData.condition_field, opt)}
-                            </SelectItem>
-                          ))}
+                          {(() => {
+                            const fieldDef = FIELD_OPTIONS.find(
+                              (f) => f.value === formData.condition_field
+                            );
+                            const opts =
+                              fieldDef &&
+                              fieldDef.type === "select" &&
+                              "options" in fieldDef
+                                ? fieldDef.options
+                                : [];
+                            return opts.map((opt: string) => (
+                              <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
+                                {formatConditionValue(formData.condition_field, opt)}
+                              </SelectItem>
+                            ));
+                          })()}
                         </SelectContent>
                       </Select>
                     ) : (
