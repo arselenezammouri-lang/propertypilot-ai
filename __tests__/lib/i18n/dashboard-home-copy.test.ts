@@ -44,4 +44,11 @@ describe('dashboard home copy (D1)', () => {
     expect(it.morningBriefing.sendTest).toBeTruthy();
     expect(en.morningBriefing.subtitle).toContain('market gap');
   });
+
+  it('competitorRadar and planCards for EN', () => {
+    const d = getTranslation('en').dashboard;
+    expect(d.competitorRadar.refreshAria).toBe('Refresh list');
+    expect(d.planCards.buyAgencyBoost).toContain('Agency Boost');
+    expect(d.planCards.allFreeFeatures).toContain('Free');
+  });
 });

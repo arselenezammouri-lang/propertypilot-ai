@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Crown, Sparkles, Rocket, Zap, Check, ArrowRight } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { Locale } from "@/lib/i18n/config";
+import { STRIPE_PLANS, STRIPE_ONE_TIME_PACKAGES } from "@/lib/stripe/config";
 
 type Plan = "free" | "starter" | "pro" | "agency";
 
@@ -14,11 +17,13 @@ interface DashboardPlanCardsSectionProps {
 }
 
 export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSectionProps) {
-  const { locale } = useLocaleContext();
+  const { locale, currency } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
   const d = t.dashboard;
+  const pc = d.planCards;
   const cta = t.landing?.pricing?.cta;
   const perMonth = t.landing?.pricing?.perMonth ?? "/month";
+  const fmt = (amount: number) => formatCurrencyForLocale(amount, locale as Locale, currency);
 
   return (
     <>
@@ -35,9 +40,9 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
                 </h2>
                 <p className="text-lg text-muted-foreground">
                   {currentPlan === "free" && `${d.planFree} - ${d.startFree}`}
-                  {currentPlan === "starter" && `${d.planStarter} - €197${perMonth}`}
-                  {currentPlan === "pro" && `${d.planPro} - €497${perMonth}`}
-                  {currentPlan === "agency" && `${d.planAgency} - €897${perMonth}`}
+                  {currentPlan === "starter" && `${d.planStarter} - ${fmt(STRIPE_PLANS.starter.price)}${perMonth}`}
+                  {currentPlan === "pro" && `${d.planPro} - ${fmt(STRIPE_PLANS.pro.price)}${perMonth}`}
+                  {currentPlan === "agency" && `${d.planAgency} - ${fmt(STRIPE_PLANS.agency.price)}${perMonth}`}
                 </p>
               </div>
             </div>
@@ -77,10 +82,10 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
             </div>
             <ul className="space-y-2 mb-6">
               <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{d.planFree}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Genera Nuovo Annuncio" : "Generate New Listing"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">AI Scraper</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Analisi da Link" : "Link Analysis"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Schede PDF Premium" : "Premium PDF Cards"}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.generateNewListing}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.aiScraper}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.linkAnalysis}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.premiumPdfCards}</span></li>
             </ul>
             {currentPlan === "free" ? (
               <Button className="w-full" disabled>✓ {d.yourCurrentPlan}</Button>
@@ -103,15 +108,15 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
             <h3 className="text-2xl font-black text-electric-blue mb-2">Starter</h3>
             <p className="text-sm text-muted-foreground mb-4">{d.forBeginners}</p>
             <div className="mb-6">
-              <span className="text-4xl font-black gradient-text-purple">€197</span>
+              <span className="text-4xl font-black gradient-text-purple">{fmt(STRIPE_PLANS.starter.price)}</span>
               <span className="text-lg text-muted-foreground">{perMonth}</span>
             </div>
             <ul className="space-y-2 mb-6">
               <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{d.planStarter}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Tutte le funzionalità Free" : "All Free features"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Lead Scoring AI</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Perfect Copy 2.0</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Traduttore 12 Lingue" : "12 Language Translator"}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.allFreeFeatures}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.leadScoringAi}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.perfectCopy20}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.translator12Languages}</span></li>
             </ul>
             {currentPlan === "starter" ? (
               <Button className="w-full bg-electric-blue" disabled>✓ {d.yourCurrentPlan}</Button>
@@ -136,16 +141,16 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
             <h3 className="text-2xl font-black gradient-text-gold mb-2">Pro</h3>
             <p className="text-sm text-muted-foreground mb-4">{d.forProfs}</p>
             <div className="mb-6">
-              <span className="text-4xl font-black gradient-text-gold">€497</span>
+              <span className="text-4xl font-black gradient-text-gold">{fmt(STRIPE_PLANS.pro.price)}</span>
               <span className="text-lg text-muted-foreground">{perMonth}</span>
             </div>
             <ul className="space-y-2 mb-6">
               <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{d.planPro}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Tutte le funzionalità Starter" : "All Starter features"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "CRM Completo + Pipeline" : "Full CRM + Pipeline"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Virtual Staging 3D</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">AI Voice Calling (30/mese)</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Agency Assistant AI</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.allStarterFeatures}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.fullCrmPipeline}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.virtualStaging3d}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.aiVoiceCallingMonthly}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.agencyAssistantAi}</span></li>
             </ul>
             {currentPlan === "pro" ? (
               <Button className="w-full bg-sunset-gold text-black" disabled>✓ {d.yourCurrentPlan}</Button>
@@ -170,16 +175,16 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
             <h3 className="text-2xl font-black gradient-text-purple mb-2">Agency</h3>
             <p className="text-sm text-muted-foreground mb-4">{d.forTeam}</p>
             <div className="mb-6">
-              <span className="text-4xl font-black gradient-text-purple">€897</span>
+              <span className="text-4xl font-black gradient-text-purple">{fmt(STRIPE_PLANS.agency.price)}</span>
               <span className="text-lg text-muted-foreground">{perMonth}</span>
             </div>
             <ul className="space-y-2 mb-6">
               <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{d.planAgency}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Tutte le funzionalità Pro" : "All Pro features"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "AI Voice Calling Illimitato" : "Unlimited AI Voice Calling"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Aura VR: Virtual Tour</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Team fino a 10 agenti" : "Team up to 10 agents"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">Omnichannel Suite</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.allProFeatures}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.unlimitedAiVoiceCalling}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.auraVrVirtualTour}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.teamUpToAgents}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-neon-aqua mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.omnichannelSuite}</span></li>
             </ul>
             {currentPlan === "agency" ? (
               <Button className="w-full bg-royal-purple" disabled>✓ {d.yourCurrentPlan}</Button>
@@ -198,21 +203,21 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
             <div className="w-12 h-12 bg-gradient-to-br from-yellow-500/30 to-orange-500/20 rounded-2xl flex items-center justify-center mb-4 shadow-glow-yellow mx-auto">
               <Rocket className="h-6 w-6 text-yellow-500" />
             </div>
-            <h3 className="text-2xl font-black text-white mb-2">Agency Boost</h3>
-            <p className="text-sm text-muted-foreground mb-4">Done-for-you Setup</p>
+            <h3 className="text-2xl font-black text-white mb-2">{pc.agencyBoostTitle}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{pc.agencyBoostSubtitle}</p>
             <div className="mb-6">
-              <span className="text-4xl font-black text-white">€2,497</span>
-              <span className="text-lg text-muted-foreground"> {locale === "it" ? "una tantum" : "one-time"}</span>
+              <span className="text-4xl font-black text-white">{fmt(STRIPE_ONE_TIME_PACKAGES.boost.price)}</span>
+              <span className="text-lg text-muted-foreground"> {pc.oneTime}</span>
             </div>
             <ul className="space-y-2 mb-6 text-left">
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Setup completo done-for-you" : "Full done-for-you setup"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Implementazione e onboarding guidato" : "Guided implementation and onboarding"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Supporto premium per il lancio" : "Premium launch support"}</span></li>
-              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{locale === "it" ? "Configurazione personalizzata" : "Custom configuration"}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.boostSetupComplete}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.boostOnboarding}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.boostLaunchSupport}</span></li>
+              <li className="flex items-start gap-2"><Check className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" /><span className="text-sm">{pc.boostCustomConfig}</span></li>
             </ul>
             <Link href="/api/stripe/checkout-oneshot?package=agency_boost">
               <Button className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:opacity-90 text-white font-bold">
-                {locale === "it" ? "Acquista Agency Boost" : "Buy Agency Boost"}
+                {pc.buyAgencyBoost}
               </Button>
             </Link>
           </div>

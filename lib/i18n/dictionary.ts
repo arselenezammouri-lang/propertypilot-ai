@@ -157,6 +157,47 @@ export interface TranslationDictionary {
         partnerAgencies: string;
         sendTest: string;
       };
+      competitorRadar: {
+        na: string;
+        title: string;
+        subtitle: string;
+        removed: string;
+        stale: string;
+        aiNote: string;
+        offlineFor: string;
+        days: string;
+        viewAll: string;
+        refreshAria: string;
+      };
+      /** Card piani su /dashboard — allineate a Stripe config; prezzi da formattare con valuta utente */
+      planCards: {
+        generateNewListing: string;
+        aiScraper: string;
+        linkAnalysis: string;
+        premiumPdfCards: string;
+        allFreeFeatures: string;
+        leadScoringAi: string;
+        perfectCopy20: string;
+        translator12Languages: string;
+        allStarterFeatures: string;
+        fullCrmPipeline: string;
+        virtualStaging3d: string;
+        aiVoiceCallingMonthly: string;
+        agencyAssistantAi: string;
+        allProFeatures: string;
+        unlimitedAiVoiceCalling: string;
+        auraVrVirtualTour: string;
+        teamUpToAgents: string;
+        omnichannelSuite: string;
+        agencyBoostTitle: string;
+        agencyBoostSubtitle: string;
+        oneTime: string;
+        boostSetupComplete: string;
+        boostOnboarding: string;
+        boostLaunchSupport: string;
+        boostCustomConfig: string;
+        buyAgencyBoost: string;
+      };
     };
 
   // Auth (Login / Signup)
@@ -773,6 +814,46 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         partnerAgencies: 'agenzie partner nella tua zona. Affrettati!',
         sendTest: 'Invia Prova sul mio Cellulare',
       },
+      competitorRadar: {
+        na: 'N/A',
+        title: 'Radar Scadenze',
+        subtitle: 'Immobili offline o fermi da 120+ giorni',
+        removed: 'Rimosso',
+        stale: 'Fermo',
+        aiNote: 'Nota AI',
+        offlineFor: 'Offline da',
+        days: 'giorni',
+        viewAll: 'Vedi tutti',
+        refreshAria: 'Aggiorna elenco',
+      },
+      planCards: {
+        generateNewListing: 'Genera Nuovo Annuncio',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Analisi da Link',
+        premiumPdfCards: 'Schede PDF Premium',
+        allFreeFeatures: 'Tutte le funzionalità Free',
+        leadScoringAi: 'Lead Scoring AI',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Traduttore 12 Lingue',
+        allStarterFeatures: 'Tutte le funzionalità Starter',
+        fullCrmPipeline: 'CRM Completo + Pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'AI Voice Calling (30/mese)',
+        agencyAssistantAi: 'Agency Assistant AI',
+        allProFeatures: 'Tutte le funzionalità Pro',
+        unlimitedAiVoiceCalling: 'AI Voice Calling Illimitato',
+        auraVrVirtualTour: 'Aura VR: Virtual Tour',
+        teamUpToAgents: 'Team fino a 10 agenti',
+        omnichannelSuite: 'Omnichannel Suite',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Setup done-for-you',
+        oneTime: 'una tantum',
+        boostSetupComplete: 'Setup completo done-for-you',
+        boostOnboarding: 'Implementazione e onboarding guidato',
+        boostLaunchSupport: 'Supporto premium per il lancio',
+        boostCustomConfig: 'Configurazione personalizzata',
+        buyAgencyBoost: 'Acquista Agency Boost',
+      },
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1386,6 +1467,46 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         fomo: 'These deals have also been sent to',
         partnerAgencies: 'partner agencies in your area. Move fast!',
         sendTest: 'Send Test to My Phone',
+      },
+      competitorRadar: {
+        na: 'N/A',
+        title: 'Expiration Radar',
+        subtitle: 'Properties offline or stale for 120+ days',
+        removed: 'Removed',
+        stale: 'Stale',
+        aiNote: 'AI note',
+        offlineFor: 'Offline for',
+        days: 'days',
+        viewAll: 'View all',
+        refreshAria: 'Refresh list',
+      },
+      planCards: {
+        generateNewListing: 'Generate New Listing',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Link Analysis',
+        premiumPdfCards: 'Premium PDF Cards',
+        allFreeFeatures: 'All Free features',
+        leadScoringAi: 'Lead Scoring AI',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: '12 Language Translator',
+        allStarterFeatures: 'All Starter features',
+        fullCrmPipeline: 'Full CRM + Pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'AI Voice Calling (30/month)',
+        agencyAssistantAi: 'Agency Assistant AI',
+        allProFeatures: 'All Pro features',
+        unlimitedAiVoiceCalling: 'Unlimited AI Voice Calling',
+        auraVrVirtualTour: 'Aura VR: Virtual Tour',
+        teamUpToAgents: 'Team up to 10 agents',
+        omnichannelSuite: 'Omnichannel Suite',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Done-for-you setup',
+        oneTime: 'one-time',
+        boostSetupComplete: 'Full done-for-you setup',
+        boostOnboarding: 'Guided implementation and onboarding',
+        boostLaunchSupport: 'Premium launch support',
+        boostCustomConfig: 'Custom configuration',
+        buyAgencyBoost: 'Buy Agency Boost',
       },
     },
     auth: {
