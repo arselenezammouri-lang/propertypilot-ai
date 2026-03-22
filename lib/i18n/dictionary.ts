@@ -171,6 +171,16 @@ import { videoScriptsPageUiFr, followupEmailsPageUiFr } from '@/lib/i18n/video-f
 import { videoScriptsPageUiDe, followupEmailsPageUiDe } from '@/lib/i18n/video-followup-locales-de';
 import { videoScriptsPageUiPt, followupEmailsPageUiPt } from '@/lib/i18n/video-followup-locales-pt';
 import { videoScriptsPageUiAr, followupEmailsPageUiAr } from '@/lib/i18n/video-followup-locales-ar';
+import type { EmotionalListingPageUi } from '@/lib/i18n/emotional-listing-page-ui';
+import {
+  emotionalListingPageUiEn,
+  emotionalListingPageUiIt,
+} from '@/lib/i18n/emotional-listing-page-ui';
+import { emotionalListingPageUiEs } from '@/lib/i18n/emotional-listing-locales-es';
+import { emotionalListingPageUiFr } from '@/lib/i18n/emotional-listing-locales-fr';
+import { emotionalListingPageUiDe } from '@/lib/i18n/emotional-listing-locales-de';
+import { emotionalListingPageUiPt } from '@/lib/i18n/emotional-listing-locales-pt';
+import { emotionalListingPageUiAr } from '@/lib/i18n/emotional-listing-locales-ar';
 import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
@@ -441,6 +451,8 @@ export interface TranslationDictionary {
       videoScriptsPage: VideoScriptsPageUi;
       /** `/dashboard/followup-emails` */
       followupEmailsPage: FollowupEmailsPageUi;
+      /** `/dashboard/emotional-listing` */
+      emotionalListingPage: EmotionalListingPageUi;
       /** `/dashboard/leads/[id]` */
       leadDetailPage: LeadDetailPageUi;
       /** Hub comunicazioni nel dettaglio lead */
@@ -1388,6 +1400,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiIt,
       videoScriptsPage: videoScriptsPageUiIt,
       followupEmailsPage: followupEmailsPageUiIt,
+      emotionalListingPage: emotionalListingPageUiIt,
       leadDetailPage: leadDetailPageUiIt,
       communicationsHub: communicationsHubUiIt,
       predatorLiveBadge: {
@@ -2330,6 +2343,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiEn,
       videoScriptsPage: videoScriptsPageUiEn,
       followupEmailsPage: followupEmailsPageUiEn,
+      emotionalListingPage: emotionalListingPageUiEn,
       leadDetailPage: leadDetailPageUiEn,
       communicationsHub: communicationsHubUiEn,
       predatorLiveBadge: {
@@ -3081,6 +3095,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiEs,
       videoScriptsPage: videoScriptsPageUiEs,
       followupEmailsPage: followupEmailsPageUiEs,
+      emotionalListingPage: emotionalListingPageUiEs,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3466,6 +3481,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiFr,
       videoScriptsPage: videoScriptsPageUiFr,
       followupEmailsPage: followupEmailsPageUiFr,
+      emotionalListingPage: emotionalListingPageUiFr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -3851,6 +3867,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiDe,
       videoScriptsPage: videoScriptsPageUiDe,
       followupEmailsPage: followupEmailsPageUiDe,
+      emotionalListingPage: emotionalListingPageUiDe,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4238,6 +4255,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiPt,
       videoScriptsPage: videoScriptsPageUiPt,
       followupEmailsPage: followupEmailsPageUiPt,
+      emotionalListingPage: emotionalListingPageUiPt,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
@@ -4431,6 +4449,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       agentBioPage: agentBioPageUiAr,
       videoScriptsPage: videoScriptsPageUiAr,
       followupEmailsPage: followupEmailsPageUiAr,
+      emotionalListingPage: emotionalListingPageUiAr,
     },
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',

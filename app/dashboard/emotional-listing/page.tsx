@@ -1,7 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type {
+  EmotionalListingTargetIconKey,
+  EmotionalListingToneIconKey,
+  EmotionalListingTxIconKey,
+  EmotionalListingVariantId,
+} from "@/lib/i18n/emotional-listing-page-ui";
+import { emotionalListingVariantGradient } from "@/lib/i18n/emotional-listing-page-ui";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,20 +30,26 @@ import {
   networkFailureToast,
   validationToast,
 } from "@/lib/i18n/api-feature-feedback";
-import { 
-  Heart, 
+import {
+  Heart,
   Crown,
   Users,
   BookOpen,
-  Copy, 
-  Check, 
+  Copy,
+  Check,
   Loader2,
   ArrowLeft,
   Lightbulb,
   Sparkles,
   Star,
-  Quote
+  Quote,
+  Tag,
+  KeyRound,
+  Palmtree,
+  TrendingUp,
+  Home,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 interface EmotionalListing {
@@ -67,97 +81,49 @@ interface FormData {
   tone: "emozionale" | "luxury" | "caldo";
 }
 
+const TX_ICON: Record<EmotionalListingTxIconKey, LucideIcon> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const TARGET_ICON: Record<EmotionalListingTargetIconKey, LucideIcon> = {
+  users: Users,
+  sparkles: Sparkles,
+  trendingUp: TrendingUp,
+  crown: Crown,
+};
+
+const TONE_ICON: Record<EmotionalListingToneIconKey, LucideIcon> = {
+  heart: Heart,
+  crown: Crown,
+  home: Home,
+};
+
+const VARIANT_TAB_ICON: Record<EmotionalListingVariantId, LucideIcon> = {
+  storytelling: BookOpen,
+  luxury: Crown,
+  familyWarm: Users,
+};
 
 export default function EmotionalListingPage() {
   const { locale } = useLocale();
-  const isItalian = locale === "it";
-  const feedbackLocale = isItalian ? "it" : "en";
+  const feedbackLocale = locale === "it" ? "it" : "en";
   const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.emotionalListingPage;
 
-  const t = {
-    backToDashboard: isItalian ? "Torna alla dashboard" : "Back to dashboard",
-    heroTitle: isItalian ? "Emotional Listing AI" : "Emotional Listing AI",
-    heroSubtitle: isItalian
-      ? "Descrizioni emozionali che toccano il cuore dei tuoi acquirenti"
-      : "Emotional descriptions that touch the heart of your buyers",
-    heroBadge: isItalian ? "💛 Emotional AI" : "💛 Emotional AI",
-    formTitle: isItalian ? "Dati Immobile" : "Property Data",
-    formSubtitle: isItalian
-      ? "Inserisci le informazioni per generare descrizioni emozionali"
-      : "Enter information to generate emotional descriptions",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    propertyTypeLabel: isItalian ? "Tipo di Immobile *" : "Property Type *",
-    propertyTypePlaceholder: isItalian ? "es. Villa con giardino e piscina" : "e.g. Villa with garden and pool",
-    locationLabel: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "es. Lago di Como" : "e.g. Lake Como",
-    priceLabel: isItalian ? "Prezzo *" : "Price *",
-    pricePlaceholder: isItalian ? "es. €1.200.000" : "e.g. $1,200,000",
-    featuresLabel: isItalian ? "Caratteristiche *" : "Features *",
-    featuresPlaceholder: isItalian
-      ? "es. 5 camere, 3 bagni, giardino 2000mq, piscina infinity, vista lago..."
-      : "e.g. 5 bedrooms, 3 bathrooms, 2000sqm garden, infinity pool, lake view...",
-    strengthsLabel: isItalian ? "Punti di Forza *" : "Key Strengths *",
-    strengthsPlaceholder: isItalian
-      ? "es. Vista mozzafiato, privacy assoluta, finiture di pregio, domotica..."
-      : "e.g. Breathtaking view, total privacy, premium finishes, home automation...",
-    targetLabel: isItalian ? "Target" : "Target",
-    selectTarget: isItalian ? "Seleziona target" : "Select target",
-    toneLabel: isItalian ? "Tono" : "Tone",
-    selectTone: isItalian ? "Seleziona tono" : "Select tone",
-    generateIdle: isItalian ? "Genera 3 Versioni Emozionali" : "Generate 3 Emotional Versions",
-    generateLoading: isItalian ? "Generazione in corso..." : "Generating...",
-    emptyTitle: isItalian ? "Nessuna descrizione generata" : "No description generated",
-    emptySubtitle: isItalian
-      ? "Compila il form con i dati dell'immobile e clicca \"Genera\" per creare 3 descrizioni emozionali."
-      : "Fill the form with property data and click \"Generate\" to create 3 emotional descriptions.",
-    loadingTitle: isItalian ? "Generazione in corso..." : "Generating...",
-    loadingSubtitle: isItalian
-      ? "Stiamo creando descrizioni emozionali coinvolgenti"
-      : "We are creating engaging emotional descriptions",
-    creativeTip: isItalian ? "Consiglio Creativo" : "Creative Tip",
-    versionLabel: isItalian ? "Versione" : "Version",
-    copyAll: isItalian ? "Copia Tutto" : "Copy All",
-    sectionTitle: isItalian ? "Titolo" : "Title",
-    sectionApertura: isItalian ? "Apertura Emozionale" : "Emotional Opening",
-    sectionSensoriale: isItalian ? "Testo Sensoriale" : "Sensory Text",
-    sectionNarrativa: isItalian ? "Descrizione Narrativa" : "Narrative Description",
-    sectionImmagina: isItalian ? "🌟 Immagina Questo..." : "🌟 Imagine This...",
-    sectionCta: isItalian ? "🎯 CTA Emozionale" : "🎯 Emotional CTA",
-    // tabs
-    tabStorytelling: "Storytelling",
-    tabStorytDesc: isItalian ? "Narrativa immersiva" : "Immersive narrative",
-    tabLuxury: "Luxury",
-    tabLuxuryDesc: isItalian ? "Esclusivo e raffinato" : "Exclusive and refined",
-    tabFamilyWarm: isItalian ? "Family Warm" : "Family Warm",
-    tabFamilyWarmDesc: isItalian ? "Caldo e accogliente" : "Warm and welcoming",
-    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile (min 3 caratteri)" : "Enter property type (min 3 characters)",
-    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    featuresRequired: isItalian ? "Descrivi le caratteristiche (min 10 caratteri)" : "Describe features (min 10 characters)",
-    strengthsRequired: isItalian ? "Descrivi i punti di forza (min 10 caratteri)" : "Describe key strengths (min 10 characters)",
-    priceRequired: isItalian ? "Inserisci il prezzo" : "Enter the price",
-    successTitle: isItalian ? "Annuncio emozionale — pronto" : "Emotional listing — ready",
-    successCached: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    successDesc: isItalian ? "3 versioni emozionali pronte all'uso" : "3 emotional versions ready to use",
-    errorGeneric: isItalian ? "Errore nella generazione" : "Generation error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-  };
-
-  const tipoTransazioneOptions = [
-    { value: "vendita", label: isItalian ? "Vendita" : "Sale", icon: "🏷️" },
-    { value: "affitto", label: isItalian ? "Affitto" : "Rental", icon: "🔑" },
-    { value: "affitto_breve", label: isItalian ? "Affitto Breve / Turistico" : "Short-Term / Vacation Rental", icon: "🏖️" },
-  ];
-
-  const listingTabs = [
-    { id: "storytelling", label: t.tabStorytelling, icon: BookOpen, description: t.tabStorytDesc, gradient: "from-rose-500 to-pink-500" },
-    { id: "luxury", label: t.tabLuxury, icon: Crown, description: t.tabLuxuryDesc, gradient: "from-amber-500 to-yellow-500" },
-    { id: "familyWarm", label: t.tabFamilyWarm, icon: Users, description: t.tabFamilyWarmDesc, gradient: "from-sky-500 to-blue-500" },
-  ] as const;
+  const listingTabs = useMemo(
+    () =>
+      t.variantTabs.map((tab) => ({
+        ...tab,
+        icon: VARIANT_TAB_ICON[tab.id],
+        gradient: emotionalListingVariantGradient(tab.id),
+      })),
+    [t.variantTabs]
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<EmotionalListingResult | null>(null);
@@ -176,7 +142,7 @@ export default function EmotionalListingPage() {
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
@@ -216,11 +182,16 @@ export default function EmotionalListingPage() {
       });
 
       if (!res.success) {
-        const fail = apiFailureToast(feedbackLocale, "emotionalListing", {
-          status: res.status,
-          error: res.error,
-          message: res.message,
-        }, t.errorGeneric);
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "emotionalListing",
+          {
+            status: res.status,
+            error: res.error,
+            message: res.message,
+          },
+          t.errorGeneric
+        );
         toast({ title: fail.title, description: fail.description, variant: "destructive" });
         return;
       }
@@ -254,21 +225,22 @@ export default function EmotionalListingPage() {
   };
 
   const copyFullListing = (listing: EmotionalListing, version: string) => {
-    const fullText = `${listing.titolo}\n\n` +
+    const fullText =
+      `${listing.titolo}\n\n` +
       `${listing.aperturaEmozionale}\n\n` +
       `${listing.testoSensoriale}\n\n` +
       `${listing.descrizioneNarrativa}\n\n` +
-      `✨ EMOTIONAL HIGHLIGHTS:\n${listing.emotionalHighlights.map(h => `• ${h}`).join('\n')}\n\n` +
-      `🌟 IMMAGINA QUESTO...\n${listing.sezioneImmagina}\n\n` +
+      `${t.copyExportHighlightsTitle}:\n${listing.emotionalHighlights.map((h) => `• ${h}`).join("\n")}\n\n` +
+      `${t.sectionImmagina}\n${listing.sezioneImmagina}\n\n` +
       `${listing.ctaEmozionale}`;
-    
+
     copyToClipboard(fullText, `full-${version}`);
   };
 
   const renderListingCard = (listing: EmotionalListing, version: string) => {
-    const tabInfo = listingTabs.find(tab => tab.id === version) || listingTabs[0];
+    const tabInfo = listingTabs.find((tab) => tab.id === version) || listingTabs[0];
     const Icon = tabInfo.icon;
-    
+
     return (
       <Card className="border-2 border-rose-200 dark:border-rose-800">
         <CardHeader className={`bg-gradient-to-r ${tabInfo.gradient} bg-opacity-10`}>
@@ -303,9 +275,7 @@ export default function EmotionalListingPage() {
                 {copiedField === `title-${version}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
-            <h3 className="text-xl font-bold text-foreground">
-              {listing.titolo}
-            </h3>
+            <h3 className="text-xl font-bold text-foreground">{listing.titolo}</h3>
           </div>
 
           <div className="space-y-2">
@@ -324,9 +294,7 @@ export default function EmotionalListingPage() {
               </Button>
             </div>
             <div className="bg-gradient-to-r from-rose-50 to-pink-50 dark:from-rose-900/20 dark:to-pink-900/20 p-4 rounded-lg border-l-4 border-rose-500">
-              <p className="text-foreground italic font-medium">
-                "{listing.aperturaEmozionale}"
-              </p>
+              <p className="text-foreground italic font-medium">&quot;{listing.aperturaEmozionale}&quot;</p>
             </div>
           </div>
 
@@ -345,9 +313,7 @@ export default function EmotionalListingPage() {
                 {copiedField === `sensoriale-${version}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
-            <p className="text-foreground leading-relaxed bg-muted/30 p-4 rounded-lg">
-              {listing.testoSensoriale}
-            </p>
+            <p className="text-foreground leading-relaxed bg-muted/30 p-4 rounded-lg">{listing.testoSensoriale}</p>
           </div>
 
           <div className="space-y-2">
@@ -365,20 +331,21 @@ export default function EmotionalListingPage() {
                 {copiedField === `narrativa-${version}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
               </Button>
             </div>
-            <p className="text-foreground leading-relaxed">
-              {listing.descrizioneNarrativa}
-            </p>
+            <p className="text-foreground leading-relaxed">{listing.descrizioneNarrativa}</p>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
-                ✨ Emotional Highlights
+                <Sparkles className="h-3 w-3" aria-hidden />
+                {t.sectionHighlights}
               </Label>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard(listing.emotionalHighlights.map(h => `• ${h}`).join('\n'), `highlights-${version}`)}
+                onClick={() =>
+                  copyToClipboard(listing.emotionalHighlights.map((h) => `• ${h}`).join("\n"), `highlights-${version}`)
+                }
                 className="h-6 px-2"
                 data-testid={`button-copy-highlights-${version}`}
               >
@@ -388,7 +355,9 @@ export default function EmotionalListingPage() {
             <ul className="space-y-2">
               {listing.emotionalHighlights.map((highlight, idx) => (
                 <li key={idx} className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
-                  <span className={`w-6 h-6 rounded-full bg-gradient-to-r ${tabInfo.gradient} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+                  <span
+                    className={`w-6 h-6 rounded-full bg-gradient-to-r ${tabInfo.gradient} flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}
+                  >
                     {idx + 1}
                   </span>
                   <span className="text-foreground">{highlight}</span>
@@ -400,6 +369,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                <Quote className="h-3 w-3" aria-hidden />
                 {t.sectionImmagina}
               </Label>
               <Button
@@ -414,10 +384,8 @@ export default function EmotionalListingPage() {
             </div>
             <div className={`bg-gradient-to-r ${tabInfo.gradient} bg-opacity-10 p-4 rounded-lg border`}>
               <div className="flex items-start gap-2">
-                <Quote className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" />
-                <p className="text-foreground italic">
-                  {listing.sezioneImmagina}
-                </p>
+                <Quote className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-1" aria-hidden />
+                <p className="text-foreground italic">{listing.sezioneImmagina}</p>
               </div>
             </div>
           </div>
@@ -425,6 +393,7 @@ export default function EmotionalListingPage() {
           <div className="space-y-2 pt-4 border-t">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                <Heart className="h-3 w-3" aria-hidden />
                 {t.sectionCta}
               </Label>
               <Button
@@ -460,6 +429,7 @@ export default function EmotionalListingPage() {
       <Link
         href="/dashboard"
         className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        aria-label={t.backToDashboard}
       >
         <ArrowLeft className="h-4 w-4" />
         {t.backToDashboard}
@@ -471,9 +441,10 @@ export default function EmotionalListingPage() {
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
         actions={
-          <Badge className="bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0 text-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/90">
+            <Heart className="h-3.5 w-3.5 text-rose-400 shrink-0" aria-hidden />
             {t.heroBadge}
-          </Badge>
+          </span>
         }
       />
 
@@ -484,29 +455,27 @@ export default function EmotionalListingPage() {
               <Sparkles className="h-5 w-5 text-rose-600" />
               {t.formTitle}
             </CardTitle>
-            <CardDescription>
-              {t.formSubtitle}
-            </CardDescription>
+            <CardDescription>{t.formSubtitle}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-4">
             <div className="space-y-2">
               <Label>{t.listingType}</Label>
-              <Select
-                value={formData.tipoTransazione}
-                onValueChange={(value) => handleInputChange("tipoTransazione", value)}
-              >
+              <Select value={formData.tipoTransazione} onValueChange={(value) => handleInputChange("tipoTransazione", value)}>
                 <SelectTrigger data-testid="select-tipo-transazione">
                   <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipoTransazioneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {t.transactionOptions.map((option) => {
+                    const TxIcon = TX_ICON[option.iconKey];
+                    return (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -574,36 +543,44 @@ export default function EmotionalListingPage() {
                 <Label htmlFor="targetBuyer">{t.targetLabel}</Label>
                 <Select
                   value={formData.targetBuyer}
-                  onValueChange={(value: FormData["targetBuyer"]) => 
-                    handleInputChange("targetBuyer", value)
-                  }
+                  onValueChange={(value: FormData["targetBuyer"]) => handleInputChange("targetBuyer", value)}
                 >
                   <SelectTrigger data-testid="select-target">
                     <SelectValue placeholder={t.selectTarget} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="famiglie">👨‍👩‍👧 Famiglie</SelectItem>
-                    <SelectItem value="giovani">✨ Giovani</SelectItem>
-                    <SelectItem value="investitori">📈 Investitori</SelectItem>
-                    <SelectItem value="luxury">👑 Luxury</SelectItem>
+                    {t.targetOptions.map((opt) => {
+                      const TargetIcon = TARGET_ICON[opt.iconKey];
+                      return (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <span className="flex items-center gap-2">
+                            <TargetIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                            {opt.label}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="tone">{t.toneLabel}</Label>
-                <Select
-                  value={formData.tone}
-                  onValueChange={(value: FormData["tone"]) => 
-                    handleInputChange("tone", value)
-                  }
-                >
+                <Select value={formData.tone} onValueChange={(value: FormData["tone"]) => handleInputChange("tone", value)}>
                   <SelectTrigger data-testid="select-tone">
                     <SelectValue placeholder={t.selectTone} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="emozionale">💗 Emozionale</SelectItem>
-                    <SelectItem value="luxury">👑 Luxury</SelectItem>
-                    <SelectItem value="caldo">🏠 Caldo</SelectItem>
+                    {t.toneOptions.map((opt) => {
+                      const ToneIcon = TONE_ICON[opt.iconKey];
+                      return (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <span className="flex items-center gap-2">
+                            <ToneIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                            {opt.label}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -634,13 +611,9 @@ export default function EmotionalListingPage() {
           {!result && !isLoading && (
             <Card className="border-dashed border-2 border-muted">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
-                <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  {t.emptyTitle}
-                </h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {t.emptySubtitle}
-                </p>
+                <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" aria-hidden />
+                <h3 className="text-lg font-medium text-muted-foreground mb-2">{t.emptyTitle}</h3>
+                <p className="text-sm text-muted-foreground max-w-md">{t.emptySubtitle}</p>
               </CardContent>
             </Card>
           )}
@@ -648,11 +621,9 @@ export default function EmotionalListingPage() {
           {isLoading && (
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-16">
-                <Loader2 className="h-12 w-12 text-rose-500 animate-spin mb-4" />
+                <Loader2 className="h-12 w-12 text-rose-500 animate-spin mb-4" aria-hidden />
                 <h3 className="text-lg font-medium mb-2">{t.loadingTitle}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {t.loadingSubtitle}
-                </p>
+                <p className="text-sm text-muted-foreground">{t.loadingSubtitle}</p>
               </CardContent>
             </Card>
           )}
@@ -663,14 +634,10 @@ export default function EmotionalListingPage() {
                 <Card className="border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20">
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-3">
-                      <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <Lightbulb className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" aria-hidden />
                       <div>
-                        <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">
-                          {t.creativeTip}
-                        </h4>
-                        <p className="text-sm text-amber-700 dark:text-amber-300">
-                          {result.consiglioCreativo}
-                        </p>
+                        <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-1">{t.creativeTip}</h4>
+                        <p className="text-sm text-amber-700 dark:text-amber-300">{result.consiglioCreativo}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -680,7 +647,7 @@ export default function EmotionalListingPage() {
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-3 gap-1 h-auto p-1">
                   {listingTabs.map((tab) => {
-                    const Icon = tab.icon;
+                    const TabIcon = tab.icon;
                     return (
                       <TabsTrigger
                         key={tab.id}
@@ -688,7 +655,7 @@ export default function EmotionalListingPage() {
                         className="flex flex-col items-center gap-1 py-3 px-2 data-[state=active]:bg-rose-100 dark:data-[state=active]:bg-rose-900/30"
                         data-testid={`tab-${tab.id}`}
                       >
-                        <Icon className="h-5 w-5" />
+                        <TabIcon className="h-5 w-5" />
                         <span className="text-xs font-medium">{tab.label}</span>
                         <span className="text-xs text-muted-foreground hidden sm:inline">{tab.description}</span>
                       </TabsTrigger>
