@@ -1,6 +1,8 @@
 /** Copy for `/dashboard/prospecting` — Arbitrage Command Center. IT + EN. */
 
 import type { ProspectingNextActionUi } from '@/lib/i18n/prospecting-next-action-ui';
+
+export type { ProspectingNextActionUi };
 import {
   prospectingNextActionUiEn,
   prospectingNextActionUiIt,
@@ -550,3 +552,10 @@ const en: ProspectingPageUi = {
 
 export const prospectingPageUiIt = it;
 export const prospectingPageUiEn = en;
+
+/** EN prospecting page + `nextAction` sostituito — per merge parziale ES/FR/DE/PT/AR nel dizionario. */
+export function prospectingPageUiWithNextAction(
+  nextAction: ProspectingNextActionUi
+): ProspectingPageUi {
+  return { ...en, nextAction };
+}

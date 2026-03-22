@@ -326,9 +326,13 @@ describe('dashboard home copy (D1)', () => {
     expect(enP.callNow.toUpperCase()).toContain('CALL');
     expect(itP.nextAction.priceDrop.reasoning).toContain('{pct}');
     expect(enP.nextAction.estMinutes).toContain('{n}');
-    expect(getTranslation('es').dashboard.prospectingPage.nextAction.monitor.action).toBe(
-      enP.nextAction.monitor.action
-    );
+    const esNa = getTranslation('es').dashboard.prospectingPage.nextAction;
+    expect(esNa.monitor.action).not.toBe(enP.nextAction.monitor.action);
+    expect(esNa.priceDrop.action.toLowerCase()).toMatch(/informe|reporte/);
+    const frNa = getTranslation('fr').dashboard.prospectingPage.nextAction;
+    expect(frNa.estMinutes).toContain('{n}');
+    expect(getTranslation('de').dashboard.prospectingPage.nextAction.est0).toMatch(/0/);
+    expect(getTranslation('ar').dashboard.prospectingPage.nextAction.monitor.action.length).toBeGreaterThan(3);
   });
 
   it('analyzeLinkPage for IT/EN', () => {
