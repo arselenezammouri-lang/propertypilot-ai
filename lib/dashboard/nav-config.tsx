@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { DashboardJtbdId, DashboardNavUi } from "@/lib/i18n/dashboard-nav-ui";
 import {
   Home,
   FileText,
@@ -30,13 +31,7 @@ import {
   User,
 } from "lucide-react";
 
-/** Job-to-be-done bucket for sidebar analytics / future filtering */
-export type DashboardJtbdId =
-  | "content"
-  | "crm"
-  | "intel"
-  | "brand"
-  | "account";
+export type { DashboardJtbdId };
 
 export type DashboardNavItem = {
   id: string;
@@ -56,20 +51,27 @@ export type DashboardNavGroup = {
   items: DashboardNavItem[];
 };
 
+function c(nav: DashboardNavUi, jtbd: DashboardJtbdId, id: string) {
+  const copy = nav.jtbd[jtbd].items[id];
+  if (!copy) {
+    throw new Error(`dashboard nav copy missing: ${jtbd}/${id}`);
+  }
+  return copy;
+}
+
 /**
- * Single source of truth for dashboard navigation (Command Palette + sidebar + mobile drawer).
- * Headings follow enterprise “job to be done” grouping (Fase A5).
+ * Single source of truth for dashboard navigation structure (Command Palette + sidebar + mobile).
+ * Labels/descriptions from `dashboardNavUi` (IT/EN in repo; other locales merge from EN via dictionary).
  */
-export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
+export function getDashboardNavGroups(nav: DashboardNavUi): DashboardNavGroup[] {
   return [
     {
       jtbdId: "content",
-      heading: isIt ? "Contenuti & annunci" : "Listings & content",
+      heading: nav.jtbd.content.heading,
       items: [
         {
           id: "listings",
-          label: isIt ? "Genera Annuncio" : "Generate Listing",
-          description: isIt ? "Crea annunci AI in 30 secondi" : "Create AI listings in 30 seconds",
+          ...c(nav, "content", "listings"),
           icon: <FileText className="h-4 w-4" />,
           href: "/dashboard/listings",
           badge: "AI",
@@ -77,10 +79,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "perfect-copy",
-          label: "Perfect Copy",
-          description: isIt
-            ? "Copy persuasivo con Hook + Body + CTA"
-            : "Persuasive copy with Hook + Body + CTA",
+          ...c(nav, "content", "perfect-copy"),
           icon: <Copy className="h-4 w-4" />,
           href: "/dashboard/perfect-copy",
           badge: "AI",
@@ -88,8 +87,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "titles",
-          label: isIt ? "Genera Titoli" : "Generate Titles",
-          description: isIt ? "10 titoli irresistibili con l'AI" : "10 irresistible AI titles",
+          ...c(nav, "content", "titles"),
           icon: <Pen className="h-4 w-4" />,
           href: "/dashboard/titles",
           badge: "AI",
@@ -97,8 +95,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "emotional-listing",
-          label: isIt ? "Annuncio Emozionale" : "Emotional Listing",
-          description: isIt ? "Storytelling che vende" : "Storytelling that sells",
+          ...c(nav, "content", "emotional-listing"),
           icon: <Heart className="h-4 w-4" />,
           href: "/dashboard/emotional-listing",
           badge: "AI",
@@ -106,8 +103,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "refine-listing",
-          label: isIt ? "Raffina Annuncio" : "Refine Listing",
-          description: isIt ? "Migliora e ottimizza testi esistenti" : "Improve and optimize existing texts",
+          ...c(nav, "content", "refine-listing"),
           icon: <Sparkles className="h-4 w-4" />,
           href: "/dashboard/refine-listing",
           badge: "AI",
@@ -115,8 +111,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "translate",
-          label: isIt ? "Traduci Annuncio" : "Translate Listing",
-          description: isIt ? "Traduci in 10+ lingue" : "Translate into 10+ languages",
+          ...c(nav, "content", "translate"),
           icon: <Globe className="h-4 w-4" />,
           href: "/dashboard/translate",
           badge: "AI",
@@ -124,8 +119,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "social-posts",
-          label: "Social Posts",
-          description: isIt ? "Post per Instagram, Facebook, LinkedIn" : "Posts for Instagram, Facebook, LinkedIn",
+          ...c(nav, "content", "social-posts"),
           icon: <Share2 className="h-4 w-4" />,
           href: "/dashboard/social-posts",
           badge: "AI",
@@ -133,8 +127,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "hashtags",
-          label: "Hashtags",
-          description: isIt ? "Set hashtag ottimizzati per ogni piattaforma" : "Optimized hashtag sets for each platform",
+          ...c(nav, "content", "hashtags"),
           icon: <Hash className="h-4 w-4" />,
           href: "/dashboard/hashtags",
           badge: "AI",
@@ -142,8 +135,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "followup-emails",
-          label: isIt ? "Email Follow-up" : "Follow-up Emails",
-          description: isIt ? "Email professionali per ogni fase" : "Professional emails for every stage",
+          ...c(nav, "content", "followup-emails"),
           icon: <Mail className="h-4 w-4" />,
           href: "/dashboard/followup-emails",
           badge: "AI",
@@ -151,8 +143,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "video-scripts",
-          label: isIt ? "Script Video" : "Video Scripts",
-          description: isIt ? "Script per Reels e TikTok" : "Scripts for Reels and TikTok",
+          ...c(nav, "content", "video-scripts"),
           icon: <Video className="h-4 w-4" />,
           href: "/dashboard/video-scripts",
           badge: "AI",
@@ -160,8 +151,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "agent-bio",
-          label: isIt ? "Bio Agente" : "Agent Bio",
-          description: isIt ? "Bio professionale per il tuo profilo" : "Professional bio for your profile",
+          ...c(nav, "content", "agent-bio"),
           icon: <User className="h-4 w-4" />,
           href: "/dashboard/agent-bio",
           badge: "AI",
@@ -169,8 +159,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "pdf",
-          label: isIt ? "Genera PDF" : "Generate PDF",
-          description: isIt ? "Brochure professionale pronta in secondi" : "Professional brochure ready in seconds",
+          ...c(nav, "content", "pdf"),
           icon: <FileText className="h-4 w-4" />,
           href: "/dashboard/pdf",
           badge: "STARTER+",
@@ -180,14 +169,11 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
     },
     {
       jtbdId: "crm",
-      heading: isIt ? "Lead, CRM & prospecting" : "Leads, CRM & prospecting",
+      heading: nav.jtbd.crm.heading,
       items: [
         {
           id: "prospecting",
-          label: isIt ? "Prospecting Engine" : "Prospecting Engine",
-          description: isIt
-            ? "Trova immobili su Idealista, Zillow, Immobiliare.it"
-            : "Find properties on Idealista, Zillow, Immobiliare.it",
+          ...c(nav, "crm", "prospecting"),
           icon: <Search className="h-4 w-4" />,
           href: "/dashboard/prospecting",
           badge: "PRO",
@@ -195,24 +181,19 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "leads",
-          label: "CRM Leads",
-          description: isIt ? "Gestisci tutti i tuoi lead" : "Manage all your leads",
+          ...c(nav, "crm", "leads"),
           icon: <Users className="h-4 w-4" />,
           href: "/dashboard/leads",
         },
         {
           id: "pipeline",
-          label: isIt ? "Pipeline Leads" : "Leads Pipeline",
-          description: isIt ? "Kanban board dei tuoi lead" : "Kanban board of your leads",
+          ...c(nav, "crm", "pipeline"),
           icon: <Layers className="h-4 w-4" />,
           href: "/dashboard/leads/pipeline",
         },
         {
           id: "workflow-automations",
-          label: isIt ? "Workflow automazioni" : "Automation workflows",
-          description: isIt
-            ? "Follow-up, reminder e contenuti ricorrenti"
-            : "Follow-up, reminders, and recurring content",
+          ...c(nav, "crm", "workflow-automations"),
           icon: <Settings className="h-4 w-4" />,
           href: "/dashboard/automations",
           badge: "PRO",
@@ -220,10 +201,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "crm-automations",
-          label: isIt ? "Regole CRM (if/then)" : "CRM rules (if/then)",
-          description: isIt
-            ? "Trigger su eventi lead: stato, score, email…"
-            : "Triggers on lead events: status, score, email…",
+          ...c(nav, "crm", "crm-automations"),
           icon: <Zap className="h-4 w-4" />,
           href: "/dashboard/crm/automations",
           badge: "PRO",
@@ -231,8 +209,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "map",
-          label: isIt ? "Mappa Tattica" : "Tactical Map",
-          description: isIt ? "Visualizza deal sulla mappa interattiva" : "View deals on the interactive map",
+          ...c(nav, "crm", "map"),
           icon: <Map className="h-4 w-4" />,
           href: "/dashboard/map",
           badge: "PRO",
@@ -240,8 +217,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "lead-score",
-          label: "Lead Score AI",
-          description: isIt ? "Punteggio AI per ogni lead" : "AI score for each lead",
+          ...c(nav, "crm", "lead-score"),
           icon: <Brain className="h-4 w-4" />,
           href: "/dashboard/lead-score",
           badge: "AI",
@@ -249,8 +225,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "opportunities",
-          label: isIt ? "Opportunità" : "Opportunities",
-          description: isIt ? "Deal con Market Gap identificato" : "Deals with identified Market Gap",
+          ...c(nav, "crm", "opportunities"),
           icon: <Target className="h-4 w-4" />,
           href: "/dashboard/opportunities",
         },
@@ -258,12 +233,11 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
     },
     {
       jtbdId: "intel",
-      heading: isIt ? "Intelligence & ricerca" : "Intelligence & research",
+      heading: nav.jtbd.intel.heading,
       items: [
         {
           id: "analyze",
-          label: isIt ? "Analisi Immobile" : "Property Analysis",
-          description: isIt ? "X-Ray AI su foto e planimetrie" : "AI X-Ray on photos and floor plans",
+          ...c(nav, "intel", "analyze"),
           icon: <ImageIcon className="h-4 w-4" />,
           href: "/dashboard/analyze",
           badge: "AI",
@@ -271,8 +245,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "auditor",
-          label: isIt ? "AI Auditor" : "AI Auditor",
-          description: isIt ? "Analisi qualità annunci esistenti" : "Quality analysis of existing listings",
+          ...c(nav, "intel", "auditor"),
           icon: <BarChart2 className="h-4 w-4" />,
           href: "/dashboard/auditor",
           badge: "AI",
@@ -280,8 +253,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "autopilot",
-          label: isIt ? "Autopilot" : "Autopilot",
-          description: isIt ? "Prospecting automatico 24/7" : "Automatic prospecting 24/7",
+          ...c(nav, "intel", "autopilot"),
           icon: <Bot className="h-4 w-4" />,
           href: "/dashboard/autopilot",
           badge: "AGENCY",
@@ -289,8 +261,7 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "scraper",
-          label: isIt ? "Scraper Globale" : "Global Scraper",
-          description: isIt ? "Cerca immobili su portali mondiali" : "Search properties on global portals",
+          ...c(nav, "intel", "scraper"),
           icon: <Globe className="h-4 w-4" />,
           href: "/dashboard/scraper",
           badge: "PRO",
@@ -300,19 +271,17 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
     },
     {
       jtbdId: "brand",
-      heading: isIt ? "Brand & crescita" : "Brand & growth",
+      heading: nav.jtbd.brand.heading,
       items: [
         {
           id: "agency-branding",
-          label: isIt ? "Brand Agenzia" : "Agency Branding",
-          description: isIt ? "Logo, colori e stile del tuo brand" : "Logo, colors and style of your brand",
+          ...c(nav, "brand", "agency-branding"),
           icon: <Building2 className="h-4 w-4" />,
           href: "/dashboard/agency-branding",
         },
         {
           id: "agency-assistant",
-          label: isIt ? "Assistente Agenzia" : "Agency Assistant",
-          description: isIt ? "AI dedicata alla tua agenzia" : "AI dedicated to your agency",
+          ...c(nav, "brand", "agency-assistant"),
           icon: <MessageSquare className="h-4 w-4" />,
           href: "/dashboard/agency-assistant",
           badge: "AI",
@@ -320,15 +289,13 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
         },
         {
           id: "packages",
-          label: isIt ? "Pacchetti Servizi" : "Service Packages",
-          description: isIt ? "Crea pacchetti da vendere ai clienti" : "Create packages to sell to clients",
+          ...c(nav, "brand", "packages"),
           icon: <Layers className="h-4 w-4" />,
           href: "/dashboard/packages",
         },
         {
           id: "referral",
-          label: isIt ? "Programma Referral" : "Referral Program",
-          description: isIt ? "Guadagna invitando colleghi" : "Earn by inviting colleagues",
+          ...c(nav, "brand", "referral"),
           icon: <Share2 className="h-4 w-4" />,
           href: "/dashboard/referral",
         },
@@ -336,42 +303,37 @@ export function getDashboardNavGroups(isIt: boolean): DashboardNavGroup[] {
     },
     {
       jtbdId: "account",
-      heading: isIt ? "Account & workspace" : "Account & workspace",
+      heading: nav.jtbd.account.heading,
       items: [
         {
           id: "dashboard",
-          label: "Dashboard",
-          description: isIt ? "Torna alla dashboard principale" : "Back to main dashboard",
+          ...c(nav, "account", "dashboard"),
           icon: <Home className="h-4 w-4" />,
           href: "/dashboard",
           shortcut: "⌘H",
         },
         {
           id: "settings-workspace",
-          label: isIt ? "Impostazioni Workspace" : "Workspace Settings",
-          description: isIt ? "Nome agenzia, lingue, preferenze" : "Agency name, languages, preferences",
+          ...c(nav, "account", "settings-workspace"),
           icon: <Settings className="h-4 w-4" />,
           href: "/dashboard/settings/workspace",
           shortcut: "⌘S",
         },
         {
           id: "billing",
-          label: isIt ? "Abbonamento & Fatturazione" : "Subscription & Billing",
-          description: isIt ? "Gestisci il tuo piano" : "Manage your plan",
+          ...c(nav, "account", "billing"),
           icon: <CreditCard className="h-4 w-4" />,
           href: "/dashboard/billing",
         },
         {
           id: "compliance",
-          label: "Compliance",
-          description: isIt ? "GDPR, CCPA e documenti legali" : "GDPR, CCPA and legal documents",
+          ...c(nav, "account", "compliance"),
           icon: <Shield className="h-4 w-4" />,
           href: "/compliance",
         },
         {
           id: "docs",
-          label: isIt ? "Documentazione" : "Documentation",
-          description: isIt ? "Guide e tutorial" : "Guides and tutorials",
+          ...c(nav, "account", "docs"),
           icon: <BookOpen className="h-4 w-4" />,
           href: "/docs",
           shortcut: "⌘D",

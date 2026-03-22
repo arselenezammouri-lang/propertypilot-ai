@@ -11,6 +11,11 @@ import {
   Settings,
   Target,
 } from "lucide-react";
+import type {
+  CommandPaletteExtraStrings,
+  CommandPaletteGuideLinkId,
+  CommandPaletteQuickLinkId,
+} from "@/lib/i18n/dashboard-nav-ui";
 
 export type CommandPaletteExtraItem = {
   id: string;
@@ -23,150 +28,98 @@ export type CommandPaletteExtraItem = {
   path: string;
 };
 
+const QUICK_ORDER: CommandPaletteQuickLinkId[] = [
+  "ql-listings",
+  "ql-perfect-copy",
+  "ql-pipeline",
+  "ql-lead-score",
+  "ql-billing",
+  "ql-workspace",
+  "ql-home",
+];
+
+const QUICK_ICONS: Record<CommandPaletteQuickLinkId, ReactNode> = {
+  "ql-listings": <FileText className="h-4 w-4" />,
+  "ql-perfect-copy": <Copy className="h-4 w-4" />,
+  "ql-pipeline": <Layers className="h-4 w-4" />,
+  "ql-lead-score": <Brain className="h-4 w-4" />,
+  "ql-billing": <CreditCard className="h-4 w-4" />,
+  "ql-workspace": <Settings className="h-4 w-4" />,
+  "ql-home": <Home className="h-4 w-4" />,
+};
+
+const QUICK_PATHS: Record<CommandPaletteQuickLinkId, string> = {
+  "ql-listings": "/dashboard/listings",
+  "ql-perfect-copy": "/dashboard/perfect-copy",
+  "ql-pipeline": "/dashboard/leads/pipeline",
+  "ql-lead-score": "/dashboard/lead-score",
+  "ql-billing": "/dashboard/billing",
+  "ql-workspace": "/dashboard/settings/workspace",
+  "ql-home": "/dashboard",
+};
+
+const GUIDE_ORDER: CommandPaletteGuideLinkId[] = [
+  "g-hub",
+  "g-welcome",
+  "g-first-listing",
+  "g-workspace-doc",
+  "g-perfect-copy",
+  "g-pipeline",
+  "g-billing",
+  "g-arbitrage",
+];
+
+const GUIDE_ICONS: Record<CommandPaletteGuideLinkId, ReactNode> = {
+  "g-hub": <BookOpen className="h-4 w-4" />,
+  "g-welcome": <Sparkles className="h-4 w-4" />,
+  "g-first-listing": <FileText className="h-4 w-4" />,
+  "g-workspace-doc": <Settings className="h-4 w-4" />,
+  "g-perfect-copy": <Copy className="h-4 w-4" />,
+  "g-pipeline": <Layers className="h-4 w-4" />,
+  "g-billing": <CreditCard className="h-4 w-4" />,
+  "g-arbitrage": <Target className="h-4 w-4" />,
+};
+
+const GUIDE_PATHS: Record<CommandPaletteGuideLinkId, string> = {
+  "g-hub": "/docs",
+  "g-welcome": "/docs/getting-started/welcome",
+  "g-first-listing": "/docs/getting-started/first-listing",
+  "g-workspace-doc": "/docs/getting-started/workspace-setup",
+  "g-perfect-copy": "/docs/getting-started/perfect-copy",
+  "g-pipeline": "/docs/crm/pipeline",
+  "g-billing": "/docs/account/billing-guide",
+  "g-arbitrage": "/docs/prospecting/arbitrage",
+};
+
 /**
- * Voci aggiuntive per la command palette (Fase C3): collegamenti veloci + guide in nuova scheda.
+ * Quick links for the command palette — copy from `getTranslation(locale).commandPaletteExtras`.
  */
-export function getCommandPaletteQuickLinks(isIt: boolean): CommandPaletteExtraItem[] {
-  return [
-    {
-      id: "ql-listings",
-      label: isIt ? "Libreria annunci" : "Listings library",
-      description: isIt ? "Annunci salvati e bozze" : "Saved listings and drafts",
-      keywords: isIt ? "libreria salvati annunci listing" : "library saved drafts listings",
-      icon: <FileText className="h-4 w-4" />,
+export function getCommandPaletteQuickLinks(strings: CommandPaletteExtraStrings): CommandPaletteExtraItem[] {
+  return QUICK_ORDER.map((id) => {
+    const s = strings.quick[id];
+    return {
+      id,
+      label: s.label,
+      description: s.description,
+      keywords: s.keywords,
+      icon: QUICK_ICONS[id],
       kind: "internal",
-      path: "/dashboard/listings",
-    },
-    {
-      id: "ql-perfect-copy",
-      label: "Perfect Copy",
-      description: isIt ? "5 varianti di copy in un colpo" : "Five copy variants at once",
-      keywords: isIt ? "copy annuncio varianti" : "copy listing variants",
-      icon: <Copy className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard/perfect-copy",
-    },
-    {
-      id: "ql-pipeline",
-      label: isIt ? "Pipeline lead" : "Lead pipeline",
-      description: isIt ? "Kanban stato lead" : "Kanban lead stages",
-      keywords: isIt ? "kanban crm lead" : "kanban crm leads",
-      icon: <Layers className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard/leads/pipeline",
-    },
-    {
-      id: "ql-lead-score",
-      label: "Lead Score AI",
-      description: isIt ? "Punteggio intelligenza lead" : "AI lead scoring",
-      keywords: isIt ? "score punteggio lead" : "score rating lead",
-      icon: <Brain className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard/lead-score",
-    },
-    {
-      id: "ql-billing",
-      label: isIt ? "Fatturazione" : "Billing",
-      description: isIt ? "Piano, Stripe, fatture" : "Plan, Stripe, invoices",
-      keywords: isIt ? "abbonamento piano stripe fattura" : "subscription plan stripe invoice",
-      icon: <CreditCard className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard/billing",
-    },
-    {
-      id: "ql-workspace",
-      label: isIt ? "Workspace" : "Workspace",
-      description: isIt ? "Moduli e preferenze agenzia" : "Agency modules and preferences",
-      keywords: isIt ? "impostazioni moduli agenzia" : "settings modules agency",
-      icon: <Settings className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard/settings/workspace",
-    },
-    {
-      id: "ql-home",
-      label: isIt ? "Command Center (home)" : "Command Center (home)",
-      description: isIt ? "Dashboard principale" : "Main dashboard",
-      keywords: isIt ? "home principale panoramica" : "home overview main",
-      icon: <Home className="h-4 w-4" />,
-      kind: "internal",
-      path: "/dashboard",
-    },
-  ];
+      path: QUICK_PATHS[id],
+    };
+  });
 }
 
-export function getCommandPaletteGuideLinks(isIt: boolean): CommandPaletteExtraItem[] {
-  return [
-    {
-      id: "g-hub",
-      label: isIt ? "Hub documentazione" : "Documentation hub",
-      description: isIt ? "Tutte le guide e le FAQ" : "All guides and FAQs",
-      keywords: isIt ? "docs aiuto help faq" : "docs help faq support",
-      icon: <BookOpen className="h-4 w-4" />,
+export function getCommandPaletteGuideLinks(strings: CommandPaletteExtraStrings): CommandPaletteExtraItem[] {
+  return GUIDE_ORDER.map((id) => {
+    const s = strings.guides[id];
+    return {
+      id,
+      label: s.label,
+      description: s.description,
+      keywords: s.keywords,
+      icon: GUIDE_ICONS[id],
       kind: "external",
-      path: "/docs",
-    },
-    {
-      id: "g-welcome",
-      label: isIt ? "Guida: Benvenuto" : "Guide: Welcome",
-      description: isIt ? "Introduzione alla piattaforma" : "Platform introduction",
-      keywords: isIt ? "inizio intro onboarding" : "start intro onboarding",
-      icon: <Sparkles className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/getting-started/welcome",
-    },
-    {
-      id: "g-first-listing",
-      label: isIt ? "Guida: Primo annuncio" : "Guide: First listing",
-      description: isIt ? "Flusso rapido per generare copy" : "Quick flow to generate copy",
-      keywords: isIt ? "primo annuncio generare tutorial" : "first listing generate tutorial",
-      icon: <FileText className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/getting-started/first-listing",
-    },
-    {
-      id: "g-workspace-doc",
-      label: isIt ? "Guida: Workspace" : "Guide: Workspace setup",
-      description: isIt ? "Moduli e personalizzazione" : "Modules and customization",
-      keywords: isIt ? "workspace moduli impostazioni" : "workspace modules settings",
-      icon: <Settings className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/getting-started/workspace-setup",
-    },
-    {
-      id: "g-perfect-copy",
-      label: isIt ? "Guida: Perfect Copy" : "Guide: Perfect Copy",
-      description: isIt ? "Campi del form e varianti" : "Form fields and variants",
-      keywords: isIt ? "perfect copy form varianti" : "perfect copy form variants",
-      icon: <Copy className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/getting-started/perfect-copy",
-    },
-    {
-      id: "g-pipeline",
-      label: isIt ? "Guida: Pipeline Kanban" : "Guide: Kanban pipeline",
-      description: isIt ? "Trascinamento stati e CRM" : "Drag status and CRM",
-      keywords: isIt ? "pipeline kanban lead crm" : "pipeline kanban leads crm",
-      icon: <Layers className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/crm/pipeline",
-    },
-    {
-      id: "g-billing",
-      label: isIt ? "Guida: Piano e fatturazione" : "Guide: Plan & billing",
-      description: isIt ? "Stripe e abbonamento" : "Stripe and subscription",
-      keywords: isIt ? "fatturazione stripe piano abbonamento" : "billing stripe plan subscription",
-      icon: <CreditCard className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/account/billing-guide",
-    },
-    {
-      id: "g-arbitrage",
-      label: isIt ? "Guida: Arbitraggio / Market Gap" : "Guide: Arbitrage / Market Gap",
-      description: isIt ? "Opportunità e pricing" : "Opportunities and pricing",
-      keywords: isIt ? "arbitraggio market gap deal" : "arbitrage market gap deal",
-      icon: <Target className="h-4 w-4" />,
-      kind: "external",
-      path: "/docs/prospecting/arbitrage",
-    },
-  ];
+      path: GUIDE_PATHS[id],
+    };
+  });
 }

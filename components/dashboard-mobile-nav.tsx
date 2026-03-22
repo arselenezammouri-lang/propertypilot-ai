@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { getDashboardNavGroups } from "@/lib/dashboard/nav-config";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -34,8 +35,9 @@ export function DashboardMobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { locale } = useLocale();
-  const isIt = locale !== "en";
-  const groups = getDashboardNavGroups(isIt);
+  const t = useMemo(() => getTranslation(locale as SupportedLocale), [locale]);
+  const layout = t.dashboardNav.layout;
+  const groups = useMemo(() => getDashboardNavGroups(t.dashboardNav), [t.dashboardNav]);
 
   useEffect(() => {
     const onClose = () => setOpen(false);
@@ -55,11 +57,11 @@ export function DashboardMobileNav() {
           variant="outline"
           size="sm"
           className="lg:hidden h-11 min-h-11 px-3 border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08] hover:text-white touch-manipulation"
-          aria-label={isIt ? "Apri menu area lavoro" : "Open workspace menu"}
+          aria-label={layout.mobileOpenMenuAria}
           data-testid="button-dashboard-mobile-nav"
         >
           <Menu className="h-5 w-5 mr-2 shrink-0" />
-          <span>{isIt ? "Menu" : "Menu"}</span>
+          <span>{layout.menuButtonLabel}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="fixed left-0 top-0 z-50 flex h-full max-h-none w-[min(100vw-1rem,320px)] translate-x-0 translate-y-0 flex-col rounded-none border-r border-white/10 bg-[#0a0a0a] p-0 text-white shadow-2xl data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-none sm:rounded-none [&>button]:hidden">
@@ -70,20 +72,20 @@ export function DashboardMobileNav() {
               variant="ghost"
               size="icon"
               className="absolute right-2 top-1/2 -translate-y-1/2 h-11 w-11 min-h-11 min-w-11 text-white hover:bg-white/10 hover:text-white touch-manipulation rounded-lg"
-              aria-label={isIt ? "Chiudi menu" : "Close menu"}
+              aria-label={layout.mobileCloseMenuAria}
             >
               <X className="h-5 w-5" />
             </Button>
           </DialogClose>
           <DialogTitle className="text-base text-white pr-2">
-            {isIt ? "Area lavoro" : "Workspace"}
+            {layout.mobileTitle}
           </DialogTitle>
           <p className="text-xs text-white/50 font-normal">
-            {isIt ? "Stessi gruppi della barra laterale desktop" : "Same groups as the desktop sidebar"}
+            {layout.mobileSubtitle}
           </p>
         </DialogHeader>
         <ScrollArea className="flex-1 h-[calc(100vh-5.5rem)]">
-          <nav className="px-2 py-3 space-y-5 pb-8" aria-label={isIt ? "Navigazione mobile" : "Mobile navigation"}>
+          <nav className="px-2 py-3 space-y-5 pb-8" aria-label={layout.mobileNavAriaLabel}>
             {groups.map((group) => (
               <div key={group.jtbdId}>
                 <h2 className="px-2 mb-2 text-[10px] font-semibold uppercase tracking-widest text-white/40">

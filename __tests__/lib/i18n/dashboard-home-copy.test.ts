@@ -11,6 +11,20 @@ describe('dashboard home copy (D1)', () => {
     expect(es.generate).toBeTruthy();
   });
 
+  it('dashboardNav and commandPaletteExtras for IT/EN; ES inherits EN nav', () => {
+    const itNav = getTranslation('it').dashboardNav;
+    const enNav = getTranslation('en').dashboardNav;
+    expect(itNav.jtbd.content.heading).toContain('Contenuti');
+    expect(enNav.jtbd.content.heading).toMatch(/Listings|content/i);
+    expect(itNav.commandPalette.placeholder.length).toBeGreaterThan(5);
+    expect(getTranslation('es').dashboardNav.jtbd.crm.heading).toBe(enNav.jtbd.crm.heading);
+    const itExtras = getTranslation('it').commandPaletteExtras;
+    expect(itExtras.quick['ql-billing'].label.length).toBeGreaterThan(2);
+    expect(getTranslation('es').commandPaletteExtras.quick['ql-home'].label).toBe(
+      getTranslation('en').commandPaletteExtras.quick['ql-home'].label
+    );
+  });
+
   it('it and en expose command center strings', () => {
     const it = getTranslation('it').dashboard;
     const en = getTranslation('en').dashboard;

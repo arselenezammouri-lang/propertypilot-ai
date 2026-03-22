@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   CommandDialog,
@@ -21,30 +21,19 @@ import {
   getCommandPaletteQuickLinks,
   type CommandPaletteExtraItem,
 } from "@/lib/dashboard/command-palette-extras";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { locale } = useLocale();
-  const isIt = locale !== "en";
+  const t = useMemo(() => getTranslation(locale as SupportedLocale), [locale]);
+  const nav = t.dashboardNav;
+  const cp = nav.commandPalette;
 
-  const t = {
-    placeholder: isIt ? "Cerca strumenti, pagine, azioni..." : "Search tools, pages, actions...",
-    noResults: isIt ? "Nessun risultato trovato." : "No results found.",
-    hint: isIt ? "Premi" : "Press",
-    hintOpen: isIt ? "per aprire il Command Center" : "to open Command Center",
-    signOut: isIt ? "Esci" : "Sign out",
-    signOutDesc: isIt ? "Chiudi sessione su questo dispositivo" : "Sign out on this device",
-    help: isIt ? "Centro assistenza" : "Help center",
-    helpDesc: isIt ? "Guide e FAQ" : "Guides and FAQ",
-    quickLinksHeading: isIt ? "Collegamenti veloci" : "Quick links",
-    guidesHeading: isIt ? "Guide (nuova scheda)" : "Guides (new tab)",
-    opensNewTab: isIt ? "Si apre in una nuova scheda" : "Opens in a new tab",
-  };
-
-  const navGroups = getDashboardNavGroups(isIt);
-  const quickLinks = getCommandPaletteQuickLinks(isIt);
-  const guideLinks = getCommandPaletteGuideLinks(isIt);
+  const navGroups = useMemo(() => getDashboardNavGroups(nav), [nav]);
+  const quickLinks = useMemo(() => getCommandPaletteQuickLinks(t.commandPaletteExtras), [t.commandPaletteExtras]);
+  const guideLinks = useMemo(() => getCommandPaletteGuideLinks(t.commandPaletteExtras), [t.commandPaletteExtras]);
 
   const handleSelect = useCallback(
     (item: DashboardNavItem) => {
@@ -66,7 +55,11 @@ export function CommandPalette() {
         return;
       }
       if (typeof window !== "undefined") {
-        window.open(item.path.startsWith("http") ? item.path : `${window.location.origin}${item.path}`, "_blank", "noopener,noreferrer");
+        window.open(
+          item.path.startsWith("http") ? item.path : `${window.location.origin}${item.path}`,
+          "_blank",
+          "noopener,noreferrer"
+        );
       }
     },
     [router]
@@ -85,10 +78,10 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder={t.placeholder} />
+      <CommandInput placeholder={cp.placeholder} />
       <CommandList>
-        <CommandEmpty>{t.noResults}</CommandEmpty>
-        <CommandGroup heading={t.quickLinksHeading}>
+        <CommandEmpty>{cp.noResults}</CommandEmpty>
+        <CommandGroup heading={cp.quickLinksHeading}>
           {quickLinks.map((item) => (
             <CommandItem
               key={item.id}
@@ -107,7 +100,7 @@ export function CommandPalette() {
           ))}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading={t.guidesHeading}>
+        <CommandGroup heading={cp.guidesHeading}>
           {guideLinks.map((item) => (
             <CommandItem
               key={item.id}
@@ -126,7 +119,7 @@ export function CommandPalette() {
                   </Badge>
                 </div>
                 <p className="truncate text-xs text-muted-foreground">
-                  {item.description} · {t.opensNewTab}
+                  {item.description} · {cp.opensNewTab}
                 </p>
               </div>
             </CommandItem>
@@ -151,9 +144,7 @@ export function CommandPalette() {
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">{item.label}</span>
                       {item.badge && (
-                        <Badge
-                          className={`${item.badgeColor} text-white text-[10px] px-1.5 py-0 h-4`}
-                        >
+                        <Badge className={`${item.badgeColor} text-white text-[10px] px-1.5 py-0 h-4`}>
                           {item.badge}
                         </Badge>
                       )}
@@ -169,9 +160,9 @@ export function CommandPalette() {
           </div>
         ))}
         <CommandSeparator />
-        <CommandGroup heading={isIt ? "Azioni rapide" : "Quick actions"}>
+        <CommandGroup heading={cp.quickActionsHeading}>
           <CommandItem
-            value={`${t.help} ${t.helpDesc}`}
+            value={`${cp.help} ${cp.helpDesc}`}
             onSelect={() => {
               setOpen(false);
               router.push("/docs");
@@ -182,12 +173,12 @@ export function CommandPalette() {
               <HelpCircle className="h-4 w-4" />
             </span>
             <div className="flex-1 min-w-0">
-              <span className="font-medium text-sm">{t.help}</span>
-              <p className="text-xs text-muted-foreground truncate">{t.helpDesc}</p>
+              <span className="font-medium text-sm">{cp.help}</span>
+              <p className="text-xs text-muted-foreground truncate">{cp.helpDesc}</p>
             </div>
           </CommandItem>
           <CommandItem
-            value={`${t.signOut} ${t.signOutDesc}`}
+            value={`${cp.signOut} ${cp.signOutDesc}`}
             onSelect={() => {
               setOpen(false);
               const form = document.createElement("form");
@@ -202,8 +193,8 @@ export function CommandPalette() {
               <LogOut className="h-4 w-4" />
             </span>
             <div className="flex-1 min-w-0">
-              <span className="font-medium text-sm">{t.signOut}</span>
-              <p className="text-xs text-muted-foreground truncate">{t.signOutDesc}</p>
+              <span className="font-medium text-sm">{cp.signOut}</span>
+              <p className="text-xs text-muted-foreground truncate">{cp.signOutDesc}</p>
             </div>
           </CommandItem>
         </CommandGroup>

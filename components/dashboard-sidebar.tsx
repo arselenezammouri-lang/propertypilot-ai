@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { getDashboardNavGroups } from "@/lib/dashboard/nav-config";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -14,21 +16,22 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 export function DashboardSidebar() {
   const pathname = usePathname();
   const { locale } = useLocale();
-  const isIt = locale !== "en";
-  const groups = getDashboardNavGroups(isIt);
+  const t = useMemo(() => getTranslation(locale as SupportedLocale), [locale]);
+  const layout = t.dashboardNav.layout;
+  const groups = useMemo(() => getDashboardNavGroups(t.dashboardNav), [t.dashboardNav]);
 
   return (
     <aside
       className="hidden lg:flex lg:flex-col lg:w-[260px] lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)]"
-      aria-label={isIt ? "Navigazione area lavoro" : "Workspace navigation"}
+      aria-label={layout.sidebarAriaLabel}
     >
       <div className="rounded-xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-xl overflow-hidden flex flex-col max-h-[inherit]">
         <div className="px-4 py-3 border-b border-white/10">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-white/45">
-            {isIt ? "Area lavoro" : "Workspace"}
+            {layout.sidebarKicker}
           </p>
           <p className="text-sm text-white/80 mt-0.5">
-            {isIt ? "Strumenti per ruolo" : "Tools by job"}
+            {layout.sidebarSubtitle}
           </p>
         </div>
         <ScrollArea className="flex-1 min-h-0">

@@ -61,6 +61,13 @@ import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
 import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
 import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
 import { ariaLimitModalUiEn, ariaLimitModalUiIt } from '@/lib/i18n/aria-limit-modal-ui';
+import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
+import {
+  commandPaletteExtrasEn,
+  commandPaletteExtrasIt,
+  dashboardNavUiEn,
+  dashboardNavUiIt,
+} from '@/lib/i18n/dashboard-nav-ui';
 
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
@@ -630,6 +637,11 @@ export interface TranslationDictionary {
   pendingCheckoutBanner: PendingCheckoutUi;
   /** Usage limit upsell modal (Aria) */
   ariaLimitModal: AriaLimitModalUi;
+
+  /** Sidebar, mobile drawer, command palette nav structure + chrome (IT/EN; other locales merge EN) */
+  dashboardNav: DashboardNavUi;
+  /** Command palette quick links + doc guides (keywords for search) */
+  commandPaletteExtras: CommandPaletteExtraStrings;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -1472,6 +1484,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiIt,
     ariaLimitModal: ariaLimitModalUiIt,
+    dashboardNav: dashboardNavUiIt,
+    commandPaletteExtras: commandPaletteExtrasIt,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost attivato!',
       boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -2316,6 +2330,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiEn,
     ariaLimitModal: ariaLimitModalUiEn,
+    dashboardNav: dashboardNavUiEn,
+    commandPaletteExtras: commandPaletteExtrasEn,
     dashboardToasts: {
       boostActivated: '🎉 Agency Boost Activated!',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
