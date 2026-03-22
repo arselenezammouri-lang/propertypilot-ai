@@ -27,4 +27,12 @@ describe('dashboard home copy (D1)', () => {
     expect(en.proTips.ariaSection).toBe('Pro Tips');
     expect(it.docsHubOpen).toContain('Documentation');
   });
+
+  it('stats3d, sniperStats, regionalPortals keys for EN', () => {
+    const d = getTranslation('en').dashboard;
+    expect(d.stats3d.openedOfSent).toContain('{opened}');
+    expect(d.sniperStats.title).toBeTruthy();
+    expect(d.regionalPortals.regionEurope).toBe('Europe');
+    expect(d.regionalPortals.unitSqm).toBe('m²');
+  });
 });

@@ -3,6 +3,7 @@
 import { useGeo } from '@/contexts/geo-context';
 import { ExternalLink, Globe, TrendingUp } from 'lucide-react';
 import { useLocale as useLocaleContext } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
 
 interface PortalInfo {
   name: string;
@@ -41,28 +42,22 @@ export function RegionalPortals() {
     );
   }
 
+  const rp = getTranslation(locale as SupportedLocale).dashboard.regionalPortals;
   const regionLabels: Record<string, string> = {
-    usa: 'United States',
-    europe: 'Europe',
-    middleeast: 'Middle East',
-    global: 'Global',
+    usa: rp.regionUsa,
+    europe: rp.regionEurope,
+    middleeast: rp.regionMiddleEast,
+    global: rp.regionGlobal,
   };
   const t = {
-    it: {
-      title: 'Portali Prioritari',
-      primaryMarkets: 'Mercati Primari',
-      secondaryMarkets: 'Mercati Secondari',
-      currency: 'Valuta',
-      units: 'Unità',
-    },
-    en: {
-      title: 'Priority Portals',
-      primaryMarkets: 'Primary Markets',
-      secondaryMarkets: 'Secondary Markets',
-      currency: 'Currency',
-      units: 'Units',
-    },
-  }[(locale === 'it' ? 'it' : 'en') as 'it' | 'en'];
+    title: rp.title,
+    primaryMarkets: rp.primaryMarkets,
+    secondaryMarkets: rp.secondaryMarkets,
+    currency: rp.currency,
+    units: rp.units,
+    unitSqft: rp.unitSqft,
+    unitSqm: rp.unitSqm,
+  };
 
   return (
     <div className="elite-card p-4 space-y-4">
@@ -128,7 +123,7 @@ export function RegionalPortals() {
       <div className="pt-2 border-t border-white/[0.08]">
         <p className="text-xs text-muted-foreground">
           <span className="text-sunset-gold font-medium">{config.currencySymbol}</span>
-          {' '}{t.currency} • {config.measurementUnit === 'sqft' ? 'sq ft' : 'm²'} {t.units}
+          {' '}{t.currency} • {config.measurementUnit === 'sqft' ? t.unitSqft : t.unitSqm} {t.units}
         </p>
       </div>
     </div>

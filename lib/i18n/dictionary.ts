@@ -96,6 +96,39 @@ export interface TranslationDictionary {
         tip3: string;
       };
       docsHubOpen: string;
+      stats3d: {
+        projects3d: string;
+        generated: string;
+        whatsappOpen: string;
+        openRate: string;
+        aiViews: string;
+        /** Placeholders: {opened}, {sent} */
+        openedOfSent: string;
+        noMessages: string;
+      };
+      sniperStats: {
+        title: string;
+        priceDropsToday: string;
+        detected: string;
+        expirations: string;
+        opportunities: string;
+        last48h: string;
+        offline120: string;
+        loadError: string;
+      };
+      regionalPortals: {
+        title: string;
+        primaryMarkets: string;
+        secondaryMarkets: string;
+        currency: string;
+        units: string;
+        regionUsa: string;
+        regionEurope: string;
+        regionMiddleEast: string;
+        regionGlobal: string;
+        unitSqft: string;
+        unitSqm: string;
+      };
     };
 
   // Auth (Login / Signup)
@@ -652,6 +685,38 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Genera più versioni e scegli quella che si adatta meglio alle tue esigenze',
       },
       docsHubOpen: 'Apri Documentation Hub',
+      stats3d: {
+        projects3d: 'Progetti 3D',
+        generated: 'Generati',
+        whatsappOpen: 'Apertura WhatsApp',
+        openRate: 'Tasso di apertura',
+        aiViews: 'Visioni AI generate',
+        openedOfSent: '{opened} aperti su {sent} inviati',
+        noMessages: 'Nessun messaggio inviato ancora',
+      },
+      sniperStats: {
+        title: 'Statistiche Sniper',
+        priceDropsToday: 'Ribassi Oggi',
+        detected: 'Rilevati',
+        expirations: 'Scadenze',
+        opportunities: 'Opportunità',
+        last48h: 'Rilevati nelle ultime 48h',
+        offline120: 'Immobili offline 120+ giorni',
+        loadError: 'Impossibile caricare le statistiche Sniper.',
+      },
+      regionalPortals: {
+        title: 'Portali Prioritari',
+        primaryMarkets: 'Mercati Primari',
+        secondaryMarkets: 'Mercati Secondari',
+        currency: 'Valuta',
+        units: 'Unità',
+        regionUsa: 'Stati Uniti',
+        regionEurope: 'Europa',
+        regionMiddleEast: 'Medio Oriente',
+        regionGlobal: 'Globale',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
     },
     auth: {
       backToHome: 'Torna alla Home',
@@ -1206,6 +1271,38 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Generate multiple versions and choose the one that best fits your needs',
       },
       docsHubOpen: 'Open Documentation Hub',
+      stats3d: {
+        projects3d: '3D Projects',
+        generated: 'Generated',
+        whatsappOpen: 'WhatsApp Open Rate',
+        openRate: 'Open rate',
+        aiViews: 'AI views generated',
+        openedOfSent: '{opened} opened out of {sent} sent',
+        noMessages: 'No messages sent yet',
+      },
+      sniperStats: {
+        title: 'Sniper stats',
+        priceDropsToday: 'Price Drops Today',
+        detected: 'Detected',
+        expirations: 'Expirations',
+        opportunities: 'Opportunities',
+        last48h: 'Detected in the last 48h',
+        offline120: 'Properties offline 120+ days',
+        loadError: 'Unable to load Sniper statistics.',
+      },
+      regionalPortals: {
+        title: 'Priority Portals',
+        primaryMarkets: 'Primary Markets',
+        secondaryMarkets: 'Secondary Markets',
+        currency: 'Currency',
+        units: 'Units',
+        regionUsa: 'United States',
+        regionEurope: 'Europe',
+        regionMiddleEast: 'Middle East',
+        regionGlobal: 'Global',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
     },
     auth: {
       backToHome: 'Back to home',
