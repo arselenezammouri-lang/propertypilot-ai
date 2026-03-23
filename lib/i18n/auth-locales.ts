@@ -1,0 +1,330 @@
+/**
+ * Login / signup / auth toasts. IT/EN: dictionary.ts.
+ * Toast copy without emoji (enterprise UI).
+ */
+
+export type AuthUi = {
+  backToHome: string;
+  login: {
+    title: string;
+    subtitle: string;
+    email: string;
+    password: string;
+    forgotPassword: string;
+    signIn: string;
+    signingIn: string;
+    newTo: string;
+    createFreeAccount: string;
+    secureNote: string;
+  };
+  signup: {
+    title: string;
+    subtitle: string;
+    fullName: string;
+    email: string;
+    password: string;
+    minChars: string;
+    freePlanIncludes: string;
+    listingsPerMonth: string;
+    allAIFeatures: string;
+    noCreditCard: string;
+    createFreeAccount: string;
+    creatingAccount: string;
+    alreadyHaveAccount: string;
+    signInInstead: string;
+    termsAgreeBefore: string;
+    termsAgreeAnd: string;
+  };
+  toast: {
+    error: string;
+    fillAllFields: string;
+    tooManyAttempts: string;
+    rateLimitMsg: string;
+    welcomeBack: string;
+    completePayment: string;
+    loginSuccess: string;
+    accountCreated: string;
+    redirectPayment: string;
+    welcomePropertyPilot: string;
+    turnstileRequired: string;
+    turnstileFailed: string;
+    turnstileLoadFailed: string;
+    turnstileMisconfigured: string;
+  };
+};
+
+const secureEs =
+  'Acceso seguro • Tus datos están protegidos con cifrado estándar del sector';
+const secureFr =
+  'Connexion sécurisée • Vos données sont protégées par un chiffrement standard';
+const secureDe =
+  'Sicherer Login • Ihre Daten sind mit branchenüblicher Verschlüsselung geschützt';
+const securePt =
+  'Login seguro • Os seus dados estão protegidos com encriptação padrão do setor';
+const secureAr =
+  'تسجيل دخول آمن • بياناتك محمية بتشفير معياري للصناعة';
+
+export const authUiEs: AuthUi = {
+  backToHome: 'Volver al inicio',
+  login: {
+    title: 'Bienvenido de nuevo',
+    subtitle: 'Inicia sesión para continuar',
+    email: 'Correo electrónico',
+    password: 'Contraseña',
+    forgotPassword: '¿Olvidaste la contraseña?',
+    signIn: 'Iniciar sesión',
+    signingIn: 'Iniciando sesión...',
+    newTo: '¿Nuevo en PropertyPilot AI?',
+    createFreeAccount: 'Crear cuenta gratuita',
+    secureNote: secureEs,
+  },
+  signup: {
+    title: 'Crea tu cuenta',
+    subtitle: 'Empieza a generar anuncios profesionales con IA',
+    fullName: 'Nombre completo',
+    email: 'Correo electrónico',
+    password: 'Contraseña',
+    minChars: 'Al menos 6 caracteres',
+    freePlanIncludes: 'El plan gratuito incluye:',
+    listingsPerMonth: '5 anuncios al mes',
+    allAIFeatures: 'Todas las funciones de IA',
+    noCreditCard: 'Sin tarjeta de crédito',
+    createFreeAccount: 'Crear cuenta gratuita',
+    creatingAccount: 'Creando cuenta...',
+    alreadyHaveAccount: '¿Ya tienes cuenta?',
+    signInInstead: 'Inicia sesión',
+    termsAgreeBefore: 'Al registrarte aceptas nuestros ',
+    termsAgreeAnd: ' y ',
+  },
+  toast: {
+    error: 'Error',
+    fillAllFields: 'Completa todos los campos obligatorios.',
+    tooManyAttempts: 'Demasiados intentos',
+    rateLimitMsg:
+      'Detectamos demasiados intentos. Por tu seguridad, inténtalo de nuevo en unos minutos.',
+    welcomeBack: '¡Bienvenido de nuevo!',
+    completePayment: 'Completa el pago en el panel.',
+    loginSuccess: 'Sesión iniciada correctamente.',
+    accountCreated: '¡Cuenta creada!',
+    redirectPayment: 'Serás redirigido para completar el pago.',
+    welcomePropertyPilot: '¡Bienvenido a PropertyPilot AI!',
+    turnstileRequired: 'Completa la verificación de seguridad antes de continuar.',
+    turnstileFailed: 'La verificación de seguridad falló. Inténtalo de nuevo.',
+    turnstileLoadFailed:
+      'No se pudo cargar la verificación de seguridad. Actualiza la página o inténtalo más tarde.',
+    turnstileMisconfigured:
+      'La verificación de seguridad no está bien configurada en el servidor. Contacta con soporte.',
+  },
+};
+
+export const authUiFr: AuthUi = {
+  backToHome: 'Retour à l’accueil',
+  login: {
+    title: 'Bon retour',
+    subtitle: 'Connectez-vous pour continuer',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    forgotPassword: 'Mot de passe oublié ?',
+    signIn: 'Se connecter',
+    signingIn: 'Connexion en cours...',
+    newTo: 'Nouveau sur PropertyPilot AI ?',
+    createFreeAccount: 'Créer un compte gratuit',
+    secureNote: secureFr,
+  },
+  signup: {
+    title: 'Créez votre compte',
+    subtitle: 'Générez des annonces professionnelles avec l’IA',
+    fullName: 'Nom complet',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    minChars: 'Au moins 6 caractères',
+    freePlanIncludes: 'Le forfait gratuit inclut :',
+    listingsPerMonth: '5 annonces par mois',
+    allAIFeatures: 'Toutes les fonctions IA',
+    noCreditCard: 'Aucune carte bancaire requise',
+    createFreeAccount: 'Créer un compte gratuit',
+    creatingAccount: 'Création du compte...',
+    alreadyHaveAccount: 'Vous avez déjà un compte ?',
+    signInInstead: 'Se connecter',
+    termsAgreeBefore: 'En vous inscrivant, vous acceptez nos ',
+    termsAgreeAnd: ' et ',
+  },
+  toast: {
+    error: 'Erreur',
+    fillAllFields: 'Veuillez remplir tous les champs obligatoires.',
+    tooManyAttempts: 'Trop de tentatives',
+    rateLimitMsg:
+      'Trop de tentatives détectées. Pour votre sécurité, réessayez dans quelques minutes.',
+    welcomeBack: 'Bon retour !',
+    completePayment: 'Finalisez le paiement dans le tableau de bord.',
+    loginSuccess: 'Connexion réussie.',
+    accountCreated: 'Compte créé !',
+    redirectPayment: 'Vous allez être redirigé pour finaliser le paiement.',
+    welcomePropertyPilot: 'Bienvenue sur PropertyPilot AI !',
+    turnstileRequired: 'Complétez la vérification de sécurité avant de continuer.',
+    turnstileFailed: 'La vérification de sécurité a échoué. Réessayez.',
+    turnstileLoadFailed:
+      'Impossible de charger la vérification de sécurité. Actualisez la page ou réessayez plus tard.',
+    turnstileMisconfigured:
+      'La vérification de sécurité est mal configurée sur le serveur. Contactez le support.',
+  },
+};
+
+export const authUiDe: AuthUi = {
+  backToHome: 'Zur Startseite',
+  login: {
+    title: 'Willkommen zurück',
+    subtitle: 'Melden Sie sich an, um fortzufahren',
+    email: 'E-Mail',
+    password: 'Passwort',
+    forgotPassword: 'Passwort vergessen?',
+    signIn: 'Anmelden',
+    signingIn: 'Anmeldung läuft...',
+    newTo: 'Neu bei PropertyPilot AI?',
+    createFreeAccount: 'Kostenloses Konto erstellen',
+    secureNote: secureDe,
+  },
+  signup: {
+    title: 'Konto erstellen',
+    subtitle: 'Erstellen Sie professionelle Inserate mit KI',
+    fullName: 'Vollständiger Name',
+    email: 'E-Mail',
+    password: 'Passwort',
+    minChars: 'Mindestens 6 Zeichen',
+    freePlanIncludes: 'Der kostenlose Tarif umfasst:',
+    listingsPerMonth: '5 Inserate pro Monat',
+    allAIFeatures: 'Alle KI-Funktionen',
+    noCreditCard: 'Keine Kreditkarte erforderlich',
+    createFreeAccount: 'Kostenloses Konto erstellen',
+    creatingAccount: 'Konto wird erstellt...',
+    alreadyHaveAccount: 'Bereits ein Konto?',
+    signInInstead: 'Stattdessen anmelden',
+    termsAgreeBefore: 'Mit der Registrierung akzeptieren Sie unsere ',
+    termsAgreeAnd: ' und ',
+  },
+  toast: {
+    error: 'Fehler',
+    fillAllFields: 'Bitte füllen Sie alle Pflichtfelder aus.',
+    tooManyAttempts: 'Zu viele Versuche',
+    rateLimitMsg:
+      'Zu viele Versuche erkannt. Zu Ihrer Sicherheit: bitte in einigen Minuten erneut versuchen.',
+    welcomeBack: 'Willkommen zurück!',
+    completePayment: 'Bitte schließen Sie die Zahlung im Dashboard ab.',
+    loginSuccess: 'Erfolgreich angemeldet.',
+    accountCreated: 'Konto erstellt!',
+    redirectPayment: 'Sie werden zur Zahlung weitergeleitet.',
+    welcomePropertyPilot: 'Willkommen bei PropertyPilot AI!',
+    turnstileRequired: 'Bitte schließen Sie die Sicherheitsprüfung ab, bevor Sie fortfahren.',
+    turnstileFailed: 'Sicherheitsprüfung fehlgeschlagen. Bitte erneut versuchen.',
+    turnstileLoadFailed:
+      'Sicherheitsprüfung konnte nicht geladen werden. Seite aktualisieren oder später erneut versuchen.',
+    turnstileMisconfigured:
+      'Sicherheitsprüfung auf dem Server falsch konfiguriert. Bitte Support kontaktieren.',
+  },
+};
+
+export const authUiPt: AuthUi = {
+  backToHome: 'Voltar ao início',
+  login: {
+    title: 'Bem-vindo de volta',
+    subtitle: 'Inicie sessão para continuar',
+    email: 'E-mail',
+    password: 'Palavra-passe',
+    forgotPassword: 'Esqueceu a palavra-passe?',
+    signIn: 'Iniciar sessão',
+    signingIn: 'A iniciar sessão...',
+    newTo: 'Novo no PropertyPilot AI?',
+    createFreeAccount: 'Criar conta gratuita',
+    secureNote: securePt,
+  },
+  signup: {
+    title: 'Crie a sua conta',
+    subtitle: 'Comece a gerar anúncios profissionais com IA',
+    fullName: 'Nome completo',
+    email: 'E-mail',
+    password: 'Palavra-passe',
+    minChars: 'Pelo menos 6 caracteres',
+    freePlanIncludes: 'O plano gratuito inclui:',
+    listingsPerMonth: '5 anúncios por mês',
+    allAIFeatures: 'Todas as funcionalidades de IA',
+    noCreditCard: 'Sem cartão de crédito',
+    createFreeAccount: 'Criar conta gratuita',
+    creatingAccount: 'A criar conta...',
+    alreadyHaveAccount: 'Já tem conta?',
+    signInInstead: 'Iniciar sessão',
+    termsAgreeBefore: 'Ao registar-se aceita os nossos ',
+    termsAgreeAnd: ' e ',
+  },
+  toast: {
+    error: 'Erro',
+    fillAllFields: 'Preencha todos os campos obrigatórios.',
+    tooManyAttempts: 'Demasiadas tentativas',
+    rateLimitMsg:
+      'Detetámos demasiadas tentativas. Por segurança, tente novamente dentro de alguns minutos.',
+    welcomeBack: 'Bem-vindo de volta!',
+    completePayment: 'Conclua o pagamento no painel.',
+    loginSuccess: 'Sessão iniciada com sucesso.',
+    accountCreated: 'Conta criada!',
+    redirectPayment: 'Será redirecionado para concluir o pagamento.',
+    welcomePropertyPilot: 'Bem-vindo ao PropertyPilot AI!',
+    turnstileRequired: 'Conclua a verificação de segurança antes de continuar.',
+    turnstileFailed: 'A verificação de segurança falhou. Tente novamente.',
+    turnstileLoadFailed:
+      'Não foi possível carregar a verificação de segurança. Atualize a página ou tente mais tarde.',
+    turnstileMisconfigured:
+      'A verificação de segurança está mal configurada no servidor. Contacte o suporte.',
+  },
+};
+
+export const authUiAr: AuthUi = {
+  backToHome: 'العودة للرئيسية',
+  login: {
+    title: 'مرحباً بعودتك',
+    subtitle: 'سجّل الدخول للمتابعة',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    forgotPassword: 'نسيت كلمة المرور؟',
+    signIn: 'تسجيل الدخول',
+    signingIn: 'جاري تسجيل الدخول...',
+    newTo: 'جديد على PropertyPilot AI؟',
+    createFreeAccount: 'إنشاء حساب مجاني',
+    secureNote: secureAr,
+  },
+  signup: {
+    title: 'أنشئ حسابك',
+    subtitle: 'ابدأ بإنشاء إعلانات احترافية بالذكاء الاصطناعي',
+    fullName: 'الاسم الكامل',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    minChars: '6 أحرف على الأقل',
+    freePlanIncludes: 'تشمل الخطة المجانية:',
+    listingsPerMonth: '5 إعلانات شهرياً',
+    allAIFeatures: 'كل ميزات الذكاء الاصطناعي',
+    noCreditCard: 'لا حاجة لبطاقة ائتمان',
+    createFreeAccount: 'إنشاء حساب مجاني',
+    creatingAccount: 'جاري إنشاء الحساب...',
+    alreadyHaveAccount: 'لديك حساب بالفعل؟',
+    signInInstead: 'سجّل الدخول',
+    termsAgreeBefore: 'بالتسجيل فإنك توافق على ',
+    termsAgreeAnd: ' و ',
+  },
+  toast: {
+    error: 'خطأ',
+    fillAllFields: 'يرجى تعبئة جميع الحقول المطلوبة.',
+    tooManyAttempts: 'محاولات كثيرة جداً',
+    rateLimitMsg:
+      'رصدنا محاولات كثيرة. لأمانك، أعد المحاولة بعد دقائق.',
+    welcomeBack: 'مرحباً بعودتك!',
+    completePayment: 'أكمل الدفع من لوحة التحكم.',
+    loginSuccess: 'تم تسجيل الدخول بنجاح.',
+    accountCreated: 'تم إنشاء الحساب!',
+    redirectPayment: 'سيتم توجيهك لإكمال الدفع.',
+    welcomePropertyPilot: 'مرحباً بك في PropertyPilot AI!',
+    turnstileRequired: 'أكمل التحقق الأمني قبل المتابعة.',
+    turnstileFailed: 'فشل التحقق الأمني. حاول مرة أخرى.',
+    turnstileLoadFailed:
+      'تعذر تحميل التحقق الأمني. حدّث الصفحة أو حاول لاحقاً.',
+    turnstileMisconfigured:
+      'التحقق الأمني غير مُعد بشكل صحيح على الخادم. تواصل مع الدعم.',
+  },
+};

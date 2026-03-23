@@ -272,6 +272,7 @@ import {
   billingUiFr,
   billingUiPt,
 } from '@/lib/i18n/billing-locales';
+import { authUiAr, authUiDe, authUiEs, authUiFr, authUiPt } from '@/lib/i18n/auth-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -1712,7 +1713,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     auth: {
       backToHome: 'Torna alla Home',
       login: {
-        title: 'Bentornato 👋',
+        title: 'Bentornato',
         subtitle: 'Accedi per continuare',
         email: 'Email',
         password: 'Password',
@@ -1724,7 +1725,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         secureNote: 'Login sicuro • I tuoi dati sono protetti con crittografia standard',
       },
       signup: {
-        title: 'Crea il tuo account ✨',
+        title: 'Crea il tuo account',
         subtitle: 'Inizia a generare annunci professionali con l\'AI',
         fullName: 'Nome completo',
         email: 'Email',
@@ -1746,10 +1747,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         fillAllFields: 'Compila tutti i campi richiesti.',
         tooManyAttempts: 'Troppi tentativi',
         rateLimitMsg: 'Abbiamo rilevato troppi tentativi. Per la tua sicurezza, riprova tra qualche minuto.',
-        welcomeBack: 'Bentornato! 🎉',
+        welcomeBack: 'Bentornato!',
         completePayment: 'Completa il pagamento nella dashboard.',
         loginSuccess: 'Accesso effettuato con successo.',
-        accountCreated: 'Account creato! 🎉',
+        accountCreated: 'Account creato!',
         redirectPayment: 'Verrai reindirizzato per completare il pagamento.',
         welcomePropertyPilot: 'Benvenuto in PropertyPilot AI!',
         turnstileRequired: 'Completa il controllo di sicurezza prima di continuare.',
@@ -2703,7 +2704,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     auth: {
       backToHome: 'Back to home',
       login: {
-        title: 'Welcome back 👋',
+        title: 'Welcome back',
         subtitle: 'Sign in to your account to continue',
         email: 'Email address',
         password: 'Password',
@@ -2715,7 +2716,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         secureNote: 'Secure login • Your data is protected with industry-standard encryption',
       },
       signup: {
-        title: 'Create your account ✨',
+        title: 'Create your account',
         subtitle: 'Start generating professional property listings with AI',
         fullName: 'Full Name',
         email: 'Email address',
@@ -2737,10 +2738,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         fillAllFields: 'Please fill in all required fields.',
         tooManyAttempts: 'Too many attempts',
         rateLimitMsg: 'We detected too many attempts. For your security, try again in a few minutes.',
-        welcomeBack: 'Welcome back! 🎉',
+        welcomeBack: 'Welcome back!',
         completePayment: 'Complete payment in the dashboard.',
         loginSuccess: 'Successfully signed in.',
-        accountCreated: 'Account created! 🎉',
+        accountCreated: 'Account created!',
         redirectPayment: 'You will be redirected to complete payment.',
         welcomePropertyPilot: 'Welcome to PropertyPilot AI!',
         turnstileRequired: 'Please complete the security check before continuing.',
@@ -3504,6 +3505,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
     },
+    auth: authUiEs,
     pendingCheckoutBanner: pendingCheckoutUiEs,
     ariaLimitModal: ariaLimitModalUiEs,
     dashboardNav: dashboardNavUiEs,
@@ -4112,6 +4114,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
     },
+    auth: authUiFr,
     pendingCheckoutBanner: pendingCheckoutUiFr,
     ariaLimitModal: ariaLimitModalUiFr,
     dashboardNav: dashboardNavUiFr,
@@ -4720,6 +4723,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
     },
+    auth: authUiDe,
     pendingCheckoutBanner: pendingCheckoutUiDe,
     ariaLimitModal: ariaLimitModalUiDe,
     dashboardNav: dashboardNavUiDe,
@@ -5328,6 +5332,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
     },
+    auth: authUiPt,
     pendingCheckoutBanner: pendingCheckoutUiPt,
     ariaLimitModal: ariaLimitModalUiPt,
     dashboardNav: dashboardNavUiPt,
@@ -5742,6 +5747,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
       },
     },
+    auth: authUiAr,
     pendingCheckoutBanner: pendingCheckoutUiAr,
     ariaLimitModal: ariaLimitModalUiAr,
     dashboardNav: dashboardNavUiAr,
