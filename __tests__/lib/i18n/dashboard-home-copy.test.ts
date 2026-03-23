@@ -219,6 +219,21 @@ describe('dashboard home copy (D1)', () => {
     expect(en.morningBriefing.subtitle).toContain('market gap');
   });
 
+  it('morningBriefing + competitorRadar native ES/FR/DE/PT/AR', () => {
+    const en = getTranslation('en').dashboard;
+    const es = getTranslation('es').dashboard;
+    expect(es.morningBriefing.title.toLowerCase()).toMatch(/briefing|hoy/);
+    expect(es.morningBriefing.subtitle).not.toBe(en.morningBriefing.subtitle);
+    expect(es.competitorRadar.title.toLowerCase()).toMatch(/radar/);
+    expect(es.competitorRadar.refreshAria.toLowerCase()).toMatch(/actualizar|lista/);
+
+    expect(getTranslation('fr').dashboard.morningBriefing.fomo.toLowerCase()).toMatch(/offres|envoy/);
+    expect(getTranslation('de').dashboard.competitorRadar.offlineFor.toLowerCase()).toMatch(/offline|seit/);
+    expect(getTranslation('pt').dashboard.morningBriefing.sendTest.toLowerCase()).toMatch(/telemóvel|telefone|móvel/);
+    expect(getTranslation('ar').dashboard.competitorRadar.subtitle.length).toBeGreaterThan(10);
+    expect(getTranslation('ar').dashboard.morningBriefing.configure.length).toBeGreaterThan(2);
+  });
+
   it('competitorRadar and planCards for EN', () => {
     const d = getTranslation('en').dashboard;
     expect(d.competitorRadar.refreshAria).toBe('Refresh list');
