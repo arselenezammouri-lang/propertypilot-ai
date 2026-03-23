@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { DOCS_INDEX_QUICK_LINK_PATHS } from "@/lib/docs/doc-static-links";
 import type { DocsHubSection } from "@/lib/i18n/docs-hub-ui";
 
 export const dynamic = "force-static";
@@ -140,7 +141,7 @@ export default function DocumentationPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">{t.quickStartDesc}</p>
-              <Link href="/docs/getting-started/welcome">
+              <Link href={DOCS_INDEX_QUICK_LINK_PATHS.quickStart}>
                 <Button variant="outline" className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
                   {t.quickStartBtn}
                 </Button>
@@ -157,7 +158,7 @@ export default function DocumentationPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">{t.bestPracticesDesc}</p>
-              <Link href="/docs/prospecting/arbitrage">
+              <Link href={DOCS_INDEX_QUICK_LINK_PATHS.bestPractices}>
                 <Button variant="outline" className="w-full border-purple-500/30 text-purple-400 hover:bg-purple-500/10">
                   {t.bestPracticesBtn}
                 </Button>
@@ -174,7 +175,7 @@ export default function DocumentationPage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-300 mb-4">{t.goalsDesc}</p>
-              <Link href="/docs/ai-voice/call-scripts">
+              <Link href={DOCS_INDEX_QUICK_LINK_PATHS.goals}>
                 <Button variant="outline" className="w-full border-green-500/30 text-green-400 hover:bg-green-500/10">
                   {t.goalsBtn}
                 </Button>

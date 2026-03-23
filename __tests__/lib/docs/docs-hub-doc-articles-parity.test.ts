@@ -4,6 +4,8 @@ import {
   ARIA_CHAT_DOC_LINK_BY_KEYWORD,
   ARIA_PROMPT_DOC_LINK_ROWS,
   COMMAND_PALETTE_GUIDE_PATHS,
+  CONTEXTUAL_HELP_DOC_SLUGS,
+  DOCS_INDEX_QUICK_LINK_PATHS,
   docArticleSlugFromPath,
 } from '@/lib/docs/doc-static-links';
 
@@ -51,6 +53,20 @@ describe('hardcoded /docs paths vs docArticles', () => {
       const slug = docArticleSlugFromPath(path);
       expect(slug).not.toBeNull();
       expect(docArticles[slug!]).toBeDefined();
+    }
+  });
+
+  it('docs index quick CTA paths resolve to articles', () => {
+    for (const path of Object.values(DOCS_INDEX_QUICK_LINK_PATHS)) {
+      const slug = docArticleSlugFromPath(path);
+      expect(slug).not.toBeNull();
+      expect(docArticles[slug!]).toBeDefined();
+    }
+  });
+
+  it('ContextualHelpTrigger slugs exist in docArticles', () => {
+    for (const slug of CONTEXTUAL_HELP_DOC_SLUGS) {
+      expect(docArticles[slug]).toBeDefined();
     }
   });
 });

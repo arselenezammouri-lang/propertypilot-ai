@@ -7,10 +7,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useLocale } from "@/lib/i18n/locale-context";
 import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { cn } from "@/lib/utils";
+import type { ContextualHelpDocSlug } from "@/lib/docs/doc-static-links";
 
 export type ContextualHelpTriggerProps = {
-  /** Slug sotto /docs/[slug] (es. getting-started/perfect-copy) */
-  docSlug: string;
+  /** Slug sotto /docs/[slug] — deve essere in `CONTEXTUAL_HELP_DOC_SLUGS` */
+  docSlug: ContextualHelpDocSlug;
   className?: string;
 };
 

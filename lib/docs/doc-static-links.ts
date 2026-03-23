@@ -25,6 +25,24 @@ export const COMMAND_PALETTE_GUIDE_PATHS: Record<
   'g-arbitrage': '/docs/prospecting/arbitrage',
 };
 
+/** CTA cards at bottom of `app/docs/page.tsx` — must match `docArticles` slugs. */
+export const DOCS_INDEX_QUICK_LINK_PATHS = {
+  quickStart: COMMAND_PALETTE_GUIDE_PATHS['g-welcome'],
+  bestPractices: COMMAND_PALETTE_GUIDE_PATHS['g-arbitrage'],
+  goals: '/docs/ai-voice/call-scripts',
+} as const;
+
+/**
+ * `ContextualHelpTrigger` `docSlug` values — must exist in `docArticles`.
+ */
+export const CONTEXTUAL_HELP_DOC_SLUGS = [
+  'crm/pipeline',
+  'account/billing-guide',
+  'getting-started/perfect-copy',
+] as const;
+
+export type ContextualHelpDocSlug = (typeof CONTEXTUAL_HELP_DOC_SLUGS)[number];
+
 /**
  * Aria chat: first keyword match wins → suggested doc link.
  * Values `/docs` = hub only (no article slug).
