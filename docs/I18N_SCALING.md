@@ -89,6 +89,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.planFeatures`, `dashboard.mapPage`, `dashboard.opportunitiesPage`, `dashboard.autopilotPage`, `dashboard.workspacePage`, `dashboard.morningBriefing`, ecc.  
    - Messaggi billing condivisi: `billing.subscriptionFetchErrorBody`, `billing.retry`; pagina **Billing** — blocco `billing` completo **IT/EN** in `dictionary.ts`, **ES/FR/DE/PT/AR** in `lib/i18n/billing-locales.ts` (importi `billingUi*` nel dizionario; importi/prezzi da Stripe restano numerici + `formatCurrencyForLocale`).  
    - **Login / registrazione** — blocco `auth` (login, signup, toast Turnstile): **IT/EN** in `dictionary.ts` (titoli toast senza emoji); **ES/FR/DE/PT/AR** in `lib/i18n/auth-locales.ts` (`authUi*`).  
+   - **Demo** (`/demo`) e **Contatti** (`/contatti`) — blocchi `demo` e `contact`: **IT/EN** in `dictionary.ts`; **ES/FR/DE/PT/AR** in `lib/i18n/contact-demo-locales.ts` (`demoUi*`, `contactUi*`). Per coerenza header marketing/demo, `landing.nav.tagline` è allineato alla stessa frase per ES–AR nel `dictionary.ts`.  
    - Evitare chiavi troppo generiche (`title1`) senza contesto.
 
 ## Checklist per nuove feature

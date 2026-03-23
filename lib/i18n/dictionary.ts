@@ -273,6 +273,18 @@ import {
   billingUiPt,
 } from '@/lib/i18n/billing-locales';
 import { authUiAr, authUiDe, authUiEs, authUiFr, authUiPt } from '@/lib/i18n/auth-locales';
+import {
+  contactUiAr,
+  contactUiDe,
+  contactUiEs,
+  contactUiFr,
+  contactUiPt,
+  demoUiAr,
+  demoUiDe,
+  demoUiEs,
+  demoUiFr,
+  demoUiPt,
+} from '@/lib/i18n/contact-demo-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3609,9 +3621,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errors: errorsUiEs,
     common: commonFullEs,
     billing: billingUiEs,
+    demo: demoUiEs,
+    contact: contactUiEs,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Lleva tu agencia al siguiente nivel',
         features: 'Características',
         pricing: 'Precios',
         compliance: 'Cumplimiento',
@@ -4218,9 +4232,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errors: errorsUiFr,
     common: commonFullFr,
     billing: billingUiFr,
+    demo: demoUiFr,
+    contact: contactUiFr,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Faites passer votre agence au niveau supérieur',
         features: 'Fonctionnalités',
         pricing: 'Tarifs',
         compliance: 'Conformité',
@@ -4827,9 +4843,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errors: errorsUiDe,
     common: commonFullDe,
     billing: billingUiDe,
+    demo: demoUiDe,
+    contact: contactUiDe,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Bringen Sie Ihre Agentur auf das nächste Level',
         features: 'Funktionen',
         pricing: 'Preise',
         compliance: 'Compliance',
@@ -5436,7 +5454,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errors: errorsUiPt,
     common: commonFullPt,
     billing: billingUiPt,
+    demo: demoUiPt,
+    contact: contactUiPt,
     landing: {
+      nav: {
+        tagline: 'Leve a sua agência ao próximo nível',
+      },
       hero: {
         signupAriaLabel: 'Registar-se no PropertyPilot AI',
         demoDashboardAriaLabel: 'Ver a demo do painel',
@@ -5851,9 +5874,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     errors: errorsUiAr,
     common: commonFullAr,
     billing: billingUiAr,
+    demo: demoUiAr,
+    contact: contactUiAr,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'ارتقِ بوكالتك إلى المستوى التالي',
         features: 'المميزات',
         pricing: 'الأسعار',
         compliance: 'الامتثال',
