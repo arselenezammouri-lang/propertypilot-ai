@@ -88,7 +88,6 @@ export default async function DashboardPage() {
       ? (rawLocale as SupportedLocale)
       : "it";
   const homeCopy = getTranslation(uiLocale).dashboard;
-  const deferIt = uiLocale === "it";
 
   const supabase = await createClient();
   
@@ -128,16 +127,18 @@ export default async function DashboardPage() {
 
   const limits = planLimits[currentPlan] || planLimits.free;
 
+  const bl = homeCopy.planBadgeLabels;
   const planBadgeLabel =
     currentPlan === "agency"
-      ? "Agency"
+      ? bl.agency
       : currentPlan === "pro"
-        ? "Pro"
+        ? bl.pro
         : currentPlan === "starter"
-          ? "Starter"
-          : "Free";
+          ? bl.starter
+          : bl.free;
 
-  const deferLabel = (it: string, en: string) => (deferIt ? it : en);
+  const sec = homeCopy.homeSections;
+  const load = homeCopy.deferredLoading;
 
   // Render dashboard (shell: header, main, wrapper from app/dashboard/layout.tsx)
   return (
@@ -163,14 +164,14 @@ export default async function DashboardPage() {
         <DashboardOnboardingChecklist />
 
         {/* STATS GRID - Premium Futuristic Cards */}
-        <section className="dashboard-section" aria-label="Piano e statistiche">
+        <section className="dashboard-section" aria-label={sec.planStats}>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               <DashboardStatsCards currentPlan={currentPlan} limits={limits} />
               {(currentPlan === "pro" || currentPlan === "agency") && (
                 <DeferredMount
                   minHeight="220px"
                   rootMargin="320px 0px"
-                  loadingLabel={deferLabel("Caricamento statistiche 3D…", "Loading 3D stats…")}
+                  loadingLabel={load.stats3d}
                 >
                   <Dashboard3DStats />
                 </DeferredMount>
@@ -179,11 +180,11 @@ export default async function DashboardPage() {
           </section>
 
           {/* 💰 PROFIT + REFERRAL + USAGE - Card uguale altezza */}
-          <section className="dashboard-section" aria-label="ROI e utilizzo">
+          <section className="dashboard-section" aria-label={sec.roiUsage}>
             <DeferredMount
               minHeight="min(320px, 70vh)"
               rootMargin="480px 0px 240px 0px"
-              loadingLabel={deferLabel("Caricamento ROI e utilizzo…", "Loading ROI and usage…")}
+              loadingLabel={load.roiUsage}
             >
               <div className="dashboard-card-row">
                 <div className="dashboard-card-equal">
@@ -201,11 +202,11 @@ export default async function DashboardPage() {
 
           {/* 🌅 AI MORNING INTEL BRIEFING */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
-            <section className="dashboard-section" aria-label="Morning briefing">
+            <section className="dashboard-section" aria-label={sec.morningIntel}>
               <DeferredMount
                 minHeight="200px"
                 rootMargin="400px 0px"
-                loadingLabel={deferLabel("Caricamento Morning Intel…", "Loading Morning Intel…")}
+                loadingLabel={load.morningIntel}
               >
                 <MorningBriefingBox />
               </DeferredMount>
@@ -213,11 +214,11 @@ export default async function DashboardPage() {
           )}
 
           {/* 🌍 REGIONAL PORTALS */}
-          <section className="dashboard-section" aria-label="Portali regionali">
+          <section className="dashboard-section" aria-label={sec.regionalPortals}>
             <DeferredMount
               minHeight="160px"
               rootMargin="400px 0px"
-              loadingLabel={deferLabel("Caricamento portali regionali…", "Loading regional portals…")}
+              loadingLabel={load.regionalPortals}
             >
               <RegionalPortals />
             </DeferredMount>
@@ -225,11 +226,11 @@ export default async function DashboardPage() {
 
           {/* 🌍 GLOBAL LIVE FEED */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
-            <section className="dashboard-section" aria-label="Live feed">
+            <section className="dashboard-section" aria-label={sec.liveFeed}>
               <DeferredMount
                 minHeight="240px"
                 rootMargin="400px 0px"
-                loadingLabel={deferLabel("Caricamento live feed…", "Loading live feed…")}
+                loadingLabel={load.liveFeed}
               >
                 <GlobalLiveFeed />
               </DeferredMount>
@@ -237,22 +238,22 @@ export default async function DashboardPage() {
           )}
 
           {/* 🎯 PIANO ATTUALE + 📋 TUTTI I PIANI */}
-          <section className="dashboard-section" aria-label="Piani e prezzi">
+          <section className="dashboard-section" aria-label={sec.plansPricing}>
             <DeferredMount
               minHeight="380px"
               rootMargin="520px 0px 240px 0px"
-              loadingLabel={deferLabel("Caricamento piani…", "Loading plans…")}
+              loadingLabel={load.plans}
             >
               <DashboardPlanCardsSection currentPlan={currentPlan} />
             </DeferredMount>
           </section>
 
           {/* 🚀 ALL TOOLS */}
-          <section className="dashboard-section" aria-label="Strumenti e funzionalità">
+          <section className="dashboard-section" aria-label={sec.toolsFeatures}>
             <DeferredMount
               minHeight="min(420px, 85vh)"
               rootMargin="600px 0px 320px 0px"
-              loadingLabel={deferLabel("Caricamento strumenti…", "Loading tools…")}
+              loadingLabel={load.tools}
             >
               <DashboardPlanFeatures currentPlan={currentPlan} />
             </DeferredMount>
@@ -260,11 +261,11 @@ export default async function DashboardPage() {
 
           {/* 🎯 SNIPER STATS */}
           {(currentPlan === "pro" || currentPlan === "agency") && (
-            <section className="dashboard-section" aria-label="Statistiche sniper">
+            <section className="dashboard-section" aria-label={sec.sniperStats}>
               <DeferredMount
                 minHeight="200px"
                 rootMargin="400px 0px"
-                loadingLabel={deferLabel("Caricamento Price Sniper…", "Loading Price Sniper…")}
+                loadingLabel={load.priceSniper}
               >
                 <SniperStats />
               </DeferredMount>
@@ -276,7 +277,7 @@ export default async function DashboardPage() {
         minHeight="140px"
         rootMargin="200px 0px"
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-        loadingLabel={deferLabel("Caricamento suggerimenti…", "Loading tips…")}
+        loadingLabel={load.proTips}
       >
         <DashboardProTips />
       </DeferredMount>

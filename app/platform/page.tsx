@@ -309,7 +309,7 @@ export default function PlatformPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Link href="/auth/signup" aria-label="Sign up for PropertyPilot AI">
+              <Link href="/auth/signup" aria-label={t.landing.hero.signupAriaLabel}>
                 <Button 
                   size="lg" 
                   className="text-xl px-12 py-7 bg-gradient-to-r from-[#9333ea] to-[#9333ea]/90 hover:from-[#9333ea] hover:to-[#9333ea] text-white border-0 shadow-[0_0_30px_rgba(147,51,234,0.5)] hover:shadow-[0_0_40px_rgba(147,51,234,0.7)] relative overflow-hidden group transition-all active:scale-95"
@@ -323,7 +323,7 @@ export default function PlatformPage() {
                   <div className="absolute inset-0 rounded-lg bg-[#06b6d4]/30 blur-2xl animate-pulse"></div>
                 </Button>
               </Link>
-              <Link href="/dashboard" aria-label="View demo dashboard">
+              <Link href="/dashboard" aria-label={t.landing.hero.demoDashboardAriaLabel}>
                 <Button 
                   size="lg" 
                   variant="outline" 
@@ -340,10 +340,11 @@ export default function PlatformPage() {
             <div className="mt-20 fade-on-scroll">
               <p className="text-sm text-gray-500 mb-6 uppercase tracking-wider">{t.landing.hero.trustedBy}</p>
               <div className="flex items-center justify-center gap-8 flex-wrap opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-                <div className="text-2xl font-bold text-gray-400">Idealista</div>
-                <div className="text-2xl font-bold text-gray-400">Immobiliare.it</div>
-                <div className="text-2xl font-bold text-gray-400">Zillow</div>
-                <div className="text-2xl font-bold text-gray-400">MLS</div>
+                {t.landing.hero.trustedPortalLogos.map((name) => (
+                  <div key={name} className="text-2xl font-bold text-gray-400">
+                    {name}
+                  </div>
+                ))}
               </div>
             </div>
 

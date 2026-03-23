@@ -625,6 +625,31 @@ export interface TranslationDictionary {
       commandCenterTitle: string;
       commandCenterSubtitle: string;
       newListingCta: string;
+      /** Header badge on /dashboard home — short tier labels */
+      planBadgeLabels: { free: string; starter: string; pro: string; agency: string };
+      /** Section `aria-label` on dashboard home */
+      homeSections: {
+        planStats: string;
+        roiUsage: string;
+        morningIntel: string;
+        regionalPortals: string;
+        liveFeed: string;
+        plansPricing: string;
+        toolsFeatures: string;
+        sniperStats: string;
+      };
+      /** DeferredMount loading labels on dashboard home */
+      deferredLoading: {
+        stats3d: string;
+        roiUsage: string;
+        morningIntel: string;
+        regionalPortals: string;
+        liveFeed: string;
+        plans: string;
+        tools: string;
+        priceSniper: string;
+        proTips: string;
+      };
       /** Live feed widget (dashboard home) */
       liveFeed: {
         deal: string;
@@ -1641,6 +1666,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto.',
       newListingCta: 'Nuovo annuncio',
+      planBadgeLabels: { free: 'FREE', starter: 'STARTER', pro: 'PRO', agency: 'AGENCY' },
+      homeSections: {
+        planStats: 'Piano e statistiche',
+        roiUsage: 'ROI e utilizzo',
+        morningIntel: 'Briefing mattutino',
+        regionalPortals: 'Portali regionali',
+        liveFeed: 'Feed in tempo reale',
+        plansPricing: 'Piani e prezzi',
+        toolsFeatures: 'Strumenti e funzionalità',
+        sniperStats: 'Statistiche Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Caricamento statistiche 3D…',
+        roiUsage: 'Caricamento ROI e utilizzo…',
+        morningIntel: 'Caricamento Morning Intel…',
+        regionalPortals: 'Caricamento portali regionali…',
+        liveFeed: 'Caricamento live feed…',
+        plans: 'Caricamento piani…',
+        tools: 'Caricamento strumenti…',
+        priceSniper: 'Caricamento Price Sniper…',
+        proTips: 'Caricamento suggerimenti…',
+      },
       liveFeed: {
         deal: 'Deal Oro',
         call: 'Chiamata AI',
@@ -2632,6 +2679,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Your plan, usage, and AI tools for listings, leads, and prospecting — in one place.',
       newListingCta: 'New listing',
+      planBadgeLabels: { free: 'Free', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan and statistics',
+        roiUsage: 'ROI and usage',
+        morningIntel: 'Morning intel',
+        regionalPortals: 'Regional portals',
+        liveFeed: 'Live feed',
+        plansPricing: 'Plans and pricing',
+        toolsFeatures: 'Tools and features',
+        sniperStats: 'Price Sniper statistics',
+      },
+      deferredLoading: {
+        stats3d: 'Loading 3D stats…',
+        roiUsage: 'Loading ROI and usage…',
+        morningIntel: 'Loading Morning Intel…',
+        regionalPortals: 'Loading regional portals…',
+        liveFeed: 'Loading live feed…',
+        plans: 'Loading plans…',
+        tools: 'Loading tools…',
+        priceSniper: 'Loading Price Sniper…',
+        proTips: 'Loading tips…',
+      },
       liveFeed: {
         deal: 'Golden Deal',
         call: 'AI Call',
@@ -3391,6 +3460,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Tu plan, uso y herramientas de IA para anuncios, leads y prospección — todo en un solo lugar.',
       newListingCta: 'Nuevo anuncio',
+      planBadgeLabels: { free: 'Gratis', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan y estadísticas',
+        roiUsage: 'ROI y uso',
+        morningIntel: 'Intel matutino',
+        regionalPortals: 'Portales regionales',
+        liveFeed: 'Feed en vivo',
+        plansPricing: 'Planes y precios',
+        toolsFeatures: 'Herramientas y funciones',
+        sniperStats: 'Estadísticas Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Cargando estadísticas 3D…',
+        roiUsage: 'Cargando ROI y uso…',
+        morningIntel: 'Cargando Morning Intel…',
+        regionalPortals: 'Cargando portales regionales…',
+        liveFeed: 'Cargando feed en vivo…',
+        plans: 'Cargando planes…',
+        tools: 'Cargando herramientas…',
+        priceSniper: 'Cargando Price Sniper…',
+        proTips: 'Cargando consejos…',
+      },
       proTips: {
         ariaSection: 'Consejos Pro',
         title: 'Consejos Pro para mejores anuncios',
@@ -4010,6 +4101,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Votre forfait, votre utilisation et vos outils IA pour les annonces, les leads et la prospection — au même endroit.',
       newListingCta: 'Nouvelle annonce',
+      planBadgeLabels: { free: 'Gratuit', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan et statistiques',
+        roiUsage: 'ROI et utilisation',
+        morningIntel: 'Intel matinal',
+        regionalPortals: 'Portails régionaux',
+        liveFeed: 'Fil en direct',
+        plansPricing: 'Plans et tarifs',
+        toolsFeatures: 'Outils et fonctionnalités',
+        sniperStats: 'Statistiques Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Chargement des stats 3D…',
+        roiUsage: 'Chargement du ROI et de l’utilisation…',
+        morningIntel: 'Chargement de Morning Intel…',
+        regionalPortals: 'Chargement des portails régionaux…',
+        liveFeed: 'Chargement du fil en direct…',
+        plans: 'Chargement des plans…',
+        tools: 'Chargement des outils…',
+        priceSniper: 'Chargement de Price Sniper…',
+        proTips: 'Chargement des conseils…',
+      },
       proTips: {
         ariaSection: 'Conseils Pro',
         title: 'Conseils Pro pour de meilleures annonces',
@@ -4629,6 +4742,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'Ihr Plan, Ihre Nutzung und KI-Tools für Inserate, Leads und Akquise — alles an einem Ort.',
       newListingCta: 'Neues Inserat',
+      planBadgeLabels: { free: 'Kostenlos', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan und Statistiken',
+        roiUsage: 'ROI und Nutzung',
+        morningIntel: 'Morgen-Briefing',
+        regionalPortals: 'Regionale Portale',
+        liveFeed: 'Live-Feed',
+        plansPricing: 'Pläne und Preise',
+        toolsFeatures: 'Tools und Funktionen',
+        sniperStats: 'Price-Sniper-Statistiken',
+      },
+      deferredLoading: {
+        stats3d: '3D-Statistiken werden geladen…',
+        roiUsage: 'ROI und Nutzung werden geladen…',
+        morningIntel: 'Morning Intel wird geladen…',
+        regionalPortals: 'Regionale Portale werden geladen…',
+        liveFeed: 'Live-Feed wird geladen…',
+        plans: 'Pläne werden geladen…',
+        tools: 'Tools werden geladen…',
+        priceSniper: 'Price Sniper wird geladen…',
+        proTips: 'Tipps werden geladen…',
+      },
       proTips: {
         ariaSection: 'Pro-Tipps',
         title: 'Pro-Tipps für bessere Inserate',
@@ -5248,6 +5383,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'O seu plano, utilização e ferramentas de IA para anúncios, leads e prospeção — num só lugar.',
       newListingCta: 'Novo anúncio',
+      planBadgeLabels: { free: 'Grátis', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plano e estatísticas',
+        roiUsage: 'ROI e utilização',
+        morningIntel: 'Intel matinal',
+        regionalPortals: 'Portais regionais',
+        liveFeed: 'Feed em direto',
+        plansPricing: 'Planos e preços',
+        toolsFeatures: 'Ferramentas e funcionalidades',
+        sniperStats: 'Estatísticas Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'A carregar estatísticas 3D…',
+        roiUsage: 'A carregar ROI e utilização…',
+        morningIntel: 'A carregar Morning Intel…',
+        regionalPortals: 'A carregar portais regionais…',
+        liveFeed: 'A carregar feed em direto…',
+        plans: 'A carregar planos…',
+        tools: 'A carregar ferramentas…',
+        priceSniper: 'A carregar Price Sniper…',
+        proTips: 'A carregar dicas…',
+      },
       proTips: {
         ariaSection: 'Dicas Pro',
         title: 'Dicas Pro para anúncios melhores',
@@ -5592,6 +5749,28 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       commandCenterSubtitle:
         'خطتك واستخدامك وأدوات الذكاء الاصطناعي للإعلانات والعملاء المحتملين والتسويق — في مكان واحد.',
       newListingCta: 'إعلان جديد',
+      planBadgeLabels: { free: 'مجاني', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'الخطة والإحصائيات',
+        roiUsage: 'العائد والاستخدام',
+        morningIntel: 'تقرير الصباح',
+        regionalPortals: 'البوابات الإقليمية',
+        liveFeed: 'البث المباشر',
+        plansPricing: 'الخطط والأسعار',
+        toolsFeatures: 'الأدوات والميزات',
+        sniperStats: 'إحصائيات Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'جاري تحميل إحصائيات ثلاثية الأبعاد…',
+        roiUsage: 'جاري تحميل العائد والاستخدام…',
+        morningIntel: 'جاري تحميل Morning Intel…',
+        regionalPortals: 'جاري تحميل البوابات الإقليمية…',
+        liveFeed: 'جاري تحميل البث المباشر…',
+        plans: 'جاري تحميل الخطط…',
+        tools: 'جاري تحميل الأدوات…',
+        priceSniper: 'جاري تحميل Price Sniper…',
+        proTips: 'جاري تحميل النصائح…',
+      },
       proTips: {
         ariaSection: 'نصائح احترافية',
         title: 'نصائح احترافية لإعلانات أفضل',

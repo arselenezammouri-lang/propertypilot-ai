@@ -151,6 +151,10 @@ describe('dashboard home copy (D1)', () => {
     expect(en.commandCenterTitle).toBeTruthy();
     expect(en.commandCenterSubtitle).toContain('plan');
     expect(en.newListingCta).toMatch(/listing/i);
+    expect(it.planBadgeLabels.agency).toMatch(/AGENCY/i);
+    expect(en.planBadgeLabels.free).toMatch(/Free/i);
+    expect(it.homeSections.toolsFeatures.length).toBeGreaterThan(5);
+    expect(en.deferredLoading.stats3d.toLowerCase()).toMatch(/loading|3d/);
   });
 
   it('command center, proTips, docsHubOpen native ES/FR/DE/PT/AR', () => {
