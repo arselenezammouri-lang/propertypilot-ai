@@ -285,6 +285,33 @@ import {
   demoUiFr,
   demoUiPt,
 } from '@/lib/i18n/contact-demo-locales';
+import {
+  blogPostPageUiAr,
+  blogPostPageUiDe,
+  blogPostPageUiEs,
+  blogPostPageUiFr,
+  blogPostPageUiPt,
+  marketingAboutUiAr,
+  marketingAboutUiDe,
+  marketingAboutUiEs,
+  marketingAboutUiFr,
+  marketingAboutUiPt,
+  marketingBlogUiAr,
+  marketingBlogUiDe,
+  marketingBlogUiEs,
+  marketingBlogUiFr,
+  marketingBlogUiPt,
+  marketingFeaturesUiAr,
+  marketingFeaturesUiDe,
+  marketingFeaturesUiEs,
+  marketingFeaturesUiFr,
+  marketingFeaturesUiPt,
+  pricingPagePlansUiAr,
+  pricingPagePlansUiDe,
+  pricingPagePlansUiEs,
+  pricingPagePlansUiFr,
+  pricingPagePlansUiPt,
+} from '@/lib/i18n/marketing-public-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3623,6 +3650,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     billing: billingUiEs,
     demo: demoUiEs,
     contact: contactUiEs,
+    marketingAbout: marketingAboutUiEs,
+    marketingBlog: marketingBlogUiEs,
+    marketingFeatures: marketingFeaturesUiEs,
+    blogPostPage: blogPostPageUiEs,
+    pricingPagePlans: pricingPagePlansUiEs,
     landing: {
       nav: {
         tagline: 'Lleva tu agencia al siguiente nivel',
@@ -4234,6 +4266,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     billing: billingUiFr,
     demo: demoUiFr,
     contact: contactUiFr,
+    marketingAbout: marketingAboutUiFr,
+    marketingBlog: marketingBlogUiFr,
+    marketingFeatures: marketingFeaturesUiFr,
+    blogPostPage: blogPostPageUiFr,
+    pricingPagePlans: pricingPagePlansUiFr,
     landing: {
       nav: {
         tagline: 'Faites passer votre agence au niveau supérieur',
@@ -4845,6 +4882,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     billing: billingUiDe,
     demo: demoUiDe,
     contact: contactUiDe,
+    marketingAbout: marketingAboutUiDe,
+    marketingBlog: marketingBlogUiDe,
+    marketingFeatures: marketingFeaturesUiDe,
+    blogPostPage: blogPostPageUiDe,
+    pricingPagePlans: pricingPagePlansUiDe,
     landing: {
       nav: {
         tagline: 'Bringen Sie Ihre Agentur auf das nächste Level',
@@ -5456,6 +5498,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     billing: billingUiPt,
     demo: demoUiPt,
     contact: contactUiPt,
+    marketingAbout: marketingAboutUiPt,
+    marketingBlog: marketingBlogUiPt,
+    marketingFeatures: marketingFeaturesUiPt,
+    blogPostPage: blogPostPageUiPt,
+    pricingPagePlans: pricingPagePlansUiPt,
     landing: {
       nav: {
         tagline: 'Leve a sua agência ao próximo nível',
@@ -5876,6 +5923,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     billing: billingUiAr,
     demo: demoUiAr,
     contact: contactUiAr,
+    marketingAbout: marketingAboutUiAr,
+    marketingBlog: marketingBlogUiAr,
+    marketingFeatures: marketingFeaturesUiAr,
+    blogPostPage: blogPostPageUiAr,
+    pricingPagePlans: pricingPagePlansUiAr,
     landing: {
       nav: {
         tagline: 'ارتقِ بوكالتك إلى المستوى التالي',
