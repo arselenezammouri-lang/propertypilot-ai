@@ -329,6 +329,7 @@ import {
   termsPolicyPageUiFr,
   termsPolicyPageUiPt,
 } from '@/lib/i18n/legal-policy-locales';
+import { landingPt } from '@/lib/i18n/landing-pt-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -5532,91 +5533,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     privacyPolicyPage: privacyPolicyPageUiPt,
     termsPolicyPage: termsPolicyPageUiPt,
     refundPolicyPage: refundPolicyPageUiPt,
-    landing: {
-      nav: {
-        tagline: 'Leve a sua agência ao próximo nível',
-      },
-      hero: {
-        signupAriaLabel: 'Registar-se no PropertyPilot AI',
-        demoDashboardAriaLabel: 'Ver a demo do painel',
-        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
-        statsValues: {
-          automation: '24/7',
-          listingsPerDay: '1000+',
-          conversionRate: '80%',
-        },
-      },
-      features: {
-        aiListing: {
-          cta: 'Experimentar grátis',
-        },
-        crmAI: {
-          cta: 'Ir para o CRM',
-        },
-        globalReach: {
-          cta: 'Descobrir Prospecting',
-        },
-      },
-      searchEngine: {
-        stepLabel: 'PASSO {n}',
-        prospectingCycleCta: 'Iniciar o ciclo Scraper → Voice AI → CRM',
-        step2: {
-          demoScoreLabel: '{score}/{max}',
-        },
-      },
-      pricing: {
-        tableCells: {
-          multiUserAgency: 'Até 10 agentes',
-          voiceCallingPro: '30/mês',
-        },
-        agencyBoost: {
-          productName: 'Impulso Agency',
-          badgePremium: 'SERVIÇO PREMIUM',
-          tierTitanium: 'Titanium',
-          description:
-            'Pacote de configuração "done-for-you" com onboarding premium e suporte dedicado',
-          bullet1: 'Configuração completa "done-for-you"',
-          bullet2: 'Implementação e onboarding guiados',
-          bullet3: 'Suporte premium para o lançamento',
-          oneTimePayment: 'Pagamento único',
-          cta: 'Obter Agency Boost',
-        },
-      },
-      pricingPage: {
-        badge: 'Preços Transparentes',
-        mainTitle: 'Escolha o Plano',
-        mainTitle2: 'Perfeito para Você',
-        subtitle: 'Planos pensados para cada fase do seu negócio imobiliário. Comece grátis, escale quando estiver pronto.',
-        trustCancel: 'Cancele quando quiser',
-        trustTrial: 'Teste grátis 7 dias',
-        trustSupport: 'Suporte no seu idioma',
-        demo: 'Demo',
-        whyChoose: 'Por Que Escolher PropertyPilot AI?',
-        whySubtitle: 'Recursos premium para cada profissional imobiliário',
-        faqTitle: 'Perguntas Frequentes',
-        faqSubtitle: 'Tudo que você precisa saber sobre nossos planos',
-        ctaTitle: 'Pronto para Transformar seus Anúncios?',
-        ctaSubtitle: 'Comece grátis hoje e descubra como a IA pode elevar seu negócio imobiliário.',
-        ctaStartFree: 'Começar Grátis',
-        ctaWatchDemo: 'Ver Demo',
-        features: [
-          { title: 'IA GPT-4 Premium', desc: 'Modelos de IA mais avançados do mercado' },
-          { title: '100% Localizado', desc: 'Conteúdo otimizado para seu mercado' },
-          { title: 'Geração Instantânea', desc: 'Resultados em menos de 30 segundos' },
-          { title: 'Fácil de Usar', desc: 'Nenhuma habilidade técnica necessária' },
-          { title: 'Anúncios Profissionais', desc: 'Qualidade de agência de comunicação' },
-          { title: 'Multi-Agência', desc: 'Gerencie vários escritórios com uma conta' },
-        ],
-        faqs: [
-          { question: "Posso mudar de plano a qualquer momento?", answer: "Sim, você pode fazer upgrade ou downgrade quando quiser. As alterações se aplicam no próximo ciclo de cobrança." },
-          { question: "Há período de teste gratuito?", answer: "Sim, oferecemos 7 dias de teste grátis em todos os planos pagos. Nenhum cartão necessário para começar." },
-          { question: "O que acontece se eu ultrapassar os limites?", answer: "Te avisaremos quando você se aproximar. Você pode facilmente fazer upgrade para continuar crescendo." },
-          { question: "Como funciona o plano Agency?", answer: "O plano Agency é para equipes e multi-agências. Inclui anúncios ilimitados, todos os recursos e suporte dedicado." },
-          { question: "Posso cancelar minha assinatura?", answer: "Sim, você pode cancelar a qualquer momento no painel. O acesso permanece até o fim do período já pago." },
-          { question: "Oferecem suporte no meu idioma?", answer: "Com certeza! Nosso suporte está disponível por email e chat no seu idioma." },
-        ],
-      },
-    },
+    landing: landingPt,
   },
   
   ar: {
