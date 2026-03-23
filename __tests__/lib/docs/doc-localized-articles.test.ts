@@ -1,15 +1,19 @@
 import { docArticles } from '@/lib/docs/doc-content';
 import { resolveDocArticle } from '@/lib/docs/doc-article';
 
-const GETTING_STARTED_SLUGS = [
+/** Articles with full ES–AR markdown (not EN fallback) */
+const FULLY_LOCALIZED_DOC_SLUGS = [
   'getting-started/welcome',
   'getting-started/first-listing',
   'getting-started/workspace-setup',
+  'getting-started/perfect-copy',
+  'crm/pipeline',
+  'account/billing-guide',
 ] as const;
 
-describe('getting-started doc articles ES–AR', () => {
+describe('localized doc articles ES–AR', () => {
   it('each article has native title distinct from EN for ES', () => {
-    for (const slug of GETTING_STARTED_SLUGS) {
+    for (const slug of FULLY_LOCALIZED_DOC_SLUGS) {
       const entry = docArticles[slug];
       const enTitle = resolveDocArticle(entry, 'en')!.title;
       const esTitle = resolveDocArticle(entry, 'es')!.title;
@@ -23,5 +27,10 @@ describe('getting-started doc articles ES–AR', () => {
     const en = resolveDocArticle(entry, 'en')!.title;
     expect(resolveDocArticle(entry, 'fr')!.title).not.toBe(en);
     expect(resolveDocArticle(entry, 'de')!.title).not.toBe(en);
+  });
+
+  it('AR billing guide content mentions Stripe', () => {
+    const body = resolveDocArticle(docArticles['account/billing-guide'], 'ar')!.content;
+    expect(body.toLowerCase()).toContain('stripe');
   });
 });

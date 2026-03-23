@@ -1,6 +1,7 @@
 import type { DocArticleEntry } from '@/lib/docs/doc-article';
 import { docWelcomeLocales } from '@/lib/docs/doc-welcome-locales';
 import { docFirstListingLocales, docWorkspaceSetupLocales } from '@/lib/docs/doc-getting-started-locales';
+import { docBillingGuideLocales, docPerfectCopyLocales, docPipelineLocales } from '@/lib/docs/doc-next-guides-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -130,6 +131,7 @@ A tidy workspace avoids confusion (e.g. PRO tools you do not need) and keeps tea
     },
   } satisfies DocArticleEntry,
   'getting-started/perfect-copy': {
+    ...docPerfectCopyLocales,
     it: {
       title: 'Perfect Copy — guida rapida',
       content: `
@@ -174,8 +176,9 @@ Create **five variants** of the same listing (professional, emotional, short, SE
 3. Save your favourite from the **listings library** for reuse.
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'crm/pipeline': {
+    ...docPipelineLocales,
     it: {
       title: 'Pipeline lead — come usarla',
       content: `
@@ -216,8 +219,9 @@ The **column** (Kanban) view shows leads by stage: New → Contacted → Follow-
 - Switch to the **lead list** (table) when you need filters and sorting.
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'account/billing-guide': {
+    ...docBillingGuideLocales,
     it: {
       title: 'Piano e fatturazione',
       content: `
@@ -254,7 +258,7 @@ Manage **upgrades**, the **Stripe Customer Portal** (payment method, invoices), 
 Payments run through **Stripe**; PropertyPilot does not store full card details. For charge issues, check the Stripe portal linked to your account email first.
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'prospecting/arbitrage': {
     it: {
       title: "Guida all'Arbitraggio",
