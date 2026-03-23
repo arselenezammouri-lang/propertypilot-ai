@@ -17,6 +17,7 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   'ai-voice/obstacle-handling',
   '3d-staging/staging-guide',
   '3d-staging/whatsapp-integration',
+  'aura-vr/vr-guide',
   'price-sniper/sniper-guide',
   'price-sniper/sniper-strategy',
   'commercial/commercial-guide',

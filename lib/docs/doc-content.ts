@@ -27,6 +27,7 @@ import {
   docXrayGuideLocales,
   docXrayRenovationLocales,
 } from '@/lib/docs/doc-briefing-xray-competitor-locales';
+import { docAuraVrGuideLocales } from '@/lib/docs/doc-aura-vr-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -661,6 +662,57 @@ Share **3D renders** or before/after comparisons with owners and buyers on the c
 ## Quality
 
 Compress without crushing detail—oversized files hurt open rates on phones.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'aura-vr/vr-guide': {
+    ...docAuraVrGuideLocales,
+    it: {
+      title: 'Guida Aura VR',
+      content: `
+# Guida Aura VR
+
+**Aura VR** genera un'esperienza immersiva (viste 360 / tour) a partire dalle foto dell'immobile da condividere con proprietari o acquirenti via WhatsApp, email o presentazioni.
+
+## Prima di generare
+
+1. Carica **foto ampie** degli ambienti principali (soggiorno, cucina, viste).
+2. Verifica il **piano**: la funzione può essere riservata a Pro/Agency secondo la configurazione del prodotto.
+3. Controlla i **diritti sulle immagini** se usi foto del venditore o di terzi.
+
+## Dopo la generazione
+
+- Prova il link su **mobile e desktop** prima di inviarlo al cliente.
+- Accompagna il link con **testo breve** (cosa vedere e passo successivo: visita, offerta).
+- Salva la versione in **CRM** o libreria con data.
+
+## Aspettative
+
+È uno strumento di **marketing e storytelling**, non sostituisce sopralluogo né rilievi tecnici. La qualità dipende da risoluzione e illuminazione delle foto di partenza.
+    `,
+    },
+    en: {
+      title: 'Aura VR Guide',
+      content: `
+# Aura VR Guide
+
+**Aura VR** builds an immersive **360° / tour-style** experience from listing photos to share with owners or buyers via WhatsApp, email, or decks.
+
+## Before you generate
+
+1. Upload **wide shots** of key rooms (living, kitchen, views).
+2. Check your **plan**—the feature may be Pro/Agency-gated depending on product settings.
+3. Respect **image rights** when using vendor or third-party photos.
+
+## After you generate
+
+- Test the link on **mobile and desktop** before client send.
+- Add **short copy** (what they will see and the next step: viewing, offer).
+- Store in **CRM** or library with a date stamp.
+
+## Expectations
+
+This is **marketing storytelling**, not a substitute for site visits or technical surveys. Output quality tracks source photo resolution and lighting.
     `,
     },
   } satisfies DocArticleEntry,

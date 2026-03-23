@@ -154,6 +154,18 @@ const sectionsIt: DocsHubSection[] = [
     ],
   },
   {
+    id: 'aura-vr',
+    title: 'Aura VR',
+    articles: [
+      {
+        id: 'vr-guide',
+        title: 'Guida Aura VR',
+        description: 'Tour immersivo 360° da foto per WhatsApp e presentazioni',
+        slug: 'aura-vr/vr-guide',
+      },
+    ],
+  },
+  {
     id: 'price-sniper',
     title: 'Price Drop Sniper',
     articles: [
@@ -375,6 +387,18 @@ const sectionsEn: DocsHubSection[] = [
         title: 'Send via WhatsApp',
         description: 'Share 3D projects with owners and clients',
         slug: '3d-staging/whatsapp-integration',
+      },
+    ],
+  },
+  {
+    id: 'aura-vr',
+    title: 'Aura VR',
+    articles: [
+      {
+        id: 'vr-guide',
+        title: 'Aura VR Guide',
+        description: '360° immersive tour from photos for WhatsApp and decks',
+        slug: 'aura-vr/vr-guide',
       },
     ],
   },

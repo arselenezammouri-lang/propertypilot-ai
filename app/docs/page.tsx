@@ -21,6 +21,7 @@ import {
   CreditCard,
   Rocket,
   Lightbulb,
+  Glasses,
 } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -36,6 +37,7 @@ const SECTION_ICONS: Record<DocsHubSection["id"], ReactNode> = {
   prospecting: <Zap className="h-5 w-5" />,
   "ai-voice": <Phone className="h-5 w-5" />,
   "3d-staging": <Box className="h-5 w-5" />,
+  "aura-vr": <Glasses className="h-5 w-5" />,
   "price-sniper": <Target className="h-5 w-5" />,
   commercial: <Building2 className="h-5 w-5" />,
   territory: <Map className="h-5 w-5" />,

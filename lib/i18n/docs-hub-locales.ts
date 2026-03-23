@@ -140,6 +140,18 @@ export const docsHubUiEs: DocsHubUi = {
       ],
     },
     {
+      id: 'aura-vr',
+      title: 'Aura VR',
+      articles: [
+        {
+          id: 'vr-guide',
+          title: 'Guía Aura VR',
+          description: 'Tour inmersivo 360° desde fotos para WhatsApp y presentaciones',
+          slug: 'aura-vr/vr-guide',
+        },
+      ],
+    },
+    {
       id: 'price-sniper',
       title: 'Price Drop Sniper',
       articles: [
@@ -378,6 +390,18 @@ export const docsHubUiFr: DocsHubUi = {
           title: 'Envoi via WhatsApp',
           description: 'Partager des projets 3D avec propriétaires et clients',
           slug: '3d-staging/whatsapp-integration',
+        },
+      ],
+    },
+    {
+      id: 'aura-vr',
+      title: 'Aura VR',
+      articles: [
+        {
+          id: 'vr-guide',
+          title: 'Guide Aura VR',
+          description: 'Visite immersive 360° à partir de photos pour WhatsApp et présentations',
+          slug: 'aura-vr/vr-guide',
         },
       ],
     },
@@ -624,6 +648,18 @@ export const docsHubUiDe: DocsHubUi = {
       ],
     },
     {
+      id: 'aura-vr',
+      title: 'Aura VR',
+      articles: [
+        {
+          id: 'vr-guide',
+          title: 'Aura VR — Anleitung',
+          description: 'Immersive 360°-Tour aus Fotos für WhatsApp und Präsentationen',
+          slug: 'aura-vr/vr-guide',
+        },
+      ],
+    },
+    {
       id: 'price-sniper',
       title: 'Price Drop Sniper',
       articles: [
@@ -866,13 +902,25 @@ export const docsHubUiPt: DocsHubUi = {
       ],
     },
     {
+      id: 'aura-vr',
+      title: 'Aura VR',
+      articles: [
+        {
+          id: 'vr-guide',
+          title: 'Guia Aura VR',
+          description: 'Tour imersivo 360° a partir de fotos para WhatsApp e apresentações',
+          slug: 'aura-vr/vr-guide',
+        },
+      ],
+    },
+    {
       id: 'price-sniper',
       title: 'Price Drop Sniper',
       articles: [
         {
           id: 'sniper-guide',
           title: 'Como funciona o Sniper',
-          description: 'Detete quedas de preço em tempo real',
+          description: 'Deteta quedas de preço em tempo real',
           slug: 'price-sniper/sniper-guide',
         },
         {
@@ -1104,6 +1152,18 @@ export const docsHubUiAr: DocsHubUi = {
           title: 'الإرسال عبر واتساب',
           description: 'شارك مشاريع ثلاثية الأبعاد مع المالكين والعملاء',
           slug: '3d-staging/whatsapp-integration',
+        },
+      ],
+    },
+    {
+      id: 'aura-vr',
+      title: 'Aura VR',
+      articles: [
+        {
+          id: 'vr-guide',
+          title: 'دليل Aura VR',
+          description: 'جولة غامرة 360° من الصور لواتساب والعروض',
+          slug: 'aura-vr/vr-guide',
         },
       ],
     },

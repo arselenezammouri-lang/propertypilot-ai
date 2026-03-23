@@ -136,6 +136,8 @@ export async function POST(request: NextRequest) {
       'smart briefing': '/docs/smart-briefing/briefing-guide',
       'x-ray': '/docs/xray/xray-guide',
       'xray': '/docs/xray/xray-guide',
+      'aura vr': '/docs/aura-vr/vr-guide',
+      'aura-vr': '/docs/aura-vr/vr-guide',
       'aiuto': '/docs',
       'help': '/docs',
       'supporto': '/docs',
