@@ -57,7 +57,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Currency, convertCurrency, formatCurrency } from "@/lib/utils/currency";
 import { Menu, X } from "lucide-react";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { Locale } from "@/lib/i18n/config";
+import { Locale, locales as allLocales } from "@/lib/i18n/config";
 import { useLocale } from "@/lib/i18n/locale-context";
 
 export default function PlatformPage() {
@@ -162,13 +162,13 @@ export default function PlatformPage() {
           <div className="hidden lg:flex items-center space-x-4">
             <span className="text-sm text-gray-400">{t.landing.nav.tagline}</span>
             
-            {/* Language Selector (IT, EN, ES) + Currency + Theme Toggle */}
-            <LocaleCurrencySelector 
+            {/* Language selector (all dashboard locales) + currency + theme */}
+            <LocaleCurrencySelector
               currentLocale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
-              localesFilter={["it", "en", "es"]}
+              localesFilter={allLocales}
             />
             <ThemeToggle />
             
@@ -202,12 +202,12 @@ export default function PlatformPage() {
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
-            <LocaleCurrencySelector 
+            <LocaleCurrencySelector
               currentLocale={locale}
               currentCurrency={selectedCurrency}
               onLocaleChange={handleLocaleChange}
               onCurrencyChange={setSelectedCurrency}
-              localesFilter={["it", "en", "es"]}
+              localesFilter={allLocales}
             />
             <Button
               variant="ghost"
@@ -842,13 +842,13 @@ export default function PlatformPage() {
                     { feature: t.landing.pricing.features.forms, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.whiteLabel, free: "—", starter: "—", pro: "✓", agency: "✓" },
                     { feature: t.landing.pricing.features.assistant, free: "—", starter: "—", pro: "✓", agency: "✓" },
-                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: locale === "en" ? "Up to 10 agents" : locale === "es" ? "Hasta 10 agentes" : locale === "fr" ? "Jusqu'à 10 agents" : locale === "de" ? "Bis zu 10 Agenten" : locale === "ar" ? "حتى 10 وكلاء" : "Fino a 10 agenti" },
+                    { feature: t.landing.pricing.features.multiUser, free: "—", starter: "—", pro: "—", agency: t.landing.pricing.tableCells.multiUserAgency },
                     { feature: t.landing.pricing.features.roles, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.distribution, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.reports, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.multiOffice, free: "—", starter: "—", pro: "—", agency: "✓" },
                     { feature: t.landing.pricing.features.auraVR, free: "—", starter: "—", pro: <span className="text-gray-400">{t.landing.pricing.plans.viewer}</span>, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
-                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: locale === "en" ? "30/month" : locale === "es" ? "30/mes" : locale === "fr" ? "30/mois" : locale === "de" ? "30/Monat" : locale === "ar" ? "30/شهر" : "30/mese", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
+                    { feature: t.landing.pricing.features.voiceCalling, free: "—", starter: "—", pro: t.landing.pricing.tableCells.voiceCallingPro, agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.unlimited}</span> },
                     { feature: t.landing.pricing.features.messaging, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.manualOverride, free: "—", starter: "—", pro: "—", agency: <span className="font-bold text-[#06b6d4]">✓ {t.landing.pricing.plans.exclusive}</span> },
                     { feature: t.landing.pricing.features.humanOverride, free: "—", starter: "—", pro: "✓", agency: "✓" },
