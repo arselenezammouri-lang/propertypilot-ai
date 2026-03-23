@@ -3254,6 +3254,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiEs,
       followupEmailsPage: followupEmailsPageUiEs,
       emotionalListingPage: emotionalListingPageUiEs,
+      commandCenterTitle: 'Centro de mando',
+      commandCenterSubtitle:
+        'Tu plan, uso y herramientas de IA para anuncios, leads y prospección — todo en un solo lugar.',
+      newListingCta: 'Nuevo anuncio',
+      proTips: {
+        ariaSection: 'Consejos Pro',
+        title: 'Consejos Pro para mejores anuncios',
+        tip1: 'Incluye detalles concretos de ubicación, servicios y rasgos únicos',
+        tip2: 'Usa superficies y número de habitaciones precisos para mejores resultados de IA',
+        tip3: 'Genera varias versiones y elige la que mejor encaje con tus necesidades',
+      },
+      docsHubOpen: 'Abrir Documentation Hub',
       liveFeed: {
         deal: 'Operación oro',
         call: 'Llamada IA',
@@ -3836,6 +3848,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiFr,
       followupEmailsPage: followupEmailsPageUiFr,
       emotionalListingPage: emotionalListingPageUiFr,
+      commandCenterTitle: 'Centre de commande',
+      commandCenterSubtitle:
+        'Votre forfait, votre utilisation et vos outils IA pour les annonces, les leads et la prospection — au même endroit.',
+      newListingCta: 'Nouvelle annonce',
+      proTips: {
+        ariaSection: 'Conseils Pro',
+        title: 'Conseils Pro pour de meilleures annonces',
+        tip1: 'Incluez des détails précis sur l’emplacement, les services et les atouts uniques',
+        tip2: 'Utilisez des surfaces et un nombre de pièces exacts pour de meilleurs résultats IA',
+        tip3: 'Générez plusieurs versions et choisissez celle qui correspond le mieux à vos besoins',
+      },
+      docsHubOpen: 'Ouvrir le Documentation Hub',
       liveFeed: {
         deal: 'Affaire en or',
         call: 'Appel IA',
@@ -4418,6 +4442,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiDe,
       followupEmailsPage: followupEmailsPageUiDe,
       emotionalListingPage: emotionalListingPageUiDe,
+      commandCenterTitle: 'Kommandozentrale',
+      commandCenterSubtitle:
+        'Ihr Plan, Ihre Nutzung und KI-Tools für Inserate, Leads und Akquise — alles an einem Ort.',
+      newListingCta: 'Neues Inserat',
+      proTips: {
+        ariaSection: 'Pro-Tipps',
+        title: 'Pro-Tipps für bessere Inserate',
+        tip1: 'Nennen Sie konkrete Details zu Lage, Ausstattung und Alleinstellungsmerkmalen',
+        tip2: 'Verwenden Sie genaue Flächen und Zimmeranzahl für bessere KI-Ergebnisse',
+        tip3: 'Erstellen Sie mehrere Versionen und wählen Sie die passendste aus',
+      },
+      docsHubOpen: 'Documentation Hub öffnen',
       liveFeed: {
         deal: 'Gold-Deal',
         call: 'KI-Anruf',
@@ -5002,6 +5038,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiPt,
       followupEmailsPage: followupEmailsPageUiPt,
       emotionalListingPage: emotionalListingPageUiPt,
+      commandCenterTitle: 'Centro de comando',
+      commandCenterSubtitle:
+        'O seu plano, utilização e ferramentas de IA para anúncios, leads e prospeção — num só lugar.',
+      newListingCta: 'Novo anúncio',
+      proTips: {
+        ariaSection: 'Dicas Pro',
+        title: 'Dicas Pro para anúncios melhores',
+        tip1: 'Inclua detalhes específicos sobre localização, comodidades e características únicas',
+        tip2: 'Use áreas e número de divisões corretos para melhores resultados de IA',
+        tip3: 'Gere várias versões e escolha a que melhor se adequa às suas necessidades',
+      },
+      docsHubOpen: 'Abrir Documentation Hub',
       liveFeed: {
         deal: 'Negócio ouro',
         call: 'Chamada IA',
@@ -5392,6 +5440,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiAr,
       followupEmailsPage: followupEmailsPageUiAr,
       emotionalListingPage: emotionalListingPageUiAr,
+      commandCenterTitle: 'مركز القيادة',
+      commandCenterSubtitle:
+        'خطتك واستخدامك وأدوات الذكاء الاصطناعي للإعلانات والعملاء المحتملين والتسويق — في مكان واحد.',
+      newListingCta: 'إعلان جديد',
+      proTips: {
+        ariaSection: 'نصائح احترافية',
+        title: 'نصائح احترافية لإعلانات أفضل',
+        tip1: 'اذكر تفاصيل محددة عن الموقع والخدمات والميزات الفريدة',
+        tip2: 'استخدم مساحات دقيقة وعدد الغرف لنتائج أفضل من الذكاء الاصطناعي',
+        tip3: 'أنشئ عدة نسخ واختر الأنسب لاحتياجاتك',
+      },
+      docsHubOpen: 'فتح Documentation Hub',
       liveFeed: {
         deal: 'صفقة ذهبية',
         call: 'مكالمة ذكاء اصطناعي',

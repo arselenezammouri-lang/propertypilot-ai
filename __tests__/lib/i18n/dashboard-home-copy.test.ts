@@ -123,6 +123,21 @@ describe('dashboard home copy (D1)', () => {
     expect(en.newListingCta).toMatch(/listing/i);
   });
 
+  it('command center, proTips, docsHubOpen native ES/FR/DE/PT/AR', () => {
+    const en = getTranslation('en').dashboard;
+    const es = getTranslation('es').dashboard;
+    expect(es.commandCenterTitle.toLowerCase()).not.toBe(en.commandCenterTitle.toLowerCase());
+    expect(es.newListingCta.toLowerCase()).toMatch(/nuevo|anuncio/);
+    expect(es.proTips.tip1.length).toBeGreaterThan(20);
+    expect(es.docsHubOpen).toContain('Documentation Hub');
+
+    expect(getTranslation('fr').dashboard.proTips.ariaSection).toContain('Pro');
+    expect(getTranslation('de').dashboard.commandCenterTitle).toBe('Kommandozentrale');
+    expect(getTranslation('pt').dashboard.docsHubOpen.toLowerCase()).toMatch(/abrir|documentation/);
+    expect(getTranslation('ar').dashboard.newListingCta.length).toBeGreaterThan(3);
+    expect(getTranslation('ar').dashboard.commandCenterSubtitle.length).toBeGreaterThan(15);
+  });
+
   it('non-english locales inherit from merge (es has strings)', () => {
     const es = getTranslation('es').dashboard;
     expect(es.commandCenterTitle).toBeTruthy();
