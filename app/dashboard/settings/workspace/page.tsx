@@ -29,6 +29,7 @@ import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host"
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   premiumFeatureToast,
@@ -266,6 +267,7 @@ export default function WorkspaceSettingsPage() {
         planBadge={
           !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/workspace-setup" />}
       />
 
       {isTrial ? (

@@ -32,6 +32,7 @@ import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -213,6 +214,7 @@ export default function AnalyzePage() {
         titleDataTestId="heading-analyze-link"
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/scraper-guide" />}
         actions={
           <Badge variant="outline" className="border-neon-aqua/40 text-xs text-neon-aqua">
             {t.headerSubtitle}

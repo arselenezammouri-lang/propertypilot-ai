@@ -16,6 +16,7 @@ import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import { apiFailureToast } from "@/lib/i18n/api-feature-feedback";
 
 type AutopilotRule = {
@@ -150,6 +151,7 @@ export default function AutopilotPage() {
         planBadge={
           !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/arbitrage" />}
       />
       <div className="max-w-5xl space-y-8">
       <Card className="border-white/10 bg-white/[0.03]">

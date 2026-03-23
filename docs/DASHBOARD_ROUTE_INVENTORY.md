@@ -86,7 +86,7 @@ Valore da `DashboardPlanFeatures` salvo dove la **UI** applica un paywall divers
 - **C5 (fatto):** home dashboard — `DeferredMount` / `DeferIdleMount` (`components/deferred-mount.tsx`, `defer-idle-mount.tsx`).  
 - **C4 (fatto):** workspace settings — lingua/valuta (`LocaleCurrencySelector`) + fuso orario; date dashboard usano `timezone` dal contesto.  
 - **C3 (fatto):** command palette con **Collegamenti veloci** + **Guide** (`lib/dashboard/command-palette-extras.tsx`).  
-- **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel` (Perfect Copy, Pipeline, Billing); docs bilingue in `lib/docs/doc-content.ts`.  
+- **C2 (fatto):** `ContextualHelpTrigger` + `FieldHelpLabel`; docs in `lib/docs/doc-content.ts`; help `?` anche su Prospecting, Scraper, Analyze link, Map, Opportunities, Autopilot, Workspace, Follow-up, Video scripts (slug in `CONTEXTUAL_HELP_DOC_SLUGS`).  
 - Seguire priorità **P1–P4** in [SHARED_COMPONENTS_AUDIT.md](./SHARED_COMPONENTS_AUDIT.md) (convergenza Card/Button/modali).  
 - Estendere **`api-feature-feedback`** (`ApiFeatureId`) dove manca ancora.  
 - Ridurre **duplicazioni** (due pagine automations, badge PDF vs piano free in features).  

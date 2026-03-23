@@ -114,6 +114,7 @@ import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -678,6 +679,7 @@ export default function ProspectingPage() {
             ? { label: planBadgeLabel(userPlan), variant: "secondary" }
             : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/arbitrage" />}
         actions={
           <div className="flex flex-wrap items-center gap-3 min-h-11 touch-manipulation">
             <Link href="/dashboard" aria-label={t.backAria}>

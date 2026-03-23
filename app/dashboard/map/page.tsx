@@ -10,6 +10,7 @@ import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   networkFailureToast,
@@ -292,6 +293,7 @@ export default function PredatorMapPage() {
           titleDataTestId="heading-predator-map"
           subtitle={mp.paywallSubtitle}
           planBadge={{ label: usagePlan.toUpperCase(), variant: "secondary" }}
+          contextualHelp={<ContextualHelpTrigger docSlug="territory/map-usage" />}
           actions={
             <div className="flex flex-wrap gap-2 min-h-11 touch-manipulation">
               <Link href="/dashboard/prospecting" aria-label={mp.backToProspecting}>
@@ -356,6 +358,7 @@ export default function PredatorMapPage() {
         subtitle={t.mapSubtitle}
         planBadge={{ label: usagePlan.toUpperCase(), variant: "secondary" }}
         className="mb-4 md:mb-6 pb-4"
+        contextualHelp={<ContextualHelpTrigger docSlug="territory/map-usage" />}
         actions={
           <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 min-h-11 touch-manipulation">
             <Link href="/dashboard/prospecting" aria-label={mp.backToProspecting}>

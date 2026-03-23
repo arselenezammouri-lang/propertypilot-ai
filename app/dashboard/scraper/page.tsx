@@ -34,6 +34,7 @@ import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import {
   apiFailureToast,
   networkFailureToast,
@@ -243,6 +244,7 @@ export default function ScraperPage() {
         titleDataTestId="heading-scraper"
         subtitle={t.pageDesc}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/scraper-guide" />}
         actions={<Sparkles className="h-8 w-8 text-violet-400" aria-hidden />}
       />
 

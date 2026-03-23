@@ -34,11 +34,18 @@ export const DOCS_INDEX_QUICK_LINK_PATHS = {
 
 /**
  * `ContextualHelpTrigger` `docSlug` values — must exist in `docArticles`.
+ * Mappa feature dashboard → guida più pertinente (stesso elenco verificato dal test di parity).
  */
 export const CONTEXTUAL_HELP_DOC_SLUGS = [
   'crm/pipeline',
   'account/billing-guide',
   'getting-started/perfect-copy',
+  'getting-started/workspace-setup',
+  'prospecting/arbitrage',
+  'prospecting/scraper-guide',
+  'ai-voice/call-scripts',
+  'territory/map-usage',
+  'competitor/radar-guide',
 ] as const;
 
 export type ContextualHelpDocSlug = (typeof CONTEXTUAL_HELP_DOC_SLUGS)[number];

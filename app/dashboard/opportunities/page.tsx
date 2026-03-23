@@ -14,6 +14,7 @@ import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { fetchApi } from "@/lib/api/client";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import { apiFailureToast, networkFailureToast } from "@/lib/i18n/api-feature-feedback";
 
 type Opportunity = {
@@ -94,6 +95,7 @@ export default function OpportunitiesPage() {
         planBadge={
           !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="competitor/radar-guide" />}
       />
       <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>

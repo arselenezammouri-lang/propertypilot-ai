@@ -18,6 +18,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -418,6 +419,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
         title={t.pageTitle}
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="ai-voice/call-scripts" />}
         actions={
           <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white border-0 text-xs">
             {t.heroBadge}
