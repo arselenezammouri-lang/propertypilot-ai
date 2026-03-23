@@ -19,6 +19,10 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   '3d-staging/whatsapp-integration',
   'price-sniper/sniper-guide',
   'price-sniper/sniper-strategy',
+  'commercial/commercial-guide',
+  'commercial/business-features',
+  'territory/territory-guide',
+  'territory/map-usage',
 ] as const;
 
 describe('localized doc articles ES–AR', () => {

@@ -14,6 +14,12 @@ import {
 } from '@/lib/docs/doc-ai-voice-locales';
 import { docStagingGuideLocales, docStagingWhatsappLocales } from '@/lib/docs/doc-3d-staging-locales';
 import { docSniperGuideLocales, docSniperStrategyLocales } from '@/lib/docs/doc-price-sniper-locales';
+import {
+  docCommercialBusinessLocales,
+  docCommercialGuideLocales,
+  docTerritoryGuideLocales,
+  docTerritoryMapLocales,
+} from '@/lib/docs/doc-commercial-territory-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -748,6 +754,210 @@ Create a **follow-up task + reminder** and link the listing. If you automate, av
 ## Compliance
 
 Honor opt-outs, do-not-call lists where applicable, and local prospecting rules.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'commercial/commercial-guide': {
+    ...docCommercialGuideLocales,
+    it: {
+      title: 'Analisi Immobili Commerciali',
+      content: `
+# Analisi Immobili Commerciali
+
+La vista **commercial** riassume possibili destinazioni d'uso, segnali di mercato e **gap** tra domanda e offerta nella zona.
+
+## Cosa controllare
+
+- **Tipologia e metratura utile**: idoneità a retail, ristorazione, ufficio leggero o misto secondo normativa locale.
+- **Scheda e foto**: vetrina, accessi, altezze libere, impianti visibili.
+- **Comparabili commerciali**: canoni, rotazione e riferimenti di via o polo.
+
+## Come usarla in trattativa
+
+1. Prepara **2–3 dati** concreti (pedonalità, concorrenza, €/m²) prima di chiamare il proprietario.
+2. Collega alla **prospezione**: se il gap è alto, usalo come aggancio senza promettere occupazione.
+3. Annota nel **CRM** ipotesi d'uso e prossima verifica urbanistica se serve.
+
+## Limiti
+
+L'IA **non sostituisce** perizia né parere legale: conferma usi e oneri con tecnico e comune.
+    `,
+    },
+    en: {
+      title: 'Commercial Property Analysis',
+      content: `
+# Commercial Property Analysis
+
+The **commercial** view summarizes viable uses, market signals, and **gaps** between local demand and supply.
+
+## What to review
+
+- **Type and net area**: fit for retail, F&B, light office, or mixed use under local zoning.
+- **Listing and photos**: storefront, access, clear heights, visible systems.
+- **Commercial comps**: rents, turnover, street or business-park benchmarks.
+
+## In conversation
+
+1. Prepare **2–3 facts** (foot traffic, competition, €/sqm or local equivalent) before calling the owner.
+2. Tie to **prospecting**: a large gap can open the talk without promising tenancy.
+3. Log use hypotheses and next planning checks in your **CRM**.
+
+## Limits
+
+AI **does not replace** technical surveys or legal advice—validate uses and encumbrances with professionals.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'commercial/business-features': {
+    ...docCommercialBusinessLocales,
+    it: {
+      title: 'Funzionalità chiave per il commerciale',
+      content: `
+# Funzionalità chiave per il commerciale
+
+Questi segnali aiutano a **classificare** i locali e a preparare domande a proprietario o tecnico.
+
+## Cosa il prodotto può evidenziare (ove applicabile)
+
+- **Canna fumaria / estrazione**: rilevante per ristorazione; verifica normativa e impianto reale.
+- **Vetrina e lineare di facciata**: visibilità e accesso pedonale.
+- **Categoria d'uso** (es. classi tipo C3 in alcuni mercati): incrocio con piano regolatore.
+
+## Buone pratiche
+
+1. Non dedurre **licenza di esercizio** solo dall'annuncio: verifica in comune.
+2. Fotografa o visita **in loco** ciò che l'IA marca come «probabile».
+3. Documenta nel **CRM** ogni elemento con fonte (foto, link, nota di chiamata).
+
+## Mercati diversi
+
+Italia, Spagna, Francia o USA usano **nomenclature diverse**: adatta il linguaggio al cliente e al legale locale.
+    `,
+    },
+    en: {
+      title: 'Key business features',
+      content: `
+# Key business features
+
+These signals help **classify** units and prepare questions for the owner or surveyor.
+
+## What the product may surface (when applicable)
+
+- **Chimney / extraction**: relevant for F&B; confirm code compliance and actual install.
+- **Storefront and frontage**: visibility and pedestrian access.
+- **Use class** (e.g. C3-style categories in some markets): cross-check with zoning.
+
+## Best practices
+
+1. Do not infer an **operating license** from the listing alone—verify with the authority.
+2. Validate on site what the AI labels as «likely».
+3. Record each point in the **CRM** with a source (photo, link, call note).
+
+## Different markets
+
+IT, ES, FR, and US use **different classification schemes**—align wording with local counsel.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'territory/territory-guide': {
+    ...docTerritoryGuideLocales,
+    it: {
+      title: 'Analisi del Territorio',
+      content: `
+# Analisi del Territorio
+
+Il modulo **Territory** sintetizza **domanda**, **DNA del quartiere** e **velocità di vendita** per prioritizzare zone e argomenti con i proprietari.
+
+## Cosa guardare
+
+- **Pressione della domanda**: interesse relativo rispetto a inventario o storico della zona.
+- **DNA del quartiere**: profilo acquirente, mix residenziale/commerciale, stagionalità se rilevante.
+- **Velocità**: giorni medi di vendita o locazione come indicatore (non garanzia).
+
+## Come applicarla
+
+1. Incrocia il territorio con **annunci concreti** che già segui in prospezione.
+2. Usa **al massimo due metriche** nel primo colloquio per non sovraccaricare.
+3. Aggiorna la narrativa quando cambiano fiscalità o nuove iniziative edilizie in zona.
+
+## Precisione
+
+I dati sono **indicativi** e dipendono da fonti e mercato: valida con transazioni recenti e rete locale.
+    `,
+    },
+    en: {
+      title: 'Territory Analysis',
+      content: `
+# Territory Analysis
+
+The **Territory** module summarizes **demand**, **neighborhood DNA**, and **sales velocity** so you can prioritize areas and talking points with owners.
+
+## What to watch
+
+- **Demand pressure** vs inventory or local history.
+- **Neighborhood DNA**: buyer profile, residential/commercial mix, seasonality where relevant.
+- **Velocity**: average days to sale or lease as a signal—not a promise.
+
+## How to apply it
+
+1. Cross-link territory insights with **specific listings** you already track in prospecting.
+2. Use **at most two metrics** in the first conversation to stay clear.
+3. Refresh the story when tax rules or new supply shifts in the area.
+
+## Accuracy
+
+Figures are **directional** and source-dependent—validate with recent deals and your local network.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'territory/map-usage': {
+    ...docTerritoryMapLocales,
+    it: {
+      title: 'Uso della Mappa Tattica',
+      content: `
+# Uso della Mappa Tattica
+
+La **mappa tattica** mostra opportunità e trattative sul territorio per decidere **dove** concentrare visite e chiamate.
+
+## Navigazione
+
+- **Zoom e layer**: passa tra heatmap, pin o elenchi secondo il prodotto.
+- **Selezione**: apri il dettaglio immobile o lead dal pin per non perdere contesto.
+- **Filtri**: applica prezzo, gap, stato lead o raggio per ridurre rumore.
+
+## Flusso di lavoro
+
+1. Scegli una **zona obiettivo** all'inizio della sessione (quartiere o raggio).
+2. Segna nel **CRM** i pin già contattati per evitare duplicati in team.
+3. Combina mappa e **pipeline**: sposta il lead quando c'è visita o offerta reale.
+
+## Prestazioni
+
+Su mobile, in caso di rete debole privilegia le **liste**: la mappa consuma più dati.
+    `,
+    },
+    en: {
+      title: 'Tactical Map Usage',
+      content: `
+# Tactical Map Usage
+
+The **tactical map** plots opportunities and deals on the ground so you choose **where** to focus visits and calls.
+
+## Navigation
+
+- **Zoom and layers**: switch between heat, pins, or lists depending on the product.
+- **Selection**: open listing or lead detail from the pin to keep context.
+- **Filters**: price, gap, lead status, or radius to cut noise.
+
+## Workflow
+
+1. Pick a **target zone** at the start of the session (neighborhood or radius).
+2. Mark contacted pins in the **CRM** so the team does not double-work.
+3. Pair the map with the **pipeline** once a viewing or real offer exists.
+
+## Performance
+
+On mobile with weak signal, prefer **lists**—maps use more data.
     `,
     },
   } satisfies DocArticleEntry,
