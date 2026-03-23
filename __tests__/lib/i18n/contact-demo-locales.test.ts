@@ -7,6 +7,15 @@ function sortedKeysDeep(o: unknown): string[] {
 }
 
 describe('contact-demo-locales', () => {
+  it('IT marketing taglines are native (not EN fallback)', () => {
+    const en = getTranslation('en');
+    const it = getTranslation('it');
+    expect(it.contact.headerTagline).not.toBe(en.contact.headerTagline);
+    expect(it.landing.nav.tagline).not.toBe(en.landing.nav.tagline);
+    expect(it.landing.nav.features).not.toBe(en.landing.nav.features);
+    expect(it.landing.nav.login).not.toBe(en.landing.nav.login);
+  });
+
   it('demo + contact structures match EN for ES–AR', () => {
     const en = getTranslation('en');
     for (const loc of ['es', 'fr', 'de', 'pt', 'ar'] as const) {

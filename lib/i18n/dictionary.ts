@@ -1969,7 +1969,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       validation: { nameMin: 'Il nome deve avere almeno 2 caratteri', emailInvalid: "Inserisci un'email valida", messageMin: 'Il messaggio deve avere almeno 10 caratteri', checkFields: 'Controlla i campi evidenziati.' },
       toast: { successTitle: 'Messaggio inviato!', successDesc: 'Ti risponderemo entro 24 ore.', errorTitle: 'Errore', errorDesc: 'Impossibile inviare il messaggio. Riprova più tardi.', validationTitle: 'Errore di validazione' },
       home: 'Home',
-      headerTagline: 'Pilot Your Agency to the Next Level',
+      headerTagline: 'Porta la tua agenzia al livello successivo',
       demoMailSubject: 'Richiesta demo PropertyPilot AI',
       minCharsCounter: '{current}/{min} caratteri minimi',
       submitting: 'Invio in corso…',
@@ -2069,12 +2069,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
-        features: 'Features',
-        pricing: 'Pricing',
+        tagline: 'Porta la tua agenzia al livello successivo',
+        features: 'Funzionalità',
+        pricing: 'Prezzi',
         compliance: 'Compliance',
-        login: 'Login',
-        getStarted: 'Get Started',
+        login: 'Accedi',
+        getStarted: 'Inizia',
       },
       hero: {
         poweredBy: 'Powered by GPT-4',
