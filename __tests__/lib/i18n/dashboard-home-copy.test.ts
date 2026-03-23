@@ -156,6 +156,26 @@ describe('dashboard home copy (D1)', () => {
     expect(getTranslation('ar').dashboard.liveNetwork.cardTitle).toContain('PropertyPilot');
   });
 
+  it('dashboardToasts native per locale (no emoji titles; placeholders in limitNearDesc)', () => {
+    const en = getTranslation('en').dashboardToasts;
+    expect(en.boostActivated).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+    expect(en.limitNearDesc).toContain('{used}');
+    expect(en.limitNearDesc).toContain('{lim}');
+
+    const it = getTranslation('it').dashboardToasts;
+    expect(it.agencyActive.toLowerCase()).toMatch(/attiv|intelligence/);
+    expect(it.checkoutCanceledDesc.toLowerCase()).toMatch(/fatturaz|billing/);
+
+    const es = getTranslation('es').dashboardToasts;
+    expect(es.paymentDone.toLowerCase()).toMatch(/pago|complet/);
+    expect(es.boostDesc).not.toBe(en.boostDesc);
+
+    expect(getTranslation('fr').dashboardToasts.checkoutCanceled.toLowerCase()).toMatch(/annul|paiement/);
+    expect(getTranslation('de').dashboardToasts.limitNear.toLowerCase()).toMatch(/limit|erreicht/);
+    expect(getTranslation('pt').dashboardToasts.agencyDesc.toLowerCase()).toMatch(/bem-vindo|propertypilot/);
+    expect(getTranslation('ar').dashboardToasts.paymentDone.length).toBeGreaterThan(3);
+  });
+
   it('stats3d, sniperStats, regionalPortals keys for EN', () => {
     const d = getTranslation('en').dashboard;
     expect(d.stats3d.openedOfSent).toContain('{opened}');
