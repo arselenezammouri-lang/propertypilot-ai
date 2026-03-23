@@ -312,6 +312,23 @@ import {
   pricingPagePlansUiFr,
   pricingPagePlansUiPt,
 } from '@/lib/i18n/marketing-public-locales';
+import {
+  privacyPolicyPageUiAr,
+  privacyPolicyPageUiDe,
+  privacyPolicyPageUiEs,
+  privacyPolicyPageUiFr,
+  privacyPolicyPageUiPt,
+  refundPolicyPageUiAr,
+  refundPolicyPageUiDe,
+  refundPolicyPageUiEs,
+  refundPolicyPageUiFr,
+  refundPolicyPageUiPt,
+  termsPolicyPageUiAr,
+  termsPolicyPageUiDe,
+  termsPolicyPageUiEs,
+  termsPolicyPageUiFr,
+  termsPolicyPageUiPt,
+} from '@/lib/i18n/legal-policy-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3655,6 +3672,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiEs,
     blogPostPage: blogPostPageUiEs,
     pricingPagePlans: pricingPagePlansUiEs,
+    privacyPolicyPage: privacyPolicyPageUiEs,
+    termsPolicyPage: termsPolicyPageUiEs,
+    refundPolicyPage: refundPolicyPageUiEs,
     landing: {
       nav: {
         tagline: 'Lleva tu agencia al siguiente nivel',
@@ -4271,6 +4291,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiFr,
     blogPostPage: blogPostPageUiFr,
     pricingPagePlans: pricingPagePlansUiFr,
+    privacyPolicyPage: privacyPolicyPageUiFr,
+    termsPolicyPage: termsPolicyPageUiFr,
+    refundPolicyPage: refundPolicyPageUiFr,
     landing: {
       nav: {
         tagline: 'Faites passer votre agence au niveau supérieur',
@@ -4887,6 +4910,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiDe,
     blogPostPage: blogPostPageUiDe,
     pricingPagePlans: pricingPagePlansUiDe,
+    privacyPolicyPage: privacyPolicyPageUiDe,
+    termsPolicyPage: termsPolicyPageUiDe,
+    refundPolicyPage: refundPolicyPageUiDe,
     landing: {
       nav: {
         tagline: 'Bringen Sie Ihre Agentur auf das nächste Level',
@@ -5503,6 +5529,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiPt,
     blogPostPage: blogPostPageUiPt,
     pricingPagePlans: pricingPagePlansUiPt,
+    privacyPolicyPage: privacyPolicyPageUiPt,
+    termsPolicyPage: termsPolicyPageUiPt,
+    refundPolicyPage: refundPolicyPageUiPt,
     landing: {
       nav: {
         tagline: 'Leve a sua agência ao próximo nível',
@@ -5928,6 +5957,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiAr,
     blogPostPage: blogPostPageUiAr,
     pricingPagePlans: pricingPagePlansUiAr,
+    privacyPolicyPage: privacyPolicyPageUiAr,
+    termsPolicyPage: termsPolicyPageUiAr,
+    refundPolicyPage: refundPolicyPageUiAr,
     landing: {
       nav: {
         tagline: 'ارتقِ بوكالتك إلى المستوى التالي',

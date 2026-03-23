@@ -52,12 +52,13 @@ export function PrivacyPageContent() {
               </h2>
               {section.body?.map((paragraph) => (
                 <p key={paragraph} className="text-white/70 leading-relaxed mt-4 first:mt-0">
-                  {paragraph.includes("privacy@propertypilotai.com") && paragraph.startsWith("Email:") ? (
+                  {paragraph.includes("privacy@propertypilotai.com") ? (
                     <>
-                      Email:{" "}
+                      {paragraph.split("privacy@propertypilotai.com")[0]}
                       <a href="mailto:privacy@propertypilotai.com" className="text-royal-purple hover:underline">
                         privacy@propertypilotai.com
                       </a>
+                      {paragraph.split("privacy@propertypilotai.com")[1] ?? ""}
                     </>
                   ) : (
                     paragraph
@@ -85,12 +86,13 @@ export function PrivacyPageContent() {
                 <ul className="text-muted-foreground mt-4 space-y-2">
                   {section.contacts.map((contact) => (
                     <li key={contact}>
-                      {contact.startsWith("Email:") ? (
+                      {contact.includes("privacy@propertypilotai.com") ? (
                         <>
-                          Email:{" "}
+                          {contact.split("privacy@propertypilotai.com")[0]}
                           <a href="mailto:privacy@propertypilotai.com" className="text-royal-purple hover:underline">
                             privacy@propertypilotai.com
                           </a>
+                          {contact.split("privacy@propertypilotai.com")[1] ?? ""}
                         </>
                       ) : (
                         contact

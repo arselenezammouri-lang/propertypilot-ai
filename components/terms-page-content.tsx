@@ -71,20 +71,24 @@ export function TermsPageContent() {
                 <ul className="text-muted-foreground mt-4 space-y-2">
                   {section.contacts.map((contact) => (
                     <li key={contact}>
-                      {contact.startsWith("Email:") ? (
+                      {contact.includes("legal@propertypilotai.com") ? (
                         <>
-                          Email:{" "}
+                          {contact.split("legal@propertypilotai.com")[0]}
                           <a href="mailto:legal@propertypilotai.com" className="text-royal-purple hover:underline">
                             legal@propertypilotai.com
                           </a>
+                          {contact.split("legal@propertypilotai.com")[1] ?? ""}
                         </>
-                      ) : (
+                      ) : contact.includes("support@propertypilotai.com") ? (
                         <>
-                          Support:{" "}
+                          {contact.split("support@propertypilotai.com")[0]}
                           <a href="mailto:support@propertypilotai.com" className="text-royal-purple hover:underline">
                             support@propertypilotai.com
                           </a>
+                          {contact.split("support@propertypilotai.com")[1] ?? ""}
                         </>
+                      ) : (
+                        contact
                       )}
                     </li>
                   ))}
