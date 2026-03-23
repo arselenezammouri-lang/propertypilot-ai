@@ -52,6 +52,18 @@ describe('dashboard home copy (D1)', () => {
     expect(pt.searchEngine.stepLabel).toContain('{n}');
   });
 
+  it('IT landing home: native marketing copy (no EN headline fragments)', () => {
+    const it = getTranslation('it').landing;
+    expect(it.features.title).not.toMatch(/^Why\s/i);
+    expect(it.testimonials.title.toLowerCase()).not.toMatch(/loved by/);
+    expect(it.aria.title.toLowerCase()).not.toMatch(/your ai success/i);
+    expect(it.footer.pricing).toBe('Prezzi');
+    expect(it.footer.features).toBe('Funzionalità');
+    expect(it.cta.button.toLowerCase()).not.toMatch(/get started/);
+    expect(it.hero.stats.conversionRate.toLowerCase()).not.toBe('conversion rate');
+    expect(it.pricing.bestValue).toMatch(/valore|miglior/i);
+  });
+
   it('marketing home trusted logos, hero stat values, step2 demo score label', () => {
     const it = getTranslation('it').landing;
     expect(it.hero.trustedPortalLogos).toHaveLength(4);
@@ -75,7 +87,7 @@ describe('dashboard home copy (D1)', () => {
     expect(en.contact.demoMailSubject.toLowerCase()).toMatch(/demo|property/i);
   });
 
-  it('marketing and legal pages (IT/EN; ES merge EN)', () => {
+  it('marketing and legal pages (IT/EN; ES native marketing blog)', () => {
     const it = getTranslation('it');
     const en = getTranslation('en');
     expect(it.marketingAbout.title).toContain('Chi');
@@ -85,7 +97,7 @@ describe('dashboard home copy (D1)', () => {
     expect(it.privacyPolicyPage.sections.length).toBe(10);
     expect(en.termsPolicyPage.sections[0].title).toMatch(/Acceptance/i);
     expect(it.refundPolicyPage.guaranteeBodyStrong.length).toBeGreaterThan(5);
-    expect(getTranslation('es').marketingBlog.subtitle).toBe(en.marketingBlog.subtitle);
+    expect(getTranslation('es').marketingBlog.subtitle).not.toBe(en.marketingBlog.subtitle);
   });
 
   it('errorBoundaryModule, welcomeTour, onboardingWizard for IT/EN; ES–AR native bundles', () => {
