@@ -1,6 +1,6 @@
 /**
  * Copy for dashboard "All tools" grid (DashboardPlanFeatures).
- * IT + EN authoritative; other locales merge from EN via getTranslation.
+ * IT + EN authoritative here; ES/FR/DE/PT/AR in `plan-features-locales.ts` (wired in dictionary).
  */
 export type PlanFeaturesChrome = {
   plan: string;

@@ -271,7 +271,7 @@ describe('dashboard home copy (D1)', () => {
     expect(getTranslation('ar').dashboard.planCards.teamUpToAgents).toContain('10');
   });
 
-  it('planFeatures (all-tools grid) for IT/EN and merge for ES', () => {
+  it('planFeatures (all-tools grid) for IT/EN and full bundles ES–AR', () => {
     const it = getTranslation('it').dashboard.planFeatures;
     const en = getTranslation('en').dashboard.planFeatures;
     expect(it.chrome.plan).toBe('Piano');
@@ -279,8 +279,14 @@ describe('dashboard home copy (D1)', () => {
     expect(it.items.generate.name).toContain('Annuncio');
     expect(en.items.generate.name).toMatch(/listing/i);
     const es = getTranslation('es').dashboard.planFeatures;
-    expect(es.chrome.plan).toBe('Plan');
-    expect(es.items.generate.name).toMatch(/listing/i);
+    expect(es.chrome.freeLimit).toContain('anuncios');
+    expect(es.items.generate.name.toLowerCase()).toMatch(/generar|nuevo/);
+    expect(es.items.generate.description).not.toBe(en.items.generate.description);
+    expect(getTranslation('fr').dashboard.planFeatures.chrome.plan).toBe('Forfait');
+    expect(getTranslation('de').dashboard.planFeatures.items.map.name).toMatch(/Karte|Gebiet/i);
+    expect(getTranslation('pt').dashboard.planFeatures.chrome.unlock).toBe('Desbloquear');
+    expect(getTranslation('ar').dashboard.planFeatures.chrome.agencyLimit).toContain('غير');
+    expect(getTranslation('ar').dashboard.planFeatures.items['perfect-copy'].name).toContain('Perfect Copy');
   });
 
   it('mapPage keys for EN and placeholder in ghostListingDays', () => {

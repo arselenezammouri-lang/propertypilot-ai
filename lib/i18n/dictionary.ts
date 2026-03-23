@@ -5,6 +5,13 @@
 
 import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
 import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
+import {
+  planFeaturesUiAr,
+  planFeaturesUiDe,
+  planFeaturesUiEs,
+  planFeaturesUiFr,
+  planFeaturesUiPt,
+} from '@/lib/i18n/plan-features-locales';
 import type { LeadsPageUi } from '@/lib/i18n/leads-page-ui';
 import { leadsPageUiEn, leadsPageUiIt } from '@/lib/i18n/leads-page-ui';
 import type { LeadDetailPageUi } from '@/lib/i18n/lead-detail-page-ui';
@@ -3254,6 +3261,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiEs,
       followupEmailsPage: followupEmailsPageUiEs,
       emotionalListingPage: emotionalListingPageUiEs,
+      planFeatures: planFeaturesUiEs,
       commandCenterTitle: 'Centro de mando',
       commandCenterSubtitle:
         'Tu plan, uso y herramientas de IA para anuncios, leads y prospección — todo en un solo lugar.',
@@ -3848,6 +3856,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiFr,
       followupEmailsPage: followupEmailsPageUiFr,
       emotionalListingPage: emotionalListingPageUiFr,
+      planFeatures: planFeaturesUiFr,
       commandCenterTitle: 'Centre de commande',
       commandCenterSubtitle:
         'Votre forfait, votre utilisation et vos outils IA pour les annonces, les leads et la prospection — au même endroit.',
@@ -4442,6 +4451,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiDe,
       followupEmailsPage: followupEmailsPageUiDe,
       emotionalListingPage: emotionalListingPageUiDe,
+      planFeatures: planFeaturesUiDe,
       commandCenterTitle: 'Kommandozentrale',
       commandCenterSubtitle:
         'Ihr Plan, Ihre Nutzung und KI-Tools für Inserate, Leads und Akquise — alles an einem Ort.',
@@ -5038,6 +5048,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiPt,
       followupEmailsPage: followupEmailsPageUiPt,
       emotionalListingPage: emotionalListingPageUiPt,
+      planFeatures: planFeaturesUiPt,
       commandCenterTitle: 'Centro de comando',
       commandCenterSubtitle:
         'O seu plano, utilização e ferramentas de IA para anúncios, leads e prospeção — num só lugar.',
@@ -5440,6 +5451,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       videoScriptsPage: videoScriptsPageUiAr,
       followupEmailsPage: followupEmailsPageUiAr,
       emotionalListingPage: emotionalListingPageUiAr,
+      planFeatures: planFeaturesUiAr,
       commandCenterTitle: 'مركز القيادة',
       commandCenterSubtitle:
         'خطتك واستخدامك وأدوات الذكاء الاصطناعي للإعلانات والعملاء المحتملين والتسويق — في مكان واحد.',
