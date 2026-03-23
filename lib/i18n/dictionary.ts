@@ -24,6 +24,18 @@ import {
   pendingCheckoutUiFr,
   pendingCheckoutUiPt,
 } from '@/lib/i18n/pending-aria-locales';
+import {
+  commandPaletteExtrasAr,
+  commandPaletteExtrasDe,
+  commandPaletteExtrasEs,
+  commandPaletteExtrasFr,
+  commandPaletteExtrasPt,
+  dashboardNavUiAr,
+  dashboardNavUiDe,
+  dashboardNavUiEs,
+  dashboardNavUiFr,
+  dashboardNavUiPt,
+} from '@/lib/i18n/dashboard-nav-command-palette-locales';
 import type { LeadsPageUi } from '@/lib/i18n/leads-page-ui';
 import { leadsPageUiEn, leadsPageUiIt } from '@/lib/i18n/leads-page-ui';
 import type { LeadDetailPageUi } from '@/lib/i18n/lead-detail-page-ui';
@@ -3456,6 +3468,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiEs,
     ariaLimitModal: ariaLimitModalUiEs,
+    dashboardNav: dashboardNavUiEs,
+    commandPaletteExtras: commandPaletteExtrasEs,
     dashboardToasts: {
       boostActivated: 'Agency Boost activado',
       boostDesc: 'Setup «done-for-you» confirmado. Nuestro equipo se pondrá en contacto contigo para el onboarding.',
@@ -4067,6 +4081,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiFr,
     ariaLimitModal: ariaLimitModalUiFr,
+    dashboardNav: dashboardNavUiFr,
+    commandPaletteExtras: commandPaletteExtrasFr,
     dashboardToasts: {
       boostActivated: 'Agency Boost activé',
       boostDesc: 'Configuration « done-for-you » confirmée. Notre équipe vous contactera pour l’onboarding.',
@@ -4678,6 +4694,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiDe,
     ariaLimitModal: ariaLimitModalUiDe,
+    dashboardNav: dashboardNavUiDe,
+    commandPaletteExtras: commandPaletteExtrasDe,
     dashboardToasts: {
       boostActivated: 'Agency Boost aktiviert',
       boostDesc: '„Done-for-you“-Setup bestätigt. Unser Team meldet sich für das Onboarding bei Ihnen.',
@@ -5289,6 +5307,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiPt,
     ariaLimitModal: ariaLimitModalUiPt,
+    dashboardNav: dashboardNavUiPt,
+    commandPaletteExtras: commandPaletteExtrasPt,
     dashboardToasts: {
       boostActivated: 'Agency Boost ativado',
       boostDesc: 'Configuração «done-for-you» confirmada. A nossa equipa contactá-lo-á para o onboarding.',
@@ -5706,6 +5726,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     pendingCheckoutBanner: pendingCheckoutUiAr,
     ariaLimitModal: ariaLimitModalUiAr,
+    dashboardNav: dashboardNavUiAr,
+    commandPaletteExtras: commandPaletteExtrasAr,
     dashboardToasts: {
       boostActivated: 'تم تفعيل Agency Boost',
       boostDesc: 'تم تأكيد الإعداد «done-for-you». سيتواصل فريقنا معك لإكمال الإعداد.',

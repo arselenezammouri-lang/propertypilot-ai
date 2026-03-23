@@ -1,4 +1,4 @@
-/** Job-to-be-done bucket for sidebar / command palette (aligned with `nav-config` groups) */
+/** Job-to-be-done bucket for sidebar / command palette (aligned with `nav-config` groups). IT/EN here; ES–AR in `dashboard-nav-command-palette-locales.ts`. */
 export type DashboardJtbdId = 'content' | 'crm' | 'intel' | 'brand' | 'account';
 
 export type DashboardNavItemCopy = {

@@ -99,18 +99,23 @@ describe('dashboard home copy (D1)', () => {
     expect(getTranslation('es').welcomeTour.welcomeTitle).toBe(getTranslation('en').welcomeTour.welcomeTitle);
   });
 
-  it('dashboardNav and commandPaletteExtras for IT/EN; ES inherits EN nav', () => {
+  it('dashboardNav and commandPaletteExtras for IT/EN; ES–AR native bundles', () => {
     const itNav = getTranslation('it').dashboardNav;
     const enNav = getTranslation('en').dashboardNav;
     expect(itNav.jtbd.content.heading).toContain('Contenuti');
     expect(enNav.jtbd.content.heading).toMatch(/Listings|content/i);
     expect(itNav.commandPalette.placeholder.length).toBeGreaterThan(5);
-    expect(getTranslation('es').dashboardNav.jtbd.crm.heading).toBe(enNav.jtbd.crm.heading);
+    const esNav = getTranslation('es').dashboardNav;
+    expect(esNav.jtbd.crm.heading.toLowerCase()).toMatch(/lead|crm|prospección|prospeccion/);
+    expect(esNav.jtbd.content.heading).not.toBe(enNav.jtbd.content.heading);
     const itExtras = getTranslation('it').commandPaletteExtras;
     expect(itExtras.quick['ql-billing'].label.length).toBeGreaterThan(2);
-    expect(getTranslation('es').commandPaletteExtras.quick['ql-home'].label).toBe(
-      getTranslation('en').commandPaletteExtras.quick['ql-home'].label
+    expect(getTranslation('es').commandPaletteExtras.quick['ql-home'].label.toLowerCase()).toMatch(
+      /centro|comando|inicio|home|principal/i
     );
+    expect(getTranslation('fr').dashboardNav.commandPalette.signOut.toLowerCase()).toMatch(/déconnect|deconnect/);
+    expect(getTranslation('de').commandPaletteExtras.guides['g-hub'].label.toLowerCase()).toMatch(/dokumentation|hub/);
+    expect(getTranslation('ar').dashboardNav.layout.sidebarKicker.length).toBeGreaterThan(2);
   });
 
   it('it and en expose command center strings', () => {
