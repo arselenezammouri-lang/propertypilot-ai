@@ -1,25 +1,45 @@
 /**
- * Docs articles in app/docs/[slug] — legacy single-locale, or bilingual IT/EN (body); hub cards localized separately.
+ * Docs articles in app/docs/[slug] — legacy single-locale, multilingual IT/EN + optional ES–AR, or bilingual IT/EN only.
  */
 
 import type { Locale } from '@/lib/i18n/config';
 
+export type DocArticleSlice = { title: string; content: string };
+
 export type DocArticleBilingual = {
-  it: { title: string; content: string };
-  en: { title: string; content: string };
+  it: DocArticleSlice;
+  en: DocArticleSlice;
 };
 
-export type DocArticleLegacy = { title: string; content: string };
+/** IT/EN required; other locales optional (fallback: requested → EN → IT) */
+export type DocArticleMultilingual = DocArticleBilingual & Partial<Record<Exclude<Locale, 'it' | 'en'>, DocArticleSlice>>;
 
-export type DocArticleEntry = DocArticleBilingual | DocArticleLegacy;
+export type DocArticleLegacy = DocArticleSlice;
+
+export type DocArticleEntry = DocArticleMultilingual | DocArticleLegacy;
+
+const EXTRA_LOCALES = ['es', 'fr', 'de', 'pt', 'ar'] as const satisfies readonly Exclude<Locale, 'it' | 'en'>[];
+
+function isMultilingual(entry: DocArticleEntry): entry is DocArticleMultilingual {
+  return 'it' in entry && 'en' in entry;
+}
 
 export function resolveDocArticle(
   entry: DocArticleEntry | undefined,
   locale: Locale
-): { title: string; content: string } | null {
+): DocArticleSlice | null {
   if (!entry) return null;
-  if ('it' in entry && 'en' in entry) {
-    return locale === 'it' ? entry.it : entry.en;
+  if (!isMultilingual(entry)) {
+    return { title: entry.title, content: entry.content };
   }
-  return { title: entry.title, content: entry.content };
+  if (locale === 'it') return entry.it;
+  if (locale === 'en') return entry.en;
+  for (const loc of EXTRA_LOCALES) {
+    if (locale === loc) {
+      const slice = entry[loc];
+      if (slice) return slice;
+      break;
+    }
+  }
+  return entry.en;
 }

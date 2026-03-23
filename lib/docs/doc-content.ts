@@ -1,10 +1,12 @@
 import type { DocArticleEntry } from '@/lib/docs/doc-article';
+import { docWelcomeLocales } from '@/lib/docs/doc-welcome-locales';
 
 /**
- * Contenuti per /docs/[slug]. Struttura bilingue IT/EN (Fase C2 + hub docs).
+ * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
  */
 export const docArticles: Record<string, DocArticleEntry> = {
   'getting-started/welcome': {
+    ...docWelcomeLocales,
     it: {
       title: 'Benvenuto in PropertyPilot AI',
       content: `
@@ -47,7 +49,7 @@ PropertyPilot AI helps real estate agents scale with AI: listings, leads, prospe
 3. Review your plan and billing from the dashboard
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'getting-started/first-listing': {
     it: {
       title: 'Crea il tuo primo annuncio',
