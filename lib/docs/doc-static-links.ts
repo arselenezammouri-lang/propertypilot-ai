@@ -59,3 +59,24 @@ export function docArticleSlugFromPath(path: string): string | null {
   if (!path.startsWith('/docs/')) return null;
   return path.slice('/docs/'.length);
 }
+
+/** Labels + paths injected into Aria system prompt (must match article slugs in `docArticles`). */
+export const ARIA_PROMPT_DOC_LINK_ROWS: ReadonlyArray<{ label: string; path: string }> = [
+  { label: 'Aura VR', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD['aura vr'] },
+  { label: 'Sniper', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD.sniper },
+  { label: 'Arbitraggio', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD.arbitraggio },
+  { label: '3D Staging', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD['3d staging'] },
+  { label: 'AI Voice', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD['ai voice'] },
+  { label: 'Commercial', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD.commercial },
+  { label: 'Territory', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD.territory },
+  { label: 'Smart Briefing', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD['smart briefing'] },
+  { label: 'X-Ray', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD['x-ray'] },
+  { label: 'Competitor Radar', path: ARIA_CHAT_DOC_LINK_BY_KEYWORD.competitor },
+];
+
+/**
+ * Multiline block for Aria system prompt — built from `ARIA_PROMPT_DOC_LINK_ROWS`.
+ */
+export function getAriaDocumentationMapBlock(): string {
+  return ARIA_PROMPT_DOC_LINK_ROWS.map(({ label, path }) => `  - ${label} → ${path}`).join('\n');
+}

@@ -2,6 +2,7 @@ import { docArticles } from '@/lib/docs/doc-content';
 import { getTranslation } from '@/lib/i18n/dictionary';
 import {
   ARIA_CHAT_DOC_LINK_BY_KEYWORD,
+  ARIA_PROMPT_DOC_LINK_ROWS,
   COMMAND_PALETTE_GUIDE_PATHS,
   docArticleSlugFromPath,
 } from '@/lib/docs/doc-static-links';
@@ -42,6 +43,14 @@ describe('hardcoded /docs paths vs docArticles', () => {
         continue;
       }
       expect(docArticles[slug]).toBeDefined();
+    }
+  });
+
+  it('Aria system prompt doc map rows resolve to articles', () => {
+    for (const { path } of ARIA_PROMPT_DOC_LINK_ROWS) {
+      const slug = docArticleSlugFromPath(path);
+      expect(slug).not.toBeNull();
+      expect(docArticles[slug!]).toBeDefined();
     }
   });
 });

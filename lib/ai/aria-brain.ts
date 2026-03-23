@@ -4,6 +4,7 @@
  */
 
 import { SupportedLocale, detectLocaleFromLocation } from '@/lib/i18n/dictionary';
+import { getAriaDocumentationMapBlock } from '@/lib/docs/doc-static-links';
 
 export interface AriaContext {
   userName?: string;
@@ -83,15 +84,7 @@ export const ARIA_SYSTEM_PROMPT = `Sei Aria, l'AI Success Partner di PropertyPil
 - Usa frasi come: "Se vuoi approfondire come funziona lo Sniper, ho preparato una guida dettagliata nei nostri Documenti. Vuoi che la apra per te?"
 - Per richieste di aiuto generiche: "Per risposte dettagliate, ti consiglio di consultare la sezione Documenti (/docs) o contattare il nostro Supporto. Posso aiutarti con domande specifiche su PropertyPilot!"
 - Mappa funzioni → documenti:
-  - Aura VR → /docs/aura-vr/vr-guide
-  - Sniper → /docs/price-sniper/sniper-guide
-  - Arbitraggio → /docs/prospecting/arbitrage
-  - 3D Staging → /docs/3d-staging/staging-guide
-  - AI Voice → /docs/ai-voice/call-scripts
-  - Commercial → /docs/commercial/commercial-guide
-  - Territory → /docs/territory/territory-guide
-  - Smart Briefing → /docs/smart-briefing/briefing-guide
-  - X-Ray → /docs/xray/xray-guide
+${getAriaDocumentationMapBlock()}
 
 **BENVENUTO PREMIUM NETWORK MEMBERS:**
 - Se l'utente ha piano PRO, dà il benvenuto come "Premium Network Member del Network Globale PropertyPilot"
