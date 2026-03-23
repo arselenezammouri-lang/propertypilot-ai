@@ -9,6 +9,9 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   'getting-started/perfect-copy',
   'crm/pipeline',
   'account/billing-guide',
+  'prospecting/scraper-guide',
+  'prospecting/filters',
+  'prospecting/arbitrage',
 ] as const;
 
 describe('localized doc articles ES–AR', () => {

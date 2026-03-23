@@ -2,6 +2,11 @@ import type { DocArticleEntry } from '@/lib/docs/doc-article';
 import { docWelcomeLocales } from '@/lib/docs/doc-welcome-locales';
 import { docFirstListingLocales, docWorkspaceSetupLocales } from '@/lib/docs/doc-getting-started-locales';
 import { docBillingGuideLocales, docPerfectCopyLocales, docPipelineLocales } from '@/lib/docs/doc-next-guides-locales';
+import {
+  docArbitrageExtraLocales,
+  docProspectingFiltersLocales,
+  docScraperGuideLocales,
+} from '@/lib/docs/doc-prospecting-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -259,7 +264,110 @@ Payments run through **Stripe**; PropertyPilot does not store full card details.
     `,
     },
   } satisfies DocArticleEntry,
+  'prospecting/scraper-guide': {
+    ...docScraperGuideLocales,
+    it: {
+      title: 'Guida allo Scraper Globale',
+      content: `
+# Guida allo Scraper Globale
+
+Lo scraper raccoglie annunci da **Idealista**, **Zillow**, **Immobiliare.it** e altri portali per analizzare le opportunità in un unico flusso.
+
+## Cosa puoi fare
+
+- **Cerca per zona o URL**: partire da città, quartiere o link annuncio.
+- **Filtra i risultati**: prezzo, metratura, tipologia e criteri del tuo mercato.
+- **Arricchisci i dati**: apri il dettaglio per foto, storico e segnali di mercato quando disponibili.
+
+## Buone pratiche
+
+1. Definisci **mercato e budget** del cliente prima di grandi volumi.
+2. Salva ricerche ricorrenti come **filtri** (vedi guida filtri) per alert coerenti.
+3. Incrocia con **Market Gap** e arbitraggio per dare priorità agli sconti sulla media.
+
+## Privacy e uso
+
+Usa lo scraper nel rispetto dei **termini di ogni portale** e della normativa locale (protezione dati, outreach).
+    `,
+    },
+    en: {
+      title: 'Global Scraper Guide',
+      content: `
+# Global Scraper Guide
+
+The scraper pulls listings from **Idealista**, **Zillow**, **Immobiliare.it**, and other portals so you can review opportunities in one workflow.
+
+## What you can do
+
+- **Search by area or URL**: start from a city, neighborhood, or listing link.
+- **Filter results**: price, size, deal type, and criteria that match your market.
+- **Enrich data**: open detail for photos, history, and market signals when available.
+
+## Best practices
+
+1. Lock in **market and client budget** before running large batches.
+2. Save recurring searches as **filters** (see the filters guide) for consistent alerts.
+3. Cross-check **Market Gap** and arbitrage views to prioritize below-market asks.
+
+## Compliance
+
+Use the scraper in line with each portal’s **terms of service** and local rules (data protection, outreach).
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'prospecting/filters': {
+    ...docProspectingFiltersLocales,
+    it: {
+      title: 'Filtri di Ricerca Avanzati',
+      content: `
+# Filtri di Ricerca Avanzati
+
+I filtri memorizzano i tuoi criteri (prezzo, zona, tipologia, Market Gap, ecc.) così il motore di prospezione mostra solo ciò che conta.
+
+## Come usarli
+
+1. Apri **Prospecting** dalla dashboard e vai alla sezione filtri o alert (secondo il piano).
+2. **Crea un filtro**: nome chiaro (es. «Milano 3 locali / gap > 10%») e regole precise.
+3. **Attiva o metti in pausa** senza cancellare la cronologia quando cambia la campagna.
+
+## Suggerimenti
+
+- Parti con **pochi criteri** e affina; troppe regole nascondono opportunità.
+- Allinea i filtri a **script di chiamata** e **pipeline CRM** per un follow-up uniforme.
+- Rivedi periodicamente: i mercati cambiano e le soglie di prezzo vanno aggiornate.
+
+## API e team
+
+Se il piano lo consente, gli stessi filtri possono sincronizzarsi con **/api/prospecting/filters** per integrazioni interne; non condividere chiavi fuori dall'organizzazione.
+    `,
+    },
+    en: {
+      title: 'Advanced Search Filters',
+      content: `
+# Advanced Search Filters
+
+Filters store your criteria (price, area, property type, Market Gap, etc.) so prospecting surfaces only what matters.
+
+## How to use them
+
+1. Open **Prospecting** on the dashboard and go to filters or alerts (depending on your plan).
+2. **Create a filter**: a clear name (e.g. «Madrid 2-bed / gap > 10%») and concrete rules.
+3. **Enable or pause** without deleting history when campaigns change.
+
+## Tips
+
+- Start with **few criteria** and refine; too many rules hide opportunities.
+- Align filters with **call scripts** and the **CRM pipeline** for consistent follow-up.
+- Review regularly: markets move and price thresholds need updates.
+
+## API & team
+
+When your plan allows, filters can sync with **/api/prospecting/filters** for internal integrations—do not share keys outside your organization.
+    `,
+    },
+  } satisfies DocArticleEntry,
   'prospecting/arbitrage': {
+    ...docArbitrageExtraLocales,
     it: {
       title: "Guida all'Arbitraggio",
       content: `
@@ -277,7 +385,7 @@ L'arbitraggio immobiliare consiste nell'identificare immobili venduti sotto il p
 
 - Prezzo annuncio: €200.000
 - Media zona: €250.000
-- **Market Gap: -20%** 🏆
+- **Market Gap: -20%**
     `,
     },
     en: {
@@ -300,7 +408,7 @@ Real estate arbitrage means spotting properties listed below fair market value.
 - **Market Gap: -20%**
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'price-sniper/sniper-guide': {
     it: {
       title: 'Come funziona lo Sniper',
