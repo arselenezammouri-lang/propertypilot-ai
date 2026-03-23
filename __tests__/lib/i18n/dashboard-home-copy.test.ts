@@ -164,6 +164,32 @@ describe('dashboard home copy (D1)', () => {
     expect(d.regionalPortals.unitSqm).toBe('m²');
   });
 
+  it('stats3d, sniperStats, regionalPortals, profitDashboard native ES/DE/PT/AR', () => {
+    const en = getTranslation('en').dashboard;
+    const es = getTranslation('es').dashboard;
+    expect(es.stats3d.projects3d.toLowerCase()).toMatch(/proyecto/);
+    expect(es.sniperStats.loadError).not.toBe(en.sniperStats.loadError);
+    expect(es.regionalPortals.title.toLowerCase()).toMatch(/portal/);
+    expect(es.profitDashboard.hours).toBe('h');
+    expect(es.profitDashboard.title.toLowerCase()).toMatch(/roi/);
+
+    const de = getTranslation('de').dashboard;
+    expect(de.stats3d.whatsappOpen).toContain('WhatsApp');
+    expect(de.sniperStats.offline120.toLowerCase()).toMatch(/offline|objekt/);
+    expect(de.regionalPortals.primaryMarkets.toLowerCase()).toMatch(/prim/);
+    expect(de.profitDashboard.amazing).toBe('Großartig!');
+
+    const pt = getTranslation('pt').dashboard;
+    expect(pt.stats3d.noMessages.toLowerCase()).toMatch(/mensagem|ainda/);
+    expect(pt.sniperStats.title).toContain('Sniper');
+    expect(pt.profitDashboard.saved10Hours.toLowerCase()).toMatch(/10|hora/);
+
+    const ar = getTranslation('ar').dashboard;
+    expect(ar.regionalPortals.regionMiddleEast.length).toBeGreaterThan(3);
+    expect(ar.profitDashboard.title.length).toBeGreaterThan(5);
+    expect(ar.sniperStats.last48h).toContain('48');
+  });
+
   it('profitDashboard and morningBriefing for IT/EN', () => {
     const it = getTranslation('it').dashboard;
     const en = getTranslation('en').dashboard;
