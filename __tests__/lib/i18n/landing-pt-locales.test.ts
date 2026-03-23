@@ -17,4 +17,12 @@ describe('landing-pt-locales', () => {
     expect(pt.features).toHaveLength(en.features.length);
     expect(pt.faqs).toHaveLength(en.faqs.length);
   });
+
+  it('PT agencyBoost block is native (used by /platform)', () => {
+    const pt = getTranslation('pt').landing.pricing.agencyBoost;
+    const en = getTranslation('en').landing.pricing.agencyBoost;
+    expect(pt.cta).not.toBe(en.cta);
+    expect(pt.badgePremium).not.toBe(en.badgePremium);
+    expect(pt.description.length).toBeGreaterThan(10);
+  });
 });

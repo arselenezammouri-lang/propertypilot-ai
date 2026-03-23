@@ -916,42 +916,30 @@ export default function PlatformPage() {
           <div className="mt-16 fade-on-scroll">
             <div className="glass-card rounded-2xl p-8 bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent relative overflow-hidden border-2 border-amber-400/60 shadow-[0_0_50px_rgba(245,158,11,0.4),0_0_100px_rgba(251,191,36,0.2)] hover:shadow-[0_0_70px_rgba(245,158,11,0.6),0_0_120px_rgba(251,191,36,0.3)] transition-all duration-500 hover:border-amber-400/80 ring-2 ring-amber-400/30 ring-offset-2 ring-offset-[#050505] agency-boost-card">
               <div className="absolute -top-3 right-4 px-4 py-1.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full z-10 backdrop-blur-md border border-white/20">
-                PREMIUM SERVICE
+                {t.landing.pricing.agencyBoost.badgePremium}
               </div>
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <Sparkles className="h-8 w-8 text-orange-400" />
-                    <h3 className="text-3xl font-bold text-white">Agency Boost</h3>
+                    <h3 className="text-3xl font-bold text-white">{t.landing.pricing.agencyBoost.productName}</h3>
                     <span className="px-3 py-1 bg-orange-500/20 text-orange-300 text-xs font-semibold rounded-full border border-orange-500/30">
-                      Titanium
+                      {t.landing.pricing.agencyBoost.tierTitanium}
                     </span>
                   </div>
-                  <p className="text-gray-300 mb-6 text-lg">
-                    {locale === "en" 
-                      ? "Done-for-you setup package with premium onboarding and dedicated support"
-                      : locale === "es"
-                      ? 'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado'
-                      : locale === "fr"
-                      ? 'Package de configuration "done-for-you" avec intégration premium et support dédié'
-                      : locale === "de"
-                      ? "Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support"
-                      : locale === "ar"
-                      ? "حزمة الإعداد الجاهزة مع الدعم المخصص"
-                      : 'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato'}
-                  </p>
+                  <p className="text-gray-300 mb-6 text-lg">{t.landing.pricing.agencyBoost.description}</p>
                   <ul className="space-y-3 mb-6">
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{locale === "en" ? 'Complete setup "done-for-you"' : locale === "es" ? 'Configuración completa "done-for-you"' : locale === "fr" ? 'Configuration complète "done-for-you"' : locale === "de" ? 'Vollständige Einrichtung "done-for-you"' : locale === "ar" ? "إعداد كامل جاهز" : 'Setup completo "done-for-you"'}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet1}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{locale === "en" ? "Guided implementation and onboarding" : locale === "es" ? "Implementación y incorporación guiada" : locale === "fr" ? "Implémentation et intégration guidées" : locale === "de" ? "Geführte Implementierung und Onboarding" : locale === "ar" ? "تنفيذ وإعداد موجه" : "Implementazione e onboarding guidato"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet2}</span>
                     </li>
                     <li className="flex items-center gap-2 text-gray-300">
                       <CheckCircle2 className="h-5 w-5 text-orange-400 flex-shrink-0" />
-                      <span>{locale === "en" ? "Premium support for launch" : locale === "es" ? "Soporte premium para el lanzamiento" : locale === "fr" ? "Support premium pour le lancement" : locale === "de" ? "Premium-Support für den Start" : locale === "ar" ? "دعم مميز للإطلاق" : "Supporto premium per il lancio"}</span>
+                      <span>{t.landing.pricing.agencyBoost.bullet3}</span>
                     </li>
                   </ul>
                 </div>
@@ -960,14 +948,12 @@ export default function PlatformPage() {
                     <div className="text-5xl font-extrabold text-white mb-2">
                       {formatCurrency(convertCurrency(2497, "EUR", selectedCurrency), selectedCurrency)}
                     </div>
-                    <div className="text-gray-400 font-light">
-                      {locale === "en" ? "One-time payment" : locale === "es" ? "Pago único" : locale === "fr" ? "Paiement unique" : locale === "de" ? "Einmalige Zahlung" : locale === "ar" ? "دفعة واحدة" : "Pagamento una tantum"}
-                    </div>
+                    <div className="text-gray-400 font-light">{t.landing.pricing.agencyBoost.oneTimePayment}</div>
                   </div>
                   <Link href="/api/stripe/checkout-oneshot?package=boost">
                     <Button className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold border-0 shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:shadow-[0_0_40px_rgba(249,115,22,0.7)] transition-all active:scale-95 py-6 text-lg">
-                      {locale === "en" ? "Get Agency Boost" : locale === "es" ? "Obtener Agency Boost" : locale === "fr" ? "Obtenir Agency Boost" : locale === "de" ? "Agency Boost erhalten" : locale === "ar" ? "احصل على Agency Boost" : "Acquista Agency Boost"}
-                      <ArrowRight className="ml-2 h-5 w-5" />
+                      {t.landing.pricing.agencyBoost.cta}
+                      <ArrowRight className={`${locale === "ar" ? "mr-2" : "ml-2"} h-5 w-5`} />
                     </Button>
                   </Link>
                 </div>
