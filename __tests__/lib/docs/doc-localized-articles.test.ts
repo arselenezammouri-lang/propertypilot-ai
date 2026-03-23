@@ -15,6 +15,10 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   'ai-voice/voice-setup',
   'ai-voice/call-scripts',
   'ai-voice/obstacle-handling',
+  '3d-staging/staging-guide',
+  '3d-staging/whatsapp-integration',
+  'price-sniper/sniper-guide',
+  'price-sniper/sniper-strategy',
 ] as const;
 
 describe('localized doc articles ES–AR', () => {

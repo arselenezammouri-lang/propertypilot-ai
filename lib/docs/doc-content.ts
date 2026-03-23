@@ -12,6 +12,8 @@ import {
   docAiVoiceObstacleLocales,
   docAiVoiceVoiceSetupLocales,
 } from '@/lib/docs/doc-ai-voice-locales';
+import { docStagingGuideLocales, docStagingWhatsappLocales } from '@/lib/docs/doc-3d-staging-locales';
+import { docSniperGuideLocales, docSniperStrategyLocales } from '@/lib/docs/doc-price-sniper-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -547,7 +549,110 @@ Always **review** AI-suggested wording before sending messages or making commitm
     `,
     },
   } satisfies DocArticleEntry,
+  '3d-staging/staging-guide': {
+    ...docStagingGuideLocales,
+    it: {
+      title: 'Guida al 3D Staging',
+      content: `
+# Guida al 3D Staging
+
+Il 3D staging genera **visualizzazioni** (arredi, luce, stile) partendo dalle foto dell'immobile per aiutare proprietari e acquirenti a immaginare il potenziale.
+
+## Quando usarlo
+
+- **Vuoto o poco valorizzato**: valorizza soggiorno, camere e zone chiave senza cantiere.
+- **Riqualifica in vendita**: mostra una linea estetica coerente (moderno, scandinavo, ecc.) allineata al prezzo richiesto.
+- **Multicanale**: esporta o condividi viste per portali, WhatsApp o presentazioni.
+
+## Buone pratiche
+
+1. Carica **foto nitide** e ben illuminate; evita angoli estremi che distorcono.
+2. Mantieni uno **stile credibile** per quartiere e target (investitore vs famiglia).
+3. Etichetta le immagini come **visualizzazione / render** se portale o normativa lo richiedono.
+
+## Aspettative
+
+È uno strumento di **marketing**, non un progetto esecutivo: rivedi sempre prima di pubblicare.
+    `,
+    },
+    en: {
+      title: '3D Staging Guide',
+      content: `
+# 3D Staging Guide
+
+3D staging creates **visuals** (furniture, lighting, style) from property photos so owners and buyers can picture the potential.
+
+## When to use it
+
+- **Empty or underwhelming**: lift living areas, bedrooms, and key rooms without construction.
+- **Renovation story**: show a coherent design direction that matches the asking price.
+- **Multi-channel**: export or share views for portals, WhatsApp, or pitch decks.
+
+## Best practices
+
+1. Upload **sharp, well-lit** photos; avoid extreme angles that distort space.
+2. Keep the **style believable** for the neighborhood and buyer profile (investor vs family).
+3. Label images as **visualization / render** if the portal or law requires it.
+
+## Expectations
+
+This is a **marketing** tool, not a build spec—always review before publishing.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  '3d-staging/whatsapp-integration': {
+    ...docStagingWhatsappLocales,
+    it: {
+      title: 'Invio via WhatsApp',
+      content: `
+# Invio via WhatsApp
+
+Condividi **render 3D** o confronti prima/dopo con proprietari e clienti sul canale dove rispondono più in fretta.
+
+## Cosa inviare
+
+- **Un'immagine forte** per messaggio; evita allegati enormi su mobile.
+- **Testo breve**: cosa mostra l'immagine e il passo successivo (visita, chiamata, link annuncio).
+- **Consenso**: verifica che accettino messaggi WhatsApp quando serve per GDPR o normativa locale.
+
+## Flusso suggerito
+
+1. Genera o seleziona la vista nel modulo **Virtual Staging** della dashboard.
+2. Esporta o usa **Condividi** se disponibile.
+3. Registra nel **CRM** l'invio e la reazione del cliente.
+
+## Qualità
+
+Comprimi senza rovinare il dettaglio: file troppo pesanti riducono l'apertura su telefono.
+    `,
+    },
+    en: {
+      title: 'Send via WhatsApp',
+      content: `
+# Send via WhatsApp
+
+Share **3D renders** or before/after comparisons with owners and buyers on the channel where they reply fastest.
+
+## What to send
+
+- **One strong image** per message; avoid huge attachments on mobile data.
+- **Short copy**: what the image shows and the next step (viewing, call, listing link).
+- **Consent**: confirm they want WhatsApp outreach where GDPR or local rules apply.
+
+## Suggested flow
+
+1. Generate or pick the view in dashboard **Virtual Staging**.
+2. Export or use **Share** if the product exposes it.
+3. Log the send and response in your **CRM**.
+
+## Quality
+
+Compress without crushing detail—oversized files hurt open rates on phones.
+    `,
+    },
+  } satisfies DocArticleEntry,
   'price-sniper/sniper-guide': {
+    ...docSniperGuideLocales,
     it: {
       title: 'Come funziona lo Sniper',
       content: `
@@ -588,5 +693,62 @@ The Sniper surfaces listings when the price has been reduced.
 3. Offer a viewing or appraisal
     `,
     },
-  },
+  } satisfies DocArticleEntry,
+  'price-sniper/sniper-strategy': {
+    ...docSniperStrategyLocales,
+    it: {
+      title: 'Strategia Sniper',
+      content: `
+# Strategia Sniper
+
+Un ribasso di prezzo è una **finestra di conversazione**: il proprietario ha già mosso una leva; il tuo compito è portare valore senza risultare invadente.
+
+## Messaggio
+
+- Riconosci il cambiamento: «Ho visto l'aggiornamento su [portale]».
+- Ancora sui dati: giorni online, comparabili, interesse acquirenti se reale.
+- Evita il tono «te l'avevo detto» o la richiesta di mandato nella prima frase.
+
+## Timing
+
+- **24–72 ore** dal ribasso spesso bilanciano velocità e rispetto.
+- Se c'era già un contatto, riprendi il filo con il nuovo prezzo come aggancio.
+
+## CRM
+
+Crea attività **follow-up + promemoria** e collega l'annuncio. Se usi automazioni, evita sequenze generiche sul primo touch.
+
+## Compliance
+
+Rispetta opt-out, registro pubblico delle opposizioni (ove applicabile) e normativa sulla prospezione nel tuo Paese.
+    `,
+    },
+    en: {
+      title: 'Sniper Strategy',
+      content: `
+# Sniper Strategy
+
+A price drop is a **conversation window**: the owner already adjusted; your job is to add value without sounding pushy.
+
+## Messaging
+
+- Acknowledge the move: “I saw the update on [portal].”
+- Anchor on facts: days on market, comps, buyer interest when real.
+- Skip “I told you so” or demanding a mandate in sentence one.
+
+## Timing
+
+- **24–72 hours** after the drop often balances speed and respect.
+- If you already spoke, reopen with the new price as the hook.
+
+## CRM
+
+Create a **follow-up task + reminder** and link the listing. If you automate, avoid generic blast sequences on the first touch.
+
+## Compliance
+
+Honor opt-outs, do-not-call lists where applicable, and local prospecting rules.
+    `,
+    },
+  } satisfies DocArticleEntry,
 };
