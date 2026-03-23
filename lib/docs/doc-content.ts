@@ -1,5 +1,6 @@
 import type { DocArticleEntry } from '@/lib/docs/doc-article';
 import { docWelcomeLocales } from '@/lib/docs/doc-welcome-locales';
+import { docFirstListingLocales, docWorkspaceSetupLocales } from '@/lib/docs/doc-getting-started-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -51,6 +52,7 @@ PropertyPilot AI helps real estate agents scale with AI: listings, leads, prospe
     },
   } satisfies DocArticleEntry,
   'getting-started/first-listing': {
+    ...docFirstListingLocales,
     it: {
       title: 'Crea il tuo primo annuncio',
       content: `
@@ -87,8 +89,9 @@ Move from **raw inputs** to portal-ready copy in minutes.
 Fill in **area**, **size**, **target buyer**, and **strengths** for more credible, market-specific output.
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'getting-started/workspace-setup': {
+    ...docWorkspaceSetupLocales,
     it: {
       title: 'Configura il tuo workspace',
       content: `
@@ -125,7 +128,7 @@ In **Workspace settings**, enable only what you use daily: less noise, faster wo
 A tidy workspace avoids confusion (e.g. PRO tools you do not need) and keeps teams aligned on the same features.
     `,
     },
-  },
+  } satisfies DocArticleEntry,
   'getting-started/perfect-copy': {
     it: {
       title: 'Perfect Copy — guida rapida',
