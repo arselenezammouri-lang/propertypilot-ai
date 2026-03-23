@@ -241,6 +241,21 @@ describe('dashboard home copy (D1)', () => {
     expect(d.planCards.allFreeFeatures).toContain('Free');
   });
 
+  it('planCards + onboardingChecklist native ES/FR/DE/PT/AR', () => {
+    const en = getTranslation('en').dashboard;
+    const es = getTranslation('es').dashboard;
+    expect(es.planCards.generateNewListing.toLowerCase()).toMatch(/generar|anuncio/);
+    expect(es.planCards.buyAgencyBoost).not.toBe(en.planCards.buyAgencyBoost);
+    expect(es.onboardingChecklist.progress).toContain('{done}');
+    expect(es.onboardingChecklist.steps.generate.cta).toContain('Perfect Copy');
+
+    expect(getTranslation('fr').dashboard.planCards.oneTime.toLowerCase()).toMatch(/unique|paiement/);
+    expect(getTranslation('de').dashboard.onboardingChecklist.dismiss).toBe('Ausblenden');
+    expect(getTranslation('pt').dashboard.planCards.linkAnalysis.toLowerCase()).toMatch(/link|análise/);
+    expect(getTranslation('ar').dashboard.onboardingChecklist.title.length).toBeGreaterThan(5);
+    expect(getTranslation('ar').dashboard.planCards.teamUpToAgents).toContain('10');
+  });
+
   it('planFeatures (all-tools grid) for IT/EN and merge for ES', () => {
     const it = getTranslation('it').dashboard.planFeatures;
     const en = getTranslation('en').dashboard.planFeatures;
