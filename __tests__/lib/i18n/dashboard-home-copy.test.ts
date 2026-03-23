@@ -96,6 +96,12 @@ describe('dashboard home copy (D1)', () => {
     const wt = getTranslation('it').welcomeTour;
     expect(wt.dealLabel).toContain('{n}');
     expect(getTranslation('en').onboardingWizard.steps[0].title).toMatch(/PropertyPilot/i);
+    const esOb = getTranslation('es').onboardingWizard;
+    expect(esOb.steps[0].title).toContain('PropertyPilot');
+    expect(esOb.createFirstListing.toLowerCase()).toMatch(/primer|anuncio|crear/);
+    expect(esOb.next).toBe('Siguiente');
+    expect(getTranslation('fr').onboardingWizard.skip.toLowerCase()).toMatch(/passer|omit/);
+    expect(getTranslation('ar').onboardingWizard.readyToStart.length).toBeGreaterThan(3);
     const esWt = getTranslation('es').welcomeTour;
     expect(esWt.welcomeTitle).not.toBe(getTranslation('en').welcomeTour.welcomeTitle);
     expect(esWt.welcomeTitle.toLowerCase()).toMatch(/bienvenido|futuro|inmobiliar/);

@@ -1,3 +1,5 @@
+/** IT/EN here; ES/FR/DE/PT/AR in `onboarding-wizard-locales.ts`. */
+
 export type OnboardingWizardStepUi = {
   title: string;
   description: string;

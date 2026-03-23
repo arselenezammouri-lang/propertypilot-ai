@@ -246,6 +246,13 @@ import type { WelcomeTourUi } from '@/lib/i18n/welcome-tour-ui';
 import { welcomeTourUiEn, welcomeTourUiIt } from '@/lib/i18n/welcome-tour-ui';
 import type { OnboardingWizardUi } from '@/lib/i18n/onboarding-wizard-ui';
 import { onboardingWizardUiEn, onboardingWizardUiIt } from '@/lib/i18n/onboarding-wizard-ui';
+import {
+  onboardingWizardUiAr,
+  onboardingWizardUiDe,
+  onboardingWizardUiEs,
+  onboardingWizardUiFr,
+  onboardingWizardUiPt,
+} from '@/lib/i18n/onboarding-wizard-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3484,6 +3491,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     commandPaletteExtras: commandPaletteExtrasEs,
     errorBoundaryModule: errorBoundaryModuleUiEs,
     welcomeTour: welcomeTourUiEs,
+    onboardingWizard: onboardingWizardUiEs,
     dashboardToasts: {
       boostActivated: 'Agency Boost activado',
       boostDesc: 'Setup «done-for-you» confirmado. Nuestro equipo se pondrá en contacto contigo para el onboarding.',
@@ -4099,6 +4107,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     commandPaletteExtras: commandPaletteExtrasFr,
     errorBoundaryModule: errorBoundaryModuleUiFr,
     welcomeTour: welcomeTourUiFr,
+    onboardingWizard: onboardingWizardUiFr,
     dashboardToasts: {
       boostActivated: 'Agency Boost activé',
       boostDesc: 'Configuration « done-for-you » confirmée. Notre équipe vous contactera pour l’onboarding.',
@@ -4714,6 +4723,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     commandPaletteExtras: commandPaletteExtrasDe,
     errorBoundaryModule: errorBoundaryModuleUiDe,
     welcomeTour: welcomeTourUiDe,
+    onboardingWizard: onboardingWizardUiDe,
     dashboardToasts: {
       boostActivated: 'Agency Boost aktiviert',
       boostDesc: '„Done-for-you“-Setup bestätigt. Unser Team meldet sich für das Onboarding bei Ihnen.',
@@ -5329,6 +5339,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     commandPaletteExtras: commandPaletteExtrasPt,
     errorBoundaryModule: errorBoundaryModuleUiPt,
     welcomeTour: welcomeTourUiPt,
+    onboardingWizard: onboardingWizardUiPt,
     dashboardToasts: {
       boostActivated: 'Agency Boost ativado',
       boostDesc: 'Configuração «done-for-you» confirmada. A nossa equipa contactá-lo-á para o onboarding.',
@@ -5750,6 +5761,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     commandPaletteExtras: commandPaletteExtrasAr,
     errorBoundaryModule: errorBoundaryModuleUiAr,
     welcomeTour: welcomeTourUiAr,
+    onboardingWizard: onboardingWizardUiAr,
     dashboardToasts: {
       boostActivated: 'تم تفعيل Agency Boost',
       boostDesc: 'تم تأكيد الإعداد «done-for-you». سيتواصل فريقنا معك لإكمال الإعداد.',

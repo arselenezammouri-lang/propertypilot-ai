@@ -10,7 +10,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Nav condivisa (sidebar, drawer mobile, command palette): `dashboardNav` + `commandPaletteExtras` in `dictionary.ts` — **IT/EN** in `lib/i18n/dashboard-nav-ui.ts`; **ES/FR/DE/PT/AR** in `lib/i18n/dashboard-nav-command-palette-locales.ts` (merge in `dictionary.ts`); struttura route in `lib/dashboard/nav-config.tsx`.  
    - Error boundary / `useAPIErrorHandler`: `errorBoundaryModule` — **IT/EN** `lib/i18n/error-boundary-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/error-boundary-welcome-locales.ts`.  
    - Welcome tour (primo accesso dashboard): `welcomeTour` — **IT/EN** `lib/i18n/welcome-tour-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/error-boundary-welcome-locales.ts` (placeholder `{n}` in `dealLabel`).  
-   - Onboarding wizard (flag env): `onboardingWizard` — `lib/i18n/onboarding-wizard-ui.ts`.  
+   - Onboarding wizard (flag env): `onboardingWizard` — **IT/EN** `lib/i18n/onboarding-wizard-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/onboarding-wizard-locales.ts`.  
    - Marketing pubblico: `marketingAbout`, `marketingBlog`, `marketingFeatures` — `lib/i18n/marketing-pages-ui.ts`.  
    - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.  
    - Blog articolo: `blogPostPage` — `lib/i18n/blog-post-page-ui.ts` (`/blog/[slug]`).  
