@@ -7,18 +7,20 @@ import { ArrowLeft, Book } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
 import { docArticles } from "@/lib/docs/doc-content";
 import { resolveDocArticle } from "@/lib/docs/doc-article";
 
 export default function DocArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
   const { locale } = useLocale();
-  const isItalian = locale === "it";
   const slug = Array.isArray(resolvedParams.slug)
     ? resolvedParams.slug.join("/")
     : resolvedParams.slug;
 
-  const article = resolveDocArticle(docArticles[slug], isItalian);
+  const article = resolveDocArticle(docArticles[slug], locale as Locale);
+  const backLabel = getTranslation(locale as SupportedLocale).docsHub.backToDocs;
 
   if (!article) {
     notFound();
@@ -30,7 +32,7 @@ export default function DocArticlePage({ params }: { params: Promise<{ slug: str
         <Link href="/docs">
           <Button variant="ghost" className="mb-6 text-gray-400 hover:text-white">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {isItalian ? "Torna alla documentazione" : "Back to documentation"}
+            {backLabel}
           </Button>
         </Link>
 

@@ -349,6 +349,15 @@ import type { BlogPostPageUi } from '@/lib/i18n/blog-post-page-ui';
 import { blogPostPageUiEn, blogPostPageUiIt } from '@/lib/i18n/blog-post-page-ui';
 import type { PricingPagePlansUi } from '@/lib/i18n/pricing-page-plans-ui';
 import { pricingPagePlansUiEn, pricingPagePlansUiIt } from '@/lib/i18n/pricing-page-plans-ui';
+import type { DocsHubUi } from '@/lib/i18n/docs-hub-ui';
+import { docsHubUiEn, docsHubUiIt } from '@/lib/i18n/docs-hub-ui';
+import {
+  docsHubUiAr,
+  docsHubUiDe,
+  docsHubUiEs,
+  docsHubUiFr,
+  docsHubUiPt,
+} from '@/lib/i18n/docs-hub-locales';
 import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
 import {
   commandPaletteExtrasEn,
@@ -1085,6 +1094,8 @@ export interface TranslationDictionary {
   blogPostPage: BlogPostPageUi;
   /** /pricing plan cards + footer legal links */
   pricingPagePlans: PricingPagePlansUi;
+  /** /docs hub index + back link (article markdown: IT/EN in `lib/docs/doc-content`) */
+  docsHub: DocsHubUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -2103,6 +2114,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     refundPolicyPage: refundPolicyPageUiIt,
     blogPostPage: blogPostPageUiIt,
     pricingPagePlans: pricingPagePlansUiIt,
+    docsHub: docsHubUiIt,
     dashboardToasts: {
       boostActivated: 'Agency Boost attivato',
       boostDesc: "Setup «done-for-you» confermato. Il nostro team ti contatterà per l'onboarding.",
@@ -3114,6 +3126,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     refundPolicyPage: refundPolicyPageUiEn,
     blogPostPage: blogPostPageUiEn,
     pricingPagePlans: pricingPagePlansUiEn,
+    docsHub: docsHubUiEn,
     dashboardToasts: {
       boostActivated: 'Agency Boost activated',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
@@ -3764,6 +3777,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiEs,
     blogPostPage: blogPostPageUiEs,
     pricingPagePlans: pricingPagePlansUiEs,
+    docsHub: docsHubUiEs,
     privacyPolicyPage: privacyPolicyPageUiEs,
     termsPolicyPage: termsPolicyPageUiEs,
     refundPolicyPage: refundPolicyPageUiEs,
@@ -4405,6 +4419,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiFr,
     blogPostPage: blogPostPageUiFr,
     pricingPagePlans: pricingPagePlansUiFr,
+    docsHub: docsHubUiFr,
     privacyPolicyPage: privacyPolicyPageUiFr,
     termsPolicyPage: termsPolicyPageUiFr,
     refundPolicyPage: refundPolicyPageUiFr,
@@ -5046,6 +5061,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiDe,
     blogPostPage: blogPostPageUiDe,
     pricingPagePlans: pricingPagePlansUiDe,
+    docsHub: docsHubUiDe,
     privacyPolicyPage: privacyPolicyPageUiDe,
     termsPolicyPage: termsPolicyPageUiDe,
     refundPolicyPage: refundPolicyPageUiDe,
@@ -5687,6 +5703,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiPt,
     blogPostPage: blogPostPageUiPt,
     pricingPagePlans: pricingPagePlansUiPt,
+    docsHub: docsHubUiPt,
     privacyPolicyPage: privacyPolicyPageUiPt,
     termsPolicyPage: termsPolicyPageUiPt,
     refundPolicyPage: refundPolicyPageUiPt,
@@ -6053,6 +6070,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     marketingFeatures: marketingFeaturesUiAr,
     blogPostPage: blogPostPageUiAr,
     pricingPagePlans: pricingPagePlansUiAr,
+    docsHub: docsHubUiAr,
     privacyPolicyPage: privacyPolicyPageUiAr,
     termsPolicyPage: termsPolicyPageUiAr,
     refundPolicyPage: refundPolicyPageUiAr,
