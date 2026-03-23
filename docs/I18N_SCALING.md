@@ -87,7 +87,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
 
 6. **Naming delle chiavi**  
    - Raggruppare per area: `dashboard.liveFeed`, `dashboard.planCards`, `dashboard.planFeatures`, `dashboard.mapPage`, `dashboard.opportunitiesPage`, `dashboard.autopilotPage`, `dashboard.workspacePage`, `dashboard.morningBriefing`, ecc.  
-   - Messaggi billing condivisi: `billing.subscriptionFetchErrorBody`, `billing.retry`.  
+   - Messaggi billing condivisi: `billing.subscriptionFetchErrorBody`, `billing.retry`; pagina **Billing** — blocco `billing` completo **IT/EN** in `dictionary.ts`, **ES/FR/DE/PT/AR** in `lib/i18n/billing-locales.ts` (importi `billingUi*` nel dizionario; importi/prezzi da Stripe restano numerici + `formatCurrencyForLocale`).  
    - Evitare chiavi troppo generiche (`title1`) senza contesto.
 
 ## Checklist per nuove feature

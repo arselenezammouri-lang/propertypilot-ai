@@ -351,6 +351,18 @@ describe('dashboard home copy (D1)', () => {
     expect(itW.modules.scraper.name).toBeTruthy();
   });
 
+  it('billing UI native ES/FR/DE/PT/AR', () => {
+    const en = getTranslation('en').billing;
+    const es = getTranslation('es').billing;
+    expect(es.perMonth).not.toBe(en.perMonth);
+    expect(es.stripeTrust.toLowerCase()).toMatch(/stripe/);
+    expect(es.subscriptionFetchErrorBody).not.toBe(en.subscriptionFetchErrorBody);
+    expect(getTranslation('fr').billing.managePayments.toLowerCase()).toMatch(/paiement|gérer/);
+    expect(getTranslation('de').billing.cancelWarning.toLowerCase()).toMatch(/abo|kostenlos|gratis|free/i);
+    expect(getTranslation('pt').billing.title.toLowerCase()).toMatch(/subscri|fatura/);
+    expect(getTranslation('ar').billing.nextRenewal.length).toBeGreaterThan(3);
+  });
+
   it('leadsPage and predatorLiveBadge for IT/EN', () => {
     const itL = getTranslation('it').dashboard.leadsPage;
     const enL = getTranslation('en').dashboard.leadsPage;

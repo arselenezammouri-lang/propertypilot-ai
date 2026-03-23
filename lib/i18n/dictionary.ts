@@ -265,6 +265,13 @@ import {
   errorsUiFr,
   errorsUiPt,
 } from '@/lib/i18n/common-errors-locales';
+import {
+  billingUiAr,
+  billingUiDe,
+  billingUiEs,
+  billingUiFr,
+  billingUiPt,
+} from '@/lib/i18n/billing-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3599,6 +3606,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiEs,
     errors: errorsUiEs,
     common: commonFullEs,
+    billing: billingUiEs,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -4206,6 +4214,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiFr,
     errors: errorsUiFr,
     common: commonFullFr,
+    billing: billingUiFr,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -4813,6 +4822,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiDe,
     errors: errorsUiDe,
     common: commonFullDe,
+    billing: billingUiDe,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -5420,6 +5430,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiPt,
     errors: errorsUiPt,
     common: commonFullPt,
+    billing: billingUiPt,
     landing: {
       hero: {
         signupAriaLabel: 'Registar-se no PropertyPilot AI',
@@ -5833,6 +5844,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiAr,
     errors: errorsUiAr,
     common: commonFullAr,
+    billing: billingUiAr,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
