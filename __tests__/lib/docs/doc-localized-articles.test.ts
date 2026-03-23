@@ -12,6 +12,9 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   'prospecting/scraper-guide',
   'prospecting/filters',
   'prospecting/arbitrage',
+  'ai-voice/voice-setup',
+  'ai-voice/call-scripts',
+  'ai-voice/obstacle-handling',
 ] as const;
 
 describe('localized doc articles ES–AR', () => {

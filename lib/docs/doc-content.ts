@@ -7,6 +7,11 @@ import {
   docProspectingFiltersLocales,
   docScraperGuideLocales,
 } from '@/lib/docs/doc-prospecting-locales';
+import {
+  docAiVoiceCallScriptsLocales,
+  docAiVoiceObstacleLocales,
+  docAiVoiceVoiceSetupLocales,
+} from '@/lib/docs/doc-ai-voice-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -409,6 +414,139 @@ Real estate arbitrage means spotting properties listed below fair market value.
     `,
     },
   } satisfies DocArticleEntry,
+  'ai-voice/voice-setup': {
+    ...docAiVoiceVoiceSetupLocales,
+    it: {
+      title: 'Configurazione Chiamate AI',
+      content: `
+# Configurazione Chiamate AI
+
+Le chiamate in uscita usano **Bland AI** (o l’integrazione voice attiva sul tuo piano). Qui imposti chi sei, cosa dici e come registrare l’esito.
+
+## Prima di chiamare
+
+1. Verifica che la **chiave API** e il numero/identità mittente siano configurati in workspace o env (solo admin).
+2. Scegli **lingua e mercato** coerenti con il proprietario (allineate al selettore lingua dell’app).
+3. Testa con una **chiamata breve** su un numero interno prima del primo contatto reale.
+
+## Script e sicurezza
+
+- Usa solo **dati pubblici** dell’annuncio e informazioni che avresti già in agenda.
+- Rispetta **opt-out** e normativa sulle chiamate commerciali nel tuo Paese.
+- Annota esito e prossimo passo nel **CRM** subito dopo la chiamata.
+    `,
+    },
+    en: {
+      title: 'AI Call Setup',
+      content: `
+# AI Call Setup
+
+Outbound calls use **Bland AI** (or the active voice integration on your plan). Configure who you are, what you say, and how outcomes are logged.
+
+## Before you dial
+
+1. Confirm **API keys** and sender identity are set in workspace or environment (admin).
+2. Pick **language and market** that match the owner (aligned with the app language selector).
+3. Run a **short test call** to an internal number before real outreach.
+
+## Scripts and compliance
+
+- Use only **public listing data** and information you would already have in a normal call.
+- Respect **opt-out** and telemarketing rules in your jurisdiction.
+- Log outcome and next step in the **CRM** right after the call.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'ai-voice/call-scripts': {
+    ...docAiVoiceCallScriptsLocales,
+    it: {
+      title: 'Script di Chiamata Personalizzati',
+      content: `
+# Script di Chiamata per Ottenere Mandati
+
+Uno script efficace può trasformare una chiamata in un mandato.
+
+## Template base
+
+"Buongiorno, chiamo per l'annuncio in [Location]. Avremmo un acquirente interessato; sarebbe disponibile per un sopralluogo nei prossimi giorni?"
+
+## Varianti
+
+- **Market gap**: potenziale ancora inespresso sul mercato
+- **Dopo ribasso**: ho notato il nuovo prezzo…
+- **Urgenza**: l'immobile è online da tempo…
+    `,
+    },
+    en: {
+      title: 'Call scripts',
+      content: `
+# Call scripts for mandates
+
+A clear script turns cold outreach into booked meetings.
+
+## Base template
+
+"Hi, I’m calling about the listing at [Location]. We may have a qualified buyer—would you be open to a short viewing this week?"
+
+## Variants
+
+- **Market gap**: upside vs recent comps
+- **After a price drop**: I saw you repositioned…
+- **Urgency**: the home has been on the market…
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'ai-voice/obstacle-handling': {
+    ...docAiVoiceObstacleLocales,
+    it: {
+      title: 'Gestione Obiezioni',
+      content: `
+# Gestione Obiezioni
+
+Il proprietario spesso alza **prezzo**, **tempo** o **fiducia** come barriera. L’AI può suggerire risposte, ma il tono umano resta decisivo.
+
+## Obiezioni frequenti
+
+- **«Non vendo / penso»**: chiedi permesso di richiamare con un dato di mercato (comparables, giorni online).
+- **«Già ho un agente»**: rispetta il rapporto; offri solo un secondo parere o buyer qualificato se vero.
+- **«Prezzo troppo basso»**: allinea su Market Gap o range zona, senza promettere esiti.
+
+## Flusso consigliato
+
+1. **Ascolta** senza interrompere.
+2. **Riformula** l’obiezione («Se ho capito, il tema è…»).
+3. **Proponi un micro-passo** (visita, invio comparables, richiamo con data certa).
+
+## Nota
+
+Le risposte AI vanno sempre **verificate** prima di mandare messaggi o registrare impegni legali.
+    `,
+    },
+    en: {
+      title: 'Objection handling',
+      content: `
+# Objection handling
+
+Owners often push back on **price**, **timing**, or **trust**. AI can suggest replies—your human tone still closes the loop.
+
+## Common objections
+
+- **“Not selling / thinking”**: ask permission to follow up with one market fact (comps, days on market).
+- **“I already have an agent”**: respect the relationship; only offer a second opinion or a real qualified buyer.
+- **“Price is too low”**: anchor on Market Gap or local ranges—never guarantee outcomes.
+
+## Suggested flow
+
+1. **Listen** without interrupting.
+2. **Reflect** the objection (“If I’m hearing you, the concern is…”).
+3. **Offer a micro-next step** (viewing, comps by email, callback on a fixed date).
+
+## Note
+
+Always **review** AI-suggested wording before sending messages or making commitments.
+    `,
+    },
+  } satisfies DocArticleEntry,
   'price-sniper/sniper-guide': {
     it: {
       title: 'Come funziona lo Sniper',
@@ -448,44 +586,6 @@ The Sniper surfaces listings when the price has been reduced.
 1. Reach out quickly after a drop
 2. Reference the new positioning
 3. Offer a viewing or appraisal
-    `,
-    },
-  },
-  'ai-voice/call-scripts': {
-    it: {
-      title: 'Script di Chiamata Personalizzati',
-      content: `
-# Script di Chiamata per Ottenere Mandati
-
-Uno script efficace può trasformare una chiamata in un mandato.
-
-## Template base
-
-"Buongiorno, chiamo per l'annuncio in [Location]. Avremmo un acquirente interessato; sarebbe disponibile per un sopralluogo nei prossimi giorni?"
-
-## Varianti
-
-- **Market gap**: potenziale ancora inespresso sul mercato
-- **Dopo ribasso**: ho notato il nuovo prezzo…
-- **Urgenza**: l'immobile è online da tempo…
-    `,
-    },
-    en: {
-      title: 'Call scripts',
-      content: `
-# Call scripts for mandates
-
-A clear script turns cold outreach into booked meetings.
-
-## Base template
-
-"Hi, I’m calling about the listing at [Location]. We may have a qualified buyer—would you be open to a short viewing this week?"
-
-## Variants
-
-- **Market gap**: upside vs recent comps
-- **After a price drop**: I saw you repositioned…
-- **Urgency**: the home has been on the market…
     `,
     },
   },
