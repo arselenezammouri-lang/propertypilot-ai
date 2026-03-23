@@ -138,6 +138,19 @@ describe('dashboard home copy (D1)', () => {
     expect(getTranslation('ar').dashboard.commandCenterSubtitle.length).toBeGreaterThan(15);
   });
 
+  it('predatorLiveBadge + contextualHelp native ES/FR/DE/PT/AR', () => {
+    const en = getTranslation('en').dashboard;
+    const es = getTranslation('es').dashboard;
+    expect(es.predatorLiveBadge.livePrefix.toUpperCase()).toMatch(/VIVO|LIVE/);
+    expect(es.predatorLiveBadge.predatorsOnline.toLowerCase()).toMatch(/predador|línea|linea/);
+    expect(es.contextualHelp.fieldHintAria).not.toBe(en.contextualHelp.fieldHintAria);
+    expect(getTranslation('fr').dashboard.contextualHelp.openGuideTooltip.toLowerCase()).toMatch(/documentation|onglet/);
+    expect(getTranslation('de').dashboard.contextualHelp.openGuideAria).toContain('Tab');
+    expect(getTranslation('pt').dashboard.predatorLiveBadge.livePrefix).toContain('VIVO');
+    expect(getTranslation('ar').dashboard.predatorLiveBadge.livePrefix.length).toBeGreaterThan(2);
+    expect(getTranslation('ar').dashboard.contextualHelp.fieldHintAria.length).toBeGreaterThan(3);
+  });
+
   it('non-english locales inherit from merge (es has strings)', () => {
     const es = getTranslation('es').dashboard;
     expect(es.commandCenterTitle).toBeTruthy();

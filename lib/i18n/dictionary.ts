@@ -3274,6 +3274,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Genera varias versiones y elige la que mejor encaje con tus necesidades',
       },
       docsHubOpen: 'Abrir Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'EN VIVO:',
+        predatorsOnline: 'Predadores en línea',
+      },
+      contextualHelp: {
+        openGuideAria: 'Abrir la guía en una pestaña nueva',
+        openGuideTooltip: 'Abre la documentación de esta función (nueva pestaña).',
+        fieldHintAria: 'Ayuda del campo',
+      },
       liveFeed: {
         deal: 'Operación oro',
         call: 'Llamada IA',
@@ -3869,6 +3878,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Générez plusieurs versions et choisissez celle qui correspond le mieux à vos besoins',
       },
       docsHubOpen: 'Ouvrir le Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'EN DIRECT :',
+        predatorsOnline: 'Prédateurs en ligne',
+      },
+      contextualHelp: {
+        openGuideAria: 'Ouvrir le guide dans un nouvel onglet',
+        openGuideTooltip: 'Ouvre la documentation pour cette fonction (nouvel onglet).',
+        fieldHintAria: 'Aide sur le champ',
+      },
       liveFeed: {
         deal: 'Affaire en or',
         call: 'Appel IA',
@@ -4464,6 +4482,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Erstellen Sie mehrere Versionen und wählen Sie die passendste aus',
       },
       docsHubOpen: 'Documentation Hub öffnen',
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predatoren online',
+      },
+      contextualHelp: {
+        openGuideAria: 'Handbuch in neuem Tab öffnen',
+        openGuideTooltip: 'Öffnet die Dokumentation für diese Funktion (neuer Tab).',
+        fieldHintAria: 'Feldhinweis',
+      },
       liveFeed: {
         deal: 'Gold-Deal',
         call: 'KI-Anruf',
@@ -5061,6 +5088,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'Gere várias versões e escolha a que melhor se adequa às suas necessidades',
       },
       docsHubOpen: 'Abrir Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'AO VIVO:',
+        predatorsOnline: 'Predadores online',
+      },
+      contextualHelp: {
+        openGuideAria: 'Abrir o guia num novo separador',
+        openGuideTooltip: 'Abre a documentação desta funcionalidade (novo separador).',
+        fieldHintAria: 'Dica do campo',
+      },
       liveFeed: {
         deal: 'Negócio ouro',
         call: 'Chamada IA',
@@ -5464,6 +5500,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         tip3: 'أنشئ عدة نسخ واختر الأنسب لاحتياجاتك',
       },
       docsHubOpen: 'فتح Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'مباشر:',
+        predatorsOnline: 'المفترسون متصلون',
+      },
+      contextualHelp: {
+        openGuideAria: 'فتح الدليل في تبويب جديد',
+        openGuideTooltip: 'يفتح توثيق هذه الميزة (تبويب جديد).',
+        fieldHintAria: 'تلميح للحقل',
+      },
       liveFeed: {
         deal: 'صفقة ذهبية',
         call: 'مكالمة ذكاء اصطناعي',
