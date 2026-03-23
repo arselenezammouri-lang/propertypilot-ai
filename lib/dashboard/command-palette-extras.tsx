@@ -16,6 +16,7 @@ import type {
   CommandPaletteGuideLinkId,
   CommandPaletteQuickLinkId,
 } from "@/lib/i18n/dashboard-nav-ui";
+import { COMMAND_PALETTE_GUIDE_PATHS } from "@/lib/docs/doc-static-links";
 
 export type CommandPaletteExtraItem = {
   id: string;
@@ -80,16 +81,7 @@ const GUIDE_ICONS: Record<CommandPaletteGuideLinkId, ReactNode> = {
   "g-arbitrage": <Target className="h-4 w-4" />,
 };
 
-const GUIDE_PATHS: Record<CommandPaletteGuideLinkId, string> = {
-  "g-hub": "/docs",
-  "g-welcome": "/docs/getting-started/welcome",
-  "g-first-listing": "/docs/getting-started/first-listing",
-  "g-workspace-doc": "/docs/getting-started/workspace-setup",
-  "g-perfect-copy": "/docs/getting-started/perfect-copy",
-  "g-pipeline": "/docs/crm/pipeline",
-  "g-billing": "/docs/account/billing-guide",
-  "g-arbitrage": "/docs/prospecting/arbitrage",
-};
+const GUIDE_PATHS: Record<CommandPaletteGuideLinkId, string> = COMMAND_PALETTE_GUIDE_PATHS;
 
 /**
  * Quick links for the command palette — copy from `getTranslation(locale).commandPaletteExtras`.

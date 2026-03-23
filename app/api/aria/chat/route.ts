@@ -5,6 +5,7 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 import type { SupportedLocale } from '@/lib/i18n/dictionary';
+import { ARIA_CHAT_DOC_LINK_BY_KEYWORD } from '@/lib/docs/doc-static-links';
 
 const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'es', 'fr', 'de', 'pt', 'ar'];
 function toSupportedLocale(s: string): SupportedLocale {
@@ -123,30 +124,8 @@ export async function POST(request: NextRequest) {
 
     // Estrai link a documentazione se presente
     let docLink: string | null = null;
-    const docPatterns: Record<string, string> = {
-      'sniper': '/docs/price-sniper/sniper-guide',
-      'arbitraggio': '/docs/prospecting/arbitrage',
-      'arbitrage': '/docs/prospecting/arbitrage',
-      '3d staging': '/docs/3d-staging/staging-guide',
-      'virtual staging': '/docs/3d-staging/staging-guide',
-      'ai voice': '/docs/ai-voice/call-scripts',
-      'chiamate': '/docs/ai-voice/call-scripts',
-      'commercial': '/docs/commercial/commercial-guide',
-      'territory': '/docs/territory/territory-guide',
-      'smart briefing': '/docs/smart-briefing/briefing-guide',
-      'x-ray': '/docs/xray/xray-guide',
-      'xray': '/docs/xray/xray-guide',
-      'aura vr': '/docs/aura-vr/vr-guide',
-      'aura-vr': '/docs/aura-vr/vr-guide',
-      'aiuto': '/docs',
-      'help': '/docs',
-      'supporto': '/docs',
-      'documenti': '/docs',
-      'documentazione': '/docs',
-    };
-
     const userMessageLower = message.toLowerCase();
-    for (const [keyword, link] of Object.entries(docPatterns)) {
+    for (const [keyword, link] of Object.entries(ARIA_CHAT_DOC_LINK_BY_KEYWORD)) {
       if (userMessageLower.includes(keyword)) {
         docLink = link;
         break;
