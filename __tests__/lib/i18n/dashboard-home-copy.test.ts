@@ -139,6 +139,23 @@ describe('dashboard home copy (D1)', () => {
     expect(it.docsHubOpen).toContain('Documentation');
   });
 
+  it('liveFeed native ES/FR/DE/PT/AR (not EN merge)', () => {
+    const es = getTranslation('es').dashboard.liveFeed;
+    const en = getTranslation('en').dashboard.liveFeed;
+    expect(es.infixDeal).toContain('detectada');
+    expect(es.subtitle.toLowerCase()).toMatch(/global|tiempo|real/);
+    expect(es.cta).not.toBe(en.cta);
+    expect(getTranslation('fr').dashboard.liveFeed.infixCall).toContain('planifi');
+    expect(getTranslation('de').dashboard.liveFeed.infixDeal).toContain('erkannt');
+    expect(getTranslation('pt').dashboard.liveFeed.priceDrop.toLowerCase()).toMatch(/preço|preco/);
+    expect(getTranslation('ar').dashboard.liveFeed.subtitle.length).toBeGreaterThan(5);
+  });
+
+  it('liveNetwork for ES and AR', () => {
+    expect(getTranslation('es').dashboard.liveNetwork.liveBadge).toBe('EN VIVO');
+    expect(getTranslation('ar').dashboard.liveNetwork.cardTitle).toContain('PropertyPilot');
+  });
+
   it('stats3d, sniperStats, regionalPortals keys for EN', () => {
     const d = getTranslation('en').dashboard;
     expect(d.stats3d.openedOfSent).toContain('{opened}');
