@@ -28,7 +28,6 @@ import type { PricingPagePlansUi } from "@/lib/i18n/pricing-page-plans-ui";
 const PLAN_STATIC = [
   {
     id: "starter" as const,
-    name: "Starter",
     price: 197,
     icon: Rocket,
     gradient: "from-electric-blue to-royal-purple",
@@ -40,7 +39,6 @@ const PLAN_STATIC = [
   },
   {
     id: "pro" as const,
-    name: "Pro",
     price: 497,
     icon: Crown,
     gradient: "from-sunset-gold via-royal-purple to-sunset-gold",
@@ -52,7 +50,6 @@ const PLAN_STATIC = [
   },
   {
     id: "agency" as const,
-    name: "Agency",
     price: 897,
     icon: Building2,
     gradient: "from-neon-aqua via-electric-blue to-royal-purple",
@@ -64,7 +61,6 @@ const PLAN_STATIC = [
   },
   {
     id: "boost" as const,
-    name: "Agency Boost",
     price: 2497,
     icon: Sparkles,
     gradient: "from-[#FFD700] via-[#FFA500] to-[#FFD700]",
@@ -76,10 +72,36 @@ const PLAN_STATIC = [
   },
 ];
 
+type LandingPricingBlock = NonNullable<
+  ReturnType<typeof getTranslation>["landing"]
+>["pricing"];
+
+const FALLBACK_PLAN_DISPLAY_NAMES: Record<(typeof PLAN_STATIC)[number]["id"], string> = {
+  starter: "Starter",
+  pro: "Pro",
+  agency: "Agency",
+  boost: "Agency Boost",
+};
+
+function planDisplayName(
+  id: (typeof PLAN_STATIC)[number]["id"],
+  landingPricing: LandingPricingBlock | undefined
+): string {
+  if (!landingPricing) {
+    return FALLBACK_PLAN_DISPLAY_NAMES[id];
+  }
+  if (id === "boost") {
+    return landingPricing.agencyBoost.productName;
+  }
+  return landingPricing.plans[id];
+}
+
 function mergePlanCopy(
   p: (typeof PLAN_STATIC)[number],
-  cards: PricingPagePlansUi
-): typeof PLAN_STATIC[number] & {
+  cards: PricingPagePlansUi,
+  landingPricing: LandingPricingBlock | undefined
+): (typeof PLAN_STATIC)[number] & {
+  name: string;
   tagline: string;
   period: string;
   includes: string[];
@@ -95,6 +117,7 @@ function mergePlanCopy(
           : cards.boost;
   return {
     ...p,
+    name: planDisplayName(p.id, landingPricing),
     tagline: card.tagline,
     period: card.period,
     includes: card.includes,
@@ -152,11 +175,12 @@ export default function PricingPage() {
 
   const t = useMemo(() => getTranslation(currentLocale as SupportedLocale), [currentLocale]);
   const pp = t.landing?.pricingPage;
+  const landingPricing = t.landing?.pricing;
   const cards = t.pricingPagePlans;
 
   const localizedPlans = useMemo(
-    () => PLAN_STATIC.map((p) => mergePlanCopy(p, cards)),
-    [cards]
+    () => PLAN_STATIC.map((p) => mergePlanCopy(p, cards, landingPricing)),
+    [cards, landingPricing]
   );
 
   const localizedFaqs = pp?.faqs ?? [];

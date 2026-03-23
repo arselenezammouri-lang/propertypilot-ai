@@ -15,7 +15,7 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.
    - Pagine errore / 404 e azioni globali: `errors` (titoli, `pageNotFound`, `backToHome`, ecc.) e `common` (`copy`, `share`, `loading`, `error`, …) — **IT/EN** nel blocco principale `dictionary.ts`; **ES/FR/DE/PT/AR** in `lib/i18n/common-errors-locales.ts` (merge in `dictionary.ts`; sostituisce il `common` parziale che aveva solo 8 chiavi).  
    - Blog articolo: `blogPostPage` — `lib/i18n/blog-post-page-ui.ts` (`/blog/[slug]`).  
-   - Pricing: oltre a `landing.pricingPage`, card piani + footer link — `pricingPagePlans` in `lib/i18n/pricing-page-plans-ui.ts`.  
+   - Pricing: oltre a `landing.pricingPage`, card piani + footer link — `pricingPagePlans` in `lib/i18n/pricing-page-plans-ui.ts`. Titoli h3 dei piani su `app/pricing/page.tsx`: `landing.pricing.plans` (`starter` / `pro` / `agency`) + `landing.pricing.agencyBoost.productName` per Boost (stesso lessico della home/platform).  
    - Contatti: chiavi extra in `contact` (`headerTagline`, `demoMailSubject`, `minCharsCounter`, `submitting`).  
    - Demo (`/demo`): `demo` include `testimonialsList`, `trustStats`, `finalCta`, `whatsappPrefill`, `calendlyIframeTitle`, `footerCopyrightLine`.  
    - Header blog/diamond: `DiamondPageHeader` usa `landing.nav.tagline` e `errors.backToHome`; `MarketingNavHeader` tagline sotto logo da `landing.nav.tagline`.  
