@@ -23,6 +23,11 @@ const FULLY_LOCALIZED_DOC_SLUGS = [
   'commercial/business-features',
   'territory/territory-guide',
   'territory/map-usage',
+  'smart-briefing/briefing-guide',
+  'smart-briefing/client-ready',
+  'xray/xray-guide',
+  'xray/renovation-quote',
+  'competitor/radar-guide',
 ] as const;
 
 describe('localized doc articles ES–AR', () => {

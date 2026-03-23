@@ -20,6 +20,13 @@ import {
   docTerritoryGuideLocales,
   docTerritoryMapLocales,
 } from '@/lib/docs/doc-commercial-territory-locales';
+import {
+  docBriefingClientReadyLocales,
+  docBriefingGuideLocales,
+  docCompetitorRadarLocales,
+  docXrayGuideLocales,
+  docXrayRenovationLocales,
+} from '@/lib/docs/doc-briefing-xray-competitor-locales';
 
 /**
  * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
@@ -958,6 +965,253 @@ The **tactical map** plots opportunities and deals on the ground so you choose *
 ## Performance
 
 On mobile with weak signal, prefer **lists**—maps use more data.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'smart-briefing/briefing-guide': {
+    ...docBriefingGuideLocales,
+    it: {
+      title: 'Guida al Smart Briefing',
+      content: `
+# Guida al Smart Briefing
+
+Il **Smart Briefing** sintetizza un immobile in pro, contro, pubblico target e angoli di vendita per preparare visite o messaggi rapidi.
+
+## Cosa ottieni
+
+- **Punti di forza e rischi** ricavati da scheda e foto (indicativi).
+- **Buyer persona** suggerite (investitore, famiglia, expat…) per allineare il tono.
+- **Hook** per titolo, WhatsApp o follow-up telefonico.
+
+## Buone pratiche
+
+1. Rileggi sempre prima di inviare al cliente: l'IA può **allucinare** dettagli non visibili nelle immagini.
+2. Incrocia con dati reali: planimetrie, APE, stato delle ristrutturazioni.
+3. Salva la versione finale in **libreria** o CRM con data e fonte.
+
+## Limiti
+
+Non è perizia né relazione tecnica: usa il briefing come **bozza professionale**.
+    `,
+    },
+    en: {
+      title: 'Smart Briefing Guide',
+      content: `
+# Smart Briefing Guide
+
+**Smart Briefing** summarizes a property—upsides, watch-outs, buyer angles—for faster prep before visits or outbound messages.
+
+## What you get
+
+- **Strengths and risks** inferred from listing copy and photos (directional).
+- **Suggested personas** to keep tone consistent (investor, family, expat…).
+- **Hooks** for headlines, WhatsApp, or callback scripts.
+
+## Best practices
+
+1. Always edit before client send—models may **hallucinate** what is not visible in images.
+2. Cross-check with real data: floor plans, EPC/EPC-equivalent, renovation status.
+3. Store the final version in your **library** or CRM with date and source.
+
+## Limits
+
+Not a survey or legal memo—treat output as a **professional draft**.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'smart-briefing/client-ready': {
+    ...docBriefingClientReadyLocales,
+    it: {
+      title: 'Copia per il Cliente',
+      content: `
+# Copia per il Cliente
+
+Genera paragrafi **brevi** per WhatsApp, email o SMS: riassunto immobile, passo successivo, tono professionale.
+
+## Struttura suggerita
+
+1. **Hook** (1 frase): cosa rende speciale l'immobile.
+2. **Dati** (2–3 bullet): zona, mq, piano, esposizione se presenti in scheda.
+3. **CTA**: visita, call o invio documentazione.
+
+## Tono
+
+- Evita jargon interno («gap», «sniper») salvo cliente esperto.
+- Non promettere prezzo di vendita o tempi legali senza base.
+
+## Privacy
+
+Non incollare dati personali del proprietario senza consenso; usa solo quanto già pubblico o autorizzato.
+    `,
+    },
+    en: {
+      title: 'Client-Ready Copy',
+      content: `
+# Client-Ready Copy
+
+Produce **short** blocks for WhatsApp, email, or SMS: property snapshot, next step, professional tone.
+
+## Suggested structure
+
+1. **Hook** (one sentence): what stands out.
+2. **Facts** (2–3 bullets): area, size, floor, aspect if listed.
+3. **CTA**: viewing, call, or document pack.
+
+## Tone
+
+- Skip internal jargon («gap», «sniper») unless the client is sophisticated.
+- Do not promise sale price or legal timelines without backing.
+
+## Privacy
+
+No owner personal data without consent—stick to public or permitted facts.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'xray/xray-guide': {
+    ...docXrayGuideLocales,
+    it: {
+      title: 'Analisi Tecnica Immagini',
+      content: `
+# Analisi tecnica immagini (X-Ray)
+
+**X-Ray** legge foto e, se disponibili, planimetrie per evidenziare **possibili** difetti, qualità delle finiture o punti di forza visibili.
+
+## Come usarlo
+
+1. Carica **foto nitide** di stanze, bagni, facciata e zone umide.
+2. Leggi l'output come **checklist**, non come perizia.
+3. Segna nel **CRM** cosa richiede sopralluogo tecnico o domanda al venditore.
+
+## Limiti
+
+- Non vede dentro muri o impianti nascosti.
+- Non sostituisce **relazione strutturale**, APE ufficiale o visura: verifica sempre in loco.
+
+## Responsabilità
+
+Chi vende o loca deve **validare** ogni affermazione sensibile verso il cliente finale.
+    `,
+    },
+    en: {
+      title: 'Technical Image Analysis',
+      content: `
+# Technical image analysis (X-Ray)
+
+**X-Ray** reviews photos and, when available, floor plans to flag **possible** visible defects, finish quality, or strengths.
+
+## How to use it
+
+1. Upload **sharp** shots of rooms, wet areas, façade, kitchens/baths.
+2. Treat the report as a **checklist**, not a certified survey.
+3. Log in **CRM** what needs a site visit or seller follow-up.
+
+## Limits
+
+- Cannot see inside walls or hidden services.
+- Does not replace **building surveys**, regulated diagnostics, or official certs—verify on site.
+
+## Responsibility
+
+Agents must **validate** sensitive claims with the end client.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'xray/renovation-quote': {
+    ...docXrayRenovationLocales,
+    it: {
+      title: 'Budget Riqualificazione',
+      content: `
+# Budget riqualificazione (indicativo)
+
+Lo strumento può **ordinare ordini di grandezza** di lavori (cucina, bagno, tinteggiatura, pavimenti) da foto e metadati: supporta la conversazione, non il contratto firmato.
+
+## Come presentarlo
+
+1. Indica sempre «**stima**» o «**fascia**» al cliente.
+2. Suddividi le voci principali; evita un numero unico «magico».
+3. Prevedi margine per **imprevisti** (umidità, impianti, pratiche comunali).
+
+## Limiti
+
+- I prezzi cambiano per città, manodopera e qualità dei materiali.
+- Non sostituisce **preventivo d'impresa** né sopralluogo dell'artigiano.
+
+## Compliance
+
+In molti mercati servono **permessi** per le opere: verifica con tecnico e comune prima di promettere tempistiche.
+    `,
+    },
+    en: {
+      title: 'Renovation Budget',
+      content: `
+# Renovation budget (indicative)
+
+The tool can **structure ballpark ranges** (kitchen, bath, paint, floors) from photos and metadata—conversation support, not a binding quote.
+
+## How to present it
+
+1. Always label output as an **estimate** or **range**.
+2. Break down major line items; avoid a single misleading number.
+3. Add buffer for **unknowns** (damp, electrics, permits).
+
+## Limits
+
+- Costs swing by city, labor rates, and finish level.
+- Does not replace a **contractor quote** or site walkthrough.
+
+## Compliance
+
+Many markets require **permits** for works—confirm before promising timelines.
+    `,
+    },
+  } satisfies DocArticleEntry,
+  'competitor/radar-guide': {
+    ...docCompetitorRadarLocales,
+    it: {
+      title: 'Rilevamento Mandati in Scadenza',
+      content: `
+# Competitor Radar — mandati e annunci fermi
+
+Il radar evidenzia immobili **da molto online** o con segnali di mandato debole, per un primo contatto rispettoso con il proprietario.
+
+## Cosa cerca (concettualmente)
+
+- Annunci con **lungo tempo** di pubblicazione (es. 120+ giorni secondo il tuo mercato).
+- Pattern che suggeriscono **scarsa rotazione** o bisogno di riposizionare prezzo o marketing.
+
+## Approccio
+
+1. **Dati prima**: menziona giorni sul portale o comparabili, non giudizi personali.
+2. Offri **valore** (nuovo pacchetto foto, prezzo, canale internazionale) prima di chiedere l'esclusiva.
+3. Annota nel **CRM** ogni contatto per non duplicare tra colleghi.
+
+## Etica e legge
+
+Rispetta privacy, opt-out e norme di **prospezione**: niente stalking; un «no» secco è definitivo.
+    `,
+    },
+    en: {
+      title: 'Expiring Mandate Detection',
+      content: `
+# Competitor Radar — stagnant mandates / listings
+
+The radar highlights homes **live for a long time** or showing weak-mandate signals so you can open a respectful conversation.
+
+## Signals (conceptual)
+
+- Listings with **high days-on-market** (e.g. 120+ depending on locale).
+- Patterns suggesting **low turnover** or need to reposition price or marketing.
+
+## Approach
+
+1. Lead with **facts**: portal days online, comps—not personal judgments.
+2. Offer **value** (media pack, pricing story, channels) before asking for exclusivity.
+3. Log every touch in **CRM** to prevent team overlap.
+
+## Ethics & law
+
+Honor privacy, opt-out, and **outreach** rules—no harassment; a firm «no» ends the thread.
     `,
     },
   } satisfies DocArticleEntry,
