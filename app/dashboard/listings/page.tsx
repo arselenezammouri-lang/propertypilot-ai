@@ -30,6 +30,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { TableSkeleton } from '@/components/ui/skeleton-loaders';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import {
   apiFailureToast,
@@ -167,6 +168,7 @@ export default function ListingsPage() {
           titleDataTestId="heading-listings"
           subtitle={t.pageDesc}
           planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+          contextualHelp={<ContextualHelpTrigger docSlug="getting-started/first-listing" />}
         />
         <Card className="border-white/10 bg-card/40">
           <CardHeader>
@@ -203,6 +205,7 @@ export default function ListingsPage() {
           titleDataTestId="heading-listings"
           subtitle={t.pageDesc}
           planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+          contextualHelp={<ContextualHelpTrigger docSlug="getting-started/first-listing" />}
         />
         <Card className="border-white/10 bg-card/40">
           <CardContent className="flex flex-col items-center justify-center py-16">
@@ -236,6 +239,7 @@ export default function ListingsPage() {
         subtitle={t.pageDesc}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
         titleDataTestId="heading-listings"
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/first-listing" />}
         actions={
           <Button
             className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] text-white border-0"

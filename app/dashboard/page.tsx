@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { DashboardStatsCards } from "@/components/dashboard-stats-cards";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import { DashboardProTips } from "@/components/dashboard-pro-tips";
 import { DeferredMount } from "@/components/deferred-mount";
 import { DeferIdleMount } from "@/components/defer-idle-mount";
@@ -148,6 +149,7 @@ export default async function DashboardPage() {
           title={homeCopy.commandCenterTitle}
           subtitle={homeCopy.commandCenterSubtitle}
           planBadge={{ label: planBadgeLabel, variant: "outline" }}
+          contextualHelp={<ContextualHelpTrigger docSlug="getting-started/welcome" />}
           actions={
             <Button
               asChild

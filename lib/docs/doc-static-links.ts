@@ -40,12 +40,18 @@ export const CONTEXTUAL_HELP_DOC_SLUGS = [
   'crm/pipeline',
   'account/billing-guide',
   'getting-started/perfect-copy',
+  'getting-started/welcome',
+  'getting-started/first-listing',
   'getting-started/workspace-setup',
   'prospecting/arbitrage',
   'prospecting/scraper-guide',
+  'prospecting/filters',
   'ai-voice/call-scripts',
   'territory/map-usage',
   'competitor/radar-guide',
+  'commercial/business-features',
+  'smart-briefing/briefing-guide',
+  'smart-briefing/client-ready',
 ] as const;
 
 export type ContextualHelpDocSlug = (typeof CONTEXTUAL_HELP_DOC_SLUGS)[number];

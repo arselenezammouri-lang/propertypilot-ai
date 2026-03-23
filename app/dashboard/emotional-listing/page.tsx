@@ -24,6 +24,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -440,6 +441,7 @@ export default function EmotionalListingPage() {
         title={t.heroTitle}
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/90">
             <Heart className="h-3.5 w-3.5 text-rose-400 shrink-0" aria-hidden />

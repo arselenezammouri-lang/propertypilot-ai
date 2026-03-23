@@ -15,6 +15,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -257,6 +258,7 @@ export default function TitlesPage() {
         title={t.heroTitle}
         subtitle={t.heroDescription}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 text-xs">
             <TrendingUp className="h-3 w-3 mr-1" />

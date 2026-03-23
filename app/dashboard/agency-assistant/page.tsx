@@ -17,6 +17,7 @@ import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { fetchApi } from "@/lib/api/client";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   networkFailureToast,
@@ -295,6 +296,7 @@ export default function AgencyAssistantPage() {
             ? { label: planBadgeLabel, variant: "secondary" }
             : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="smart-briefing/client-ready" />}
         actions={
           <div className="flex flex-wrap items-center gap-2 min-h-11">
             <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-sm text-blue-200">

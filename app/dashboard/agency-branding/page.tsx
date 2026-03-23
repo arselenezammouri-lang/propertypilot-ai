@@ -11,6 +11,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   networkFailureToast,
@@ -229,6 +230,7 @@ export default function AgencyBrandingPage() {
         planBadge={
           !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="commercial/business-features" />}
         actions={
           <Link
             href="/dashboard"

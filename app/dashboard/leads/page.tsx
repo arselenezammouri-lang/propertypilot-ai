@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   Dialog,
   DialogContent,
@@ -568,6 +569,7 @@ export default function LeadsPage() {
           title={lp.leadManagerTitle}
           subtitle={lp.pageSubtitle}
           planBadge={{ label: planBadgeLabel, variant: "outline" }}
+          contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
           actions={
             <div className="flex flex-wrap items-center gap-2">
               <Link href="/dashboard/leads/pipeline" aria-label="Switch to pipeline view">

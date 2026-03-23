@@ -17,6 +17,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -303,6 +304,7 @@ export default function HashtagsPage() {
         title={t.heroTitle}
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="flex items-center gap-1 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 text-xs">
             <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />

@@ -49,6 +49,7 @@ import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import Link from 'next/link';
 import {
   apiFailureToast,
@@ -423,6 +424,7 @@ export default function AutomationCenterPage() {
         titleDataTestId="heading-crm-automation-rules"
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Badge className="border-0 bg-gradient-to-r from-violet-500 to-purple-500 text-xs text-white">

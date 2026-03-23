@@ -54,6 +54,7 @@ import type { UserApiKey, InsertUserApiKey, LeadMarket } from '@/lib/types/datab
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -311,6 +312,7 @@ export default function CRMSettingsPage() {
         planBadge={
           !planLoading ? { label: plan.toUpperCase(), variant: 'secondary' } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
         actions={
           <Link href="/dashboard/leads" aria-label={t.backAria}>
             <Button

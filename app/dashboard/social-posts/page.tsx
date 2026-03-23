@@ -15,6 +15,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import { Badge } from "@/components/ui/badge";
 import {
   apiFailureToast,
@@ -222,6 +223,7 @@ export default function SocialPostsPage() {
         title={t.heroTitle}
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="bg-pink-500/15 text-pink-100 border border-pink-500/30 text-xs">
             {t.heroBadge}

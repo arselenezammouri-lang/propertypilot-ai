@@ -74,6 +74,7 @@ const STRUCTURAL_SECTION_ICON: Record<
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -402,6 +403,7 @@ export default function AuditorPage() {
         titleDataTestId="heading-listing-auditor"
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="border-0 bg-gradient-to-r from-amber-500 to-orange-500 text-xs text-white">
             {t.expertBadge}

@@ -30,6 +30,7 @@ import { fetchApi } from '@/lib/api/client';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import { Badge } from '@/components/ui/badge';
 import {
   apiFailureToast,
@@ -201,6 +202,7 @@ export default function TranslatePage() {
         title={t.heroTitle}
         subtitle={t.heroSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
         actions={
           <Badge className="inline-flex items-center gap-1.5 bg-emerald-500/15 text-emerald-200 border border-emerald-500/30 text-xs">
             <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden />

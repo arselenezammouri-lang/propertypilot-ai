@@ -16,6 +16,7 @@ import { useAPIErrorHandler } from '@/components/error-boundary';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import Link from 'next/link';
 import {
   apiFailureToast,
@@ -303,6 +304,7 @@ export default function LeadScorePage() {
         titleDataTestId="heading-lead-score"
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
         actions={
           <Badge className="flex items-center gap-1 border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-xs text-cyan-200">
             <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />

@@ -42,6 +42,7 @@ import { fetchApi } from '@/lib/api/client';
 import { useUsageLimits } from '@/hooks/use-usage-limits';
 import { DashboardPageShell } from '@/components/dashboard-page-shell';
 import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
 import {
   apiFailureToast,
   clipboardFailureToast,
@@ -328,6 +329,7 @@ export default function LeadDetailPage() {
         titleDataTestId="heading-lead-detail"
         subtitle={t.headerSubtitle}
         planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Badge className={`${scoreBadge.color} text-white gap-1.5`}>

@@ -20,6 +20,7 @@ import type { WorkflowAutomationTypeId } from "@/lib/i18n/workflow-automations-p
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   validationToast,
@@ -364,6 +365,7 @@ export default function AutomationsPage() {
         titleDataTestId="heading-workflow-automations"
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" size="sm" className="border-white/20 text-white/90" asChild>

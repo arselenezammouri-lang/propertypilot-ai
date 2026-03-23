@@ -14,6 +14,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   networkFailureToast,
@@ -194,6 +195,7 @@ export default function NotificationsSettingsPage() {
         planBadge={
           !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="smart-briefing/briefing-guide" />}
         actions={
           <Link href="/dashboard/settings/workspace" aria-label={t.backAria}>
             <Button

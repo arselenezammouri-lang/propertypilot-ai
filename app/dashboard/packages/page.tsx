@@ -18,6 +18,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import { Shield } from "lucide-react";
 import { apiFailureToast, networkFailureToast } from "@/lib/i18n/api-feature-feedback";
 
@@ -180,6 +181,7 @@ function PackagesPageContent() {
         planBadge={
           !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
         }
+        contextualHelp={<ContextualHelpTrigger docSlug="account/billing-guide" />}
       />
 
       <div

@@ -48,6 +48,7 @@ import { fetchApi } from "@/lib/api/client";
 import { useUsageLimits } from "@/hooks/use-usage-limits";
 import { DashboardPageShell } from "@/components/dashboard-page-shell";
 import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
 import {
   apiFailureToast,
   networkFailureToast,
@@ -330,6 +331,7 @@ export default function PdfGeneratorPage() {
         titleDataTestId="heading-pdf-page"
         subtitle={t.pageSubtitle}
         planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="smart-briefing/client-ready" />}
       />
 
         <div className="grid lg:grid-cols-3 gap-8">
