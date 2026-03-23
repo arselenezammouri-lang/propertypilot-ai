@@ -1,14 +1,15 @@
 import { getTranslation } from '@/lib/i18n/dictionary';
 
 describe('dashboard home copy (D1)', () => {
-  it('dashboard header chrome keys for IT/EN and ES merge from EN', () => {
+  it('dashboard header chrome keys for IT/EN and ES native nav', () => {
     const it = getTranslation('it').dashboard;
     const en = getTranslation('en').dashboard;
     expect(it.navAriaLabel.length).toBeGreaterThan(3);
     expect(en.commandPaletteOpenAria.toLowerCase()).toMatch(/search|quick|open/i);
     const es = getTranslation('es').dashboard;
-    expect(es.navAriaLabel).toBe(en.navAriaLabel);
-    expect(es.generate).toBeTruthy();
+    expect(es.navAriaLabel.toLowerCase()).toMatch(/navegación|principal/);
+    expect(es.generate.toLowerCase()).toMatch(/generar/);
+    expect(es.commandPalettePlaceholder).toContain('…');
   });
 
   it('demo page extended keys for IT/EN', () => {

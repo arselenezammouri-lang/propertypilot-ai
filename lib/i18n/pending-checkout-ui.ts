@@ -1,4 +1,4 @@
-/** Strings for `components/pending-checkout-banner.tsx`. IT + EN. */
+/** Strings for `components/pending-checkout-banner.tsx`. IT + EN; ES–AR in `pending-aria-locales.ts`. */
 
 export type PendingCheckoutUi = {
   planNames: {

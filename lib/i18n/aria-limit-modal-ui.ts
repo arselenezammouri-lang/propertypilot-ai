@@ -1,4 +1,4 @@
-/** Strings + upgrade tiers for `components/aria-limit-modal.tsx`. IT + EN. */
+/** Strings + upgrade tiers for `components/aria-limit-modal.tsx`. IT + EN; ES–AR in `pending-aria-locales.ts`. */
 
 export type AriaLimitUpgradeTier = {
   next: 'starter' | 'pro' | 'agency';
