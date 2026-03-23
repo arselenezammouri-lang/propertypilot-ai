@@ -88,7 +88,7 @@ describe('dashboard home copy (D1)', () => {
     expect(getTranslation('es').marketingBlog.subtitle).toBe(en.marketingBlog.subtitle);
   });
 
-  it('errorBoundaryModule, welcomeTour, onboardingWizard for IT/EN; ES inherits EN', () => {
+  it('errorBoundaryModule, welcomeTour, onboardingWizard for IT/EN; ES–AR native bundles', () => {
     const itE = getTranslation('it').errorBoundaryModule;
     const enE = getTranslation('en').errorBoundaryModule;
     expect(itE.boundary.title).toContain('storto');
@@ -96,7 +96,13 @@ describe('dashboard home copy (D1)', () => {
     const wt = getTranslation('it').welcomeTour;
     expect(wt.dealLabel).toContain('{n}');
     expect(getTranslation('en').onboardingWizard.steps[0].title).toMatch(/PropertyPilot/i);
-    expect(getTranslation('es').welcomeTour.welcomeTitle).toBe(getTranslation('en').welcomeTour.welcomeTitle);
+    const esWt = getTranslation('es').welcomeTour;
+    expect(esWt.welcomeTitle).not.toBe(getTranslation('en').welcomeTour.welcomeTitle);
+    expect(esWt.welcomeTitle.toLowerCase()).toMatch(/bienvenido|futuro|inmobiliar/);
+    expect(esWt.dealLabel).toContain('{n}');
+    expect(getTranslation('fr').errorBoundaryModule.boundary.reload.toLowerCase()).toMatch(/recharg|charger/);
+    expect(getTranslation('de').welcomeTour.scanSync.toLowerCase()).toMatch(/portal|synchron/);
+    expect(getTranslation('ar').errorBoundaryModule.boundary.title.length).toBeGreaterThan(3);
   });
 
   it('dashboardNav and commandPaletteExtras for IT/EN; ES–AR native bundles', () => {

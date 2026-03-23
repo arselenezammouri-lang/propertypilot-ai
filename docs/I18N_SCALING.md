@@ -8,8 +8,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Preferire `getTranslation(locale)` da `lib/i18n/dictionary.ts`.  
    - Header dashboard (`components/dashboard-header.tsx`): `dashboard.navAriaLabel`, `dashboard.commandPaletteOpenAria`, `dashboard.commandPalettePlaceholder`, oltre a `generate` / `signOut`.  
    - Nav condivisa (sidebar, drawer mobile, command palette): `dashboardNav` + `commandPaletteExtras` in `dictionary.ts` — **IT/EN** in `lib/i18n/dashboard-nav-ui.ts`; **ES/FR/DE/PT/AR** in `lib/i18n/dashboard-nav-command-palette-locales.ts` (merge in `dictionary.ts`); struttura route in `lib/dashboard/nav-config.tsx`.  
-   - Error boundary / `useAPIErrorHandler`: `errorBoundaryModule` — `lib/i18n/error-boundary-ui.ts`.  
-   - Welcome tour (primo accesso dashboard): `welcomeTour` — `lib/i18n/welcome-tour-ui.ts`.  
+   - Error boundary / `useAPIErrorHandler`: `errorBoundaryModule` — **IT/EN** `lib/i18n/error-boundary-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/error-boundary-welcome-locales.ts`.  
+   - Welcome tour (primo accesso dashboard): `welcomeTour` — **IT/EN** `lib/i18n/welcome-tour-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/error-boundary-welcome-locales.ts` (placeholder `{n}` in `dealLabel`).  
    - Onboarding wizard (flag env): `onboardingWizard` — `lib/i18n/onboarding-wizard-ui.ts`.  
    - Marketing pubblico: `marketingAbout`, `marketingBlog`, `marketingFeatures` — `lib/i18n/marketing-pages-ui.ts`.  
    - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.  

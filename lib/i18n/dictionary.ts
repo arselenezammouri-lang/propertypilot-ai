@@ -230,6 +230,18 @@ import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
 import { ariaLimitModalUiEn, ariaLimitModalUiIt } from '@/lib/i18n/aria-limit-modal-ui';
 import type { ErrorBoundaryModuleUi } from '@/lib/i18n/error-boundary-ui';
 import { errorBoundaryModuleUiEn, errorBoundaryModuleUiIt } from '@/lib/i18n/error-boundary-ui';
+import {
+  errorBoundaryModuleUiAr,
+  errorBoundaryModuleUiDe,
+  errorBoundaryModuleUiEs,
+  errorBoundaryModuleUiFr,
+  errorBoundaryModuleUiPt,
+  welcomeTourUiAr,
+  welcomeTourUiDe,
+  welcomeTourUiEs,
+  welcomeTourUiFr,
+  welcomeTourUiPt,
+} from '@/lib/i18n/error-boundary-welcome-locales';
 import type { WelcomeTourUi } from '@/lib/i18n/welcome-tour-ui';
 import { welcomeTourUiEn, welcomeTourUiIt } from '@/lib/i18n/welcome-tour-ui';
 import type { OnboardingWizardUi } from '@/lib/i18n/onboarding-wizard-ui';
@@ -3470,6 +3482,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiEs,
     dashboardNav: dashboardNavUiEs,
     commandPaletteExtras: commandPaletteExtrasEs,
+    errorBoundaryModule: errorBoundaryModuleUiEs,
+    welcomeTour: welcomeTourUiEs,
     dashboardToasts: {
       boostActivated: 'Agency Boost activado',
       boostDesc: 'Setup «done-for-you» confirmado. Nuestro equipo se pondrá en contacto contigo para el onboarding.',
@@ -4083,6 +4097,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiFr,
     dashboardNav: dashboardNavUiFr,
     commandPaletteExtras: commandPaletteExtrasFr,
+    errorBoundaryModule: errorBoundaryModuleUiFr,
+    welcomeTour: welcomeTourUiFr,
     dashboardToasts: {
       boostActivated: 'Agency Boost activé',
       boostDesc: 'Configuration « done-for-you » confirmée. Notre équipe vous contactera pour l’onboarding.',
@@ -4696,6 +4712,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiDe,
     dashboardNav: dashboardNavUiDe,
     commandPaletteExtras: commandPaletteExtrasDe,
+    errorBoundaryModule: errorBoundaryModuleUiDe,
+    welcomeTour: welcomeTourUiDe,
     dashboardToasts: {
       boostActivated: 'Agency Boost aktiviert',
       boostDesc: '„Done-for-you“-Setup bestätigt. Unser Team meldet sich für das Onboarding bei Ihnen.',
@@ -5309,6 +5327,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiPt,
     dashboardNav: dashboardNavUiPt,
     commandPaletteExtras: commandPaletteExtrasPt,
+    errorBoundaryModule: errorBoundaryModuleUiPt,
+    welcomeTour: welcomeTourUiPt,
     dashboardToasts: {
       boostActivated: 'Agency Boost ativado',
       boostDesc: 'Configuração «done-for-you» confirmada. A nossa equipa contactá-lo-á para o onboarding.',
@@ -5728,6 +5748,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     ariaLimitModal: ariaLimitModalUiAr,
     dashboardNav: dashboardNavUiAr,
     commandPaletteExtras: commandPaletteExtrasAr,
+    errorBoundaryModule: errorBoundaryModuleUiAr,
+    welcomeTour: welcomeTourUiAr,
     dashboardToasts: {
       boostActivated: 'تم تفعيل Agency Boost',
       boostDesc: 'تم تأكيد الإعداد «done-for-you». سيتواصل فريقنا معك لإكمال الإعداد.',

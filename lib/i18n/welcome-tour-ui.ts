@@ -1,3 +1,5 @@
+/** IT/EN here; ES–AR in `error-boundary-welcome-locales.ts`. */
+
 export type WelcomeTourUi = {
   scanSync: string;
   scanArbitrage: string;
