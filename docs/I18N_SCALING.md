@@ -12,7 +12,8 @@ Obiettivo: prodotto **globale** (USA, EU, Middle East, LATAM) con copy e numeri 
    - Welcome tour (primo accesso dashboard): `welcomeTour` — **IT/EN** `lib/i18n/welcome-tour-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/error-boundary-welcome-locales.ts` (placeholder `{n}` in `dealLabel`).  
    - Onboarding wizard (flag env): `onboardingWizard` — **IT/EN** `lib/i18n/onboarding-wizard-ui.ts`; **ES/FR/DE/PT/AR** `lib/i18n/onboarding-wizard-locales.ts`.  
    - Marketing pubblico: `marketingAbout`, `marketingBlog`, `marketingFeatures` — `lib/i18n/marketing-pages-ui.ts`.  
-   - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.  
+   - Legal: `privacyPolicyPage` — `lib/i18n/privacy-policy-page-ui.ts`; `termsPolicyPage` — `lib/i18n/terms-policy-page-ui.ts`; `refundPolicyPage` — `lib/i18n/refund-policy-page-ui.ts`.
+   - Pagine errore / 404 e azioni globali: `errors` (titoli, `pageNotFound`, `backToHome`, ecc.) e `common` (`copy`, `share`, `loading`, `error`, …) — **IT/EN** nel blocco principale `dictionary.ts`; **ES/FR/DE/PT/AR** in `lib/i18n/common-errors-locales.ts` (merge in `dictionary.ts`; sostituisce il `common` parziale che aveva solo 8 chiavi).  
    - Blog articolo: `blogPostPage` — `lib/i18n/blog-post-page-ui.ts` (`/blog/[slug]`).  
    - Pricing: oltre a `landing.pricingPage`, card piani + footer link — `pricingPagePlans` in `lib/i18n/pricing-page-plans-ui.ts`.  
    - Contatti: chiavi extra in `contact` (`headerTagline`, `demoMailSubject`, `minCharsCounter`, `submitting`).  

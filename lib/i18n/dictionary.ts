@@ -253,6 +253,18 @@ import {
   onboardingWizardUiFr,
   onboardingWizardUiPt,
 } from '@/lib/i18n/onboarding-wizard-locales';
+import {
+  commonFullAr,
+  commonFullDe,
+  commonFullEs,
+  commonFullFr,
+  commonFullPt,
+  errorsUiAr,
+  errorsUiDe,
+  errorsUiEs,
+  errorsUiFr,
+  errorsUiPt,
+} from '@/lib/i18n/common-errors-locales';
 import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
 import {
   marketingAboutUiEn,
@@ -3585,17 +3597,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationDesc: 'Inténtalo de nuevo en un momento.',
     },
     prospectingModals: prospectingModalsUiEs,
-    common: {
-      copy: 'Copiar',
-      share: 'Compartir',
-      send: 'Enviar',
-      cancel: 'Cancelar',
-      confirm: 'Confirmar',
-      save: 'Guardar',
-      delete: 'Eliminar',
-      edit: 'Editar',
-      view: 'Ver',
-    },
+    errors: errorsUiEs,
+    common: commonFullEs,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -4201,17 +4204,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationDesc: 'Réessayez dans un instant.',
     },
     prospectingModals: prospectingModalsUiFr,
-    common: {
-      copy: 'Copier',
-      share: 'Partager',
-      send: 'Envoyer',
-      cancel: 'Annuler',
-      confirm: 'Confirmer',
-      save: 'Enregistrer',
-      delete: 'Supprimer',
-      edit: 'Modifier',
-      view: 'Voir',
-    },
+    errors: errorsUiFr,
+    common: commonFullFr,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -4817,17 +4811,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationDesc: 'Bitte versuchen Sie es gleich erneut.',
     },
     prospectingModals: prospectingModalsUiDe,
-    common: {
-      copy: 'Kopieren',
-      share: 'Teilen',
-      send: 'Senden',
-      cancel: 'Abbrechen',
-      confirm: 'Bestätigen',
-      save: 'Speichern',
-      delete: 'Löschen',
-      edit: 'Bearbeiten',
-      view: 'Anzeigen',
-    },
+    errors: errorsUiDe,
+    common: commonFullDe,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
@@ -5433,17 +5418,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationDesc: 'Tente novamente dentro de instantes.',
     },
     prospectingModals: prospectingModalsUiPt,
-    common: {
-      copy: 'Copiar',
-      share: 'Compartilhar',
-      send: 'Enviar',
-      cancel: 'Cancelar',
-      confirm: 'Confirmar',
-      save: 'Salvar',
-      delete: 'Excluir',
-      edit: 'Editar',
-      view: 'Visualizar',
-    },
+    errors: errorsUiPt,
+    common: commonFullPt,
     landing: {
       hero: {
         signupAriaLabel: 'Registar-se no PropertyPilot AI',
@@ -5855,17 +5831,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       calibrationDesc: 'أعد المحاولة بعد لحظات.',
     },
     prospectingModals: prospectingModalsUiAr,
-    common: {
-      copy: 'نسخ',
-      share: 'مشاركة',
-      send: 'إرسال',
-      cancel: 'إلغاء',
-      confirm: 'تأكيد',
-      save: 'حفظ',
-      delete: 'حذف',
-      edit: 'تعديل',
-      view: 'عرض',
-    },
+    errors: errorsUiAr,
+    common: commonFullAr,
     landing: {
       nav: {
         tagline: 'Pilot Your Agency to the Next Level',
