@@ -1,7 +1,9 @@
 import { getBaseUrl } from '@/lib/env';
 import {
   buildAboutPageMetadata,
+  buildAuthForgotPasswordPageMetadata,
   buildAuthLoginPageMetadata,
+  buildAuthResetPasswordPageMetadata,
   buildAuthSignupPageMetadata,
   buildBlogIndexMetadata,
   buildBlogPostPageMetadata,
@@ -10,6 +12,7 @@ import {
   buildContactAliasPageMetadata,
   buildContactPageMetadata,
   buildDemoPageMetadata,
+  buildDevTestErrorPageMetadata,
   buildDocArticlePageMetadata,
   buildDocsHubPageMetadata,
   buildPricingPageMetadata,
@@ -67,6 +70,22 @@ describe('page-metadata-builders', () => {
     expect(meta!.title).toContain('Benvenuto');
     expect(meta!.alternates?.canonical).toContain(slug);
     expect(buildDocArticlePageMetadata('it', 'non-existent-slug-xyz')).toBeNull();
+  });
+
+  it('forgot and reset password metadata are localized with canonical', () => {
+    const itF = buildAuthForgotPasswordPageMetadata('it');
+    const enF = buildAuthForgotPasswordPageMetadata('en');
+    expect(itF.title).not.toBe(enF.title);
+    expect(itF.alternates?.canonical).toMatch(/\/auth\/forgot-password$/);
+    const itR = buildAuthResetPasswordPageMetadata('it');
+    expect(itR.alternates?.canonical).toMatch(/\/auth\/reset-password$/);
+    expect((itR.description as string).length).toBeGreaterThan(15);
+  });
+
+  it('dev test-error metadata is noindex with canonical', () => {
+    const meta = buildDevTestErrorPageMetadata('en');
+    expect(meta.robots).toEqual({ index: false, follow: false });
+    expect(meta.alternates?.canonical).toMatch(/\/dashboard\/test-error$/);
   });
 
   it('auth login and signup metadata differ by locale and set canonical', () => {

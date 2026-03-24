@@ -5,6 +5,7 @@ import { titleFromBlogSlug } from '@/lib/i18n/blog-post-slug';
 import { getBaseUrl } from '@/lib/env';
 import { docArticles } from '@/lib/docs/doc-content';
 import { resolveDocArticle } from '@/lib/docs/doc-article';
+import { DEV_TEST_ERROR_FOLDER_PATH } from '@/lib/i18n/dev-test-error-ui';
 
 function firstMeaningfulLineFromDocBody(body: string): string {
   const line =
@@ -176,6 +177,35 @@ export function buildAuthSignupPageMetadata(locale: SupportedLocale): Metadata {
     title: s.title,
     description: clipDescription(s.subtitle, s.freePlanIncludes, s.noCreditCard),
     alternates: { canonical: buildCanonicalPath('/auth/signup') },
+  };
+}
+
+export function buildAuthForgotPasswordPageMetadata(locale: SupportedLocale): Metadata {
+  const f = getTranslation(locale).authPasswordRecovery.forgot;
+  return {
+    title: f.pageTitle,
+    description: clipDescription(f.descDefault),
+    alternates: { canonical: buildCanonicalPath('/auth/forgot-password') },
+  };
+}
+
+export function buildAuthResetPasswordPageMetadata(locale: SupportedLocale): Metadata {
+  const r = getTranslation(locale).authPasswordRecovery.reset;
+  return {
+    title: r.pageTitle,
+    description: clipDescription(r.pageDesc, r.minLength),
+    alternates: { canonical: buildCanonicalPath('/auth/reset-password') },
+  };
+}
+
+/** Dev-only dashboard route — do not index. */
+export function buildDevTestErrorPageMetadata(locale: SupportedLocale): Metadata {
+  const t = getTranslation(locale).devTestError;
+  return {
+    title: t.title,
+    description: clipDescription(t.body2BeforeFolder, DEV_TEST_ERROR_FOLDER_PATH, t.body2AfterFolder),
+    alternates: { canonical: buildCanonicalPath('/dashboard/test-error') },
+    robots: { index: false, follow: false },
   };
 }
 
