@@ -59,7 +59,7 @@ npm run test:e2e:debug
 
 ## Smoke pubblico (no login)
 
-`npm run smoke:public` — home (HTTP), `/auth/login`, `/auth/signup`, **`/docs`**, **`/docs/getting-started/welcome`**.
+`npm run smoke:public` — home (HTTP), `/auth/login`, `/auth/signup`, **`/docs`**, **`/docs/getting-started/welcome`**, **`/pricing`**, **`/contatti`**, **`/compliance`**.
 
 ## Note
 

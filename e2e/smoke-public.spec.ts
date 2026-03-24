@@ -31,4 +31,19 @@ test.describe("@smoke public", () => {
     await page.goto(`${base}/docs/getting-started/welcome`, { waitUntil: "domcontentloaded" });
     await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
   });
+
+  test("pricing page loads", async ({ page }) => {
+    await page.goto(`${base}/pricing`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("contatti page loads", async ({ page }) => {
+    await page.goto(`${base}/contatti`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("compliance page loads", async ({ page }) => {
+    await page.goto(`${base}/compliance`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
 });
