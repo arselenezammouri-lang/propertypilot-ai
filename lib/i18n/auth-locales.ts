@@ -59,6 +59,10 @@ export type AuthUi = {
     turnstileFailed: string;
     turnstileLoadFailed: string;
     turnstileMisconfigured: string;
+    /** Toast description when sign-in fails and API returns no message */
+    loginFailedGeneric: string;
+    /** Toast description when sign-up fails and API returns no message */
+    signupFailedGeneric: string;
   };
 };
 
@@ -131,6 +135,8 @@ export const authUiEs: AuthUi = {
       'No se pudo cargar la verificación de seguridad. Actualiza la página o inténtalo más tarde.',
     turnstileMisconfigured:
       'La verificación de seguridad no está bien configurada en el servidor. Contacta con soporte.',
+    loginFailedGeneric: 'Correo o contraseña no válidos.',
+    signupFailedGeneric: 'No se pudo crear la cuenta. Inténtalo de nuevo.',
   },
 };
 
@@ -192,6 +198,8 @@ export const authUiFr: AuthUi = {
       'Impossible de charger la vérification de sécurité. Actualisez la page ou réessayez plus tard.',
     turnstileMisconfigured:
       'La vérification de sécurité est mal configurée sur le serveur. Contactez le support.',
+    loginFailedGeneric: 'E-mail ou mot de passe incorrect.',
+    signupFailedGeneric: 'Impossible de créer le compte. Réessayez.',
   },
 };
 
@@ -253,6 +261,8 @@ export const authUiDe: AuthUi = {
       'Sicherheitsprüfung konnte nicht geladen werden. Seite aktualisieren oder später erneut versuchen.',
     turnstileMisconfigured:
       'Sicherheitsprüfung auf dem Server falsch konfiguriert. Bitte Support kontaktieren.',
+    loginFailedGeneric: 'E-Mail oder Passwort ungültig.',
+    signupFailedGeneric: 'Konto konnte nicht erstellt werden. Bitte erneut versuchen.',
   },
 };
 
@@ -314,6 +324,8 @@ export const authUiPt: AuthUi = {
       'Não foi possível carregar a verificação de segurança. Atualize a página ou tente mais tarde.',
     turnstileMisconfigured:
       'A verificação de segurança está mal configurada no servidor. Contacte o suporte.',
+    loginFailedGeneric: 'E-mail ou palavra-passe inválidos.',
+    signupFailedGeneric: 'Não foi possível criar a conta. Tente novamente.',
   },
 };
 
@@ -375,5 +387,7 @@ export const authUiAr: AuthUi = {
       'تعذر تحميل التحقق الأمني. حدّث الصفحة أو حاول لاحقاً.',
     turnstileMisconfigured:
       'التحقق الأمني غير مُعد بشكل صحيح على الخادم. تواصل مع الدعم.',
+    loginFailedGeneric: 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+    signupFailedGeneric: 'تعذر إنشاء الحساب. حاول مرة أخرى.',
   },
 };

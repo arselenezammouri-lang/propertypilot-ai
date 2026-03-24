@@ -888,6 +888,8 @@ export interface TranslationDictionary {
       turnstileFailed: string;
       turnstileLoadFailed: string;
       turnstileMisconfigured: string;
+      loginFailedGeneric: string;
+      signupFailedGeneric: string;
     };
   };
 
@@ -1940,6 +1942,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileFailed: 'Verifica di sicurezza non riuscita. Riprova.',
         turnstileLoadFailed: 'Impossibile caricare il controllo di sicurezza. Aggiorna la pagina o riprova più tardi.',
         turnstileMisconfigured: 'Verifica di sicurezza non configurata correttamente sul server. Contatta il supporto.',
+        loginFailedGeneric: 'Email o password non validi.',
+        signupFailedGeneric: 'Impossibile creare l’account. Riprova.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiIt,
@@ -2968,6 +2972,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileFailed: 'Security verification failed. Please try again.',
         turnstileLoadFailed: 'Could not load the security check. Refresh the page or try again later.',
         turnstileMisconfigured: 'Security check is misconfigured on the server. Please contact support.',
+        loginFailedGeneric: 'Invalid email or password.',
+        signupFailedGeneric: 'Could not create account. Please try again.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiEn,

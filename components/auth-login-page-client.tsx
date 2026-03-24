@@ -162,7 +162,7 @@ function LoginClient() {
       
       toast({
         title: isRateLimit ? t.auth.toast.tooManyAttempts : t.auth.toast.error,
-        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || "Invalid email or password"),
+        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || t.auth.toast.loginFailedGeneric),
         variant: "destructive",
       });
     } finally {

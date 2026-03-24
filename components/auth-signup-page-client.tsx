@@ -193,7 +193,7 @@ function SignupClient() {
       
       toast({
         title: isRateLimit ? t.auth.toast.tooManyAttempts : t.auth.toast.error,
-        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || "Failed to create account"),
+        description: isRateLimit ? t.auth.toast.rateLimitMsg : (errorMessage || t.auth.toast.signupFailedGeneric),
         variant: "destructive",
       });
     } finally {
