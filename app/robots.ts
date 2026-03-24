@@ -13,6 +13,10 @@ export default function robots(): MetadataRoute.Robots {
           '/api/',
           '/dashboard/',
           '/auth/signout',
+          // Next.js build output — not meaningful for crawlers as standalone URLs
+          '/_next/',
+          // Alias redirects to /contatti; canonical is the Italian URL
+          '/contact',
         ],
       },
     ],
