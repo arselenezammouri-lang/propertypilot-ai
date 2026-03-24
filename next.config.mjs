@@ -55,8 +55,9 @@ const nextConfig = {
   swcMinify: true,
   productionBrowserSourceMaps: false,
   experimental: {
-    webpackBuildWorker: true,
-    cpus: 1,
+    // `webpackBuildWorker` + very slow first compiles can trigger ChunkLoadError/timeouts in
+    // `next dev` (embedded browser, Windows). Keep it for production builds only.
+    ...(process.env.NODE_ENV === 'production' ? { webpackBuildWorker: true } : {}),
   },
   images: {
     formats: ['image/avif', 'image/webp'],

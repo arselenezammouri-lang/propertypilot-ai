@@ -24,7 +24,9 @@ export function ThemeToggle() {
         suppressHydrationWarning
       >
         <Moon className="h-4 w-4 text-purple-400" suppressHydrationWarning />
-        <span className="text-xs font-medium hidden sm:inline" suppressHydrationWarning>Ombra</span>
+        <span className="text-xs font-medium hidden sm:inline" suppressHydrationWarning>
+          Tema
+        </span>
       </Button>
     );
   }
@@ -43,7 +45,7 @@ export function ThemeToggle() {
       {isDark ? (
         <>
           <Moon className="h-4 w-4 text-purple-400" />
-          <span className="text-xs font-medium hidden sm:inline">Ombra</span>
+          <span className="text-xs font-medium hidden sm:inline">Scuro</span>
         </>
       ) : (
         <>
