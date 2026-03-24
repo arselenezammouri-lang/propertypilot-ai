@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import { titleFromBlogSlug } from '@/lib/i18n/blog-post-slug';
 
 const MAX_DESC = 158;
 
@@ -37,6 +38,21 @@ export function buildBlogIndexMetadata(locale: SupportedLocale): Metadata {
   return {
     title: m.metaTitle,
     description: clipDescription(m.subtitle, extra),
+  };
+}
+
+export function buildBlogPostPageMetadata(
+  locale: SupportedLocale,
+  slug: string
+): Metadata {
+  const tr = getTranslation(locale);
+  const blog = tr.blogPostPage;
+  const hub = tr.marketingBlog;
+  const title = titleFromBlogSlug(slug, blog.knownTitles);
+  const excerpt = hub.posts.find((p) => p.slug === slug)?.excerpt;
+  return {
+    title,
+    description: clipDescription(excerpt ?? blog.comingSoonBody),
   };
 }
 
