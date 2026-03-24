@@ -28,6 +28,7 @@ export const marketingAboutUiEs: MarketingAboutUi = {
 };
 
 export const marketingBlogUiEs: MarketingBlogUi = {
+  metaTitle: 'Blog inmobiliario',
   subtitle: 'Guías, consejos y recursos para agentes inmobiliarios',
   comingSoon: 'Pronto habrá más artículos. ¡Permanece atento!',
   backHome: 'Volver al inicio',
@@ -190,6 +191,7 @@ export const marketingAboutUiFr: MarketingAboutUi = {
 };
 
 export const marketingBlogUiFr: MarketingBlogUi = {
+  metaTitle: 'Blog immobilier',
   subtitle: 'Guides, conseils et ressources pour agents immobiliers',
   comingSoon: 'D’autres articles arrivent bientôt. Restez informé !',
   backHome: 'Retour à l’accueil',
@@ -352,6 +354,7 @@ export const marketingAboutUiDe: MarketingAboutUi = {
 };
 
 export const marketingBlogUiDe: MarketingBlogUi = {
+  metaTitle: 'Immobilien-Blog',
   subtitle: 'Leitfäden, Tipps und Ressourcen für Immobilienmakler',
   comingSoon: 'Weitere Artikel folgen bald. Bleiben Sie dran!',
   backHome: 'Zur Startseite',
@@ -514,6 +517,7 @@ export const marketingAboutUiPt: MarketingAboutUi = {
 };
 
 export const marketingBlogUiPt: MarketingBlogUi = {
+  metaTitle: 'Blog imobiliário',
   subtitle: 'Guias, dicas e recursos para agentes imobiliários',
   comingSoon: 'Mais artigos em breve. Fique atento!',
   backHome: 'Voltar ao início',
@@ -676,6 +680,7 @@ export const marketingAboutUiAr: MarketingAboutUi = {
 };
 
 export const marketingBlogUiAr: MarketingBlogUi = {
+  metaTitle: 'المدونة العقارية',
   subtitle: 'أدلة ونصائح وموارد للوسطاء العقاريين',
   comingSoon: 'المزيد من المقالات قريباً. تابعونا!',
   backHome: 'العودة للرئيسية',

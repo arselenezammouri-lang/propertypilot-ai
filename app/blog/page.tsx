@@ -1,6 +1,9 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { DiamondPageHeader } from "@/components/diamond-page-header";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { buildBlogIndexMetadata } from "@/lib/i18n/page-metadata-builders";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
 
 const BlogPageContent = dynamic(
   () => import("@/components/blog-page-content").then((m) => ({ default: m.BlogPageContent })),
@@ -19,10 +22,10 @@ const BlogPageContent = dynamic(
   }
 );
 
-export const metadata: Metadata = {
-  title: "Blog | PropertyPilot AI",
-  description: "Articoli, guide e risorse per agenti immobiliari. Tips AI, marketing e best practice.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocaleFromCookies();
+  return buildBlogIndexMetadata(locale as SupportedLocale);
+}
 
 export default function BlogPage() {
   return (

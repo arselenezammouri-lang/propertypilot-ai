@@ -1,11 +1,14 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { DiamondPageHeader } from "@/components/diamond-page-header";
 import { AboutPageContent } from "@/components/about-page-content";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { buildAboutPageMetadata } from "@/lib/i18n/page-metadata-builders";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
 
-export const metadata: Metadata = {
-  title: "About Us | PropertyPilot AI",
-  description: "Scopri la missione di PropertyPilot AI: potenziare le agenzie immobiliari con l'AI.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocaleFromCookies();
+  return buildAboutPageMetadata(locale as SupportedLocale);
+}
 
 export default function AboutPage() {
   return (

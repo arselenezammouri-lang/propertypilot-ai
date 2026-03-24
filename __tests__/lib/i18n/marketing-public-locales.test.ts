@@ -33,6 +33,7 @@ describe('marketing-public-locales', () => {
     for (const loc of ['es', 'fr', 'de', 'pt', 'ar'] as const) {
       const t = getTranslation(loc);
       expect(t.marketingAbout.title).not.toBe(en.marketingAbout.title);
+      expect(t.marketingBlog.metaTitle).not.toBe(en.marketingBlog.metaTitle);
       expect(t.marketingBlog.subtitle).not.toBe(en.marketingBlog.subtitle);
       expect(t.marketingFeatures.titleWord).not.toBe(en.marketingFeatures.titleWord);
       expect(t.blogPostPage.backToBlog).not.toBe(en.blogPostPage.backToBlog);

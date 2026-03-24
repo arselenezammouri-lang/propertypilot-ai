@@ -59,6 +59,8 @@ export const marketingAboutUiEn: MarketingAboutUi = {
 export type MarketingBlogPostUi = { slug: string; title: string; excerpt: string; date: string };
 
 export type MarketingBlogUi = {
+  /** `<title>` segment (layout adds `| PropertyPilot AI`) */
+  metaTitle: string;
   subtitle: string;
   comingSoon: string;
   backHome: string;
@@ -66,6 +68,7 @@ export type MarketingBlogUi = {
 };
 
 export const marketingBlogUiIt: MarketingBlogUi = {
+  metaTitle: 'Blog immobiliare',
   subtitle: 'Guide, tips e risorse per agenti immobiliari',
   comingSoon: 'Altri articoli in arrivo. Resta sintonizzato!',
   backHome: 'Torna alla Home',
@@ -92,6 +95,7 @@ export const marketingBlogUiIt: MarketingBlogUi = {
 };
 
 export const marketingBlogUiEn: MarketingBlogUi = {
+  metaTitle: 'Real estate blog',
   subtitle: 'Guides, tips, and resources for real estate agents',
   comingSoon: 'More articles are coming soon. Stay tuned!',
   backHome: 'Back to Home',
