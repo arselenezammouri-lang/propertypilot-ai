@@ -20,8 +20,17 @@ Crea un file `.env.local` con:
 ```env
 E2E_TEST_EMAIL=test@example.com
 E2E_TEST_PASSWORD=TestPassword123!
+# opzionale (founder / agency su localhost):
+E2E_FOUNDER_EMAIL=...
+E2E_FOUNDER_PASSWORD=...
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+Per caricare `.env.local` da shell:
+```bash
+DOTENV_CONFIG_PATH=.env.local node -r dotenv/config npx playwright test e2e/dashboard-billing.spec.ts
+```
+oppure `npm run test:e2e:billing` (se le variabili sono già nell’ambiente).
 
 ## Eseguire i test
 
@@ -42,6 +51,8 @@ npm run test:e2e:debug
 ## Test disponibili
 
 - **auth-flow.spec.ts**: Test di autenticazione (signup, login)
+- **dashboard-billing.spec.ts**: Login → `/dashboard/billing`, verifica card piano (`E2E_FOUNDER_*` o `E2E_TEST_*`)
+- **dashboard-founder-agency.spec.ts**: Founder localhost → card piano Agency
 - **checkout-flow.spec.ts**: Test del flusso di checkout
 - **webhook-verification.spec.ts**: Verifica endpoint webhook
 - **ai-generation-flow.spec.ts**: Test generazione contenuto AI

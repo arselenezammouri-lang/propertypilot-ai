@@ -32,7 +32,7 @@ Eseguire: `npx jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/
 
 | Area | Criterio “fatto” |
 |------|-------------------|
-| **Stripe** | Checkout test → webhook → piano e stato nel DB allineati; nessun accesso PRO senza pagamento confermato. |
+| **Stripe** | Checkout test → webhook → piano e stato nel DB allineati; nessun accesso PRO senza pagamento confermato. Smoke Playwright: `npm run test:e2e:billing` (richiede `E2E_FOUNDER_*` o `E2E_TEST_*` in `.env.local`; vedi `e2e/README.md`). |
 | **Auth** | Login, signup, forgot/reset, sessione, redirect dashboard; eventuale OAuth se attivo. |
 | **Dashboard** | Ogni feature critica: happy path + paywall (free vs agency) dove previsto. |
 | **Env produzione** | `NEXT_PUBLIC_APP_URL`, Supabase, Stripe live/test, chiavi AI, `API_STRICT_BROWSER_ORIGIN` / origini consentite. |
