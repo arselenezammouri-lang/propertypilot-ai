@@ -9,45 +9,27 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Mail, CheckCircle } from "lucide-react";
 import { getBaseUrl } from "@/lib/env";
 
 export default function ForgotPasswordPage() {
   const { locale } = useLocale();
-  const isItalian = locale === "it";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const { toast } = useToast();
   const supabase = createClient();
-
-  const t = {
-    backToLogin: isItalian ? "Torna al Login" : "Back to Login",
-    pageTitle: isItalian ? "Password dimenticata?" : "Forgot password?",
-    descSent: isItalian
-      ? "Controlla la tua email per il link di reset."
-      : "Check your email for the reset link.",
-    descDefault: isItalian
-      ? "Inserisci la tua email e ti invieremo un link per reimpostare la password."
-      : "Enter your email and we'll send you a link to reset your password.",
-    emailLabel: "Email",
-    emailPlaceholder: isItalian ? "tua@email.com" : "your@email.com",
-    sendIdle: isItalian ? "Invia link di reset" : "Send reset link",
-    sendLoading: isItalian ? "Invio in corso..." : "Sending...",
-    errorTitle: isItalian ? "Errore" : "Error",
-    emailRequired: isItalian ? "Inserisci la tua email." : "Please enter your email.",
-    sentTitle: isItalian ? "Email inviata" : "Email sent",
-    sentDesc: isItalian
-      ? "Controlla la tua casella per il link di reset password."
-      : "Check your inbox for the password reset link.",
-  };
+  const tr = getTranslation(locale as SupportedLocale);
+  const t = tr.authPasswordRecovery.forgot;
+  const errorTitle = tr.auth.toast.error;
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedEmail = email?.trim();
     if (!trimmedEmail) {
-      toast({ title: t.errorTitle, description: t.emailRequired, variant: "destructive" });
+      toast({ title: errorTitle, description: t.emailRequired, variant: "destructive" });
       return;
     }
 
@@ -61,8 +43,9 @@ export default function ForgotPasswordPage() {
       setSent(true);
       toast({ title: t.sentTitle, description: t.sentDesc });
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : (isItalian ? "Si è verificato un errore." : "An error occurred.");
-      toast({ title: t.errorTitle, description: msg, variant: "destructive" });
+      const msg =
+        err instanceof Error ? err.message : tr.authPasswordRecovery.genericError;
+      toast({ title: errorTitle, description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -84,7 +67,7 @@ export default function ForgotPasswordPage() {
         className="absolute top-4 left-4 inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        <span>{t.backToLogin}</span>
+        <span>{tr.authPasswordRecovery.backToLogin}</span>
       </Link>
 
       <div className="w-full max-w-md relative z-10">
@@ -102,7 +85,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center py-4">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
                 <Link href="/auth/login">
-                  <Button variant="outline" className="w-full">{t.backToLogin}</Button>
+                  <Button variant="outline" className="w-full">{tr.authPasswordRecovery.backToLogin}</Button>
                 </Link>
               </div>
             ) : (

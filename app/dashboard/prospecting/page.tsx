@@ -679,7 +679,7 @@ export default function ProspectingPage() {
             ? { label: planBadgeLabel(userPlan), variant: "secondary" }
             : undefined
         }
-        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/arbitrage" />}
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/filters" />}
         actions={
           <div className="flex flex-wrap items-center gap-3 min-h-11 touch-manipulation">
             <Link href="/dashboard" aria-label={t.backAria}>

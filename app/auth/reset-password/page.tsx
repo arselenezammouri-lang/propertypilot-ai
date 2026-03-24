@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,46 +10,23 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ArrowLeft, Lock, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 function ResetPasswordClient() {
   const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const tr = getTranslation(locale as SupportedLocale);
+  const t = tr.authPasswordRecovery.reset;
+  const errorTitle = tr.auth.toast.error;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { toast } = useToast();
   const supabase = createClient();
-
-  const t = {
-    backToLogin: isItalian ? "Torna al Login" : "Back to Login",
-    pageTitle: isItalian ? "Nuova password" : "New password",
-    pageDesc: isItalian
-      ? "Inserisci la nuova password per il tuo account."
-      : "Enter the new password for your account.",
-    passwordLabel: isItalian ? "Nuova password" : "New password",
-    passwordPlaceholder: isItalian ? "Minimo 8 caratteri" : "At least 8 characters",
-    confirmLabel: isItalian ? "Conferma password" : "Confirm password",
-    confirmPlaceholder: isItalian ? "Ripeti la password" : "Repeat the password",
-    updateIdle: isItalian ? "Aggiorna password" : "Update password",
-    updateLoading: isItalian ? "Aggiornamento..." : "Updating...",
-    successTitle: isItalian ? "Password aggiornata!" : "Password updated!",
-    redirecting: isItalian ? "Reindirizzamento al login..." : "Redirecting to login...",
-    errorTitle: isItalian ? "Errore" : "Error",
-    minLength: isItalian ? "La password deve avere almeno 8 caratteri." : "Password must be at least 8 characters.",
-    passwordMismatch: isItalian ? "Le password non coincidono." : "Passwords do not match.",
-    updatedTitle: isItalian ? "Password aggiornata" : "Password updated",
-    updatedDesc: isItalian
-      ? "Ora puoi accedere con la nuova password."
-      : "You can now sign in with your new password.",
-  };
-
-  const hash = typeof window !== "undefined" ? window.location.hash : "";
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,11 +34,11 @@ function ResetPasswordClient() {
     const confirm = confirmPassword?.trim();
 
     if (!pwd || pwd.length < 8) {
-      toast({ title: t.errorTitle, description: t.minLength, variant: "destructive" });
+      toast({ title: errorTitle, description: t.minLength, variant: "destructive" });
       return;
     }
     if (pwd !== confirm) {
-      toast({ title: t.errorTitle, description: t.passwordMismatch, variant: "destructive" });
+      toast({ title: errorTitle, description: t.passwordMismatch, variant: "destructive" });
       return;
     }
 
@@ -73,8 +50,9 @@ function ResetPasswordClient() {
       toast({ title: t.updatedTitle, description: t.updatedDesc });
       setTimeout(() => router.replace("/auth/login"), 2000);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : (isItalian ? "Si è verificato un errore." : "An error occurred.");
-      toast({ title: t.errorTitle, description: msg, variant: "destructive" });
+      const msg =
+        err instanceof Error ? err.message : tr.authPasswordRecovery.genericError;
+      toast({ title: errorTitle, description: msg, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -89,7 +67,7 @@ function ResetPasswordClient() {
         </div>
         <div className="absolute top-4 right-4"><ThemeToggle /></div>
         <Link href="/auth/login" className="absolute top-4 left-4 inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors">
-          <ArrowLeft className="h-4 w-4" /><span>{t.backToLogin}</span>
+          <ArrowLeft className="h-4 w-4" /><span>{tr.authPasswordRecovery.backToLogin}</span>
         </Link>
         <div className="w-full max-w-md relative z-10">
           <Card className="border border-white/10 bg-[#0a0a0a]/95 backdrop-blur-md">
@@ -114,7 +92,7 @@ function ResetPasswordClient() {
       </div>
       <div className="absolute top-4 right-4"><ThemeToggle /></div>
       <Link href="/auth/login" className="absolute top-4 left-4 inline-flex items-center space-x-2 text-sm text-gray-400 hover:text-white transition-colors">
-        <ArrowLeft className="h-4 w-4" /><span>{t.backToLogin}</span>
+        <ArrowLeft className="h-4 w-4" /><span>{tr.authPasswordRecovery.backToLogin}</span>
       </Link>
       <div className="w-full max-w-md relative z-10">
         <Card className="border border-white/10 bg-[#0a0a0a]/95 backdrop-blur-md">
@@ -143,7 +121,7 @@ function ResetPasswordClient() {
                     autoComplete="new-password"
                     className="pl-10 pr-10 bg-white/5 border-white/10 text-white"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white" aria-label={showPassword ? "Hide password" : "Show password"}>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white" aria-label={showPassword ? t.hidePasswordAria : t.showPasswordAria}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>

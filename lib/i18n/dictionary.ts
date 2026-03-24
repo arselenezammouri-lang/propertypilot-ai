@@ -3,6 +3,18 @@
  * Support: IT, EN, ES, FR, DE, PT, AR
  */
 
+import type { AuthPasswordRecoveryUi } from '@/lib/i18n/auth-password-recovery-ui';
+import {
+  authPasswordRecoveryUiEn,
+  authPasswordRecoveryUiIt,
+} from '@/lib/i18n/auth-password-recovery-ui';
+import {
+  authPasswordRecoveryUiAr,
+  authPasswordRecoveryUiDe,
+  authPasswordRecoveryUiEs,
+  authPasswordRecoveryUiFr,
+  authPasswordRecoveryUiPt,
+} from '@/lib/i18n/auth-password-recovery-locales';
 import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
 import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
 import {
@@ -842,6 +854,9 @@ export interface TranslationDictionary {
       turnstileMisconfigured: string;
     };
   };
+
+  /** Forgot / reset password (auth routes) — all 7 locales */
+  authPasswordRecovery: AuthPasswordRecoveryUi;
   
   // Aura VR Generator
   auraVR: {
@@ -1874,6 +1889,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileMisconfigured: 'Verifica di sicurezza non configurata correttamente sul server. Contatta il supporto.',
       },
     },
+    authPasswordRecovery: authPasswordRecoveryUiIt,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Trasforma un video dello smartphone in un tour VR immersivo 3D',
@@ -2888,6 +2904,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileMisconfigured: 'Security check is misconfigured on the server. Please contact support.',
       },
     },
+    authPasswordRecovery: authPasswordRecoveryUiEn,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Transform a smartphone video into an immersive 3D VR tour',
@@ -3667,6 +3684,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     auth: authUiEs,
+    authPasswordRecovery: authPasswordRecoveryUiEs,
     pendingCheckoutBanner: pendingCheckoutUiEs,
     ariaLimitModal: ariaLimitModalUiEs,
     dashboardNav: dashboardNavUiEs,
@@ -4309,6 +4327,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     auth: authUiFr,
+    authPasswordRecovery: authPasswordRecoveryUiFr,
     pendingCheckoutBanner: pendingCheckoutUiFr,
     ariaLimitModal: ariaLimitModalUiFr,
     dashboardNav: dashboardNavUiFr,
@@ -4951,6 +4970,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     auth: authUiDe,
+    authPasswordRecovery: authPasswordRecoveryUiDe,
     pendingCheckoutBanner: pendingCheckoutUiDe,
     ariaLimitModal: ariaLimitModalUiDe,
     dashboardNav: dashboardNavUiDe,
@@ -5593,6 +5613,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     auth: authUiPt,
+    authPasswordRecovery: authPasswordRecoveryUiPt,
     pendingCheckoutBanner: pendingCheckoutUiPt,
     ariaLimitModal: ariaLimitModalUiPt,
     dashboardNav: dashboardNavUiPt,
@@ -5960,6 +5981,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     auth: authUiAr,
+    authPasswordRecovery: authPasswordRecoveryUiAr,
     pendingCheckoutBanner: pendingCheckoutUiAr,
     ariaLimitModal: ariaLimitModalUiAr,
     dashboardNav: dashboardNavUiAr,
