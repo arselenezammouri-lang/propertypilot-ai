@@ -1,7 +1,10 @@
 import {
   buildAboutPageMetadata,
+  buildAuthLoginPageMetadata,
+  buildAuthSignupPageMetadata,
   buildBlogIndexMetadata,
   buildBlogPostPageMetadata,
+  buildContactAliasPageMetadata,
   buildContactPageMetadata,
   buildDemoPageMetadata,
   buildDocArticlePageMetadata,
@@ -52,5 +55,23 @@ describe('page-metadata-builders', () => {
     expect(meta!.title).toContain('Benvenuto');
     expect(meta!.alternates?.canonical).toContain(slug);
     expect(buildDocArticlePageMetadata('it', 'non-existent-slug-xyz')).toBeNull();
+  });
+
+  it('auth login and signup metadata differ by locale and set canonical', () => {
+    expect(buildAuthLoginPageMetadata('it').title).not.toBe(
+      buildAuthLoginPageMetadata('en').title
+    );
+    expect(buildAuthLoginPageMetadata('en').alternates?.canonical).toMatch(/\/auth\/login$/);
+    expect(buildAuthSignupPageMetadata('it').title).not.toBe(
+      buildAuthSignupPageMetadata('en').title
+    );
+    expect(buildAuthSignupPageMetadata('en').alternates?.canonical).toMatch(/\/auth\/signup$/);
+  });
+
+  it('contact alias uses same title as contatti but canonical /contatti', () => {
+    const itAlias = buildContactAliasPageMetadata('it');
+    const itMain = buildContactPageMetadata('it');
+    expect(itAlias.title).toBe(itMain.title);
+    expect(itAlias.alternates?.canonical).toMatch(/\/contatti$/);
   });
 });

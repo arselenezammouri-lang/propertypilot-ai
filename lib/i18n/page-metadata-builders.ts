@@ -123,6 +123,36 @@ export function buildContactPageMetadata(locale: SupportedLocale): Metadata {
   };
 }
 
+/** `/contact` → 301 to `/contatti`; SEO consolidates on the canonical locale URL. */
+export function buildContactAliasPageMetadata(locale: SupportedLocale): Metadata {
+  const base = getBaseUrl();
+  const inner = buildContactPageMetadata(locale);
+  return {
+    ...inner,
+    alternates: { canonical: `${base}/contatti` },
+  };
+}
+
+export function buildAuthLoginPageMetadata(locale: SupportedLocale): Metadata {
+  const a = getTranslation(locale).auth.login;
+  const base = getBaseUrl();
+  return {
+    title: a.title,
+    description: clipDescription(a.subtitle, a.secureNote),
+    alternates: { canonical: `${base}/auth/login` },
+  };
+}
+
+export function buildAuthSignupPageMetadata(locale: SupportedLocale): Metadata {
+  const s = getTranslation(locale).auth.signup;
+  const base = getBaseUrl();
+  return {
+    title: s.title,
+    description: clipDescription(s.subtitle, s.freePlanIncludes, s.noCreditCard),
+    alternates: { canonical: `${base}/auth/signup` },
+  };
+}
+
 export function buildPricingPageMetadata(locale: SupportedLocale): Metadata {
   const tr = getTranslation(locale);
   const fallback = getTranslation('en').landing!.pricingPage;
