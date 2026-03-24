@@ -73,6 +73,12 @@ export type AuthUi = {
     invalidEmail: string;
     /** Fetch / connectivity failures */
     networkError: string;
+    /** Session / JWT expired — re-login */
+    sessionExpired: string;
+    /** Sign-ups disabled on project */
+    signupDisabled: string;
+    /** OAuth / social login failed */
+    oauthFailed: string;
   };
 };
 
@@ -152,6 +158,9 @@ export const authUiEs: AuthUi = {
     passwordTooShort: 'La contraseña no cumple los requisitos de longitud. Usa al menos 8 caracteres.',
     invalidEmail: 'Introduce una dirección de correo válida.',
     networkError: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.',
+    sessionExpired: 'Tu sesión ha caducado. Vuelve a iniciar sesión.',
+    signupDisabled: 'El registro de nuevas cuentas no está disponible en este momento.',
+    oauthFailed: 'No se pudo completar el inicio de sesión social. Inténtalo de nuevo o usa email y contraseña.',
   },
 };
 
@@ -220,6 +229,9 @@ export const authUiFr: AuthUi = {
     passwordTooShort: 'Le mot de passe est trop court. Utilisez au moins 8 caractères.',
     invalidEmail: 'Saisissez une adresse e-mail valide.',
     networkError: 'Erreur de connexion. Vérifiez votre réseau et réessayez.',
+    sessionExpired: 'Votre session a expiré. Reconnectez-vous.',
+    signupDisabled: 'La création de compte n’est pas disponible pour le moment.',
+    oauthFailed: 'La connexion sociale a échoué. Réessayez ou utilisez e-mail et mot de passe.',
   },
 };
 
@@ -288,6 +300,9 @@ export const authUiDe: AuthUi = {
     passwordTooShort: 'Das Passwort ist zu kurz. Verwenden Sie mindestens 8 Zeichen.',
     invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
     networkError: 'Verbindungsfehler. Prüfen Sie Ihr Netzwerk und versuchen Sie es erneut.',
+    sessionExpired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
+    signupDisabled: 'Neue Registrierungen sind derzeit nicht möglich.',
+    oauthFailed: 'Social-Login fehlgeschlagen. Bitte erneut versuchen oder E-Mail und Passwort nutzen.',
   },
 };
 
@@ -356,6 +371,9 @@ export const authUiPt: AuthUi = {
     passwordTooShort: 'A palavra-passe é demasiado curta. Use pelo menos 8 caracteres.',
     invalidEmail: 'Introduza um endereço de e-mail válido.',
     networkError: 'Erro de ligação. Verifique a rede e tente novamente.',
+    sessionExpired: 'A sua sessão expirou. Inicie sessão novamente.',
+    signupDisabled: 'O registo de novas contas não está disponível de momento.',
+    oauthFailed: 'Não foi possível concluir o login social. Tente novamente ou use e-mail e palavra-passe.',
   },
 };
 
@@ -424,5 +442,8 @@ export const authUiAr: AuthUi = {
     passwordTooShort: 'كلمة المرور قصيرة جداً. استخدم 8 أحرف على الأقل.',
     invalidEmail: 'أدخل عنوان بريد إلكتروني صالحاً.',
     networkError: 'خطأ في الاتصال. تحقق من الشبكة وحاول مرة أخرى.',
+    sessionExpired: 'انتهت جلستك. سجّل الدخول مرة أخرى.',
+    signupDisabled: 'تسجيل حسابات جديدة غير متاح حالياً.',
+    oauthFailed: 'تعذر إكمال تسجيل الدخول الاجتماعي. حاول مرة أخرى أو استخدم البريد وكلمة المرور.',
   },
 };

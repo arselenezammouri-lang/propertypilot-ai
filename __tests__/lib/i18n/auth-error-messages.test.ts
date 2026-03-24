@@ -53,6 +53,16 @@ describe('auth-error-messages', () => {
     expect(extractAuthErrorCode(new Error('x'))).toBeUndefined();
   });
 
+  it('maps session_expired and signup_disabled by code', () => {
+    expect(resolveAuthErrorDescription('', itToast, 'login', 'session_expired')).toBe(
+      itToast.sessionExpired
+    );
+    expect(resolveAuthErrorDescription('', itToast, 'signup', 'signup_disabled')).toBe(
+      itToast.signupDisabled
+    );
+    expect(resolveAuthErrorDescription('', itToast, 'login', 'oauth_error')).toBe(itToast.oauthFailed);
+  });
+
   it('IT differs from EN for resolved credential message', () => {
     const enToast = getTranslation('en').auth.toast;
     expect(

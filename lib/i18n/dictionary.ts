@@ -895,6 +895,9 @@ export interface TranslationDictionary {
       passwordTooShort: string;
       invalidEmail: string;
       networkError: string;
+      sessionExpired: string;
+      signupDisabled: string;
+      oauthFailed: string;
     };
   };
 
@@ -1954,6 +1957,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         passwordTooShort: 'La password non rispetta la lunghezza minima. Usa almeno 8 caratteri.',
         invalidEmail: 'Inserisci un indirizzo email valido.',
         networkError: 'Errore di connessione. Controlla la rete e riprova.',
+        sessionExpired: 'Sessione scaduta. Accedi di nuovo.',
+        signupDisabled: 'La registrazione di nuovi account non è al momento disponibile.',
+        oauthFailed: 'Accesso social non riuscito. Riprova oppure usa email e password.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiIt,
@@ -2989,6 +2995,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         passwordTooShort: 'Password does not meet length requirements. Use at least 8 characters.',
         invalidEmail: 'Enter a valid email address.',
         networkError: 'Connection error. Check your network and try again.',
+        sessionExpired: 'Your session has expired. Please sign in again.',
+        signupDisabled: 'New account sign-ups are not available right now.',
+        oauthFailed: 'Social sign-in could not be completed. Try again or use email and password.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiEn,

@@ -16,6 +16,7 @@ import {
   buildDevTestErrorPageMetadata,
   buildDocArticlePageMetadata,
   buildDocsHubPageMetadata,
+  buildNotFoundPageMetadata,
   buildPricingPageMetadata,
 } from '@/lib/i18n/page-metadata-builders';
 
@@ -118,6 +119,14 @@ describe('page-metadata-builders', () => {
     const itMain = buildContactPageMetadata('it');
     expect(itAlias.title).toBe(itMain.title);
     expect(itAlias.alternates?.canonical).toMatch(/\/contatti$/);
+  });
+
+  it('not-found metadata is localized and noindex', () => {
+    const itN = buildNotFoundPageMetadata('it');
+    const enN = buildNotFoundPageMetadata('en');
+    expect(itN.title).not.toBe(enN.title);
+    expect(itN.robots).toEqual({ index: false, follow: true });
+    expect((itN.description as string).length).toBeGreaterThan(10);
   });
 
   it('compliance page metadata is localized with canonical', () => {

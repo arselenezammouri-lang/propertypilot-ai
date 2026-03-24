@@ -33,6 +33,19 @@ function mapErrorCodeToDescription(
       return t.rateLimitMsg;
     case 'invalid_credentials':
       return generic;
+    case 'session_expired':
+    case 'jwt_expired':
+    case 'refresh_token_not_found':
+      return t.sessionExpired;
+    case 'signup_disabled':
+      return t.signupDisabled;
+    case 'flow_state_expired':
+    case 'bad_oauth_state':
+    case 'oauth_error':
+    case 'provider_disabled':
+      return t.oauthFailed;
+    case 'identity_already_exists':
+      return t.userAlreadyRegistered;
     default:
       return null;
   }
@@ -58,6 +71,33 @@ export function resolveAuthErrorDescription(
   }
 
   if (!m) return generic;
+
+  if (
+    lower.includes('session expired') ||
+    lower.includes('jwt expired') ||
+    lower.includes('refresh token') ||
+    lower.includes('invalid refresh token')
+  ) {
+    return t.sessionExpired;
+  }
+
+  if (
+    lower.includes('sign up') &&
+    (lower.includes('disabled') || lower.includes('not allowed') || lower.includes('not enabled'))
+  ) {
+    return t.signupDisabled;
+  }
+
+  if (lower.includes('identity already exists')) {
+    return t.userAlreadyRegistered;
+  }
+
+  if (
+    lower.includes('oauth') ||
+    (lower.includes('provider') && lower.includes('error'))
+  ) {
+    return t.oauthFailed;
+  }
 
   if (
     lower.includes('rate limit') ||

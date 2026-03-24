@@ -153,6 +153,16 @@ export function buildCompliancePageMetadata(locale: SupportedLocale): Metadata {
   };
 }
 
+/** Global 404 — localized title/description; do not index missing URLs. */
+export function buildNotFoundPageMetadata(locale: SupportedLocale): Metadata {
+  const e = getTranslation(locale).errors;
+  return {
+    title: e.pageNotFound,
+    description: clipDescription(e.pageNotFoundDesc),
+    robots: { index: false, follow: true },
+  };
+}
+
 /** `/contact` → 301 to `/contatti`; SEO consolidates on the canonical locale URL. */
 export function buildContactAliasPageMetadata(locale: SupportedLocale): Metadata {
   const inner = buildContactPageMetadata(locale);
