@@ -142,6 +142,16 @@ export function buildContactPageMetadata(locale: SupportedLocale): Metadata {
   };
 }
 
+/** `/compliance` — legal reference documents by country (public). */
+export function buildCompliancePageMetadata(locale: SupportedLocale): Metadata {
+  const c = getTranslation(locale).complianceCenter;
+  return {
+    title: c.pageTitle,
+    description: clipDescription(c.pageSubtitle, c.encDesc, c.gdprDesc),
+    alternates: { canonical: buildCanonicalPath('/compliance') },
+  };
+}
+
 /** `/contact` → 301 to `/contatti`; SEO consolidates on the canonical locale URL. */
 export function buildContactAliasPageMetadata(locale: SupportedLocale): Metadata {
   const inner = buildContactPageMetadata(locale);

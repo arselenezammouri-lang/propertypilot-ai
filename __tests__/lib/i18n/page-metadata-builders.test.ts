@@ -6,6 +6,7 @@ import {
   buildBlogIndexMetadata,
   buildBlogPostPageMetadata,
   buildCanonicalPath,
+  buildCompliancePageMetadata,
   buildContactAliasPageMetadata,
   buildContactPageMetadata,
   buildDemoPageMetadata,
@@ -84,5 +85,13 @@ describe('page-metadata-builders', () => {
     const itMain = buildContactPageMetadata('it');
     expect(itAlias.title).toBe(itMain.title);
     expect(itAlias.alternates?.canonical).toMatch(/\/contatti$/);
+  });
+
+  it('compliance page metadata is localized with canonical', () => {
+    const itC = buildCompliancePageMetadata('it');
+    const enC = buildCompliancePageMetadata('en');
+    expect(itC.title).not.toBe(enC.title);
+    expect(itC.alternates?.canonical).toMatch(/\/compliance$/);
+    expect((itC.description as string).length).toBeGreaterThan(20);
   });
 });
