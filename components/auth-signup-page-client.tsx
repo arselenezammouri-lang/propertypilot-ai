@@ -13,7 +13,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { isAuthRateLimitedMessage, resolveAuthErrorDescription } from "@/lib/i18n/auth-error-messages";
+import {
+  extractAuthErrorCode,
+  isAuthRateLimited,
+  resolveAuthErrorDescription,
+} from "@/lib/i18n/auth-error-messages";
 import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff } from "lucide-react";
 import { TurnstileWidget, getTurnstileSiteKey } from "@/components/turnstile-widget";
 
@@ -185,15 +189,16 @@ function SignupClient() {
       
       router.push("/dashboard");
       router.refresh();
-    } catch (error: any) {
-      const errorMessage = typeof error?.message === 'string' ? error.message : '';
-      const isRateLimit = isAuthRateLimitedMessage(errorMessage);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : '';
+      const errorCode = extractAuthErrorCode(error);
+      const isRateLimit = isAuthRateLimited(errorMessage, errorCode);
 
       toast({
         title: isRateLimit ? t.auth.toast.tooManyAttempts : t.auth.toast.error,
         description: isRateLimit
           ? t.auth.toast.rateLimitMsg
-          : resolveAuthErrorDescription(errorMessage, t.auth.toast, 'signup'),
+          : resolveAuthErrorDescription(errorMessage, t.auth.toast, 'signup', errorCode),
         variant: "destructive",
       });
     } finally {
