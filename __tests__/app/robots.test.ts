@@ -1,4 +1,7 @@
-import { buildRobotsMetadata, shouldBlockAllIndexing } from '@/lib/seo/build-robots';
+import {
+  buildRobotsMetadata,
+  shouldBlockAllIndexing,
+} from '@/lib/seo/build-robots';
 import { getBaseUrl } from '@/lib/env';
 
 describe('buildRobotsMetadata', () => {
@@ -30,6 +33,7 @@ describe('buildRobotsMetadata', () => {
     delete process.env.NEXT_PUBLIC_BLOCK_SEARCH_INDEXING;
     delete process.env.VERCEL_ENV;
 
+    expect(shouldBlockAllIndexing()).toBe(false);
     const r = buildRobotsMetadata();
     const disallow = r.rules?.[0]?.disallow;
     expect(Array.isArray(disallow)).toBe(true);

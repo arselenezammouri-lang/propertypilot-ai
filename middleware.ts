@@ -18,6 +18,14 @@ import {
   isUpstashAiUserRateLimitConfigured,
   limitAiUserRequestUpstash,
 } from '@/lib/security/upstash-ai-user-rate-limit';
+import { shouldBlockAllIndexing } from '@/lib/seo/build-robots';
+
+function withNoIndexWhenBlocked(response: NextResponse): NextResponse {
+  if (shouldBlockAllIndexing()) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
+  return response;
+}
 
 function jsonWithSession(
   sessionResponse: NextResponse,
@@ -67,9 +75,11 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
-          'Retry-After': String(upstash.retryAfterSec),
-        });
+        return withNoIndexWhenBlocked(
+          jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+            'Retry-After': String(upstash.retryAfterSec),
+          })
+        );
       }
     }
 
@@ -90,9 +100,11 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
-          'Retry-After': String(aiUp.retryAfterSec),
-        });
+        return withNoIndexWhenBlocked(
+          jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+            'Retry-After': String(aiUp.retryAfterSec),
+          })
+        );
       }
     }
 
@@ -118,9 +130,11 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
-          'Retry-After': String(userUp.retryAfterSec),
-        });
+        return withNoIndexWhenBlocked(
+          jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+            'Retry-After': String(userUp.retryAfterSec),
+          })
+        );
       }
     }
 
@@ -149,7 +163,9 @@ export async function middleware(request: NextRequest) {
           },
           { ipHash }
         );
-        return jsonWithSession(sessionResponse, { error: 'Forbidden' }, 403);
+        return withNoIndexWhenBlocked(
+          jsonWithSession(sessionResponse, { error: 'Forbidden' }, 403)
+        );
       }
       logSecurityAudit(
         {
@@ -161,15 +177,17 @@ export async function middleware(request: NextRequest) {
         },
         { ipHash }
       );
-      return jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
-        'Retry-After': String(guard.retryAfterSec),
-      });
+      return withNoIndexWhenBlocked(
+        jsonWithSession(sessionResponse, { error: 'Too many requests' }, 429, {
+          'Retry-After': String(guard.retryAfterSec),
+        })
+      );
     }
 
-    return sessionResponse;
+    return withNoIndexWhenBlocked(sessionResponse);
   }
 
-  return await updateSession(request);
+  return withNoIndexWhenBlocked(await updateSession(request));
 }
 
 export const config = {
