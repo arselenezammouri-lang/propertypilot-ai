@@ -507,7 +507,7 @@ const sectionsEn: DocsHubSection[] = [
 ];
 
 export const docsHubUiIt: DocsHubUi = {
-  pageTitle: 'Documentation Hub',
+  pageTitle: 'Centro documentazione',
   pageSubtitle: 'Guide complete per dominare PropertyPilot AI',
   searchPlaceholder: 'Cerca nelle guide…',
   articleSingular: 'articolo',

@@ -127,8 +127,11 @@ export function buildMarketingHomeMetadata(locale: SupportedLocale): Metadata {
 export function buildPlatformPageMetadata(locale: SupportedLocale): Metadata {
   const L = getTranslation(locale).landing!;
   const f = L.features;
+  const homeCanonical = `${getBaseUrl()}/`;
   return {
     title: f.title,
     description: clipMetaDescription(f.subtitle, f.aiListing.description),
+    /** Same hero stack as `/`; consolidate ranking signals on the homepage URL. */
+    alternates: { canonical: homeCanonical },
   };
 }

@@ -4,6 +4,8 @@ import {
   buildBlogPostPageMetadata,
   buildContactPageMetadata,
   buildDemoPageMetadata,
+  buildDocArticlePageMetadata,
+  buildDocsHubPageMetadata,
   buildPricingPageMetadata,
 } from '@/lib/i18n/page-metadata-builders';
 
@@ -34,5 +36,21 @@ describe('page-metadata-builders', () => {
     expect((en.description as string).length).toBeGreaterThan(10);
     const it = buildBlogPostPageMetadata('it', slug);
     expect(it.title).toBe('Come scrivere annunci che convertono');
+  });
+
+  it('docs hub metadata is localized and has canonical', () => {
+    const itHub = buildDocsHubPageMetadata('it');
+    const enHub = buildDocsHubPageMetadata('en');
+    expect(itHub.title).not.toBe(enHub.title);
+    expect(itHub.alternates?.canonical).toMatch(/\/docs$/);
+  });
+
+  it('doc article metadata resolves welcome slug', () => {
+    const slug = 'getting-started/welcome';
+    const meta = buildDocArticlePageMetadata('it', slug);
+    expect(meta).not.toBeNull();
+    expect(meta!.title).toContain('Benvenuto');
+    expect(meta!.alternates?.canonical).toContain(slug);
+    expect(buildDocArticlePageMetadata('it', 'non-existent-slug-xyz')).toBeNull();
   });
 });

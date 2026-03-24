@@ -29,8 +29,6 @@ import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { DOCS_INDEX_QUICK_LINK_PATHS } from "@/lib/docs/doc-static-links";
 import type { DocsHubSection } from "@/lib/i18n/docs-hub-ui";
 
-export const dynamic = "force-static";
-
 const SECTION_ICONS: Record<DocsHubSection["id"], ReactNode> = {
   "getting-started": <Book className="h-5 w-5" />,
   crm: <Users className="h-5 w-5" />,
@@ -47,7 +45,7 @@ const SECTION_ICONS: Record<DocsHubSection["id"], ReactNode> = {
   competitor: <TrendingDown className="h-5 w-5" />,
 };
 
-export default function DocumentationPage() {
+export function DocsHubPageClient() {
   const { locale } = useLocale();
   const [searchQuery, setSearchQuery] = useState("");
 

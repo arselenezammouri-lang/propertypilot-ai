@@ -1,3 +1,4 @@
+import { getBaseUrl } from '@/lib/env';
 import { getTranslation } from '@/lib/i18n/dictionary';
 import {
   buildMarketingHomeMetadata,
@@ -24,5 +25,10 @@ describe('root-site-metadata', () => {
     const en = buildPlatformPageMetadata('en');
     expect(en.title).toBe(getTranslation('en').landing!.features.title);
     expect((en.description as string).length).toBeGreaterThan(15);
+  });
+
+  it('platform canonical points to homepage URL', () => {
+    const base = getBaseUrl().replace(/\/$/, '');
+    expect(buildPlatformPageMetadata('en').alternates?.canonical).toBe(`${base}/`);
   });
 });

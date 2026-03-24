@@ -1,6 +1,19 @@
 import type { Metadata } from 'next';
+import type { Locale } from '@/lib/i18n/config';
 import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
 import { titleFromBlogSlug } from '@/lib/i18n/blog-post-slug';
+import { getBaseUrl } from '@/lib/env';
+import { docArticles } from '@/lib/docs/doc-content';
+import { resolveDocArticle } from '@/lib/docs/doc-article';
+
+function firstMeaningfulLineFromDocBody(body: string): string {
+  const line =
+    body
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .find((l) => l.length > 0) ?? '';
+  return line.replace(/^#+\s*/, '').trim();
+}
 
 const MAX_DESC = 158;
 
@@ -118,5 +131,34 @@ export function buildPricingPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title,
     description: clipDescription(pp.subtitle, pp.trustTrial, pp.trustCancel),
+  };
+}
+
+/** `/docs` — hub title and subtitle from dictionary. */
+export function buildDocsHubPageMetadata(locale: SupportedLocale): Metadata {
+  const h = getTranslation(locale).docsHub;
+  const base = getBaseUrl();
+  return {
+    title: h.pageTitle,
+    description: clipDescription(h.pageSubtitle),
+    alternates: { canonical: `${base}/docs` },
+  };
+}
+
+/** `/docs/[slug]` — article title + first content line as description. */
+export function buildDocArticlePageMetadata(
+  locale: SupportedLocale,
+  slug: string
+): Metadata | null {
+  const entry = docArticles[slug];
+  if (!entry) return null;
+  const slice = resolveDocArticle(entry, locale as Locale);
+  if (!slice) return null;
+  const base = getBaseUrl();
+  const lead = firstMeaningfulLineFromDocBody(slice.content);
+  return {
+    title: slice.title,
+    description: clipDescription(slice.title, lead),
+    alternates: { canonical: `${base}/docs/${slug}` },
   };
 }
