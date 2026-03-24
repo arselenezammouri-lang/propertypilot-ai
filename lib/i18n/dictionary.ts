@@ -3,6 +3,18 @@
  * Support: IT, EN, ES, FR, DE, PT, AR
  */
 
+import type { DevTestErrorUi } from '@/lib/i18n/dev-test-error-ui';
+import {
+  devTestErrorUiEn,
+  devTestErrorUiIt,
+} from '@/lib/i18n/dev-test-error-ui';
+import {
+  devTestErrorUiAr,
+  devTestErrorUiDe,
+  devTestErrorUiEs,
+  devTestErrorUiFr,
+  devTestErrorUiPt,
+} from '@/lib/i18n/dev-test-error-locales';
 import type { ComplianceCenterUi } from '@/lib/i18n/compliance-center-ui';
 import {
   complianceCenterUiEn,
@@ -1034,6 +1046,9 @@ export interface TranslationDictionary {
     loading: string;
     error: string;
   };
+
+  /** Dev route `/dashboard/test-error` — all 7 locales */
+  devTestError: DevTestErrorUi;
 
   billing: {
     title: string;
@@ -2078,6 +2093,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Caricamento...',
       error: 'Errore',
     },
+    devTestError: devTestErrorUiIt,
     billing: {
       title: 'Gestione',
       titleAccent: 'Abbonamento',
@@ -3093,6 +3109,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Loading...',
       error: 'Error',
     },
+    devTestError: devTestErrorUiEn,
     billing: {
       title: 'Subscription',
       titleAccent: 'Management',
@@ -3805,6 +3822,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiEs,
     errors: errorsUiEs,
     common: commonFullEs,
+    devTestError: devTestErrorUiEs,
     billing: billingUiEs,
     demo: demoUiEs,
     contact: contactUiEs,
@@ -4449,6 +4467,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiFr,
     errors: errorsUiFr,
     common: commonFullFr,
+    devTestError: devTestErrorUiFr,
     billing: billingUiFr,
     demo: demoUiFr,
     contact: contactUiFr,
@@ -5093,6 +5112,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiDe,
     errors: errorsUiDe,
     common: commonFullDe,
+    devTestError: devTestErrorUiDe,
     billing: billingUiDe,
     demo: demoUiDe,
     contact: contactUiDe,
@@ -5737,6 +5757,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiPt,
     errors: errorsUiPt,
     common: commonFullPt,
+    devTestError: devTestErrorUiPt,
     billing: billingUiPt,
     demo: demoUiPt,
     contact: contactUiPt,
@@ -6106,6 +6127,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     prospectingModals: prospectingModalsUiAr,
     errors: errorsUiAr,
     common: commonFullAr,
+    devTestError: devTestErrorUiAr,
     billing: billingUiAr,
     demo: demoUiAr,
     contact: contactUiAr,
