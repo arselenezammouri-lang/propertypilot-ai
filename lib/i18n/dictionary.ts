@@ -1052,6 +1052,10 @@ export interface TranslationDictionary {
     pageNotFound: string;
     pageNotFoundDesc: string;
     dashboard: string;
+    /** `/dashboard/error.tsx` boundary */
+    dashboardAreaErrorTitle: string;
+    dashboardAreaErrorDesc: string;
+    backToDashboard: string;
   };
 
   // Common Actions
@@ -2056,6 +2060,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       pageNotFound: 'Pagina non trovata',
       pageNotFoundDesc: 'La pagina che stai cercando non esiste o è stata spostata.',
       dashboard: 'Dashboard',
+      dashboardAreaErrorTitle: 'Qualcosa è andato storto',
+      dashboardAreaErrorDesc:
+        'Si è verificato un errore nella dashboard. Puoi riprovare o tornare alla home della dashboard.',
+      backToDashboard: 'Torna alla dashboard',
     },
     demo: {
       nav: { pricing: 'Prezzi', login: 'Login', startFree: 'Inizia Gratis' },
@@ -3093,6 +3101,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       pageNotFound: 'Page not found',
       pageNotFoundDesc: 'The page you are looking for does not exist or has been moved.',
       dashboard: 'Dashboard',
+      dashboardAreaErrorTitle: 'Something went wrong',
+      dashboardAreaErrorDesc:
+        'An error occurred in the dashboard. You can try again or return to the dashboard home.',
+      backToDashboard: 'Back to dashboard',
     },
     demo: {
       nav: { pricing: 'Pricing', login: 'Login', startFree: 'Start Free' },

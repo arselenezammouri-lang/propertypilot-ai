@@ -13,6 +13,9 @@ type Errors = {
   pageNotFound: string;
   pageNotFoundDesc: string;
   dashboard: string;
+  dashboardAreaErrorTitle: string;
+  dashboardAreaErrorDesc: string;
+  backToDashboard: string;
 };
 
 type Common = {
@@ -39,6 +42,10 @@ export const errorsUiEs: Errors = {
   pageNotFound: 'Página no encontrada',
   pageNotFoundDesc: 'La página que buscas no existe o se ha movido.',
   dashboard: 'Panel',
+  dashboardAreaErrorTitle: 'Algo salió mal',
+  dashboardAreaErrorDesc:
+    'Ocurrió un error en el panel. Puedes reintentar o volver al inicio del panel.',
+  backToDashboard: 'Volver al panel',
 };
 
 export const commonFullEs: Common = {
@@ -65,6 +72,10 @@ export const errorsUiFr: Errors = {
   pageNotFound: 'Page introuvable',
   pageNotFoundDesc: 'La page que vous recherchez n’existe pas ou a été déplacée.',
   dashboard: 'Tableau de bord',
+  dashboardAreaErrorTitle: 'Une erreur s’est produite',
+  dashboardAreaErrorDesc:
+    'Une erreur s’est produite dans le tableau de bord. Réessayez ou revenez à l’accueil du tableau de bord.',
+  backToDashboard: 'Retour au tableau de bord',
 };
 
 export const commonFullFr: Common = {
@@ -91,6 +102,10 @@ export const errorsUiDe: Errors = {
   pageNotFound: 'Seite nicht gefunden',
   pageNotFoundDesc: 'Die gesuchte Seite existiert nicht oder wurde verschoben.',
   dashboard: 'Dashboard',
+  dashboardAreaErrorTitle: 'Etwas ist schiefgelaufen',
+  dashboardAreaErrorDesc:
+    'Im Dashboard ist ein Fehler aufgetreten. Versuchen Sie es erneut oder kehren Sie zur Dashboard-Startseite zurück.',
+  backToDashboard: 'Zurück zum Dashboard',
 };
 
 export const commonFullDe: Common = {
@@ -117,6 +132,10 @@ export const errorsUiPt: Errors = {
   pageNotFound: 'Página não encontrada',
   pageNotFoundDesc: 'A página que procura não existe ou foi movida.',
   dashboard: 'Painel',
+  dashboardAreaErrorTitle: 'Algo correu mal',
+  dashboardAreaErrorDesc:
+    'Ocorreu um erro no painel. Pode tentar novamente ou voltar ao início do painel.',
+  backToDashboard: 'Voltar ao painel',
 };
 
 export const commonFullPt: Common = {
@@ -143,6 +162,10 @@ export const errorsUiAr: Errors = {
   pageNotFound: 'الصفحة غير موجودة',
   pageNotFoundDesc: 'الصفحة التي تبحث عنها غير موجودة أو تم نقلها.',
   dashboard: 'لوحة التحكم',
+  dashboardAreaErrorTitle: 'حدث خطأ ما',
+  dashboardAreaErrorDesc:
+    'حدث خطأ في لوحة التحكم. يمكنك إعادة المحاولة أو العودة إلى الصفحة الرئيسية للوحة.',
+  backToDashboard: 'العودة إلى لوحة التحكم',
 };
 
 export const commonFullAr: Common = {
