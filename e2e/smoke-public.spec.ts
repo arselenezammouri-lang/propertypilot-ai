@@ -21,4 +21,14 @@ test.describe("@smoke public", () => {
     await page.goto(`${base}/auth/signup`, { waitUntil: "domcontentloaded" });
     await expect(page.locator('main, [role="main"], body')).toBeVisible();
   });
+
+  test("docs hub loads", async ({ page }) => {
+    await page.goto(`${base}/docs`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("sample docs article loads", async ({ page }) => {
+    await page.goto(`${base}/docs/getting-started/welcome`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
 });

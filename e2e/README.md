@@ -57,6 +57,10 @@ npm run test:e2e:debug
 - **webhook-verification.spec.ts**: Verifica endpoint webhook
 - **ai-generation-flow.spec.ts**: Test generazione contenuto AI
 
+## Smoke pubblico (no login)
+
+`npm run smoke:public` — home (HTTP), `/auth/login`, `/auth/signup`, **`/docs`**, **`/docs/getting-started/welcome`**.
+
 ## Note
 
 - I test richiedono che il server di sviluppo sia in esecuzione
