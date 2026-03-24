@@ -1,5 +1,5 @@
 /**
- * Docs articles in app/docs/[slug] — legacy single-locale, multilingual IT/EN + optional ES–AR, or bilingual IT/EN only.
+ * Docs articles in app/docs/[...slug] — legacy single-locale, multilingual IT/EN + optional ES–AR, or bilingual IT/EN only.
  */
 
 import type { Locale } from '@/lib/i18n/config';

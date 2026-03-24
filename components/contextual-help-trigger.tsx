@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import type { ContextualHelpDocSlug } from "@/lib/docs/doc-static-links";
 
 export type ContextualHelpTriggerProps = {
-  /** Slug sotto /docs/[slug] — deve essere in `CONTEXTUAL_HELP_DOC_SLUGS` */
+  /** Slug sotto /docs/[...slug] — deve essere in `CONTEXTUAL_HELP_DOC_SLUGS` */
   docSlug: ContextualHelpDocSlug;
   className?: string;
 };

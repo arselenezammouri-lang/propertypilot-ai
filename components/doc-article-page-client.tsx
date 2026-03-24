@@ -1,6 +1,5 @@
 "use client";
 
-import { use } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Book } from "lucide-react";
@@ -12,16 +11,11 @@ import type { Locale } from "@/lib/i18n/config";
 import { docArticles } from "@/lib/docs/doc-content";
 import { resolveDocArticle } from "@/lib/docs/doc-article";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { docSlug: string };
 
-export function DocArticlePageClient({ params }: Props) {
-  const resolvedParams = use(params);
+export function DocArticlePageClient({ docSlug }: Props) {
   const { locale } = useLocale();
-  const slug = Array.isArray(resolvedParams.slug)
-    ? resolvedParams.slug.join("/")
-    : resolvedParams.slug;
-
-  const article = resolveDocArticle(docArticles[slug], locale as Locale);
+  const article = resolveDocArticle(docArticles[docSlug], locale as Locale);
   const backLabel = getTranslation(locale as SupportedLocale).docsHub.backToDocs;
 
   if (!article) {

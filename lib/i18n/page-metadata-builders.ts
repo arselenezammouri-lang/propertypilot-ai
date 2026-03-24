@@ -258,7 +258,7 @@ export function buildDocsHubPageMetadata(locale: SupportedLocale): Metadata {
   };
 }
 
-/** `/docs/[slug]` — article title + first content line as description. */
+/** `/docs/[...slug]` — article title + first content line as description. */
 export function buildDocArticlePageMetadata(
   locale: SupportedLocale,
   slug: string

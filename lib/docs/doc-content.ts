@@ -30,7 +30,7 @@ import {
 import { docAuraVrGuideLocales } from '@/lib/docs/doc-aura-vr-locales';
 
 /**
- * Contenuti per /docs/[slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
+ * Contenuti per /docs/[...slug]. IT/EN obbligatori; ES–AR opzionali per articolo (fallback EN).
  */
 export const docArticles: Record<string, DocArticleEntry> = {
   'getting-started/welcome': {
