@@ -409,6 +409,10 @@ export interface TranslationDictionary {
     dashboard: {
       title: string;
       subtitle: string;
+      /** SEO `<title>` segment for `/dashboard/*` (noindex; clearer than UI `title`). */
+      metaTitle: string;
+      /** Meta description for authenticated app shell (noindex). */
+      metaDescription: string;
       loading: string;
       error: string;
       success: string;
@@ -1439,6 +1443,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Pannello di controllo',
+      metaTitle: 'Area riservata agenti — PropertyPilot AI',
+      metaDescription:
+        'Console operativa per annunci AI, CRM, prospecting e automazioni. Accesso riservato agli utenti registrati.',
       loading: 'Caricamento...',
       error: 'Errore',
       success: 'Successo',
@@ -2457,6 +2464,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Control Panel',
+      metaTitle: 'Agent workspace — PropertyPilot AI',
+      metaDescription:
+        'Operational console for AI listings, CRM, prospecting, and automations. Sign-in required.',
       loading: 'Loading...',
       error: 'Error',
       success: 'Success',
@@ -3472,6 +3482,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Panel de Control',
       subtitle: 'Tablero de mandos',
+      metaTitle: 'Espacio del agente — PropertyPilot AI',
+      metaDescription:
+        'Consola operativa para anuncios con IA, CRM, prospección y automatizaciones. Acceso para usuarios registrados.',
       loading: 'Cargando...',
       error: 'Error',
       success: 'Éxito',
@@ -4117,6 +4130,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Tableau de Bord',
       subtitle: 'Panneau de contrôle',
+      metaTitle: 'Espace agent — PropertyPilot AI',
+      metaDescription:
+        'Console opérationnelle pour annonces IA, CRM, prospection et automatisations. Accès réservé aux comptes connectés.',
       loading: 'Chargement...',
       error: 'Erreur',
       success: 'Succès',
@@ -4762,6 +4778,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Kontrollpanel',
+      metaTitle: 'Agenten-Arbeitsbereich — PropertyPilot AI',
+      metaDescription:
+        'Operative Konsole für KI-Inserate, CRM, Prospecting und Automatisierung. Nur für angemeldete Nutzer.',
       loading: 'Lädt...',
       error: 'Fehler',
       success: 'Erfolg',
@@ -5407,6 +5426,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Painel',
       subtitle: 'Painel de controle',
+      metaTitle: 'Área do agente — PropertyPilot AI',
+      metaDescription:
+        'Consola operacional para anúncios com IA, CRM, prospeção e automações. Acesso para utilizadores registados.',
       loading: 'Carregando...',
       error: 'Erro',
       success: 'Sucesso',
@@ -5777,6 +5799,9 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'لوحة التحكم',
       subtitle: 'لوحة التحكم الرئيسية',
+      metaTitle: 'مساحة الوكيل — PropertyPilot AI',
+      metaDescription:
+        'وحدة تشغيلية للإعلانات بالذكاء الاصطناعي وإدارة علاقات العملاء والتنقيب والأتمتة. للمستخدمين المسجلين فقط.',
       loading: 'جاري التحميل...',
       error: 'خطأ',
       success: 'نجاح',

@@ -216,8 +216,8 @@ export function buildDevTestErrorPageMetadata(locale: SupportedLocale): Metadata
 export function buildDashboardLayoutMetadata(locale: SupportedLocale): Metadata {
   const d = getTranslation(locale).dashboard;
   return {
-    title: d.title,
-    description: clipDescription(d.subtitle),
+    title: d.metaTitle,
+    description: clipDescription(d.metaDescription),
     robots: {
       index: false,
       follow: false,

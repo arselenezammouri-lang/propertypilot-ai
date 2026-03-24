@@ -92,6 +92,7 @@ describe('page-metadata-builders', () => {
   it('dashboard layout metadata is noindex and localized', () => {
     const itD = buildDashboardLayoutMetadata('it');
     const enD = buildDashboardLayoutMetadata('en');
+    expect(itD.title).not.toBe(enD.title);
     expect(`${itD.title} ${itD.description}`).not.toBe(`${enD.title} ${enD.description}`);
     expect(itD.robots).toMatchObject({
       index: false,
