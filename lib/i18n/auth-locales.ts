@@ -63,6 +63,16 @@ export type AuthUi = {
     loginFailedGeneric: string;
     /** Toast description when sign-up fails and API returns no message */
     signupFailedGeneric: string;
+    /** Supabase: email not confirmed */
+    emailNotConfirmed: string;
+    /** Supabase: user already registered */
+    userAlreadyRegistered: string;
+    /** Supabase: password too short / weak */
+    passwordTooShort: string;
+    /** Supabase: malformed or invalid email */
+    invalidEmail: string;
+    /** Fetch / connectivity failures */
+    networkError: string;
   };
 };
 
@@ -137,6 +147,11 @@ export const authUiEs: AuthUi = {
       'La verificación de seguridad no está bien configurada en el servidor. Contacta con soporte.',
     loginFailedGeneric: 'Correo o contraseña no válidos.',
     signupFailedGeneric: 'No se pudo crear la cuenta. Inténtalo de nuevo.',
+    emailNotConfirmed: 'Confirma tu correo antes de iniciar sesión.',
+    userAlreadyRegistered: 'Ya existe una cuenta con este correo. Inicia sesión o recupera la contraseña.',
+    passwordTooShort: 'La contraseña no cumple los requisitos de longitud. Usa al menos 8 caracteres.',
+    invalidEmail: 'Introduce una dirección de correo válida.',
+    networkError: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.',
   },
 };
 
@@ -200,6 +215,11 @@ export const authUiFr: AuthUi = {
       'La vérification de sécurité est mal configurée sur le serveur. Contactez le support.',
     loginFailedGeneric: 'E-mail ou mot de passe incorrect.',
     signupFailedGeneric: 'Impossible de créer le compte. Réessayez.',
+    emailNotConfirmed: 'Confirmez votre e-mail avant de vous connecter.',
+    userAlreadyRegistered: 'Un compte existe déjà avec cet e-mail. Connectez-vous ou réinitialisez le mot de passe.',
+    passwordTooShort: 'Le mot de passe est trop court. Utilisez au moins 8 caractères.',
+    invalidEmail: 'Saisissez une adresse e-mail valide.',
+    networkError: 'Erreur de connexion. Vérifiez votre réseau et réessayez.',
   },
 };
 
@@ -263,6 +283,11 @@ export const authUiDe: AuthUi = {
       'Sicherheitsprüfung auf dem Server falsch konfiguriert. Bitte Support kontaktieren.',
     loginFailedGeneric: 'E-Mail oder Passwort ungültig.',
     signupFailedGeneric: 'Konto konnte nicht erstellt werden. Bitte erneut versuchen.',
+    emailNotConfirmed: 'Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.',
+    userAlreadyRegistered: 'Mit dieser E-Mail ist bereits ein Konto registriert. Melden Sie sich an oder setzen Sie das Passwort zurück.',
+    passwordTooShort: 'Das Passwort ist zu kurz. Verwenden Sie mindestens 8 Zeichen.',
+    invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+    networkError: 'Verbindungsfehler. Prüfen Sie Ihr Netzwerk und versuchen Sie es erneut.',
   },
 };
 
@@ -326,6 +351,11 @@ export const authUiPt: AuthUi = {
       'A verificação de segurança está mal configurada no servidor. Contacte o suporte.',
     loginFailedGeneric: 'E-mail ou palavra-passe inválidos.',
     signupFailedGeneric: 'Não foi possível criar a conta. Tente novamente.',
+    emailNotConfirmed: 'Confirme o seu e-mail antes de iniciar sessão.',
+    userAlreadyRegistered: 'Já existe uma conta com este e-mail. Inicie sessão ou redefina a palavra-passe.',
+    passwordTooShort: 'A palavra-passe é demasiado curta. Use pelo menos 8 caracteres.',
+    invalidEmail: 'Introduza um endereço de e-mail válido.',
+    networkError: 'Erro de ligação. Verifique a rede e tente novamente.',
   },
 };
 
@@ -389,5 +419,10 @@ export const authUiAr: AuthUi = {
       'التحقق الأمني غير مُعد بشكل صحيح على الخادم. تواصل مع الدعم.',
     loginFailedGeneric: 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
     signupFailedGeneric: 'تعذر إنشاء الحساب. حاول مرة أخرى.',
+    emailNotConfirmed: 'يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.',
+    userAlreadyRegistered: 'يوجد حساب بهذا البريد. سجّل الدخول أو أعد تعيين كلمة المرور.',
+    passwordTooShort: 'كلمة المرور قصيرة جداً. استخدم 8 أحرف على الأقل.',
+    invalidEmail: 'أدخل عنوان بريد إلكتروني صالحاً.',
+    networkError: 'خطأ في الاتصال. تحقق من الشبكة وحاول مرة أخرى.',
   },
 };

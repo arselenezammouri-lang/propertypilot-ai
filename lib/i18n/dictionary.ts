@@ -890,6 +890,11 @@ export interface TranslationDictionary {
       turnstileMisconfigured: string;
       loginFailedGeneric: string;
       signupFailedGeneric: string;
+      emailNotConfirmed: string;
+      userAlreadyRegistered: string;
+      passwordTooShort: string;
+      invalidEmail: string;
+      networkError: string;
     };
   };
 
@@ -1944,6 +1949,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileMisconfigured: 'Verifica di sicurezza non configurata correttamente sul server. Contatta il supporto.',
         loginFailedGeneric: 'Email o password non validi.',
         signupFailedGeneric: 'Impossibile creare l’account. Riprova.',
+        emailNotConfirmed: 'Conferma l’email prima di accedere.',
+        userAlreadyRegistered: 'Esiste già un account con questa email. Accedi o reimposta la password.',
+        passwordTooShort: 'La password non rispetta la lunghezza minima. Usa almeno 8 caratteri.',
+        invalidEmail: 'Inserisci un indirizzo email valido.',
+        networkError: 'Errore di connessione. Controlla la rete e riprova.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiIt,
@@ -2974,6 +2984,11 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         turnstileMisconfigured: 'Security check is misconfigured on the server. Please contact support.',
         loginFailedGeneric: 'Invalid email or password.',
         signupFailedGeneric: 'Could not create account. Please try again.',
+        emailNotConfirmed: 'Please confirm your email before signing in.',
+        userAlreadyRegistered: 'An account with this email already exists. Sign in or reset your password.',
+        passwordTooShort: 'Password does not meet length requirements. Use at least 8 characters.',
+        invalidEmail: 'Enter a valid email address.',
+        networkError: 'Connection error. Check your network and try again.',
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiEn,
