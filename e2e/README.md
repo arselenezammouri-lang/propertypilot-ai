@@ -59,7 +59,12 @@ npm run test:e2e:debug
 
 ## Smoke pubblico (no login)
 
-`npm run smoke:public` — home (HTTP GET), auth (`/auth/login`, `/auth/signup`, `/auth/forgot-password`, `/auth/reset-password`), marketing (`/platform`, `/features`, `/about`, `/demo`, `/pricing`, `/contatti`, `/compliance`), **`/blog`**, sample post **`/blog/come-scrivere-annunci-che-convertono`**, docs hub + sample article, legal **`/privacy`**, **`/terms`**, **`/refund`** — tutte con `#main-content` visibile dove applicabile.
+- **`npm run smoke:public`** — stesso elenco di route pubbliche; **`baseURL`** = `playwright.config` (`http://127.0.0.1:3000` di default). Playwright avvia **`npm run dev`** se la porta è libera (in CI sempre).
+- **Staging:** `PLAYWRIGHT_BASE_URL=https://tuo-preview.vercel.app npm run smoke:public` — nessun server locale; i test colpiscono quell’host (serve app raggiungibile e env Supabase coerenti lato server).
+
+## Pre-merge (locale o CI)
+
+**`npm run qa:premerge`** = `npm run qa:launch` + `npm run smoke:public` (Jest launch/readiness + smoke Playwright). Allineato a `docs/LAUNCH_READINESS.md`.
 
 ## Note
 

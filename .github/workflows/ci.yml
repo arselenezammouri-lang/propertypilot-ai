@@ -80,39 +80,40 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           # Add other required env vars (without sensitive values)
 
-  # E2E Tests (opzionale, può essere lento)
-  e2e:
-    name: E2E Tests
+  # Pre-merge: Jest launch gates + Playwright smoke pubblico (server Next avviato da Playwright)
+  premerge_qa:
+    name: Pre-merge QA (launch + smoke pubblico)
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Install Playwright
+
+      - name: Install Playwright (Chromium)
         run: npx playwright install --with-deps chromium
-      
-      - name: Run E2E tests
-        run: npm run test:e2e
+
+      - name: Run qa:premerge
+        run: npm run qa:premerge
         env:
-          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-      
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
+          CI: true
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-premerge
           path: playwright-report/
-          retention-days: 30
+          retention-days: 14
 
   # Security Audit — block on critical; high reported for visibility (see OPERATIONS_SECURITY.md)
   security:
