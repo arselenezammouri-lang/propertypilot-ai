@@ -32,12 +32,23 @@ function clipDescription(...parts: string[]): string {
   return clipMetaDescription(...parts);
 }
 
+/**
+ * Absolute canonical URL for a path (`/about`, `/blog/slug`). Root is `{base}/`.
+ */
+export function buildCanonicalPath(path: string): string {
+  const base = getBaseUrl().replace(/\/$/, '');
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  if (normalized === '/') return `${base}/`;
+  return `${base}${normalized}`;
+}
+
 /** Child page titles use root layout template `%s | PropertyPilot AI`. */
 export function buildAboutPageMetadata(locale: SupportedLocale): Metadata {
   const m = getTranslation(locale).marketingAbout;
   return {
     title: m.title,
     description: clipDescription(m.subtitle, m.missionBody),
+    alternates: { canonical: buildCanonicalPath('/about') },
   };
 }
 
@@ -47,6 +58,7 @@ export function buildFeaturesPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: m.titleWord,
     description: clipDescription(m.subtitle, extra),
+    alternates: { canonical: buildCanonicalPath('/features') },
   };
 }
 
@@ -56,6 +68,7 @@ export function buildBlogIndexMetadata(locale: SupportedLocale): Metadata {
   return {
     title: m.metaTitle,
     description: clipDescription(m.subtitle, extra),
+    alternates: { canonical: buildCanonicalPath('/blog') },
   };
 }
 
@@ -71,6 +84,7 @@ export function buildBlogPostPageMetadata(
   return {
     title,
     description: clipDescription(excerpt ?? blog.comingSoonBody),
+    alternates: { canonical: buildCanonicalPath(`/blog/${slug}`) },
   };
 }
 
@@ -80,6 +94,7 @@ export function buildPrivacyPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: `${p.title} ${p.highlight}`.trim(),
     description: clipDescription(first),
+    alternates: { canonical: buildCanonicalPath('/privacy') },
   };
 }
 
@@ -89,6 +104,7 @@ export function buildTermsPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: `${t.title} ${t.highlight}`.trim(),
     description: clipDescription(first),
+    alternates: { canonical: buildCanonicalPath('/terms') },
   };
 }
 
@@ -103,6 +119,7 @@ export function buildRefundPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: `${r.title} ${r.highlight}`.trim(),
     description: first,
+    alternates: { canonical: buildCanonicalPath('/refund') },
   };
 }
 
@@ -112,6 +129,7 @@ export function buildDemoPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: d.hero.title,
     description: clipDescription(d.hero.subtitle, extra),
+    alternates: { canonical: buildCanonicalPath('/demo') },
   };
 }
 
@@ -120,36 +138,34 @@ export function buildContactPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title: c.title,
     description: clipDescription(c.subtitle, c.support.desc),
+    alternates: { canonical: buildCanonicalPath('/contatti') },
   };
 }
 
 /** `/contact` → 301 to `/contatti`; SEO consolidates on the canonical locale URL. */
 export function buildContactAliasPageMetadata(locale: SupportedLocale): Metadata {
-  const base = getBaseUrl();
   const inner = buildContactPageMetadata(locale);
   return {
     ...inner,
-    alternates: { canonical: `${base}/contatti` },
+    alternates: { canonical: buildCanonicalPath('/contatti') },
   };
 }
 
 export function buildAuthLoginPageMetadata(locale: SupportedLocale): Metadata {
   const a = getTranslation(locale).auth.login;
-  const base = getBaseUrl();
   return {
     title: a.title,
     description: clipDescription(a.subtitle, a.secureNote),
-    alternates: { canonical: `${base}/auth/login` },
+    alternates: { canonical: buildCanonicalPath('/auth/login') },
   };
 }
 
 export function buildAuthSignupPageMetadata(locale: SupportedLocale): Metadata {
   const s = getTranslation(locale).auth.signup;
-  const base = getBaseUrl();
   return {
     title: s.title,
     description: clipDescription(s.subtitle, s.freePlanIncludes, s.noCreditCard),
-    alternates: { canonical: `${base}/auth/signup` },
+    alternates: { canonical: buildCanonicalPath('/auth/signup') },
   };
 }
 
@@ -161,17 +177,17 @@ export function buildPricingPageMetadata(locale: SupportedLocale): Metadata {
   return {
     title,
     description: clipDescription(pp.subtitle, pp.trustTrial, pp.trustCancel),
+    alternates: { canonical: buildCanonicalPath('/pricing') },
   };
 }
 
 /** `/docs` — hub title and subtitle from dictionary. */
 export function buildDocsHubPageMetadata(locale: SupportedLocale): Metadata {
   const h = getTranslation(locale).docsHub;
-  const base = getBaseUrl();
   return {
     title: h.pageTitle,
     description: clipDescription(h.pageSubtitle),
-    alternates: { canonical: `${base}/docs` },
+    alternates: { canonical: buildCanonicalPath('/docs') },
   };
 }
 
@@ -184,11 +200,10 @@ export function buildDocArticlePageMetadata(
   if (!entry) return null;
   const slice = resolveDocArticle(entry, locale as Locale);
   if (!slice) return null;
-  const base = getBaseUrl();
   const lead = firstMeaningfulLineFromDocBody(slice.content);
   return {
     title: slice.title,
     description: clipDescription(slice.title, lead),
-    alternates: { canonical: `${base}/docs/${slug}` },
+    alternates: { canonical: buildCanonicalPath(`/docs/${slug}`) },
   };
 }

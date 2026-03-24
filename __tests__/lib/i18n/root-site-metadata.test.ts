@@ -19,6 +19,8 @@ describe('root-site-metadata', () => {
     const it = buildMarketingHomeMetadata('it');
     expect(it.title).toContain('AI');
     expect((it.description as string).length).toBeGreaterThan(20);
+    const base = getBaseUrl().replace(/\/$/, '');
+    expect(it.alternates?.canonical).toBe(`${base}/`);
   });
 
   it('platform page uses features block title', () => {

@@ -117,9 +117,11 @@ export function buildMarketingHomeMetadata(locale: SupportedLocale): Metadata {
   const tr = getTranslation(locale);
   const h = tr.landing!.hero;
   const titleSegment = `${h.titlePart1} ${h.titlePart2} ${h.titleAI}`.replace(/\s+/g, ' ').trim();
+  const base = getBaseUrl().replace(/\/$/, '');
   return {
     title: titleSegment,
     description: clipMetaDescription(h.subtitle, h.poweredBy, tr.landing!.nav.tagline),
+    alternates: { canonical: `${base}/` },
   };
 }
 
@@ -127,7 +129,7 @@ export function buildMarketingHomeMetadata(locale: SupportedLocale): Metadata {
 export function buildPlatformPageMetadata(locale: SupportedLocale): Metadata {
   const L = getTranslation(locale).landing!;
   const f = L.features;
-  const homeCanonical = `${getBaseUrl()}/`;
+  const homeCanonical = `${getBaseUrl().replace(/\/$/, '')}/`;
   return {
     title: f.title,
     description: clipMetaDescription(f.subtitle, f.aiListing.description),

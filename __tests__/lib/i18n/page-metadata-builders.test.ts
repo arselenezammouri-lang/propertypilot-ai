@@ -1,9 +1,11 @@
+import { getBaseUrl } from '@/lib/env';
 import {
   buildAboutPageMetadata,
   buildAuthLoginPageMetadata,
   buildAuthSignupPageMetadata,
   buildBlogIndexMetadata,
   buildBlogPostPageMetadata,
+  buildCanonicalPath,
   buildContactAliasPageMetadata,
   buildContactPageMetadata,
   buildDemoPageMetadata,
@@ -13,11 +15,19 @@ import {
 } from '@/lib/i18n/page-metadata-builders';
 
 describe('page-metadata-builders', () => {
+  it('buildCanonicalPath normalizes base and root', () => {
+    const base = getBaseUrl().replace(/\/$/, '');
+    expect(buildCanonicalPath('/')).toBe(`${base}/`);
+    expect(buildCanonicalPath('/about')).toBe(`${base}/about`);
+    expect(buildCanonicalPath('pricing')).toBe(`${base}/pricing`);
+  });
+
   it('about title uses marketing about title', () => {
     const it = buildAboutPageMetadata('it');
     expect(it.title).toBe('Chi siamo');
     expect(typeof it.description).toBe('string');
     expect((it.description as string).length).toBeGreaterThan(10);
+    expect(it.alternates?.canonical).toMatch(/\/about$/);
   });
 
   it('blog title uses localized metaTitle', () => {
@@ -37,6 +47,7 @@ describe('page-metadata-builders', () => {
     const en = buildBlogPostPageMetadata('en', slug);
     expect(en.title).toBe('How to write listings that convert');
     expect((en.description as string).length).toBeGreaterThan(10);
+    expect(en.alternates?.canonical).toContain(slug);
     const it = buildBlogPostPageMetadata('it', slug);
     expect(it.title).toBe('Come scrivere annunci che convertono');
   });
