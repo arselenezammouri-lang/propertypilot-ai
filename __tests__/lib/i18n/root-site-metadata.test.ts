@@ -1,4 +1,9 @@
-import { buildMarketingHomeMetadata, buildRootSiteMetadata } from '@/lib/i18n/root-site-metadata';
+import { getTranslation } from '@/lib/i18n/dictionary';
+import {
+  buildMarketingHomeMetadata,
+  buildPlatformPageMetadata,
+  buildRootSiteMetadata,
+} from '@/lib/i18n/root-site-metadata';
 
 describe('root-site-metadata', () => {
   it('root default title differs by locale', () => {
@@ -13,5 +18,11 @@ describe('root-site-metadata', () => {
     const it = buildMarketingHomeMetadata('it');
     expect(it.title).toContain('AI');
     expect((it.description as string).length).toBeGreaterThan(20);
+  });
+
+  it('platform page uses features block title', () => {
+    const en = buildPlatformPageMetadata('en');
+    expect(en.title).toBe(getTranslation('en').landing!.features.title);
+    expect((en.description as string).length).toBeGreaterThan(15);
   });
 });

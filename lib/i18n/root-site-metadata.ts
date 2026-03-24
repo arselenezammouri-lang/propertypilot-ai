@@ -122,3 +122,13 @@ export function buildMarketingHomeMetadata(locale: SupportedLocale): Metadata {
     description: clipMetaDescription(h.subtitle, h.poweredBy, tr.landing!.nav.tagline),
   };
 }
+
+/** `/platform` — SSR+SEO variant of the marketing landing (features-led title). */
+export function buildPlatformPageMetadata(locale: SupportedLocale): Metadata {
+  const L = getTranslation(locale).landing!;
+  const f = L.features;
+  return {
+    title: f.title,
+    description: clipMetaDescription(f.subtitle, f.aiListing.description),
+  };
+}
