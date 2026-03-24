@@ -3,6 +3,18 @@
  * Support: IT, EN, ES, FR, DE, PT, AR
  */
 
+import type { ComplianceCenterUi } from '@/lib/i18n/compliance-center-ui';
+import {
+  complianceCenterUiEn,
+  complianceCenterUiIt,
+} from '@/lib/i18n/compliance-center-ui';
+import {
+  complianceCenterUiAr,
+  complianceCenterUiDe,
+  complianceCenterUiEs,
+  complianceCenterUiFr,
+  complianceCenterUiPt,
+} from '@/lib/i18n/compliance-center-locales';
 import type { AuthPasswordRecoveryUi } from '@/lib/i18n/auth-password-recovery-ui';
 import {
   authPasswordRecoveryUiEn,
@@ -857,6 +869,9 @@ export interface TranslationDictionary {
 
   /** Forgot / reset password (auth routes) — all 7 locales */
   authPasswordRecovery: AuthPasswordRecoveryUi;
+
+  /** Public /compliance — all 7 locales */
+  complianceCenter: ComplianceCenterUi;
   
   // Aura VR Generator
   auraVR: {
@@ -1890,6 +1905,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiIt,
+    complianceCenter: complianceCenterUiIt,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Trasforma un video dello smartphone in un tour VR immersivo 3D',
@@ -2905,6 +2921,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
     },
     authPasswordRecovery: authPasswordRecoveryUiEn,
+    complianceCenter: complianceCenterUiEn,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Transform a smartphone video into an immersive 3D VR tour',
@@ -3685,6 +3702,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: authUiEs,
     authPasswordRecovery: authPasswordRecoveryUiEs,
+    complianceCenter: complianceCenterUiEs,
     pendingCheckoutBanner: pendingCheckoutUiEs,
     ariaLimitModal: ariaLimitModalUiEs,
     dashboardNav: dashboardNavUiEs,
@@ -4328,6 +4346,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: authUiFr,
     authPasswordRecovery: authPasswordRecoveryUiFr,
+    complianceCenter: complianceCenterUiFr,
     pendingCheckoutBanner: pendingCheckoutUiFr,
     ariaLimitModal: ariaLimitModalUiFr,
     dashboardNav: dashboardNavUiFr,
@@ -4971,6 +4990,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: authUiDe,
     authPasswordRecovery: authPasswordRecoveryUiDe,
+    complianceCenter: complianceCenterUiDe,
     pendingCheckoutBanner: pendingCheckoutUiDe,
     ariaLimitModal: ariaLimitModalUiDe,
     dashboardNav: dashboardNavUiDe,
@@ -5614,6 +5634,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: authUiPt,
     authPasswordRecovery: authPasswordRecoveryUiPt,
+    complianceCenter: complianceCenterUiPt,
     pendingCheckoutBanner: pendingCheckoutUiPt,
     ariaLimitModal: ariaLimitModalUiPt,
     dashboardNav: dashboardNavUiPt,
@@ -5982,6 +6003,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: authUiAr,
     authPasswordRecovery: authPasswordRecoveryUiAr,
+    complianceCenter: complianceCenterUiAr,
     pendingCheckoutBanner: pendingCheckoutUiAr,
     ariaLimitModal: ariaLimitModalUiAr,
     dashboardNav: dashboardNavUiAr,
