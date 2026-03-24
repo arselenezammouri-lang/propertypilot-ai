@@ -11,6 +11,7 @@ import {
   buildCompliancePageMetadata,
   buildContactAliasPageMetadata,
   buildContactPageMetadata,
+  buildDashboardLayoutMetadata,
   buildDemoPageMetadata,
   buildDevTestErrorPageMetadata,
   buildDocArticlePageMetadata,
@@ -86,6 +87,18 @@ describe('page-metadata-builders', () => {
     const meta = buildDevTestErrorPageMetadata('en');
     expect(meta.robots).toEqual({ index: false, follow: false });
     expect(meta.alternates?.canonical).toMatch(/\/dashboard\/test-error$/);
+  });
+
+  it('dashboard layout metadata is noindex and localized', () => {
+    const itD = buildDashboardLayoutMetadata('it');
+    const enD = buildDashboardLayoutMetadata('en');
+    expect(`${itD.title} ${itD.description}`).not.toBe(`${enD.title} ${enD.description}`);
+    expect(itD.robots).toMatchObject({
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    });
+    expect((itD.description as string).length).toBeGreaterThan(3);
   });
 
   it('auth login and signup metadata differ by locale and set canonical', () => {

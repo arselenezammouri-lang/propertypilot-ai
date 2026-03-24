@@ -209,6 +209,23 @@ export function buildDevTestErrorPageMetadata(locale: SupportedLocale): Metadata
   };
 }
 
+/**
+ * Authenticated `/dashboard/*` — keep out of search indexes; default title for routes without their own metadata.
+ * Child `generateMetadata` (e.g. test-error) merges and can override title/description.
+ */
+export function buildDashboardLayoutMetadata(locale: SupportedLocale): Metadata {
+  const d = getTranslation(locale).dashboard;
+  return {
+    title: d.title,
+    description: clipDescription(d.subtitle),
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: { index: false, follow: false },
+    },
+  };
+}
+
 export function buildPricingPageMetadata(locale: SupportedLocale): Metadata {
   const tr = getTranslation(locale);
   const fallback = getTranslation('en').landing!.pricingPage;

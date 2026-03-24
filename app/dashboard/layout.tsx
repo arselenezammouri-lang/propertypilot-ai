@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { buildDashboardLayoutMetadata } from "@/lib/i18n/page-metadata-builders";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocaleFromCookies();
+  return buildDashboardLayoutMetadata(locale as SupportedLocale);
+}
 
 export default function DashboardLayout({
   children,
