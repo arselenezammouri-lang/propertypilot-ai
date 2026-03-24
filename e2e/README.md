@@ -59,7 +59,7 @@ npm run test:e2e:debug
 
 ## Smoke pubblico (no login)
 
-`npm run smoke:public` — home (HTTP), `/auth/login`, `/auth/signup`, **`/docs`**, **`/docs/getting-started/welcome`**, **`/pricing`**, **`/contatti`**, **`/compliance`**.
+`npm run smoke:public` — home (HTTP GET), auth (`/auth/login`, `/auth/signup`, `/auth/forgot-password`, `/auth/reset-password`), marketing (`/platform`, `/features`, `/about`, `/demo`, `/pricing`, `/contatti`, `/compliance`), **`/blog`**, sample post **`/blog/come-scrivere-annunci-che-convertono`**, docs hub + sample article, legal **`/privacy`**, **`/terms`**, **`/refund`** — tutte con `#main-content` visibile dove applicabile.
 
 ## Note
 

@@ -14,12 +14,22 @@ test.describe("@smoke public", () => {
 
   test("login page loads", async ({ page }) => {
     await page.goto(`${base}/auth/login`, { waitUntil: "domcontentloaded" });
-    await expect(page.locator('main, [role="main"], body')).toBeVisible();
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
   });
 
   test("signup page loads", async ({ page }) => {
     await page.goto(`${base}/auth/signup`, { waitUntil: "domcontentloaded" });
-    await expect(page.locator('main, [role="main"], body')).toBeVisible();
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("forgot-password page loads", async ({ page }) => {
+    await page.goto(`${base}/auth/forgot-password`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("reset-password page loads", async ({ page }) => {
+    await page.goto(`${base}/auth/reset-password`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
   });
 
   test("docs hub loads", async ({ page }) => {
@@ -44,6 +54,51 @@ test.describe("@smoke public", () => {
 
   test("compliance page loads", async ({ page }) => {
     await page.goto(`${base}/compliance`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("platform page loads", async ({ page }) => {
+    await page.goto(`${base}/platform`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("features page loads", async ({ page }) => {
+    await page.goto(`${base}/features`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("about page loads", async ({ page }) => {
+    await page.goto(`${base}/about`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("demo page loads", async ({ page }) => {
+    await page.goto(`${base}/demo`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("blog index loads", async ({ page }) => {
+    await page.goto(`${base}/blog`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("sample blog post loads", async ({ page }) => {
+    await page.goto(`${base}/blog/come-scrivere-annunci-che-convertono`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("privacy page loads", async ({ page }) => {
+    await page.goto(`${base}/privacy`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("terms page loads", async ({ page }) => {
+    await page.goto(`${base}/terms`, { waitUntil: "domcontentloaded" });
+    await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("refund page loads", async ({ page }) => {
+    await page.goto(`${base}/refund`, { waitUntil: "domcontentloaded" });
     await expect(page.locator("#main-content")).toBeVisible({ timeout: 15_000 });
   });
 });
