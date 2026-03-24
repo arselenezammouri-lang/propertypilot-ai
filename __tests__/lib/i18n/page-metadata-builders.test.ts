@@ -2,6 +2,9 @@ import {
   buildAboutPageMetadata,
   buildBlogIndexMetadata,
   buildBlogPostPageMetadata,
+  buildContactPageMetadata,
+  buildDemoPageMetadata,
+  buildPricingPageMetadata,
 } from '@/lib/i18n/page-metadata-builders';
 
 describe('page-metadata-builders', () => {
@@ -15,6 +18,13 @@ describe('page-metadata-builders', () => {
   it('blog title uses localized metaTitle', () => {
     expect(buildBlogIndexMetadata('en').title).toBe('Real estate blog');
     expect(buildBlogIndexMetadata('it').title).toBe('Blog immobiliare');
+  });
+
+  it('demo, contact, pricing metadata differ by locale', () => {
+    expect(buildDemoPageMetadata('it').title).not.toBe(buildDemoPageMetadata('en').title);
+    expect(buildContactPageMetadata('it').title).not.toBe(buildContactPageMetadata('en').title);
+    expect(buildPricingPageMetadata('it').title).not.toBe(buildPricingPageMetadata('en').title);
+    expect((buildPricingPageMetadata('en').description as string).length).toBeGreaterThan(20);
   });
 
   it('blog post metadata uses known title and excerpt', () => {

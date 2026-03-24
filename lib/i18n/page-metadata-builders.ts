@@ -87,3 +87,31 @@ export function buildRefundPageMetadata(locale: SupportedLocale): Metadata {
     description: first,
   };
 }
+
+export function buildDemoPageMetadata(locale: SupportedLocale): Metadata {
+  const d = getTranslation(locale).demo;
+  const extra = d.valuePointsList[0]?.description ?? '';
+  return {
+    title: d.hero.title,
+    description: clipDescription(d.hero.subtitle, extra),
+  };
+}
+
+export function buildContactPageMetadata(locale: SupportedLocale): Metadata {
+  const c = getTranslation(locale).contact;
+  return {
+    title: c.title,
+    description: clipDescription(c.subtitle, c.support.desc),
+  };
+}
+
+export function buildPricingPageMetadata(locale: SupportedLocale): Metadata {
+  const tr = getTranslation(locale);
+  const fallback = getTranslation('en').landing!.pricingPage;
+  const pp = tr.landing?.pricingPage ?? fallback;
+  const title = `${pp.mainTitle} ${pp.mainTitle2}`.replace(/\s+/g, ' ').trim();
+  return {
+    title,
+    description: clipDescription(pp.subtitle, pp.trustTrial, pp.trustCancel),
+  };
+}
