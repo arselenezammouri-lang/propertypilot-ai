@@ -80,4 +80,7 @@ Conta righe con `Esito` = `ok` ÷ (righe totali − `dev` − `na` se escludi).
 2. In caso di `ko`: descrivere in **`Note`** (errore API, 403, paywall errato).
 3. Prima del marketing: obiettivo **100% `ok`** sulle righe non-`dev` rilevanti per il lancio.
 
-Vedi anche [`LAUNCH_READINESS.md`](./LAUNCH_READINESS.md) per gate automatici Jest e definizione di “100%”.
+Vedi anche [`LAUNCH_READINESS.md`](./LAUNCH_READINESS.md) per gate automatici Jest e definizione di “100%”.  
+Per **GTM, legale, supporto** (checklist aziendale manuale): [`COMPANY_GO_LIVE_OPERATIONS.md`](./COMPANY_GO_LIVE_OPERATIONS.md).
+
+**CI:** Jest verifica che questa tabella contenga **tutte** le route in `app/dashboard/**/page.tsx` — vedi `__tests__/launch/dashboard-qa-checklist-parity.test.ts`.

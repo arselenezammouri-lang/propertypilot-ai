@@ -29,7 +29,8 @@
     "validate:env:soft": "node scripts/validate-env.js --no-fail",
     "marketing:stats": "node scripts/marketing-stats.mjs",
     "test:smoke": "node scripts/run-all-smoke-tests.mjs",
-    "smoke:public": "playwright test e2e/smoke-public.spec.ts"
+    "smoke:public": "playwright test e2e/smoke-public.spec.ts",
+    "qa:launch": "jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/seo/build-public-sitemap.test.ts --passWithNoTests"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

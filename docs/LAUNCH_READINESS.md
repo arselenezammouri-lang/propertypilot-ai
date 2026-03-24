@@ -22,6 +22,11 @@ Eseguire: `npx jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/
 
 - File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.
 - Aggiornare dopo ogni sessione di test locale per avere una **percentuale misurabile** (`ok` / righe totali esclusi `dev`).
+- **Parità automatica:** `__tests__/launch/dashboard-qa-checklist-parity.test.ts` — la checklist deve elencare ogni route reale sotto `app/dashboard`.
+
+## 100% aziendale (GTM, legale, supporto)
+
+- Guida operativa: **[`COMPANY_GO_LIVE_OPERATIONS.md`](./COMPANY_GO_LIVE_OPERATIONS.md)** (tabelle da compilare a mano, fuori dal codice).
 
 ## Gate manuali (obbligatori per “go” mercato)
 
