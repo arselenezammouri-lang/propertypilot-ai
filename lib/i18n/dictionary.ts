@@ -835,11 +835,15 @@ export interface TranslationDictionary {
   // Auth (Login / Signup)
   auth: {
     backToHome: string;
+    brandTagline: string;
     login: {
       title: string;
       subtitle: string;
       email: string;
+      emailPlaceholder: string;
       password: string;
+      showPasswordAria: string;
+      hidePasswordAria: string;
       forgotPassword: string;
       signIn: string;
       signingIn: string;
@@ -851,8 +855,12 @@ export interface TranslationDictionary {
       title: string;
       subtitle: string;
       fullName: string;
+      fullNamePlaceholder: string;
       email: string;
+      emailPlaceholder: string;
       password: string;
+      showPasswordAria: string;
+      hidePasswordAria: string;
       minChars: string;
       freePlanIncludes: string;
       listingsPerMonth: string;
@@ -1879,11 +1887,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: {
       backToHome: 'Torna alla Home',
+      brandTagline: 'Porta la tua agenzia al livello successivo',
       login: {
         title: 'Bentornato',
         subtitle: 'Accedi per continuare',
         email: 'Email',
+        emailPlaceholder: 'mario@example.com',
         password: 'Password',
+        showPasswordAria: 'Mostra password',
+        hidePasswordAria: 'Nascondi password',
         forgotPassword: 'Password dimenticata?',
         signIn: 'Accedi',
         signingIn: 'Accesso in corso...',
@@ -1895,8 +1907,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         title: 'Crea il tuo account',
         subtitle: 'Inizia a generare annunci professionali con l\'AI',
         fullName: 'Nome completo',
+        fullNamePlaceholder: 'Mario Rossi',
         email: 'Email',
+        emailPlaceholder: 'mario@example.com',
         password: 'Password',
+        showPasswordAria: 'Mostra password',
+        hidePasswordAria: 'Nascondi password',
         minChars: 'Almeno 6 caratteri',
         freePlanIncludes: 'Il piano gratuito include:',
         listingsPerMonth: '5 annunci al mese',
@@ -2899,11 +2915,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     },
     auth: {
       backToHome: 'Back to home',
+      brandTagline: 'Pilot your agency to the next level',
       login: {
         title: 'Welcome back',
         subtitle: 'Sign in to your account to continue',
         email: 'Email address',
+        emailPlaceholder: 'you@example.com',
         password: 'Password',
+        showPasswordAria: 'Show password',
+        hidePasswordAria: 'Hide password',
         forgotPassword: 'Forgot password?',
         signIn: 'Sign In',
         signingIn: 'Signing in...',
@@ -2915,8 +2935,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         title: 'Create your account',
         subtitle: 'Start generating professional property listings with AI',
         fullName: 'Full Name',
+        fullNamePlaceholder: 'Jane Smith',
         email: 'Email address',
+        emailPlaceholder: 'you@example.com',
         password: 'Password',
+        showPasswordAria: 'Show password',
+        hidePasswordAria: 'Hide password',
         minChars: 'Must be at least 6 characters',
         freePlanIncludes: 'Free plan includes:',
         listingsPerMonth: '5 listings per month',

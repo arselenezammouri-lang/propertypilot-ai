@@ -5,11 +5,16 @@
 
 export type AuthUi = {
   backToHome: string;
+  /** Short line under the product name on login/signup cards */
+  brandTagline: string;
   login: {
     title: string;
     subtitle: string;
     email: string;
+    emailPlaceholder: string;
     password: string;
+    showPasswordAria: string;
+    hidePasswordAria: string;
     forgotPassword: string;
     signIn: string;
     signingIn: string;
@@ -21,8 +26,12 @@ export type AuthUi = {
     title: string;
     subtitle: string;
     fullName: string;
+    fullNamePlaceholder: string;
     email: string;
+    emailPlaceholder: string;
     password: string;
+    showPasswordAria: string;
+    hidePasswordAria: string;
     minChars: string;
     freePlanIncludes: string;
     listingsPerMonth: string;
@@ -66,11 +75,15 @@ const secureAr =
 
 export const authUiEs: AuthUi = {
   backToHome: 'Volver al inicio',
+  brandTagline: 'Lleva tu agencia al siguiente nivel',
   login: {
     title: 'Bienvenido de nuevo',
     subtitle: 'Inicia sesión para continuar',
     email: 'Correo electrónico',
+    emailPlaceholder: 'tu@email.com',
     password: 'Contraseña',
+    showPasswordAria: 'Mostrar contraseña',
+    hidePasswordAria: 'Ocultar contraseña',
     forgotPassword: '¿Olvidaste la contraseña?',
     signIn: 'Iniciar sesión',
     signingIn: 'Iniciando sesión...',
@@ -82,8 +95,12 @@ export const authUiEs: AuthUi = {
     title: 'Crea tu cuenta',
     subtitle: 'Empieza a generar anuncios profesionales con IA',
     fullName: 'Nombre completo',
+    fullNamePlaceholder: 'María García',
     email: 'Correo electrónico',
+    emailPlaceholder: 'tu@email.com',
     password: 'Contraseña',
+    showPasswordAria: 'Mostrar contraseña',
+    hidePasswordAria: 'Ocultar contraseña',
     minChars: 'Al menos 6 caracteres',
     freePlanIncludes: 'El plan gratuito incluye:',
     listingsPerMonth: '5 anuncios al mes',
@@ -119,11 +136,15 @@ export const authUiEs: AuthUi = {
 
 export const authUiFr: AuthUi = {
   backToHome: 'Retour à l’accueil',
+  brandTagline: 'Faites passer votre agence au niveau supérieur',
   login: {
     title: 'Bon retour',
     subtitle: 'Connectez-vous pour continuer',
     email: 'E-mail',
+    emailPlaceholder: 'vous@email.com',
     password: 'Mot de passe',
+    showPasswordAria: 'Afficher le mot de passe',
+    hidePasswordAria: 'Masquer le mot de passe',
     forgotPassword: 'Mot de passe oublié ?',
     signIn: 'Se connecter',
     signingIn: 'Connexion en cours...',
@@ -135,8 +156,12 @@ export const authUiFr: AuthUi = {
     title: 'Créez votre compte',
     subtitle: 'Générez des annonces professionnelles avec l’IA',
     fullName: 'Nom complet',
+    fullNamePlaceholder: 'Marie Dupont',
     email: 'E-mail',
+    emailPlaceholder: 'vous@email.com',
     password: 'Mot de passe',
+    showPasswordAria: 'Afficher le mot de passe',
+    hidePasswordAria: 'Masquer le mot de passe',
     minChars: 'Au moins 6 caractères',
     freePlanIncludes: 'Le forfait gratuit inclut :',
     listingsPerMonth: '5 annonces par mois',
@@ -172,11 +197,15 @@ export const authUiFr: AuthUi = {
 
 export const authUiDe: AuthUi = {
   backToHome: 'Zur Startseite',
+  brandTagline: 'Bringen Sie Ihre Agentur auf das nächste Level',
   login: {
     title: 'Willkommen zurück',
     subtitle: 'Melden Sie sich an, um fortzufahren',
     email: 'E-Mail',
+    emailPlaceholder: 'sie@email.com',
     password: 'Passwort',
+    showPasswordAria: 'Passwort anzeigen',
+    hidePasswordAria: 'Passwort ausblenden',
     forgotPassword: 'Passwort vergessen?',
     signIn: 'Anmelden',
     signingIn: 'Anmeldung läuft...',
@@ -188,8 +217,12 @@ export const authUiDe: AuthUi = {
     title: 'Konto erstellen',
     subtitle: 'Erstellen Sie professionelle Inserate mit KI',
     fullName: 'Vollständiger Name',
+    fullNamePlaceholder: 'Max Mustermann',
     email: 'E-Mail',
+    emailPlaceholder: 'sie@email.com',
     password: 'Passwort',
+    showPasswordAria: 'Passwort anzeigen',
+    hidePasswordAria: 'Passwort ausblenden',
     minChars: 'Mindestens 6 Zeichen',
     freePlanIncludes: 'Der kostenlose Tarif umfasst:',
     listingsPerMonth: '5 Inserate pro Monat',
@@ -225,11 +258,15 @@ export const authUiDe: AuthUi = {
 
 export const authUiPt: AuthUi = {
   backToHome: 'Voltar ao início',
+  brandTagline: 'Leve a sua agência ao próximo nível',
   login: {
     title: 'Bem-vindo de volta',
     subtitle: 'Inicie sessão para continuar',
     email: 'E-mail',
+    emailPlaceholder: 'seu@email.com',
     password: 'Palavra-passe',
+    showPasswordAria: 'Mostrar palavra-passe',
+    hidePasswordAria: 'Ocultar palavra-passe',
     forgotPassword: 'Esqueceu a palavra-passe?',
     signIn: 'Iniciar sessão',
     signingIn: 'A iniciar sessão...',
@@ -241,8 +278,12 @@ export const authUiPt: AuthUi = {
     title: 'Crie a sua conta',
     subtitle: 'Comece a gerar anúncios profissionais com IA',
     fullName: 'Nome completo',
+    fullNamePlaceholder: 'Maria Silva',
     email: 'E-mail',
+    emailPlaceholder: 'seu@email.com',
     password: 'Palavra-passe',
+    showPasswordAria: 'Mostrar palavra-passe',
+    hidePasswordAria: 'Ocultar palavra-passe',
     minChars: 'Pelo menos 6 caracteres',
     freePlanIncludes: 'O plano gratuito inclui:',
     listingsPerMonth: '5 anúncios por mês',
@@ -278,11 +319,15 @@ export const authUiPt: AuthUi = {
 
 export const authUiAr: AuthUi = {
   backToHome: 'العودة للرئيسية',
+  brandTagline: 'ارتقِ بوكالتك إلى المستوى التالي',
   login: {
     title: 'مرحباً بعودتك',
     subtitle: 'سجّل الدخول للمتابعة',
     email: 'البريد الإلكتروني',
+    emailPlaceholder: 'you@example.com',
     password: 'كلمة المرور',
+    showPasswordAria: 'إظهار كلمة المرور',
+    hidePasswordAria: 'إخفاء كلمة المرور',
     forgotPassword: 'نسيت كلمة المرور؟',
     signIn: 'تسجيل الدخول',
     signingIn: 'جاري تسجيل الدخول...',
@@ -294,8 +339,12 @@ export const authUiAr: AuthUi = {
     title: 'أنشئ حسابك',
     subtitle: 'ابدأ بإنشاء إعلانات احترافية بالذكاء الاصطناعي',
     fullName: 'الاسم الكامل',
+    fullNamePlaceholder: 'أحمد محمد',
     email: 'البريد الإلكتروني',
+    emailPlaceholder: 'you@example.com',
     password: 'كلمة المرور',
+    showPasswordAria: 'إظهار كلمة المرور',
+    hidePasswordAria: 'إخفاء كلمة المرور',
     minChars: '6 أحرف على الأقل',
     freePlanIncludes: 'تشمل الخطة المجانية:',
     listingsPerMonth: '5 إعلانات شهرياً',

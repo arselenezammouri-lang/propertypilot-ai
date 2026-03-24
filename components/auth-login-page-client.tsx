@@ -204,7 +204,7 @@ function LoginClient() {
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold gradient-text">PropertyPilot AI</h1>
-              <p className="text-xs text-muted-foreground">Pilot Your Agency to the Next Level</p>
+              <p className="text-xs text-muted-foreground">{t.auth.brandTagline}</p>
             </div>
           </Link>
         </div>
@@ -231,7 +231,7 @@ function LoginClient() {
                     id="email"
                     name="email"
                     type="email"
-                    placeholder="mario@example.com"
+                    placeholder={t.auth.login.emailPlaceholder}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -264,7 +264,7 @@ function LoginClient() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors focus:outline-none"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? t.auth.login.hidePasswordAria : t.auth.login.showPasswordAria}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
