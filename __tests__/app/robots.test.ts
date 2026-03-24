@@ -64,4 +64,19 @@ describe('buildRobotsMetadata', () => {
     expect(r.rules?.[0]?.disallow).toEqual(['/']);
     expect(r.sitemap).toBeUndefined();
   });
+
+  it('explicit false allows indexing when not on Vercel preview', () => {
+    process.env.NEXT_PUBLIC_BLOCK_SEARCH_INDEXING = 'false';
+    delete process.env.VERCEL_ENV;
+
+    expect(shouldBlockAllIndexing()).toBe(false);
+    expect(buildRobotsMetadata().sitemap).toMatch(/sitemap\.xml$/);
+  });
+
+  it('Vercel preview still blocks when NEXT_PUBLIC_BLOCK_SEARCH_INDEXING=false', () => {
+    process.env.NEXT_PUBLIC_BLOCK_SEARCH_INDEXING = 'false';
+    process.env.VERCEL_ENV = 'preview';
+
+    expect(shouldBlockAllIndexing()).toBe(true);
+  });
 });

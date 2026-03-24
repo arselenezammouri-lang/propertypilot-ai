@@ -18,6 +18,11 @@ Obiettivo: sapere **cosa è verificato automaticamente** e **cosa resta manuale*
 
 Eseguire: `npx jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/seo/build-public-sitemap.test.ts` (e `npm test` per tutto).
 
+## Checklist funzionale dashboard (tracciamento manuale)
+
+- File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.
+- Aggiornare dopo ogni sessione di test locale per avere una **percentuale misurabile** (`ok` / righe totali esclusi `dev`).
+
 ## Gate manuali (obbligatori per “go” mercato)
 
 | Area | Criterio “fatto” |
@@ -26,7 +31,8 @@ Eseguire: `npx jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/
 | **Auth** | Login, signup, forgot/reset, sessione, redirect dashboard; eventuale OAuth se attivo. |
 | **Dashboard** | Ogni feature critica: happy path + paywall (free vs agency) dove previsto. |
 | **Env produzione** | `NEXT_PUBLIC_APP_URL`, Supabase, Stripe live/test, chiavi AI, `API_STRICT_BROWSER_ORIGIN` / origini consentite. |
-| **Preview** | `VERCEL_ENV=preview` → robots `Disallow: /` + header `X-Robots-Tag` (middleware). |
+| **Preview** | `VERCEL_ENV=preview` → robots `Disallow: /` + header `X-Robots-Tag` (middleware). Anche con `NEXT_PUBLIC_BLOCK_SEARCH_INDEXING=false` la preview resta bloccata. |
+| **Production indexing** | Su Vercel Production impostare **`NEXT_PUBLIC_BLOCK_SEARCH_INDEXING=false`** (o lasciare vuoto) così un env copiato per errore da staging non lascia il sito in `noindex`. Valori `true`/`1`/`yes` forzano il blocco. |
 | **Legale / GTM** | Privacy/terms per mercati target, supporto, playbook lancio. |
 
 ## Tabella percentuale orientativa (aggiornare a mano dopo ogni sprint)
