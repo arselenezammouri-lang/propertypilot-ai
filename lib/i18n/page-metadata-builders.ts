@@ -4,7 +4,8 @@ import { titleFromBlogSlug } from '@/lib/i18n/blog-post-slug';
 
 const MAX_DESC = 158;
 
-function clipDescription(...parts: string[]): string {
+/** Shared SEO description trim (Open Graph, Twitter, child pages). */
+export function clipMetaDescription(...parts: string[]): string {
   const s = parts
     .filter(Boolean)
     .join(' ')
@@ -12,6 +13,10 @@ function clipDescription(...parts: string[]): string {
     .trim();
   if (s.length <= MAX_DESC) return s;
   return `${s.slice(0, MAX_DESC - 1)}…`;
+}
+
+function clipDescription(...parts: string[]): string {
+  return clipMetaDescription(...parts);
 }
 
 /** Child page titles use root layout template `%s | PropertyPilot AI`. */

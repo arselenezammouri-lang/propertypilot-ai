@@ -1,9 +1,9 @@
 import { cookies } from 'next/headers';
-import { locales, type Locale } from '@/lib/i18n/config';
+import { defaultLocale, locales, type Locale } from '@/lib/i18n/config';
 
 /**
  * Reads `propertypilot_locale` (same cookie as root `generateMetadata` / `LocaleProvider`).
- * Defaults to `en` when missing or invalid.
+ * Defaults to `defaultLocale` (`it` in config) when missing or invalid — allineato al prodotto.
  */
 export async function getServerLocaleFromCookies(): Promise<Locale> {
   const cookieStore = await cookies();
@@ -11,5 +11,5 @@ export async function getServerLocaleFromCookies(): Promise<Locale> {
   if (raw && locales.includes(raw as Locale)) {
     return raw as Locale;
   }
-  return 'en';
+  return defaultLocale;
 }
