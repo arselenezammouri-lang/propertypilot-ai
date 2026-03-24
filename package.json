@@ -32,6 +32,7 @@
     "smoke:public": "playwright test e2e/smoke-public.spec.ts",
     "qa:launch": "jest __tests__/launch __tests__/app/robots.test.ts __tests__/lib/seo/build-public-sitemap.test.ts --passWithNoTests",
     "qa:premerge": "npm run qa:launch && npm run smoke:public",
+    "qa:premerge:local": "node scripts/qa-premerge-local.mjs",
     "test:e2e:billing": "playwright test e2e/dashboard-billing.spec.ts"
   },
   "dependencies": {

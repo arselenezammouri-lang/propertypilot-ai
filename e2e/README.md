@@ -64,10 +64,12 @@ npm run test:e2e:debug
 
 ## Pre-merge (locale o CI)
 
-**`npm run qa:premerge`** = `npm run qa:launch` + `npm run smoke:public` (Jest launch/readiness + smoke Playwright). Allineato a `docs/LAUNCH_READINESS.md`.
+- **`npm run qa:premerge`** = `qa:launch` + `smoke:public` (come job GitHub **Pre-merge QA**).
+- **`npm run qa:premerge:local`** = stesso flusso ma carica **`.env`** e **`.env.local`**, poi esegue **`test:e2e:billing`** solo se `E2E_FOUNDER_EMAIL`/`E2E_FOUNDER_PASSWORD` o `E2E_TEST_EMAIL`/`E2E_TEST_PASSWORD` sono valorizzati; altrimenti stampa un messaggio e termina con successo. Un solo comando prima del merge su laptop.
 
 ## Note
 
-- I test richiedono che il server di sviluppo sia in esecuzione
+- **`smoke:public`** e **`qa:premerge`**: Playwright può avviare **`npm run dev`** da solo se la porta è libera (vedi `playwright.config.ts`).
+- Altri test E2E possono richiedere il server già in esecuzione
 - Alcuni test richiedono un utente test configurato
 - I test di checkout richiedono Stripe test mode

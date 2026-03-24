@@ -16,7 +16,7 @@ Obiettivo: sapere **cosa è verificato automaticamente** e **cosa resta manuale*
 | Robots | `__tests__/app/robots.test.ts` | Regole produzione vs preview / `NEXT_PUBLIC_BLOCK_SEARCH_INDEXING`. |
 | i18n / metadata | suite `__tests__/lib/i18n/*` | Coerenza dizionari, metadata builder, errori auth, ecc. |
 
-Eseguire: `npm run qa:launch` (stessa suite) oppure, prima del merge locale, **`npm run qa:premerge`** (Jest launch + **`npm run smoke:public`** con server Next avviato da Playwright se necessario). In alternativa: `npx jest __tests__/launch ...` e `npm test` per tutto.
+Eseguire: `npm run qa:launch` (stessa suite) oppure, prima del merge locale, **`npm run qa:premerge`** (Jest launch + **`npm run smoke:public`**, come in CI). Su **macchina founder** con `.env.local`: **`npm run qa:premerge:local`** — carica `.env` / `.env.local`, stesso flusso + **`npm run test:e2e:billing`** se sono impostate `E2E_FOUNDER_*` o `E2E_TEST_*` (altrimenti il billing viene saltato senza errore). In alternativa: `npx jest __tests__/launch ...` e `npm test` per tutto.
 
 ## Checklist funzionale dashboard (tracciamento manuale)
 
