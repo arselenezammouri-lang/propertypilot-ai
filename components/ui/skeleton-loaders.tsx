@@ -126,3 +126,40 @@ export function ListSkeleton({ items = 5 }: { items?: number }) {
     </div>
   );
 }
+
+/**
+ * Tool page: sidebar form (1 col) + wide content (2 cols) — matches Perfect Copy style layout.
+ */
+export function ToolPageTwoColumnSkeleton() {
+  return (
+    <div className="grid lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-1">
+        <Card className="border-white/10 bg-card/40">
+          <CardHeader>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-full mt-2" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormSkeleton />
+          </CardContent>
+        </Card>
+      </div>
+      <div className="lg:col-span-2">
+        <Card className="border-white/10 bg-card/30 min-h-[320px]">
+          <CardContent className="p-8">
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-2/3 mx-auto" />
+              <Skeleton className="h-4 w-full max-w-md mx-auto" />
+              <div className="grid grid-cols-5 gap-2 pt-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full rounded-md" />
+                ))}
+              </div>
+              <Skeleton className="h-64 w-full rounded-xl mt-6" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -1,14 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Zap, Phone, Box, Target, Building2, Map, FileText, Sparkles, TrendingDown } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { Settings, Zap, Phone, Box, Target, Building2, Map as MapIcon, FileText, Sparkles, TrendingDown, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { DASHBOARD_TIMEZONE_OPTIONS, type DashboardTimezone } from "@/lib/i18n/timezones";
+import { formatDateTimeForLocale } from "@/lib/i18n/intl";
+import type { Locale } from "@/lib/i18n/config";
 import { createClient } from "@/lib/supabase/client";
+import { resolveUiSubscriptionPlan } from "@/lib/utils/effective-plan";
+import { isFounderSubscriptionPreviewAllowed } from "@/lib/utils/local-dev-host";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  premiumFeatureToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 interface WorkspaceModule {
   id: string;
@@ -21,125 +46,111 @@ interface WorkspaceModule {
 }
 
 export default function WorkspaceSettingsPage() {
-  const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const { locale, currency, timezone, setLocale, setCurrency, setTimezone } = useLocale();
+  const feedbackLocale = locale;
+  const t = getTranslation(locale as SupportedLocale).dashboard.workspacePage;
   const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
 
-  const t = {
-    loading: isItalian ? "Caricamento impostazioni..." : "Loading settings...",
-    heroTitle: "Feature Control Center",
-    heroSubtitle: isItalian ? "Personalizza la tua dashboard attivando o disattivando i moduli" : "Customize your dashboard by enabling or disabling modules",
-    trialActive: isItalian ? "Trial Attivo" : "Trial Active",
-    trialDesc: (days: number) => isItalian
-      ? `Hai accesso a tutti i moduli per i prossimi ${days} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.`
-      : `You have access to all modules for the next ${days} days. After the trial, only the modules in your plan will be available.`,
-    howItWorks: isItalian ? "💡 Come funziona" : "💡 How it works",
-    howItWorksList: isItalian
-      ? [
-          "I moduli disattivati scompariranno dalla barra laterale della dashboard",
-          "Durante il trial, tutti i moduli sono disponibili",
-          "Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati",
-          "Le impostazioni vengono salvate automaticamente",
-        ]
-      : [
-          "Disabled modules will disappear from the dashboard sidebar",
-          "During the trial, all modules are available",
-          "After the trial, only modules included in your plan can be enabled",
-          "Settings are saved automatically",
-        ],
-    insufficientPlan: isItalian ? "Piano insufficiente" : "Insufficient plan",
-    insufficientPlanDesc: (plan: string) => isItalian
-      ? `Questo modulo richiede il piano ${plan}. Aggiorna il tuo account.`
-      : `This module requires the ${plan} plan. Upgrade your account.`,
-    moduleUpdated: isItalian ? "Modulo aggiornato" : "Module updated",
-    moduleEnabled: isItalian ? "attivato" : "enabled",
-    moduleDisabled: isItalian ? "disattivato" : "disabled",
-    errorTitle: isItalian ? "Errore" : "Error",
-    saveError: isItalian ? "Impossibile salvare le impostazioni." : "Unable to save settings.",
-    // module names
-    modules: {
-      scraper: { name: isItalian ? "Scraper Globale" : "Global Scraper", desc: isItalian ? "Scansione automatica di Idealista, Zillow, Immobiliare.it" : "Automatic scanning of Idealista, Zillow, Immobiliare.it" },
-      ai_voice: { name: "AI Voice Calling", desc: isItalian ? "Chiamate automatiche con Bland AI" : "Automatic calls with Bland AI" },
-      "3d_staging": { name: "3D Virtual Staging", desc: isItalian ? "Generazione visioni 3D post-ristrutturazione" : "3D visualization generation post-renovation" },
-      price_sniper: { name: "Price Drop Sniper", desc: isItalian ? "Rilevamento automatico ribassi di prezzo" : "Automatic price drop detection" },
-      commercial: { name: "Commercial Intelligence", desc: isItalian ? "Analisi immobili commerciali e Business Features" : "Commercial property analysis and Business Features" },
-      territory_map: { name: "Territory Commander", desc: isItalian ? "Mappa tattica e analisi territorio" : "Tactical map and territory analysis" },
-      smart_briefing: { name: "AI Smart Briefing", desc: isItalian ? "Riassunto automatico vantaggi/difetti/target" : "Automatic summary of pros/cons/target" },
-      xray_vision: { name: "AI X-Ray Vision", desc: isItalian ? "Analisi tecnica immagini per difetti/pregi" : "Technical image analysis for defects/features" },
-      competitor_radar: { name: "Competitor Radar", desc: isItalian ? "Rilevamento mandati in scadenza" : "Expiring mandate detection" },
-    } as Record<string, { name: string; desc: string }>,
-  };
+  const trialDays = 7;
 
   const [modules, setModules] = useState<WorkspaceModule[]>([]);
   const [isTrial, setIsTrial] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  const timezoneGroups = useMemo(() => {
+    const regions = getTranslation(locale as SupportedLocale).dashboard.workspacePage.timezoneRegions;
+    const labels: Record<string, string> = {
+      EU: regions.EU,
+      US: regions.US,
+      NA: regions.NA,
+      LATAM: regions.LATAM,
+      ME: regions.ME,
+      APAC: regions.APAC,
+      UTC: regions.UTC,
+    };
+    const byRegion = new globalThis.Map<string, (typeof DASHBOARD_TIMEZONE_OPTIONS)[number][]>();
+    for (const opt of DASHBOARD_TIMEZONE_OPTIONS) {
+      const list = byRegion.get(opt.region) ?? [];
+      list.push(opt);
+      byRegion.set(opt.region, list);
+    }
+    return Array.from(byRegion.entries()).map(([region, opts]) => ({
+      region,
+      label: labels[region] ?? region,
+      opts,
+    }));
+  }, [locale]);
+
+  const timePreview = useMemo(
+    () => formatDateTimeForLocale(new Date(), locale as Locale, timezone),
+    [locale, timezone]
+  );
+
   useEffect(() => {
-    loadWorkspaceSettings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
-  }, []);
+    const wp = getTranslation(locale as SupportedLocale).dashboard.workspacePage;
+    const loadWorkspaceSettings = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
 
-  const loadWorkspaceSettings = async () => {
-    try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) return;
+        if (!user) return;
 
-      // Controlla se è in trial (primi 7 giorni)
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('created_at, subscription_plan')
-        .eq('id', user.id)
-        .single();
-
-      if (profile) {
-        const daysSinceSignup = Math.floor(
-          (Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24)
-        );
-        setIsTrial(daysSinceSignup <= 7);
-
-        // Carica moduli abilitati dall'utente
-        const { data: workspace } = await supabase
-          .from('user_workspace_settings')
-          .select('enabled_modules')
-          .eq('user_id', user.id)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('created_at, subscription_plan')
+          .eq('id', user.id)
           .single();
 
-        const enabledModules = workspace?.enabled_modules || [];
+        if (profile) {
+          const daysSinceSignup = Math.floor(
+            (Date.now() - new Date(profile.created_at).getTime()) / (1000 * 60 * 60 * 24)
+          );
+          const inTrial = daysSinceSignup <= 7;
+          setIsTrial(inTrial);
 
-        // Definisci tutti i moduli
-        const moduleList = [
-          { id: 'scraper', icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'ai_voice', icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: '3d_staging', icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'price_sniper', icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'commercial', icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
-          { id: 'territory_map', icon: <Map className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'smart_briefing', icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'xray_vision', icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-          { id: 'competitor_radar', icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
-        ];
+          const { data: workspace } = await supabase
+            .from('user_workspace_settings')
+            .select('enabled_modules')
+            .eq('user_id', user.id)
+            .single();
 
-        const allModules: WorkspaceModule[] = moduleList.map(m => ({
-          id: m.id,
-          name: t.modules[m.id]?.name || m.id,
-          description: t.modules[m.id]?.desc || '',
-          icon: m.icon,
-          requiredPlan: m.requiredPlan,
-          enabled: enabledModules.includes(m.id) || (isTrial && !enabledModules.includes(m.id)),
-          trialEnabled: isTrial,
-        }));
+          const enabledModules = workspace?.enabled_modules || [];
 
-        setModules(allModules);
+          const moduleList = [
+            { id: 'scraper' as const, icon: <Zap className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'ai_voice' as const, icon: <Phone className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: '3d_staging' as const, icon: <Box className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'price_sniper' as const, icon: <Target className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'commercial' as const, icon: <Building2 className="h-5 w-5" />, requiredPlan: 'AGENCY' as const },
+            { id: 'territory_map' as const, icon: <MapIcon className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'smart_briefing' as const, icon: <FileText className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'xray_vision' as const, icon: <Sparkles className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+            { id: 'competitor_radar' as const, icon: <TrendingDown className="h-5 w-5" />, requiredPlan: 'PRO' as const },
+          ];
+
+          const allModules: WorkspaceModule[] = moduleList.map((m) => ({
+            id: m.id,
+            name: wp.modules[m.id].name,
+            description: wp.modules[m.id].desc,
+            icon: m.icon,
+            requiredPlan: m.requiredPlan,
+            enabled: enabledModules.includes(m.id) || (inTrial && !enabledModules.includes(m.id)),
+            trialEnabled: inTrial,
+          }));
+
+          setModules(allModules);
+        }
+      } catch (error) {
+        console.error('[WORKSPACE] Error loading settings:', error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('[WORKSPACE] Error loading settings:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    void loadWorkspaceSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- mount + locale for copy
+  }, [locale]);
 
   const handleToggleModule = async (moduleId: string) => {
     const workspaceModule = modules.find((m) => m.id === moduleId);
@@ -160,11 +171,24 @@ export default function WorkspaceSettingsPage() {
 
       if (profile) {
         const planHierarchy = ['FREE', 'STARTER', 'PRO', 'AGENCY'];
-        const userPlanIndex = planHierarchy.indexOf(profile.subscription_plan || 'FREE');
+        const localDevHost = isFounderSubscriptionPreviewAllowed(
+          typeof window !== "undefined" ? window.location.host : ""
+        );
+        const effective = resolveUiSubscriptionPlan(user.email, profile.subscription_plan, {
+          localDevHost,
+        });
+        const userPlanIndex = planHierarchy.indexOf(effective.toUpperCase());
         const requiredPlanIndex = planHierarchy.indexOf(workspaceModule.requiredPlan);
 
         if (userPlanIndex < requiredPlanIndex) {
-          toast({ title: t.insufficientPlan, description: t.insufficientPlanDesc(workspaceModule.requiredPlan), variant: "destructive" });
+          toast({
+            variant: "destructive",
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "workspaceModules",
+              t.insufficientPlanDesc.replace("{plan}", workspaceModule.requiredPlan)
+            ),
+          });
           return;
         }
       }
@@ -202,7 +226,10 @@ export default function WorkspaceSettingsPage() {
       toast({ title: t.moduleUpdated, description: `${workspaceModule.name} ${!workspaceModule.enabled ? t.moduleEnabled : t.moduleDisabled}.` });
     } catch (error) {
       console.error('[WORKSPACE] Error saving:', error);
-      toast({ title: t.errorTitle, description: t.saveError, variant: "destructive" });
+      toast({
+        variant: "destructive",
+        ...apiFailureToast(feedbackLocale, "workspaceModules", {}, t.saveError),
+      });
       // Revert
       setModules((prev) =>
         prev.map((m) =>
@@ -216,43 +243,95 @@ export default function WorkspaceSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
-        <div className="text-center">
-          <Settings className="h-8 w-8 animate-spin text-purple-400 mx-auto mb-4" />
-          <p className="text-gray-400">{t.loading}</p>
-        </div>
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] flex-col items-center justify-center text-white">
+        <Settings className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+        <p className="mt-4 text-sm text-white/60">{t.loading}</p>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/30 to-cyan-500/30 flex items-center justify-center border border-purple-500/50">
-              <Settings className="h-6 w-6 text-purple-400" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">{t.heroTitle}</h1>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-purple-500/50 bg-gradient-to-br from-purple-500/30 to-cyan-500/30">
+              <Settings className="h-6 w-6 text-purple-400" aria-hidden />
+            </span>
+            <span>{t.heroTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-workspace-settings"
+        subtitle={t.heroSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/workspace-setup" />}
+      />
 
-          {isTrial && (
-            <div className="mt-4 p-4 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg">
-              <p className="text-sm text-purple-300">
-                🎉 <strong>{t.trialActive}</strong> - {t.trialDesc(7)}
-              </p>
-            </div>
-          )}
+      {isTrial ? (
+        <div className="mb-8 rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 p-4">
+          <p className="text-sm text-purple-200">
+            <strong>{t.trialActive}</strong> —{" "}
+            {t.trialDesc.replace("{days}", String(trialDays))}
+          </p>
         </div>
+      ) : null}
 
-        {/* Modules List */}
-        <div className="space-y-4">
+      <div className="mx-auto max-w-5xl w-full space-y-4">
+        <Card className="border-white/10 bg-[#0a0a0a]">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg text-white">
+              <Clock className="h-5 w-5 text-cyan-400" aria-hidden />
+              {t.prefsTitle}
+            </CardTitle>
+            <CardDescription className="text-white/60">{t.prefsSubtitle}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+              <LocaleCurrencySelector
+                currentLocale={locale}
+                currentCurrency={currency}
+                onLocaleChange={setLocale}
+                onCurrencyChange={setCurrency}
+              />
+            </div>
+            <Separator className="bg-white/10" />
+            <div className="space-y-2 max-w-md">
+              <Label htmlFor="workspace-timezone" className="text-white/90">
+                {t.timezoneLabel}
+              </Label>
+              <Select value={timezone} onValueChange={(v) => setTimezone(v as DashboardTimezone)}>
+                <SelectTrigger
+                  id="workspace-timezone"
+                  className="h-11 min-h-11 touch-manipulation border-white/20 bg-white/5 text-white"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-[min(24rem,70vh)]">
+                  {timezoneGroups.map(({ region, label, opts }) => (
+                    <SelectGroup key={region}>
+                      <SelectLabel className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {label}
+                      </SelectLabel>
+                      {opts.map((o) => (
+                        <SelectItem key={o.value} value={o.value} className="min-h-11 touch-manipulation">
+                          {o.value.replace(/_/g, " ")}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-white/50">{t.timezoneHint}</p>
+            </div>
+            <p className="text-sm text-white/70">
+              <span className="text-white/50">{t.previewLabel}:</span>{" "}
+              <span className="font-medium text-cyan-200 tabular-nums">{timePreview}</span>
+            </p>
+          </CardContent>
+        </Card>
           {modules.map((module) => (
             <Card
               key={module.id}
@@ -276,7 +355,7 @@ export default function WorkspaceSettingsPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold text-white">{module.name}</h3>
                         {module.trialEnabled && (
-                          <Badge className="bg-cyan-500 text-white text-xs">Trial</Badge>
+                          <Badge className="bg-cyan-500 text-white text-xs">{t.trialBadge}</Badge>
                         )}
                         <Badge
                           variant="outline"
@@ -304,7 +383,6 @@ export default function WorkspaceSettingsPage() {
               </CardContent>
             </Card>
           ))}
-        </div>
 
         {/* Info Box */}
         <Card className="mt-8 border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
@@ -313,14 +391,14 @@ export default function WorkspaceSettingsPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-gray-300">
-              {t.howItWorksList.map((item, i) => (
+              {t.howItWorksBullets.map((item, i) => (
                 <li key={i}>• {item}</li>
               ))}
             </ul>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 

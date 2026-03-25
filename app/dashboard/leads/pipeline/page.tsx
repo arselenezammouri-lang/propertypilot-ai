@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale } from "@/lib/i18n/locale-context";
-import { 
-  ArrowLeft, 
-  Users, 
-  Target, 
-  Phone, 
-  Mail, 
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { useAPIErrorHandler } from "@/components/error-boundary";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  networkFailureToast,
+} from "@/lib/i18n/api-feature-feedback";
+import {
+  ArrowLeft,
+  Users,
+  Target,
+  Phone,
+  Mail,
   GripVertical,
   ExternalLink,
   Sparkles,
   RefreshCw,
-  LayoutGrid
+  LayoutGrid,
+  Flame,
+  Star,
+  Snowflake,
+  HelpCircle,
 } from "lucide-react";
 
 interface Lead {
@@ -46,47 +61,30 @@ function getScoreColor(score: number | null): string {
   return 'text-red-400';
 }
 
-function getScoreBadge(score: number | null): string {
-  if (score === null || score === 0) return '❓';
-  if (score >= 80) return '🔥';
-  if (score >= 50) return '⭐';
-  return '❄️';
+function ScoreTierGlyph({ score }: { score: number | null }) {
+  if (score === null || score === 0) {
+    return <HelpCircle className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />;
+  }
+  if (score >= 80) {
+    return <Flame className="h-4 w-4 text-emerald-400 shrink-0" aria-hidden />;
+  }
+  if (score >= 50) {
+    return <Star className="h-4 w-4 text-yellow-400 shrink-0 fill-yellow-400" aria-hidden />;
+  }
+  return <Snowflake className="h-4 w-4 text-red-400 shrink-0" aria-hidden />;
 }
 
 export default function PipelinePage() {
   const router = useRouter();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const feedbackLocale = locale;
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.leadPipelinePage,
+    [locale],
+  );
+  const usage = useUsageLimits();
   const { toast } = useToast();
-
-  const t = {
-    loadingPipeline: isItalian ? "Caricamento pipeline..." : "Loading pipeline...",
-    heroTitle: isItalian ? "Pipeline Leads" : "Leads Pipeline",
-    heroBadge: "🧠 CRM 2.5",
-    heroSubtitle: isItalian
-      ? "Trascina i lead tra le colonne per aggiornare lo stato"
-      : "Drag leads between columns to update their status",
-    tableView: isItalian ? "Vista Tabella" : "Table View",
-    refresh: isItalian ? "Aggiorna" : "Refresh",
-    noLeads: isItalian ? "Nessun lead" : "No leads",
-    openLead: isItalian ? "Apri Lead" : "Open Lead",
-    notAnalyzed: isItalian ? "Non analizzato" : "Not analyzed",
-    errorTitle: isItalian ? "Errore" : "Error",
-    loadError: isItalian ? "Impossibile caricare i lead" : "Cannot load leads",
-    statusUpdated: isItalian ? "Stato aggiornato" : "Status updated",
-    movedTo: (label: string) => isItalian ? `Lead spostato in "${label}"` : `Lead moved to "${label}"`,
-    automationApplied: isItalian ? "⚡ Automazione applicata" : "⚡ Automation applied",
-    automationRules: (n: number) => isItalian ? `${n} regola/e eseguita/e` : `${n} rule(s) executed`,
-    updateError: isItalian ? "Impossibile aggiornare lo stato del lead" : "Cannot update lead status",
-    statusNew: isItalian ? "Nuovi" : "New",
-    statusContacted: isItalian ? "Contattati" : "Contacted",
-    statusFollowup: "Follow-up",
-    statusClosed: isItalian ? "Chiusi" : "Closed",
-    statusLost: isItalian ? "Persi" : "Lost",
-    priorityLow: isItalian ? "Bassa" : "Low",
-    priorityMedium: isItalian ? "Media" : "Medium",
-    priorityHigh: isItalian ? "Alta" : "High",
-  };
+  const { handleAPIError } = useAPIErrorHandler();
 
   const statusConfig: Record<StatusColumn, { label: string; color: string; bgColor: string; borderColor: string }> = {
     new: { label: t.statusNew, color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30' },
@@ -109,23 +107,34 @@ export default function PipelinePage() {
 
   const fetchLeads = useCallback(async () => {
     try {
-      const response = await fetch('/api/leads');
-      if (!response.ok) {
-        if (response.status === 401) {
-          router.push('/auth/login');
+      const res = await fetchApi<Lead[]>("/api/leads");
+      if (!res.success) {
+        if (res.status === 401) {
+          router.push("/auth/login");
           return;
         }
-        throw new Error('fetch error');
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadPipeline",
+          { status: res.status, error: res.error, message: res.message },
+          t.loadError
+        );
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
-      const data = await response.json();
-      setLeads(data.data || []);
+      const list = Array.isArray(res.data) ? res.data : [];
+      setLeads(list);
     } catch (error) {
-      console.error('Error fetching leads:', error);
-      toast({ title: t.errorTitle, description: t.loadError, variant: "destructive" });
+      const net = networkFailureToast(feedbackLocale, "leadPipeline");
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [router, toast, t.errorTitle, t.loadError]);
+  }, [router, toast, feedbackLocale, t.loadError, handleAPIError]);
 
   useEffect(() => {
     fetchLeads();
@@ -172,22 +181,30 @@ export default function PipelinePage() {
     );
 
     try {
-      const response = await fetch('/api/leads/update-status', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/leads/update-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead_id: draggedLead.id,
-          new_status: newStatus
-        })
+          new_status: newStatus,
+        }),
       });
+      const body = (await response.json()) as { message?: string; error?: string };
 
       if (!response.ok) {
-        throw new Error('Errore nell\'aggiornamento');
+        const fail = apiFailureToast(
+          feedbackLocale,
+          "leadPipeline",
+          { status: response.status, error: body.error, message: body.message },
+          t.updateError
+        );
+        throw new Error(fail.description);
       }
 
-      const result = await response.json();
-      
-      toast({ title: t.statusUpdated, description: result.message || t.movedTo(statusConfig[newStatus].label) });
+      toast({
+        title: t.statusUpdated,
+        description: body.message || t.movedTo.replace("{label}", statusConfig[newStatus].label),
+      });
 
       fetch('/api/automations/execute-rule', {
         method: 'POST',
@@ -202,7 +219,10 @@ export default function PipelinePage() {
         if (autoRes.ok) {
           const autoData = await autoRes.json();
           if (autoData.executed > 0) {
-            toast({ title: t.automationApplied, description: t.automationRules(autoData.executed) });
+            toast({
+              title: t.automationApplied,
+              description: t.automationRules.replace("{count}", String(autoData.executed)),
+            });
             fetchLeads();
           }
         }
@@ -217,7 +237,11 @@ export default function PipelinePage() {
             : lead
         )
       );
-      toast({ title: t.errorTitle, description: t.updateError, variant: "destructive" });
+      const desc =
+        error instanceof Error && error.message
+          ? error.message
+          : t.updateError;
+      toast({ title: t.errorTitle, description: desc, variant: "destructive" });
     } finally {
       setIsUpdating(false);
       setDraggedLead(null);
@@ -230,47 +254,57 @@ export default function PipelinePage() {
 
   const columns: StatusColumn[] = ['new', 'contacted', 'followup', 'closed', 'lost'];
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-        <div className="max-w-[1800px] mx-auto">
-          <div className="flex items-center justify-center h-[60vh]">
-            <div className="flex flex-col items-center gap-4">
-              <RefreshCw className="h-8 w-8 text-emerald-400 animate-spin" />
-              <p className="text-slate-400">{t.loadingPipeline}</p>
-            </div>
-          </div>
+      <DashboardPageShell className="max-w-[1800px]">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
+          <RefreshCw className="h-8 w-8 animate-spin text-emerald-400" />
+          <p className="text-slate-400">{t.loadingPipeline}</p>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4 md:p-8">
-      <div className="max-w-[1800px] mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white" data-testid="button-back-dashboard" aria-label="Back to dashboard">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h1>
-                <Badge className="bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-white border-0">
-                  {t.heroBadge}
-                </Badge>
-              </div>
-              <p className="text-slate-400 mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
+    <DashboardPageShell className="max-w-[1800px]">
+      <div className="mb-6 flex flex-wrap items-center gap-3">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+          data-testid="button-back-dashboard"
+          aria-label={t.backToDashboardAria}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t.dashboardLink}
+        </Link>
+      </div>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        titleDataTestId="heading-leads-pipeline"
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
+        actions={
+          <Badge className="border-0 bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-xs text-white">
+            {t.heroBadge}
+          </Badge>
+        }
+      />
+
+      <div>
+        <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div className="flex flex-wrap items-center gap-3 md:ml-auto md:justify-end">
             <Link href="/dashboard/leads">
               <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800" data-testid="button-table-view">
                 <LayoutGrid className="h-4 w-4 mr-2" />
@@ -290,7 +324,7 @@ export default function PipelinePage() {
           </div>
         </div>
 
-        <div className="mb-6 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+        <div className="mb-6 rounded-xl border border-slate-700/50 bg-slate-800/50 p-4">
           <div className="flex flex-wrap gap-6 justify-center md:justify-start">
             {columns.map(status => (
               <div key={status} className="flex items-center gap-2">
@@ -365,7 +399,7 @@ export default function PipelinePage() {
                           <span className={`text-sm font-bold ${getScoreColor(lead.lead_score)}`}>
                             {lead.lead_score}/100
                           </span>
-                          <span className="text-lg">{getScoreBadge(lead.lead_score)}</span>
+                          <ScoreTierGlyph score={lead.lead_score} />
                         </div>
                       )}
 
@@ -426,24 +460,24 @@ export default function PipelinePage() {
         <div className="mt-8 p-4 rounded-xl bg-slate-800/30 border border-slate-700/50">
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="text-emerald-400">🔥</span>
-              <span>Score 80-100 (Hot)</span>
+              <Flame className="h-4 w-4 text-emerald-400 shrink-0" aria-hidden />
+              <span>{t.legendHot}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-yellow-400">⭐</span>
-              <span>Score 50-79 (Warm)</span>
+              <Star className="h-4 w-4 text-yellow-400 shrink-0 fill-yellow-400" aria-hidden />
+              <span>{t.legendWarm}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-red-400">❄️</span>
-              <span>Score 0-49 (Cold)</span>
+              <Snowflake className="h-4 w-4 text-red-400 shrink-0" aria-hidden />
+              <span>{t.legendCold}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span>❓</span>
+              <HelpCircle className="h-4 w-4 text-slate-400 shrink-0" aria-hidden />
               <span>{t.notAnalyzed}</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

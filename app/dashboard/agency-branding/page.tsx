@@ -1,12 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
   Building2, 
   Palette,
@@ -23,6 +34,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 interface AgencyBranding {
   id: number;
@@ -41,53 +53,19 @@ interface AgencyBranding {
 export default function AgencyBrandingPage() {
   const { toast } = useToast();
   const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const feedbackLocale = locale;
+  const { plan, isLoading: planLoading } = useUsageLimits();
   const [isLoading, setIsLoading] = useState(true);
 
-  const t = {
-    backToDashboard: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    pageTitle: isItalian ? "Branding Agenzia" : "Agency Branding",
-    pageSubtitle: isItalian ? "Personalizza le schede PDF con il tuo brand White Label" : "Customize PDF sheets with your White Label brand",
-    agencyInfoTitle: isItalian ? "Informazioni Agenzia" : "Agency Information",
-    agencyInfoDesc: isItalian ? "Dati base della tua agenzia immobiliare" : "Basic data for your real estate agency",
-    agencyNameLabel: isItalian ? "Nome Agenzia *" : "Agency Name *",
-    agencyNamePlaceholder: isItalian ? "es. Immobiliare Rossi" : "e.g. Rossi Real Estate",
-    logoUrlLabel: isItalian ? "URL Logo (opzionale)" : "Logo URL (optional)",
-    logoUrlHelper: isItalian ? "Inserisci l'URL del logo della tua agenzia (formato PNG o JPG consigliato)" : "Enter your agency logo URL (PNG or JPG format recommended)",
-    websiteLabel: isItalian ? "Sito Web (opzionale)" : "Website (optional)",
-    websitePlaceholder: isItalian ? "https://www.tuaagenzia.it" : "https://www.youragency.com",
-    contactsTitle: isItalian ? "Contatti" : "Contacts",
-    contactsDesc: isItalian ? "Informazioni di contatto per le schede PDF" : "Contact information for PDF sheets",
-    contactNameLabel: isItalian ? "Nome Referente" : "Contact Name",
-    contactNamePlaceholder: isItalian ? "es. Mario Rossi" : "e.g. John Smith",
-    phoneLabel: isItalian ? "Telefono" : "Phone",
-    phonePlaceholder: isItalian ? "+39 02 1234567" : "+1 555 1234567",
-    emailPlaceholder: isItalian ? "info@agenzia.it" : "info@agency.com",
-    colorsTitle: isItalian ? "Colori Brand" : "Brand Colors",
-    colorsDesc: isItalian ? "Personalizza i colori delle tue schede PDF" : "Customize the colors of your PDF sheets",
-    primaryColor: isItalian ? "Colore Primario" : "Primary Color",
-    secondaryColor: isItalian ? "Colore Secondario" : "Secondary Color",
-    accentColor: isItalian ? "Colore Accento" : "Accent Color",
-    saving: isItalian ? "Salvataggio..." : "Saving...",
-    updateBranding: isItalian ? "Aggiorna Branding" : "Update Branding",
-    saveBranding: isItalian ? "Salva Branding" : "Save Branding",
-    previewTitle: isItalian ? "Anteprima Scheda PDF" : "PDF Sheet Preview",
-    previewDesc: isItalian ? "Ecco come apparirà la tua scheda White Label" : "Here's how your White Label sheet will look",
-    previewPropertyTitle: isItalian ? "Titolo Immobile" : "Property Title",
-    previewAgencyName: isItalian ? "Nome Agenzia" : "Agency Name",
-    previewContact: isItalian ? "Nome Referente" : "Contact Name",
-    previewPhone: isItalian ? "+39 000 0000000" : "+1 000 0000000",
-    previewWebsite: isItalian ? "www.agenzia.it" : "www.agency.com",
-    previewDesc2: isItalian ? "Splendido appartamento in zona centrale, luminoso e ristrutturato con finiture di pregio. Ideale per famiglie..." : "Splendid apartment in central area, bright and renovated with quality finishes. Ideal for families...",
-    brandingConfigured: isItalian ? "Branding configurato - Usa \"White Label\" nella generazione PDF" : "Branding configured - Use \"White Label\" in PDF generation",
-    // toasts
-    required: isItalian ? "Campo obbligatorio" : "Required field",
-    agencyNameRequired: isItalian ? "Inserisci il nome dell'agenzia" : "Enter the agency name",
-    saved: isItalian ? "Branding salvato!" : "Branding saved!",
-    savedDesc: isItalian ? "Il profilo della tua agenzia è stato salvato con successo." : "Your agency profile has been saved successfully.",
-    errorTitle: isItalian ? "Errore" : "Error",
-    saveError: isItalian ? "Errore nel salvataggio" : "Save error",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.agencyBrandingPage,
+    [locale]
+  );
+
+  const loadForbiddenRef = useRef(t.loadForbidden);
+  const loadErrorGenericRef = useRef(t.loadErrorGeneric);
+  loadForbiddenRef.current = t.loadForbidden;
+  loadErrorGenericRef.current = t.loadErrorGeneric;
   const [isSaving, setIsSaving] = useState(false);
   const [hasExisting, setHasExisting] = useState(false);
 
@@ -104,34 +82,59 @@ export default function AgencyBrandingPage() {
   });
 
   useEffect(() => {
-    loadBranding();
-  }, []);
-
-  const loadBranding = async () => {
-    try {
-      const response = await fetch("/api/agency-branding");
-      const data = await response.json();
-      
-      if (data.branding) {
-        setFormData({
-          agency_name: data.branding.agency_name || "",
-          logo_url: data.branding.logo_url || "",
-          primary_color: data.branding.primary_color || "#1E3A5F",
-          secondary_color: data.branding.secondary_color || "#60A5FA",
-          accent_color: data.branding.accent_color || "#F59E0B",
-          contact_name: data.branding.contact_name || "",
-          contact_phone: data.branding.contact_phone || "",
-          contact_email: data.branding.contact_email || "",
-          website_url: data.branding.website_url || "",
+    const loadBranding = async () => {
+      try {
+        const res = await fetchApi<{ branding: AgencyBranding | null }>("/api/agency-branding");
+        if (!res.success) {
+          if (res.status === 403) {
+            toast({
+              variant: "destructive",
+              ...premiumFeatureToast(
+                feedbackLocale,
+                "agencyBrandingWhiteLabel",
+                res.message || res.error || loadForbiddenRef.current
+              ),
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              ...apiFailureToast(
+                feedbackLocale,
+                "agencyBrandingWhiteLabel",
+                { status: res.status, message: res.message, error: res.error },
+                loadErrorGenericRef.current
+              ),
+            });
+          }
+          return;
+        }
+        const branding = res.data?.branding;
+        if (branding) {
+          setFormData({
+            agency_name: branding.agency_name || "",
+            logo_url: branding.logo_url || "",
+            primary_color: branding.primary_color || "#1E3A5F",
+            secondary_color: branding.secondary_color || "#60A5FA",
+            accent_color: branding.accent_color || "#F59E0B",
+            contact_name: branding.contact_name || "",
+            contact_phone: branding.contact_phone || "",
+            contact_email: branding.contact_email || "",
+            website_url: branding.website_url || "",
+          });
+          setHasExisting(true);
+        }
+      } catch {
+        toast({
+          variant: "destructive",
+          ...networkFailureToast(feedbackLocale, "agencyBrandingWhiteLabel"),
         });
-        setHasExisting(true);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error loading branding:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+    void loadBranding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount only; refs carry latest copy for toasts
+  }, []);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -140,9 +143,8 @@ export default function AgencyBrandingPage() {
   const handleSubmit = async () => {
     if (!formData.agency_name.trim()) {
       toast({
-        title: t.required,
-        description: t.agencyNameRequired,
         variant: "destructive",
+        ...validationToast(feedbackLocale, "agencyBrandingWhiteLabel", t.agencyNameRequired),
       });
       return;
     }
@@ -150,9 +152,8 @@ export default function AgencyBrandingPage() {
     setIsSaving(true);
 
     try {
-      const response = await fetch("/api/agency-branding", {
+      const res = await fetchApi<unknown>("/api/agency-branding", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           logo_url: formData.logo_url || null,
@@ -163,10 +164,28 @@ export default function AgencyBrandingPage() {
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || t.saveError);
+      if (!res.success) {
+        if (res.status === 403) {
+          toast({
+            variant: "destructive",
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "agencyBrandingWhiteLabel",
+              res.message || res.error || loadForbiddenRef.current
+            ),
+          });
+          return;
+        }
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "agencyBrandingWhiteLabel",
+            { status: res.status, message: res.message, error: res.error },
+            t.saveError
+          ),
+        });
+        return;
       }
 
       setHasExisting(true);
@@ -174,11 +193,10 @@ export default function AgencyBrandingPage() {
         title: t.saved,
         description: t.savedDesc,
       });
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: error instanceof Error ? error.message : t.saveError,
         variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "agencyBrandingWhiteLabel"),
       });
     } finally {
       setIsSaving(false);
@@ -187,55 +205,68 @@ export default function AgencyBrandingPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8 px-4 max-w-6xl">
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </div>
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-400" aria-hidden />
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.backToDashboard}
-        </Link>
-      </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 p-2 text-white">
+              <Building2 className="h-8 w-8" aria-hidden />
+            </span>
+            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              {t.pageTitle}
+            </span>
+          </span>
+        }
+        titleDataTestId="heading-agency-branding"
+        subtitle={t.pageSubtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="commercial/business-features" />}
+        actions={
+          <Link
+            href="/dashboard"
+            className="text-sm text-white/70 hover:text-white"
+            aria-label={t.backAria}
+          >
+            <span className="inline-flex min-h-11 items-center gap-2 touch-manipulation">
+              <ArrowLeft className="h-4 w-4" />
+              {t.backToDashboard}
+            </span>
+          </Link>
+        }
+      />
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white">
-          <Building2 className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-            {t.pageTitle}
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
-          🏢 White Label
+      <div className="mb-6 flex justify-end">
+        <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
+          <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          {t.badgeWhiteLabel}
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="mx-auto grid max-w-6xl w-full grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-6">
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Building2 className="h-5 w-5 text-indigo-400" />
                 {t.agencyInfoTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.agencyInfoDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label htmlFor="agency_name">{t.agencyNameLabel}</Label>
+                <Label htmlFor="agency_name" className="text-white/90">{t.agencyNameLabel}</Label>
                 <Input
                   id="agency_name"
                   placeholder={t.agencyNamePlaceholder}
@@ -253,7 +284,7 @@ export default function AgencyBrandingPage() {
                 <Input
                   id="logo_url"
                   type="url"
-                  placeholder="https://example.com/logo.png"
+                  placeholder={t.logoUrlPlaceholder}
                   value={formData.logo_url}
                   onChange={(e) => handleInputChange("logo_url", e.target.value)}
                   data-testid="input-logo-url"
@@ -280,13 +311,13 @@ export default function AgencyBrandingPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <User className="h-5 w-5 text-indigo-400" />
                 {t.contactsTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.contactsDesc}
               </CardDescription>
             </CardHeader>
@@ -322,7 +353,7 @@ export default function AgencyBrandingPage() {
                 <div className="space-y-2">
                   <Label htmlFor="contact_email" className="flex items-center gap-2">
                     <Mail className="h-4 w-4" />
-                    Email
+                    {t.emailLabel}
                   </Label>
                   <Input
                     id="contact_email"
@@ -337,13 +368,13 @@ export default function AgencyBrandingPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-indigo-600" />
+          <Card className="border border-white/10 bg-white/[0.03]">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Palette className="h-5 w-5 text-indigo-400" />
                 {t.colorsTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.colorsDesc}
               </CardDescription>
             </CardHeader>
@@ -412,7 +443,7 @@ export default function AgencyBrandingPage() {
           <Button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
+            className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
             size="lg"
             data-testid="button-save-branding"
           >
@@ -431,13 +462,13 @@ export default function AgencyBrandingPage() {
         </div>
 
         <div>
-          <Card className="border-2 border-indigo-200 dark:border-indigo-800 sticky top-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-indigo-600" />
+          <Card className="sticky top-4 border border-white/10 bg-white/[0.03] lg:top-24">
+            <CardHeader className="border-b border-white/10">
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Eye className="h-5 w-5 text-indigo-400" />
                 {t.previewTitle}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-white/60">
                 {t.previewDesc}
               </CardDescription>
             </CardHeader>
@@ -454,7 +485,7 @@ export default function AgencyBrandingPage() {
                     // eslint-disable-next-line @next/next/no-img-element -- dynamic logo URL from form
                     <img
                       src={formData.logo_url}
-                      alt="Logo"
+                      alt={t.logoAlt}
                       className="h-8 w-auto object-contain bg-white rounded p-1"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
@@ -469,7 +500,7 @@ export default function AgencyBrandingPage() {
                     className="text-xs font-medium px-2 py-1 rounded"
                     style={{ backgroundColor: formData.secondary_color, color: '#fff' }}
                   >
-                    White Label
+                    {t.previewRibbon}
                   </div>
                 </div>
 
@@ -488,11 +519,11 @@ export default function AgencyBrandingPage() {
                     className="text-xl font-bold"
                     style={{ color: formData.secondary_color }}
                   >
-                    €350.000
+                    {t.previewPriceSample}
                   </p>
-                  
+
                   <div className="mt-3 grid grid-cols-3 gap-2">
-                    {["100 mq", "3 locali", "2 bagni"].map((feature, i) => (
+                    {t.previewFeatures.map((feature, i) => (
                       <div 
                         key={i}
                         className="text-center p-2 rounded text-xs"
@@ -544,6 +575,6 @@ export default function AgencyBrandingPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

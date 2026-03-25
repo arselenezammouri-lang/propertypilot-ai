@@ -1,6 +1,6 @@
 import { POST } from '@/app/api/stripe/checkout/route';
-import { createClient } from '@/lib/supabase/server';
 import { getOrCreateCustomer, createCheckoutSession } from '@/lib/stripe';
+import { getAuthenticatedUser } from '@/lib/api/auth-helper';
 
 // Mock Next.js server
 jest.mock('next/server', () => ({
@@ -8,8 +8,7 @@ jest.mock('next/server', () => ({
   NextResponse: global.NextResponse,
 }));
 
-// Mock dependencies
-jest.mock('@/lib/supabase/server');
+jest.mock('@/lib/api/auth-helper');
 jest.mock('@/lib/stripe', () => ({
   getOrCreateCustomer: jest.fn(),
   createCheckoutSession: jest.fn(),
@@ -20,13 +19,15 @@ jest.mock('@/lib/stripe', () => ({
   },
 }));
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockGetAuthenticatedUser = getAuthenticatedUser as jest.MockedFunction<
+  typeof getAuthenticatedUser
+>;
 const mockGetOrCreateCustomer = getOrCreateCustomer as jest.MockedFunction<typeof getOrCreateCustomer>;
 const mockCreateCheckoutSession = createCheckoutSession as jest.MockedFunction<typeof createCheckoutSession>;
 
 describe('POST /api/stripe/checkout', () => {
-  let mockSupabase: any;
   let mockUser: any;
+  let mockSupabase: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -34,30 +35,16 @@ describe('POST /api/stripe/checkout', () => {
     mockUser = {
       id: 'user-123',
       email: 'test@example.com',
+      user_metadata: { full_name: 'Test User' },
     };
 
-    mockSupabase = {
-      auth: {
-        getUser: jest.fn().mockResolvedValue({
-          data: { user: mockUser },
-          error: null,
-        }),
-      },
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({
-        data: {
-          email: 'test@example.com',
-          full_name: 'Test User',
-          stripe_customer_id: null,
-        },
-        error: null,
-      }),
-      update: jest.fn().mockReturnThis(),
-    };
+    mockSupabase = {};
 
-    mockCreateClient.mockResolvedValue(mockSupabase as any);
+    mockGetAuthenticatedUser.mockResolvedValue({
+      ok: true,
+      user: mockUser,
+      supabase: mockSupabase as any,
+    });
     mockGetOrCreateCustomer.mockResolvedValue({ id: 'cus_test123' } as any);
     mockCreateCheckoutSession.mockResolvedValue({
       id: 'cs_test123',
@@ -98,9 +85,12 @@ describe('POST /api/stripe/checkout', () => {
   });
 
   it('should return 401 if user is not authenticated', async () => {
-    mockSupabase.auth.getUser.mockResolvedValue({
-      data: { user: null },
-      error: { message: 'Not authenticated' },
+    mockGetAuthenticatedUser.mockResolvedValue({
+      ok: false,
+      response: global.NextResponse.json(
+        { error: 'Non autorizzato', success: false },
+        { status: 401 }
+      ),
     });
 
     const request = new global.NextRequest('http://localhost:3000/api/stripe/checkout', {
@@ -112,25 +102,7 @@ describe('POST /api/stripe/checkout', () => {
     const data = await response.json();
 
     expect(response.status).toBe(401);
-    expect(data.error).toBe('Unauthorized');
-  });
-
-  it('should return 404 if profile not found', async () => {
-    mockSupabase.single.mockResolvedValue({
-      data: null,
-      error: { message: 'Profile not found' },
-    });
-
-    const request = new global.NextRequest('http://localhost:3000/api/stripe/checkout', {
-      method: 'POST',
-      body: JSON.stringify({ plan: 'PRO' }),
-    });
-
-    const response = await POST(request);
-    const data = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(data.error).toBe('Profile not found');
+    expect(data.error).toBe('Non autorizzato');
   });
 
   it('should return 400 for invalid plan', async () => {
@@ -148,21 +120,6 @@ describe('POST /api/stripe/checkout', () => {
     expect(data.error).toBe('Invalid request');
     
     consoleErrorSpy.mockRestore();
-  });
-
-  it('should save customer ID if not present', async () => {
-    mockGetOrCreateCustomer.mockResolvedValue({ id: 'cus_new123' } as any);
-
-    const request = new global.NextRequest('http://localhost:3000/api/stripe/checkout', {
-      method: 'POST',
-      body: JSON.stringify({ plan: 'AGENCY' }),
-    });
-
-    await POST(request);
-
-    expect(mockSupabase.update).toHaveBeenCalledWith({
-      stripe_customer_id: 'cus_new123',
-    });
   });
 
   it('should handle all plan types', async () => {

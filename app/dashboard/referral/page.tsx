@@ -1,132 +1,165 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Gift, Share2, Users, Percent, TrendingUp, Copy, Check, MessageCircle } from "lucide-react";
+import { Gift, Users, Percent, TrendingUp, Copy, Check, MessageCircle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 export default function ReferralPage() {
   const { locale, currency } = useLocaleContext();
   const { toast } = useToast();
+  const feedbackLocale = locale;
+  const billingT = useMemo(
+    () => getTranslation(locale as SupportedLocale).billing,
+    [locale]
+  );
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.referralPage,
+    [locale]
+  );
+  const loadErrorRef = useRef(t.loadError);
+  const clipboardErrRef = useRef(t.clipboardCopyError);
+  loadErrorRef.current = t.loadError;
+  clipboardErrRef.current = t.clipboardCopyError;
+  const { plan, isLoading: planLoading } = useUsageLimits();
   const [referralCode, setReferralCode] = useState<string>("");
+  const [referralLinkFromApi, setReferralLinkFromApi] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [stats, setStats] = useState({
     friendsInvited: 0,
     discountsEarned: 0,
     potentialEarnings: 0,
   });
-  const isItalian = locale === "it";
-  const t = {
-    copied: isItalian ? "Link copiato!" : "Link copied!",
-    copiedDesc: isItalian ? "Il link di referral e stato copiato negli appunti." : "The referral link has been copied to your clipboard.",
-    programTitle: isItalian ? "Referral Program" : "Referral Program",
-    programSubtitle: isItalian
-      ? "Invita un'altra agenzia e ricevi uno sconto del 20% sul tuo prossimo rinnovo"
-      : "Invite another agency and receive a 20% discount on your next renewal",
-    uniqueLink: isItalian ? "Il tuo Link Unico" : "Your Unique Link",
-    uniqueLinkDesc: isItalian
-      ? "Condividi questo link con altre agenzie. Quando si iscrivono al piano PRO o AGENCY, ricevi il 20% di sconto sul tuo prossimo rinnovo."
-      : "Share this link with other agencies. When they subscribe to the PRO or AGENCY plan, you receive a 20% discount on your next renewal.",
-    shareWhatsapp: isItalian ? "Condividi su WhatsApp" : "Share on WhatsApp",
-    invitedFriends: isItalian ? "Amici Invitati" : "Friends Invited",
-    registeredAgencies: isItalian ? "Agenzie registrate" : "Registered agencies",
-    discountsEarned: isItalian ? "Sconti Maturati" : "Discounts Earned",
-    totalDiscount: isItalian ? "Sconto totale accumulato" : "Total discount accumulated",
-    potentialEarnings: isItalian ? "Guadagno Potenziale" : "Potential Earnings",
-    futureValue: isItalian ? "Valore sconti futuri" : "Future discount value",
-    howItWorks: isItalian ? "Come Funziona" : "How It Works",
-    step1Title: isItalian ? "Condividi il tuo link" : "Share your link",
-    step1Desc: isItalian ? "Invita altre agenzie usando il link unico o WhatsApp." : "Invite other agencies using your unique link or WhatsApp.",
-    step2Title: isItalian ? "Si iscrivono al piano PRO o AGENCY" : "They subscribe to the PRO or AGENCY plan",
-    step2Desc: isItalian
-      ? "Quando un'amica si iscrive a un piano a pagamento, il sistema la registra automaticamente."
-      : "When a referred agency subscribes to a paid plan, the system records it automatically.",
-    step3Title: isItalian ? "Ricevi il 20% di sconto" : "Receive a 20% discount",
-    step3Desc: isItalian
-      ? "Lo sconto viene applicato automaticamente al tuo prossimo rinnovo. Puoi accumulare piu sconti!"
-      : "The discount is automatically applied to your next renewal. You can accumulate multiple discounts!",
-    whatsappMessage: isItalian
-      ? "Ciao! Ho trovato PropertyPilot AI, la piattaforma che sta rivoluzionando il settore immobiliare. Con l'IA puoi generare annunci, trovare deal e ottenere mandati 24/7. Provala anche tu usando il mio link:"
-      : "Hi! I found PropertyPilot AI, the platform helping real estate agencies generate listings, find deals, and win mandates 24/7. Try it using my link:",
-  };
+  const planBadgeLabel =
+    plan === "agency"
+      ? t.planAgency
+      : plan === "pro"
+        ? t.planPro
+        : plan === "starter"
+          ? t.planStarter
+          : t.planFree;
+
+  const loadReferralData = useCallback(async () => {
+    try {
+      const res = await fetchApi<{
+        referralCode?: string;
+        referralLink?: string;
+        totalReferrals?: number;
+      }>("/api/referral");
+      if (!res.success) {
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "referralProgram",
+            { status: res.status, message: res.message, error: res.error },
+            loadErrorRef.current
+          ),
+        });
+        return;
+      }
+      const d = res.data;
+      if (d?.referralCode) setReferralCode(d.referralCode);
+      if (d?.referralLink) setReferralLinkFromApi(d.referralLink);
+      const n = typeof d?.totalReferrals === "number" ? d.totalReferrals : 0;
+      setStats({
+        friendsInvited: n,
+        discountsEarned: n * 20,
+        potentialEarnings: n * 179.4,
+      });
+    } catch {
+      toast({
+        variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "referralProgram"),
+      });
+    }
+  }, [feedbackLocale, toast]);
 
   useEffect(() => {
-    loadReferralData();
-  }, []);
+    void loadReferralData();
+  }, [loadReferralData]);
 
-  const loadReferralData = async () => {
+  const referralLink = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    if (referralLinkFromApi) return referralLinkFromApi;
+    if (!referralCode) return "";
+    return `${window.location.origin}/auth/signup?ref=${referralCode}`;
+  }, [referralCode, referralLinkFromApi]);
+
+  const handleCopy = async () => {
+    const link = referralLink;
+    if (!link) return;
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      // Genera o recupera referral code
-      const userCode = `PP-${user.id.slice(0, 8).toUpperCase()}`;
-      setReferralCode(userCode);
-
-      // Carica statistiche (mock per ora - in produzione: da database)
-      const { data: referrals } = await supabase
-        .from('referrals')
-        .select('*')
-        .eq('referrer_id', user.id)
-        .eq('status', 'completed');
-
-      if (referrals) {
-        setStats({
-          friendsInvited: referrals.length,
-          discountsEarned: referrals.length * 20, // 20% per referral
-          potentialEarnings: referrals.length * 179.4, // 20% di €897
-        });
-      }
-    } catch (error) {
-      console.error('[REFERRAL] Error loading data:', error);
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      toast({
+        title: t.copied,
+        description: t.copiedDesc,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        variant: "destructive",
+        ...clipboardFailureToast(
+          feedbackLocale,
+          "referralProgram",
+          clipboardErrRef.current
+        ),
+      });
     }
   };
 
-  const handleCopy = () => {
-    const referralLink = `${window.location.origin}/auth/signup?ref=${referralCode}`;
-    navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    toast({
-      title: t.copied,
-      description: t.copiedDesc,
-    });
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handleWhatsAppShare = () => {
-    const message = `${t.whatsappMessage} ${window.location.origin}/auth/signup?ref=${referralCode}`;
+    const link = referralLink || `${typeof window !== "undefined" ? window.location.origin : ""}/auth/signup?ref=${referralCode}`;
+    const message = `${t.whatsappMessage} ${link}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
-  const referralLink = typeof window !== 'undefined' ? `${window.location.origin}/auth/signup?ref=${referralCode}` : '';
-
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/30 to-yellow-500/30 flex items-center justify-center border border-amber-500/50">
-              <Gift className="h-6 w-6 text-amber-400" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">{t.programTitle}</h1>
-              <p className="text-muted-foreground mt-1">
-                {t.programSubtitle}
-              </p>
-            </div>
-          </div>
-        </div>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-amber-500/50 bg-gradient-to-br from-amber-500/30 to-yellow-500/30">
+              <Gift className="h-6 w-6 text-amber-400" aria-hidden />
+            </span>
+            <span>{t.programTitle}</span>
+          </span>
+        }
+        titleDataTestId="heading-referral"
+        subtitle={t.programSubtitle}
+        planBadge={
+          !planLoading ? { label: planBadgeLabel, variant: "secondary" } : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="commercial/business-features" />}
+      />
+
+      <div
+        className="mb-8 flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white/70"
+        data-testid="stripe-trust-banner-referral"
+      >
+        <Shield className="h-5 w-5 shrink-0 text-amber-400 mt-0.5" aria-hidden />
+        <p className="leading-relaxed">{billingT.stripeTrust}</p>
+      </div>
 
         {/* Main Card - Gold Design */}
         <Card className="border-amber-500/30 bg-gradient-to-br from-[#0a0a0a] via-amber-900/10 to-yellow-900/10 mb-8 shadow-2xl shadow-amber-500/20">
@@ -147,11 +180,11 @@ export default function ReferralPage() {
                 className="bg-[#111111] border-amber-500/30 text-white font-mono text-sm"
               />
               <Button
-                onClick={handleCopy}
+                onClick={() => void handleCopy()}
                 variant="outline"
                 size="icon"
-                className="border-amber-500/30 hover:bg-amber-500/10"
-                aria-label={copied ? (isItalian ? "Copiato" : "Copied") : (isItalian ? "Copia link" : "Copy link")}
+                className="min-h-11 min-w-11 touch-manipulation border-amber-500/30 hover:bg-amber-500/10"
+                aria-label={copied ? t.copiedAria : t.copyLinkAria}
               >
                 {copied ? (
                   <Check className="h-4 w-4 text-green-400" />
@@ -163,7 +196,7 @@ export default function ReferralPage() {
 
             <Button
               onClick={handleWhatsAppShare}
-              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
+              className="w-full min-h-11 touch-manipulation bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white border-0"
             >
               <MessageCircle className="h-4 w-4 mr-2" />
               {t.shareWhatsapp}
@@ -244,8 +277,7 @@ export default function ReferralPage() {
             </ol>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }
 

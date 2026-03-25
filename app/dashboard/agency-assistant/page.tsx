@@ -1,19 +1,29 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { ProFeaturePaywall } from "@/components/demo-modal";
-import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
+import { toIntlLocale } from "@/lib/i18n/intl";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { fetchApi } from "@/lib/api/client";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+} from "@/lib/i18n/api-feature-feedback";
 import { 
-  Home, 
   ArrowLeft,
   Send,
   Bot,
@@ -47,38 +57,14 @@ interface ChatResponse {
   error?: string;
 }
 
-const QUICK_SUGGESTIONS = [
-  { 
-    icon: FileText, 
-    text: "Genera un annuncio per questo immobile",
-    context: "copy"
-  },
-  { 
-    icon: Mail, 
-    text: "Crea un'email di follow-up",
-    context: "email"
-  },
-  { 
-    icon: MessageSquare, 
-    text: "Suggerisci post social",
-    context: "social"
-  },
-  { 
-    icon: Lightbulb, 
-    text: "Come usare Perfect Copy 2.0?",
-    context: "tutorial"
-  },
-  { 
-    icon: Video, 
-    text: "Consigli per video immobiliari",
-    context: "social"
-  },
-  { 
-    icon: Hash, 
-    text: "Migliori hashtag per Instagram",
-    context: "social"
-  },
-];
+const QUICK_ICON_BY_KEY = {
+  file: FileText,
+  mail: Mail,
+  message: MessageSquare,
+  lightbulb: Lightbulb,
+  video: Video,
+  hash: Hash,
+} as const;
 
 const FEATURE_ROUTES: Record<string, string> = {
   'perfect-copy': '/dashboard/perfect-copy',
@@ -99,6 +85,7 @@ const FEATURE_ROUTES: Record<string, string> = {
 
 export default function AgencyAssistantPage() {
   const { locale } = useLocaleContext();
+  const feedbackLocale = locale;
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [currentContext, setCurrentContext] = useState<string>("general");
@@ -106,51 +93,50 @@ export default function AgencyAssistantPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
-  const [isLoadingPlan, setIsLoadingPlan] = useState(true);
-  const isItalian = locale === "it";
+  const { plan: usagePlan, isLoading: usagePlanLoading } = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
-  const localizedQuickSuggestions = isItalian
-    ? QUICK_SUGGESTIONS
-    : [
-        { icon: FileText, text: "Generate a listing for this property", context: "copy" },
-        { icon: Mail, text: "Create a follow-up email", context: "email" },
-        { icon: MessageSquare, text: "Suggest social posts", context: "social" },
-        { icon: Lightbulb, text: "How do I use Perfect Copy 2.0?", context: "tutorial" },
-        { icon: Video, text: "Tips for real estate videos", context: "social" },
-        { icon: Hash, text: "Best hashtags for Instagram", context: "social" },
-      ];
-  const t = {
-    error: isItalian ? "Errore" : "Error",
-    premiumRequired: isItalian
-      ? "L'Agency Assistant AI è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY."
-      : "Agency Assistant AI is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    responseError: isItalian ? "Errore nella risposta" : "Response error",
-    title: "Agency Assistant AI",
-    subtitle: isItalian ? "Il tuo assistente immobiliare 24/7" : "Your real estate assistant 24/7",
-    aiActive: isItalian ? "AI Attivo" : "AI Active",
-    backAria: isItalian ? "Torna alla dashboard" : "Go back to dashboard",
-    paywallDescription: isItalian
-      ? "Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare l'assistente AI completo."
-      : "This feature is only available for PRO and AGENCY users. Upgrade your account to unlock the full AI assistant.",
-    introTitle: isItalian ? "Ciao! Sono il tuo Assistente AI" : "Hi! I am your AI Assistant",
-    introBody: isItalian
-      ? "Sono specializzato in copywriting immobiliare e conosco tutte le funzionalità di PropertyPilot AI. Chiedimi aiuto per annunci, email, post social, strategie di vendita e molto altro!"
-      : "I specialize in real estate copywriting and know every feature inside PropertyPilot AI. Ask me for help with listings, emails, social posts, sales strategy, and much more.",
-    quickStart: isItalian ? "Inizia con un suggerimento rapido" : "Start with a quick suggestion",
-    conversation: isItalian ? "Conversazione" : "Conversation",
-    messages: isItalian ? "messaggi" : "messages",
-    newChat: isItalian ? "Nuova chat" : "New chat",
-    emptyState: isItalian ? "Scrivi un messaggio per iniziare la conversazione" : "Write a message to start the conversation",
-    thinking: isItalian ? "Sto pensando..." : "Thinking...",
-    placeholder: isItalian ? "Scrivi un messaggio..." : "Write a message...",
-    sendAria: isItalian ? "Invia messaggio" : "Send message",
-    inputHint: isItalian
-      ? "Premi Invio per inviare • L'assistente conosce tutte le funzionalità di PropertyPilot AI"
-      : "Press Enter to send • The assistant knows all PropertyPilot AI features",
-  };
-  
+
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.agencyAssistantPage,
+    [locale]
+  );
+
+  const premiumRequiredRef = useRef(t.premiumRequired);
+  const responseErrorRef = useRef(t.responseError);
+  premiumRequiredRef.current = t.premiumRequired;
+  responseErrorRef.current = t.responseError;
+
+  const localizedQuickSuggestions = useMemo(
+    () =>
+      t.quickSuggestions.map((s) => ({
+        context: s.context,
+        text: s.text,
+        icon: QUICK_ICON_BY_KEY[s.iconKey],
+      })),
+    [t]
+  );
+
+  useEffect(() => {
+    if (usagePlanLoading) return;
+    const p = (usagePlan || "free").toLowerCase();
+    if (p === "starter" || p === "pro" || p === "agency") {
+      setUserPlan(p);
+    } else {
+      setUserPlan("free");
+    }
+  }, [usagePlan, usagePlanLoading]);
+
+  const planBadgeLabel =
+    userPlan === "agency"
+      ? t.planAgency
+      : userPlan === "pro"
+        ? t.planPro
+        : userPlan === "starter"
+          ? t.planStarter
+          : t.planFree;
+
   // Agency Assistant AI is only for PRO and AGENCY plans
-  const isLocked = userPlan === 'free' || userPlan === 'starter';
+  const isLocked = userPlan === "free" || userPlan === "starter";
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -159,53 +145,86 @@ export default function AgencyAssistantPage() {
   }, [messages]);
 
   const chatMutation = useMutation({
-    mutationFn: async ({ userMessage, context }: { userMessage: string; context: string }): Promise<ChatResponse> => {
-      const historyMessages = messages.slice(-20).map(m => ({
+    mutationFn: async ({
+      userMessage,
+      context,
+    }: {
+      userMessage: string;
+      context: string;
+    }): Promise<ChatResponse> => {
+      const historyMessages = messages.slice(-20).map((m) => ({
         role: m.role,
         content: m.content,
       }));
 
-      historyMessages.push({ role: 'user', content: userMessage });
+      historyMessages.push({ role: "user", content: userMessage });
 
-      const response = await fetch("/api/agency-chatbot", {
+      const res = await fetchApi<ChatResponse>("/api/agency-chatbot", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: historyMessages,
-          context: context,
+          context,
         }),
       });
 
-      const result = await response.json();
-
-      // If 403, update user plan to free and show error
-      if (response.status === 403) {
-        setUserPlan('free');
-        throw new Error(result.message || result.error || t.premiumRequired);
+      if (!res.success) {
+        if (res.status === 403) {
+          setUserPlan("free");
+        }
+        const err = new Error(
+          res.message || res.error || responseErrorRef.current
+        ) as Error & { status?: number };
+        err.status = res.status;
+        throw err;
       }
 
-      if (!response.ok) {
-        throw new Error(result.error || result.message || t.responseError);
+      const data = res.data;
+      if (!data?.message) {
+        const e = new Error(responseErrorRef.current) as Error & { status?: number };
+        e.status = 500;
+        throw e;
       }
-
-      return result;
+      return data;
     },
     onSuccess: (data) => {
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
-        role: 'assistant',
+        role: "assistant",
         content: data.message,
         timestamp: new Date(),
         suggestedFeature: data.suggestedFeature,
         suggestedAction: data.suggestedAction,
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
     },
-    onError: (error: any) => {
+    onError: (error: Error & { status?: number }) => {
+      const st = error.status;
+      if (st === 403) {
+        toast({
+          variant: "destructive",
+          ...premiumFeatureToast(
+            feedbackLocale,
+            "agencyAssistantChat",
+            error.message || premiumRequiredRef.current
+          ),
+        });
+        return;
+      }
+      if (st !== undefined) {
+        toast({
+          variant: "destructive",
+          ...apiFailureToast(
+            feedbackLocale,
+            "agencyAssistantChat",
+            { status: st, message: error.message },
+            handleAPIError(error, responseErrorRef.current)
+          ),
+        });
+        return;
+      }
       toast({
-        title: t.error,
-        description: handleAPIError(error, t.title),
         variant: "destructive",
+        ...networkFailureToast(feedbackLocale, "agencyAssistantChat"),
       });
     },
   });
@@ -248,43 +267,62 @@ export default function AgencyAssistantPage() {
     setCurrentContext("general");
   };
 
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="glass border-b border-silver-frost/30 sticky top-0 z-50 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <Link href="/dashboard" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 via-violet-500 to-purple-600 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-glow-purple">
-                <Bot className="text-white" size={24} />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-500 via-violet-500 to-purple-600 bg-clip-text text-transparent">{t.title}</h1>
-                <p className="text-xs text-muted-foreground font-medium">{t.subtitle}</p>
-              </div>
-            </Link>
-            
-            <nav className="flex items-center space-x-2 md:space-x-4">
-              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-500/20 to-violet-500/20 rounded-full border border-blue-500/30">
-                <Bot className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium text-blue-600 dark:text-blue-400">{t.aiActive}</span>
-              </span>
-              <ThemeToggle />
-              <Link href="/dashboard" aria-label={t.backAria}>
-                <Button variant="outline" size="sm" className="border-violet-500/30 hover:border-violet-500 hover:bg-violet-500/10 transition-all" data-testid="button-back-dashboard" aria-label={t.backAria}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Dashboard
-                </Button>
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+  if (usagePlanLoading) {
+    return (
+      <DashboardPageShell className="flex min-h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-violet-500" aria-hidden />
+      </DashboardPageShell>
+    );
+  }
 
-      <div className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col">
+  return (
+    <DashboardPageShell className="flex flex-col">
+      <DashboardPageHeader
+        variant="dark"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-violet-500 to-purple-600 shadow-glow-purple">
+              <Bot className="h-6 w-6 text-white" aria-hidden />
+            </span>
+            <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+              {t.title}
+            </span>
+          </span>
+        }
+        titleDataTestId="heading-agency-assistant"
+        subtitle={t.subtitle}
+        planBadge={
+          !usagePlanLoading
+            ? { label: planBadgeLabel, variant: "secondary" }
+            : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="smart-briefing/client-ready" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2 min-h-11">
+            <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-sm text-blue-200">
+              <Bot className="h-4 w-4 shrink-0" aria-hidden />
+              {t.aiActive}
+            </span>
+            <Link href="/dashboard" aria-label={t.backAria}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10"
+                data-testid="button-back-dashboard"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t.backLink}
+              </Button>
+            </Link>
+          </div>
+        }
+      />
+
+      <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col">
         <ProFeaturePaywall
           title={t.title}
           description={t.paywallDescription}
-          isLocked={isLocked && !isLoadingPlan}
+          isLocked={isLocked}
         >
         <div className="mb-6 animate-fade-in-up">
           <div className="futuristic-card p-6 border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 via-violet-500/5 to-purple-500/5">
@@ -401,7 +439,10 @@ export default function AgencyAssistantPage() {
                       )}
                       
                       <p className="text-xs text-muted-foreground mt-1 px-1">
-                        {message.timestamp.toLocaleTimeString(isItalian ? 'it-IT' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {message.timestamp.toLocaleTimeString(
+                          toIntlLocale(locale as Locale),
+                          { hour: '2-digit', minute: '2-digit' }
+                        )}
                       </p>
                     </div>
                     
@@ -463,6 +504,6 @@ export default function AgencyAssistantPage() {
         </div>
         </ProFeaturePaywall>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

@@ -16,6 +16,14 @@ const customJestConfig = {
     '**/__tests__/**/*.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)',
   ],
+  // Ignore nested duplicate clone (e.g. C:\...\propilot-ai\propertypilot-ai\) — double React + double test run
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/e2e/',
+    '/\\.next/',
+    'propertypilot-ai',
+    '_BACKUP_',
+  ],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'components/**/*.{js,jsx,ts,tsx}',

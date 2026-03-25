@@ -100,6 +100,70 @@ const PORTALE_GUIDELINES: Record<string, string> = {
   zillow: 'Zillow (USA): stile americano, square feet, neighborhood highlights, investment potential',
 };
 
+/** Normalizza la risposta JSON del modello (chiavi accentate / sinonimi / array mancanti). */
+function parseCopyVariantFromContent(
+  content: string | null | undefined,
+  variantLabel: string
+): CopyVariant {
+  const rawText = (content ?? '').trim() || '{}';
+  let raw: Record<string, unknown>;
+  try {
+    raw = JSON.parse(rawText) as Record<string, unknown>;
+  } catch (e) {
+    logger.warn('[Perfect Copy] JSON parse failed', {
+      variantLabel,
+      snippet: rawText.slice(0, 240),
+    });
+    throw new Error(`Risposta JSON non valida (${variantLabel})`);
+  }
+
+  const highlightsRaw = raw.highlights;
+  const highlights = Array.isArray(highlightsRaw)
+    ? highlightsRaw.map((h) => String(h))
+    : typeof highlightsRaw === 'string'
+      ? [highlightsRaw]
+      : [];
+
+  const perchéRaw =
+    raw.perchéComprarlo ??
+    raw.percheComprarlo ??
+    raw.perche_comprarlo;
+
+  const perchéComprarlo = Array.isArray(perchéRaw)
+    ? perchéRaw.map((p) => String(p))
+    : typeof perchéRaw === 'string'
+      ? perchéRaw
+          .split(/\n|;/)
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
+
+  const titolo = String(raw.titolo ?? raw.title ?? '').trim();
+  const descrizione = String(
+    raw.descrizione ?? raw.description ?? raw.desc ?? ''
+  ).trim();
+
+  if (!titolo || titolo.length < 2) {
+    logger.warn('[Perfect Copy] Empty title from model', { variantLabel, keys: Object.keys(raw) });
+    throw new Error(`Titolo mancante dalla variante (${variantLabel})`);
+  }
+
+  return {
+    titolo,
+    descrizione: descrizione || titolo,
+    highlights: highlights.length ? highlights : ['—'],
+    perchéComprarlo: perchéComprarlo.length ? perchéComprarlo : ['—'],
+    cta:
+      String(raw.cta ?? raw.call_to_action ?? '').trim() ||
+      "Contatta l'agenzia per una visita.",
+    metaDescription: String(
+      raw.metaDescription ?? raw.meta_description ?? ''
+    )
+      .trim()
+      .slice(0, 160),
+  };
+}
+
 async function generateProfessionale(openai: OpenAI, data: RequestData): Promise<CopyVariant> {
   const prompt = `Sei un copywriter immobiliare italiano esperto. Genera un annuncio PROFESSIONALE per:
 
@@ -134,12 +198,13 @@ Rispondi SOLO in JSON valido:
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
+      max_tokens: 2500,
       response_format: { type: 'json_object' },
     }, { signal }),
     { timeoutMs: 45000, maxRetries: 3 }
   );
 
-  return JSON.parse(response.choices[0].message.content || '{}');
+  return parseCopyVariantFromContent(response.choices[0].message.content, 'professionale');
 }
 
 async function generateEmotivo(openai: OpenAI, data: RequestData): Promise<CopyVariant> {
@@ -177,12 +242,13 @@ Rispondi SOLO in JSON valido:
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.8,
+      max_tokens: 2500,
       response_format: { type: 'json_object' },
     }, { signal }),
     { timeoutMs: 45000, maxRetries: 3 }
   );
 
-  return JSON.parse(response.choices[0].message.content || '{}');
+  return parseCopyVariantFromContent(response.choices[0].message.content, 'emotivo');
 }
 
 async function generateBreve(openai: OpenAI, data: RequestData): Promise<CopyVariant> {
@@ -219,12 +285,13 @@ Rispondi SOLO in JSON valido:
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.6,
+      max_tokens: 2500,
       response_format: { type: 'json_object' },
     }, { signal }),
     { timeoutMs: 45000, maxRetries: 3 }
   );
 
-  return JSON.parse(response.choices[0].message.content || '{}');
+  return parseCopyVariantFromContent(response.choices[0].message.content, 'breve');
 }
 
 async function generateSEO(openai: OpenAI, data: RequestData): Promise<CopyVariant> {
@@ -266,12 +333,13 @@ Rispondi SOLO in JSON valido:
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.5,
+      max_tokens: 2500,
       response_format: { type: 'json_object' },
     }, { signal }),
     { timeoutMs: 45000, maxRetries: 3 }
   );
 
-  return JSON.parse(response.choices[0].message.content || '{}');
+  return parseCopyVariantFromContent(response.choices[0].message.content, 'seo');
 }
 
 async function generateLuxury(openai: OpenAI, data: RequestData): Promise<CopyVariant> {
@@ -308,12 +376,13 @@ Rispondi SOLO in JSON valido:
       model: 'gpt-4o-mini',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.75,
+      max_tokens: 2500,
       response_format: { type: 'json_object' },
     }, { signal }),
     { timeoutMs: 45000, maxRetries: 3 }
   );
 
-  return JSON.parse(response.choices[0].message.content || '{}');
+  return parseCopyVariantFromContent(response.choices[0].message.content, 'luxury');
 }
 
 async function generateConsiglioEsperto(openai: OpenAI, data: RequestData): Promise<string> {
@@ -424,24 +493,21 @@ export async function POST(request: NextRequest) {
   const openai = new OpenAI({ apiKey: openaiApiKey });
 
   try {
-    const generatePromises: Promise<CopyVariant | string>[] = [
-      generateProfessionale(openai, data),
-      generateEmotivo(openai, data),
-      generateBreve(openai, data),
-      generateSEO(openai, data),
-      generateLuxury(openai, data),
-      generateConsiglioEsperto(openai, data),
-    ];
-
-    const results = await Promise.all(generatePromises);
+    // Sequenziale: meno 429 da OpenAI e JSON più stabili che 6 parallel calls.
+    const professionale = await generateProfessionale(openai, data);
+    const emotivo = await generateEmotivo(openai, data);
+    const breve = await generateBreve(openai, data);
+    const seo = await generateSEO(openai, data);
+    const luxury = await generateLuxury(openai, data);
+    const consiglioEsperto = await generateConsiglioEsperto(openai, data);
 
     const result: PerfectCopyResult = {
-      professionale: results[0] as CopyVariant,
-      emotivo: results[1] as CopyVariant,
-      breve: results[2] as CopyVariant,
-      seo: results[3] as CopyVariant,
-      luxury: results[4] as CopyVariant,
-      consiglioEsperto: results[5] as string,
+      professionale,
+      emotivo,
+      breve,
+      seo,
+      luxury,
+      consiglioEsperto,
     };
 
     if (data.portaleTarget && data.portaleTarget !== 'generico') {
@@ -450,7 +516,8 @@ export async function POST(request: NextRequest) {
 
     try {
       const cacheService = getAICacheService();
-      await cacheService.set(cacheKey, cachePromptType, result, 24 * 60 * 60 * 1000);
+      // TTL in secondi (coerente con AICacheService.set: * 1000 nel Date)
+      await cacheService.set(cacheKey, cachePromptType, result, 24 * 60 * 60);
       logger.debug('[Perfect Copy] Cached result');
     } catch (cacheError) {
       logger.warn('[Perfect Copy] Cache write error', { error: cacheError });
@@ -459,31 +526,63 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
 
   } catch (error: unknown) {
-    logger.error('[Perfect Copy] Generation error', error as Error, { component: 'generate-perfect-copy' });
-    
-    if (error instanceof Error) {
-      if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-        return NextResponse.json(
-          { error: 'Il servizio AI impiega troppo tempo. Riprova tra qualche minuto.' },
-          { status: 504 }
-        );
-      }
-      if (error.message.includes('429') || error.message.includes('rate limit')) {
-        return NextResponse.json(
-          { error: 'Limite richieste AI raggiunto. Riprova tra qualche minuto.' },
-          { status: 429 }
-        );
-      }
-      if (error.message.includes('quota') || error.message.includes('insufficient_quota')) {
-        return NextResponse.json(
-          { error: 'Crediti AI esauriti. Contatta il supporto.' },
-          { status: 503 }
-        );
-      }
+    const err = error instanceof Error ? error : new Error(String(error));
+    const status =
+      typeof error === 'object' &&
+      error !== null &&
+      'status' in error &&
+      typeof (error as { status?: number }).status === 'number'
+        ? (error as { status: number }).status
+        : undefined;
+
+    logger.error('[Perfect Copy] Generation error', err, {
+      component: 'generate-perfect-copy',
+      openaiStatus: status,
+    });
+
+    const isDev = process.env.NODE_ENV === 'development';
+
+    if (status === 429 || /rate limit|429/i.test(err.message)) {
+      return NextResponse.json(
+        { error: 'Limite richieste AI raggiunto. Riprova tra qualche minuto.' },
+        { status: 429 }
+      );
+    }
+
+    if (
+      status === 401 ||
+      /incorrect api key|invalid_api_key|invalid x-api-key/i.test(err.message)
+    ) {
+      return NextResponse.json(
+        {
+          error: isDev
+            ? `OpenAI: chiave non valida o mancante. (${err.message})`
+            : 'Servizio AI non configurato. Contatta il supporto.',
+        },
+        { status: 502 }
+      );
+    }
+
+    if (err.message.includes('timeout') || err.message.includes('Timeout')) {
+      return NextResponse.json(
+        { error: 'Il servizio AI impiega troppo tempo. Riprova tra qualche minuto.' },
+        { status: 504 }
+      );
+    }
+
+    if (err.message.includes('quota') || err.message.includes('insufficient_quota')) {
+      return NextResponse.json(
+        { error: 'Crediti AI esauriti. Contatta il supporto.' },
+        { status: 503 }
+      );
     }
 
     return NextResponse.json(
-      { error: 'Errore durante la generazione. Riprova.' },
+      {
+        error: isDev
+          ? `Dev — ${err.message}`
+          : 'Errore durante la generazione. Riprova.',
+      },
       { status: 500 }
     );
   }

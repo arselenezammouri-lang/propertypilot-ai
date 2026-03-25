@@ -1,5 +1,15 @@
+import type { Metadata } from "next";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { DashboardClientWrapper } from "@/components/dashboard-client-wrapper";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { buildDashboardLayoutMetadata } from "@/lib/i18n/page-metadata-builders";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocaleFromCookies();
+  return buildDashboardLayoutMetadata(locale as SupportedLocale);
+}
 
 export default function DashboardLayout({
   children,
@@ -17,7 +27,10 @@ export default function DashboardLayout({
       <DashboardHeader />
       <DashboardClientWrapper>
         <main id="main-content" className="relative z-10 pt-24 pb-16" role="main">
-          {children}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-6 lg:gap-8">
+            <DashboardSidebar />
+            <div className="min-w-0 flex-1">{children}</div>
+          </div>
         </main>
       </DashboardClientWrapper>
     </div>

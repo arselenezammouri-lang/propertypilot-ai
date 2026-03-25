@@ -8,10 +8,16 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { createClient } from "@/lib/supabase/client";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatDateTimeForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import { apiFailureToast } from "@/lib/i18n/api-feature-feedback";
 
 type AutopilotRule = {
   id?: string;
@@ -27,64 +33,16 @@ type AutopilotRule = {
 };
 
 export default function AutopilotPage() {
-  const { locale } = useLocaleContext();
+  const { locale, timezone } = useLocaleContext();
   const { toast } = useToast();
+  const { plan, isLoading: planLoading } = useUsageLimits();
+  const feedbackLocale = locale;
+  const t = getTranslation(locale as SupportedLocale).dashboard.autopilotPage;
   const [rule, setRule] = useState<AutopilotRule | null>(null);
   const [runs, setRuns] = useState<any[]>([]);
   const [actions, setActions] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
   const { handleAPIError } = useAPIErrorHandler();
-
-  const t = {
-    it: {
-      title: "Autopilot Mandati 24/7",
-      subtitle: "Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.",
-      active: "Autopilot attivo",
-      rulePlaceholder: "Nome regola (es. Mandati Milano Centro)",
-      city: "Città",
-      region: "Regione/Provincia",
-      minPrice: "Prezzo minimo",
-      maxPrice: "Prezzo massimo",
-      runHour: "Ora di esecuzione (UTC)",
-      dailyLimit: "Max nuovi lead al giorno",
-      saving: "Salvataggio...",
-      save: "Salva regola Autopilot",
-      lastRuns: "Ultimi run",
-      noRuns: "Nessun run registrato.",
-      opportunities: "opportunità",
-      leads: "lead",
-      recentActions: "Azioni recenti",
-      noActions: "Nessuna azione registrata.",
-      defaultRule: "Autopilot Mandati",
-      loadError: "Impossibile caricare la configurazione Autopilot.",
-      saveSuccess: "Regola Autopilot salvata",
-      saveError: "Errore nel salvataggio della regola Autopilot.",
-    },
-    en: {
-      title: "Mandate Autopilot 24/7",
-      subtitle: "Scraper and Voice AI work every day to find new mandates and create leads automatically.",
-      active: "Autopilot enabled",
-      rulePlaceholder: "Rule name (e.g. Milan Center Mandates)",
-      city: "City",
-      region: "Region/Province",
-      minPrice: "Minimum price",
-      maxPrice: "Maximum price",
-      runHour: "Run time (UTC)",
-      dailyLimit: "Max new leads per day",
-      saving: "Saving...",
-      save: "Save Autopilot rule",
-      lastRuns: "Latest runs",
-      noRuns: "No runs recorded.",
-      opportunities: "opportunities",
-      leads: "leads",
-      recentActions: "Recent actions",
-      noActions: "No actions recorded.",
-      defaultRule: "Mandate Autopilot",
-      loadError: "Unable to load Autopilot configuration.",
-      saveSuccess: "Autopilot rule saved",
-      saveError: "Error while saving Autopilot rule.",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
 
   useEffect(() => {
     const loadData = async () => {
@@ -130,18 +88,17 @@ export default function AutopilotPage() {
 
         if (actionsError) throw actionsError;
         setActions(recentActions ?? []);
-      } catch (error: any) {
+      } catch (error: unknown) {
         const friendly = handleAPIError(error, t.loadError);
         toast({
-          title: "Autopilot",
-          description: friendly,
+          ...apiFailureToast(feedbackLocale, "mandateAutopilot", {}, friendly),
           variant: "destructive",
         });
       }
     };
 
     void loadData();
-  }, [handleAPIError, toast, t.defaultRule, t.loadError]);
+  }, [handleAPIError, toast, feedbackLocale, t.defaultRule, t.loadError]);
 
   const updateField = (patch: Partial<AutopilotRule>) => {
     setRule((prev) => ({ ...(prev ?? { name: t.defaultRule, portals: [] as string[] } as AutopilotRule), ...patch }));
@@ -170,14 +127,13 @@ export default function AutopilotPage() {
         setRule(data as AutopilotRule);
       }
       toast({
-        title: "Autopilot",
+        title: t.saveToastTitle,
         description: t.saveSuccess,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       const friendly = handleAPIError(error, t.saveError);
       toast({
-        title: "Autopilot",
-        description: friendly,
+        ...apiFailureToast(feedbackLocale, "mandateAutopilot", {}, friendly),
         variant: "destructive",
       });
     } finally {
@@ -186,13 +142,22 @@ export default function AutopilotPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 py-8">
-      <Card>
+    <DashboardPageShell>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.title}
+        titleDataTestId="heading-autopilot"
+        subtitle={t.subtitle}
+        planBadge={
+          !planLoading ? { label: plan.toUpperCase(), variant: "secondary" } : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/arbitrage" />}
+      />
+      <div className="max-w-5xl space-y-8">
+      <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle>{t.title}</CardTitle>
-          <CardDescription>
-            {t.subtitle}
-          </CardDescription>
+          <CardTitle className="text-white">{t.configCardTitle}</CardTitle>
+          <CardDescription className="text-white/60">{t.configCardDescription}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {rule && (
@@ -274,15 +239,17 @@ export default function AutopilotPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle>{t.lastRuns}</CardTitle>
+          <CardTitle className="text-white">{t.lastRuns}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
-          {runs.length === 0 && <p className="text-muted-foreground">{t.noRuns}</p>}
+          {runs.length === 0 && (
+            <p className="text-white/55">{t.noRuns}</p>
+          )}
           {runs.map((r) => (
             <div key={r.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{formatDateTimeForLocale(r.run_at, locale as Locale)}</span>
+              <span>{formatDateTimeForLocale(r.run_at, locale as Locale, timezone)}</span>
               <span>{r.status}</span>
               <span>{r.total_opportunities} {t.opportunities}</span>
               <span>{r.total_leads_created} {t.leads}</span>
@@ -291,22 +258,25 @@ export default function AutopilotPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-white/10 bg-white/[0.03]">
         <CardHeader>
-          <CardTitle>{t.recentActions}</CardTitle>
+          <CardTitle className="text-white">{t.recentActions}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-1 text-sm">
-          {actions.length === 0 && <p className="text-muted-foreground">{t.noActions}</p>}
+          {actions.length === 0 && (
+            <p className="text-white/55">{t.noActions}</p>
+          )}
           {actions.map((a) => (
             <div key={a.id} className="flex justify-between border-b border-border/20 py-1">
-              <span>{formatDateTimeForLocale(a.created_at, locale as Locale)}</span>
+              <span>{formatDateTimeForLocale(a.created_at, locale as Locale, timezone)}</span>
               <span>{a.action_type}</span>
               <span>{a.action_status}</span>
             </div>
           ))}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </DashboardPageShell>
   );
 }
 

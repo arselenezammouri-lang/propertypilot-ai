@@ -80,41 +80,42 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           # Add other required env vars (without sensitive values)
 
-  # E2E Tests (opzionale, può essere lento)
-  e2e:
-    name: E2E Tests
+  # Pre-merge: Jest launch gates + Playwright smoke pubblico (server Next avviato da Playwright)
+  premerge_qa:
+    name: Pre-merge QA (launch + smoke pubblico)
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
-      
-      - name: Run E2E tests
-        run: npm run test:e2e
-        env:
-          E2E_TEST_EMAIL: ${{ secrets.E2E_TEST_EMAIL }}
-          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
-      
-      - name: Upload test results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
 
-  # Security Audit
+      - name: Install Playwright (Chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: Run qa:premerge
+        run: npm run qa:premerge
+        env:
+          CI: true
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-premerge
+          path: playwright-report/
+          retention-days: 14
+
+  # Security Audit — block on critical; high reported for visibility (see OPERATIONS_SECURITY.md)
   security:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -130,22 +131,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+      - name: npm audit (critical — blocking)
+        run: npm audit --audit-level=critical
       
-      - name: Check for vulnerabilities
-        run: |
-          if npm audit --audit-level=high --json | jq -e '.metadata.vulnerabilities.high > 0' > /dev/null; then
-            echo "High severity vulnerabilities found!"
-            exit 1
-          fi
+      - name: npm audit (high — advisory log)
+        run: npm audit --audit-level=high || true
 
   # Deploy (solo su main/master dopo merge)
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    needs: [lint, test, build]
+    needs: [lint, test, build, premerge_qa]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4

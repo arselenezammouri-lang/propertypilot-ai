@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Users, Zap } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 
 interface PredatorLiveBadgeProps {
   className?: string;
@@ -17,7 +18,7 @@ export function PredatorLiveBadge({ className }: PredatorLiveBadgeProps) {
   const { locale } = useLocaleContext();
   const [isVisible, setIsVisible] = useState(false);
   const [predatorCount, setPredatorCount] = useState(124);
-  const onlineLabel = locale === "it" ? "Predatori Online" : "Predators Online";
+  const badge = getTranslation(locale as SupportedLocale).dashboard.predatorLiveBadge;
 
   useEffect(() => {
     // Controlla se è il primo accesso (non mostrato prima)
@@ -57,7 +58,8 @@ export function PredatorLiveBadge({ className }: PredatorLiveBadgeProps) {
       >
         <Zap className="h-3 w-3 mr-1.5 inline-block animate-pulse" />
         <span className="text-xs sm:text-sm">
-          LIVE: <span className="font-black">{predatorCount}</span> {onlineLabel}
+          {badge.livePrefix}{" "}
+          <span className="font-black">{predatorCount}</span> {badge.predatorsOnline}
         </span>
         <Users className="h-3 w-3 ml-1.5 inline-block" />
       </Badge>

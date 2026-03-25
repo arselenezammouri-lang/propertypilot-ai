@@ -61,6 +61,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria è il tuo coach AI nella dashboard. Accedi per iniziare la conversazione e ricevere consigli personalizzati!",
     signInCta: "Accedi per chattare con Aria",
+    upgradeTipPrefix: "Suggerimento:",
   },
   en: {
     welcome: "Hi! I'm Aria, your AI Success Partner. Today the market is yours!",
@@ -92,6 +93,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria is your AI coach in the dashboard. Sign in to start the conversation and get personalized advice!",
     signInCta: "Sign in to chat with Aria",
+    upgradeTipPrefix: "Tip:",
   },
   es: {
     welcome: "¡Hola! Soy Aria, tu AI Success Partner. ¡Hoy el mercado es tuyo!",
@@ -123,6 +125,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria es tu coach AI en el panel. Inicia sesión para comenzar la conversación y obtener consejos personalizados!",
     signInCta: "Iniciar sesión para chatear con Aria",
+    upgradeTipPrefix: "Consejo:",
   },
   fr: {
     welcome: "Bonjour! Je suis Aria, votre AI Success Partner. Aujourd'hui, le marché est à vous!",
@@ -154,6 +157,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria est votre coach AI dans le tableau de bord. Connectez-vous pour démarrer la conversation et obtenir des conseils personnalisés!",
     signInCta: "Se connecter pour discuter avec Aria",
+    upgradeTipPrefix: "Conseil :",
   },
   de: {
     welcome: "Hallo! Ich bin Aria, dein AI Success Partner. Heute gehört dir der Markt!",
@@ -185,6 +189,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria ist dein AI-Coach im Dashboard. Melde dich an, um das Gespräch zu starten und personalisierte Ratschläge zu erhalten!",
     signInCta: "Anmelden zum Chatten mit Aria",
+    upgradeTipPrefix: "Tipp:",
   },
   ar: {
     welcome: "مرحباً! أنا آريا، شريكك الذكي للنجاح. السوق اليوم لك!",
@@ -216,6 +221,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "آريا هي مدربك الذكي في لوحة التحكم. سجّل الدخول لبدء المحادثة والحصول على نصائح مخصصة!",
     signInCta: "تسجيل الدخول للدردشة مع آريا",
+    upgradeTipPrefix: "نصيحة:",
   },
   pt: {
     welcome: "Olá! Sou a Aria, sua AI Success Partner. Hoje o mercado é seu!",
@@ -247,6 +253,7 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "A Aria é a tua coach AI no painel. Entra para iniciar a conversa e obter conselhos personalizados!",
     signInCta: "Entrar para conversar com a Aria",
+    upgradeTipPrefix: "Sugestão:",
   },
 };
 

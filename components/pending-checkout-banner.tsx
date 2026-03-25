@@ -1,18 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CreditCard, Sparkles, X, Loader2, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
+import { formatCurrencyForLocale } from "@/lib/i18n/intl";
+import { STRIPE_ONE_TIME_PACKAGES, STRIPE_PLANS } from "@/lib/stripe/config";
 
-const PLAN_DETAILS: Record<string, { name: string; price: string; color: string }> = {
-  starter: { name: "Starter", price: "€197/mese", color: "from-blue-500 to-cyan-500" },
-  pro: { name: "Pro", price: "€497/mese", color: "from-purple-500 to-pink-500" },
-  agency: { name: "Agency", price: "€897/mese", color: "from-amber-500 to-orange-500" },
-  boost: { name: "Agency Boost", price: "€2.497", color: "from-emerald-500 to-teal-500" },
-};
+type PlanKey = "starter" | "pro" | "agency" | "boost";
 
 export function PendingCheckoutBanner() {
   const [pendingPlan, setPendingPlan] = useState<string | null>(null);
@@ -21,30 +20,61 @@ export function PendingCheckoutBanner() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const { toast } = useToast();
-  const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
+  const { locale, currency } = useLocaleContext();
 
-  const t = {
-    syncError: isItalian ? "Errore durante la sincronizzazione" : "Error during synchronization",
-    syncDone: isItalian ? "Sincronizzazione completata!" : "Sync completed!",
-    syncPlan: (plan: string) => isItalian ? `Piano attuale: ${plan}` : `Current plan: ${plan}`,
-    errorTitle: isItalian ? "Errore" : "Error",
-    invalidPlan: isItalian ? "Piano non valido" : "Invalid plan",
-    checkoutError: isItalian ? "Errore durante la creazione del checkout" : "Error creating checkout",
-    checkoutUrlMissing: isItalian ? "URL checkout non ricevuto" : "Checkout URL not received",
-    paymentError: isItalian ? "Impossibile avviare il pagamento" : "Unable to start payment",
-    closeLabel: isItalian ? "Chiudi" : "Close",
-    activatePlan: (name: string) => isItalian ? `Completa l'attivazione del piano ${name}` : `Complete ${name} plan activation`,
-    activateDesc: (name: string, price: string) =>
-      isItalian
-        ? `Hai selezionato il piano ${name} (${price}). Clicca il pulsante per completare il pagamento e attivare tutte le funzionalità.`
-        : `You selected the ${name} plan (${price}). Click the button to complete payment and activate all features.`,
-    loading: isItalian ? "Caricamento..." : "Loading...",
-    goToPayment: isItalian ? "Vai al Pagamento" : "Go to Payment",
-    syncing: isItalian ? "Sincronizzazione..." : "Syncing...",
-    alreadyPaid: isItalian ? "Già pagato? Sincronizza" : "Already paid? Sync",
-    pricePerMonth: isItalian ? "/mese" : "/mo",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).pendingCheckoutBanner,
+    [locale]
+  );
+  const billingT = useMemo(
+    () => getTranslation(locale as SupportedLocale).billing,
+    [locale]
+  );
+
+  const syncErrorRef = useRef(t.syncError);
+  syncErrorRef.current = t.syncError;
+  const invalidPlanRef = useRef(t.invalidPlan);
+  invalidPlanRef.current = t.invalidPlan;
+  const checkoutErrorRef = useRef(t.checkoutError);
+  checkoutErrorRef.current = t.checkoutError;
+  const checkoutUrlMissingRef = useRef(t.checkoutUrlMissing);
+  checkoutUrlMissingRef.current = t.checkoutUrlMissing;
+  const paymentErrorRef = useRef(t.paymentError);
+  paymentErrorRef.current = t.paymentError;
+
+  const planDetails = useMemo(() => {
+    const fmt = (amount: number, suffix: string) =>
+      `${formatCurrencyForLocale(amount, locale as Locale, currency)}${suffix}`;
+    return {
+      starter: {
+        name: t.planNames.starter,
+        price: fmt(STRIPE_PLANS.starter.price, billingT.perMonth),
+        color: "from-blue-500 to-cyan-500" as const,
+      },
+      pro: {
+        name: t.planNames.pro,
+        price: fmt(STRIPE_PLANS.pro.price, billingT.perMonth),
+        color: "from-purple-500 to-pink-500" as const,
+      },
+      agency: {
+        name: t.planNames.agency,
+        price: fmt(STRIPE_PLANS.agency.price, billingT.perMonth),
+        color: "from-amber-500 to-orange-500" as const,
+      },
+      boost: {
+        name: t.planNames.boost,
+        price: formatCurrencyForLocale(
+          STRIPE_ONE_TIME_PACKAGES.boost.price,
+          locale as Locale,
+          currency
+        ),
+        color: "from-emerald-500 to-teal-500" as const,
+      },
+    } satisfies Record<
+      PlanKey,
+      { name: string; price: string; color: string }
+    >;
+  }, [t.planNames, locale, currency, billingT.perMonth]);
 
   useEffect(() => {
     const plan = localStorage.getItem("pendingPlan");
@@ -63,23 +93,24 @@ export function PendingCheckoutBanner() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || t.syncError);
+        throw new Error(data.error || syncErrorRef.current);
       }
 
       toast({
         title: t.syncDone,
-        description: t.syncPlan(data.plan?.toUpperCase() || 'FREE'),
+        description: t.syncPlan.replace("{plan}", data.plan?.toUpperCase() || "FREE"),
       });
 
-      if (data.plan && data.plan !== 'free') {
+      if (data.plan && data.plan !== "free") {
         localStorage.removeItem("pendingPlan");
         localStorage.removeItem("pendingPackage");
         window.location.reload();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : syncErrorRef.current;
       toast({
         title: t.errorTitle,
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -99,7 +130,7 @@ export function PendingCheckoutBanner() {
         endpoint = "/api/stripe/checkout-oneshot";
         body = { packageId: "boost" };
       } else {
-        throw new Error(t.invalidPlan);
+        throw new Error(invalidPlanRef.current);
       }
 
       const response = await fetch(endpoint, {
@@ -111,7 +142,7 @@ export function PendingCheckoutBanner() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || t.checkoutError);
+        throw new Error(data.error || checkoutErrorRef.current);
       }
 
       if (data.url) {
@@ -119,13 +150,15 @@ export function PendingCheckoutBanner() {
         localStorage.removeItem("pendingPackage");
         window.location.href = data.url;
       } else {
-        throw new Error(t.checkoutUrlMissing);
+        throw new Error(checkoutUrlMissingRef.current);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Checkout error:", error);
+      const message =
+        error instanceof Error ? error.message : paymentErrorRef.current;
       toast({
         title: t.errorTitle,
-        description: error.message || t.paymentError,
+        description: message || paymentErrorRef.current,
         variant: "destructive",
       });
       setIsLoading(false);
@@ -142,20 +175,24 @@ export function PendingCheckoutBanner() {
     return null;
   }
 
-  const planKey = pendingPlan || pendingPackage || "starter";
-  const details = PLAN_DETAILS[planKey] || PLAN_DETAILS.starter;
+  const planKey = (pendingPlan || pendingPackage || "starter") as PlanKey;
+  const details = planDetails[planKey] ?? planDetails.starter;
 
   return (
-    <Card className="mb-8 border-2 border-primary/50 bg-gradient-to-r from-primary/5 to-primary/10 animate-fade-in-up overflow-hidden relative" data-testid="pending-checkout-banner">
+    <Card
+      className="mb-8 border-2 border-primary/50 bg-gradient-to-r from-primary/5 to-primary/10 animate-fade-in-up overflow-hidden relative"
+      data-testid="pending-checkout-banner"
+    >
       <button
         onClick={handleDismiss}
         className="absolute top-3 right-3 p-1 rounded-full hover:bg-black/10 transition-colors z-10"
         aria-label={t.closeLabel}
         data-testid="button-dismiss-checkout"
+        type="button"
       >
         <X className="h-4 w-4 text-muted-foreground" />
       </button>
-      
+
       <CardContent className="p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-start gap-4">
@@ -164,14 +201,14 @@ export function PendingCheckoutBanner() {
             </div>
             <div>
               <h3 className="text-xl font-bold mb-1">
-                {t.activatePlan(details.name)}
+                {t.activatePlan.replace("{name}", details.name)}
               </h3>
               <p className="text-muted-foreground">
-                {t.activateDesc(details.name, details.price)}
+                {t.activateDesc.replace("{name}", details.name).replace("{price}", details.price)}
               </p>
             </div>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleCheckout}
@@ -179,6 +216,7 @@ export function PendingCheckoutBanner() {
               size="lg"
               className={`bg-gradient-to-r ${details.color} hover:opacity-90 text-white shadow-lg min-w-[200px]`}
               data-testid="button-complete-checkout"
+              type="button"
             >
               {isLoading ? (
                 <>
@@ -192,7 +230,7 @@ export function PendingCheckoutBanner() {
                 </>
               )}
             </Button>
-            
+
             <Button
               onClick={handleSync}
               disabled={isLoading || isSyncing}
@@ -200,6 +238,7 @@ export function PendingCheckoutBanner() {
               variant="outline"
               className="min-w-[180px]"
               data-testid="button-sync-subscription"
+              type="button"
             >
               {isSyncing ? (
                 <>

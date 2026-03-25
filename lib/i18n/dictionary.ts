@@ -3,6 +3,405 @@
  * Support: IT, EN, ES, FR, DE, PT, AR
  */
 
+import type { DevTestErrorUi } from '@/lib/i18n/dev-test-error-ui';
+import {
+  devTestErrorUiEn,
+  devTestErrorUiIt,
+} from '@/lib/i18n/dev-test-error-ui';
+import {
+  devTestErrorUiAr,
+  devTestErrorUiDe,
+  devTestErrorUiEs,
+  devTestErrorUiFr,
+  devTestErrorUiPt,
+} from '@/lib/i18n/dev-test-error-locales';
+import type { ComplianceCenterUi } from '@/lib/i18n/compliance-center-ui';
+import {
+  complianceCenterUiEn,
+  complianceCenterUiIt,
+} from '@/lib/i18n/compliance-center-ui';
+import {
+  complianceCenterUiAr,
+  complianceCenterUiDe,
+  complianceCenterUiEs,
+  complianceCenterUiFr,
+  complianceCenterUiPt,
+} from '@/lib/i18n/compliance-center-locales';
+import type { AuthPasswordRecoveryUi } from '@/lib/i18n/auth-password-recovery-ui';
+import {
+  authPasswordRecoveryUiEn,
+  authPasswordRecoveryUiIt,
+} from '@/lib/i18n/auth-password-recovery-ui';
+import {
+  authPasswordRecoveryUiAr,
+  authPasswordRecoveryUiDe,
+  authPasswordRecoveryUiEs,
+  authPasswordRecoveryUiFr,
+  authPasswordRecoveryUiPt,
+} from '@/lib/i18n/auth-password-recovery-locales';
+import type { PlanFeaturesUi } from '@/lib/i18n/plan-features-ui';
+import { planFeaturesUiEn, planFeaturesUiIt } from '@/lib/i18n/plan-features-ui';
+import {
+  planFeaturesUiAr,
+  planFeaturesUiDe,
+  planFeaturesUiEs,
+  planFeaturesUiFr,
+  planFeaturesUiPt,
+} from '@/lib/i18n/plan-features-locales';
+import {
+  ariaLimitModalUiAr,
+  ariaLimitModalUiDe,
+  ariaLimitModalUiEs,
+  ariaLimitModalUiFr,
+  ariaLimitModalUiPt,
+  pendingCheckoutUiAr,
+  pendingCheckoutUiDe,
+  pendingCheckoutUiEs,
+  pendingCheckoutUiFr,
+  pendingCheckoutUiPt,
+} from '@/lib/i18n/pending-aria-locales';
+import {
+  commandPaletteExtrasAr,
+  commandPaletteExtrasDe,
+  commandPaletteExtrasEs,
+  commandPaletteExtrasFr,
+  commandPaletteExtrasPt,
+  dashboardNavUiAr,
+  dashboardNavUiDe,
+  dashboardNavUiEs,
+  dashboardNavUiFr,
+  dashboardNavUiPt,
+} from '@/lib/i18n/dashboard-nav-command-palette-locales';
+import type { LeadsPageUi } from '@/lib/i18n/leads-page-ui';
+import { leadsPageUiEn, leadsPageUiIt } from '@/lib/i18n/leads-page-ui';
+import type { LeadDetailPageUi } from '@/lib/i18n/lead-detail-page-ui';
+import { leadDetailPageUiEn, leadDetailPageUiIt } from '@/lib/i18n/lead-detail-page-ui';
+import type { CommunicationsHubUi } from '@/lib/i18n/communications-hub-ui';
+import { communicationsHubUiEn, communicationsHubUiIt } from '@/lib/i18n/communications-hub-ui';
+import type { LeadPipelinePageUi } from '@/lib/i18n/lead-pipeline-page-ui';
+import { leadPipelinePageUiEn, leadPipelinePageUiIt } from '@/lib/i18n/lead-pipeline-page-ui';
+import type { CrmApiKeysPageUi } from '@/lib/i18n/crm-api-keys-page-ui';
+import { crmApiKeysPageUiEn, crmApiKeysPageUiIt } from '@/lib/i18n/crm-api-keys-page-ui';
+import type { CrmAutomationRulesPageUi } from '@/lib/i18n/crm-automation-rules-page-ui';
+import {
+  crmAutomationRulesPageUiEn,
+  crmAutomationRulesPageUiIt,
+} from '@/lib/i18n/crm-automation-rules-page-ui';
+import type { WorkflowAutomationsPageUi } from '@/lib/i18n/workflow-automations-page-ui';
+import {
+  workflowAutomationsPageUiEn,
+  workflowAutomationsPageUiIt,
+} from '@/lib/i18n/workflow-automations-page-ui';
+import type { AgencyBrandingPageUi } from '@/lib/i18n/agency-branding-page-ui';
+import { agencyBrandingPageUiEn, agencyBrandingPageUiIt } from '@/lib/i18n/agency-branding-page-ui';
+import type { NotificationsSettingsPageUi } from '@/lib/i18n/notifications-settings-page-ui';
+import {
+  notificationsSettingsPageUiEn,
+  notificationsSettingsPageUiIt,
+} from '@/lib/i18n/notifications-settings-page-ui';
+import type { AgencyAssistantPageUi } from '@/lib/i18n/agency-assistant-page-ui';
+import { agencyAssistantPageUiEn, agencyAssistantPageUiIt } from '@/lib/i18n/agency-assistant-page-ui';
+import type { PerfectCopyPageUi } from '@/lib/i18n/perfect-copy-page-ui';
+import { perfectCopyPageUiEn, perfectCopyPageUiIt } from '@/lib/i18n/perfect-copy-page-ui';
+import type { ReferralPageUi } from '@/lib/i18n/referral-page-ui';
+import { referralPageUiEn, referralPageUiIt } from '@/lib/i18n/referral-page-ui';
+import type { PackagesPageUi } from '@/lib/i18n/packages-page-ui';
+import { packagesPageUiEn, packagesPageUiIt } from '@/lib/i18n/packages-page-ui';
+import type { ProspectingPageUi } from '@/lib/i18n/prospecting-page-ui';
+import {
+  prospectingPageUiEn,
+  prospectingPageUiIt,
+} from '@/lib/i18n/prospecting-page-ui';
+import {
+  prospectingPageUiAr,
+  prospectingPageUiDe,
+  prospectingPageUiEs,
+  prospectingPageUiFr,
+  prospectingPageUiPt,
+} from '@/lib/i18n/prospecting-page-ui-locales';
+import {
+  dashboardMapOppAutoAr,
+  dashboardMapOppAutoDe,
+  dashboardMapOppAutoEs,
+  dashboardMapOppAutoFr,
+  dashboardMapOppAutoPt,
+} from '@/lib/i18n/dashboard-map-opportunity-autopilot-locales';
+import {
+  leadsPipelineLocalesAr,
+  leadsPipelineLocalesDe,
+  leadsPipelineLocalesEs,
+  leadsPipelineLocalesFr,
+  leadsPipelineLocalesPt,
+} from '@/lib/i18n/leads-pipeline-locales';
+import {
+  leadDetailCommLocalesAr,
+  leadDetailCommLocalesDe,
+  leadDetailCommLocalesEs,
+  leadDetailCommLocalesFr,
+  leadDetailCommLocalesPt,
+} from '@/lib/i18n/lead-detail-communications-locales';
+import {
+  crmSettingsAutomationLocalesAr,
+  crmSettingsAutomationLocalesDe,
+  crmSettingsAutomationLocalesEs,
+  crmSettingsAutomationLocalesFr,
+  crmSettingsAutomationLocalesPt,
+} from '@/lib/i18n/crm-settings-automation-locales';
+import {
+  workflowAutomationsLocalesAr,
+  workflowAutomationsLocalesDe,
+  workflowAutomationsLocalesEs,
+  workflowAutomationsLocalesFr,
+  workflowAutomationsLocalesPt,
+} from '@/lib/i18n/workflow-automations-locales';
+import {
+  brandingNotificationsPackagesLocalesAr,
+  brandingNotificationsPackagesLocalesDe,
+  brandingNotificationsPackagesLocalesEs,
+  brandingNotificationsPackagesLocalesFr,
+  brandingNotificationsPackagesLocalesPt,
+} from '@/lib/i18n/branding-notifications-packages-locales';
+import {
+  assistantReferralPerfectCopyLocalesAr,
+  assistantReferralPerfectCopyLocalesDe,
+  assistantReferralPerfectCopyLocalesEs,
+  assistantReferralPerfectCopyLocalesFr,
+  assistantReferralPerfectCopyLocalesPt,
+} from '@/lib/i18n/assistant-referral-perfect-copy-locales';
+import { listingToolsLocalesEs } from '@/lib/i18n/listing-tools-locales-es';
+import { listingToolsLocalesFr } from '@/lib/i18n/listing-tools-locales-fr';
+import { listingToolsLocalesDe } from '@/lib/i18n/listing-tools-locales-de';
+import { listingToolsLocalesPt } from '@/lib/i18n/listing-tools-locales-pt';
+import { listingToolsLocalesAr } from '@/lib/i18n/listing-tools-locales-ar';
+import type { AnalyzeLinkPageUi } from '@/lib/i18n/analyze-link-page-ui';
+import { analyzeLinkPageUiEn, analyzeLinkPageUiIt } from '@/lib/i18n/analyze-link-page-ui';
+import type { ListingScraperPageUi } from '@/lib/i18n/listing-scraper-page-ui';
+import {
+  listingScraperPageUiEn,
+  listingScraperPageUiIt,
+} from '@/lib/i18n/listing-scraper-page-ui';
+import type { ListingAuditorPageUi } from '@/lib/i18n/listing-auditor-page-ui';
+import {
+  listingAuditorPageUiEn,
+  listingAuditorPageUiIt,
+} from '@/lib/i18n/listing-auditor-page-ui';
+import type { RefineListingPageUi } from '@/lib/i18n/refine-listing-page-ui';
+import {
+  refineListingPageUiEn,
+  refineListingPageUiIt,
+} from '@/lib/i18n/refine-listing-page-ui';
+import type { TranslateListingPageUi } from '@/lib/i18n/translate-listing-page-ui';
+import {
+  translateListingPageUiEn,
+  translateListingPageUiIt,
+} from '@/lib/i18n/translate-listing-page-ui';
+import type { ListingsLibraryPageUi } from '@/lib/i18n/listings-library-page-ui';
+import {
+  listingsLibraryPageUiEn,
+  listingsLibraryPageUiIt,
+} from '@/lib/i18n/listings-library-page-ui';
+import type { TitlesAbPageUi } from '@/lib/i18n/titles-ab-page-ui';
+import { titlesAbPageUiEn, titlesAbPageUiIt } from '@/lib/i18n/titles-ab-page-ui';
+import type { HashtagsPageUi } from '@/lib/i18n/hashtags-page-ui';
+import { hashtagsPageUiEn, hashtagsPageUiIt } from '@/lib/i18n/hashtags-page-ui';
+import type { SocialPostsPageUi } from '@/lib/i18n/social-posts-page-ui';
+import { socialPostsPageUiEn, socialPostsPageUiIt } from '@/lib/i18n/social-posts-page-ui';
+import { listingContentToolsLocalesEs } from '@/lib/i18n/listing-content-tools-locales-es';
+import { listingContentToolsLocalesFr } from '@/lib/i18n/listing-content-tools-locales-fr';
+import { listingContentToolsLocalesDe } from '@/lib/i18n/listing-content-tools-locales-de';
+import { listingContentToolsLocalesPt } from '@/lib/i18n/listing-content-tools-locales-pt';
+import { listingContentToolsLocalesAr } from '@/lib/i18n/listing-content-tools-locales-ar';
+import type { TransactionTypeUi } from '@/lib/i18n/transaction-type-ui';
+import { transactionTypeUiEn, transactionTypeUiIt } from '@/lib/i18n/transaction-type-ui';
+import type { LeadScorePageUi } from '@/lib/i18n/lead-score-page-ui';
+import { leadScorePageUiEn, leadScorePageUiIt } from '@/lib/i18n/lead-score-page-ui';
+import { leadScorePageUiEs } from '@/lib/i18n/lead-score-page-locales-es';
+import { leadScorePageUiFr } from '@/lib/i18n/lead-score-page-locales-fr';
+import { leadScorePageUiDe } from '@/lib/i18n/lead-score-page-locales-de';
+import { leadScorePageUiPt } from '@/lib/i18n/lead-score-page-locales-pt';
+import { leadScorePageUiAr } from '@/lib/i18n/lead-score-page-locales-ar';
+import type { PdfSheetPageUi } from '@/lib/i18n/pdf-sheet-page-ui';
+import { pdfSheetPageUiEn, pdfSheetPageUiIt } from '@/lib/i18n/pdf-sheet-page-ui';
+import type { AgentBioPageUi } from '@/lib/i18n/agent-bio-page-ui';
+import { agentBioPageUiEn, agentBioPageUiIt } from '@/lib/i18n/agent-bio-page-ui';
+import { pdfSheetPageUiEs, agentBioPageUiEs } from '@/lib/i18n/pdf-agent-bio-locales-es';
+import { pdfSheetPageUiFr, agentBioPageUiFr } from '@/lib/i18n/pdf-agent-bio-locales-fr';
+import { pdfSheetPageUiDe, agentBioPageUiDe } from '@/lib/i18n/pdf-agent-bio-locales-de';
+import { pdfSheetPageUiPt, agentBioPageUiPt } from '@/lib/i18n/pdf-agent-bio-locales-pt';
+import { pdfSheetPageUiAr, agentBioPageUiAr } from '@/lib/i18n/pdf-agent-bio-locales-ar';
+import type { VideoScriptsPageUi } from '@/lib/i18n/video-scripts-page-ui';
+import { videoScriptsPageUiEn, videoScriptsPageUiIt } from '@/lib/i18n/video-scripts-page-ui';
+import type { FollowupEmailsPageUi } from '@/lib/i18n/followup-emails-page-ui';
+import { followupEmailsPageUiEn, followupEmailsPageUiIt } from '@/lib/i18n/followup-emails-page-ui';
+import { videoScriptsPageUiEs, followupEmailsPageUiEs } from '@/lib/i18n/video-followup-locales-es';
+import { videoScriptsPageUiFr, followupEmailsPageUiFr } from '@/lib/i18n/video-followup-locales-fr';
+import { videoScriptsPageUiDe, followupEmailsPageUiDe } from '@/lib/i18n/video-followup-locales-de';
+import { videoScriptsPageUiPt, followupEmailsPageUiPt } from '@/lib/i18n/video-followup-locales-pt';
+import { videoScriptsPageUiAr, followupEmailsPageUiAr } from '@/lib/i18n/video-followup-locales-ar';
+import type { EmotionalListingPageUi } from '@/lib/i18n/emotional-listing-page-ui';
+import {
+  emotionalListingPageUiEn,
+  emotionalListingPageUiIt,
+} from '@/lib/i18n/emotional-listing-page-ui';
+import { emotionalListingPageUiEs } from '@/lib/i18n/emotional-listing-locales-es';
+import { emotionalListingPageUiFr } from '@/lib/i18n/emotional-listing-locales-fr';
+import { emotionalListingPageUiDe } from '@/lib/i18n/emotional-listing-locales-de';
+import { emotionalListingPageUiPt } from '@/lib/i18n/emotional-listing-locales-pt';
+import { emotionalListingPageUiAr } from '@/lib/i18n/emotional-listing-locales-ar';
+import type { ProspectingModalsUiBundle } from '@/lib/i18n/prospecting-modals-ui';
+import {
+  prospectingModalsUiEn,
+  prospectingModalsUiIt,
+} from '@/lib/i18n/prospecting-modals-ui';
+import {
+  prospectingModalsUiAr,
+  prospectingModalsUiDe,
+  prospectingModalsUiEs,
+  prospectingModalsUiFr,
+  prospectingModalsUiPt,
+} from '@/lib/i18n/prospecting-modals-locales';
+import type { PendingCheckoutUi } from '@/lib/i18n/pending-checkout-ui';
+import { pendingCheckoutUiEn, pendingCheckoutUiIt } from '@/lib/i18n/pending-checkout-ui';
+import type { AriaLimitModalUi } from '@/lib/i18n/aria-limit-modal-ui';
+import { ariaLimitModalUiEn, ariaLimitModalUiIt } from '@/lib/i18n/aria-limit-modal-ui';
+import type { ErrorBoundaryModuleUi } from '@/lib/i18n/error-boundary-ui';
+import { errorBoundaryModuleUiEn, errorBoundaryModuleUiIt } from '@/lib/i18n/error-boundary-ui';
+import {
+  errorBoundaryModuleUiAr,
+  errorBoundaryModuleUiDe,
+  errorBoundaryModuleUiEs,
+  errorBoundaryModuleUiFr,
+  errorBoundaryModuleUiPt,
+  welcomeTourUiAr,
+  welcomeTourUiDe,
+  welcomeTourUiEs,
+  welcomeTourUiFr,
+  welcomeTourUiPt,
+} from '@/lib/i18n/error-boundary-welcome-locales';
+import type { WelcomeTourUi } from '@/lib/i18n/welcome-tour-ui';
+import { welcomeTourUiEn, welcomeTourUiIt } from '@/lib/i18n/welcome-tour-ui';
+import type { OnboardingWizardUi } from '@/lib/i18n/onboarding-wizard-ui';
+import { onboardingWizardUiEn, onboardingWizardUiIt } from '@/lib/i18n/onboarding-wizard-ui';
+import {
+  onboardingWizardUiAr,
+  onboardingWizardUiDe,
+  onboardingWizardUiEs,
+  onboardingWizardUiFr,
+  onboardingWizardUiPt,
+} from '@/lib/i18n/onboarding-wizard-locales';
+import {
+  commonFullAr,
+  commonFullDe,
+  commonFullEs,
+  commonFullFr,
+  commonFullPt,
+  errorsUiAr,
+  errorsUiDe,
+  errorsUiEs,
+  errorsUiFr,
+  errorsUiPt,
+} from '@/lib/i18n/common-errors-locales';
+import {
+  billingUiAr,
+  billingUiDe,
+  billingUiEs,
+  billingUiFr,
+  billingUiPt,
+} from '@/lib/i18n/billing-locales';
+import { authUiAr, authUiDe, authUiEs, authUiFr, authUiPt } from '@/lib/i18n/auth-locales';
+import {
+  contactUiAr,
+  contactUiDe,
+  contactUiEs,
+  contactUiFr,
+  contactUiPt,
+  demoUiAr,
+  demoUiDe,
+  demoUiEs,
+  demoUiFr,
+  demoUiPt,
+} from '@/lib/i18n/contact-demo-locales';
+import {
+  blogPostPageUiAr,
+  blogPostPageUiDe,
+  blogPostPageUiEs,
+  blogPostPageUiFr,
+  blogPostPageUiPt,
+  marketingAboutUiAr,
+  marketingAboutUiDe,
+  marketingAboutUiEs,
+  marketingAboutUiFr,
+  marketingAboutUiPt,
+  marketingBlogUiAr,
+  marketingBlogUiDe,
+  marketingBlogUiEs,
+  marketingBlogUiFr,
+  marketingBlogUiPt,
+  marketingFeaturesUiAr,
+  marketingFeaturesUiDe,
+  marketingFeaturesUiEs,
+  marketingFeaturesUiFr,
+  marketingFeaturesUiPt,
+  pricingPagePlansUiAr,
+  pricingPagePlansUiDe,
+  pricingPagePlansUiEs,
+  pricingPagePlansUiFr,
+  pricingPagePlansUiPt,
+} from '@/lib/i18n/marketing-public-locales';
+import {
+  privacyPolicyPageUiAr,
+  privacyPolicyPageUiDe,
+  privacyPolicyPageUiEs,
+  privacyPolicyPageUiFr,
+  privacyPolicyPageUiPt,
+  refundPolicyPageUiAr,
+  refundPolicyPageUiDe,
+  refundPolicyPageUiEs,
+  refundPolicyPageUiFr,
+  refundPolicyPageUiPt,
+  termsPolicyPageUiAr,
+  termsPolicyPageUiDe,
+  termsPolicyPageUiEs,
+  termsPolicyPageUiFr,
+  termsPolicyPageUiPt,
+} from '@/lib/i18n/legal-policy-locales';
+import { landingPt } from '@/lib/i18n/landing-pt-locales';
+import type { MarketingAboutUi, MarketingBlogUi, MarketingFeaturesUi } from '@/lib/i18n/marketing-pages-ui';
+import {
+  marketingAboutUiEn,
+  marketingAboutUiIt,
+  marketingBlogUiEn,
+  marketingBlogUiIt,
+  marketingFeaturesUiEn,
+  marketingFeaturesUiIt,
+} from '@/lib/i18n/marketing-pages-ui';
+import type { PrivacyPolicyPageUi } from '@/lib/i18n/privacy-policy-page-ui';
+import { privacyPolicyPageUiEn, privacyPolicyPageUiIt } from '@/lib/i18n/privacy-policy-page-ui';
+import type { TermsPolicyPageUi } from '@/lib/i18n/terms-policy-page-ui';
+import { termsPolicyPageUiEn, termsPolicyPageUiIt } from '@/lib/i18n/terms-policy-page-ui';
+import type { RefundPolicyPageUi } from '@/lib/i18n/refund-policy-page-ui';
+import { refundPolicyPageUiEn, refundPolicyPageUiIt } from '@/lib/i18n/refund-policy-page-ui';
+import type { BlogPostPageUi } from '@/lib/i18n/blog-post-page-ui';
+import { blogPostPageUiEn, blogPostPageUiIt } from '@/lib/i18n/blog-post-page-ui';
+import type { PricingPagePlansUi } from '@/lib/i18n/pricing-page-plans-ui';
+import { pricingPagePlansUiEn, pricingPagePlansUiIt } from '@/lib/i18n/pricing-page-plans-ui';
+import type { DocsHubUi } from '@/lib/i18n/docs-hub-ui';
+import { docsHubUiEn, docsHubUiIt } from '@/lib/i18n/docs-hub-ui';
+import {
+  docsHubUiAr,
+  docsHubUiDe,
+  docsHubUiEs,
+  docsHubUiFr,
+  docsHubUiPt,
+} from '@/lib/i18n/docs-hub-locales';
+import type { CommandPaletteExtraStrings, DashboardNavUi } from '@/lib/i18n/dashboard-nav-ui';
+import {
+  commandPaletteExtrasEn,
+  commandPaletteExtrasIt,
+  dashboardNavUiEn,
+  dashboardNavUiIt,
+} from '@/lib/i18n/dashboard-nav-ui';
+
 export type SupportedLocale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt' | 'ar';
 
 export interface TranslationDictionary {
@@ -10,11 +409,20 @@ export interface TranslationDictionary {
     dashboard: {
       title: string;
       subtitle: string;
+      /** SEO `<title>` segment for `/dashboard/*` (noindex; clearer than UI `title`). */
+      metaTitle: string;
+      /** Meta description for authenticated app shell (noindex). */
+      metaDescription: string;
       loading: string;
       error: string;
       success: string;
       generate: string;
       signOut: string;
+      /** Header: `<nav aria-label>` */
+      navAriaLabel: string;
+      /** Header: command palette trigger button */
+      commandPaletteOpenAria: string;
+      commandPalettePlaceholder: string;
       currentPlan: string;
       dashboardAI: string;
       thisMonth: string;
@@ -50,16 +458,392 @@ export interface TranslationDictionary {
       mapCallLaunched: string;
       mapCallError: string;
       mapLanciaChiamata: string;
+      /** Predator / territory map page (`/dashboard/map`) */
+      mapPage: {
+        loadError: string;
+        callStartedDesc: string;
+        paywallSubtitle: string;
+        paywallCardDesc: string;
+        unlockAgency: string;
+        backToProspecting: string;
+        backAria: string;
+        topDealsOnly: string;
+        topDealsOnlyShort: string;
+        ghostShort: string;
+        mapTitleShort: string;
+        kpiMappedListings: string;
+        kpiTopDeals: string;
+        kpiHighUrgency: string;
+        emptyNoListings: string;
+        emptyNoGhosts: string;
+        emptyEnableGhostHint: string;
+        closeDetailAria: string;
+        badgeTopDeal: string;
+        badgeHighUrgency: string;
+        urgencyScoreTitle: string;
+        ghostListingDays: string;
+        marketGapTitle: string;
+        marketGapVsArea: string;
+        preview3dTitle: string;
+        quickActionsTitle: string;
+        callingInProgress: string;
+        whatsappProjectCta: string;
+        viewOriginalListing: string;
+      };
+      /** `/dashboard/opportunities` */
+      opportunitiesPage: {
+        title: string;
+        subtitle: string;
+        type: string;
+        underpriced: string;
+        old: string;
+        uncontacted: string;
+        city: string;
+        cityPlaceholder: string;
+        oldDays: string;
+        loading: string;
+        refresh: string;
+        results: string;
+        noResults: string;
+        selectListing: string;
+        loadingResults: string;
+        loadFailed: string;
+        unknown: string;
+        status: string;
+        na: string;
+        filtersTitle: string;
+        filtersDescription: string;
+      };
+      /** `/dashboard/autopilot` */
+      autopilotPage: {
+        title: string;
+        subtitle: string;
+        active: string;
+        rulePlaceholder: string;
+        city: string;
+        region: string;
+        minPrice: string;
+        maxPrice: string;
+        runHour: string;
+        dailyLimit: string;
+        saving: string;
+        save: string;
+        lastRuns: string;
+        noRuns: string;
+        opportunities: string;
+        leads: string;
+        recentActions: string;
+        noActions: string;
+        defaultRule: string;
+        loadError: string;
+        saveSuccess: string;
+        saveError: string;
+        saveToastTitle: string;
+        configCardTitle: string;
+        configCardDescription: string;
+      };
+      /** `/dashboard/settings/workspace` — moduli e preferenze */
+      workspacePage: {
+        loading: string;
+        heroTitle: string;
+        heroSubtitle: string;
+        trialActive: string;
+        trialDesc: string;
+        howItWorks: string;
+        howItWorksBullets: string[];
+        prefsTitle: string;
+        prefsSubtitle: string;
+        timezoneLabel: string;
+        timezoneHint: string;
+        previewLabel: string;
+        insufficientPlan: string;
+        insufficientPlanDesc: string;
+        moduleUpdated: string;
+        moduleEnabled: string;
+        moduleDisabled: string;
+        errorTitle: string;
+        saveError: string;
+        trialBadge: string;
+        modules: {
+          scraper: { name: string; desc: string };
+          ai_voice: { name: string; desc: string };
+          '3d_staging': { name: string; desc: string };
+          price_sniper: { name: string; desc: string };
+          commercial: { name: string; desc: string };
+          territory_map: { name: string; desc: string };
+          smart_briefing: { name: string; desc: string };
+          xray_vision: { name: string; desc: string };
+          competitor_radar: { name: string; desc: string };
+        };
+        timezoneRegions: {
+          EU: string;
+          US: string;
+          NA: string;
+          LATAM: string;
+          ME: string;
+          APAC: string;
+          UTC: string;
+        };
+      };
+      /** `/dashboard/leads` — Lead Manager + AI */
+      leadsPage: LeadsPageUi;
+      /** `/dashboard/leads/pipeline` — Kanban */
+      leadPipelinePage: LeadPipelinePageUi;
+      /** `/dashboard/crm/settings` — API keys & embed */
+      crmApiKeysPage: CrmApiKeysPageUi;
+      /** `/dashboard/crm/automations` — if/then CRM rules */
+      crmAutomationRulesPage: CrmAutomationRulesPageUi;
+      /** `/dashboard/automations` — scheduled workflows */
+      workflowAutomationsPage: WorkflowAutomationsPageUi;
+      /** `/dashboard/agency-branding` — white-label PDF */
+      agencyBrandingPage: AgencyBrandingPageUi;
+      /** `/dashboard/settings/notifications` — Morning Intel */
+      notificationsSettingsPage: NotificationsSettingsPageUi;
+      /** `/dashboard/agency-assistant` */
+      agencyAssistantPage: AgencyAssistantPageUi;
+      /** `/dashboard/perfect-copy` */
+      perfectCopyPage: PerfectCopyPageUi;
+      /** `/dashboard/referral` */
+      referralPage: ReferralPageUi;
+      /** `/dashboard/packages` */
+      packagesPage: PackagesPageUi;
+      /** `/dashboard/prospecting` — Arbitrage Command Center */
+      prospectingPage: ProspectingPageUi;
+      /** `/dashboard/analyze` — link analysis */
+      analyzeLinkPage: AnalyzeLinkPageUi;
+      /** `/dashboard/scraper` — listing import + AI pack */
+      listingScraperPage: ListingScraperPageUi;
+      /** `/dashboard/auditor` — AI listing audit */
+      listingAuditorPage: ListingAuditorPageUi;
+      /** `/dashboard/refine-listing` — Perfect Again */
+      refineListingPage: RefineListingPageUi;
+      /** `/dashboard/translate` */
+      translateListingPage: TranslateListingPageUi;
+      /** `/dashboard/listings` */
+      listingsLibraryPage: ListingsLibraryPageUi;
+      /** `/dashboard/titles` — A/B titles */
+      titlesAbPage: TitlesAbPageUi;
+      /** `/dashboard/hashtags` */
+      hashtagsPage: HashtagsPageUi;
+      /** `/dashboard/social-posts` */
+      socialPostsPage: SocialPostsPageUi;
+      /** Sale / rent / short-term — shared by listing copy tools */
+      transactionTypes: TransactionTypeUi;
+      /** `/dashboard/lead-score` */
+      leadScorePage: LeadScorePageUi;
+      /** `/dashboard/pdf` */
+      pdfSheetPage: PdfSheetPageUi;
+      /** `/dashboard/agent-bio` */
+      agentBioPage: AgentBioPageUi;
+      /** `/dashboard/video-scripts` */
+      videoScriptsPage: VideoScriptsPageUi;
+      /** `/dashboard/followup-emails` */
+      followupEmailsPage: FollowupEmailsPageUi;
+      /** `/dashboard/emotional-listing` */
+      emotionalListingPage: EmotionalListingPageUi;
+      /** `/dashboard/leads/[id]` */
+      leadDetailPage: LeadDetailPageUi;
+      /** Hub comunicazioni nel dettaglio lead */
+      communicationsHub: CommunicationsHubUi;
+      /** Badge temporaneo su mappa prospecting */
+      predatorLiveBadge: {
+        livePrefix: string;
+        predatorsOnline: string;
+      };
+      onboardingChecklist: {
+        title: string;
+        subtitle: string;
+        dismiss: string;
+        dismissAria: string;
+        progress: string;
+        allDone: string;
+        steps: {
+          generate: { title: string; description: string; cta: string };
+          library: { title: string; description: string; cta: string };
+          pipeline: { title: string; description: string; cta: string };
+          billing: { title: string; description: string; cta: string };
+          workspace: { title: string; description: string; cta: string };
+        };
+      };
+      contextualHelp: {
+        openGuideAria: string;
+        openGuideTooltip: string;
+        fieldHintAria: string;
+      };
+      /** Home /dashboard — Fase D1 (IT/EN in repo; altre lingue → merge da EN) */
+      commandCenterTitle: string;
+      commandCenterSubtitle: string;
+      newListingCta: string;
+      /** Header badge on /dashboard home — short tier labels */
+      planBadgeLabels: { free: string; starter: string; pro: string; agency: string };
+      /** Section `aria-label` on dashboard home */
+      homeSections: {
+        planStats: string;
+        roiUsage: string;
+        morningIntel: string;
+        regionalPortals: string;
+        liveFeed: string;
+        plansPricing: string;
+        toolsFeatures: string;
+        sniperStats: string;
+      };
+      /** DeferredMount loading labels on dashboard home */
+      deferredLoading: {
+        stats3d: string;
+        roiUsage: string;
+        morningIntel: string;
+        regionalPortals: string;
+        liveFeed: string;
+        plans: string;
+        tools: string;
+        priceSniper: string;
+        proTips: string;
+      };
+      /** Live feed widget (dashboard home) */
+      liveFeed: {
+        deal: string;
+        call: string;
+        staging: string;
+        priceDrop: string;
+        subtitle: string;
+        cta: string;
+        infixDeal: string;
+        infixCall: string;
+        infixStaging: string;
+        priceDropLine: string;
+      };
+      /** GlobalLiveFeed header chrome (dashboard home) */
+      liveNetwork: {
+        cardTitle: string;
+        liveBadge: string;
+      };
+      /** Suggerimenti in fondo alla dashboard */
+      proTips: {
+        ariaSection: string;
+        title: string;
+        tip1: string;
+        tip2: string;
+        tip3: string;
+      };
+      docsHubOpen: string;
+      stats3d: {
+        projects3d: string;
+        generated: string;
+        whatsappOpen: string;
+        openRate: string;
+        aiViews: string;
+        /** Placeholders: {opened}, {sent} */
+        openedOfSent: string;
+        noMessages: string;
+      };
+      sniperStats: {
+        title: string;
+        priceDropsToday: string;
+        detected: string;
+        expirations: string;
+        opportunities: string;
+        last48h: string;
+        offline120: string;
+        loadError: string;
+      };
+      regionalPortals: {
+        title: string;
+        primaryMarkets: string;
+        secondaryMarkets: string;
+        currency: string;
+        units: string;
+        regionUsa: string;
+        regionEurope: string;
+        regionMiddleEast: string;
+        regionGlobal: string;
+        unitSqft: string;
+        unitSqm: string;
+      };
+      profitDashboard: {
+        title: string;
+        hoursSaved: string;
+        hours: string;
+        perListing: string;
+        valueGenerated: string;
+        estimatedValue: string;
+        generatedListings: string;
+        amazing: string;
+        saved10Hours: string;
+      };
+      morningBriefing: {
+        na: string;
+        sent: string;
+        sentDesc: string;
+        error: string;
+        sendError: string;
+        connectionError: string;
+        title: string;
+        subtitle: string;
+        configure: string;
+        priceDown: string;
+        highUrgency: string;
+        target: string;
+        fomo: string;
+        partnerAgencies: string;
+        sendTest: string;
+      };
+      competitorRadar: {
+        na: string;
+        title: string;
+        subtitle: string;
+        removed: string;
+        stale: string;
+        aiNote: string;
+        offlineFor: string;
+        days: string;
+        viewAll: string;
+        refreshAria: string;
+      };
+      /** Card piani su /dashboard — allineate a Stripe config; prezzi da formattare con valuta utente */
+      planCards: {
+        generateNewListing: string;
+        aiScraper: string;
+        linkAnalysis: string;
+        premiumPdfCards: string;
+        allFreeFeatures: string;
+        leadScoringAi: string;
+        perfectCopy20: string;
+        translator12Languages: string;
+        allStarterFeatures: string;
+        fullCrmPipeline: string;
+        virtualStaging3d: string;
+        aiVoiceCallingMonthly: string;
+        agencyAssistantAi: string;
+        allProFeatures: string;
+        unlimitedAiVoiceCalling: string;
+        auraVrVirtualTour: string;
+        teamUpToAgents: string;
+        omnichannelSuite: string;
+        agencyBoostTitle: string;
+        agencyBoostSubtitle: string;
+        oneTime: string;
+        boostSetupComplete: string;
+        boostOnboarding: string;
+        boostLaunchSupport: string;
+        boostCustomConfig: string;
+        buyAgencyBoost: string;
+      };
+      /** Griglia "Tutti gli strumenti" (DashboardPlanFeatures) — IT/EN autorevoli; altre lingue da EN */
+      planFeatures: PlanFeaturesUi;
     };
 
   // Auth (Login / Signup)
   auth: {
     backToHome: string;
+    brandTagline: string;
     login: {
       title: string;
       subtitle: string;
       email: string;
+      emailPlaceholder: string;
       password: string;
+      showPasswordAria: string;
+      hidePasswordAria: string;
       forgotPassword: string;
       signIn: string;
       signingIn: string;
@@ -71,8 +855,12 @@ export interface TranslationDictionary {
       title: string;
       subtitle: string;
       fullName: string;
+      fullNamePlaceholder: string;
       email: string;
+      emailPlaceholder: string;
       password: string;
+      showPasswordAria: string;
+      hidePasswordAria: string;
       minChars: string;
       freePlanIncludes: string;
       listingsPerMonth: string;
@@ -96,8 +884,28 @@ export interface TranslationDictionary {
       accountCreated: string;
       redirectPayment: string;
       welcomePropertyPilot: string;
+      turnstileRequired: string;
+      turnstileFailed: string;
+      turnstileLoadFailed: string;
+      turnstileMisconfigured: string;
+      loginFailedGeneric: string;
+      signupFailedGeneric: string;
+      emailNotConfirmed: string;
+      userAlreadyRegistered: string;
+      passwordTooShort: string;
+      invalidEmail: string;
+      networkError: string;
+      sessionExpired: string;
+      signupDisabled: string;
+      oauthFailed: string;
     };
   };
+
+  /** Forgot / reset password (auth routes) — all 7 locales */
+  authPasswordRecovery: AuthPasswordRecoveryUi;
+
+  /** Public /compliance — all 7 locales */
+  complianceCenter: ComplianceCenterUi;
   
   // Aura VR Generator
   auraVR: {
@@ -134,20 +942,84 @@ export interface TranslationDictionary {
     };
     aria: {
       message: string;
-      stats: string;
-      action: string;
+      /** `{pct}` = numeric percent e.g. 40 */
+      visitsSentence: string;
+      followUp: string;
+      tripleNote: string;
     };
+    toast: {
+      copySuccessTitle: string;
+      copySuccessDesc: string;
+      copyErrorTitle: string;
+      copyErrorDesc: string;
+    };
+    tripleView: {
+      title: string;
+      subtitle: string;
+    };
+    views: {
+      drone: { title: string; description: string };
+      cinematic: { title: string; description: string };
+      panorama: { title: string; description: string };
+    };
+    preview: {
+      drone: string;
+      cinematic: string;
+      panorama: string;
+      default: string;
+    };
+    listingFallback: string;
+    /** WhatsApp share body; `{link}` */
+    whatsappVrBody: string;
   };
-  
+
+  /** Prospecting — AI Virtual Staging card */
+  virtualStaging: {
+    cardTitle: string;
+    sendWhatsApp: string;
+    originalPhoto: string;
+    afterVisionTitle: string;
+    afterVisionSubtitle: string;
+    generatePrompt: string;
+    generating: string;
+    generateCta: string;
+    successBanner: string;
+    premiumRequiredTitle: string;
+    premiumRequiredDesc: string;
+    calibrationTitle: string;
+    calibrationDesc: string;
+  };
+
+  /** Prospecting modals (Sniper, Investment, WhatsApp) + X-Ray + Territory Commander chrome */
+  prospectingModals: ProspectingModalsUiBundle;
+
   // Demo page
   demo: {
     nav: { pricing: string; login: string; startFree: string };
     hero: { badge: string; title: string; subtitle: string };
     calendly: { chooseDate: string; demoFree: string; preferContact: string; whatsapp: string; sendEmail: string };
+    /** `wa.me` pre-filled message */
+    whatsappPrefill: string;
+    calendlyIframeTitle: string;
     valuePoints: { sectionTitle: string; sectionSubtitle: string; bookNow: string };
     valuePointsList: Array<{ title: string; description: string }>;
     testimonials: { title: string; subtitle: string };
+    testimonialsList: Array<{ name: string; role: string; quote: string }>;
+    trustStats: Array<{
+      iconKey: 'clock' | 'shield' | 'users' | 'trendingUp';
+      value: string;
+      label: string;
+    }>;
+    finalCta: {
+      titleLead: string;
+      titleAccent: string;
+      titleTail: string;
+      subtitle: string;
+      bookDemo: string;
+    };
     footer: { home: string; pricing: string; contact: string; login: string };
+    /** `© {year} PropertyPilot AI. {rights}` */
+    footerCopyrightLine: string;
   };
 
   // Contact page
@@ -161,6 +1033,12 @@ export interface TranslationDictionary {
     validation: { nameMin: string; emailInvalid: string; messageMin: string; checkFields: string };
     toast: { successTitle: string; successDesc: string; errorTitle: string; errorDesc: string; validationTitle: string };
     home: string;
+    /** Subtitle under logo on /contatti (align with landing nav tagline) */
+    headerTagline: string;
+    demoMailSubject: string;
+    /** Message field counter: placeholders {current}, {min} */
+    minCharsCounter: string;
+    submitting: string;
   };
 
   // Error / 404 pages
@@ -174,6 +1052,10 @@ export interface TranslationDictionary {
     pageNotFound: string;
     pageNotFoundDesc: string;
     dashboard: string;
+    /** `/dashboard/error.tsx` boundary */
+    dashboardAreaErrorTitle: string;
+    dashboardAreaErrorDesc: string;
+    backToDashboard: string;
   };
 
   // Common Actions
@@ -190,6 +1072,9 @@ export interface TranslationDictionary {
     loading: string;
     error: string;
   };
+
+  /** Dev route `/dashboard/test-error` — all 7 locales */
+  devTestError: DevTestErrorUi;
 
   billing: {
     title: string;
@@ -235,7 +1120,53 @@ export interface TranslationDictionary {
     switchToAgency: string;
     upgradeToPro: string;
     upgradeToAgency: string;
+    /** Trust line — Stripe handles cards & Customer Portal */
+    stripeTrust: string;
+    /** Soft error when GET /api/user/subscription fails (billing page) */
+    subscriptionFetchErrorBody: string;
+    retry: string;
+    /** Status badge on billing page (no emoji) */
+    planBadgeStarter: string;
+    planBadgePro: string;
+    planBadgeAgency: string;
   };
+
+  /** Pending Stripe checkout banner (localStorage pendingPlan / pendingPackage) */
+  pendingCheckoutBanner: PendingCheckoutUi;
+  /** Usage limit upsell modal (Aria) */
+  ariaLimitModal: AriaLimitModalUi;
+
+  /** Sidebar, mobile drawer, command palette nav structure + chrome (IT/EN; other locales merge EN) */
+  dashboardNav: DashboardNavUi;
+  /** Command palette quick links + doc guides (keywords for search) */
+  commandPaletteExtras: CommandPaletteExtraStrings;
+
+  /** React error boundary + useAPIErrorHandler messages */
+  errorBoundaryModule: ErrorBoundaryModuleUi;
+  /** First-login welcome tour modal (dashboard) */
+  welcomeTour: WelcomeTourUi;
+  /** Optional multi-step onboarding wizard */
+  onboardingWizard: OnboardingWizardUi;
+
+  /** Public marketing: /about */
+  marketingAbout: MarketingAboutUi;
+  /** Public marketing: /blog */
+  marketingBlog: MarketingBlogUi;
+  /** Public marketing: /features */
+  marketingFeatures: MarketingFeaturesUi;
+  /** Legal: /privacy */
+  privacyPolicyPage: PrivacyPolicyPageUi;
+  /** Legal: /terms */
+  termsPolicyPage: TermsPolicyPageUi;
+  /** Legal: /refund */
+  refundPolicyPage: RefundPolicyPageUi;
+
+  /** /blog/[slug] placeholder article */
+  blogPostPage: BlogPostPageUi;
+  /** /pricing plan cards + footer legal links */
+  pricingPagePlans: PricingPagePlansUi;
+  /** /docs hub index + back link (article markdown: IT/EN in `lib/docs/doc-content`) */
+  docsHub: DocsHubUi;
 
   /** Toasts shown by DashboardClientWrapper (payment success, limit warning, etc.). Use {used} and {lim} in limitNearDesc. */
   dashboardToasts: {
@@ -249,6 +1180,12 @@ export interface TranslationDictionary {
     checkoutCanceledDesc: string;
     limitNear: string;
     limitNearDesc: string;
+    /** One-time reminder after login: data protection / compliance (links to public /compliance in description). */
+    complianceReminderTitle: string;
+    complianceReminderDesc: string;
+    /** Shown when /api/health reports degraded Supabase from the browser (optional follow-up). */
+    connectivityIssueTitle: string;
+    connectivityIssueDesc: string;
   };
   
   // Landing Page
@@ -273,11 +1210,23 @@ export interface TranslationDictionary {
         ctaStart: string;
         ctaDemo: string;
         trustedBy: string;
+        /** Brand names / portal logos row (fixed order on home) */
+        trustedPortalLogos: [string, string, string, string];
         stats: {
           automation: string;
           listingsPerDay: string;
           conversionRate: string;
         };
+        /** Hero stat figures (e.g. 24/7, 1000+, 80%) */
+        statsValues: {
+          automation: string;
+          listingsPerDay: string;
+          conversionRate: string;
+        };
+        /** Home marketing: `<Link>` aria-label signup hero */
+        signupAriaLabel: string;
+        /** Home marketing: `<Link>` aria-label demo dashboard hero */
+        demoDashboardAriaLabel: string;
       };
     features: {
       title: string;
@@ -286,16 +1235,19 @@ export interface TranslationDictionary {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
       crmAI: {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
       globalReach: {
         title: string;
         description: string;
         benefit: string;
+        cta: string;
       };
     };
       searchEngine: {
@@ -304,6 +1256,10 @@ export interface TranslationDictionary {
         exclusive: string;
         exclusiveInPlan: string;
         benefit: string;
+        /** Bento step badge, e.g. "STEP {n}" or "PASSO {n}" */
+        stepLabel: string;
+        /** CTA under search-engine bento grid */
+        prospectingCycleCta: string;
       step1: {
         title: string;
         description: string;
@@ -313,6 +1269,8 @@ export interface TranslationDictionary {
         title: string;
         description: string;
         status: string;
+        /** Demo UI label, placeholders {score} {max} */
+        demoScoreLabel: string;
       };
       step3: {
         title: string;
@@ -441,6 +1399,23 @@ export interface TranslationDictionary {
         choosePro: string;
         chooseAgency: string;
       };
+      /** Home pricing table — localized cell text (not ✓/—/numbers) */
+      tableCells: {
+        multiUserAgency: string;
+        voiceCallingPro: string;
+      };
+      agencyBoost: {
+        /** Product title next to tier badge (e.g. home pricing block) */
+        productName: string;
+        badgePremium: string;
+        tierTitanium: string;
+        description: string;
+        bullet1: string;
+        bullet2: string;
+        bullet3: string;
+        oneTimePayment: string;
+        cta: string;
+      };
     };
     cta: {
       title: string;
@@ -496,11 +1471,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Pannello di controllo',
+      metaTitle: 'Area riservata agenti — PropertyPilot AI',
+      metaDescription:
+        'Console operativa per annunci AI, CRM, prospecting e automazioni. Accesso riservato agli utenti registrati.',
       loading: 'Caricamento...',
       error: 'Errore',
       success: 'Successo',
       generate: 'Genera',
       signOut: 'Esci',
+      navAriaLabel: 'Navigazione principale',
+      commandPaletteOpenAria: 'Apri ricerca rapida',
+      commandPalettePlaceholder: 'Cerca…',
       currentPlan: 'Piano Attuale',
       dashboardAI: 'Dashboard AI',
       thisMonth: 'Questo Mese',
@@ -536,14 +1517,405 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Chiamata avviata',
       mapCallError: 'Errore nell\'avvio della chiamata',
       mapLanciaChiamata: 'Lancia Chiamata Predator',
+      mapPage: {
+        loadError: 'Errore nel caricamento delle liste',
+        callStartedDesc: 'La chiamata AI è stata avviata con successo',
+        paywallSubtitle:
+          'Disponibile solo con piano Agency. Sblocca la mappa e tutte le funzionalità Diamond.',
+        paywallCardDesc: 'Disponibile solo con piano Agency.',
+        unlockAgency: 'Sblocca con Agency',
+        backToProspecting: 'Torna al Prospecting',
+        backAria: 'Indietro',
+        topDealsOnly: 'Solo TOP DEAL',
+        topDealsOnlyShort: 'TOP',
+        ghostShort: 'Ghost',
+        mapTitleShort: 'Predator Map',
+        kpiMappedListings: 'Immobili mappati',
+        kpiTopDeals: 'Top Deals',
+        kpiHighUrgency: 'Alta urgenza',
+        emptyNoListings: 'Nessun immobile trovato',
+        emptyNoGhosts: 'Nessun Ghost Listing disponibile',
+        emptyEnableGhostHint: 'Attiva il filtro Ghost Listings per vedere più opzioni',
+        closeDetailAria: 'Chiudi dettaglio',
+        badgeTopDeal: 'TOP DEAL',
+        badgeHighUrgency: 'HIGH URGENCY',
+        urgencyScoreTitle: 'Urgency Score',
+        ghostListingDays: 'Ghost Listing: {days} giorni sul mercato',
+        marketGapTitle: 'GAP DI MERCATO',
+        marketGapVsArea: 'vs Media Zona',
+        preview3dTitle: 'Anteprima 3D',
+        quickActionsTitle: 'Azioni Rapide',
+        callingInProgress: 'Chiamata in corso...',
+        whatsappProjectCta: 'Invia WhatsApp Progetto',
+        viewOriginalListing: 'Vedi annuncio originale →',
+      },
+      opportunitiesPage: {
+        title: 'Radar Opportunità',
+        subtitle:
+          'Trova immobili sotto-prezzo, annunci vecchi o mai contattati per nuovi mandati.',
+        type: 'Tipo opportunità',
+        underpriced: 'Sotto-prezzo',
+        old: 'Annunci vecchi',
+        uncontacted: 'Mai contattati',
+        city: 'Città (opzionale)',
+        cityPlaceholder: 'Milano',
+        oldDays: 'Vecchi da almeno (giorni)',
+        loading: 'Caricamento...',
+        refresh: 'Aggiorna',
+        results: 'Risultati',
+        noResults: 'Nessuna opportunità trovata con i filtri correnti.',
+        selectListing: 'Seleziona un annuncio per aprire i dettagli.',
+        loadingResults: 'Caricamento opportunità...',
+        loadFailed: 'Impossibile caricare le opportunità.',
+        unknown: 'sconosciuto',
+        status: 'Stato',
+        na: 'n.d.',
+        filtersTitle: 'Filtri ricerca',
+        filtersDescription: 'Affina il tipo di opportunità e la zona.',
+      },
+      autopilotPage: {
+        title: 'Autopilot Mandati 24/7',
+        subtitle:
+          'Lo scraper e il Voice AI lavorano ogni giorno per trovare nuovi incarichi e creare lead in automatico.',
+        active: 'Autopilot attivo',
+        rulePlaceholder: 'Nome regola (es. Mandati Milano Centro)',
+        city: 'Città',
+        region: 'Regione/Provincia',
+        minPrice: 'Prezzo minimo',
+        maxPrice: 'Prezzo massimo',
+        runHour: 'Ora di esecuzione (UTC)',
+        dailyLimit: 'Max nuovi lead al giorno',
+        saving: 'Salvataggio...',
+        save: 'Salva regola Autopilot',
+        lastRuns: 'Ultimi run',
+        noRuns: 'Nessun run registrato.',
+        opportunities: 'opportunità',
+        leads: 'lead',
+        recentActions: 'Azioni recenti',
+        noActions: 'Nessuna azione registrata.',
+        defaultRule: 'Autopilot Mandati',
+        loadError: 'Impossibile caricare la configurazione Autopilot.',
+        saveSuccess: 'Regola Autopilot salvata',
+        saveError: 'Errore nel salvataggio della regola Autopilot.',
+        saveToastTitle: 'Autopilot mandati',
+        configCardTitle: 'Configurazione regola',
+        configCardDescription: 'Attiva Autopilot, zone e limiti giornalieri.',
+      },
+      workspacePage: {
+        loading: 'Caricamento impostazioni...',
+        heroTitle: 'Feature Control Center',
+        heroSubtitle:
+          'Personalizza la tua dashboard attivando o disattivando i moduli',
+        trialActive: 'Trial Attivo',
+        trialDesc:
+          'Hai accesso a tutti i moduli per i prossimi {days} giorni. Dopo il trial, solo i moduli del tuo piano saranno disponibili.',
+        howItWorks: '💡 Come funziona',
+        howItWorksBullets: [
+          'I moduli disattivati scompariranno dalla barra laterale della dashboard',
+          'Durante il trial, tutti i moduli sono disponibili',
+          'Dopo il trial, solo i moduli inclusi nel tuo piano possono essere attivati',
+          'Le impostazioni vengono salvate automaticamente',
+        ],
+        prefsTitle: 'Lingua, valuta e fuso orario',
+        prefsSubtitle:
+          'Stesse preferenze dell’header: qui le imposti in un unico posto. Il fuso orario influisce su date e orari nella dashboard (es. fatturazione, automazioni).',
+        timezoneLabel: 'Fuso orario',
+        timezoneHint:
+          'Salvato su questo browser. Se il tuo fuso non è in elenco, scegli UTC e segnala al supporto.',
+        previewLabel: 'Anteprima ora locale',
+        insufficientPlan: 'Piano insufficiente',
+        insufficientPlanDesc: 'Questo modulo richiede il piano {plan}. Aggiorna il tuo account.',
+        moduleUpdated: 'Modulo aggiornato',
+        moduleEnabled: 'attivato',
+        moduleDisabled: 'disattivato',
+        errorTitle: 'Errore',
+        saveError: 'Impossibile salvare le impostazioni.',
+        trialBadge: 'Trial',
+        modules: {
+          scraper: {
+            name: 'Scraper Globale',
+            desc: 'Scansione automatica di Idealista, Zillow, Immobiliare.it',
+          },
+          ai_voice: {
+            name: 'AI Voice Calling',
+            desc: 'Chiamate automatiche con Bland AI',
+          },
+          '3d_staging': {
+            name: '3D Virtual Staging',
+            desc: 'Generazione visioni 3D post-ristrutturazione',
+          },
+          price_sniper: {
+            name: 'Price Drop Sniper',
+            desc: 'Rilevamento automatico ribassi di prezzo',
+          },
+          commercial: {
+            name: 'Commercial Intelligence',
+            desc: 'Analisi immobili commerciali e Business Features',
+          },
+          territory_map: {
+            name: 'Territory Commander',
+            desc: 'Mappa tattica e analisi territorio',
+          },
+          smart_briefing: {
+            name: 'AI Smart Briefing',
+            desc: 'Riassunto automatico vantaggi/difetti/target',
+          },
+          xray_vision: {
+            name: 'AI X-Ray Vision',
+            desc: 'Analisi tecnica immagini per difetti/pregi',
+          },
+          competitor_radar: {
+            name: 'Competitor Radar',
+            desc: 'Rilevamento mandati in scadenza',
+          },
+        },
+        timezoneRegions: {
+          EU: 'Europa',
+          US: 'Stati Uniti',
+          NA: 'Nord America',
+          LATAM: 'LATAM',
+          ME: 'Medio Oriente',
+          APAC: 'APAC',
+          UTC: 'UTC',
+        },
+      },
+      leadsPage: leadsPageUiIt,
+      leadPipelinePage: leadPipelinePageUiIt,
+      crmApiKeysPage: crmApiKeysPageUiIt,
+      crmAutomationRulesPage: crmAutomationRulesPageUiIt,
+      workflowAutomationsPage: workflowAutomationsPageUiIt,
+      agencyBrandingPage: agencyBrandingPageUiIt,
+      notificationsSettingsPage: notificationsSettingsPageUiIt,
+      agencyAssistantPage: agencyAssistantPageUiIt,
+      perfectCopyPage: perfectCopyPageUiIt,
+      referralPage: referralPageUiIt,
+      packagesPage: packagesPageUiIt,
+      prospectingPage: prospectingPageUiIt,
+      analyzeLinkPage: analyzeLinkPageUiIt,
+      listingScraperPage: listingScraperPageUiIt,
+      listingAuditorPage: listingAuditorPageUiIt,
+      refineListingPage: refineListingPageUiIt,
+      translateListingPage: translateListingPageUiIt,
+      listingsLibraryPage: listingsLibraryPageUiIt,
+      titlesAbPage: titlesAbPageUiIt,
+      hashtagsPage: hashtagsPageUiIt,
+      socialPostsPage: socialPostsPageUiIt,
+      transactionTypes: transactionTypeUiIt,
+      leadScorePage: leadScorePageUiIt,
+      pdfSheetPage: pdfSheetPageUiIt,
+      agentBioPage: agentBioPageUiIt,
+      videoScriptsPage: videoScriptsPageUiIt,
+      followupEmailsPage: followupEmailsPageUiIt,
+      emotionalListingPage: emotionalListingPageUiIt,
+      leadDetailPage: leadDetailPageUiIt,
+      communicationsHub: communicationsHubUiIt,
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predatori online',
+      },
+      onboardingChecklist: {
+        title: 'I tuoi primi 5 passi',
+        subtitle: 'Completa questa checklist per sbloccare valore subito. Puoi nasconderla quando vuoi: i progressi restano salvati su questo browser.',
+        dismiss: 'Nascondi',
+        dismissAria: 'Nascondi checklist onboarding',
+        progress: '{done} di {total} completati',
+        allDone: 'Ottimo lavoro — hai completato tutti i passi.',
+        steps: {
+          generate: {
+            title: 'Genera il primo annuncio con l\'AI',
+            description: 'Parti da Perfect Copy o dagli strumenti di copy: titoli, descrizioni e varianti in pochi minuti.',
+            cta: 'Vai a Perfect Copy',
+          },
+          library: {
+            title: 'Salva un annuncio in libreria',
+            description: 'Tieni i migliori testi e riutilizzali per i portali o i clienti.',
+            cta: 'Apri libreria',
+          },
+          pipeline: {
+            title: 'Organizza i lead in pipeline',
+            description: 'Sposta i lead tra le colonne e tieni sotto controllo follow-up e priorità.',
+            cta: 'Apri pipeline',
+          },
+          billing: {
+            title: 'Verifica piano e fatturazione',
+            description: 'Controlla il piano attivo e come gestire upgrade o fatture.',
+            cta: 'Apri fatturazione',
+          },
+          workspace: {
+            title: 'Configura il workspace',
+            description: 'Attiva i moduli che usi ogni giorno (CRM, voice, mappe, ecc.).',
+            cta: 'Impostazioni workspace',
+          },
+        },
+      },
+      contextualHelp: {
+        openGuideAria: 'Apri la guida in una nuova scheda',
+        openGuideTooltip: 'Apre la documentazione per questa funzione (nuova scheda).',
+        fieldHintAria: 'Suggerimento sul campo',
+      },
+      commandCenterTitle: 'Command Center',
+      commandCenterSubtitle:
+        'Panoramica del piano, utilizzo e strumenti AI per annunci, lead e prospecting — in un solo posto.',
+      newListingCta: 'Nuovo annuncio',
+      planBadgeLabels: { free: 'FREE', starter: 'STARTER', pro: 'PRO', agency: 'AGENCY' },
+      homeSections: {
+        planStats: 'Piano e statistiche',
+        roiUsage: 'ROI e utilizzo',
+        morningIntel: 'Briefing mattutino',
+        regionalPortals: 'Portali regionali',
+        liveFeed: 'Feed in tempo reale',
+        plansPricing: 'Piani e prezzi',
+        toolsFeatures: 'Strumenti e funzionalità',
+        sniperStats: 'Statistiche Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Caricamento statistiche 3D…',
+        roiUsage: 'Caricamento ROI e utilizzo…',
+        morningIntel: 'Caricamento Morning Intel…',
+        regionalPortals: 'Caricamento portali regionali…',
+        liveFeed: 'Caricamento live feed…',
+        plans: 'Caricamento piani…',
+        tools: 'Caricamento strumenti…',
+        priceSniper: 'Caricamento Price Sniper…',
+        proTips: 'Caricamento suggerimenti…',
+      },
+      liveFeed: {
+        deal: 'Deal Oro',
+        call: 'Chiamata AI',
+        staging: 'Virtual Staging',
+        priceDrop: 'Price Drop',
+        subtitle: 'Attività globale in tempo reale',
+        cta: 'Sei parte di un network globale di elite. Non restare indietro.',
+        infixDeal: 'rilevato a',
+        infixCall: 'fissata con successo a',
+        infixStaging: 'generato per immobile a',
+        priceDropLine: 'Price Drop Sniper attivato a',
+      },
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live Network',
+        liveBadge: 'LIVE',
+      },
+      proTips: {
+        ariaSection: 'Suggerimenti Pro',
+        title: 'Suggerimenti Pro per Annunci Migliori',
+        tip1: 'Includi dettagli specifici su posizione, servizi e caratteristiche uniche',
+        tip2: 'Usa metrature accurate e numero stanze per risultati AI migliori',
+        tip3: 'Genera più versioni e scegli quella che si adatta meglio alle tue esigenze',
+      },
+      docsHubOpen: 'Apri Documentation Hub',
+      stats3d: {
+        projects3d: 'Progetti 3D',
+        generated: 'Generati',
+        whatsappOpen: 'Apertura WhatsApp',
+        openRate: 'Tasso di apertura',
+        aiViews: 'Visioni AI generate',
+        openedOfSent: '{opened} aperti su {sent} inviati',
+        noMessages: 'Nessun messaggio inviato ancora',
+      },
+      sniperStats: {
+        title: 'Statistiche Sniper',
+        priceDropsToday: 'Ribassi Oggi',
+        detected: 'Rilevati',
+        expirations: 'Scadenze',
+        opportunities: 'Opportunità',
+        last48h: 'Rilevati nelle ultime 48h',
+        offline120: 'Immobili offline 120+ giorni',
+        loadError: 'Impossibile caricare le statistiche Sniper.',
+      },
+      regionalPortals: {
+        title: 'Portali Prioritari',
+        primaryMarkets: 'Mercati Primari',
+        secondaryMarkets: 'Mercati Secondari',
+        currency: 'Valuta',
+        units: 'Unità',
+        regionUsa: 'Stati Uniti',
+        regionEurope: 'Europa',
+        regionMiddleEast: 'Medio Oriente',
+        regionGlobal: 'Globale',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Il Tuo ROI Questo Mese',
+        hoursSaved: 'Ore Risparmiate',
+        hours: 'ore',
+        perListing: 'min per annuncio',
+        valueGenerated: 'Valore Generato',
+        estimatedValue: 'annuncio stimato',
+        generatedListings: 'Annunci generati',
+        amazing: 'Fantastico!',
+        saved10Hours: 'Hai risparmiato più di 10 ore questo mese',
+      },
+      morningBriefing: {
+        na: 'N/A',
+        sent: 'Notifica di prova inviata!',
+        sentDesc: 'Controlla la tua email e WhatsApp',
+        error: 'Errore',
+        sendError: 'Impossibile inviare la notifica',
+        connectionError: 'Errore di connessione',
+        title: 'Il tuo Briefing di Oggi',
+        subtitle: 'Top 3 opportunità con Market Gap più alto (ultime 24h)',
+        configure: 'Configura',
+        priceDown: 'Prezzo',
+        highUrgency: 'Urgenza Alta',
+        target: 'Target',
+        fomo: 'Questi deal sono stati inviati anche a',
+        partnerAgencies: 'agenzie partner nella tua zona. Affrettati!',
+        sendTest: 'Invia Prova sul mio Cellulare',
+      },
+      competitorRadar: {
+        na: 'N/A',
+        title: 'Radar Scadenze',
+        subtitle: 'Immobili offline o fermi da 120+ giorni',
+        removed: 'Rimosso',
+        stale: 'Fermo',
+        aiNote: 'Nota AI',
+        offlineFor: 'Offline da',
+        days: 'giorni',
+        viewAll: 'Vedi tutti',
+        refreshAria: 'Aggiorna elenco',
+      },
+      planCards: {
+        generateNewListing: 'Genera Nuovo Annuncio',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Analisi da Link',
+        premiumPdfCards: 'Schede PDF Premium',
+        allFreeFeatures: 'Tutte le funzionalità Free',
+        leadScoringAi: 'Lead Scoring AI',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Traduttore 12 Lingue',
+        allStarterFeatures: 'Tutte le funzionalità Starter',
+        fullCrmPipeline: 'CRM Completo + Pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'AI Voice Calling (30/mese)',
+        agencyAssistantAi: 'Agency Assistant AI',
+        allProFeatures: 'Tutte le funzionalità Pro',
+        unlimitedAiVoiceCalling: 'AI Voice Calling Illimitato',
+        auraVrVirtualTour: 'Aura VR: Virtual Tour',
+        teamUpToAgents: 'Team fino a 10 agenti',
+        omnichannelSuite: 'Omnichannel Suite',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Setup done-for-you',
+        oneTime: 'una tantum',
+        boostSetupComplete: 'Setup completo done-for-you',
+        boostOnboarding: 'Implementazione e onboarding guidato',
+        boostLaunchSupport: 'Supporto premium per il lancio',
+        boostCustomConfig: 'Configurazione personalizzata',
+        buyAgencyBoost: 'Acquista Agency Boost',
+      },
+      planFeatures: planFeaturesUiIt,
     },
     auth: {
       backToHome: 'Torna alla Home',
+      brandTagline: 'Porta la tua agenzia al livello successivo',
       login: {
-        title: 'Bentornato 👋',
+        title: 'Bentornato',
         subtitle: 'Accedi per continuare',
         email: 'Email',
+        emailPlaceholder: 'mario@example.com',
         password: 'Password',
+        showPasswordAria: 'Mostra password',
+        hidePasswordAria: 'Nascondi password',
         forgotPassword: 'Password dimenticata?',
         signIn: 'Accedi',
         signingIn: 'Accesso in corso...',
@@ -552,11 +1924,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         secureNote: 'Login sicuro • I tuoi dati sono protetti con crittografia standard',
       },
       signup: {
-        title: 'Crea il tuo account ✨',
+        title: 'Crea il tuo account',
         subtitle: 'Inizia a generare annunci professionali con l\'AI',
         fullName: 'Nome completo',
+        fullNamePlaceholder: 'Mario Rossi',
         email: 'Email',
+        emailPlaceholder: 'mario@example.com',
         password: 'Password',
+        showPasswordAria: 'Mostra password',
+        hidePasswordAria: 'Nascondi password',
         minChars: 'Almeno 6 caratteri',
         freePlanIncludes: 'Il piano gratuito include:',
         listingsPerMonth: '5 annunci al mese',
@@ -574,14 +1950,31 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         fillAllFields: 'Compila tutti i campi richiesti.',
         tooManyAttempts: 'Troppi tentativi',
         rateLimitMsg: 'Abbiamo rilevato troppi tentativi. Per la tua sicurezza, riprova tra qualche minuto.',
-        welcomeBack: 'Bentornato! 🎉',
+        welcomeBack: 'Bentornato!',
         completePayment: 'Completa il pagamento nella dashboard.',
         loginSuccess: 'Accesso effettuato con successo.',
-        accountCreated: 'Account creato! 🎉',
+        accountCreated: 'Account creato!',
         redirectPayment: 'Verrai reindirizzato per completare il pagamento.',
         welcomePropertyPilot: 'Benvenuto in PropertyPilot AI!',
+        turnstileRequired: 'Completa il controllo di sicurezza prima di continuare.',
+        turnstileFailed: 'Verifica di sicurezza non riuscita. Riprova.',
+        turnstileLoadFailed: 'Impossibile caricare il controllo di sicurezza. Aggiorna la pagina o riprova più tardi.',
+        turnstileMisconfigured: 'Verifica di sicurezza non configurata correttamente sul server. Contatta il supporto.',
+        loginFailedGeneric: 'Email o password non validi.',
+        signupFailedGeneric: 'Impossibile creare l’account. Riprova.',
+        emailNotConfirmed: 'Conferma l’email prima di accedere.',
+        userAlreadyRegistered: 'Esiste già un account con questa email. Accedi o reimposta la password.',
+        passwordTooShort: 'La password non rispetta la lunghezza minima. Usa almeno 8 caratteri.',
+        invalidEmail: 'Inserisci un indirizzo email valido.',
+        networkError:
+          'Impossibile raggiungere il server di login (Supabase). Controlla rete, VPN/firewall/antivirus, che il progetto Supabase sia attivo e che NEXT_PUBLIC_SUPABASE_URL in .env.local sia l’URL https://….supabase.co corretto.',
+        sessionExpired: 'Sessione scaduta. Accedi di nuovo.',
+        signupDisabled: 'La registrazione di nuovi account non è al momento disponibile.',
+        oauthFailed: 'Accesso social non riuscito. Riprova oppure usa email e password.',
       },
     },
+    authPasswordRecovery: authPasswordRecoveryUiIt,
+    complianceCenter: complianceCenterUiIt,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Trasforma un video dello smartphone in un tour VR immersivo 3D',
@@ -616,10 +2009,54 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Ottimo lavoro!',
-        stats: 'Questa scansione attirerà il',
-        action: 'di visite in più. Vuoi che la invii io ai tuoi lead caldi?',
+        visitsSentence: 'Questa scansione può aumentare le visite fino al {pct}%.',
+        followUp: 'Vuoi che la condivida con i lead più caldi?',
+        tripleNote:
+          'Prospettiva tripla: Drone, Cinematic Walk e 360° Panorama — standard premium per tour VR immersivi.',
       },
+      toast: {
+        copySuccessTitle: 'Link copiato',
+        copySuccessDesc: 'Il link VR è negli appunti.',
+        copyErrorTitle: 'Errore',
+        copyErrorDesc: 'Impossibile copiare il link.',
+      },
+      tripleView: {
+        title: 'Tripla prospettiva — standard luxury',
+        subtitle: 'Scegli la modalità di visualizzazione per il tour VR',
+      },
+      views: {
+        drone: { title: 'Modalità drone', description: 'Vista aerea / contesto dell’area' },
+        cinematic: { title: 'Cinematic walk', description: 'Percorso fluido tra gli ambienti' },
+        panorama: { title: 'Panorama 360°', description: 'Visualizzazione immersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aerea',
+        cinematic: 'Cinematic walk — percorso fluido',
+        panorama: '360° — immersione totale',
+        default: 'Tour VR immersivo',
+      },
+      listingFallback: 'Immobile',
+      whatsappVrBody:
+        'Ciao! Ecco un tour VR immersivo per te:\n\n{link}\n\nApri il link sullo smartphone per esplorare l’immobile.',
     },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Invia progetto via WhatsApp',
+      originalPhoto: 'Foto originale',
+      afterVisionTitle: 'Visione post-allestimento (AI)',
+      afterVisionSubtitle: 'Interno moderno di pregio',
+      generatePrompt: 'Genera la visione 3D per vedere il confronto',
+      generating: 'L’IA sta allestendo l’immobile…',
+      generateCta: 'Genera visione 3D',
+      successBanner:
+        'Visione 3D generata. Trascina lo slider per confrontare prima e dopo.',
+      premiumRequiredTitle: 'Piano Premium richiesto',
+      premiumRequiredDesc:
+        'Il Virtual Staging 3D è una funzione Premium. Passa al piano PRO o AGENCY per sbloccarlo.',
+      calibrationTitle: 'Calibrazione in corso',
+      calibrationDesc: 'Riprova tra un istante.',
+    },
+    prospectingModals: prospectingModalsUiIt,
     errors: {
       somethingWentWrong: 'Qualcosa è andato storto',
       unexpectedError: 'Si è verificato un errore imprevisto. Non ti preoccupare, i tuoi dati sono al sicuro.',
@@ -630,11 +2067,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       pageNotFound: 'Pagina non trovata',
       pageNotFoundDesc: 'La pagina che stai cercando non esiste o è stata spostata.',
       dashboard: 'Dashboard',
+      dashboardAreaErrorTitle: 'Qualcosa è andato storto',
+      dashboardAreaErrorDesc:
+        'Si è verificato un errore nella dashboard. Puoi riprovare o tornare alla home della dashboard.',
+      backToDashboard: 'Torna alla dashboard',
     },
     demo: {
       nav: { pricing: 'Prezzi', login: 'Login', startFree: 'Inizia Gratis' },
       hero: { badge: 'Prenota in 30 secondi', title: 'Prenota una Demo Gratuita', subtitle: 'Scopri come PropertyPilot AI può trasformare la tua agenzia immobiliare. 30 minuti con un nostro esperto per vedere la piattaforma in azione.' },
       calendly: { chooseDate: 'Scegli Data e Ora', demoFree: 'Demo gratuita di 30 minuti', preferContact: 'Preferisci contattarci direttamente?', whatsapp: 'Scrivi su WhatsApp', sendEmail: 'Invia Email' },
+      whatsappPrefill: 'Ciao! Vorrei prenotare una demo di PropertyPilot AI.',
+      calendlyIframeTitle: 'Prenota demo PropertyPilot AI',
       valuePoints: { sectionTitle: 'Cosa scoprirai nella Demo', sectionSubtitle: 'Una panoramica completa delle funzionalità che renderanno la tua agenzia più efficiente.', bookNow: 'Prenota Ora la Tua Demo' },
       valuePointsList: [
         { title: 'AI Generativa Avanzata', description: 'Crea annunci professionali, titoli A/B, descrizioni SEO e contenuti marketing in pochi secondi.' },
@@ -645,7 +2088,40 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         { title: 'Branding Personalizzato', description: 'PDF white-label, schede immobili professionali e materiali con il tuo brand.' },
       ],
       testimonials: { title: 'Cosa dicono i nostri Clienti', subtitle: 'Agenti e agenzie che hanno già trasformato il loro business con PropertyPilot AI' },
+      testimonialsList: [
+        {
+          name: 'Marco R.',
+          role: 'Agente immobiliare, Milano',
+          quote:
+            'PropertyPilot AI ha rivoluzionato il mio modo di lavorare. Creo annunci in 30 secondi invece di 30 minuti.',
+        },
+        {
+          name: 'Laura B.',
+          role: 'Titolare agenzia, Roma',
+          quote: 'Il CRM e le automazioni mi hanno fatto risparmiare ore ogni settimana. Lo consiglio a tutti!',
+        },
+        {
+          name: 'Giuseppe T.',
+          role: 'Property manager, Napoli',
+          quote: 'Finalmente una piattaforma italiana che capisce le nostre esigenze. Supporto eccezionale.',
+        },
+      ],
+      trustStats: [
+        { iconKey: 'clock', value: '30 min', label: 'Demo gratuita' },
+        { iconKey: 'shield', value: '100%', label: 'Senza impegno' },
+        { iconKey: 'users', value: '500+', label: 'Clienti soddisfatti' },
+        { iconKey: 'trendingUp', value: '+40%', label: 'Produttività media' },
+      ],
+      finalCta: {
+        titleLead: 'Pronto a ',
+        titleAccent: 'Trasformare',
+        titleTail: ' la tua agenzia?',
+        subtitle:
+          'Prenota ora la tua demo gratuita e scopri come PropertyPilot AI può moltiplicare le tue vendite.',
+        bookDemo: 'Prenota demo gratuita',
+      },
       footer: { home: 'Home', pricing: 'Prezzi', contact: 'Contatti', login: 'Login' },
+      footerCopyrightLine: '© {year} PropertyPilot AI. {rights}',
     },
     contact: {
       title: 'Contattaci',
@@ -657,6 +2133,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       validation: { nameMin: 'Il nome deve avere almeno 2 caratteri', emailInvalid: "Inserisci un'email valida", messageMin: 'Il messaggio deve avere almeno 10 caratteri', checkFields: 'Controlla i campi evidenziati.' },
       toast: { successTitle: 'Messaggio inviato!', successDesc: 'Ti risponderemo entro 24 ore.', errorTitle: 'Errore', errorDesc: 'Impossibile inviare il messaggio. Riprova più tardi.', validationTitle: 'Errore di validazione' },
       home: 'Home',
+      headerTagline: 'Porta la tua agenzia al livello successivo',
+      demoMailSubject: 'Richiesta demo PropertyPilot AI',
+      minCharsCounter: '{current}/{min} caratteri minimi',
+      submitting: 'Invio in corso…',
     },
     common: {
       copy: 'Copia',
@@ -671,6 +2151,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Caricamento...',
       error: 'Errore',
     },
+    devTestError: devTestErrorUiIt,
     billing: {
       title: 'Gestione',
       titleAccent: 'Abbonamento',
@@ -715,30 +2196,60 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       switchToAgency: 'Passa a Agency',
       upgradeToPro: 'Upgrade a Pro',
       upgradeToAgency: 'Upgrade a Agency',
+      stripeTrust:
+        'Pagamenti sicuri elaborati da Stripe. Carte, metodi di pagamento e fatture si gestiscono nel portale cliente Stripe.',
+      subscriptionFetchErrorBody:
+        'Impossibile caricare l\'abbonamento. Mostriamo il piano Free.',
+      retry: 'Riprova',
+      planBadgeStarter: 'Starter',
+      planBadgePro: 'Pro',
+      planBadgeAgency: 'Agency',
     },
+    pendingCheckoutBanner: pendingCheckoutUiIt,
+    ariaLimitModal: ariaLimitModalUiIt,
+    dashboardNav: dashboardNavUiIt,
+    commandPaletteExtras: commandPaletteExtrasIt,
+    errorBoundaryModule: errorBoundaryModuleUiIt,
+    welcomeTour: welcomeTourUiIt,
+    onboardingWizard: onboardingWizardUiIt,
+    marketingAbout: marketingAboutUiIt,
+    marketingBlog: marketingBlogUiIt,
+    marketingFeatures: marketingFeaturesUiIt,
+    privacyPolicyPage: privacyPolicyPageUiIt,
+    termsPolicyPage: termsPolicyPageUiIt,
+    refundPolicyPage: refundPolicyPageUiIt,
+    blogPostPage: blogPostPageUiIt,
+    pricingPagePlans: pricingPagePlansUiIt,
+    docsHub: docsHubUiIt,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost attivato!',
-      boostDesc: "Setup \"done-for-you\" confermato. Il nostro team ti contatterà per l'onboarding.",
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Accesso Premium Confermato - Benvenuto nel Network Globale PropertyPilot!',
-      paymentDone: '✅ Pagamento completato!',
+      boostActivated: 'Agency Boost attivato',
+      boostDesc: "Setup «done-for-you» confermato. Il nostro team ti contatterà per l'onboarding.",
+      agencyActive: 'Agency Intelligence attiva',
+      agencyDesc: 'Accesso premium confermato. Benvenuto nel network globale PropertyPilot!',
+      paymentDone: 'Pagamento completato',
       paymentDesc: 'Il tuo piano è stato attivato con successo.',
-      checkoutCanceled: 'Checkout annullato',
-      checkoutCanceledDesc: 'Puoi riprovare quando vuoi dalla pagina Billing.',
-      limitNear: '⚠️ Limite quasi raggiunto!',
-      limitNearDesc: 'Hai usato {used} dei tuoi {lim} annunci mensili (80%+). Considera un upgrade per continuare.',
+      checkoutCanceled: 'Pagamento annullato',
+      checkoutCanceledDesc: 'Puoi riprovare in qualsiasi momento dalla pagina Fatturazione.',
+      limitNear: 'Limite quasi raggiunto',
+      limitNearDesc: 'Hai usato {used} dei tuoi {lim} annunci mensili (80%+). Valuta un upgrade per continuare.',
+      complianceReminderTitle: 'Uso conforme',
+      complianceReminderDesc:
+        'Tratta i dati dei clienti secondo GDPR e le norme del tuo mercato. Documentazione e centro compliance: pagina Compliance nel sito.',
+      connectivityIssueTitle: 'Backend o Supabase non rispondono',
+      connectivityIssueDesc:
+        'Ricarica la pagina. Se persiste: controlla rete/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL in .env.local e che npm run dev sia attivo.',
     },
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
-        features: 'Features',
-        pricing: 'Pricing',
+        tagline: 'Porta la tua agenzia al livello successivo',
+        features: 'Funzionalità',
+        pricing: 'Prezzi',
         compliance: 'Compliance',
-        login: 'Login',
-        getStarted: 'Get Started',
+        login: 'Accedi',
+        getStarted: 'Inizia',
       },
       hero: {
-        poweredBy: 'Powered by GPT-4',
+        poweredBy: 'Basato su GPT-4',
         titlePart1: 'Il tuo Agente',
         titlePart2: 'Immobiliare',
         titleAI: 'AI',
@@ -749,29 +2260,40 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Inizia Gratis',
         ctaDemo: 'Vedi Demo',
         trustedBy: 'Compatibile con i principali portali',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automazione',
           listingsPerDay: 'Annunci/Giorno',
-          conversionRate: 'Conversion Rate',
+          conversionRate: 'Tasso di conversione',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
+        signupAriaLabel: 'Registrati su PropertyPilot AI',
+        demoDashboardAriaLabel: 'Apri la demo della dashboard',
       },
       features: {
-        title: 'Why PropertyPilot AI?',
+        title: 'Perché PropertyPilot AI?',
         subtitle: 'La piattaforma AI completa per agenti immobiliari che vogliono scalare',
         aiListing: {
-          title: 'AI Listing Engine',
+          title: 'Motore annunci IA',
           description: 'Genera annunci professionali in secondi con stili personalizzati (Luxury, Investment, Standard Pro). Multi-lingua e ottimizzato per Zillow, Idealista, Immobiliare.',
           benefit: 'Risparmia 5 ore a settimana su scrittura annunci',
+          cta: 'Prova gratis',
         },
         crmAI: {
-          title: 'CRM AI Intelligence',
-          description: 'Lead Scoring automatico, follow-up AI multi-canale (WhatsApp, Email, SMS). Categorizza lead HOT/WARM/COLD e suggerisce azioni prioritarie.',
-          benefit: 'Aumenta conversioni del 40% con prioritizzazione AI',
+          title: 'CRM con intelligenza artificiale',
+          description: 'Lead Scoring automatico, follow-up IA multi-canale (WhatsApp, Email, SMS). Categorizza lead HOT/WARM/COLD e suggerisce azioni prioritarie.',
+          benefit: 'Aumenta le conversioni del 40% con la prioritizzazione IA',
+          cta: 'Vai al CRM',
         },
         globalReach: {
-          title: 'Global Reach',
+          title: 'Presenza globale',
           description: 'Operiamo su USA (Zillow, MLS), Italia (Idealista, Immobiliare), Spagna (Idealista.es). Terminologia localizzata e formati di mercato.',
           benefit: 'Espandi il tuo business in 3 continenti',
+          cta: 'Scopri la prospezione',
         },
       },
       searchEngine: {
@@ -780,6 +2302,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'ESCLUSIVAMENTE',
         exclusiveInPlan: 'nel piano AGENCY',
         benefit: 'Risparmia 20 ore di telefonate a settimana',
+        stepLabel: 'PASSO {n}',
+        prospectingCycleCta: 'Avvia il ciclo Scraper → Voice AI → CRM',
         step1: {
           title: 'Scansione Globale',
           description: "L'AI scansiona automaticamente Idealista, Immobiliare, Zillow e MLS 24/7, trovando migliaia di annunci ogni giorno.",
@@ -789,6 +2313,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrazione IA',
           description: 'Ogni annuncio riceve un Lead Score AI (0-100). Solo i "TOP DEAL" (80+) vengono selezionati per le chiamate.',
           status: 'TOP DEAL rilevato',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Chiamata Automatica',
@@ -815,7 +2340,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         time3Desc: 'Apri PropertyPilot AI e trovi 3 appuntamenti già in calendario, con tutti i dettagli dell\'immobile, contatti del proprietario e note AI.',
       },
       testimonials: {
-        title: 'Loved by Agents Worldwide',
+        title: 'Scelto dagli agenti in tutto il mondo',
         subtitle: 'Migliaia di agenti immobiliari si fidano di PropertyPilot AI',
         testimonial1: {
           name: 'Marco Rossi',
@@ -824,18 +2349,18 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         },
         testimonial2: {
           name: 'Sarah Johnson',
-          role: 'Real Estate Agent, Miami',
-          content: 'La funzione di generazione annunci è incredibile. Creo listing professionali in 30 secondi invece di ore.',
+          role: 'Agente immobiliare, Miami',
+          content: 'La generazione annunci è incredibile. Creo annunci professionali in 30 secondi invece che ore.',
         },
         testimonial3: {
           name: 'Carlos Garcia',
-          role: 'Agente, Barcelona',
-          content: 'Il CRM AI è un game-changer. I follow-up automatici mi fanno risparmiare 10 ore a settimana.',
+          role: 'Agente, Barcellona',
+          content: 'Il CRM IA è una svolta. I follow-up automatici mi fanno risparmiare 10 ore a settimana.',
         },
       },
       aria: {
         badge: 'Disponibile in tutti i piani',
-        title: 'Aria - Your AI Success Partner',
+        title: 'Aria — il tuo partner IA per il successo',
         subtitle: 'Il tuo coach personale, sempre disponibile. Onboarding, strategia, motivazione: tutto in una chat.',
         mentoring: {
           title: 'Mentoring 24/7',
@@ -859,10 +2384,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         title: 'Prezzi',
         subtitle: 'Confronta i piani e scegli quello perfetto per il tuo business',
         feature: 'Funzionalità',
-        bestValue: 'BEST VALUE',
+        bestValue: 'MIGLIOR VALORE',
         perMonth: '/mese',
-        agencySubtitle: 'Omnichannel Domination Suite',
-        agencyExtra: '+ Modulo Commerciale & Arbitraggio Esteso',
+        agencySubtitle: 'Suite omnicanale di dominio',
+        agencyExtra: '+ Modulo commerciale e arbitraggio esteso',
         features: {
           listingsPerMonth: 'Annunci al mese',
           aiGeneration: 'Generazione Annunci AI',
@@ -872,27 +2397,27 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           crm: 'CRM Completo',
           kanban: 'Pipeline Kanban',
           leadScoring: 'Lead Scoring AI Base',
-          briefing: 'Smart Briefing Multi-Categoria',
+          briefing: 'Briefing intelligente multi-categoria',
           staging: 'Virtual Staging 3D',
-          followup: 'Follow-up AI Multi-canale',
+          followup: 'Follow-up IA multi-canale',
           automations: 'Automazioni AI',
-          forms: 'Smart Lead Capture Forms',
-          whiteLabel: 'White-label PDF',
-          assistant: 'Agency Assistant AI',
+          forms: 'Moduli intelligenti di acquisizione lead',
+          whiteLabel: 'PDF white-label',
+          assistant: 'Agency Assistant IA',
           multiUser: 'Multi-utente',
           roles: 'Ruoli e Permessi',
           distribution: 'Distribuzione Lead Automatica',
           reports: 'Report Attività Team',
           multiOffice: 'Integrazione Multi-sede',
-          auraVR: '🥽 Aura VR: Cinematic Virtual Tour Generation',
-          voiceCalling: 'AI Voice Calling (Bland AI)',
-          messaging: 'AI Smart Messaging (SMS/WhatsApp AI)',
-          manualOverride: 'Manual Override: Accesso diretto dati proprietario',
+          auraVR: 'Aura VR: tour virtuali cinematografici',
+          voiceCalling: 'Chiamate vocali IA (Bland AI)',
+          messaging: 'Messaggistica intelligente IA (SMS/WhatsApp)',
+          manualOverride: 'Override manuale: accesso diretto ai dati del proprietario',
           humanOverride: "Libertà d'intervento umano",
-          autoProspecting: 'Auto-Prospecting 24/7',
-          scraping: 'Scraping Intelligente',
-          dashboard: 'Dashboard War Room',
-          calendar: 'Google Calendar Integration',
+          autoProspecting: 'Autoprospezione 24/7',
+          scraping: 'Scraping intelligente',
+          dashboard: 'Dashboard operativa',
+          calendar: 'Integrazione Google Calendar',
           notifications: 'Notifiche Email Automatiche',
           support: 'Supporto',
         },
@@ -917,26 +2442,42 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Scegli Pro',
           chooseAgency: 'Scegli Agency',
         },
+        tableCells: {
+          multiUserAgency: 'Fino a 10 agenti',
+          voiceCallingPro: '30/mese',
+        },
+        agencyBoost: {
+          productName: 'Agency Boost',
+          badgePremium: 'SERVIZIO PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Pacchetto setup completo "done-for-you" con onboarding premium e supporto dedicato',
+          bullet1: 'Setup completo "done-for-you"',
+          bullet2: 'Implementazione e onboarding guidato',
+          bullet3: 'Supporto premium per il lancio',
+          oneTimePayment: 'Pagamento una tantum',
+          cta: 'Acquista Agency Boost',
+        },
       },
       cta: {
         title: 'Pronto a moltiplicare i tuoi affari?',
         subtitle: 'Unisciti a centinaia di agenti che già usano PropertyPilot AI',
-        button: 'Get Started Gratis',
+        button: 'Inizia gratis',
       },
       footer: {
         tagline: 'Il tuo Agente Immobiliare AI che lavora 24/7',
         product: 'Prodotto',
         company: 'Azienda',
         support: 'Supporto',
-        pricing: 'Pricing',
+        pricing: 'Prezzi',
         dashboard: 'Dashboard',
-        features: 'Features',
+        features: 'Funzionalità',
         about: 'Chi Siamo',
         contact: 'Contatti',
         blog: 'Blog',
-        privacy: 'Privacy Policy',
-        terms: 'Terms of Service',
-        refund: 'Refund Policy',
+        privacy: 'Informativa sulla privacy',
+        terms: 'Termini di servizio',
+        refund: 'Politica di rimborso',
         copyright: 'Tutti i diritti riservati.',
       },
       pricingPage: {
@@ -949,7 +2490,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         trustSupport: 'Supporto in italiano',
         demo: 'Demo',
         whyChoose: 'Perché Scegliere PropertyPilot AI?',
-        whySubtitle: 'Funzionalità premium per ogni professionista del real estate',
+        whySubtitle: 'Funzionalità premium per ogni professionista immobiliare',
         faqTitle: 'Domande Frequenti',
         faqSubtitle: 'Tutto quello che devi sapere sui nostri piani',
         ctaTitle: 'Pronto a Trasformare i Tuoi Annunci?',
@@ -980,11 +2521,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Control Panel',
+      metaTitle: 'Agent workspace — PropertyPilot AI',
+      metaDescription:
+        'Operational console for AI listings, CRM, prospecting, and automations. Sign-in required.',
       loading: 'Loading...',
       error: 'Error',
       success: 'Success',
       generate: 'Generate',
       signOut: 'Sign Out',
+      navAriaLabel: 'Main navigation',
+      commandPaletteOpenAria: 'Open quick search',
+      commandPalettePlaceholder: 'Search…',
       currentPlan: 'Current Plan',
       dashboardAI: 'Dashboard AI',
       thisMonth: 'This Month',
@@ -1020,14 +2567,404 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       mapCallLaunched: 'Call started',
       mapCallError: 'Error starting call',
       mapLanciaChiamata: 'Launch Predator Call',
+      mapPage: {
+        loadError: 'Error loading map data',
+        callStartedDesc: 'AI call started successfully',
+        paywallSubtitle:
+          'Available on Agency plan only. Unlock the map and all Diamond features.',
+        paywallCardDesc: 'Available on Agency plan only.',
+        unlockAgency: 'Upgrade to Agency',
+        backToProspecting: 'Back to Prospecting',
+        backAria: 'Back',
+        topDealsOnly: 'Top deals only',
+        topDealsOnlyShort: 'TOP',
+        ghostShort: 'Ghost',
+        mapTitleShort: 'Predator Map',
+        kpiMappedListings: 'Mapped listings',
+        kpiTopDeals: 'Top deals',
+        kpiHighUrgency: 'High urgency',
+        emptyNoListings: 'No listings found',
+        emptyNoGhosts: 'No ghost listings available',
+        emptyEnableGhostHint: 'Enable Ghost Listings to see more options',
+        closeDetailAria: 'Close detail',
+        badgeTopDeal: 'TOP DEAL',
+        badgeHighUrgency: 'HIGH URGENCY',
+        urgencyScoreTitle: 'Urgency score',
+        ghostListingDays: 'Ghost listing: {days} days on market',
+        marketGapTitle: 'Market gap',
+        marketGapVsArea: 'vs area average',
+        preview3dTitle: '3D preview',
+        quickActionsTitle: 'Quick actions',
+        callingInProgress: 'Calling…',
+        whatsappProjectCta: 'Send WhatsApp project',
+        viewOriginalListing: 'View original listing →',
+      },
+      opportunitiesPage: {
+        title: 'Opportunity Radar',
+        subtitle:
+          'Find underpriced properties, old listings, or never-contacted owners for new mandates.',
+        type: 'Opportunity type',
+        underpriced: 'Underpriced',
+        old: 'Old listings',
+        uncontacted: 'Never contacted',
+        city: 'City (optional)',
+        cityPlaceholder: 'Milan',
+        oldDays: 'Older than (days)',
+        loading: 'Loading...',
+        refresh: 'Refresh',
+        results: 'Results',
+        noResults: 'No opportunities found with the current filters.',
+        selectListing: 'Select a listing to open details.',
+        loadingResults: 'Loading opportunities...',
+        loadFailed: 'Could not load opportunities.',
+        unknown: 'unknown',
+        status: 'Status',
+        na: 'n/a',
+        filtersTitle: 'Search filters',
+        filtersDescription: 'Refine opportunity type and area.',
+      },
+      autopilotPage: {
+        title: 'Mandate Autopilot 24/7',
+        subtitle:
+          'Scraper and Voice AI work every day to find new mandates and create leads automatically.',
+        active: 'Autopilot enabled',
+        rulePlaceholder: 'Rule name (e.g. Milan Center Mandates)',
+        city: 'City',
+        region: 'Region/Province',
+        minPrice: 'Minimum price',
+        maxPrice: 'Maximum price',
+        runHour: 'Run time (UTC)',
+        dailyLimit: 'Max new leads per day',
+        saving: 'Saving...',
+        save: 'Save Autopilot rule',
+        lastRuns: 'Latest runs',
+        noRuns: 'No runs recorded.',
+        opportunities: 'opportunities',
+        leads: 'leads',
+        recentActions: 'Recent actions',
+        noActions: 'No actions recorded.',
+        defaultRule: 'Mandate Autopilot',
+        loadError: 'Unable to load Autopilot configuration.',
+        saveSuccess: 'Autopilot rule saved',
+        saveError: 'Error while saving Autopilot rule.',
+        saveToastTitle: 'Mandate autopilot',
+        configCardTitle: 'Rule configuration',
+        configCardDescription: 'Enable Autopilot, areas, and daily limits.',
+      },
+      workspacePage: {
+        loading: 'Loading settings...',
+        heroTitle: 'Feature Control Center',
+        heroSubtitle: 'Customize your dashboard by enabling or disabling modules',
+        trialActive: 'Trial active',
+        trialDesc:
+          'You have access to all modules for the next {days} days. After the trial, only the modules in your plan will be available.',
+        howItWorks: '💡 How it works',
+        howItWorksBullets: [
+          'Disabled modules will disappear from the dashboard sidebar',
+          'During the trial, all modules are available',
+          'After the trial, only modules included in your plan can be enabled',
+          'Settings are saved automatically',
+        ],
+        prefsTitle: 'Language, currency & timezone',
+        prefsSubtitle:
+          'Same choices as the header — manage them in one place. Timezone affects dates and times across the dashboard (billing, automations, etc.).',
+        timezoneLabel: 'Time zone',
+        timezoneHint:
+          'Saved in this browser. If your zone is missing, pick UTC and contact support.',
+        previewLabel: 'Local time preview',
+        insufficientPlan: 'Insufficient plan',
+        insufficientPlanDesc: 'This module requires the {plan} plan. Upgrade your account.',
+        moduleUpdated: 'Module updated',
+        moduleEnabled: 'enabled',
+        moduleDisabled: 'disabled',
+        errorTitle: 'Error',
+        saveError: 'Unable to save settings.',
+        trialBadge: 'Trial',
+        modules: {
+          scraper: {
+            name: 'Global Scraper',
+            desc: 'Automatic scanning of Idealista, Zillow, Immobiliare.it',
+          },
+          ai_voice: {
+            name: 'AI Voice Calling',
+            desc: 'Automatic calls with Bland AI',
+          },
+          '3d_staging': {
+            name: '3D Virtual Staging',
+            desc: '3D visualization generation post-renovation',
+          },
+          price_sniper: {
+            name: 'Price Drop Sniper',
+            desc: 'Automatic price drop detection',
+          },
+          commercial: {
+            name: 'Commercial Intelligence',
+            desc: 'Commercial property analysis and Business Features',
+          },
+          territory_map: {
+            name: 'Territory Commander',
+            desc: 'Tactical map and territory analysis',
+          },
+          smart_briefing: {
+            name: 'AI Smart Briefing',
+            desc: 'Automatic summary of pros/cons/target',
+          },
+          xray_vision: {
+            name: 'AI X-Ray Vision',
+            desc: 'Technical image analysis for defects/features',
+          },
+          competitor_radar: {
+            name: 'Competitor Radar',
+            desc: 'Expiring mandate detection',
+          },
+        },
+        timezoneRegions: {
+          EU: 'Europe',
+          US: 'United States',
+          NA: 'North America',
+          LATAM: 'LATAM',
+          ME: 'Middle East',
+          APAC: 'APAC',
+          UTC: 'UTC',
+        },
+      },
+      leadsPage: leadsPageUiEn,
+      leadPipelinePage: leadPipelinePageUiEn,
+      crmApiKeysPage: crmApiKeysPageUiEn,
+      crmAutomationRulesPage: crmAutomationRulesPageUiEn,
+      workflowAutomationsPage: workflowAutomationsPageUiEn,
+      agencyBrandingPage: agencyBrandingPageUiEn,
+      notificationsSettingsPage: notificationsSettingsPageUiEn,
+      agencyAssistantPage: agencyAssistantPageUiEn,
+      perfectCopyPage: perfectCopyPageUiEn,
+      referralPage: referralPageUiEn,
+      packagesPage: packagesPageUiEn,
+      prospectingPage: prospectingPageUiEn,
+      analyzeLinkPage: analyzeLinkPageUiEn,
+      listingScraperPage: listingScraperPageUiEn,
+      listingAuditorPage: listingAuditorPageUiEn,
+      refineListingPage: refineListingPageUiEn,
+      translateListingPage: translateListingPageUiEn,
+      listingsLibraryPage: listingsLibraryPageUiEn,
+      titlesAbPage: titlesAbPageUiEn,
+      hashtagsPage: hashtagsPageUiEn,
+      socialPostsPage: socialPostsPageUiEn,
+      transactionTypes: transactionTypeUiEn,
+      leadScorePage: leadScorePageUiEn,
+      pdfSheetPage: pdfSheetPageUiEn,
+      agentBioPage: agentBioPageUiEn,
+      videoScriptsPage: videoScriptsPageUiEn,
+      followupEmailsPage: followupEmailsPageUiEn,
+      emotionalListingPage: emotionalListingPageUiEn,
+      leadDetailPage: leadDetailPageUiEn,
+      communicationsHub: communicationsHubUiEn,
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predators online',
+      },
+      onboardingChecklist: {
+        title: 'Your first 5 steps',
+        subtitle: 'Complete this checklist to get value fast. You can hide it anytime — progress is saved in this browser.',
+        dismiss: 'Hide',
+        dismissAria: 'Hide onboarding checklist',
+        progress: '{done} of {total} done',
+        allDone: 'Great — you completed every step.',
+        steps: {
+          generate: {
+            title: 'Generate your first listing with AI',
+            description: 'Start with Perfect Copy or other copy tools: titles, descriptions, and variants in minutes.',
+            cta: 'Open Perfect Copy',
+          },
+          library: {
+            title: 'Save a listing to your library',
+            description: 'Keep your best drafts and reuse them for portals or clients.',
+            cta: 'Open library',
+          },
+          pipeline: {
+            title: 'Organize leads in the pipeline',
+            description: 'Move leads across stages and stay on top of follow-ups.',
+            cta: 'Open pipeline',
+          },
+          billing: {
+            title: 'Review plan and billing',
+            description: 'See your active plan and how upgrades or invoices work.',
+            cta: 'Open billing',
+          },
+          workspace: {
+            title: 'Configure your workspace',
+            description: 'Enable the modules you use daily (CRM, voice, maps, and more).',
+            cta: 'Workspace settings',
+          },
+        },
+      },
+      contextualHelp: {
+        openGuideAria: 'Open the guide in a new tab',
+        openGuideTooltip: 'Opens documentation for this feature (new tab).',
+        fieldHintAria: 'Field hint',
+      },
+      commandCenterTitle: 'Command Center',
+      commandCenterSubtitle:
+        'Your plan, usage, and AI tools for listings, leads, and prospecting — in one place.',
+      newListingCta: 'New listing',
+      planBadgeLabels: { free: 'Free', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan and statistics',
+        roiUsage: 'ROI and usage',
+        morningIntel: 'Morning intel',
+        regionalPortals: 'Regional portals',
+        liveFeed: 'Live feed',
+        plansPricing: 'Plans and pricing',
+        toolsFeatures: 'Tools and features',
+        sniperStats: 'Price Sniper statistics',
+      },
+      deferredLoading: {
+        stats3d: 'Loading 3D stats…',
+        roiUsage: 'Loading ROI and usage…',
+        morningIntel: 'Loading Morning Intel…',
+        regionalPortals: 'Loading regional portals…',
+        liveFeed: 'Loading live feed…',
+        plans: 'Loading plans…',
+        tools: 'Loading tools…',
+        priceSniper: 'Loading Price Sniper…',
+        proTips: 'Loading tips…',
+      },
+      liveFeed: {
+        deal: 'Golden Deal',
+        call: 'AI Call',
+        staging: 'Virtual Staging',
+        priceDrop: 'Price Drop',
+        subtitle: 'Global real-time activity',
+        cta: 'You are part of a global elite network. Do not fall behind.',
+        infixDeal: 'detected in',
+        infixCall: 'successfully scheduled in',
+        infixStaging: 'generated for property in',
+        priceDropLine: 'Price Drop Sniper activated in',
+      },
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live Network',
+        liveBadge: 'LIVE',
+      },
+      proTips: {
+        ariaSection: 'Pro Tips',
+        title: 'Pro Tips for Better Listings',
+        tip1: 'Include specific details about location, amenities, and unique features',
+        tip2: 'Use accurate square footage and room count for better AI results',
+        tip3: 'Generate multiple versions and choose the one that best fits your needs',
+      },
+      docsHubOpen: 'Open Documentation Hub',
+      stats3d: {
+        projects3d: '3D Projects',
+        generated: 'Generated',
+        whatsappOpen: 'WhatsApp Open Rate',
+        openRate: 'Open rate',
+        aiViews: 'AI views generated',
+        openedOfSent: '{opened} opened out of {sent} sent',
+        noMessages: 'No messages sent yet',
+      },
+      sniperStats: {
+        title: 'Sniper stats',
+        priceDropsToday: 'Price Drops Today',
+        detected: 'Detected',
+        expirations: 'Expirations',
+        opportunities: 'Opportunities',
+        last48h: 'Detected in the last 48h',
+        offline120: 'Properties offline 120+ days',
+        loadError: 'Unable to load Sniper statistics.',
+      },
+      regionalPortals: {
+        title: 'Priority Portals',
+        primaryMarkets: 'Primary Markets',
+        secondaryMarkets: 'Secondary Markets',
+        currency: 'Currency',
+        units: 'Units',
+        regionUsa: 'United States',
+        regionEurope: 'Europe',
+        regionMiddleEast: 'Middle East',
+        regionGlobal: 'Global',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Your ROI This Month',
+        hoursSaved: 'Hours Saved',
+        hours: 'hrs',
+        perListing: 'min per listing',
+        valueGenerated: 'Value Generated',
+        estimatedValue: 'estimated per listing',
+        generatedListings: 'Listings generated',
+        amazing: 'Amazing!',
+        saved10Hours: 'You saved more than 10 hours this month',
+      },
+      morningBriefing: {
+        na: 'N/A',
+        sent: 'Test notification sent!',
+        sentDesc: 'Check your email and WhatsApp',
+        error: 'Error',
+        sendError: 'Unable to send notification',
+        connectionError: 'Connection error',
+        title: 'Your Briefing Today',
+        subtitle: 'Top 3 opportunities with the highest market gap (last 24h)',
+        configure: 'Configure',
+        priceDown: 'Price',
+        highUrgency: 'High Urgency',
+        target: 'Target',
+        fomo: 'These deals have also been sent to',
+        partnerAgencies: 'partner agencies in your area. Move fast!',
+        sendTest: 'Send Test to My Phone',
+      },
+      competitorRadar: {
+        na: 'N/A',
+        title: 'Expiration Radar',
+        subtitle: 'Properties offline or stale for 120+ days',
+        removed: 'Removed',
+        stale: 'Stale',
+        aiNote: 'AI note',
+        offlineFor: 'Offline for',
+        days: 'days',
+        viewAll: 'View all',
+        refreshAria: 'Refresh list',
+      },
+      planCards: {
+        generateNewListing: 'Generate New Listing',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Link Analysis',
+        premiumPdfCards: 'Premium PDF Cards',
+        allFreeFeatures: 'All Free features',
+        leadScoringAi: 'Lead Scoring AI',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: '12 Language Translator',
+        allStarterFeatures: 'All Starter features',
+        fullCrmPipeline: 'Full CRM + Pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'AI Voice Calling (30/month)',
+        agencyAssistantAi: 'Agency Assistant AI',
+        allProFeatures: 'All Pro features',
+        unlimitedAiVoiceCalling: 'Unlimited AI Voice Calling',
+        auraVrVirtualTour: 'Aura VR: Virtual Tour',
+        teamUpToAgents: 'Team up to 10 agents',
+        omnichannelSuite: 'Omnichannel Suite',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Done-for-you setup',
+        oneTime: 'one-time',
+        boostSetupComplete: 'Full done-for-you setup',
+        boostOnboarding: 'Guided implementation and onboarding',
+        boostLaunchSupport: 'Premium launch support',
+        boostCustomConfig: 'Custom configuration',
+        buyAgencyBoost: 'Buy Agency Boost',
+      },
+      planFeatures: planFeaturesUiEn,
     },
     auth: {
       backToHome: 'Back to home',
+      brandTagline: 'Pilot your agency to the next level',
       login: {
-        title: 'Welcome back 👋',
+        title: 'Welcome back',
         subtitle: 'Sign in to your account to continue',
         email: 'Email address',
+        emailPlaceholder: 'you@example.com',
         password: 'Password',
+        showPasswordAria: 'Show password',
+        hidePasswordAria: 'Hide password',
         forgotPassword: 'Forgot password?',
         signIn: 'Sign In',
         signingIn: 'Signing in...',
@@ -1036,11 +2973,15 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         secureNote: 'Secure login • Your data is protected with industry-standard encryption',
       },
       signup: {
-        title: 'Create your account ✨',
+        title: 'Create your account',
         subtitle: 'Start generating professional property listings with AI',
         fullName: 'Full Name',
+        fullNamePlaceholder: 'Jane Smith',
         email: 'Email address',
+        emailPlaceholder: 'you@example.com',
         password: 'Password',
+        showPasswordAria: 'Show password',
+        hidePasswordAria: 'Hide password',
         minChars: 'Must be at least 6 characters',
         freePlanIncludes: 'Free plan includes:',
         listingsPerMonth: '5 listings per month',
@@ -1058,14 +2999,31 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         fillAllFields: 'Please fill in all required fields.',
         tooManyAttempts: 'Too many attempts',
         rateLimitMsg: 'We detected too many attempts. For your security, try again in a few minutes.',
-        welcomeBack: 'Welcome back! 🎉',
+        welcomeBack: 'Welcome back!',
         completePayment: 'Complete payment in the dashboard.',
         loginSuccess: 'Successfully signed in.',
-        accountCreated: 'Account created! 🎉',
+        accountCreated: 'Account created!',
         redirectPayment: 'You will be redirected to complete payment.',
         welcomePropertyPilot: 'Welcome to PropertyPilot AI!',
+        turnstileRequired: 'Please complete the security check before continuing.',
+        turnstileFailed: 'Security verification failed. Please try again.',
+        turnstileLoadFailed: 'Could not load the security check. Refresh the page or try again later.',
+        turnstileMisconfigured: 'Security check is misconfigured on the server. Please contact support.',
+        loginFailedGeneric: 'Invalid email or password.',
+        signupFailedGeneric: 'Could not create account. Please try again.',
+        emailNotConfirmed: 'Please confirm your email before signing in.',
+        userAlreadyRegistered: 'An account with this email already exists. Sign in or reset your password.',
+        passwordTooShort: 'Password does not meet length requirements. Use at least 8 characters.',
+        invalidEmail: 'Enter a valid email address.',
+        networkError:
+          'Cannot reach the login service (Supabase). Check network, VPN/firewall/antivirus, that your Supabase project is up, and NEXT_PUBLIC_SUPABASE_URL in .env.local matches https://….supabase.co.',
+        sessionExpired: 'Your session has expired. Please sign in again.',
+        signupDisabled: 'New account sign-ups are not available right now.',
+        oauthFailed: 'Social sign-in could not be completed. Try again or use email and password.',
       },
     },
+    authPasswordRecovery: authPasswordRecoveryUiEn,
+    complianceCenter: complianceCenterUiEn,
     auraVR: {
       title: 'Aura VR Generator',
       subtitle: 'Transform a smartphone video into an immersive 3D VR tour',
@@ -1100,10 +3058,53 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Great work!',
-        stats: 'This scan will attract',
-        action: 'more visits. Would you like me to send it to your hot leads?',
+        visitsSentence: 'This scan can drive up to {pct}% more visits.',
+        followUp: 'Want me to share it with your hottest leads?',
+        tripleNote:
+          'Triple view: Drone, Cinematic Walk, and 360° Panorama — a premium standard for immersive VR tours.',
       },
+      toast: {
+        copySuccessTitle: 'Link copied',
+        copySuccessDesc: 'The VR link is on your clipboard.',
+        copyErrorTitle: 'Error',
+        copyErrorDesc: 'Could not copy the link.',
+      },
+      tripleView: {
+        title: 'Triple perspective — luxury standard',
+        subtitle: 'Choose how the VR tour is presented',
+      },
+      views: {
+        drone: { title: 'Drone mode', description: 'Aerial / area context' },
+        cinematic: { title: 'Cinematic walk', description: 'Smooth path through rooms' },
+        panorama: { title: '360° panorama', description: 'Full immersive view' },
+      },
+      preview: {
+        drone: 'Drone — aerial view',
+        cinematic: 'Cinematic walk — smooth path',
+        panorama: '360° — full immersion',
+        default: 'Immersive VR tour',
+      },
+      listingFallback: 'Property',
+      whatsappVrBody:
+        'Hi! Here is an immersive VR tour for you:\n\n{link}\n\nOpen the link on your phone to explore the property.',
     },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Send design via WhatsApp',
+      originalPhoto: 'Original photo',
+      afterVisionTitle: 'Post-staging vision (AI)',
+      afterVisionSubtitle: 'Modern luxury interior',
+      generatePrompt: 'Generate the 3D vision to see the comparison',
+      generating: 'AI is staging the property…',
+      generateCta: 'Generate 3D vision',
+      successBanner: '3D vision ready. Drag the slider to compare before and after.',
+      premiumRequiredTitle: 'Premium plan required',
+      premiumRequiredDesc:
+        '3D Virtual Staging is a Premium feature. Upgrade to PRO or AGENCY to unlock it.',
+      calibrationTitle: 'Calibrating',
+      calibrationDesc: 'Please try again in a moment.',
+    },
+    prospectingModals: prospectingModalsUiEn,
     errors: {
       somethingWentWrong: 'Something went wrong',
       unexpectedError: 'An unexpected error occurred. Don\'t worry, your data is safe.',
@@ -1114,11 +3115,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       pageNotFound: 'Page not found',
       pageNotFoundDesc: 'The page you are looking for does not exist or has been moved.',
       dashboard: 'Dashboard',
+      dashboardAreaErrorTitle: 'Something went wrong',
+      dashboardAreaErrorDesc:
+        'An error occurred in the dashboard. You can try again or return to the dashboard home.',
+      backToDashboard: 'Back to dashboard',
     },
     demo: {
       nav: { pricing: 'Pricing', login: 'Login', startFree: 'Start Free' },
       hero: { badge: 'Book in 30 seconds', title: 'Book a Free Demo', subtitle: 'Discover how PropertyPilot AI can transform your real estate agency. 30 minutes with our expert to see the platform in action.' },
       calendly: { chooseDate: 'Choose Date & Time', demoFree: 'Free 30-minute demo', preferContact: 'Prefer to contact us directly?', whatsapp: 'WhatsApp', sendEmail: 'Send Email' },
+      whatsappPrefill: 'Hello! I would like to book a PropertyPilot AI demo.',
+      calendlyIframeTitle: 'Book PropertyPilot AI demo',
       valuePoints: { sectionTitle: 'What You\'ll Discover in the Demo', sectionSubtitle: 'A complete overview of the features that will make your agency more efficient.', bookNow: 'Book Your Demo Now' },
       valuePointsList: [
         { title: 'Advanced Generative AI', description: 'Create professional listings, A/B titles, SEO descriptions and marketing content in seconds.' },
@@ -1129,7 +3136,40 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         { title: 'Custom Branding', description: 'White-label PDFs, professional property sheets and materials with your brand.' },
       ],
       testimonials: { title: 'What Our Customers Say', subtitle: 'Agents and agencies who have already transformed their business with PropertyPilot AI' },
+      testimonialsList: [
+        {
+          name: 'Marco R.',
+          role: 'Real estate agent, Milan',
+          quote:
+            'PropertyPilot AI completely changed the way I work. I now create listings in 30 seconds instead of 30 minutes.',
+        },
+        {
+          name: 'Laura B.',
+          role: 'Agency owner, Rome',
+          quote: 'The CRM and automations save me hours every week. I recommend it to every serious agency.',
+        },
+        {
+          name: 'Giuseppe T.',
+          role: 'Property manager, Naples',
+          quote: 'Finally, a platform that understands what agencies really need. Exceptional support.',
+        },
+      ],
+      trustStats: [
+        { iconKey: 'clock', value: '30 min', label: 'Free demo' },
+        { iconKey: 'shield', value: '100%', label: 'No commitment' },
+        { iconKey: 'users', value: '500+', label: 'Happy customers' },
+        { iconKey: 'trendingUp', value: '+40%', label: 'Average productivity' },
+      ],
+      finalCta: {
+        titleLead: 'Ready to ',
+        titleAccent: 'Transform',
+        titleTail: ' your agency?',
+        subtitle:
+          'Book your free demo now and discover how PropertyPilot AI can multiply your sales.',
+        bookDemo: 'Book free demo',
+      },
       footer: { home: 'Home', pricing: 'Pricing', contact: 'Contact', login: 'Login' },
+      footerCopyrightLine: '© {year} PropertyPilot AI. {rights}',
     },
     contact: {
       title: 'Contact Us',
@@ -1141,6 +3181,10 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       validation: { nameMin: 'Name must be at least 2 characters', emailInvalid: 'Enter a valid email', messageMin: 'Message must be at least 10 characters', checkFields: 'Check the highlighted fields.' },
       toast: { successTitle: 'Message sent!', successDesc: 'We\'ll get back to you within 24 hours.', errorTitle: 'Error', errorDesc: 'Unable to send message. Please try again.', validationTitle: 'Validation error' },
       home: 'Home',
+      headerTagline: 'Pilot Your Agency to the Next Level',
+      demoMailSubject: 'PropertyPilot AI demo request',
+      minCharsCounter: '{current}/{min} minimum characters',
+      submitting: 'Sending…',
     },
     common: {
       copy: 'Copy',
@@ -1155,6 +3199,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       loading: 'Loading...',
       error: 'Error',
     },
+    devTestError: devTestErrorUiEn,
     billing: {
       title: 'Subscription',
       titleAccent: 'Management',
@@ -1199,18 +3244,47 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       switchToAgency: 'Switch to Agency',
       upgradeToPro: 'Upgrade to Pro',
       upgradeToAgency: 'Upgrade to Agency',
+      stripeTrust:
+        'Secure payments powered by Stripe. Cards, payment methods, and invoices are managed in the Stripe customer portal.',
+      subscriptionFetchErrorBody: 'Unable to load subscription. Showing Free plan.',
+      retry: 'Retry',
+      planBadgeStarter: 'Starter',
+      planBadgePro: 'Pro',
+      planBadgeAgency: 'Agency',
     },
+    pendingCheckoutBanner: pendingCheckoutUiEn,
+    ariaLimitModal: ariaLimitModalUiEn,
+    dashboardNav: dashboardNavUiEn,
+    commandPaletteExtras: commandPaletteExtrasEn,
+    errorBoundaryModule: errorBoundaryModuleUiEn,
+    welcomeTour: welcomeTourUiEn,
+    onboardingWizard: onboardingWizardUiEn,
+    marketingAbout: marketingAboutUiEn,
+    marketingBlog: marketingBlogUiEn,
+    marketingFeatures: marketingFeaturesUiEn,
+    privacyPolicyPage: privacyPolicyPageUiEn,
+    termsPolicyPage: termsPolicyPageUiEn,
+    refundPolicyPage: refundPolicyPageUiEn,
+    blogPostPage: blogPostPageUiEn,
+    pricingPagePlans: pricingPagePlansUiEn,
+    docsHub: docsHubUiEn,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
+      boostActivated: 'Agency Boost activated',
       boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
+      agencyActive: 'Agency Intelligence active',
+      agencyDesc: 'Premium access confirmed. Welcome to the PropertyPilot global network!',
+      paymentDone: 'Payment completed',
       paymentDesc: 'Your plan has been activated successfully.',
       checkoutCanceled: 'Checkout canceled',
       checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
+      limitNear: 'Limit almost reached',
       limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      complianceReminderTitle: 'Compliant use',
+      complianceReminderDesc:
+        'Process client data under GDPR and applicable regulations. Documentation and compliance hub: Compliance page on the site.',
+      connectivityIssueTitle: 'Backend or Supabase unreachable',
+      connectivityIssueDesc:
+        'Reload the page. If it persists: check network/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL in .env.local, and that npm run dev is running.',
     },
     landing: {
       nav: {
@@ -1233,11 +3307,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Start Free',
         ctaDemo: 'View Demo',
         trustedBy: 'Compatible with major portals',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automation',
           listingsPerDay: 'Listings/Day',
           conversionRate: 'Conversion Rate',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
+        signupAriaLabel: 'Sign up for PropertyPilot AI',
+        demoDashboardAriaLabel: 'View the demo dashboard',
       },
       features: {
         title: 'Why PropertyPilot AI?',
@@ -1246,16 +3328,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'AI Listing Engine',
           description: 'Generate professional listings in seconds with custom styles (Luxury, Investment, Standard Pro). Multi-language and optimized for Zillow, Idealista, Immobiliare.',
           benefit: 'Save 5 hours per week on listing writing',
+          cta: 'Try free',
         },
         crmAI: {
           title: 'CRM AI Intelligence',
           description: 'Automatic Lead Scoring, multi-channel AI follow-up (WhatsApp, Email, SMS). Categorizes HOT/WARM/COLD leads and suggests priority actions.',
           benefit: 'Increase conversions by 40% with AI prioritization',
+          cta: 'Go to CRM',
         },
         globalReach: {
           title: 'Global Reach',
           description: 'We operate in USA (Zillow, MLS), Italy (Idealista, Immobiliare), Spain (Idealista.es). Localized terminology and market formats.',
           benefit: 'Expand your business across 3 continents',
+          cta: 'Explore Prospecting',
         },
       },
       searchEngine: {
@@ -1264,6 +3349,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVELY',
         exclusiveInPlan: 'in the AGENCY plan',
         benefit: 'Save 20 hours of phone calls per week',
+        stepLabel: 'STEP {n}',
+        prospectingCycleCta: 'Start the Scraper → Voice AI → CRM loop',
         step1: {
           title: 'Global Scan',
           description: 'AI automatically scans Idealista, Immobiliare, Zillow, and MLS 24/7, finding thousands of listings every day.',
@@ -1273,6 +3360,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'AI Filtering',
           description: 'Each listing receives an AI Lead Score (0-100). Only "TOP DEAL" (80+) are selected for calls.',
           status: 'TOP DEAL detected',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Automatic Call',
@@ -1401,6 +3489,22 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Choose Pro',
           chooseAgency: 'Choose Agency',
         },
+        tableCells: {
+          multiUserAgency: 'Up to 10 agents',
+          voiceCallingPro: '30/month',
+        },
+        agencyBoost: {
+          productName: 'Agency Boost',
+          badgePremium: 'PREMIUM SERVICE',
+          tierTitanium: 'Titanium',
+          description:
+            'Done-for-you setup package with premium onboarding and dedicated support',
+          bullet1: 'Complete setup "done-for-you"',
+          bullet2: 'Guided implementation and onboarding',
+          bullet3: 'Premium support for launch',
+          oneTimePayment: 'One-time payment',
+          cta: 'Get Agency Boost',
+        },
       },
       cta: {
         title: 'Ready to multiply your business?',
@@ -1464,9 +3568,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Panel de Control',
       subtitle: 'Tablero de mandos',
+      metaTitle: 'Espacio del agente — PropertyPilot AI',
+      metaDescription:
+        'Consola operativa para anuncios con IA, CRM, prospección y automatizaciones. Acceso para usuarios registrados.',
       loading: 'Cargando...',
       error: 'Error',
       success: 'Éxito',
+      generate: 'Generar',
+      signOut: 'Cerrar sesión',
+      navAriaLabel: 'Navegación principal',
+      commandPaletteOpenAria: 'Abrir búsqueda rápida',
+      commandPalettePlaceholder: 'Buscar…',
       currentPlan: 'Plan Actual',
       dashboardAI: 'Dashboard IA',
       thisMonth: 'Este Mes',
@@ -1490,18 +3602,247 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Pasar a Starter',
       upgradeToPro: 'Pasar a Pro',
       upgradeToAgency: 'Pasar a Agency',
+      prospectingPage: prospectingPageUiEs,
+      ...dashboardMapOppAutoEs,
+      ...leadsPipelineLocalesEs,
+      ...leadDetailCommLocalesEs,
+      ...crmSettingsAutomationLocalesEs,
+      ...workflowAutomationsLocalesEs,
+      ...brandingNotificationsPackagesLocalesEs,
+      ...assistantReferralPerfectCopyLocalesEs,
+      ...listingToolsLocalesEs,
+      ...listingContentToolsLocalesEs,
+      leadScorePage: leadScorePageUiEs,
+      pdfSheetPage: pdfSheetPageUiEs,
+      agentBioPage: agentBioPageUiEs,
+      videoScriptsPage: videoScriptsPageUiEs,
+      followupEmailsPage: followupEmailsPageUiEs,
+      emotionalListingPage: emotionalListingPageUiEs,
+      planFeatures: planFeaturesUiEs,
+      commandCenterTitle: 'Centro de mando',
+      commandCenterSubtitle:
+        'Tu plan, uso y herramientas de IA para anuncios, leads y prospección — todo en un solo lugar.',
+      newListingCta: 'Nuevo anuncio',
+      planBadgeLabels: { free: 'Gratis', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan y estadísticas',
+        roiUsage: 'ROI y uso',
+        morningIntel: 'Intel matutino',
+        regionalPortals: 'Portales regionales',
+        liveFeed: 'Feed en vivo',
+        plansPricing: 'Planes y precios',
+        toolsFeatures: 'Herramientas y funciones',
+        sniperStats: 'Estadísticas Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Cargando estadísticas 3D…',
+        roiUsage: 'Cargando ROI y uso…',
+        morningIntel: 'Cargando Morning Intel…',
+        regionalPortals: 'Cargando portales regionales…',
+        liveFeed: 'Cargando feed en vivo…',
+        plans: 'Cargando planes…',
+        tools: 'Cargando herramientas…',
+        priceSniper: 'Cargando Price Sniper…',
+        proTips: 'Cargando consejos…',
+      },
+      proTips: {
+        ariaSection: 'Consejos Pro',
+        title: 'Consejos Pro para mejores anuncios',
+        tip1: 'Incluye detalles concretos de ubicación, servicios y rasgos únicos',
+        tip2: 'Usa superficies y número de habitaciones precisos para mejores resultados de IA',
+        tip3: 'Genera varias versiones y elige la que mejor encaje con tus necesidades',
+      },
+      docsHubOpen: 'Abrir Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'EN VIVO:',
+        predatorsOnline: 'Predadores en línea',
+      },
+      contextualHelp: {
+        openGuideAria: 'Abrir la guía en una pestaña nueva',
+        openGuideTooltip: 'Abre la documentación de esta función (nueva pestaña).',
+        fieldHintAria: 'Ayuda del campo',
+      },
+      liveFeed: {
+        deal: 'Operación oro',
+        call: 'Llamada IA',
+        staging: 'Virtual Staging',
+        priceDrop: 'Bajada de precio',
+        subtitle: 'Actividad global en tiempo real',
+        cta: 'Formas parte de una red global de élite. No te quedes atrás.',
+        infixDeal: 'detectada en',
+        infixCall: 'programada con éxito en',
+        infixStaging: 'generada para inmueble en',
+        priceDropLine: 'Price Drop Sniper activado en',
+      },
+      liveNetwork: {
+        cardTitle: 'Red en vivo PropertyPilot',
+        liveBadge: 'EN VIVO',
+      },
+      stats3d: {
+        projects3d: 'Proyectos 3D',
+        generated: 'Generados',
+        whatsappOpen: 'Aperturas WhatsApp',
+        openRate: 'Tasa de apertura',
+        aiViews: 'Visualizaciones IA generadas',
+        openedOfSent: '{opened} abiertos de {sent} enviados',
+        noMessages: 'Aún no hay mensajes enviados',
+      },
+      sniperStats: {
+        title: 'Estadísticas Sniper',
+        priceDropsToday: 'Bajadas de precio hoy',
+        detected: 'Detectados',
+        expirations: 'Caducidades',
+        opportunities: 'Oportunidades',
+        last48h: 'Detectados en las últimas 48 h',
+        offline120: 'Inmuebles offline 120+ días',
+        loadError: 'No se pudieron cargar las estadísticas Sniper.',
+      },
+      regionalPortals: {
+        title: 'Portales prioritarios',
+        primaryMarkets: 'Mercados primarios',
+        secondaryMarkets: 'Mercados secundarios',
+        currency: 'Moneda',
+        units: 'Unidades',
+        regionUsa: 'Estados Unidos',
+        regionEurope: 'Europa',
+        regionMiddleEast: 'Oriente Medio',
+        regionGlobal: 'Global',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Tu ROI este mes',
+        hoursSaved: 'Horas ahorradas',
+        hours: 'h',
+        perListing: 'min por anuncio',
+        valueGenerated: 'Valor generado',
+        estimatedValue: 'anuncio estimado',
+        generatedListings: 'Anuncios generados',
+        amazing: '¡Genial!',
+        saved10Hours: 'Has ahorrado más de 10 horas este mes',
+      },
+      morningBriefing: {
+        na: 'N/D',
+        sent: '¡Notificación de prueba enviada!',
+        sentDesc: 'Revisa tu correo y WhatsApp',
+        error: 'Error',
+        sendError: 'No se pudo enviar la notificación',
+        connectionError: 'Error de conexión',
+        title: 'Tu briefing de hoy',
+        subtitle: 'Top 3 oportunidades con mayor brecha de mercado (últimas 24 h)',
+        configure: 'Configurar',
+        priceDown: 'Precio',
+        highUrgency: 'Alta urgencia',
+        target: 'Objetivo',
+        fomo: 'Estas operaciones también se han enviado a',
+        partnerAgencies: 'agencias partner en tu zona. ¡Date prisa!',
+        sendTest: 'Enviar prueba a mi móvil',
+      },
+      competitorRadar: {
+        na: 'N/D',
+        title: 'Radar de caducidades',
+        subtitle: 'Inmuebles fuera de línea o estancados más de 120 días',
+        removed: 'Retirado',
+        stale: 'Estancado',
+        aiNote: 'Nota IA',
+        offlineFor: 'Fuera de línea durante',
+        days: 'días',
+        viewAll: 'Ver todo',
+        refreshAria: 'Actualizar lista',
+      },
+      planCards: {
+        generateNewListing: 'Generar nuevo anuncio',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Análisis desde enlace',
+        premiumPdfCards: 'Fichas PDF premium',
+        allFreeFeatures: 'Todas las funciones Free',
+        leadScoringAi: 'Lead Scoring IA',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Traductor 12 idiomas',
+        allStarterFeatures: 'Todas las funciones Starter',
+        fullCrmPipeline: 'CRM completo + pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'Llamadas de voz IA (30/mes)',
+        agencyAssistantAi: 'Agency Assistant IA',
+        allProFeatures: 'Todas las funciones Pro',
+        unlimitedAiVoiceCalling: 'Llamadas de voz IA ilimitadas',
+        auraVrVirtualTour: 'Aura VR: tour virtual',
+        teamUpToAgents: 'Equipo de hasta 10 agentes',
+        omnichannelSuite: 'Suite omnicanal',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Configuración «done-for-you»',
+        oneTime: 'pago único',
+        boostSetupComplete: 'Configuración completa «done-for-you»',
+        boostOnboarding: 'Implementación y onboarding guiados',
+        boostLaunchSupport: 'Soporte premium para el lanzamiento',
+        boostCustomConfig: 'Configuración personalizada',
+        buyAgencyBoost: 'Comprar Agency Boost',
+      },
+      onboardingChecklist: {
+        title: 'Tus primeros 5 pasos',
+        subtitle:
+          'Completa esta lista para obtener valor rápido. Puedes ocultarla cuando quieras; el progreso se guarda en este navegador.',
+        dismiss: 'Ocultar',
+        dismissAria: 'Ocultar lista de incorporación',
+        progress: '{done} de {total} completados',
+        allDone: 'Genial — completaste todos los pasos.',
+        steps: {
+          generate: {
+            title: 'Genera tu primer anuncio con IA',
+            description:
+              'Empieza con Perfect Copy u otras herramientas: títulos, descripciones y variantes en minutos.',
+            cta: 'Ir a Perfect Copy',
+          },
+          library: {
+            title: 'Guarda un anuncio en la biblioteca',
+            description: 'Conserva tus mejores borradores y reutilízalos en portales o con clientes.',
+            cta: 'Abrir biblioteca',
+          },
+          pipeline: {
+            title: 'Organiza los leads en la pipeline',
+            description: 'Mueve leads entre etapas y mantén el control de los seguimientos.',
+            cta: 'Abrir pipeline',
+          },
+          billing: {
+            title: 'Revisa plan y facturación',
+            description: 'Consulta tu plan activo y cómo gestionar upgrades o facturas.',
+            cta: 'Abrir facturación',
+          },
+          workspace: {
+            title: 'Configura el workspace',
+            description: 'Activa los módulos que usas cada día (CRM, voz, mapas, etc.).',
+            cta: 'Ajustes del workspace',
+          },
+        },
+      },
     },
+    auth: authUiEs,
+    authPasswordRecovery: authPasswordRecoveryUiEs,
+    complianceCenter: complianceCenterUiEs,
+    pendingCheckoutBanner: pendingCheckoutUiEs,
+    ariaLimitModal: ariaLimitModalUiEs,
+    dashboardNav: dashboardNavUiEs,
+    commandPaletteExtras: commandPaletteExtrasEs,
+    errorBoundaryModule: errorBoundaryModuleUiEs,
+    welcomeTour: welcomeTourUiEs,
+    onboardingWizard: onboardingWizardUiEs,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
-      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
-      paymentDesc: 'Your plan has been activated successfully.',
-      checkoutCanceled: 'Checkout canceled',
-      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
-      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      boostActivated: 'Agency Boost activado',
+      boostDesc: 'Setup «done-for-you» confirmado. Nuestro equipo se pondrá en contacto contigo para el onboarding.',
+      agencyActive: 'Agency Intelligence activa',
+      agencyDesc: 'Acceso premium confirmado. ¡Bienvenido a la red global PropertyPilot!',
+      paymentDone: 'Pago completado',
+      paymentDesc: 'Tu plan se ha activado correctamente.',
+      checkoutCanceled: 'Pago cancelado',
+      checkoutCanceledDesc: 'Puedes volver a intentarlo cuando quieras desde Facturación.',
+      limitNear: 'Casi has alcanzado el límite',
+      limitNearDesc: 'Has usado {used} de tus {lim} anuncios mensuales (80%+). Valora ampliar el plan para seguir.',
+      complianceReminderTitle: 'Uso conforme',
+      complianceReminderDesc:
+        'Trata los datos de clientes según el RGPD y la normativa aplicable. Documentación: página Cumplimiento del sitio.',
+      connectivityIssueTitle: 'Backend o Supabase no responden',
+      connectivityIssueDesc:
+        'Recarga la página. Si continúa: revisa red/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL en .env.local y que npm run dev esté en marcha.',
     },
     auraVR: {
       title: 'Generador Aura VR',
@@ -1537,24 +3878,71 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: ¡Excelente trabajo!',
-        stats: 'Este escaneo atraerá un',
-        action: 'más de visitas. ¿Quieres que lo envíe a tus leads calientes?',
+        visitsSentence: 'Este escaneo puede aumentar las visitas hasta un {pct}%.',
+        followUp: '¿Quieres que lo comparta con tus leads más calientes?',
+        tripleNote:
+          'Triple vista: Drone, Cinematic Walk y 360° Panorama — estándar premium para tours VR inmersivos.',
       },
+      toast: {
+        copySuccessTitle: 'Enlace copiado',
+        copySuccessDesc: 'El enlace VR está en el portapapeles.',
+        copyErrorTitle: 'Error',
+        copyErrorDesc: 'No se pudo copiar el enlace.',
+      },
+      tripleView: {
+        title: 'Triple perspectiva — estándar luxury',
+        subtitle: 'Elige el modo de visualización del tour VR',
+      },
+      views: {
+        drone: { title: 'Modo drone', description: 'Vista aérea / contexto del área' },
+        cinematic: { title: 'Cinematic walk', description: 'Recorrido fluido entre estancias' },
+        panorama: { title: 'Panorama 360°', description: 'Vista inmersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aérea',
+        cinematic: 'Cinematic walk — recorrido fluido',
+        panorama: '360° — inmersión total',
+        default: 'Tour VR inmersivo',
+      },
+      listingFallback: 'Inmueble',
+      whatsappVrBody:
+        '¡Hola! Aquí tienes un tour VR inmersivo:\n\n{link}\n\nAbre el enlace en tu móvil para explorar la propiedad.',
     },
-    common: {
-      copy: 'Copiar',
-      share: 'Compartir',
-      send: 'Enviar',
-      cancel: 'Cancelar',
-      confirm: 'Confirmar',
-      save: 'Guardar',
-      delete: 'Eliminar',
-      edit: 'Editar',
-      view: 'Ver',
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Enviar diseño por WhatsApp',
+      originalPhoto: 'Foto original',
+      afterVisionTitle: 'Visión post-amueblado (IA)',
+      afterVisionSubtitle: 'Interior moderno de lujo',
+      generatePrompt: 'Genera la visión 3D para ver la comparación',
+      generating: 'La IA está amueblando el inmueble…',
+      generateCta: 'Generar visión 3D',
+      successBanner: 'Visión 3D lista. Arrastra el control para comparar antes y después.',
+      premiumRequiredTitle: 'Plan Premium requerido',
+      premiumRequiredDesc:
+        'El Virtual Staging 3D es Premium. Actualiza a PRO o AGENCY para desbloquearlo.',
+      calibrationTitle: 'Calibrando',
+      calibrationDesc: 'Inténtalo de nuevo en un momento.',
     },
+    prospectingModals: prospectingModalsUiEs,
+    errors: errorsUiEs,
+    common: commonFullEs,
+    devTestError: devTestErrorUiEs,
+    billing: billingUiEs,
+    demo: demoUiEs,
+    contact: contactUiEs,
+    marketingAbout: marketingAboutUiEs,
+    marketingBlog: marketingBlogUiEs,
+    marketingFeatures: marketingFeaturesUiEs,
+    blogPostPage: blogPostPageUiEs,
+    pricingPagePlans: pricingPagePlansUiEs,
+    docsHub: docsHubUiEs,
+    privacyPolicyPage: privacyPolicyPageUiEs,
+    termsPolicyPage: termsPolicyPageUiEs,
+    refundPolicyPage: refundPolicyPageUiEs,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Lleva tu agencia al siguiente nivel',
         features: 'Características',
         pricing: 'Precios',
         compliance: 'Cumplimiento',
@@ -1573,11 +3961,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Empezar Gratis',
         ctaDemo: 'Ver Demo',
         trustedBy: 'Compatible con los principales portales',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatización',
           listingsPerDay: 'Anuncios/Día',
           conversionRate: 'Tasa de Conversión',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
+        signupAriaLabel: 'Regístrate en PropertyPilot AI',
+        demoDashboardAriaLabel: 'Ver la demo del panel',
       },
       features: {
         title: '¿Por qué PropertyPilot AI?',
@@ -1586,16 +3982,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Motor de Anuncios IA',
           description: 'Genera anuncios profesionales en segundos con estilos personalizados (Lujo, Inversión, Estándar Pro). Multiidioma y optimizado para Zillow, Idealista, Immobiliare.',
           benefit: 'Ahorra 5 horas a la semana en escritura de anuncios',
+          cta: 'Prueba gratis',
         },
         crmAI: {
           title: 'Inteligencia CRM IA',
           description: 'Puntuación de Leads automática, seguimiento IA multicanal (WhatsApp, Email, SMS). Categoriza leads CALIENTES/TIBIOS/FRÍOS y sugiere acciones prioritarias.',
           benefit: 'Aumenta conversiones en un 40% con priorización IA',
+          cta: 'Ir al CRM',
         },
         globalReach: {
           title: 'Alcance Global',
           description: 'Operamos en USA (Zillow, MLS), Italia (Idealista, Immobiliare), España (Idealista.es). Terminología localizada y formatos de mercado.',
           benefit: 'Expande tu negocio en 3 continentes',
+          cta: 'Descubre Prospecting',
         },
       },
       searchEngine: {
@@ -1604,6 +4003,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVAMENTE',
         exclusiveInPlan: 'en el plan AGENCY',
         benefit: 'Ahorra 20 horas de llamadas telefónicas a la semana',
+        stepLabel: 'PASO {n}',
+        prospectingCycleCta: 'Inicia el ciclo Scraper → Voice AI → CRM',
         step1: {
           title: 'Escaneo Global',
           description: 'La IA escanea automáticamente Idealista, Immobiliare, Zillow y MLS 24/7, encontrando miles de anuncios cada día.',
@@ -1613,6 +4014,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrado IA',
           description: 'Cada anuncio recibe una Puntuación de Lead IA (0-100). Solo los "TOP DEAL" (80+) se seleccionan para llamadas.',
           status: 'TOP DEAL detectado',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Llamada Automática',
@@ -1741,6 +4143,22 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Elegir Pro',
           chooseAgency: 'Elegir Agency',
         },
+        tableCells: {
+          multiUserAgency: 'Hasta 10 agentes',
+          voiceCallingPro: '30/mes',
+        },
+        agencyBoost: {
+          productName: 'Impulso Agency',
+          badgePremium: 'SERVICIO PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Paquete de configuración "done-for-you" con incorporación premium y soporte dedicado',
+          bullet1: 'Configuración completa "done-for-you"',
+          bullet2: 'Implementación y incorporación guiada',
+          bullet3: 'Soporte premium para el lanzamiento',
+          oneTimePayment: 'Pago único',
+          cta: 'Obtener Agency Boost',
+        },
       },
       cta: {
         title: '¿Listo para multiplicar tus negocios?',
@@ -1804,9 +4222,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Tableau de Bord',
       subtitle: 'Panneau de contrôle',
+      metaTitle: 'Espace agent — PropertyPilot AI',
+      metaDescription:
+        'Console opérationnelle pour annonces IA, CRM, prospection et automatisations. Accès réservé aux comptes connectés.',
       loading: 'Chargement...',
       error: 'Erreur',
       success: 'Succès',
+      generate: 'Générer',
+      signOut: 'Se déconnecter',
+      navAriaLabel: 'Navigation principale',
+      commandPaletteOpenAria: 'Ouvrir la recherche rapide',
+      commandPalettePlaceholder: 'Rechercher…',
       currentPlan: 'Plan Actuel',
       dashboardAI: 'Dashboard IA',
       thisMonth: 'Ce Mois-ci',
@@ -1830,18 +4256,247 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Passer à Starter',
       upgradeToPro: 'Passer à Pro',
       upgradeToAgency: 'Passer à Agency',
+      prospectingPage: prospectingPageUiFr,
+      ...dashboardMapOppAutoFr,
+      ...leadsPipelineLocalesFr,
+      ...leadDetailCommLocalesFr,
+      ...crmSettingsAutomationLocalesFr,
+      ...workflowAutomationsLocalesFr,
+      ...brandingNotificationsPackagesLocalesFr,
+      ...assistantReferralPerfectCopyLocalesFr,
+      ...listingToolsLocalesFr,
+      ...listingContentToolsLocalesFr,
+      leadScorePage: leadScorePageUiFr,
+      pdfSheetPage: pdfSheetPageUiFr,
+      agentBioPage: agentBioPageUiFr,
+      videoScriptsPage: videoScriptsPageUiFr,
+      followupEmailsPage: followupEmailsPageUiFr,
+      emotionalListingPage: emotionalListingPageUiFr,
+      planFeatures: planFeaturesUiFr,
+      commandCenterTitle: 'Centre de commande',
+      commandCenterSubtitle:
+        'Votre forfait, votre utilisation et vos outils IA pour les annonces, les leads et la prospection — au même endroit.',
+      newListingCta: 'Nouvelle annonce',
+      planBadgeLabels: { free: 'Gratuit', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan et statistiques',
+        roiUsage: 'ROI et utilisation',
+        morningIntel: 'Intel matinal',
+        regionalPortals: 'Portails régionaux',
+        liveFeed: 'Fil en direct',
+        plansPricing: 'Plans et tarifs',
+        toolsFeatures: 'Outils et fonctionnalités',
+        sniperStats: 'Statistiques Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'Chargement des stats 3D…',
+        roiUsage: 'Chargement du ROI et de l’utilisation…',
+        morningIntel: 'Chargement de Morning Intel…',
+        regionalPortals: 'Chargement des portails régionaux…',
+        liveFeed: 'Chargement du fil en direct…',
+        plans: 'Chargement des plans…',
+        tools: 'Chargement des outils…',
+        priceSniper: 'Chargement de Price Sniper…',
+        proTips: 'Chargement des conseils…',
+      },
+      proTips: {
+        ariaSection: 'Conseils Pro',
+        title: 'Conseils Pro pour de meilleures annonces',
+        tip1: 'Incluez des détails précis sur l’emplacement, les services et les atouts uniques',
+        tip2: 'Utilisez des surfaces et un nombre de pièces exacts pour de meilleurs résultats IA',
+        tip3: 'Générez plusieurs versions et choisissez celle qui correspond le mieux à vos besoins',
+      },
+      docsHubOpen: 'Ouvrir le Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'EN DIRECT :',
+        predatorsOnline: 'Prédateurs en ligne',
+      },
+      contextualHelp: {
+        openGuideAria: 'Ouvrir le guide dans un nouvel onglet',
+        openGuideTooltip: 'Ouvre la documentation pour cette fonction (nouvel onglet).',
+        fieldHintAria: 'Aide sur le champ',
+      },
+      liveFeed: {
+        deal: 'Affaire en or',
+        call: 'Appel IA',
+        staging: 'Home staging virtuel',
+        priceDrop: 'Baisse de prix',
+        subtitle: 'Activité mondiale en temps réel',
+        cta: 'Vous faites partie d’un réseau d’élite mondial. Ne restez pas sur la touche.',
+        infixDeal: 'détectée à',
+        infixCall: 'planifiée avec succès à',
+        infixStaging: 'générée pour un bien à',
+        priceDropLine: 'Sniper baisse de prix activé à',
+      },
+      liveNetwork: {
+        cardTitle: 'Réseau en direct PropertyPilot',
+        liveBadge: 'EN DIRECT',
+      },
+      stats3d: {
+        projects3d: 'Projets 3D',
+        generated: 'Générés',
+        whatsappOpen: 'Ouvertures WhatsApp',
+        openRate: 'Taux d’ouverture',
+        aiViews: 'Vues IA générées',
+        openedOfSent: '{opened} ouverts sur {sent} envoyés',
+        noMessages: 'Aucun message envoyé pour l’instant',
+      },
+      sniperStats: {
+        title: 'Statistiques Sniper',
+        priceDropsToday: 'Baisses de prix aujourd’hui',
+        detected: 'Détectés',
+        expirations: 'Expirations',
+        opportunities: 'Opportunités',
+        last48h: 'Détectés sur les dernières 48 h',
+        offline120: 'Biens hors ligne depuis 120+ jours',
+        loadError: 'Impossible de charger les statistiques Sniper.',
+      },
+      regionalPortals: {
+        title: 'Portails prioritaires',
+        primaryMarkets: 'Marchés primaires',
+        secondaryMarkets: 'Marchés secondaires',
+        currency: 'Devise',
+        units: 'Unités',
+        regionUsa: 'États-Unis',
+        regionEurope: 'Europe',
+        regionMiddleEast: 'Moyen-Orient',
+        regionGlobal: 'Monde',
+        unitSqft: 'pi²',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Votre ROI ce mois-ci',
+        hoursSaved: 'Heures économisées',
+        hours: 'h',
+        perListing: 'min par annonce',
+        valueGenerated: 'Valeur générée',
+        estimatedValue: 'annonce estimée',
+        generatedListings: 'Annonces générées',
+        amazing: 'Fantastique !',
+        saved10Hours: 'Vous avez économisé plus de 10 heures ce mois-ci',
+      },
+      morningBriefing: {
+        na: 'N/D',
+        sent: 'Notification test envoyée !',
+        sentDesc: 'Vérifiez votre e-mail et WhatsApp',
+        error: 'Erreur',
+        sendError: 'Impossible d’envoyer la notification',
+        connectionError: 'Erreur de connexion',
+        title: 'Votre briefing du jour',
+        subtitle: 'Top 3 opportunités avec l’écart de marché le plus élevé (24 dernières h)',
+        configure: 'Configurer',
+        priceDown: 'Prix',
+        highUrgency: 'Urgence élevée',
+        target: 'Cible',
+        fomo: 'Ces offres ont aussi été envoyées à',
+        partnerAgencies: 'agences partenaires dans votre secteur. Agissez vite !',
+        sendTest: 'Envoyer un test sur mon téléphone',
+      },
+      competitorRadar: {
+        na: 'N/D',
+        title: 'Radar des expirations',
+        subtitle: 'Biens hors ligne ou sans mouvement depuis 120+ jours',
+        removed: 'Retiré',
+        stale: 'Sans mouvement',
+        aiNote: 'Note IA',
+        offlineFor: 'Hors ligne depuis',
+        days: 'jours',
+        viewAll: 'Tout voir',
+        refreshAria: 'Actualiser la liste',
+      },
+      planCards: {
+        generateNewListing: 'Générer une nouvelle annonce',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Analyse depuis lien',
+        premiumPdfCards: 'Fiches PDF premium',
+        allFreeFeatures: 'Toutes les fonctionnalités Free',
+        leadScoringAi: 'Lead Scoring IA',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Traduction 12 langues',
+        allStarterFeatures: 'Toutes les fonctionnalités Starter',
+        fullCrmPipeline: 'CRM complet + pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'Appels vocaux IA (30/mois)',
+        agencyAssistantAi: 'Agency Assistant IA',
+        allProFeatures: 'Toutes les fonctionnalités Pro',
+        unlimitedAiVoiceCalling: 'Appels vocaux IA illimités',
+        auraVrVirtualTour: 'Aura VR : visite virtuelle',
+        teamUpToAgents: 'Équipe jusqu’à 10 agents',
+        omnichannelSuite: 'Suite omnicanal',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Configuration « done-for-you »',
+        oneTime: 'paiement unique',
+        boostSetupComplete: 'Configuration complète « done-for-you »',
+        boostOnboarding: 'Mise en œuvre et onboarding guidés',
+        boostLaunchSupport: 'Support premium au lancement',
+        boostCustomConfig: 'Configuration sur mesure',
+        buyAgencyBoost: 'Acheter Agency Boost',
+      },
+      onboardingChecklist: {
+        title: 'Vos 5 premières étapes',
+        subtitle:
+          'Complétez cette liste pour obtenir de la valeur rapidement. Vous pouvez la masquer à tout moment — la progression est enregistrée dans ce navigateur.',
+        dismiss: 'Masquer',
+        dismissAria: 'Masquer la checklist d’intégration',
+        progress: '{done} sur {total} terminés',
+        allDone: 'Bravo — toutes les étapes sont terminées.',
+        steps: {
+          generate: {
+            title: 'Générez votre première annonce avec l’IA',
+            description:
+              'Commencez avec Perfect Copy ou d’autres outils : titres, descriptions et variantes en quelques minutes.',
+            cta: 'Ouvrir Perfect Copy',
+          },
+          library: {
+            title: 'Enregistrez une annonce dans la bibliothèque',
+            description: 'Conservez vos meilleurs brouillons et réutilisez-les pour les portails ou les clients.',
+            cta: 'Ouvrir la bibliothèque',
+          },
+          pipeline: {
+            title: 'Organisez les leads dans le pipeline',
+            description: 'Faites avancer les leads entre les étapes et gardez le contrôle des relances.',
+            cta: 'Ouvrir le pipeline',
+          },
+          billing: {
+            title: 'Vérifiez le forfait et la facturation',
+            description: 'Consultez votre forfait actif et la gestion des mises à niveau ou factures.',
+            cta: 'Ouvrir la facturation',
+          },
+          workspace: {
+            title: 'Configurez votre workspace',
+            description: 'Activez les modules que vous utilisez chaque jour (CRM, voix, cartes, etc.).',
+            cta: 'Paramètres du workspace',
+          },
+        },
+      },
     },
+    auth: authUiFr,
+    authPasswordRecovery: authPasswordRecoveryUiFr,
+    complianceCenter: complianceCenterUiFr,
+    pendingCheckoutBanner: pendingCheckoutUiFr,
+    ariaLimitModal: ariaLimitModalUiFr,
+    dashboardNav: dashboardNavUiFr,
+    commandPaletteExtras: commandPaletteExtrasFr,
+    errorBoundaryModule: errorBoundaryModuleUiFr,
+    welcomeTour: welcomeTourUiFr,
+    onboardingWizard: onboardingWizardUiFr,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
-      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
-      paymentDesc: 'Your plan has been activated successfully.',
-      checkoutCanceled: 'Checkout canceled',
-      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
-      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      boostActivated: 'Agency Boost activé',
+      boostDesc: 'Configuration « done-for-you » confirmée. Notre équipe vous contactera pour l’onboarding.',
+      agencyActive: 'Agency Intelligence active',
+      agencyDesc: 'Accès premium confirmé. Bienvenue dans le réseau mondial PropertyPilot !',
+      paymentDone: 'Paiement effectué',
+      paymentDesc: 'Votre forfait a été activé avec succès.',
+      checkoutCanceled: 'Paiement annulé',
+      checkoutCanceledDesc: 'Vous pouvez réessayer à tout moment depuis la page Facturation.',
+      limitNear: 'Limite presque atteinte',
+      limitNearDesc: 'Vous avez utilisé {used} sur {lim} annonces mensuelles (80%+). Envisagez une mise à niveau pour continuer.',
+      complianceReminderTitle: 'Usage conforme',
+      complianceReminderDesc:
+        'Traitez les données clients conformément au RGPD et aux lois applicables. Documentation : page Conformité du site.',
+      connectivityIssueTitle: 'Backend ou Supabase injoignable',
+      connectivityIssueDesc:
+        'Rechargez la page. Si cela persiste : vérifiez réseau/VPN/pare-feu, NEXT_PUBLIC_SUPABASE_URL dans .env.local et que npm run dev tourne.',
     },
     auraVR: {
       title: 'Générateur Aura VR',
@@ -1877,24 +4532,71 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Excellent travail!',
-        stats: 'Ce scan attirera',
-        action: 'de visites en plus. Voulez-vous que je l\'envoie à vos leads chauds?',
+        visitsSentence: 'Ce scan peut augmenter les visites jusqu’à {pct}%.',
+        followUp: 'Souhaitez-vous que je le partage avec vos leads les plus chauds ?',
+        tripleNote:
+          'Triple vue : Drone, Cinematic Walk et 360° Panorama — standard premium pour des tours VR immersifs.',
       },
+      toast: {
+        copySuccessTitle: 'Lien copié',
+        copySuccessDesc: 'Le lien VR est dans le presse-papiers.',
+        copyErrorTitle: 'Erreur',
+        copyErrorDesc: 'Impossible de copier le lien.',
+      },
+      tripleView: {
+        title: 'Triple perspective — standard luxury',
+        subtitle: 'Choisissez le mode d’affichage du tour VR',
+      },
+      views: {
+        drone: { title: 'Mode drone', description: 'Vue aérienne / contexte' },
+        cinematic: { title: 'Cinematic walk', description: 'Parcours fluide entre les pièces' },
+        panorama: { title: 'Panorama 360°', description: 'Vue immersive' },
+      },
+      preview: {
+        drone: 'Drone — vue aérienne',
+        cinematic: 'Cinematic walk — parcours fluide',
+        panorama: '360° — immersion totale',
+        default: 'Tour VR immersif',
+      },
+      listingFallback: 'Bien',
+      whatsappVrBody:
+        'Bonjour ! Voici une visite VR immersive :\n\n{link}\n\nOuvrez le lien sur votre smartphone pour explorer le bien.',
     },
-    common: {
-      copy: 'Copier',
-      share: 'Partager',
-      send: 'Envoyer',
-      cancel: 'Annuler',
-      confirm: 'Confirmer',
-      save: 'Enregistrer',
-      delete: 'Supprimer',
-      edit: 'Modifier',
-      view: 'Voir',
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Envoyer le projet par WhatsApp',
+      originalPhoto: 'Photo d’origine',
+      afterVisionTitle: 'Vision post-ameublement (IA)',
+      afterVisionSubtitle: 'Intérieur moderne haut de gamme',
+      generatePrompt: 'Générez la vision 3D pour comparer',
+      generating: 'L’IA aménage le bien…',
+      generateCta: 'Générer la vision 3D',
+      successBanner: 'Vision 3D prête. Faites glisser le curseur pour comparer avant/après.',
+      premiumRequiredTitle: 'Forfait Premium requis',
+      premiumRequiredDesc:
+        'Le Virtual Staging 3D est une fonction Premium. Passez à PRO ou AGENCY pour l’activer.',
+      calibrationTitle: 'Calibrage en cours',
+      calibrationDesc: 'Réessayez dans un instant.',
     },
+    prospectingModals: prospectingModalsUiFr,
+    errors: errorsUiFr,
+    common: commonFullFr,
+    devTestError: devTestErrorUiFr,
+    billing: billingUiFr,
+    demo: demoUiFr,
+    contact: contactUiFr,
+    marketingAbout: marketingAboutUiFr,
+    marketingBlog: marketingBlogUiFr,
+    marketingFeatures: marketingFeaturesUiFr,
+    blogPostPage: blogPostPageUiFr,
+    pricingPagePlans: pricingPagePlansUiFr,
+    docsHub: docsHubUiFr,
+    privacyPolicyPage: privacyPolicyPageUiFr,
+    termsPolicyPage: termsPolicyPageUiFr,
+    refundPolicyPage: refundPolicyPageUiFr,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Faites passer votre agence au niveau supérieur',
         features: 'Fonctionnalités',
         pricing: 'Tarifs',
         compliance: 'Conformité',
@@ -1913,11 +4615,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Commencer Gratuitement',
         ctaDemo: 'Voir la Démo',
         trustedBy: 'Compatible avec les principaux portails',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatisation',
           listingsPerDay: 'Annonces/Jour',
           conversionRate: 'Taux de Conversion',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
+        signupAriaLabel: 'Créer un compte PropertyPilot AI',
+        demoDashboardAriaLabel: 'Voir la démo du tableau de bord',
       },
       features: {
         title: 'Pourquoi PropertyPilot AI?',
@@ -1926,16 +4636,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Moteur d\'Annonces IA',
           description: 'Générez des annonces professionnelles en secondes avec des styles personnalisés (Luxe, Investissement, Standard Pro). Multilingue et optimisé pour Zillow, Idealista, Immobiliare.',
           benefit: 'Économisez 5 heures par semaine sur l\'écriture d\'annonces',
+          cta: 'Essayer gratuitement',
         },
         crmAI: {
           title: 'Intelligence CRM IA',
           description: 'Scoring de Leads automatique, suivi IA multicanal (WhatsApp, Email, SMS). Catégorise les leads CHAUD/TIÈDE/FROID et suggère des actions prioritaires.',
           benefit: 'Augmentez les conversions de 40% avec la priorisation IA',
+          cta: 'Aller au CRM',
         },
         globalReach: {
           title: 'Portée Mondiale',
           description: 'Nous opérons aux USA (Zillow, MLS), en Italie (Idealista, Immobiliare), en Espagne (Idealista.es). Terminologie localisée et formats de marché.',
           benefit: 'Développez votre activité sur 3 continents',
+          cta: 'Découvrir le Prospecting',
         },
       },
       searchEngine: {
@@ -1944,6 +4657,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'EXCLUSIVEMENT',
         exclusiveInPlan: 'dans le plan AGENCY',
         benefit: 'Économisez 20 heures d\'appels téléphoniques par semaine',
+        stepLabel: 'ÉTAPE {n}',
+        prospectingCycleCta: 'Lancer la boucle Scraper → Voice AI → CRM',
         step1: {
           title: 'Scan Global',
           description: 'L\'IA scanne automatiquement Idealista, Immobiliare, Zillow et MLS 24/7, trouvant des milliers d\'annonces chaque jour.',
@@ -1953,6 +4668,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'Filtrage IA',
           description: 'Chaque annonce reçoit un Score de Lead IA (0-100). Seuls les "TOP DEAL" (80+) sont sélectionnés pour les appels.',
           status: 'TOP DEAL détecté',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Appel Automatique',
@@ -2081,6 +4797,22 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Choisir Pro',
           chooseAgency: 'Choisir Agency',
         },
+        tableCells: {
+          multiUserAgency: "Jusqu'à 10 agents",
+          voiceCallingPro: '30/mois',
+        },
+        agencyBoost: {
+          productName: 'Boost Agency',
+          badgePremium: 'SERVICE PREMIUM',
+          tierTitanium: 'Titanium',
+          description:
+            'Package de configuration "done-for-you" avec intégration premium et support dédié',
+          bullet1: 'Configuration complète "done-for-you"',
+          bullet2: 'Implémentation et intégration guidées',
+          bullet3: 'Support premium pour le lancement',
+          oneTimePayment: 'Paiement unique',
+          cta: 'Obtenir Agency Boost',
+        },
       },
       cta: {
         title: 'Prêt à multiplier vos affaires?',
@@ -2144,9 +4876,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Kontrollpanel',
+      metaTitle: 'Agenten-Arbeitsbereich — PropertyPilot AI',
+      metaDescription:
+        'Operative Konsole für KI-Inserate, CRM, Prospecting und Automatisierung. Nur für angemeldete Nutzer.',
       loading: 'Lädt...',
       error: 'Fehler',
       success: 'Erfolg',
+      generate: 'Generieren',
+      signOut: 'Abmelden',
+      navAriaLabel: 'Hauptnavigation',
+      commandPaletteOpenAria: 'Schnellsuche öffnen',
+      commandPalettePlaceholder: 'Suchen…',
       currentPlan: 'Aktueller Plan',
       dashboardAI: 'Dashboard KI',
       thisMonth: 'Dieser Monat',
@@ -2170,18 +4910,247 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Auf Starter upgraden',
       upgradeToPro: 'Auf Pro upgraden',
       upgradeToAgency: 'Auf Agency upgraden',
+      prospectingPage: prospectingPageUiDe,
+      ...dashboardMapOppAutoDe,
+      ...leadsPipelineLocalesDe,
+      ...leadDetailCommLocalesDe,
+      ...crmSettingsAutomationLocalesDe,
+      ...workflowAutomationsLocalesDe,
+      ...brandingNotificationsPackagesLocalesDe,
+      ...assistantReferralPerfectCopyLocalesDe,
+      ...listingToolsLocalesDe,
+      ...listingContentToolsLocalesDe,
+      leadScorePage: leadScorePageUiDe,
+      pdfSheetPage: pdfSheetPageUiDe,
+      agentBioPage: agentBioPageUiDe,
+      videoScriptsPage: videoScriptsPageUiDe,
+      followupEmailsPage: followupEmailsPageUiDe,
+      emotionalListingPage: emotionalListingPageUiDe,
+      planFeatures: planFeaturesUiDe,
+      commandCenterTitle: 'Kommandozentrale',
+      commandCenterSubtitle:
+        'Ihr Plan, Ihre Nutzung und KI-Tools für Inserate, Leads und Akquise — alles an einem Ort.',
+      newListingCta: 'Neues Inserat',
+      planBadgeLabels: { free: 'Kostenlos', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plan und Statistiken',
+        roiUsage: 'ROI und Nutzung',
+        morningIntel: 'Morgen-Briefing',
+        regionalPortals: 'Regionale Portale',
+        liveFeed: 'Live-Feed',
+        plansPricing: 'Pläne und Preise',
+        toolsFeatures: 'Tools und Funktionen',
+        sniperStats: 'Price-Sniper-Statistiken',
+      },
+      deferredLoading: {
+        stats3d: '3D-Statistiken werden geladen…',
+        roiUsage: 'ROI und Nutzung werden geladen…',
+        morningIntel: 'Morning Intel wird geladen…',
+        regionalPortals: 'Regionale Portale werden geladen…',
+        liveFeed: 'Live-Feed wird geladen…',
+        plans: 'Pläne werden geladen…',
+        tools: 'Tools werden geladen…',
+        priceSniper: 'Price Sniper wird geladen…',
+        proTips: 'Tipps werden geladen…',
+      },
+      proTips: {
+        ariaSection: 'Pro-Tipps',
+        title: 'Pro-Tipps für bessere Inserate',
+        tip1: 'Nennen Sie konkrete Details zu Lage, Ausstattung und Alleinstellungsmerkmalen',
+        tip2: 'Verwenden Sie genaue Flächen und Zimmeranzahl für bessere KI-Ergebnisse',
+        tip3: 'Erstellen Sie mehrere Versionen und wählen Sie die passendste aus',
+      },
+      docsHubOpen: 'Documentation Hub öffnen',
+      predatorLiveBadge: {
+        livePrefix: 'LIVE:',
+        predatorsOnline: 'Predatoren online',
+      },
+      contextualHelp: {
+        openGuideAria: 'Handbuch in neuem Tab öffnen',
+        openGuideTooltip: 'Öffnet die Dokumentation für diese Funktion (neuer Tab).',
+        fieldHintAria: 'Feldhinweis',
+      },
+      liveFeed: {
+        deal: 'Gold-Deal',
+        call: 'KI-Anruf',
+        staging: 'Virtuelles Staging',
+        priceDrop: 'Preisrutsch',
+        subtitle: 'Globale Aktivität in Echtzeit',
+        cta: 'Sie sind Teil eines globalen Elite-Netzwerks. Bleiben Sie nicht zurück.',
+        infixDeal: 'erkannt in',
+        infixCall: 'erfolgreich geplant in',
+        infixStaging: 'generiert für Objekt in',
+        priceDropLine: 'Price-Drop-Sniper aktiviert in',
+      },
+      liveNetwork: {
+        cardTitle: 'PropertyPilot Live-Netzwerk',
+        liveBadge: 'LIVE',
+      },
+      stats3d: {
+        projects3d: '3D-Projekte',
+        generated: 'Erstellt',
+        whatsappOpen: 'WhatsApp-Öffnungen',
+        openRate: 'Öffnungsrate',
+        aiViews: 'KI-generierte Ansichten',
+        openedOfSent: '{opened} geöffnet von {sent} gesendet',
+        noMessages: 'Noch keine Nachrichten gesendet',
+      },
+      sniperStats: {
+        title: 'Sniper-Statistiken',
+        priceDropsToday: 'Preisabschläge heute',
+        detected: 'Erkannt',
+        expirations: 'Abläufe',
+        opportunities: 'Chancen',
+        last48h: 'In den letzten 48 Std. erkannt',
+        offline120: 'Objekte offline seit 120+ Tagen',
+        loadError: 'Sniper-Statistiken konnten nicht geladen werden.',
+      },
+      regionalPortals: {
+        title: 'Prioritätsportale',
+        primaryMarkets: 'Primärmärkte',
+        secondaryMarkets: 'Sekundärmärkte',
+        currency: 'Währung',
+        units: 'Einheiten',
+        regionUsa: 'USA',
+        regionEurope: 'Europa',
+        regionMiddleEast: 'Naher Osten',
+        regionGlobal: 'Weltweit',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'Ihr ROI diesen Monat',
+        hoursSaved: 'Gesparte Stunden',
+        hours: 'Std.',
+        perListing: 'Min. pro Anzeige',
+        valueGenerated: 'Generierter Wert',
+        estimatedValue: 'geschätzte Anzeige',
+        generatedListings: 'Erstellte Anzeigen',
+        amazing: 'Großartig!',
+        saved10Hours: 'Sie haben diesen Monat über 10 Stunden gespart',
+      },
+      morningBriefing: {
+        na: 'k. A.',
+        sent: 'Testbenachrichtigung gesendet!',
+        sentDesc: 'Prüfen Sie E-Mail und WhatsApp',
+        error: 'Fehler',
+        sendError: 'Benachrichtigung konnte nicht gesendet werden',
+        connectionError: 'Verbindungsfehler',
+        title: 'Ihr Briefing heute',
+        subtitle: 'Top 3 Chancen mit der größten Marktlücke (letzte 24 Std.)',
+        configure: 'Konfigurieren',
+        priceDown: 'Preis',
+        highUrgency: 'Hohe Dringlichkeit',
+        target: 'Ziel',
+        fomo: 'Diese Deals wurden auch an',
+        partnerAgencies: 'Partner-Agenturen in Ihrer Region gesendet. Schnell sein!',
+        sendTest: 'Test an mein Telefon senden',
+      },
+      competitorRadar: {
+        na: 'k. A.',
+        title: 'Ablauf-Radar',
+        subtitle: 'Objekte offline oder seit 120+ Tagen ohne Bewegung',
+        removed: 'Entfernt',
+        stale: 'Stillstand',
+        aiNote: 'KI-Hinweis',
+        offlineFor: 'Offline seit',
+        days: 'Tagen',
+        viewAll: 'Alle anzeigen',
+        refreshAria: 'Liste aktualisieren',
+      },
+      planCards: {
+        generateNewListing: 'Neues Inserat erstellen',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Link-Analyse',
+        premiumPdfCards: 'Premium-PDF-Karten',
+        allFreeFeatures: 'Alle Free-Funktionen',
+        leadScoringAi: 'Lead Scoring KI',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Übersetzer 12 Sprachen',
+        allStarterFeatures: 'Alle Starter-Funktionen',
+        fullCrmPipeline: 'Voll-CRM + Pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'KI-Sprachanrufe (30/Monat)',
+        agencyAssistantAi: 'Agency Assistant KI',
+        allProFeatures: 'Alle Pro-Funktionen',
+        unlimitedAiVoiceCalling: 'Unbegrenzte KI-Sprachanrufe',
+        auraVrVirtualTour: 'Aura VR: Virtuelle Tour',
+        teamUpToAgents: 'Team bis zu 10 Maklern',
+        omnichannelSuite: 'Omnichannel-Suite',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: '„Done-for-you“-Setup',
+        oneTime: 'einmalig',
+        boostSetupComplete: 'Vollständiges „Done-for-you“-Setup',
+        boostOnboarding: 'Geführte Implementierung und Onboarding',
+        boostLaunchSupport: 'Premium-Support beim Launch',
+        boostCustomConfig: 'Individuelle Konfiguration',
+        buyAgencyBoost: 'Agency Boost kaufen',
+      },
+      onboardingChecklist: {
+        title: 'Ihre ersten 5 Schritte',
+        subtitle:
+          'Erledigen Sie diese Checkliste für schnellen Mehrwert. Sie können sie ausblenden — der Fortschritt wird in diesem Browser gespeichert.',
+        dismiss: 'Ausblenden',
+        dismissAria: 'Onboarding-Checkliste ausblenden',
+        progress: '{done} von {total} erledigt',
+        allDone: 'Super — alle Schritte sind erledigt.',
+        steps: {
+          generate: {
+            title: 'Erstellen Sie Ihr erstes Inserat mit KI',
+            description:
+              'Starten Sie mit Perfect Copy oder anderen Tools: Titel, Beschreibungen und Varianten in wenigen Minuten.',
+            cta: 'Perfect Copy öffnen',
+          },
+          library: {
+            title: 'Speichern Sie ein Inserat in der Bibliothek',
+            description: 'Bewahren Sie Ihre besten Entwürfe auf und nutzen Sie sie für Portale oder Kunden.',
+            cta: 'Bibliothek öffnen',
+          },
+          pipeline: {
+            title: 'Organisieren Sie Leads in der Pipeline',
+            description: 'Verschieben Sie Leads zwischen Phasen und behalten Sie Nachfassungen im Blick.',
+            cta: 'Pipeline öffnen',
+          },
+          billing: {
+            title: 'Plan und Abrechnung prüfen',
+            description: 'Sehen Sie Ihren aktiven Plan und wie Upgrades oder Rechnungen funktionieren.',
+            cta: 'Abrechnung öffnen',
+          },
+          workspace: {
+            title: 'Workspace konfigurieren',
+            description: 'Aktivieren Sie die Module, die Sie täglich nutzen (CRM, Voice, Karten usw.).',
+            cta: 'Workspace-Einstellungen',
+          },
+        },
+      },
     },
+    auth: authUiDe,
+    authPasswordRecovery: authPasswordRecoveryUiDe,
+    complianceCenter: complianceCenterUiDe,
+    pendingCheckoutBanner: pendingCheckoutUiDe,
+    ariaLimitModal: ariaLimitModalUiDe,
+    dashboardNav: dashboardNavUiDe,
+    commandPaletteExtras: commandPaletteExtrasDe,
+    errorBoundaryModule: errorBoundaryModuleUiDe,
+    welcomeTour: welcomeTourUiDe,
+    onboardingWizard: onboardingWizardUiDe,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
-      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
-      paymentDesc: 'Your plan has been activated successfully.',
-      checkoutCanceled: 'Checkout canceled',
-      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
-      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      boostActivated: 'Agency Boost aktiviert',
+      boostDesc: '„Done-for-you“-Setup bestätigt. Unser Team meldet sich für das Onboarding bei Ihnen.',
+      agencyActive: 'Agency Intelligence aktiv',
+      agencyDesc: 'Premium-Zugang bestätigt. Willkommen im globalen PropertyPilot-Netzwerk!',
+      paymentDone: 'Zahlung abgeschlossen',
+      paymentDesc: 'Ihr Plan wurde erfolgreich aktiviert.',
+      checkoutCanceled: 'Zahlung abgebrochen',
+      checkoutCanceledDesc: 'Sie können es jederzeit erneut auf der Seite Abrechnung versuchen.',
+      limitNear: 'Limit fast erreicht',
+      limitNearDesc: 'Sie haben {used} von {lim} monatlichen Inseraten genutzt (80%+). Erwägen Sie ein Upgrade, um fortzufahren.',
+      complianceReminderTitle: 'Konforme Nutzung',
+      complianceReminderDesc:
+        'Verarbeiten Sie Kundendaten gemäß DSGVO und geltendem Recht. Dokumentation: Compliance-Seite der Website.',
+      connectivityIssueTitle: 'Backend oder Supabase nicht erreichbar',
+      connectivityIssueDesc:
+        'Seite neu laden. Falls weiterhin: Netzwerk/VPN/Firewall prüfen, NEXT_PUBLIC_SUPABASE_URL in .env.local und ob npm run dev läuft.',
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -2217,24 +5186,71 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Große Arbeit!',
-        stats: 'Dieser Scan wird',
-        action: 'mehr Besuche anziehen. Soll ich es an Ihre heißen Leads senden?',
+        visitsSentence: 'Dieser Scan kann die Besuche um bis zu {pct}% steigern.',
+        followUp: 'Soll ich ihn mit Ihren heißesten Leads teilen?',
+        tripleNote:
+          'Dreifachansicht: Drone, Cinematic Walk und 360°-Panorama — Premium-Standard für immersive VR-Touren.',
       },
+      toast: {
+        copySuccessTitle: 'Link kopiert',
+        copySuccessDesc: 'Der VR-Link liegt in der Zwischenablage.',
+        copyErrorTitle: 'Fehler',
+        copyErrorDesc: 'Link konnte nicht kopiert werden.',
+      },
+      tripleView: {
+        title: 'Dreifachperspektive — Luxury-Standard',
+        subtitle: 'Wählen Sie die Darstellung der VR-Tour',
+      },
+      views: {
+        drone: { title: 'Drohnenmodus', description: 'Luftbild / Umgebung' },
+        cinematic: { title: 'Cinematic Walk', description: 'Fließender Weg durch die Räume' },
+        panorama: { title: '360°-Panorama', description: 'Volle Immersion' },
+      },
+      preview: {
+        drone: 'Drohne — Luftansicht',
+        cinematic: 'Cinematic Walk — fließender Pfad',
+        panorama: '360° — volle Immersion',
+        default: 'Immersive VR-Tour',
+      },
+      listingFallback: 'Objekt',
+      whatsappVrBody:
+        'Hallo! Hier ist eine immersive VR-Tour für dich:\n\n{link}\n\nÖffne den Link auf dem Smartphone, um die Immobilie zu erkunden.',
     },
-    common: {
-      copy: 'Kopieren',
-      share: 'Teilen',
-      send: 'Senden',
-      cancel: 'Abbrechen',
-      confirm: 'Bestätigen',
-      save: 'Speichern',
-      delete: 'Löschen',
-      edit: 'Bearbeiten',
-      view: 'Anzeigen',
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Entwurf per WhatsApp senden',
+      originalPhoto: 'Originalfoto',
+      afterVisionTitle: 'Vision nach Staging (KI)',
+      afterVisionSubtitle: 'Moderne Luxus-Innenansicht',
+      generatePrompt: '3D-Vision erzeugen, um Vorher/Nachher zu sehen',
+      generating: 'Die KI richtet die Immobilie ein…',
+      generateCta: '3D-Vision erzeugen',
+      successBanner: '3D-Vision bereit. Schieben Sie den Regler für den Vergleich.',
+      premiumRequiredTitle: 'Premium-Tarif erforderlich',
+      premiumRequiredDesc:
+        '3D Virtual Staging ist eine Premium-Funktion. Upgrade auf PRO oder AGENCY zum Freischalten.',
+      calibrationTitle: 'Kalibrierung läuft',
+      calibrationDesc: 'Bitte versuchen Sie es gleich erneut.',
     },
+    prospectingModals: prospectingModalsUiDe,
+    errors: errorsUiDe,
+    common: commonFullDe,
+    devTestError: devTestErrorUiDe,
+    billing: billingUiDe,
+    demo: demoUiDe,
+    contact: contactUiDe,
+    marketingAbout: marketingAboutUiDe,
+    marketingBlog: marketingBlogUiDe,
+    marketingFeatures: marketingFeaturesUiDe,
+    blogPostPage: blogPostPageUiDe,
+    pricingPagePlans: pricingPagePlansUiDe,
+    docsHub: docsHubUiDe,
+    privacyPolicyPage: privacyPolicyPageUiDe,
+    termsPolicyPage: termsPolicyPageUiDe,
+    refundPolicyPage: refundPolicyPageUiDe,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'Bringen Sie Ihre Agentur auf das nächste Level',
         features: 'Funktionen',
         pricing: 'Preise',
         compliance: 'Compliance',
@@ -2253,11 +5269,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'Kostenlos Starten',
         ctaDemo: 'Demo Ansehen',
         trustedBy: 'Kompatibel mit führenden Portalen',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'Automatisierung',
           listingsPerDay: 'Anzeigen/Tag',
           conversionRate: 'Konversionsrate',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80%',
+        },
+        signupAriaLabel: 'Bei PropertyPilot AI registrieren',
+        demoDashboardAriaLabel: 'Demo-Dashboard ansehen',
       },
       features: {
         title: 'Warum PropertyPilot AI?',
@@ -2266,16 +5290,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'KI-Anzeigen-Engine',
           description: 'Erstellen Sie professionelle Anzeigen in Sekunden mit benutzerdefinierten Stilen (Luxus, Investition, Standard Pro). Mehrsprachig und optimiert für Zillow, Idealista, Immobiliare.',
           benefit: 'Sparen Sie 5 Stunden pro Woche beim Schreiben von Anzeigen',
+          cta: 'Kostenlos testen',
         },
         crmAI: {
           title: 'CRM-KI-Intelligenz',
           description: 'Automatisches Lead-Scoring, mehrkanaliges KI-Follow-up (WhatsApp, E-Mail, SMS). Kategorisiert HEISSE/WARME/KALTE Leads und schlägt Prioritätsaktionen vor.',
           benefit: 'Steigern Sie Conversions um 40% mit KI-Priorisierung',
+          cta: 'Zum CRM',
         },
         globalReach: {
           title: 'Globale Reichweite',
           description: 'Wir operieren in den USA (Zillow, MLS), Italien (Idealista, Immobiliare), Spanien (Idealista.es). Lokalisierte Terminologie und Marktformate.',
           benefit: 'Erweitern Sie Ihr Geschäft auf 3 Kontinenten',
+          cta: 'Prospecting entdecken',
         },
       },
       searchEngine: {
@@ -2284,6 +5311,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'AUSSCHLIESSLICH',
         exclusiveInPlan: 'im AGENCY-Plan',
         benefit: 'Sparen Sie 20 Stunden Telefonanrufe pro Woche',
+        stepLabel: 'SCHRITT {n}',
+        prospectingCycleCta: 'Scraper → Voice AI → CRM Schleife starten',
         step1: {
           title: 'Globale Suche',
           description: 'Die KI scannt automatisch Idealista, Immobiliare, Zillow und MLS 24/7 und findet täglich Tausende von Anzeigen.',
@@ -2293,6 +5322,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'KI-Filterung',
           description: 'Jede Anzeige erhält einen KI-Lead-Score (0-100). Nur "TOP DEAL" (80+) werden für Anrufe ausgewählt.',
           status: 'TOP DEAL erkannt',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'Automatischer Anruf',
@@ -2421,6 +5451,22 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           choosePro: 'Pro Wählen',
           chooseAgency: 'Agency Wählen',
         },
+        tableCells: {
+          multiUserAgency: 'Bis zu 10 Agenten',
+          voiceCallingPro: '30/Monat',
+        },
+        agencyBoost: {
+          productName: 'Agency Boost',
+          badgePremium: 'PREMIUM-SERVICE',
+          tierTitanium: 'Titanium',
+          description:
+            'Done-for-you Setup-Paket mit Premium-Onboarding und dediziertem Support',
+          bullet1: 'Vollständige Einrichtung "done-for-you"',
+          bullet2: 'Geführte Implementierung und Onboarding',
+          bullet3: 'Premium-Support für den Start',
+          oneTimePayment: 'Einmalige Zahlung',
+          cta: 'Agency Boost erhalten',
+        },
       },
       cta: {
         title: 'Bereit, Ihr Geschäft zu multiplizieren?',
@@ -2484,11 +5530,17 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
     dashboard: {
       title: 'Painel',
       subtitle: 'Painel de controle',
+      metaTitle: 'Área do agente — PropertyPilot AI',
+      metaDescription:
+        'Consola operacional para anúncios com IA, CRM, prospeção e automações. Acesso para utilizadores registados.',
       loading: 'Carregando...',
       error: 'Erro',
       success: 'Sucesso',
       generate: 'Gerar',
       signOut: 'Sair',
+      navAriaLabel: 'Navegação principal',
+      commandPaletteOpenAria: 'Abrir pesquisa rápida',
+      commandPalettePlaceholder: 'Pesquisar…',
       currentPlan: 'Plano Atual',
       dashboardAI: 'Dashboard AI',
       thisMonth: 'Este Mês',
@@ -2512,18 +5564,247 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'Mudar para Starter',
       upgradeToPro: 'Mudar para Pro',
       upgradeToAgency: 'Mudar para Agency',
+      prospectingPage: prospectingPageUiPt,
+      ...dashboardMapOppAutoPt,
+      ...leadsPipelineLocalesPt,
+      ...leadDetailCommLocalesPt,
+      ...crmSettingsAutomationLocalesPt,
+      ...workflowAutomationsLocalesPt,
+      ...brandingNotificationsPackagesLocalesPt,
+      ...assistantReferralPerfectCopyLocalesPt,
+      ...listingToolsLocalesPt,
+      ...listingContentToolsLocalesPt,
+      leadScorePage: leadScorePageUiPt,
+      pdfSheetPage: pdfSheetPageUiPt,
+      agentBioPage: agentBioPageUiPt,
+      videoScriptsPage: videoScriptsPageUiPt,
+      followupEmailsPage: followupEmailsPageUiPt,
+      emotionalListingPage: emotionalListingPageUiPt,
+      planFeatures: planFeaturesUiPt,
+      commandCenterTitle: 'Centro de comando',
+      commandCenterSubtitle:
+        'O seu plano, utilização e ferramentas de IA para anúncios, leads e prospeção — num só lugar.',
+      newListingCta: 'Novo anúncio',
+      planBadgeLabels: { free: 'Grátis', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'Plano e estatísticas',
+        roiUsage: 'ROI e utilização',
+        morningIntel: 'Intel matinal',
+        regionalPortals: 'Portais regionais',
+        liveFeed: 'Feed em direto',
+        plansPricing: 'Planos e preços',
+        toolsFeatures: 'Ferramentas e funcionalidades',
+        sniperStats: 'Estatísticas Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'A carregar estatísticas 3D…',
+        roiUsage: 'A carregar ROI e utilização…',
+        morningIntel: 'A carregar Morning Intel…',
+        regionalPortals: 'A carregar portais regionais…',
+        liveFeed: 'A carregar feed em direto…',
+        plans: 'A carregar planos…',
+        tools: 'A carregar ferramentas…',
+        priceSniper: 'A carregar Price Sniper…',
+        proTips: 'A carregar dicas…',
+      },
+      proTips: {
+        ariaSection: 'Dicas Pro',
+        title: 'Dicas Pro para anúncios melhores',
+        tip1: 'Inclua detalhes específicos sobre localização, comodidades e características únicas',
+        tip2: 'Use áreas e número de divisões corretos para melhores resultados de IA',
+        tip3: 'Gere várias versões e escolha a que melhor se adequa às suas necessidades',
+      },
+      docsHubOpen: 'Abrir Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'AO VIVO:',
+        predatorsOnline: 'Predadores online',
+      },
+      contextualHelp: {
+        openGuideAria: 'Abrir o guia num novo separador',
+        openGuideTooltip: 'Abre a documentação desta funcionalidade (novo separador).',
+        fieldHintAria: 'Dica do campo',
+      },
+      liveFeed: {
+        deal: 'Negócio ouro',
+        call: 'Chamada IA',
+        staging: 'Virtual Staging',
+        priceDrop: 'Queda de preço',
+        subtitle: 'Atividade global em tempo real',
+        cta: 'Faz parte de uma rede global de elite. Não fique para trás.',
+        infixDeal: 'detetada em',
+        infixCall: 'agendada com sucesso em',
+        infixStaging: 'gerada para imóvel em',
+        priceDropLine: 'Price Drop Sniper ativado em',
+      },
+      liveNetwork: {
+        cardTitle: 'Rede ao vivo PropertyPilot',
+        liveBadge: 'AO VIVO',
+      },
+      stats3d: {
+        projects3d: 'Projetos 3D',
+        generated: 'Gerados',
+        whatsappOpen: 'Aberturas WhatsApp',
+        openRate: 'Taxa de abertura',
+        aiViews: 'Visualizações IA geradas',
+        openedOfSent: '{opened} abertos de {sent} enviados',
+        noMessages: 'Ainda não há mensagens enviadas',
+      },
+      sniperStats: {
+        title: 'Estatísticas Sniper',
+        priceDropsToday: 'Quedas de preço hoje',
+        detected: 'Detetados',
+        expirations: 'Expirações',
+        opportunities: 'Oportunidades',
+        last48h: 'Detetados nas últimas 48 h',
+        offline120: 'Imóveis offline há 120+ dias',
+        loadError: 'Não foi possível carregar as estatísticas Sniper.',
+      },
+      regionalPortals: {
+        title: 'Portais prioritários',
+        primaryMarkets: 'Mercados primários',
+        secondaryMarkets: 'Mercados secundários',
+        currency: 'Moeda',
+        units: 'Unidades',
+        regionUsa: 'Estados Unidos',
+        regionEurope: 'Europa',
+        regionMiddleEast: 'Médio Oriente',
+        regionGlobal: 'Global',
+        unitSqft: 'sq ft',
+        unitSqm: 'm²',
+      },
+      profitDashboard: {
+        title: 'O seu ROI este mês',
+        hoursSaved: 'Horas poupadas',
+        hours: 'h',
+        perListing: 'min por anúncio',
+        valueGenerated: 'Valor gerado',
+        estimatedValue: 'anúncio estimado',
+        generatedListings: 'Anúncios gerados',
+        amazing: 'Fantástico!',
+        saved10Hours: 'Poupou mais de 10 horas este mês',
+      },
+      morningBriefing: {
+        na: 'N/D',
+        sent: 'Notificação de teste enviada!',
+        sentDesc: 'Verifique o seu email e WhatsApp',
+        error: 'Erro',
+        sendError: 'Não foi possível enviar a notificação',
+        connectionError: 'Erro de ligação',
+        title: 'O seu briefing de hoje',
+        subtitle: 'Top 3 oportunidades com maior gap de mercado (últimas 24 h)',
+        configure: 'Configurar',
+        priceDown: 'Preço',
+        highUrgency: 'Urgência alta',
+        target: 'Alvo',
+        fomo: 'Estes negócios também foram enviados a',
+        partnerAgencies: 'agências parceiras na sua zona. Seja rápido!',
+        sendTest: 'Enviar teste para o meu telemóvel',
+      },
+      competitorRadar: {
+        na: 'N/D',
+        title: 'Radar de expirações',
+        subtitle: 'Imóveis offline ou parados há mais de 120 dias',
+        removed: 'Removido',
+        stale: 'Parado',
+        aiNote: 'Nota IA',
+        offlineFor: 'Offline há',
+        days: 'dias',
+        viewAll: 'Ver tudo',
+        refreshAria: 'Atualizar lista',
+      },
+      planCards: {
+        generateNewListing: 'Gerar novo anúncio',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'Análise por link',
+        premiumPdfCards: 'Fichas PDF premium',
+        allFreeFeatures: 'Todas as funcionalidades Free',
+        leadScoringAi: 'Lead Scoring IA',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'Tradutor 12 línguas',
+        allStarterFeatures: 'Todas as funcionalidades Starter',
+        fullCrmPipeline: 'CRM completo + pipeline',
+        virtualStaging3d: 'Virtual Staging 3D',
+        aiVoiceCallingMonthly: 'Chamadas de voz IA (30/mês)',
+        agencyAssistantAi: 'Agency Assistant IA',
+        allProFeatures: 'Todas as funcionalidades Pro',
+        unlimitedAiVoiceCalling: 'Chamadas de voz IA ilimitadas',
+        auraVrVirtualTour: 'Aura VR: tour virtual',
+        teamUpToAgents: 'Equipa até 10 agentes',
+        omnichannelSuite: 'Suite omnicanal',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'Configuração «done-for-you»',
+        oneTime: 'pagamento único',
+        boostSetupComplete: 'Configuração completa «done-for-you»',
+        boostOnboarding: 'Implementação e onboarding guiados',
+        boostLaunchSupport: 'Suporte premium ao lançamento',
+        boostCustomConfig: 'Configuração personalizada',
+        buyAgencyBoost: 'Comprar Agency Boost',
+      },
+      onboardingChecklist: {
+        title: 'Os seus primeiros 5 passos',
+        subtitle:
+          'Complete esta lista para obter valor rapidamente. Pode ocultá-la quando quiser — o progresso fica guardado neste navegador.',
+        dismiss: 'Ocultar',
+        dismissAria: 'Ocultar checklist de integração',
+        progress: '{done} de {total} concluídos',
+        allDone: 'Ótimo — concluiu todos os passos.',
+        steps: {
+          generate: {
+            title: 'Gere o seu primeiro anúncio com IA',
+            description:
+              'Comece com Perfect Copy ou outras ferramentas: títulos, descrições e variantes em minutos.',
+            cta: 'Abrir Perfect Copy',
+          },
+          library: {
+            title: 'Guarde um anúncio na biblioteca',
+            description: 'Guarde os seus melhores rascunhos e reutilize-os em portais ou com clientes.',
+            cta: 'Abrir biblioteca',
+          },
+          pipeline: {
+            title: 'Organize leads na pipeline',
+            description: 'Mova leads entre fases e mantenha o controlo dos follow-ups.',
+            cta: 'Abrir pipeline',
+          },
+          billing: {
+            title: 'Revise plano e faturação',
+            description: 'Veja o plano ativo e como funcionam upgrades ou faturas.',
+            cta: 'Abrir faturação',
+          },
+          workspace: {
+            title: 'Configure o workspace',
+            description: 'Ative os módulos que usa no dia a dia (CRM, voz, mapas, etc.).',
+            cta: 'Definições do workspace',
+          },
+        },
+      },
     },
+    auth: authUiPt,
+    authPasswordRecovery: authPasswordRecoveryUiPt,
+    complianceCenter: complianceCenterUiPt,
+    pendingCheckoutBanner: pendingCheckoutUiPt,
+    ariaLimitModal: ariaLimitModalUiPt,
+    dashboardNav: dashboardNavUiPt,
+    commandPaletteExtras: commandPaletteExtrasPt,
+    errorBoundaryModule: errorBoundaryModuleUiPt,
+    welcomeTour: welcomeTourUiPt,
+    onboardingWizard: onboardingWizardUiPt,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
-      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
-      paymentDesc: 'Your plan has been activated successfully.',
-      checkoutCanceled: 'Checkout canceled',
-      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
-      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      boostActivated: 'Agency Boost ativado',
+      boostDesc: 'Configuração «done-for-you» confirmada. A nossa equipa contactá-lo-á para o onboarding.',
+      agencyActive: 'Agency Intelligence ativa',
+      agencyDesc: 'Acesso premium confirmado. Bem-vindo à rede global PropertyPilot!',
+      paymentDone: 'Pagamento concluído',
+      paymentDesc: 'O seu plano foi ativado com sucesso.',
+      checkoutCanceled: 'Pagamento cancelado',
+      checkoutCanceledDesc: 'Pode tentar novamente a qualquer momento na página de Faturação.',
+      limitNear: 'Limite quase atingido',
+      limitNearDesc: 'Utilizou {used} dos seus {lim} anúncios mensais (80%+). Considere fazer upgrade para continuar.',
+      complianceReminderTitle: 'Utilização conforme',
+      complianceReminderDesc:
+        'Trate dados de clientes em conformidade com o RGPD e a legislação aplicável. Documentação: página Compliance do site.',
+      connectivityIssueTitle: 'Backend ou Supabase indisponível',
+      connectivityIssueDesc:
+        'Recarregue a página. Se persistir: verifique rede/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL no .env.local e se npm run dev está a correr.',
     },
     auraVR: {
       title: 'Gerador Aura VR',
@@ -2559,68 +5840,86 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'Aria: Ótimo trabalho!',
-        stats: 'Este scan atrairá',
-        action: 'mais visitas. Quer que eu envie para seus leads quentes?',
+        visitsSentence: 'Este scan pode aumentar as visitas em até {pct}%.',
+        followUp: 'Quer que eu partilhe com os seus leads mais quentes?',
+        tripleNote:
+          'Tripla perspetiva: Drone, Cinematic Walk e 360° Panorama — padrão premium para tours VR imersivos.',
       },
-    },
-    common: {
-      copy: 'Copiar',
-      share: 'Compartilhar',
-      send: 'Enviar',
-      cancel: 'Cancelar',
-      confirm: 'Confirmar',
-      save: 'Salvar',
-      delete: 'Excluir',
-      edit: 'Editar',
-      view: 'Visualizar',
-    },
-    landing: {
-      pricingPage: {
-        badge: 'Preços Transparentes',
-        mainTitle: 'Escolha o Plano',
-        mainTitle2: 'Perfeito para Você',
-        subtitle: 'Planos pensados para cada fase do seu negócio imobiliário. Comece grátis, escale quando estiver pronto.',
-        trustCancel: 'Cancele quando quiser',
-        trustTrial: 'Teste grátis 7 dias',
-        trustSupport: 'Suporte no seu idioma',
-        demo: 'Demo',
-        whyChoose: 'Por Que Escolher PropertyPilot AI?',
-        whySubtitle: 'Recursos premium para cada profissional imobiliário',
-        faqTitle: 'Perguntas Frequentes',
-        faqSubtitle: 'Tudo que você precisa saber sobre nossos planos',
-        ctaTitle: 'Pronto para Transformar seus Anúncios?',
-        ctaSubtitle: 'Comece grátis hoje e descubra como a IA pode elevar seu negócio imobiliário.',
-        ctaStartFree: 'Começar Grátis',
-        ctaWatchDemo: 'Ver Demo',
-        features: [
-          { title: 'IA GPT-4 Premium', desc: 'Modelos de IA mais avançados do mercado' },
-          { title: '100% Localizado', desc: 'Conteúdo otimizado para seu mercado' },
-          { title: 'Geração Instantânea', desc: 'Resultados em menos de 30 segundos' },
-          { title: 'Fácil de Usar', desc: 'Nenhuma habilidade técnica necessária' },
-          { title: 'Anúncios Profissionais', desc: 'Qualidade de agência de comunicação' },
-          { title: 'Multi-Agência', desc: 'Gerencie vários escritórios com uma conta' },
-        ],
-        faqs: [
-          { question: "Posso mudar de plano a qualquer momento?", answer: "Sim, você pode fazer upgrade ou downgrade quando quiser. As alterações se aplicam no próximo ciclo de cobrança." },
-          { question: "Há período de teste gratuito?", answer: "Sim, oferecemos 7 dias de teste grátis em todos os planos pagos. Nenhum cartão necessário para começar." },
-          { question: "O que acontece se eu ultrapassar os limites?", answer: "Te avisaremos quando você se aproximar. Você pode facilmente fazer upgrade para continuar crescendo." },
-          { question: "Como funciona o plano Agency?", answer: "O plano Agency é para equipes e multi-agências. Inclui anúncios ilimitados, todos os recursos e suporte dedicado." },
-          { question: "Posso cancelar minha assinatura?", answer: "Sim, você pode cancelar a qualquer momento no painel. O acesso permanece até o fim do período já pago." },
-          { question: "Oferecem suporte no meu idioma?", answer: "Com certeza! Nosso suporte está disponível por email e chat no seu idioma." },
-        ],
+      toast: {
+        copySuccessTitle: 'Link copiado',
+        copySuccessDesc: 'O link VR está na área de transferência.',
+        copyErrorTitle: 'Erro',
+        copyErrorDesc: 'Não foi possível copiar o link.',
       },
+      tripleView: {
+        title: 'Tripla perspetiva — padrão luxury',
+        subtitle: 'Escolha o modo de visualização do tour VR',
+      },
+      views: {
+        drone: { title: 'Modo drone', description: 'Vista aérea / contexto' },
+        cinematic: { title: 'Cinematic walk', description: 'Percurso fluido pelos espaços' },
+        panorama: { title: 'Panorama 360°', description: 'Vista imersiva' },
+      },
+      preview: {
+        drone: 'Drone — vista aérea',
+        cinematic: 'Cinematic walk — percurso fluido',
+        panorama: '360° — imersão total',
+        default: 'Tour VR imersivo',
+      },
+      listingFallback: 'Imóvel',
+      whatsappVrBody:
+        'Olá! Aqui está um tour VR imersivo para si:\n\n{link}\n\nAbra o link no telemóvel para explorar o imóvel.',
     },
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'Enviar projeto via WhatsApp',
+      originalPhoto: 'Foto original',
+      afterVisionTitle: 'Visão pós-staging (IA)',
+      afterVisionSubtitle: 'Interior moderno de luxo',
+      generatePrompt: 'Gere a visão 3D para ver a comparação',
+      generating: 'A IA está a preparar o imóvel…',
+      generateCta: 'Gerar visão 3D',
+      successBanner: 'Visão 3D pronta. Arraste o controlo para comparar antes e depois.',
+      premiumRequiredTitle: 'Plano Premium necessário',
+      premiumRequiredDesc:
+        'O Virtual Staging 3D é Premium. Atualize para PRO ou AGENCY para desbloquear.',
+      calibrationTitle: 'A calibrar',
+      calibrationDesc: 'Tente novamente dentro de instantes.',
+    },
+    prospectingModals: prospectingModalsUiPt,
+    errors: errorsUiPt,
+    common: commonFullPt,
+    devTestError: devTestErrorUiPt,
+    billing: billingUiPt,
+    demo: demoUiPt,
+    contact: contactUiPt,
+    marketingAbout: marketingAboutUiPt,
+    marketingBlog: marketingBlogUiPt,
+    marketingFeatures: marketingFeaturesUiPt,
+    blogPostPage: blogPostPageUiPt,
+    pricingPagePlans: pricingPagePlansUiPt,
+    docsHub: docsHubUiPt,
+    privacyPolicyPage: privacyPolicyPageUiPt,
+    termsPolicyPage: termsPolicyPageUiPt,
+    refundPolicyPage: refundPolicyPageUiPt,
+    landing: landingPt,
   },
   
   ar: {
     dashboard: {
       title: 'لوحة التحكم',
       subtitle: 'لوحة التحكم الرئيسية',
+      metaTitle: 'مساحة الوكيل — PropertyPilot AI',
+      metaDescription:
+        'وحدة تشغيلية للإعلانات بالذكاء الاصطناعي وإدارة علاقات العملاء والتنقيب والأتمتة. للمستخدمين المسجلين فقط.',
       loading: 'جاري التحميل...',
       error: 'خطأ',
       success: 'نجاح',
       generate: 'إنشاء',
       signOut: 'خروج',
+      navAriaLabel: 'التنقل الرئيسي',
+      commandPaletteOpenAria: 'فتح البحث السريع',
+      commandPalettePlaceholder: 'بحث…',
       currentPlan: 'الخطة الحالية',
       dashboardAI: 'لوحة التحكم',
       thisMonth: 'هذا الشهر',
@@ -2644,18 +5943,247 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       upgradeToStarter: 'الترقية إلى Starter',
       upgradeToPro: 'الترقية إلى Pro',
       upgradeToAgency: 'الترقية إلى Agency',
+      prospectingPage: prospectingPageUiAr,
+      ...dashboardMapOppAutoAr,
+      ...leadsPipelineLocalesAr,
+      ...leadDetailCommLocalesAr,
+      ...crmSettingsAutomationLocalesAr,
+      ...workflowAutomationsLocalesAr,
+      ...brandingNotificationsPackagesLocalesAr,
+      ...assistantReferralPerfectCopyLocalesAr,
+      ...listingToolsLocalesAr,
+      ...listingContentToolsLocalesAr,
+      leadScorePage: leadScorePageUiAr,
+      pdfSheetPage: pdfSheetPageUiAr,
+      agentBioPage: agentBioPageUiAr,
+      videoScriptsPage: videoScriptsPageUiAr,
+      followupEmailsPage: followupEmailsPageUiAr,
+      emotionalListingPage: emotionalListingPageUiAr,
+      planFeatures: planFeaturesUiAr,
+      commandCenterTitle: 'مركز القيادة',
+      commandCenterSubtitle:
+        'خطتك واستخدامك وأدوات الذكاء الاصطناعي للإعلانات والعملاء المحتملين والتسويق — في مكان واحد.',
+      newListingCta: 'إعلان جديد',
+      planBadgeLabels: { free: 'مجاني', starter: 'Starter', pro: 'Pro', agency: 'Agency' },
+      homeSections: {
+        planStats: 'الخطة والإحصائيات',
+        roiUsage: 'العائد والاستخدام',
+        morningIntel: 'تقرير الصباح',
+        regionalPortals: 'البوابات الإقليمية',
+        liveFeed: 'البث المباشر',
+        plansPricing: 'الخطط والأسعار',
+        toolsFeatures: 'الأدوات والميزات',
+        sniperStats: 'إحصائيات Price Sniper',
+      },
+      deferredLoading: {
+        stats3d: 'جاري تحميل إحصائيات ثلاثية الأبعاد…',
+        roiUsage: 'جاري تحميل العائد والاستخدام…',
+        morningIntel: 'جاري تحميل Morning Intel…',
+        regionalPortals: 'جاري تحميل البوابات الإقليمية…',
+        liveFeed: 'جاري تحميل البث المباشر…',
+        plans: 'جاري تحميل الخطط…',
+        tools: 'جاري تحميل الأدوات…',
+        priceSniper: 'جاري تحميل Price Sniper…',
+        proTips: 'جاري تحميل النصائح…',
+      },
+      proTips: {
+        ariaSection: 'نصائح احترافية',
+        title: 'نصائح احترافية لإعلانات أفضل',
+        tip1: 'اذكر تفاصيل محددة عن الموقع والخدمات والميزات الفريدة',
+        tip2: 'استخدم مساحات دقيقة وعدد الغرف لنتائج أفضل من الذكاء الاصطناعي',
+        tip3: 'أنشئ عدة نسخ واختر الأنسب لاحتياجاتك',
+      },
+      docsHubOpen: 'فتح Documentation Hub',
+      predatorLiveBadge: {
+        livePrefix: 'مباشر:',
+        predatorsOnline: 'المفترسون متصلون',
+      },
+      contextualHelp: {
+        openGuideAria: 'فتح الدليل في تبويب جديد',
+        openGuideTooltip: 'يفتح توثيق هذه الميزة (تبويب جديد).',
+        fieldHintAria: 'تلميح للحقل',
+      },
+      liveFeed: {
+        deal: 'صفقة ذهبية',
+        call: 'مكالمة ذكاء اصطناعي',
+        staging: 'التجهيز الافتراضي',
+        priceDrop: 'انخفاض السعر',
+        subtitle: 'نشاط عالمي لحظي',
+        cta: 'أنت جزء من شبكة عالمية نخبوية. لا تتخلف عن الركب.',
+        infixDeal: 'تم رصدها في',
+        infixCall: 'تم جدولتها بنجاح في',
+        infixStaging: 'تم إنشاؤها لعقار في',
+        priceDropLine: 'تم تفعيل قناص انخفاض السعر في',
+      },
+      liveNetwork: {
+        cardTitle: 'شبكة PropertyPilot المباشرة',
+        liveBadge: 'مباشر',
+      },
+      stats3d: {
+        projects3d: 'مشاريع ثلاثية الأبعاد',
+        generated: 'تم الإنشاء',
+        whatsappOpen: 'فتحات واتساب',
+        openRate: 'معدل الفتح',
+        aiViews: 'مشاهدات مولّدة بالذكاء الاصطناعي',
+        openedOfSent: '{opened} مفتوحة من {sent} مرسلة',
+        noMessages: 'لم يُرسل أي رسالة بعد',
+      },
+      sniperStats: {
+        title: 'إحصائيات القنّاص',
+        priceDropsToday: 'انخفاضات السعر اليوم',
+        detected: 'تم الرصد',
+        expirations: 'انتهاءات',
+        opportunities: 'فرص',
+        last48h: 'تم الرصد خلال آخر 48 ساعة',
+        offline120: 'عقارات غير متصلة منذ 120+ يوماً',
+        loadError: 'تعذر تحميل إحصائيات القنّاص.',
+      },
+      regionalPortals: {
+        title: 'بوابات ذات أولوية',
+        primaryMarkets: 'أسواق رئيسية',
+        secondaryMarkets: 'أسواق ثانوية',
+        currency: 'العملة',
+        units: 'الوحدات',
+        regionUsa: 'الولايات المتحدة',
+        regionEurope: 'أوروبا',
+        regionMiddleEast: 'الشرق الأوسط',
+        regionGlobal: 'عالمي',
+        unitSqft: 'قدم مربع',
+        unitSqm: 'م²',
+      },
+      profitDashboard: {
+        title: 'عائدك على الاستثمار هذا الشهر',
+        hoursSaved: 'ساعات موفّرة',
+        hours: 'س',
+        perListing: 'دقيقة لكل إعلان',
+        valueGenerated: 'القيمة المُولَّدة',
+        estimatedValue: 'إعلان مقدّر',
+        generatedListings: 'إعلانات مُنشأة',
+        amazing: 'رائع!',
+        saved10Hours: 'وفّرت أكثر من 10 ساعات هذا الشهر',
+      },
+      morningBriefing: {
+        na: 'غير متوفر',
+        sent: 'تم إرسال إشعار تجريبي!',
+        sentDesc: 'تحقق من بريدك الإلكتروني وواتساب',
+        error: 'خطأ',
+        sendError: 'تعذر إرسال الإشعار',
+        connectionError: 'خطأ في الاتصال',
+        title: 'ملخصك اليوم',
+        subtitle: 'أفضل 3 فرص بأعلى فجوة سوقية (آخر 24 ساعة)',
+        configure: 'إعدادات',
+        priceDown: 'السعر',
+        highUrgency: 'إلحاح عالٍ',
+        target: 'الهدف',
+        fomo: 'تم إرسال هذه الصفقات أيضاً إلى',
+        partnerAgencies: 'وكالات شريكة في منطقتك. بادر بسرعة!',
+        sendTest: 'إرسال تجربة إلى هاتفي',
+      },
+      competitorRadar: {
+        na: 'غير متوفر',
+        title: 'رادار انتهاء الصلاحية',
+        subtitle: 'عقارات غير متصلة أو راكدة منذ أكثر من 120 يوماً',
+        removed: 'مُزال',
+        stale: 'راكد',
+        aiNote: 'ملاحظة الذكاء الاصطناعي',
+        offlineFor: 'غير متصل منذ',
+        days: 'أيام',
+        viewAll: 'عرض الكل',
+        refreshAria: 'تحديث القائمة',
+      },
+      planCards: {
+        generateNewListing: 'إنشاء إعلان جديد',
+        aiScraper: 'AI Scraper',
+        linkAnalysis: 'تحليل من رابط',
+        premiumPdfCards: 'بطاقات PDF مميزة',
+        allFreeFeatures: 'جميع ميزات Free',
+        leadScoringAi: 'Lead Scoring بالذكاء الاصطناعي',
+        perfectCopy20: 'Perfect Copy 2.0',
+        translator12Languages: 'مترجم 12 لغة',
+        allStarterFeatures: 'جميع ميزات Starter',
+        fullCrmPipeline: 'CRM كامل + مسار',
+        virtualStaging3d: 'Virtual Staging ثلاثي الأبعاد',
+        aiVoiceCallingMonthly: 'مكالمات صوتية بالذكاء الاصطناعي (30/شهر)',
+        agencyAssistantAi: 'Agency Assistant بالذكاء الاصطناعي',
+        allProFeatures: 'جميع ميزات Pro',
+        unlimitedAiVoiceCalling: 'مكالمات صوتية بالذكاء الاصطناعي غير محدودة',
+        auraVrVirtualTour: 'Aura VR: جولة افتراضية',
+        teamUpToAgents: 'فريق حتى 10 وكلاء',
+        omnichannelSuite: 'حزمة omnichannel',
+        agencyBoostTitle: 'Agency Boost',
+        agencyBoostSubtitle: 'إعداد «done-for-you»',
+        oneTime: 'دفعة لمرة واحدة',
+        boostSetupComplete: 'إعداد «done-for-you» كامل',
+        boostOnboarding: 'تنفيذ وإعداد موجَّهان',
+        boostLaunchSupport: 'دعم ممتاز للإطلاق',
+        boostCustomConfig: 'تهيئة مخصصة',
+        buyAgencyBoost: 'شراء Agency Boost',
+      },
+      onboardingChecklist: {
+        title: 'أول 5 خطوات لك',
+        subtitle:
+          'أكمل هذه القائمة للحصول على قيمة بسرعة. يمكنك إخفاؤها في أي وقت — يُحفظ التقدم في هذا المتصفح.',
+        dismiss: 'إخفاء',
+        dismissAria: 'إخفاء قائمة التهيئة',
+        progress: '{done} من {total} مكتمل',
+        allDone: 'ممتاز — أكملت كل الخطوات.',
+        steps: {
+          generate: {
+            title: 'أنشئ أول إعلان بالذكاء الاصطناعي',
+            description:
+              'ابدأ بـ Perfect Copy أو أدوات أخرى: عناوين ووصف ومتغيرات في دقائق.',
+            cta: 'فتح Perfect Copy',
+          },
+          library: {
+            title: 'احفظ إعلاناً في المكتبة',
+            description: 'احتفظ بأفضل المسودات وأعد استخدامها للبوابات أو العملاء.',
+            cta: 'فتح المكتبة',
+          },
+          pipeline: {
+            title: 'نظّم العملاء المحتملين في المسار',
+            description: 'انقل العملاء بين المراحل وتابع المتابعات.',
+            cta: 'فتح المسار',
+          },
+          billing: {
+            title: 'راجع الخطة والفوترة',
+            description: 'اطلع على خطتك النشطة وكيفية الترقية أو الفواتير.',
+            cta: 'فتح الفوترة',
+          },
+          workspace: {
+            title: 'اضبط مساحة العمل',
+            description: 'فعّل الوحدات التي تستخدمها يومياً (CRM، صوت، خرائط، وغيرها).',
+            cta: 'إعدادات مساحة العمل',
+          },
+        },
+      },
     },
+    auth: authUiAr,
+    authPasswordRecovery: authPasswordRecoveryUiAr,
+    complianceCenter: complianceCenterUiAr,
+    pendingCheckoutBanner: pendingCheckoutUiAr,
+    ariaLimitModal: ariaLimitModalUiAr,
+    dashboardNav: dashboardNavUiAr,
+    commandPaletteExtras: commandPaletteExtrasAr,
+    errorBoundaryModule: errorBoundaryModuleUiAr,
+    welcomeTour: welcomeTourUiAr,
+    onboardingWizard: onboardingWizardUiAr,
     dashboardToasts: {
-      boostActivated: '🎉 Agency Boost Activated!',
-      boostDesc: 'Done-for-you setup confirmed. Our team will contact you for onboarding.',
-      agencyActive: '🎉 Agency Intelligence Active',
-      agencyDesc: 'Premium Access Confirmed - Welcome to the PropertyPilot Global Network!',
-      paymentDone: '✅ Payment completed!',
-      paymentDesc: 'Your plan has been activated successfully.',
-      checkoutCanceled: 'Checkout canceled',
-      checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
-      limitNear: '⚠️ Limit almost reached!',
-      limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      boostActivated: 'تم تفعيل Agency Boost',
+      boostDesc: 'تم تأكيد الإعداد «done-for-you». سيتواصل فريقنا معك لإكمال الإعداد.',
+      agencyActive: 'Agency Intelligence نشطة',
+      agencyDesc: 'تم تأكيد الوصول المميز. أهلاً بك في شبكة PropertyPilot العالمية!',
+      paymentDone: 'اكتمل الدفع',
+      paymentDesc: 'تم تفعيل خطتك بنجاح.',
+      checkoutCanceled: 'تم إلغاء الدفع',
+      checkoutCanceledDesc: 'يمكنك المحاولة مرة أخرى في أي وقت من صفحة الفوترة.',
+      limitNear: 'اقتربت من الحد',
+      limitNearDesc: 'استخدمت {used} من أصل {lim} إعلان شهري (أكثر من 80%). فكّر بالترقية للمتابعة.',
+      complianceReminderTitle: 'استخدام متوافق',
+      complianceReminderDesc:
+        'عالج بيانات العملاء وفق GDPR والأنظمة المعمول بها. التوثيق: صفحة الامتثال في الموقع.',
+      connectivityIssueTitle: 'الخادم أو Supabase لا يستجيب',
+      connectivityIssueDesc:
+        'أعد تحميل الصفحة. إذا استمر الأمر: تحقق من الشبكة/VPN/الجدار الناري وNEXT_PUBLIC_SUPABASE_URL في .env.local وتشغيل npm run dev.',
     },
     auraVR: {
       title: 'مولد Aura VR',
@@ -2691,24 +6219,71 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       },
       aria: {
         message: 'آريا: عمل رائع!',
-        stats: 'هذا المسح سيجذب',
-        action: 'زيارات إضافية. هل تريد أن أرسله إلى عملائك المحتملين؟',
+        visitsSentence: 'قد يزيد هذا المسح من الزيارات حتى {pct}٪.',
+        followUp: 'هل تريد مشاركته مع أهم العملاء المحتملين؟',
+        tripleNote:
+          'منظور ثلاثي: Drone وCinematic Walk و360° Panorama — معيار مميز لجولات VR غامرة.',
       },
+      toast: {
+        copySuccessTitle: 'تم نسخ الرابط',
+        copySuccessDesc: 'رابط VR في الحافظة.',
+        copyErrorTitle: 'خطأ',
+        copyErrorDesc: 'تعذر نسخ الرابط.',
+      },
+      tripleView: {
+        title: 'منظور ثلاثي — معيار فاخر',
+        subtitle: 'اختر طريقة عرض الجولة',
+      },
+      views: {
+        drone: { title: 'وضع الطائرة', description: 'منظر جوي / السياق' },
+        cinematic: { title: 'Cinematic walk', description: 'مسار سلس بين الغرف' },
+        panorama: { title: 'بانوراما 360°', description: 'عرض غامر' },
+      },
+      preview: {
+        drone: 'Drone — منظر جوي',
+        cinematic: 'Cinematic walk — مسار سلس',
+        panorama: '360° — غمر كامل',
+        default: 'جولة VR غامرة',
+      },
+      listingFallback: 'عقار',
+      whatsappVrBody:
+        'مرحباً! إليك جولة VR غامرة:\n\n{link}\n\nافتح الرابط على هاتفك لاستكشاف العقار.',
     },
-    common: {
-      copy: 'نسخ',
-      share: 'مشاركة',
-      send: 'إرسال',
-      cancel: 'إلغاء',
-      confirm: 'تأكيد',
-      save: 'حفظ',
-      delete: 'حذف',
-      edit: 'تعديل',
-      view: 'عرض',
+    virtualStaging: {
+      cardTitle: 'AI Virtual Staging',
+      sendWhatsApp: 'إرسال التصميم عبر واتساب',
+      originalPhoto: 'الصورة الأصلية',
+      afterVisionTitle: 'الرؤية بعد التجهيز (ذكاء اصطناعي)',
+      afterVisionSubtitle: 'داخلية عصرية فاخرة',
+      generatePrompt: 'أنشئ الرؤية ثلاثية الأبعاد للمقارنة',
+      generating: 'الذكاء الاصطناعي يجهز العقار…',
+      generateCta: 'إنشاء رؤية ثلاثية الأبعاد',
+      successBanner: 'الرؤية جاهزة. اسحب المنزلق للمقارنة قبل وبعد.',
+      premiumRequiredTitle: 'خطة Premium مطلوبة',
+      premiumRequiredDesc:
+        'التجهيز الافتراضي ثلاثي الأبعاد ميزة Premium. ترقية إلى PRO أو AGENCY للفتح.',
+      calibrationTitle: 'جاري المعايرة',
+      calibrationDesc: 'أعد المحاولة بعد لحظات.',
     },
+    prospectingModals: prospectingModalsUiAr,
+    errors: errorsUiAr,
+    common: commonFullAr,
+    devTestError: devTestErrorUiAr,
+    billing: billingUiAr,
+    demo: demoUiAr,
+    contact: contactUiAr,
+    marketingAbout: marketingAboutUiAr,
+    marketingBlog: marketingBlogUiAr,
+    marketingFeatures: marketingFeaturesUiAr,
+    blogPostPage: blogPostPageUiAr,
+    pricingPagePlans: pricingPagePlansUiAr,
+    docsHub: docsHubUiAr,
+    privacyPolicyPage: privacyPolicyPageUiAr,
+    termsPolicyPage: termsPolicyPageUiAr,
+    refundPolicyPage: refundPolicyPageUiAr,
     landing: {
       nav: {
-        tagline: 'Pilot Your Agency to the Next Level',
+        tagline: 'ارتقِ بوكالتك إلى المستوى التالي',
         features: 'المميزات',
         pricing: 'الأسعار',
         compliance: 'الامتثال',
@@ -2727,11 +6302,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         ctaStart: 'ابدأ مجاناً',
         ctaDemo: 'شاهد العرض التوضيحي',
         trustedBy: 'متوافق مع البوابات الرئيسية',
+        trustedPortalLogos: ['Idealista', 'Immobiliare.it', 'Zillow', 'MLS'],
         stats: {
           automation: 'الأتمتة',
           listingsPerDay: 'إعلان/يوم',
           conversionRate: 'معدل التحويل',
         },
+        statsValues: {
+          automation: '24/7',
+          listingsPerDay: '1000+',
+          conversionRate: '80٪',
+        },
+        signupAriaLabel: 'التسجيل في PropertyPilot AI',
+        demoDashboardAriaLabel: 'عرض لوحة التحكم التجريبية',
       },
       features: {
         title: 'لماذا PropertyPilot AI?',
@@ -2740,16 +6323,19 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'محرك الإعلانات الذكي',
           description: 'أنشئ إعلانات احترافية في ثوانٍ بأنماط مخصصة (الفاخر، الاستثماري، الاحترافي القياسي). متعدد اللغات ومحسّن لـ Zillow و Idealista و Immobiliare.',
           benefit: 'وفر 5 ساعات أسبوعياً في كتابة الإعلانات',
+          cta: 'جرّب مجاناً',
         },
         crmAI: {
           title: 'ذكاء CRM الذكي',
           description: 'تقييم العملاء المحتملين تلقائياً، متابعة ذكية متعددة القنوات (واتساب، بريد إلكتروني، رسائل نصية). تصنف العملاء المحتملين الساخنين/الدافئين/الباردين وتقترح إجراءات أولوية.',
           benefit: 'زِد التحويلات بنسبة 40% مع تحديد الأولويات الذكي',
+          cta: 'اذهب إلى CRM',
         },
         globalReach: {
           title: 'الوصول العالمي',
           description: 'نعمل في الولايات المتحدة (Zillow و MLS) وإيطاليا (Idealista و Immobiliare) وإسبانيا (Idealista.es). مصطلحات محلية وأشكال سوق.',
           benefit: 'وسّع عملك في 3 قارات',
+          cta: 'اكتشف الاستطلاع',
         },
       },
       searchEngine: {
@@ -2758,6 +6344,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         exclusive: 'حصرياً',
         exclusiveInPlan: 'في خطة AGENCY',
         benefit: 'وفر 20 ساعة من المكالمات الهاتفية أسبوعياً',
+        stepLabel: 'الخطوة {n}',
+        prospectingCycleCta: 'ابدأ دورة Scraper → Voice AI → CRM',
         step1: {
           title: 'المسح الشامل',
           description: 'يُمسح الذكي تلقائياً Idealista و Immobiliare و Zillow و MLS على مدار الساعة، ويجد آلاف الإعلانات كل يوم.',
@@ -2767,6 +6355,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           title: 'التصفية الذكية',
           description: 'يحصل كل إعلان على تقييم عميل محتمل ذكي (0-100). يتم اختيار "الصفقات المميزة" (80+) فقط للمكالمات.',
           status: 'تم اكتشاف صفقة مميزة',
+          demoScoreLabel: '{score}/{max}',
         },
         step3: {
           title: 'المكالمة التلقائية',
@@ -2894,6 +6483,21 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
           chooseStarter: 'اختر Starter',
           choosePro: 'اختر Pro',
           chooseAgency: 'اختر Agency',
+        },
+        tableCells: {
+          multiUserAgency: 'حتى 10 وكلاء',
+          voiceCallingPro: '30/شهر',
+        },
+        agencyBoost: {
+          productName: 'Agency Boost',
+          badgePremium: 'خدمة مميزة',
+          tierTitanium: 'Titanium',
+          description: 'حزمة إعداد جاهزة مع دعم مخصص وتجربة انضمام مميزة',
+          bullet1: 'إعداد كامل جاهز',
+          bullet2: 'تنفيذ وإعداد موجه',
+          bullet3: 'دعم مميز للإطلاق',
+          oneTimePayment: 'دفعة واحدة',
+          cta: 'احصل على Agency Boost',
         },
       },
       cta: {

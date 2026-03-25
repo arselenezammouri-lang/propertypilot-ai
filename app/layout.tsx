@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
@@ -10,126 +9,25 @@ import { Providers } from "@/components/providers";
 import { DemoModal } from "@/components/demo-modal";
 import { PerformanceMonitor } from "@/components/performance-monitor";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
-import { ErrorBoundary } from "@/components/error-boundary";
+import { LocalizedErrorBoundary } from "@/components/error-boundary";
 import { CommandPalette } from "@/components/command-palette";
 import { DisableServiceWorker } from "@/components/disable-service-worker";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { SkipToContent } from "@/components/skip-to-content";
 import { HtmlLangDir } from "@/components/html-lang-dir";
-import type { Locale } from "@/lib/i18n/config";
 import { getBaseUrl } from "@/lib/env";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
+import { getTranslation } from "@/lib/i18n/dictionary";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { SEO_APP_NAME, buildRootSiteMetadata } from "@/lib/i18n/root-site-metadata";
 
 export const dynamic = 'force-dynamic';
 
-const LOCALE_TO_OG: Record<Locale, string> = {
-  it: 'it_IT',
-  en: 'en_US',
-  es: 'es_ES',
-  fr: 'fr_FR',
-  de: 'de_DE',
-  ar: 'ar_AE',
-  pt: 'pt_PT',
-};
-
-const LOCALES: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'ar', 'pt'];
-
 const APP_URL = getBaseUrl();
-const APP_NAME = 'PropertyPilot AI';
-const APP_DESCRIPTION = 'The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups. Built for agents and teams in the US, Europe, and beyond.';
-const SUPPORT_EMAIL = 'support@propertypilotai.com';
-const SALES_EMAIL = 'sales@propertypilotai.com';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get('propertypilot_locale')?.value;
-  const locale: Locale = localeCookie && LOCALES.includes(localeCookie as Locale) ? (localeCookie as Locale) : 'en';
-  const ogLocale = LOCALE_TO_OG[locale];
-
-  return {
-    metadataBase: new URL(getBaseUrl()),
-    title: {
-      default: `${APP_NAME} - The Real Estate Operating System | AI-Powered Property Platform`,
-      template: `%s | ${APP_NAME}`,
-    },
-    description: APP_DESCRIPTION,
-    keywords: [
-      "AI Real Estate Operating System",
-      "Zillow Voice AI automation",
-      "Idealista Prospecting AI",
-      "real estate AI",
-      "property listing generator",
-      "real estate CRM",
-      "AI listing writer",
-      "MLS listing generator",
-      "Zillow listing AI",
-      "real estate automation",
-      "lead management software",
-      "PropertyPilot AI",
-      "real estate marketing",
-      "property description generator",
-      "real estate agents tools",
-      "immobiliare AI",
-      "Idealista",
-      "AI real estate agent",
-      "automated property descriptions",
-      "real estate lead scoring",
-      "AI property valuation",
-      "real estate voice AI",
-      "property AI assistant",
-      "Casa.it AI",
-      "Subito.it automation",
-      "Redfin AI tools",
-      "Realtor.com automation",
-    ],
-    authors: [{ name: APP_NAME, url: APP_URL }],
-    creator: APP_NAME,
-    publisher: APP_NAME,
-    formatDetection: {
-      email: false,
-      address: false,
-      telephone: false,
-    },
-    openGraph: {
-      type: 'website',
-      locale: ogLocale,
-      url: APP_URL,
-      title: `${APP_NAME} - AI Operating System for Real Estate`,
-      description: APP_DESCRIPTION,
-      siteName: APP_NAME,
-      images: [
-        {
-          url: `${APP_URL}/og-image.png`,
-          width: 1200,
-          height: 630,
-          alt: `${APP_NAME} - AI for Real Estate Agencies`,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${APP_NAME} - AI Operating System for Real Estate`,
-      description: APP_DESCRIPTION,
-      creator: '@PropertyPilotAI',
-      images: [`${APP_URL}/og-image.png`],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
-    verification: {
-      google: process.env.GOOGLE_SITE_VERIFICATION,
-    },
-    alternates: {
-      canonical: APP_URL,
-      languages: Object.fromEntries(LOCALES.map((l) => [l, APP_URL])) as Record<string, string>,
-    },
-  };
+  const locale = await getServerLocaleFromCookies();
+  return buildRootSiteMetadata(locale as SupportedLocale);
 }
 
 export const viewport = {
@@ -138,16 +36,20 @@ export const viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getServerLocaleFromCookies();
+  const hero = getTranslation(locale as SupportedLocale).landing!.hero;
+  const jsonLdDescription = `${hero.subtitle} ${hero.poweredBy}`.replace(/\s+/g, ' ').trim();
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: APP_NAME,
-    description: APP_DESCRIPTION,
+    name: SEO_APP_NAME,
+    description: jsonLdDescription,
     url: APP_URL,
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
@@ -167,19 +69,26 @@ export default function RootLayout({
     },
     author: {
       '@type': 'Organization',
-      name: APP_NAME,
+      name: SEO_APP_NAME,
       url: APP_URL,
     },
     areaServed: ['United States', 'Canada', 'Italy', 'Spain', 'Portugal', 'France', 'United Kingdom', 'Germany'],
-    availableLanguage: ['English', 'Italian', 'Spanish', 'Portuguese', 'French', 'German'],
+    availableLanguage: ['English', 'Italian', 'Spanish', 'Portuguese', 'French', 'German', 'Arabic'],
   };
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var h=typeof location!=='undefined'&&location.hostname;var l=h&&/^localhost$|^127\\.0\\.0\\.1$|^\\[::1\\]$|^::1$/i.test(h);if(!l||typeof navigator==='undefined'||!('serviceWorker'in navigator))return;navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});});if('caches'in window)caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});});})();`,
+          }}
+        />
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
-        <link rel="manifest" href="/manifest.json" />
+        {process.env.NODE_ENV === 'production' ? (
+          <link rel="manifest" href="/manifest.json" />
+        ) : null}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="PropertyPilot" />
@@ -204,14 +113,16 @@ export default function RootLayout({
               defaultTheme="dark"
               storageKey="propertypilot-theme"
             >
-              <PerformanceMonitor />
-              <DisableServiceWorker />
-              <ErrorBoundary>
-                {children}
-              </ErrorBoundary>
-              <Toaster />
-              <DemoModal />
-              <CommandPalette />
+              <TooltipProvider delayDuration={300} skipDelayDuration={0}>
+                <PerformanceMonitor />
+                <DisableServiceWorker />
+                <LocalizedErrorBoundary>
+                  {children}
+                </LocalizedErrorBoundary>
+                <Toaster />
+                <DemoModal />
+                <CommandPalette />
+              </TooltipProvider>
             </ThemeProvider>
           </LocaleProvider>
         </Providers>

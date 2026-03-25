@@ -19,12 +19,14 @@ export function ThemeToggle() {
       <Button
         variant="ghost"
         size="sm"
-        className="relative overflow-hidden group gap-2 border border-white/[0.08] hover:border-white/20 transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="relative overflow-hidden group gap-2 border border-white/[0.08] hover:border-white/20 transition-all h-11 min-h-11 px-3 touch-manipulation focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         aria-label="Toggle theme"
         suppressHydrationWarning
       >
         <Moon className="h-4 w-4 text-purple-400" suppressHydrationWarning />
-        <span className="text-xs font-medium hidden sm:inline" suppressHydrationWarning>Ombra</span>
+        <span className="text-xs font-medium hidden sm:inline" suppressHydrationWarning>
+          Tema
+        </span>
       </Button>
     );
   }
@@ -36,14 +38,14 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative overflow-hidden group gap-2 border border-white/[0.08] hover:border-white/20 transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+      className="relative overflow-hidden group gap-2 border border-white/[0.08] hover:border-white/20 transition-all h-11 min-h-11 px-3 touch-manipulation focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       data-testid="button-theme-toggle"
       aria-label="Toggle theme"
     >
       {isDark ? (
         <>
           <Moon className="h-4 w-4 text-purple-400" />
-          <span className="text-xs font-medium hidden sm:inline">Ombra</span>
+          <span className="text-xs font-medium hidden sm:inline">Scuro</span>
         </>
       ) : (
         <>

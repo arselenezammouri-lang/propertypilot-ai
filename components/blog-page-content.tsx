@@ -1,55 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { FileText, ArrowRight } from "lucide-react";
 
 export function BlogPageContent() {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
-
-  const posts = isItalian
-    ? [
-        {
-          slug: "come-scrivere-annunci-che-convertono",
-          title: "Come scrivere annunci che convertono",
-          excerpt: "5 regole d'oro per annunci immobiliari che generano contatti.",
-          date: "2024-12",
-        },
-        {
-          slug: "ai-per-agenzie-immobiliari",
-          title: "AI per agenzie immobiliari: guida pratica",
-          excerpt: "Come integrare l'intelligenza artificiale nel tuo flusso di lavoro.",
-          date: "2024-11",
-        },
-        {
-          slug: "crm-immobiliare-automatizzato",
-          title: "CRM immobiliare automatizzato",
-          excerpt: "Riduci il lavoro manuale e non perdere mai un lead.",
-          date: "2024-10",
-        },
-      ]
-    : [
-        {
-          slug: "come-scrivere-annunci-che-convertono",
-          title: "How to write listings that convert",
-          excerpt: "5 golden rules for property listings that generate leads.",
-          date: "2024-12",
-        },
-        {
-          slug: "ai-per-agenzie-immobiliari",
-          title: "AI for real estate agencies: practical guide",
-          excerpt: "How to integrate artificial intelligence into your daily workflow.",
-          date: "2024-11",
-        },
-        {
-          slug: "crm-immobiliare-automatizzato",
-          title: "Automated real estate CRM",
-          excerpt: "Reduce manual work and never lose a lead again.",
-          date: "2024-10",
-        },
-      ];
+  const t = useMemo(() => getTranslation(locale as SupportedLocale).marketingBlog, [locale]);
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -60,17 +20,18 @@ export function BlogPageContent() {
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold">
-              Blog <span className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">PropertyPilot AI</span>
+              Blog{" "}
+              <span className="bg-gradient-to-r from-[#9333ea] to-[#06b6d4] bg-clip-text text-transparent">
+                PropertyPilot AI
+              </span>
             </h1>
-            <p className="text-white/60 mt-1">
-              {isItalian ? "Guide, tips e risorse per agenti immobiliari" : "Guides, tips, and resources for real estate agents"}
-            </p>
+            <p className="text-white/60 mt-1">{t.subtitle}</p>
           </div>
         </div>
       </div>
 
       <div className="space-y-6">
-        {posts.map((post) => (
+        {t.posts.map((post) => (
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
@@ -78,9 +39,7 @@ export function BlogPageContent() {
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-white group-hover:text-[#9333ea] transition-colors">
-                  {post.title}
-                </h2>
+                <h2 className="text-lg font-semibold text-white group-hover:text-[#9333ea] transition-colors">{post.title}</h2>
                 <p className="text-white/60 text-sm mt-2">{post.excerpt}</p>
                 <span className="text-white/40 text-xs mt-2 block">{post.date}</span>
               </div>
@@ -91,12 +50,10 @@ export function BlogPageContent() {
       </div>
 
       <div className="mt-12 text-center">
-        <p className="text-white/50 text-sm">
-          {isItalian ? "Altri articoli in arrivo. Resta sintonizzato!" : "More articles are coming soon. Stay tuned!"}
-        </p>
+        <p className="text-white/50 text-sm">{t.comingSoon}</p>
         <Link href="/" className="mt-4 inline-block">
           <Button variant="outline" className="border-white/10 text-white hover:bg-white/5 mt-4">
-            {isItalian ? "Torna alla Home" : "Back to Home"}
+            {t.backHome}
           </Button>
         </Link>
       </div>

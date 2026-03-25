@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,19 +12,35 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAPIErrorHandler } from "@/components/error-boundary";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
-import { 
-  Sparkles, 
+import { getTranslation } from "@/lib/i18n/dictionary";
+import type { RefineListingToneIconKey, RefineListingTxIconKey } from "@/lib/i18n/refine-listing-page-ui";
+import { fetchApi } from "@/lib/api/client";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
+import {
+  Sparkles,
   Briefcase,
   Heart,
   Crown,
   Search,
-  Copy, 
-  Check, 
+  Copy,
+  Check,
   Loader2,
   ArrowLeft,
   AlertCircle,
   Wand2,
-  FileText
+  FileText,
+  Tag,
+  KeyRound,
+  Palmtree,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -45,6 +61,19 @@ interface RefineListingResult {
   cached?: boolean;
 }
 
+const REFINE_TX_ICON: Record<RefineListingTxIconKey, typeof Tag> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const REFINE_TONE_ICON: Record<RefineListingToneIconKey, typeof Briefcase> = {
+  briefcase: Briefcase,
+  heart: Heart,
+  crown: Crown,
+  search: Search,
+};
+
 interface FormData {
   tipoTransazione: string;
   originalText: string;
@@ -55,7 +84,8 @@ interface FormData {
 
 export default function RefineListingPage() {
   const { locale } = useLocaleContext();
-  const isItalian = locale === "it";
+  const feedbackLocale = locale;
+  const usage = useUsageLimits();
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
   const [isLoading, setIsLoading] = useState(false);
@@ -63,81 +93,43 @@ export default function RefineListingPage() {
   const [activeTab, setActiveTab] = useState("professional");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const t = {
-    textTooShort: isItalian ? "Testo troppo breve" : "Text too short",
-    textTooShortDesc: isItalian ? "L'annuncio originale deve avere almeno 50 caratteri" : "The original listing must be at least 50 characters",
-    required: isItalian ? "Campo obbligatorio" : "Required field",
-    propertyTypeRequired: isItalian ? "Inserisci il tipo di immobile" : "Enter the property type",
-    locationRequired: isItalian ? "Inserisci la località" : "Enter the location",
-    rateLimit: isItalian ? "Limite raggiunto" : "Rate limit reached",
-    rateLimitDesc: isItalian ? "Troppi tentativi. Riprova tra un minuto." : "Too many attempts. Try again in a minute.",
-    accessDenied: isItalian ? "Accesso negato" : "Access denied",
-    loginRequired: isItalian ? "Devi effettuare il login per usare questa funzione." : "You need to log in to use this feature.",
-    refineError: isItalian ? "Errore nel raffinamento" : "Refinement error",
-    success: isItalian ? "Annuncio raffinato!" : "Listing refined!",
-    cacheResult: isItalian ? "Risultato dalla cache (24h)" : "Result from cache (24h)",
-    ready4: isItalian ? "4 versioni migliorate pronte all'uso" : "4 improved versions ready to use",
-    error: isItalian ? "Errore" : "Error",
-    copied: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Testo copiato negli appunti" : "Text copied to clipboard",
-    copyFailed: isItalian ? "Impossibile copiare il testo" : "Unable to copy text",
-    back: isItalian ? "Torna alla Dashboard" : "Back to Dashboard",
-    pageSubtitle: isItalian ? "Raffina e migliora completamente i tuoi annunci esistenti" : "Refine and improve your existing listings",
-    listingToImprove: isItalian ? "Annuncio da Migliorare" : "Listing to Improve",
-    listingToImproveDesc: isItalian ? "Incolla il tuo annuncio esistente e lascia che l'AI lo perfezioni" : "Paste your existing listing and let AI perfect it",
-    listingType: isItalian ? "Tipo Annuncio" : "Listing Type",
-    selectTransaction: isItalian ? "Seleziona tipo transazione" : "Select transaction type",
-    originalText: isItalian ? "Testo Annuncio Originale *" : "Original Listing Text *",
-    originalPlaceholder: isItalian ? "Incolla qui il tuo annuncio esistente che vuoi migliorare... (min 50 caratteri)" : "Paste your existing listing to improve... (min 50 characters)",
-    chars: isItalian ? "caratteri" : "characters",
-    propertyType: isItalian ? "Tipo Immobile *" : "Property Type *",
-    propertyTypePlaceholder: isItalian ? "es. Appartamento" : "e.g. Apartment",
-    location: isItalian ? "Località *" : "Location *",
-    locationPlaceholder: isItalian ? "es. Milano Centro" : "e.g. Downtown",
-    preferredTone: isItalian ? "Tono Preferito" : "Preferred Tone",
-    selectTone: isItalian ? "Seleziona tono" : "Select tone",
-    refining: isItalian ? "Raffinamento in corso..." : "Refining...",
-    refineButton: isItalian ? "Perfeziona Annuncio" : "Perfect Listing",
-    noResult: isItalian ? "Nessun annuncio raffinato" : "No refined listing",
-    noResultDesc: isItalian ? 'Incolla il tuo annuncio esistente e clicca "Perfeziona" per generare 4 versioni migliorate: Professional, Emotional, Luxury e SEO.' : 'Paste your existing listing and click "Perfect" to generate 4 improved versions: Professional, Emotional, Luxury and SEO.',
-    version: isItalian ? "Versione" : "Version",
-    copyAll: isItalian ? "Copia Tutto" : "Copy All",
-    improvedTitle: isItalian ? "Titolo Migliorato" : "Improved Title",
-    improvedDesc: isItalian ? "Descrizione Migliorata" : "Improved Description",
-    highlights5: isItalian ? "✨ 5 Highlights" : "✨ 5 Highlights",
-    ctaImproved: isItalian ? "🎯 CTA Migliorata" : "🎯 Improved CTA",
-    metaSeo: isItalian ? "Meta Description SEO" : "Meta Description SEO",
-    originalAnalysis: isItalian ? "Analisi Annuncio Originale" : "Original Listing Analysis",
-    highlightsHeading: isItalian ? "HIGHLIGHTS:" : "HIGHLIGHTS:",
-    ctaHeading: isItalian ? "CTA:" : "CTA:",
-    metaHeading: isItalian ? "META DESCRIPTION:" : "META DESCRIPTION:",
-  };
+  const dash = useMemo(() => getTranslation(locale).dashboard, [locale]);
+  const t = dash.refineListingPage;
 
-  const tipoTransazioneOptions = isItalian
-    ? [
-        { value: "vendita", label: "Vendita", icon: "🏷️" },
-        { value: "affitto", label: "Affitto", icon: "🔑" },
-        { value: "affitto_breve", label: "Affitto Breve / Turistico", icon: "🏖️" },
-      ]
-    : [
-        { value: "vendita", label: "Sale", icon: "🏷️" },
-        { value: "affitto", label: "Rent", icon: "🔑" },
-        { value: "affitto_breve", label: "Short-term / Vacation Rent", icon: "🏖️" },
-      ];
-
-  const refineTabs = isItalian
-    ? [
-        { id: "professional", label: "Professional", icon: Briefcase, description: "Autorevole e credibile", gradient: "from-blue-500 to-indigo-500" },
-        { id: "emotional", label: "Emotional", icon: Heart, description: "Coinvolgente ed evocativo", gradient: "from-rose-500 to-pink-500" },
-        { id: "luxury", label: "Luxury", icon: Crown, description: "Esclusivo e raffinato", gradient: "from-amber-500 to-yellow-500" },
-        { id: "seo", label: "SEO Boosted", icon: Search, description: "Ottimizzato per Google", gradient: "from-emerald-500 to-teal-500" },
-      ] as const
-    : [
-        { id: "professional", label: "Professional", icon: Briefcase, description: "Authoritative and credible", gradient: "from-blue-500 to-indigo-500" },
-        { id: "emotional", label: "Emotional", icon: Heart, description: "Engaging and evocative", gradient: "from-rose-500 to-pink-500" },
-        { id: "luxury", label: "Luxury", icon: Crown, description: "Exclusive and refined", gradient: "from-amber-500 to-yellow-500" },
-        { id: "seo", label: "SEO Boosted", icon: Search, description: "Optimized for Google", gradient: "from-emerald-500 to-teal-500" },
-      ] as const;
+  const refineTabs = useMemo(
+    () =>
+      [
+        {
+          id: "professional" as const,
+          label: t.refineTabs[0].label,
+          icon: Briefcase,
+          description: t.refineTabs[0].description,
+          gradient: "from-blue-500 to-indigo-500",
+        },
+        {
+          id: "emotional" as const,
+          label: t.refineTabs[1].label,
+          icon: Heart,
+          description: t.refineTabs[1].description,
+          gradient: "from-rose-500 to-pink-500",
+        },
+        {
+          id: "luxury" as const,
+          label: t.refineTabs[2].label,
+          icon: Crown,
+          description: t.refineTabs[2].description,
+          gradient: "from-amber-500 to-yellow-500",
+        },
+        {
+          id: "seo" as const,
+          label: t.refineTabs[3].label,
+          icon: Search,
+          description: t.refineTabs[3].description,
+          gradient: "from-emerald-500 to-teal-500",
+        },
+      ] as const,
+    [t.refineTabs]
+  );
 
   const [formData, setFormData] = useState<FormData>({
     tipoTransazione: "vendita",
@@ -153,29 +145,20 @@ export default function RefineListingPage() {
 
   const handleSubmit = async () => {
     if (!formData.originalText.trim() || formData.originalText.length < 50) {
-      toast({
-        title: t.textTooShort,
-        description: t.textTooShortDesc,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.textTooShortDesc);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.propertyType.trim()) {
-      toast({
-        title: t.required,
-        description: t.propertyTypeRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.propertyTypeRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
     if (!formData.location.trim()) {
-      toast({
-        title: t.required,
-        description: t.locationRequired,
-        variant: "destructive",
-      });
+      const v = validationToast(feedbackLocale, "refineListing", t.locationRequired);
+      toast({ title: v.title, description: v.description, variant: "destructive" });
       return;
     }
 
@@ -183,44 +166,33 @@ export default function RefineListingPage() {
     setResult(null);
 
     try {
-      const response = await fetch("/api/refine-listing", {
+      const res = await fetchApi<RefineListingResult>("/api/refine-listing", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          toast({
-            title: t.rateLimit,
-            description: data.message || t.rateLimitDesc,
-            variant: "destructive",
-          });
-          return;
-        }
-        if (response.status === 401) {
-          toast({
-            title: t.accessDenied,
-            description: t.loginRequired,
-            variant: "destructive",
-          });
-          return;
-        }
-        throw new Error(data.error || t.refineError);
+      if (!res.success) {
+        const fail = apiFailureToast(feedbackLocale, "refineListing", {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, t.refineError);
+        toast({ title: fail.title, description: fail.description, variant: "destructive" });
+        return;
       }
 
+      const data = res.data as RefineListingResult;
       setResult(data);
       setActiveTab("professional");
       toast({
-        title: t.success,
+        title: t.successTitle,
         description: data.cached ? t.cacheResult : t.ready4,
       });
     } catch (error) {
+      const net = networkFailureToast(feedbackLocale, "refineListing");
       toast({
-        title: t.error,
-        description: handleAPIError(error, t.refineError),
+        title: net.title,
+        description: handleAPIError(error, net.description),
         variant: "destructive",
       });
     } finally {
@@ -238,20 +210,17 @@ export default function RefineListingPage() {
       });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({
-        title: t.error,
-        description: t.copyFailed,
-        variant: "destructive",
-      });
+      const c = clipboardFailureToast(feedbackLocale, "refineListing", t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: "destructive" });
     }
   };
 
   const copyFullListing = (listing: RefinedListing, version: string) => {
     const fullText = `${listing.titolo}\n\n` +
       `${listing.descrizione}\n\n` +
-      `✨ ${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
-      `🎯 ${t.ctaHeading} ${listing.cta}\n\n` +
-      `📝 ${t.metaHeading}\n${listing.metaDescription}`;
+      `${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
+      `${t.ctaHeading} ${listing.cta}\n\n` +
+      `${t.metaHeading}\n${listing.metaDescription}`;
     
     copyToClipboard(fullText, `full-${version}`);
   };
@@ -397,31 +366,39 @@ export default function RefineListingPage() {
     );
   };
 
-  return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
-      <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors" aria-label={t.back}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t.back}
-        </Link>
-      </div>
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? dash.planAgency
+      : usage.plan === "pro"
+        ? dash.planPro
+        : usage.plan === "starter"
+          ? dash.planStarter
+          : dash.planFree;
 
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 text-white">
-          <Sparkles className="h-8 w-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-transparent">
-            Perfect Again AI
-          </h1>
-          <p className="text-muted-foreground">
-            {t.pageSubtitle}
-          </p>
-        </div>
-        <Badge className="ml-auto bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0">
-          ✨ Perfect Again AI
-        </Badge>
-      </div>
+  return (
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        aria-label={t.back}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.back}
+      </Link>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
+        actions={
+          <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 text-xs">
+            <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {t.heroBadge}
+          </Badge>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-1 border-2 border-violet-200 dark:border-violet-800">
@@ -445,14 +422,17 @@ export default function RefineListingPage() {
                   <SelectValue placeholder={t.selectTransaction} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipoTransazioneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {t.transactionOptions.map((option) => {
+                    const TxIcon = REFINE_TX_ICON[option.iconKey];
+                    return (
+                      <SelectItem key={option.value} value={option.value}>
+                        <span className="flex items-center gap-2">
+                          <TxIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{option.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -508,10 +488,17 @@ export default function RefineListingPage() {
                   <SelectValue placeholder={t.selectTone} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="professional">💼 Professional</SelectItem>
-                  <SelectItem value="emotional">💗 Emotional</SelectItem>
-                  <SelectItem value="luxury">👑 Luxury</SelectItem>
-                  <SelectItem value="seo">🔍 SEO Boosted</SelectItem>
+                  {t.toneSelectItems.map((item) => {
+                    const ToneIcon = REFINE_TONE_ICON[item.iconKey];
+                    return (
+                      <SelectItem key={item.value} value={item.value}>
+                        <span className="flex items-center gap-2">
+                          <ToneIcon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                          <span>{item.label}</span>
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -623,6 +610,6 @@ export default function RefineListingPage() {
           )}
         </div>
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }

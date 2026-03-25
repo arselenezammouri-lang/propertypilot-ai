@@ -38,7 +38,7 @@ export function LanguageSelector() {
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all min-h-[36px] focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="gap-2 border border-white/[0.08] hover:border-white/20 transition-all h-11 min-h-11 px-3 touch-manipulation focus-visible:ring-2 focus-visible:ring-royal-purple focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           data-testid="button-language-selector"
         >
           <Languages className="h-4 w-4" />
@@ -54,7 +54,7 @@ export function LanguageSelector() {
           <DropdownMenuItem
             key={option.value}
             onClick={() => handleSelect(option.value)}
-            className={`flex items-center gap-3 cursor-pointer ${
+            className={`min-h-11 py-2.5 flex items-center gap-3 cursor-pointer touch-manipulation ${
               locale === option.value ? 'bg-primary/20 text-primary' : ''
             }`}
           >

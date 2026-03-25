@@ -1,7 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useLocale } from '@/lib/i18n/locale-context';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
+import { FieldHelpLabel } from '@/components/field-help-label';
+import { ToolPageTwoColumnSkeleton } from '@/components/ui/skeleton-loaders';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,15 +20,22 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { useAPIErrorHandler } from '@/components/error-boundary';
-import { 
-  Sparkles, 
-  Loader2, 
-  Copy, 
-  Check, 
-  Building2, 
-  MapPin, 
-  Users, 
-  Wallet, 
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
+import {
+  Sparkles,
+  Loader2,
+  Copy,
+  Check,
+  Building2,
+  Building,
+  MapPin,
+  Users,
+  Wallet,
   Megaphone,
   Target,
   Search,
@@ -31,8 +45,42 @@ import {
   Heart,
   Zap,
   Gem,
-  ArrowLeft
+  ArrowLeft,
+  Rocket,
+  Tag,
+  KeyRound,
+  Palmtree,
+  TrendingUp,
+  GraduationCap,
+  Briefcase,
+  Umbrella,
+  Globe,
+  Plane,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type {
+  PerfectCopyTargetIconKey,
+  PerfectCopyTransactionIconKey,
+} from '@/lib/i18n/perfect-copy-page-ui';
+
+const PERFECT_COPY_TX_ICON: Record<PerfectCopyTransactionIconKey, LucideIcon> = {
+  tag: Tag,
+  keyRound: KeyRound,
+  palmtree: Palmtree,
+};
+
+const PERFECT_COPY_TARGET_ICON: Record<PerfectCopyTargetIconKey, LucideIcon> = {
+  users: Users,
+  heart: Heart,
+  trendingUp: TrendingUp,
+  graduationCap: GraduationCap,
+  briefcase: Briefcase,
+  umbrella: Umbrella,
+  gem: Gem,
+  globe: Globe,
+  plane: Plane,
+  building: Building,
+};
 import Link from 'next/link';
 
 interface CopyVariant {
@@ -57,130 +105,35 @@ interface PerfectCopyResult {
 
 export default function PerfectCopyPage() {
   const { locale } = useLocale();
-  const isItalian = locale === 'it';
+  const feedbackLocale = locale;
   const { toast } = useToast();
   const { handleAPIError } = useAPIErrorHandler();
+  const usage = useUsageLimits();
+  const [pageReady, setPageReady] = useState(false);
 
-  const t = {
-    backToDashboard: isItalian ? 'Torna alla Dashboard' : 'Back to Dashboard',
-    heroTitle: isItalian ? 'Perfect Real Estate Copy 2.0' : 'Perfect Real Estate Copy 2.0',
-    heroBadge: isItalian ? '🚀 Power Feature' : '🚀 Power Feature',
-    heroSubtitle: isItalian
-      ? 'Genera 5 varianti professionali del tuo annuncio in un click'
-      : 'Generate 5 professional variants of your listing in one click',
-    formTitle: isItalian ? 'Dati Immobile' : 'Property Data',
-    formSubtitle: isItalian ? 'Inserisci i dettagli per generare annunci perfetti' : 'Enter details to generate perfect listings',
-    listingTypeLabel: isItalian ? 'Tipo Annuncio *' : 'Listing Type *',
-    selectListingType: isItalian ? 'Vendita o Affitto?' : 'Sale or Rental?',
-    propertyTypeLabel: isItalian ? 'Tipo Immobile *' : 'Property Type *',
-    selectPropertyType: isItalian ? 'Seleziona tipo' : 'Select type',
-    locationLabel: isItalian ? 'Zona/Località *' : 'Area/Location *',
-    locationPlaceholder: isItalian ? 'Es: Centro Storico, Milano' : 'e.g. Downtown, Miami',
-    featuresLabel: isItalian ? 'Caratteristiche Principali *' : 'Main Features *',
-    featuresPlaceholder: isItalian
-      ? 'Es: 120mq, 3 camere, 2 bagni, terrazzo, box auto, ristrutturato 2023...'
-      : 'e.g. 120sqm, 3 beds, 2 baths, terrace, parking, renovated 2023...',
-    strengthsLabel: isItalian ? 'Punti di Forza' : 'Key Strengths',
-    strengthsPlaceholder: isItalian
-      ? 'Es: Vista panoramica, silenzioso, luminoso, vicino metro...'
-      : 'e.g. Panoramic view, quiet, bright, near subway...',
-    targetLabel: isItalian ? 'Target Cliente *' : 'Target Client *',
-    selectTarget: isItalian ? 'Seleziona target' : 'Select target',
-    priceLabel: isItalian ? 'Fascia di Prezzo' : 'Price Range',
-    pricePlaceholder: isItalian ? 'Es: €350.000 - €400.000' : 'e.g. $350,000 - $400,000',
-    toneLabel: isItalian ? 'Tono Principale' : 'Main Tone',
-    portalLabel: isItalian ? 'Portale Target' : 'Target Portal',
-    variantsIncluded: isItalian ? '5 Varianti Premium Incluse' : '5 Premium Variants Included',
-    variantsDesc: isItalian ? 'Professionale, Emotivo, Breve, SEO e Luxury' : 'Professional, Emotional, Brief, SEO and Luxury',
-    generateIdle: isItalian ? 'Genera 5 Varianti' : 'Generate 5 Variants',
-    generateLoading: isItalian ? 'Generazione in corso...' : 'Generating...',
-    emptyTitle: isItalian ? 'Il tuo annuncio perfetto ti aspetta' : 'Your perfect listing awaits',
-    emptySubtitle: isItalian
-      ? 'Compila il form e genera automaticamente 5 varianti professionali: Professionale, Emotivo, Breve, SEO e Luxury.'
-      : 'Fill the form and automatically generate 5 professional variants: Professional, Emotional, Brief, SEO and Luxury.',
-    loadingTitle: isItalian ? 'Generazione AI in corso...' : 'AI Generation in progress...',
-    loadingSubtitle: isItalian ? 'Stiamo creando 5 varianti ottimizzate del tuo annuncio' : 'We are creating 5 optimized variants of your listing',
-    expertTip: isItalian ? "Consiglio dell'Esperto" : 'Expert Tip',
-    portalAdaptation: isItalian ? 'Adattamento portale:' : 'Portal adaptation:',
-    copyAll: isItalian ? 'Copia Tutto' : 'Copy All',
-    sectionTitle: isItalian ? 'Titolo' : 'Title',
-    sectionDesc: isItalian ? 'Descrizione Completa' : 'Full Description',
-    sectionHighlights: 'Highlights',
-    sectionWhy: isItalian ? 'Perché Comprarlo' : 'Why Buy It',
-    sectionCta: 'Call to Action',
-    sectionMeta: 'Meta Description SEO',
-    metaChars: isItalian ? 'caratteri' : 'characters',
-    tabPro: isItalian ? 'Pro' : 'Pro',
-    tabEmotivo: isItalian ? 'Emotivo' : 'Emotional',
-    tabBreve: isItalian ? 'Breve' : 'Brief',
-    tabSeo: 'SEO',
-    tabLuxury: 'Luxury',
-    // toasts
-    requiredFields: isItalian ? 'Campi obbligatori' : 'Required fields',
-    requiredFieldsDesc: isItalian
-      ? 'Compila tipo immobile, zona, caratteristiche e target cliente.'
-      : 'Fill in property type, location, features and target client.',
-    tooManyRequests: isItalian ? 'Troppe richieste. Riprova tra un minuto.' : 'Too many requests. Try again in a minute.',
-    errorGeneric: isItalian ? 'Errore durante la generazione' : 'Error during generation',
-    successTitle: isItalian ? '✨ Annunci generati!' : '✨ Listings generated!',
-    successDesc: isItalian ? 'Tutte le varianti sono pronte. Scegli quella perfetta per te.' : 'All variants are ready. Choose the perfect one for you.',
-    errorTitle: isItalian ? 'Errore' : 'Error',
-    copied: isItalian ? 'Copiato!' : 'Copied!',
-    copiedDesc: isItalian ? 'Testo copiato negli appunti.' : 'Text copied to clipboard.',
-    copyFailed: isItalian ? 'Impossibile copiare. Riprova.' : 'Unable to copy. Try again.',
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.perfectCopyPage,
+    [locale]
+  );
 
-  const tipoTransazione = [
-    { value: 'vendita', label: isItalian ? 'Vendita' : 'Sale', icon: '🏷️' },
-    { value: 'affitto', label: isItalian ? 'Affitto' : 'Rental', icon: '🔑' },
-    { value: 'affitto_breve', label: isItalian ? 'Affitto Breve / Turistico' : 'Short-Term / Vacation Rental', icon: '🏖️' },
-  ];
+  const errorGenericRef = useRef(t.errorGeneric);
+  errorGenericRef.current = t.errorGeneric;
 
-  const tipiImmobile = [
-    { value: 'appartamento', label: isItalian ? 'Appartamento' : 'Apartment' },
-    { value: 'casa', label: isItalian ? 'Casa Indipendente' : 'Detached House' },
-    { value: 'villa', label: 'Villa' },
-    { value: 'attico', label: isItalian ? 'Attico' : 'Penthouse' },
-    { value: 'loft', label: 'Loft' },
-    { value: 'bilocale', label: isItalian ? 'Bilocale' : '1-Bedroom Apt' },
-    { value: 'trilocale', label: isItalian ? 'Trilocale' : '2-Bedroom Apt' },
-    { value: 'monolocale', label: isItalian ? 'Monolocale' : 'Studio' },
-    { value: 'rustico', label: isItalian ? 'Rustico' : 'Rustic' },
-    { value: 'casale', label: isItalian ? 'Casale' : 'Farmhouse' },
-    { value: 'palazzo', label: isItalian ? 'Palazzo' : 'Palace / Building' },
-    { value: 'locale_commerciale', label: isItalian ? 'Locale Commerciale' : 'Commercial Space' },
-    { value: 'ufficio', label: isItalian ? 'Ufficio' : 'Office' },
-    { value: 'terreno', label: isItalian ? 'Terreno' : 'Land' },
-    { value: 'garage', label: 'Garage/Box' },
-  ];
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setPageReady(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
-  const targetCliente = [
-    { value: 'famiglie', label: isItalian ? 'Famiglie' : 'Families', icon: '👨‍👩‍👧‍👦' },
-    { value: 'giovani_coppie', label: isItalian ? 'Giovani Coppie' : 'Young Couples', icon: '💑' },
-    { value: 'investitori', label: isItalian ? 'Investitori' : 'Investors', icon: '📈' },
-    { value: 'studenti', label: isItalian ? 'Studenti / Universitari' : 'Students', icon: '🎓' },
-    { value: 'professionisti', label: isItalian ? 'Professionisti / Lavoratori' : 'Professionals', icon: '💼' },
-    { value: 'pensionati', label: isItalian ? 'Pensionati' : 'Retirees', icon: '🏖️' },
-    { value: 'luxury', label: isItalian ? 'Clientela Luxury' : 'Luxury Clients', icon: '💎' },
-    { value: 'stranieri', label: isItalian ? 'Clienti Stranieri' : 'Foreign Buyers', icon: '🌍' },
-    { value: 'turisti', label: isItalian ? 'Turisti / Vacanzieri' : 'Tourists / Vacationers', icon: '✈️' },
-    { value: 'aziende', label: isItalian ? 'Aziende / Corporate' : 'Companies / Corporate', icon: '🏢' },
-  ];
+  const planBadgeLabel =
+    usage.plan === 'agency'
+      ? t.planAgency
+      : usage.plan === 'pro'
+        ? t.planPro
+        : usage.plan === 'starter'
+          ? t.planStarter
+          : t.planFree;
 
-  const toni = [
-    { value: 'professionale', label: isItalian ? 'Professionale' : 'Professional', description: isItalian ? 'Formale e informativo' : 'Formal and informative' },
-    { value: 'emotivo', label: isItalian ? 'Emotivo' : 'Emotional', description: isItalian ? 'Coinvolgente e aspirazionale' : 'Engaging and aspirational' },
-    { value: 'luxury', label: 'Luxury', description: isItalian ? 'Esclusivo e prestigioso' : 'Exclusive and prestigious' },
-  ];
-
-  const portali = [
-    { value: 'generico', label: isItalian ? 'Generico (tutti i portali)' : 'Generic (all portals)' },
-    { value: 'immobiliare', label: 'Immobiliare.it' },
-    { value: 'idealista', label: 'Idealista.it' },
-    { value: 'casa', label: 'Casa.it' },
-    { value: 'subito', label: 'Subito.it' },
-    { value: 'zillow', label: 'Zillow.com (USA)' },
-  ];
+  const { tipoTransazione, tipiImmobile, targetCliente, toni, portali } = t;
 
   const [isLoading, setIsLoading] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -201,7 +154,8 @@ export default function PerfectCopyPage() {
 
   const handleSubmit = async () => {
     if (!formData.tipoImmobile || !formData.zona || !formData.caratteristiche || !formData.targetCliente) {
-      toast({ title: t.requiredFields, description: t.requiredFieldsDesc, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'perfectCopy', t.requiredFieldsDesc);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -214,16 +168,22 @@ export default function PerfectCopyPage() {
         body: JSON.stringify(formData),
       });
       if (!res.success) {
-        if (res.status === 429) throw new Error(res.error ?? res.message ?? t.tooManyRequests);
-        throw new Error(res.error ?? res.message ?? t.errorGeneric);
+        const fail = apiFailureToast(feedbackLocale, 'perfectCopy', {
+          status: res.status,
+          error: res.error,
+          message: res.message,
+        }, errorGenericRef.current);
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
+        return;
       }
       setResult(res.data as PerfectCopyResult);
       setActiveTab('professionale');
       toast({ title: t.successTitle, description: t.successDesc });
 
     } catch (error) {
-      const friendly = handleAPIError(error, t.errorGeneric);
-      toast({ title: t.errorTitle, description: friendly, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'perfectCopy');
+      const friendly = handleAPIError(error, net.description);
+      toast({ title: net.title, description: friendly, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -236,16 +196,17 @@ export default function PerfectCopyPage() {
       toast({ title: t.copied, description: t.copiedDesc });
       setTimeout(() => setCopiedField(null), 2000);
     } catch {
-      toast({ title: t.errorTitle, description: t.copyFailed, variant: 'destructive' });
+      const c = clipboardFailureToast(feedbackLocale, 'perfectCopy', t.copyFailed);
+      toast({ title: c.title, description: c.description, variant: 'destructive' });
     }
   };
 
   const copyFullVariant = (variant: CopyVariant, name: string) => {
-    const fullText = `TITOLO:\n${variant.titolo}\n\nDESCRIZIONE:\n${variant.descrizione}\n\nHIGHLIGHTS:\n${variant.highlights.map(h => `• ${h}`).join('\n')}\n\nPERCHÉ COMPRARLO:\n${variant.perchéComprarlo.map(p => `• ${p}`).join('\n')}\n\nCALL TO ACTION:\n${variant.cta}\n\nMETA DESCRIPTION SEO:\n${variant.metaDescription}`;
+    const fullText = `${t.copyPackTitle}:\n${variant.titolo}\n\n${t.copyPackDescription}:\n${variant.descrizione}\n\n${t.copyPackHighlights}:\n${variant.highlights.map((h) => `• ${h}`).join('\n')}\n\n${t.copyPackWhyBuy}:\n${variant.perchéComprarlo.map((p) => `• ${p}`).join('\n')}\n\n${t.copyPackCta}:\n${variant.cta}\n\n${t.copyPackMeta}:\n${variant.metaDescription}`;
     copyToClipboard(fullText, `full-${name}`);
   };
 
-  const renderVariantCard = (variant: CopyVariant, name: string, icon: React.ReactNode, color: string) => (
+  const renderVariantCard = (variant: CopyVariant, name: string, icon: ReactNode, color: string) => (
     <div className="space-y-4" data-testid={`variant-${name}`}>
       <div className="flex justify-end">
         <Button
@@ -444,38 +405,34 @@ export default function PerfectCopyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-gray-900 dark:via-amber-950/20 dark:to-orange-950/20">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <Link 
-            href="/dashboard" 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
-            data-testid="link-back-dashboard"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t.backToDashboard}
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 shadow-lg shadow-amber-500/25">
-              <Crown className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 bg-clip-text text-transparent">
-                  {t.heroTitle}
-                </h1>
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-                  {t.heroBadge}
-                </Badge>
-              </div>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-        </div>
+    <DashboardPageShell className="max-w-6xl">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+        data-testid="link-back-dashboard"
+        aria-label={t.backAria}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backToDashboard}
+      </Link>
 
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        subtitle={t.heroSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: 'outline' }}
+        contextualHelp={<ContextualHelpTrigger docSlug="getting-started/perfect-copy" />}
+        actions={
+          <Badge className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-xs">
+            <Rocket className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            {t.heroBadge}
+          </Badge>
+        }
+      />
+
+      {!pageReady || usage.isLoading ? (
+        <ToolPageTwoColumnSkeleton />
+      ) : (
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <Card className="border-amber-200 dark:border-amber-800/50 shadow-xl sticky top-8">
@@ -503,11 +460,17 @@ export default function PerfectCopyPage() {
                       <SelectValue placeholder={t.selectListingType} />
                     </SelectTrigger>
                     <SelectContent>
-                      {tipoTransazione.map((tipo) => (
-                        <SelectItem key={tipo.value} value={tipo.value}>
-                          {tipo.icon} {tipo.label}
-                        </SelectItem>
-                      ))}
+                      {tipoTransazione.map((tipo) => {
+                        const TxIcon = PERFECT_COPY_TX_ICON[tipo.iconKey];
+                        return (
+                          <SelectItem key={tipo.value} value={tipo.value}>
+                            <span className="flex items-center gap-2">
+                              <TxIcon className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+                              {tipo.label}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -548,10 +511,12 @@ export default function PerfectCopyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-amber-500" />
-                    {t.featuresLabel}
-                  </Label>
+                  <FieldHelpLabel help={t.featuresHelp} className="items-center">
+                    <span className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-amber-500" />
+                      {t.featuresLabel}
+                    </span>
+                  </FieldHelpLabel>
                   <Textarea
                     placeholder={t.featuresPlaceholder}
                     value={formData.caratteristiche}
@@ -576,10 +541,12 @@ export default function PerfectCopyPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-amber-500" />
-                    {t.targetLabel}
-                  </Label>
+                  <FieldHelpLabel help={t.targetHelp} className="items-center">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-amber-500" />
+                      {t.targetLabel}
+                    </span>
+                  </FieldHelpLabel>
                   <Select
                     value={formData.targetCliente}
                     onValueChange={(value) => setFormData({ ...formData, targetCliente: value })}
@@ -588,11 +555,17 @@ export default function PerfectCopyPage() {
                       <SelectValue placeholder={t.selectTarget} />
                     </SelectTrigger>
                     <SelectContent>
-                      {targetCliente.map((target) => (
-                        <SelectItem key={target.value} value={target.value}>
-                          {target.icon} {target.label}
-                        </SelectItem>
-                      ))}
+                      {targetCliente.map((target) => {
+                        const TgIcon = PERFECT_COPY_TARGET_ICON[target.iconKey];
+                        return (
+                          <SelectItem key={target.value} value={target.value}>
+                            <span className="flex items-center gap-2">
+                              <TgIcon className="h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+                              {target.label}
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -699,11 +672,26 @@ export default function PerfectCopyPage() {
                     {t.emptySubtitle}
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-6">
-                    <Badge variant="secondary">📋 {t.tabPro}</Badge>
-                    <Badge variant="secondary">💖 {t.tabEmotivo}</Badge>
-                    <Badge variant="secondary">⚡ {t.tabBreve}</Badge>
-                    <Badge variant="secondary">🔍 {t.tabSeo}</Badge>
-                    <Badge variant="secondary">💎 {t.tabLuxury}</Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabPro}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Heart className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabEmotivo}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Zap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabBreve}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Search className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabSeo}
+                    </Badge>
+                    <Badge variant="secondary" className="gap-1.5">
+                      <Gem className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                      {t.tabLuxury}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -797,7 +785,7 @@ export default function PerfectCopyPage() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </DashboardPageShell>
   );
 }

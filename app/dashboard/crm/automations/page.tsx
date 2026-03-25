@@ -1,31 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  Zap, 
-  Plus, 
-  Play, 
-  Pause, 
-  Trash2, 
-  Edit, 
-  ChevronDown, 
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Zap,
+  Plus,
+  Play,
+  Trash2,
+  ChevronDown,
   ChevronUp,
   CheckCircle,
   XCircle,
   Clock,
-  Filter,
   RefreshCw,
   ArrowLeft,
   Target,
   GitBranch,
   Activity,
-  Settings,
   AlertTriangle,
-  Copy,
-  Check,
-  Loader2
+  Loader2,
+  UserPlus,
+  BarChart3,
+  Globe,
+  Mail,
+  MessageSquare,
+  Smartphone,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -42,15 +42,39 @@ import { DashboardCardSkeleton, ListSkeleton } from '@/components/ui/skeleton-lo
 import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { useLocale } from '@/lib/i18n/locale-context';
-import type { 
-  AutomationRule, 
-  AutomationTriggerType, 
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
+import type { Locale } from '@/lib/i18n/config';
+import { formatDateForLocale, formatDateTimeForLocale } from '@/lib/i18n/intl';
+import { useAPIErrorHandler } from '@/components/error-boundary';
+import { useUsageLimits } from '@/hooks/use-usage-limits';
+import { DashboardPageShell } from '@/components/dashboard-page-shell';
+import { DashboardPageHeader } from '@/components/dashboard-page-header';
+import { ContextualHelpTrigger } from '@/components/contextual-help-trigger';
+import Link from 'next/link';
+import {
+  apiFailureToast,
+  networkFailureToast,
+  validationToast,
+} from '@/lib/i18n/api-feature-feedback';
+import type {
+  AutomationRule,
+  AutomationTriggerType,
   AutomationConditionOperator,
   AutomationActionType,
-  AutomationLog
+  AutomationLog,
 } from '@/lib/types/database.types';
+import type { CrmAutomationTriggerIconKey } from '@/lib/i18n/crm-automation-rules-page-ui';
 
-// Locale-aware label dicts are built inside the component
+const CRM_TRIGGER_ICON_BY_KEY: Record<CrmAutomationTriggerIconKey, LucideIcon> = {
+  userPlus: UserPlus,
+  barChart3: BarChart3,
+  refreshCw: RefreshCw,
+  zap: Zap,
+  globe: Globe,
+  mail: Mail,
+  messageSquare: MessageSquare,
+  smartphone: Smartphone,
+};
 
 interface RuleFormData {
   name: string;
@@ -75,127 +99,50 @@ const initialFormData: RuleFormData = {
 };
 
 export default function AutomationCenterPage() {
-  const router = useRouter();
-  const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const { locale, timezone } = useLocale();
+  const feedbackLocale = locale;
+  const usage = useUsageLimits();
   const { toast } = useToast();
+  const { handleAPIError } = useAPIErrorHandler();
 
-  const TRIGGER_LABELS: Record<AutomationTriggerType, { label: string; description: string; icon: string }> = {
-    new_lead: { label: isItalian ? 'Nuovo Lead' : 'New Lead', description: isItalian ? 'Quando arriva un nuovo lead' : 'When a new lead arrives', icon: '🆕' },
-    score_updated: { label: isItalian ? 'Score Aggiornato' : 'Score Updated', description: isItalian ? 'Quando il lead score cambia' : 'When the lead score changes', icon: '📊' },
-    status_changed: { label: isItalian ? 'Status Cambiato' : 'Status Changed', description: isItalian ? 'Quando lo status del lead cambia' : 'When the lead status changes', icon: '🔄' },
-    priority_changed: { label: isItalian ? 'Priorità Cambiata' : 'Priority Changed', description: isItalian ? 'Quando la priorità cambia' : 'When the priority changes', icon: '⚡' },
-    market_changed: { label: isItalian ? 'Mercato Cambiato' : 'Market Changed', description: isItalian ? 'Quando il mercato di riferimento cambia' : 'When the reference market changes', icon: '🌍' },
-    email_sent: { label: isItalian ? 'Email Inviata' : 'Email Sent', description: isItalian ? "Quando viene inviata un'email al lead" : 'When an email is sent to the lead', icon: '📧' },
-    whatsapp_sent: { label: isItalian ? 'WhatsApp Inviato' : 'WhatsApp Sent', description: isItalian ? 'Quando viene inviato un messaggio WhatsApp' : 'When a WhatsApp message is sent', icon: '💬' },
-    sms_sent: { label: isItalian ? 'SMS Inviato' : 'SMS Sent', description: isItalian ? 'Quando viene inviato un SMS al lead' : 'When an SMS is sent to the lead', icon: '📱' },
-  };
+  const ui = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.crmAutomationRulesPage,
+    [locale]
+  );
 
-  const OPERATOR_LABELS: Record<AutomationConditionOperator, string> = {
-    eq: isItalian ? 'è uguale a' : 'equals',
-    neq: isItalian ? 'è diverso da' : 'not equals',
-    gt: isItalian ? 'è maggiore di' : 'is greater than',
-    gte: isItalian ? 'è maggiore o uguale a' : 'is greater than or equal to',
-    lt: isItalian ? 'è minore di' : 'is less than',
-    lte: isItalian ? 'è minore o uguale a' : 'is less than or equal to',
-    contains: isItalian ? 'contiene' : 'contains',
-    not_contains: isItalian ? 'non contiene' : 'does not contain',
-  };
+  const TRIGGER_LABELS = ui.triggers;
+  const OPERATOR_LABELS = ui.operators;
+  const ACTION_LABELS = ui.actions;
 
-  const FIELD_OPTIONS = [
-    { value: 'lead_score', label: 'Lead Score', type: 'number' },
-    { value: 'status', label: 'Status', type: 'select', options: ['new', 'contacted', 'followup', 'closed', 'lost'] },
-    { value: 'priorita', label: isItalian ? 'Priorità' : 'Priority', type: 'select', options: ['low', 'medium', 'high'] },
-    { value: 'market', label: isItalian ? 'Mercato' : 'Market', type: 'select', options: ['italy', 'usa'] },
-    { value: 'source', label: isItalian ? 'Fonte' : 'Source', type: 'text' },
-    { value: 'messaggio', label: isItalian ? 'Messaggio' : 'Message', type: 'text' },
-  ];
+  const FIELD_OPTIONS = useMemo(
+    () =>
+      [
+        { value: 'lead_score' as const, label: ui.fieldLeadScore, type: 'number' as const },
+        {
+          value: 'status' as const,
+          label: ui.fieldStatus,
+          type: 'select' as const,
+          options: ['new', 'contacted', 'followup', 'closed', 'lost'] as const,
+        },
+        {
+          value: 'priorita' as const,
+          label: ui.fieldPriority,
+          type: 'select' as const,
+          options: ['low', 'medium', 'high'] as const,
+        },
+        {
+          value: 'market' as const,
+          label: ui.fieldMarket,
+          type: 'select' as const,
+          options: ['italy', 'usa'] as const,
+        },
+        { value: 'source' as const, label: ui.fieldSource, type: 'text' as const },
+        { value: 'messaggio' as const, label: ui.fieldMessage, type: 'text' as const },
+      ] as const,
+    [ui]
+  );
 
-  const ACTION_LABELS: Record<AutomationActionType, { label: string; description: string; needsValue: boolean }> = {
-    update_status: { label: isItalian ? 'Aggiorna Status' : 'Update Status', description: isItalian ? 'Cambia lo status del lead' : 'Change the lead status', needsValue: true },
-    update_priority: { label: isItalian ? 'Aggiorna Priorità' : 'Update Priority', description: isItalian ? 'Cambia la priorità del lead' : 'Change the lead priority', needsValue: true },
-    assign_to: { label: isItalian ? 'Assegna a' : 'Assign to', description: isItalian ? 'Assegna il lead a un agente' : 'Assign the lead to an agent', needsValue: true },
-    add_note: { label: isItalian ? 'Aggiungi Nota' : 'Add Note', description: isItalian ? 'Aggiunge una nota automatica' : 'Adds an automatic note', needsValue: true },
-    send_email: { label: isItalian ? 'Invia Email' : 'Send Email', description: isItalian ? "Invia un'email template" : 'Send a template email', needsValue: true },
-    send_whatsapp: { label: isItalian ? 'Invia WhatsApp' : 'Send WhatsApp', description: isItalian ? 'Invia un messaggio WhatsApp template' : 'Send a WhatsApp template message', needsValue: true },
-    send_sms: { label: isItalian ? 'Invia SMS' : 'Send SMS', description: isItalian ? 'Invia un SMS template' : 'Send a template SMS', needsValue: true },
-    trigger_lead_score: { label: isItalian ? 'Calcola Lead Score' : 'Calculate Lead Score', description: isItalian ? 'Attiva il calcolo AI del lead score' : 'Trigger the AI lead score calculation', needsValue: false },
-    trigger_enrichment: { label: isItalian ? 'Arricchisci Lead' : 'Enrich Lead', description: isItalian ? "Attiva l'arricchimento AI del lead" : 'Trigger AI lead enrichment', needsValue: false },
-  };
-
-  const t = {
-    pageTitle: "Automation Center",
-    pageBadge: "CRM 3.0",
-    pageSubtitle: isItalian ? "Crea regole automatiche per gestire i tuoi lead" : "Create automatic rules to manage your leads",
-    newRule: isItalian ? "Nuova Regola" : "New Rule",
-    createRuleTitle: isItalian ? "Crea Nuova Regola" : "Create New Rule",
-    createRuleDesc: isItalian
-      ? "Definisci trigger, condizione e azione per la tua automazione"
-      : "Define trigger, condition and action for your automation",
-    ruleNameLabel: isItalian ? "Nome Regola *" : "Rule Name *",
-    ruleNamePlaceholder: isItalian ? "Es: Lead Hot → Follow-up" : "e.g. Hot Lead → Follow-up",
-    descLabel: isItalian ? "Descrizione (opzionale)" : "Description (optional)",
-    descPlaceholder: isItalian ? "Descrivi cosa fa questa regola..." : "Describe what this rule does...",
-    triggerSection: "TRIGGER",
-    conditionSection: isItalian ? "CONDIZIONE" : "CONDITION",
-    actionSection: isItalian ? "AZIONE" : "ACTION",
-    selectStatus: isItalian ? "Seleziona status..." : "Select status...",
-    selectPriority: isItalian ? "Seleziona priorità..." : "Select priority...",
-    selectValue: isItalian ? "Seleziona..." : "Select...",
-    valueLabel: isItalian ? "Valore..." : "Value...",
-    cancel: isItalian ? "Annulla" : "Cancel",
-    creatingRule: isItalian ? "Creazione..." : "Creating...",
-    createRule: isItalian ? "Crea Regola" : "Create Rule",
-    statsTotalRules: isItalian ? "Regole Totali" : "Total Rules",
-    statsActiveRules: isItalian ? "Regole Attive" : "Active Rules",
-    statsTotalExec: isItalian ? "Esecuzioni Totali" : "Total Executions",
-    statsRecentLogs: isItalian ? "Log Recenti" : "Recent Logs",
-    tabRules: (n: number) => isItalian ? `Regole (${n})` : `Rules (${n})`,
-    tabLogs: (n: number) => isItalian ? `Log Esecuzioni (${n})` : `Execution Logs (${n})`,
-    noRules: isItalian ? "Nessuna regola creata" : "No rules created",
-    noRulesDesc: isItalian
-      ? "Crea la tua prima automazione per gestire i lead automaticamente"
-      : "Create your first automation to manage leads automatically",
-    createFirstRule: isItalian ? "Crea Prima Regola" : "Create First Rule",
-    active: isItalian ? "Attiva" : "Active",
-    inactive: isItalian ? "Disattivata" : "Inactive",
-    executions: (n: number) => isItalian ? `${n} esecuzioni` : `${n} executions`,
-    lastExec: isItalian ? "Ultima:" : "Last:",
-    conditionLabel: isItalian ? "Condizione:" : "Condition:",
-    actionLabel: isItalian ? "Azione:" : "Action:",
-    noCondition: isItalian ? "Nessuna condizione" : "No condition",
-    noAction: isItalian ? "Nessuna azione" : "No action",
-    noLogs: isItalian ? "Nessun log disponibile" : "No logs available",
-    noLogsDesc: isItalian ? "I log delle esecuzioni appariranno qui" : "Execution logs will appear here",
-    success: isItalian ? "Successo" : "Success",
-    error: isItalian ? "Errore" : "Error",
-    triggerLabel: isItalian ? "Trigger:" : "Trigger:",
-    howItWorksTitle: isItalian ? "Come funzionano le automazioni" : "How automations work",
-    howItWorksList: isItalian
-      ? [
-          "Le regole vengono eseguite automaticamente quando un lead soddisfa le condizioni",
-          "Puoi creare fino a 20 regole per account",
-          "Ogni regola può avere un trigger, una condizione e un'azione",
-          "I log mostrano tutte le esecuzioni delle regole",
-        ]
-      : [
-          "Rules are automatically executed when a lead meets the conditions",
-          "You can create up to 20 rules per account",
-          "Each rule can have a trigger, a condition and an action",
-          "Logs show all rule executions",
-        ],
-    // toasts
-    ruleNameRequired: isItalian ? "Inserisci un nome per la regola" : "Enter a name for the rule",
-    deleteConfirm: isItalian
-      ? "Sei sicuro di voler eliminare questa regola?"
-      : "Are you sure you want to delete this rule?",
-    successTitle: isItalian ? "Successo!" : "Success!",
-    errorTitle: isItalian ? "Errore" : "Error",
-    createError: isItalian ? "Errore nella creazione della regola" : "Error creating the rule",
-    updateError: isItalian ? "Errore nell'aggiornamento" : "Update error",
-    deleteError: isItalian ? "Errore nell'eliminazione" : "Deletion error",
-    ruleDefault: isItalian ? "Regola" : "Rule",
-  };
+  const t = ui;
   
   const [rules, setRules] = useState<AutomationRule[]>([]);
   const [logs, setLogs] = useState<AutomationLog[]>([]);
@@ -204,29 +151,36 @@ export default function AutomationCenterPage() {
   const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('rules');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [editingRule, setEditingRule] = useState<AutomationRule | null>(null);
   const [formData, setFormData] = useState<RuleFormData>(initialFormData);
   const [expandedRules, setExpandedRules] = useState<Set<string>>(new Set());
 
-  useEffect(() => {
-    fetchRules();
-    fetchLogs();
-  }, []);
-
-  const fetchRules = async () => {
+  const fetchRules = useCallback(async () => {
     try {
       const res = await fetchApi<{ rules?: AutomationRule[] }>('/api/automations/rules');
       if (res.success && res.data != null) {
         setRules((res.data.rules ?? []) as AutomationRule[]);
+      } else if (!res.success) {
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.cannotLoadRules
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      console.error('Error fetching rules:', error);
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [feedbackLocale, toast, handleAPIError, t.cannotLoadRules]);
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const res = await fetchApi<{ logs?: AutomationLog[] }>('/api/automations/execute-rule?limit=50');
       if (res.success && res.data != null) {
@@ -235,11 +189,17 @@ export default function AutomationCenterPage() {
     } catch (error) {
       console.error('Error fetching logs:', error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void fetchRules();
+    void fetchLogs();
+  }, [fetchRules, fetchLogs]);
 
   const handleCreateRule = async () => {
     if (!formData.name.trim()) {
-      toast({ title: t.errorTitle, description: t.ruleNameRequired, variant: 'destructive' });
+      const v = validationToast(feedbackLocale, 'crmAutomationRules', t.ruleNameRequired);
+      toast({ title: v.title, description: v.description, variant: 'destructive' });
       return;
     }
 
@@ -272,10 +232,21 @@ export default function AutomationCenterPage() {
         setFormData(initialFormData);
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.createError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.createError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setSaving(false);
     }
@@ -291,10 +262,21 @@ export default function AutomationCenterPage() {
         toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.updateError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.updateError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -307,10 +289,21 @@ export default function AutomationCenterPage() {
         toast({ title: t.successTitle, description: res.data?.message });
         fetchRules();
       } else {
-        toast({ title: t.errorTitle, description: res.error || res.message, variant: 'destructive' });
+        const fail = apiFailureToast(
+          feedbackLocale,
+          'crmAutomationRules',
+          { status: res.status, error: res.error, message: res.message },
+          t.deleteError
+        );
+        toast({ title: fail.title, description: fail.description, variant: 'destructive' });
       }
     } catch (error) {
-      toast({ title: t.errorTitle, description: t.deleteError, variant: 'destructive' });
+      const net = networkFailureToast(feedbackLocale, 'crmAutomationRules');
+      toast({
+        title: net.title,
+        description: handleAPIError(error, net.description),
+        variant: 'destructive',
+      });
     } finally {
       setDeletingRuleId(null);
     }
@@ -326,18 +319,40 @@ export default function AutomationCenterPage() {
     setExpandedRules(newExpanded);
   };
 
+  const formatConditionValue = (field: string, raw: string) => {
+    if (field === 'status') {
+      const k = raw as keyof typeof ui.statusLabels;
+      return ui.statusLabels[k] ?? raw;
+    }
+    if (field === 'priorita') {
+      const k = raw as keyof typeof ui.priorityLabels;
+      return ui.priorityLabels[k] ?? raw;
+    }
+    if (field === 'market') {
+      const k = raw as keyof typeof ui.marketLabels;
+      return ui.marketLabels[k] ?? raw;
+    }
+    return raw;
+  };
+
   const formatCondition = (condition: any) => {
     if (!condition) return t.noCondition;
-    const field = FIELD_OPTIONS.find(f => f.value === condition.field)?.label || condition.field;
+    const field = FIELD_OPTIONS.find((f) => f.value === condition.field)?.label || condition.field;
     const operator = OPERATOR_LABELS[condition.operator as AutomationConditionOperator] || condition.operator;
-    return `${field} ${operator} "${condition.value}"`;
+    const displayVal = formatConditionValue(String(condition.field), String(condition.value));
+    return `${field} ${operator} "${displayVal}"`;
   };
 
   const formatAction = (action: any) => {
     if (!action) return t.noAction;
     const actionInfo = ACTION_LABELS[action.type as AutomationActionType];
     if (!actionInfo) return action.type;
-    return action.value ? `${actionInfo.label}: "${action.value}"` : actionInfo.label;
+    if (!action.value) return actionInfo.label;
+    const raw = String(action.value);
+    let display = raw;
+    if (action.type === 'update_status') display = formatConditionValue('status', raw);
+    else if (action.type === 'update_priority') display = formatConditionValue('priorita', raw);
+    return `${actionInfo.label}: "${display}"`;
   };
 
   const getStatusColor = (status: string) => {
@@ -360,73 +375,74 @@ export default function AutomationCenterPage() {
     }
   };
 
+  const planBadgeLabel =
+    usage.plan === "agency"
+      ? "Agency"
+      : usage.plan === "pro"
+        ? "Pro"
+        : usage.plan === "starter"
+          ? "Starter"
+          : "Free";
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <DashboardPageShell className="max-w-7xl">
+        <div className="space-y-6">
           <DashboardCardSkeleton />
-          <Card className="bg-slate-900/60 border-slate-800">
+          <Card className="border-white/10 bg-slate-900/60">
             <CardHeader>
-              <CardTitle className="text-white text-lg flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-lg text-white">
                 <Zap className="h-5 w-5 text-violet-400" />
                 {t.pageTitle}
               </CardTitle>
-              <CardDescription className="text-slate-400">
-                {t.pageSubtitle}
-              </CardDescription>
+              <CardDescription className="text-slate-400">{t.pageSubtitle}</CardDescription>
             </CardHeader>
             <CardContent>
               <ListSkeleton items={6} />
             </CardContent>
           </Card>
         </div>
-      </div>
+      </DashboardPageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => router.push('/dashboard')}
-              className="text-white/70 hover:text-white hover:bg-white/10"
-              data-testid="button-back"
-              aria-label="Back to dashboard"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                    {t.pageTitle}
-                    <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs">
-                      {t.pageBadge}
-                    </Badge>
-                  </h1>
-                  <p className="text-white/60 text-sm">{t.pageSubtitle}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <DashboardPageShell className="max-w-7xl">
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        data-testid="button-back"
+        aria-label={t.backAria}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        {t.backLink}
+      </Link>
 
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button 
-                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
-                data-testid="button-create-rule"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {t.newRule}
-              </Button>
-            </DialogTrigger>
+      <DashboardPageHeader
+        variant="dark"
+        title={t.pageTitle}
+        titleDataTestId="heading-crm-automation-rules"
+        subtitle={t.pageSubtitle}
+        planBadge={{ label: planBadgeLabel, variant: "outline" }}
+        contextualHelp={<ContextualHelpTrigger docSlug="crm/pipeline" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="border-0 bg-gradient-to-r from-violet-500 to-purple-500 text-xs text-white">
+              {t.pageBadge}
+            </Badge>
+            <Button variant="outline" size="sm" className="border-white/20 text-white/90" asChild>
+              <Link href="/dashboard/automations">{t.workflowsLink}</Link>
+            </Button>
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+              <DialogTrigger asChild>
+                <Button
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
+                  data-testid="button-create-rule"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t.newRule}
+                </Button>
+              </DialogTrigger>
             <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
@@ -478,15 +494,18 @@ export default function AutomationCenterPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-slate-800 border-white/10">
-                      {Object.entries(TRIGGER_LABELS).map(([key, { label, description, icon }]) => (
-                        <SelectItem key={key} value={key} className="text-white hover:bg-white/10">
-                          <span className="flex items-center gap-2">
-                            <span>{icon}</span>
-                            <span>{label}</span>
-                            <span className="text-white/40 text-xs">- {description}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
+                      {Object.entries(TRIGGER_LABELS).map(([key, { label, description, iconKey }]) => {
+                        const TriggerIcon = CRM_TRIGGER_ICON_BY_KEY[iconKey];
+                        return (
+                          <SelectItem key={key} value={key} className="text-white hover:bg-white/10">
+                            <span className="flex items-center gap-2">
+                              <TriggerIcon className="h-4 w-4 shrink-0 text-violet-300" aria-hidden />
+                              <span>{label}</span>
+                              <span className="text-white/40 text-xs">- {description}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -540,18 +559,33 @@ export default function AutomationCenterPage() {
                           <SelectValue placeholder={t.selectValue} />
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-white/10">
-                          {FIELD_OPTIONS.find(f => f.value === formData.condition_field)?.options?.map((opt) => (
-                            <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
-                              {opt}
-                            </SelectItem>
-                          ))}
+                          {(() => {
+                            const fieldDef = FIELD_OPTIONS.find(
+                              (f) => f.value === formData.condition_field
+                            );
+                            const opts =
+                              fieldDef &&
+                              fieldDef.type === "select" &&
+                              "options" in fieldDef
+                                ? fieldDef.options
+                                : [];
+                            return opts.map((opt: string) => (
+                              <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
+                                {formatConditionValue(formData.condition_field, opt)}
+                              </SelectItem>
+                            ));
+                          })()}
                         </SelectContent>
                       </Select>
                     ) : (
                       <Input
                         value={formData.condition_value}
                         onChange={(e) => setFormData({ ...formData, condition_value: e.target.value })}
-                        placeholder={formData.condition_field === 'lead_score' ? 'Es: 70' : 'Valore...'}
+                        placeholder={
+                          formData.condition_field === 'lead_score'
+                            ? t.conditionValueExampleScore
+                            : t.conditionValuePlaceholder
+                        }
                         type={formData.condition_field === 'lead_score' ? 'number' : 'text'}
                         className="bg-white/5 border-white/10 text-white"
                         data-testid="input-condition-value"
@@ -597,9 +631,9 @@ export default function AutomationCenterPage() {
                             <SelectValue placeholder={t.selectStatus} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-white/10">
-                            {['new', 'contacted', 'followup', 'closed', 'lost'].map((opt) => (
+                            {(['new', 'contacted', 'followup', 'closed', 'lost'] as const).map((opt) => (
                               <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
-                                {opt}
+                                {ui.statusLabels[opt]}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -613,9 +647,9 @@ export default function AutomationCenterPage() {
                             <SelectValue placeholder={t.selectPriority} />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-white/10">
-                            {['low', 'medium', 'high'].map((opt) => (
+                            {(['low', 'medium', 'high'] as const).map((opt) => (
                               <SelectItem key={opt} value={opt} className="text-white hover:bg-white/10">
-                                {opt}
+                                {ui.priorityLabels[opt]}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -664,7 +698,11 @@ export default function AutomationCenterPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </div>
+          </div>
+        }
+      />
+
+      <p className="mb-6 max-w-2xl text-sm text-white/55">{t.workflowsHint}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white/5 border-white/10">
@@ -730,11 +768,11 @@ export default function AutomationCenterPage() {
           <TabsList className="bg-white/5 border-white/10">
             <TabsTrigger value="rules" className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-white/60" data-testid="tab-rules">
               <Zap className="h-4 w-4 mr-2" />
-              {t.tabRules(rules.length)}
+              {t.tabRules.replace('{count}', String(rules.length))}
             </TabsTrigger>
             <TabsTrigger value="logs" className="data-[state=active]:bg-violet-600 data-[state=active]:text-white text-white/60" data-testid="tab-logs">
               <Activity className="h-4 w-4 mr-2" />
-              {t.tabLogs(logs.length)}
+              {t.tabLogs.replace('{count}', String(logs.length))}
             </TabsTrigger>
           </TabsList>
 
@@ -771,8 +809,19 @@ export default function AutomationCenterPage() {
                               <Badge className={rule.is_active ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/40'}>
                                 {rule.is_active ? t.active : t.inactive}
                               </Badge>
-                              <Badge className="bg-violet-500/20 text-violet-400">
-                                {TRIGGER_LABELS[rule.trigger_type]?.icon} {TRIGGER_LABELS[rule.trigger_type]?.label}
+                              <Badge className="bg-violet-500/20 text-violet-400 inline-flex items-center gap-1">
+                                {(() => {
+                                  const trig = TRIGGER_LABELS[rule.trigger_type];
+                                  const TriggerIcon = trig
+                                    ? CRM_TRIGGER_ICON_BY_KEY[trig.iconKey]
+                                    : Zap;
+                                  return (
+                                    <>
+                                      <TriggerIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                      {trig?.label}
+                                    </>
+                                  );
+                                })()}
                               </Badge>
                             </div>
                             {rule.description && (
@@ -781,12 +830,17 @@ export default function AutomationCenterPage() {
                             <div className="flex items-center gap-4 text-sm text-white/50">
                               <span className="flex items-center gap-1">
                                 <Activity className="h-3 w-3" />
-                                {t.executions(rule.execution_count || 0)}
+                                {t.executions.replace('{count}', String(rule.execution_count || 0))}
                               </span>
                               {rule.last_executed_at && (
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
-                                  {t.lastExec} {new Date(rule.last_executed_at).toLocaleDateString(locale === 'it' ? 'it-IT' : 'en-US')}
+                                  {t.lastExec}{' '}
+                                  {formatDateForLocale(
+                                    rule.last_executed_at,
+                                    locale as Locale,
+                                    timezone
+                                  )}
                                 </span>
                               )}
                             </div>
@@ -817,7 +871,9 @@ export default function AutomationCenterPage() {
                             onClick={() => toggleRuleExpanded(rule.id)}
                             className="text-white/50 hover:text-white hover:bg-white/10"
                             data-testid={`button-expand-rule-${rule.id}`}
-                            aria-label={expandedRules.has(rule.id) ? "Collapse rule" : "Expand rule"}
+                            aria-label={
+                              expandedRules.has(rule.id) ? t.collapseRuleAria : t.expandRuleAria
+                            }
                           >
                             {expandedRules.has(rule.id) ? (
                               <ChevronUp className="h-4 w-4" />
@@ -837,7 +893,7 @@ export default function AutomationCenterPage() {
                             disabled={deletingRuleId !== null}
                             className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                             data-testid={`button-delete-rule-${rule.id}`}
-                            aria-label="Delete rule"
+                            aria-label={t.deleteRuleAria}
                           >
                             {deletingRuleId === rule.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -897,7 +953,7 @@ export default function AutomationCenterPage() {
                               </div>
                             </div>
                             <span className="text-white/40 text-sm">
-                              {new Date(log.created_at).toLocaleString(locale === 'it' ? 'it-IT' : 'en-US')}
+                              {formatDateTimeForLocale(log.created_at, locale as Locale, timezone)}
                             </span>
                           </div>
                         </div>
@@ -925,7 +981,6 @@ export default function AutomationCenterPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </DashboardPageShell>
   );
 }

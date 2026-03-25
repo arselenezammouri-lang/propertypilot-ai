@@ -8,6 +8,7 @@ import { BellRing, TrendingDown, Zap, Smartphone, ExternalLink, Loader2 } from "
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 
@@ -28,42 +29,7 @@ export function MorningBriefingBox() {
   const [loading, setLoading] = useState(true);
   const [partnerAgencies, setPartnerAgencies] = useState<number>(0);
   const { toast } = useToast();
-  const t = {
-    it: {
-      na: "N/A",
-      sent: "Notifica di prova inviata!",
-      sentDesc: "Controlla la tua email e WhatsApp",
-      error: "Errore",
-      sendError: "Impossibile inviare la notifica",
-      connectionError: "Errore di connessione",
-      title: "Il tuo Briefing di Oggi",
-      subtitle: "Top 3 opportunità con Market Gap più alto (ultime 24h)",
-      configure: "Configura",
-      priceDown: "Prezzo",
-      highUrgency: "Urgenza Alta",
-      target: "Target",
-      fomo: "Questi deal sono stati inviati anche a",
-      partnerAgencies: "agenzie partner nella tua zona. Affrettati!",
-      sendTest: "Invia Prova sul mio Cellulare",
-    },
-    en: {
-      na: "N/A",
-      sent: "Test notification sent!",
-      sentDesc: "Check your email and WhatsApp",
-      error: "Error",
-      sendError: "Unable to send notification",
-      connectionError: "Connection error",
-      title: "Your Briefing Today",
-      subtitle: "Top 3 opportunities with the highest market gap (last 24h)",
-      configure: "Configure",
-      priceDown: "Price",
-      highUrgency: "High Urgency",
-      target: "Target",
-      fomo: "These deals have also been sent to",
-      partnerAgencies: "partner agencies in your area. Move fast!",
-      sendTest: "Send Test to My Phone",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.morningBriefing;
 
   useEffect(() => {
     fetchBriefing();

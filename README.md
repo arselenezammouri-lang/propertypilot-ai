@@ -41,11 +41,16 @@ npm install
 cp .env.example .env.local
 # Edit .env.local with your keys
 
-# Run development server
+# Run development server (consigliato su Windows se le porte sono occupate)
+npm run dev:clean
+
+# In alternativa
 npm run dev
 ```
 
-Apri http://localhost:3000
+Apri **solo** http://localhost:3000 (stessa porta del terminale).
+
+**Problemi con «Sei Offline», 404 o porte 3001/3002?** → [AVVIO_LOCAL_WINDOWS.md](./AVVIO_LOCAL_WINDOWS.md)
 
 Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 
@@ -53,6 +58,16 @@ Per setup completo, vedi [docs/SETUP.md](./docs/SETUP.md)
 
 ## 📚 Documentazione
 
+- [Design & UX (locale, benchmark internazionali)](./DESIGN_UX_LOCALE.md) - Principi enterprise, checklist per feature, allineamento al design system
+- [Security hardening](./docs/SECURITY_HARDENING.md) - Middleware anti-abuso, header, limiti e cosa demandare a WAF / Cloudflare
+- [Checklist deploy Vercel](./docs/VERCEL_DEPLOY_CHECKLIST.md) - Variabili ambiente, Origin, Turnstile, verifiche post-deploy
+- [Smoke staging / preview](./docs/SMOKE_STAGING.md) - Checklist dopo deploy + `npm run smoke:public`
+- [Feedback beta (sessioni guidate)](./docs/D3_BETA_FEEDBACK.md) - Fase D3, compiti reali
+- [i18n e scalabilità globale](./docs/I18N_SCALING.md) - dizionario, valute, checklist nuove feature
+- [Operations & security](./docs/OPERATIONS_SECURITY.md) - WAF Vercel, log `security_audit`, Dependabot, rotazione segreti
+- [Piano UX & struttura enterprise](./docs/PLAN_SAAS_UX_ENTERPRISE.md) - Roadmap design moderno, shell dashboard, verticali per area
+- [Inventario route dashboard (Fase 0)](./docs/DASHBOARD_ROUTE_INVENTORY.md) - URL, JTBD, piano, gate UI, priorità B1–B6
+- [Audit componenti condivisi (Fase 0)](./docs/SHARED_COMPONENTS_AUDIT.md) - Card, Button, modali, header/sidebar, drift vs design system
 - [API Documentation](./docs/API.md) - Documentazione completa API
 - [Architecture](./docs/ARCHITECTURE.md) - Architettura sistema
 - [Setup Guide](./docs/SETUP.md) - Guida setup e deployment
@@ -93,6 +108,8 @@ npm run perf:all
 ```bash
 # Development
 npm run dev          # Start dev server
+npm run dev:clean    # Libera 3000–3002 e avvia su porta 3000 (Windows / porte occupate)
+npm run dev:free-port # Solo kill porte 3000–3002
 npm run build        # Build for production
 npm run start        # Start production server
 

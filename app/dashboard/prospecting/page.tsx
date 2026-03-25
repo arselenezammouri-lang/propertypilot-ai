@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { PropertyCategory } from "@/lib/utils/property-category";
@@ -76,8 +76,24 @@ import {
   User,
   Zap,
   Send,
+  Home,
+  Building2,
+  Globe,
+  ClipboardList,
+  Package,
+  Landmark,
+  Gem,
+  Flame,
+  BarChart3,
+  Smartphone,
+  Palette,
+  Mail,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { detectLocaleFromLocation, getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
+import { formatCurrencyForLocale, formatDateTimeForLocale } from "@/lib/i18n/intl";
+import type { Locale } from "@/lib/i18n/config";
 import { generateSmartBriefing } from "@/lib/ai/smart-briefing";
 import { maskPhone, maskName } from "@/lib/utils/pii-mask";
 import NextDynamic from "next/dynamic";
@@ -86,9 +102,26 @@ import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AuraVRGenerator } from "@/components/aura-vr-generator";
 import { GlobalStatsTicker } from "@/components/global-stats-ticker";
-import { detectLocaleFromLocation } from "@/lib/i18n/dictionary";
+import {
+  getProspectingPlatform,
+  PROSPECTING_PLATFORM_KEYS,
+  type ProspectingPlatformIconKey,
+} from "@/lib/i18n/prospecting-platforms";
+import { buildProspectingWhatsappMessage } from "@/lib/i18n/prospecting-whatsapp-outreach";
+import type { NextActionIconKey } from "@/lib/ai/next-action-types";
 import { formatPriceByLocation } from "@/lib/utils/currency-formatter";
 import { useAPIErrorHandler } from "@/components/error-boundary";
+import { useUsageLimits } from "@/hooks/use-usage-limits";
+import { DashboardPageShell } from "@/components/dashboard-page-shell";
+import { DashboardPageHeader } from "@/components/dashboard-page-header";
+import { ContextualHelpTrigger } from "@/components/contextual-help-trigger";
+import {
+  apiFailureToast,
+  clipboardFailureToast,
+  networkFailureToast,
+  premiumFeatureToast,
+  validationToast,
+} from "@/lib/i18n/api-feature-feedback";
 
 // Lazy load heavy components
 const InvestmentAnalysisModal = NextDynamic(() => import("@/components/investment-analysis-modal").then(mod => ({ default: mod.InvestmentAnalysisModal })), {
@@ -170,138 +203,96 @@ interface ProspectingFilter {
   listings_found_count: number;
 }
 
-const getStatusConfig = (isItalian: boolean): Record<string, { label: string; color: string; bgColor: string }> => ({
-  new: { label: isItalian ? 'Nuovo' : 'New', color: 'text-blue-600', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
-  analyzed: { label: isItalian ? 'Analizzato' : 'Analyzed', color: 'text-cyan-600', bgColor: 'bg-cyan-100 dark:bg-cyan-900/30' },
-  called: { label: isItalian ? 'Chiamato' : 'Called', color: 'text-yellow-600', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
-  in_negotiation: { label: isItalian ? 'In Trattativa' : 'In Negotiation', color: 'text-orange-600', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
-  mandate_taken: { label: isItalian ? 'Mandato Preso' : 'Mandate Taken', color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900/30' },
-  appointment_set: { label: isItalian ? 'Appuntamento Fissato' : 'Appointment Set', color: 'text-green-600', bgColor: 'bg-green-100 dark:bg-green-900/30' },
-  rejected: { label: isItalian ? 'Rifiutato' : 'Rejected', color: 'text-red-600', bgColor: 'bg-red-100 dark:bg-red-900/30' },
-  converted: { label: isItalian ? 'Convertito' : 'Converted', color: 'text-purple-600', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
-});
-
-const platformConfig: Record<string, { label: string; emoji: string }> = {
-  idealista: { label: 'Idealista', emoji: '🏠' },
-  immobiliare: { label: 'Immobiliare.it', emoji: '🏘️' },
-  zillow: { label: 'Zillow', emoji: '🇺🇸' },
-  mls: { label: 'MLS', emoji: '📋' },
-  subito: { label: 'Subito.it', emoji: '📦' },
-  casa: { label: 'Casa.it', emoji: '🏡' },
+const NEXT_ACTION_ICON: Record<NextActionIconKey, LucideIcon> = {
+  barChart: BarChart3,
+  smartphone: Smartphone,
+  palette: Palette,
+  phone: Phone,
+  fileText: FileText,
+  mail: Mail,
+  search: Search,
+  eye: Eye,
 };
+
+const PLATFORM_ICON: Record<ProspectingPlatformIconKey, LucideIcon> = {
+  home: Home,
+  building2: Building2,
+  globe: Globe,
+  clipboardList: ClipboardList,
+  package: Package,
+  landmark: Landmark,
+};
+
+function PlatformBadge({ sourcePlatform }: { sourcePlatform: string | null | undefined }) {
+  const p = getProspectingPlatform(sourcePlatform);
+  const Icon = PLATFORM_ICON[p.iconKey] ?? Home;
+  return (
+    <Badge variant="outline" className="inline-flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      <span>{p.label}</span>
+    </Badge>
+  );
+}
 
 export default function ProspectingPage() {
   const router = useRouter();
-  const { locale } = useLocale();
-  const isItalian = locale === "it";
+  const { locale, currency, timezone } = useLocale();
+  /** api-feature-feedback supports only it|en; non-IT dashboard locales use EN chrome */
+  const feedbackLocale = locale;
   const { toast } = useToast();
-  const statusConfig = getStatusConfig(isItalian);
+  const { plan: usagePlan, isLoading: usagePlanLoading, refresh: refreshUsagePlan } = useUsageLimits();
   const { handleAPIError } = useAPIErrorHandler();
 
-  const t = {
-    heroTitle: isItalian ? "Arbitrage Command Center" : "Arbitrage Command Center",
-    heroSubtitle: isItalian ? "Identifica opportunità di arbitraggio e ottieni mandati esclusivi" : "Identify arbitrage opportunities and secure exclusive mandates",
-    topMatchOnly: isItalian ? "Sola polpa" : "Top matches only",
-    exportLeads: isItalian ? "Esporta Lead" : "Export Leads",
-    refresh: isItalian ? "Aggiorna" : "Refresh",
-    filters: isItalian ? "Filtri" : "Filters",
-    ariaMsg: isItalian ? "Crea il tuo primo filtro per iniziare a trovare deal d'oro! Definisci prezzo, location e caratteristiche desiderate." : "Create your first filter to start finding golden deals! Define price, location, and desired features.",
-    statusLabel: "Status",
-    allStatuses: isItalian ? "Tutti" : "All",
-    platformLabel: isItalian ? "Piattaforma" : "Platform",
-    allPlatforms: isItalian ? "Tutte" : "All",
-    locationLabel: isItalian ? "Location" : "Location",
-    locationPlaceholder: isItalian ? "Cerca location..." : "Search location...",
-    activeFilters: isItalian ? "Filtri Attivi" : "Active Filters",
-    noFilters: isItalian ? "Nessun filtro attivo" : "No active filters",
-    editFilter: isItalian ? "Modifica" : "Edit",
-    deleteFilter: isItalian ? "Elimina" : "Delete",
-    autoRun: "Auto-run",
-    lastRun: isItalian ? "Ultimo run:" : "Last run:",
-    listings: isItalian ? "annunci" : "listings",
-    exportConfirm: isItalian ? "Esporta in Excel? (OK = Excel, Annulla = CSV)" : "Export to Excel? (OK = Excel, Cancel = CSV)",
-    // toasts
-    premiumRequired: isItalian ? "Piano Premium richiesto" : "Premium plan required",
-    premiumCallDesc: isItalian ? "Il Voice AI Prospecting è una funzionalità Premium. Aggiorna il tuo account al piano PRO o AGENCY." : "Voice AI Prospecting is a Premium feature. Upgrade your account to the PRO or AGENCY plan.",
-    callStarted: isItalian ? "Chiamata avviata" : "Call started",
-    callStartedDesc: isItalian ? "La chiamata AI è stata avviata con successo" : "The AI call was started successfully",
-    errorTitle: isItalian ? "Errore" : "Error",
-    connectionError: isItalian ? "Errore di connessione" : "Connection error",
-    loadError: isItalian ? "Errore nel caricamento degli annunci" : "Error loading listings",
-    callError: isItalian ? "Errore nell'avvio della chiamata" : "Error starting the call",
-    msgGenerated: isItalian ? "Messaggio generato" : "Message generated",
-    msgGeneratedDesc: isItalian ? "Il messaggio WhatsApp è stato generato con successo" : "The WhatsApp message was generated successfully",
-    filtersComingSoon: isItalian ? "Crea un filtro dalla barra di ricerca sopra. Funzionalità in arrivo." : "Create a filter from the search bar above. Feature coming soon.",
-    statusUpdated: isItalian ? "Status aggiornato" : "Status updated",
-    statusUpdateError: isItalian ? "Errore aggiornamento status" : "Error updating status",
-    autoRunUpdated: isItalian ? "Auto-run aggiornato" : "Auto-run updated",
-    autoRunError: isItalian ? "Errore aggiornamento auto-run" : "Error updating auto-run",
-    deleted: isItalian ? "Eliminato" : "Deleted",
-    deleteError: isItalian ? "Errore eliminazione" : "Delete error",
-    // status/priority labels
-    statusNew: isItalian ? "Nuovo" : "New",
-    statusAnalyzed: isItalian ? "Analizzato" : "Analyzed",
-    statusCalled: isItalian ? "Chiamato" : "Called",
-    statusNegotiation: isItalian ? "In Trattativa" : "In Negotiation",
-    statusMandateTaken: isItalian ? "Mandato Preso" : "Mandate Taken",
-    statusAppointment: isItalian ? "Appuntamento Fissato" : "Appointment Set",
-    statusRejected: isItalian ? "Rifiutato" : "Rejected",
-    statusConverted: isItalian ? "Convertito" : "Converted",
-    // table
-    colTitle: isItalian ? "Titolo" : "Title",
-    colAiBriefing: isItalian ? "AI Briefing" : "AI Briefing",
-    colLocation: isItalian ? "Location" : "Location",
-    colPrice: isItalian ? "Prezzo" : "Price",
-    colMarketGap: isItalian ? "GAP Mercato" : "Market GAP",
-    colPlatform: isItalian ? "Piattaforma" : "Platform",
-    colStatus: isItalian ? "Status" : "Status",
-    colNextAction: isItalian ? "Next Action" : "Next Action",
-    colActions: isItalian ? "Azioni" : "Actions",
-    // copy
-    copied: isItalian ? "Copiato" : "Copied",
-    copiedTitle: isItalian ? "Copiato!" : "Copied!",
-    copiedDesc: isItalian ? "Riassunto copiato negli appunti" : "Summary copied to clipboard",
-    copyForClient: isItalian ? "Copia per Cliente" : "Copy for Client",
-    copyError: isItalian ? "Impossibile copiare" : "Cannot copy",
-    // empty state
-    noListings: isItalian ? "Nessun annuncio trovato. Crea un filtro per iniziare." : "No listings found. Create a filter to get started.",
-    ariaAdvice: isItalian ? "💡 Consiglio di Aria" : "💡 Aria's Tip",
-    ariaEmptyMsg: isItalian ? "Crea un filtro personalizzato con criteri specifici (prezzo, location, yield) per trovare le migliori opportunità. Più specifico sei, più preciso sarà il match!" : "Create a custom filter with specific criteria (price, location, yield) to find the best opportunities. The more specific you are, the more accurate the match!",
-    // detail modal strings
-    viewDetails: isItalian ? "Dettagli" : "Details",
-    callAI: isItalian ? "Chiama AI" : "AI Call",
-    smartMessage: isItalian ? "Messaggio Smart" : "Smart Message",
-    investmentAnalysis: isItalian ? "Analisi Investimento" : "Investment Analysis",
-    premiumReport: isItalian ? "Report Premium" : "Premium Report",
-    priceDropSniper: isItalian ? "Price Drop Sniper" : "Price Drop Sniper",
-    virtualStaging: isItalian ? "Virtual Staging" : "Virtual Staging",
-    xRayVision: isItalian ? "X-Ray Vision" : "X-Ray Vision",
-    auraVR: isItalian ? "Aura VR" : "Aura VR",
-    contactOwner: isItalian ? "Contatta Proprietario" : "Contact Owner",
-    loading: isItalian ? "Caricamento..." : "Loading...",
-    // status select
-    statusSelectNew: isItalian ? "Nuovo" : "New",
-    statusSelectAnalyzed: isItalian ? "Analizzato" : "Analyzed",
-    statusSelectCalled: isItalian ? "Chiamato" : "Called",
-    statusSelectNegotiation: isItalian ? "In Trattativa" : "In Negotiation",
-    statusSelectMandate: isItalian ? "Mandato Preso" : "Mandate Taken",
-    // action buttons
-    starting: isItalian ? "Avvio..." : "Starting...",
-    callNow: isItalian ? "🔥 CHIAMA ORA" : "🔥 CALL NOW",
-    outreach: isItalian ? "Outreach" : "Outreach",
-    startAiCall: isItalian ? "Avvia Chiamata AI" : "Start AI Call",
-    callsRemaining: (n: number) => isItalian ? `${n}/30 rimanenti` : `${n}/30 remaining`,
-    callLimitReached: isItalian ? "Limite raggiunto" : "Limit reached",
-    aiVoiceCall: isItalian ? "📞 AI Voice Call" : "📞 AI Voice Call",
-    aiVoiceCallDesc: isItalian ? "Chiamata automatica 24/7" : "Automatic call 24/7",
-    aiSmartMessage: isItalian ? "💬 AI Smart Message" : "💬 AI Smart Message",
-    aiSmartMessageDesc: isItalian ? "Genera SMS/WhatsApp con AI" : "Generate SMS/WhatsApp with AI",
-    auraVRTitle: isItalian ? "Aura VR aperto" : "Aura VR opened",
-    auraVRDesc: isItalian ? "Genera un tour VR immersivo per questo immobile" : "Generate an immersive VR tour for this property",
-    vsMarket: isItalian ? "vs Mercato" : "vs Market",
-    statusUpdatedDesc: (label: string) => isItalian ? `Immobile spostato in: ${label}` : `Property moved to: ${label}`,
-    statusUpdateFailDesc: isItalian ? "Impossibile aggiornare lo status" : "Cannot update status",
-  };
+  const t = useMemo(
+    () => getTranslation(locale as SupportedLocale).dashboard.prospectingPage,
+    [locale]
+  );
+
+  const statusConfig = useMemo(
+    () =>
+      ({
+        new: { label: t.statusRow.new, color: "text-blue-600", bgColor: "bg-blue-100 dark:bg-blue-900/30" },
+        analyzed: {
+          label: t.statusRow.analyzed,
+          color: "text-cyan-600",
+          bgColor: "bg-cyan-100 dark:bg-cyan-900/30",
+        },
+        called: {
+          label: t.statusRow.called,
+          color: "text-yellow-600",
+          bgColor: "bg-yellow-100 dark:bg-yellow-900/30",
+        },
+        in_negotiation: {
+          label: t.statusRow.in_negotiation,
+          color: "text-orange-600",
+          bgColor: "bg-orange-100 dark:bg-orange-900/30",
+        },
+        mandate_taken: {
+          label: t.statusRow.mandate_taken,
+          color: "text-green-600",
+          bgColor: "bg-green-100 dark:bg-green-900/30",
+        },
+        appointment_set: {
+          label: t.statusRow.appointment_set,
+          color: "text-green-600",
+          bgColor: "bg-green-100 dark:bg-green-900/30",
+        },
+        rejected: {
+          label: t.statusRow.rejected,
+          color: "text-red-600",
+          bgColor: "bg-red-100 dark:bg-red-900/30",
+        },
+        converted: {
+          label: t.statusRow.converted,
+          color: "text-purple-600",
+          bgColor: "bg-purple-100 dark:bg-purple-900/30",
+        },
+      }) as Record<string, { label: string; color: string; bgColor: string }>,
+    [t]
+  );
+
+  const loadErrorRef = useRef(t.loadError);
+  loadErrorRef.current = t.loadError;
 
   const [listings, setListings] = useState<ExternalListing[]>([]);
   const [filters, setFilters] = useState<ProspectingFilter[]>([]);
@@ -320,6 +311,16 @@ export default function ProspectingPage() {
   const [showTopMatchOnly, setShowTopMatchOnly] = useState(false);
   const [copiedListingId, setCopiedListingId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<'free' | 'starter' | 'pro' | 'agency'>('free');
+
+  useEffect(() => {
+    if (usagePlanLoading) return;
+    const p = (usagePlan || "free").toLowerCase();
+    if (p === "starter" || p === "pro" || p === "agency") {
+      setUserPlan(p);
+    } else {
+      setUserPlan("free");
+    }
+  }, [usagePlan, usagePlanLoading]);
   const [voiceCallsRemaining, setVoiceCallsRemaining] = useState<number>(0);
   const [isManualOverrideOpen, setIsManualOverrideOpen] = useState<string | null>(null);
   const [isAuraVRModalOpen, setIsAuraVRModalOpen] = useState(false);
@@ -342,14 +343,13 @@ export default function ProspectingPage() {
 
       const res = await fetchApi<ExternalListing[]>(`/api/prospecting/listings?${params.toString()}`);
       if (!res.success) {
-        throw new Error(res.error || res.message || t.loadError);
+        throw new Error(res.error || res.message || loadErrorRef.current);
       }
       setListings(res.data ?? []);
     } catch (error: unknown) {
-      const friendly = handleAPIError(error, t.loadError);
+      const friendly = handleAPIError(error, loadErrorRef.current);
       toast({
-        title: t.errorTitle,
-        description: friendly,
+        ...apiFailureToast(feedbackLocale, "prospectingCommand", {}, friendly),
         variant: "destructive",
       });
     } finally {
@@ -382,33 +382,26 @@ export default function ProspectingPage() {
     }
   };
 
-  const fetchUserSubscription = async () => {
+  const fetchVoiceCallQuota = async () => {
+    if (userPlan !== "pro" && userPlan !== "agency") {
+      setVoiceCallsRemaining(0);
+      return;
+    }
+    if (userPlan === "agency") {
+      setVoiceCallsRemaining(-1);
+      return;
+    }
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     try {
-      const res = await fetchApi<{ status?: string }>('/api/user/subscription');
-      if (!res.success || !res.data) return;
-      const plan = (res.data.status || 'free') as 'free' | 'starter' | 'pro' | 'agency';
-      setUserPlan(plan);
-
-      if (plan === 'pro') {
-        const now = new Date();
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        try {
-          const callsRes = await fetchApi<{ calls_this_month?: number }>(`/api/prospecting/stats?month_start=${monthStart.toISOString()}`);
-          const callsUsed = callsRes.success && callsRes.data ? (callsRes.data.calls_this_month ?? 0) : 0;
-          setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
-        } catch {
-          setVoiceCallsRemaining(30);
-        }
-      } else if (plan === 'agency') {
-        setVoiceCallsRemaining(-1);
-      } else {
-        setVoiceCallsRemaining(0);
-      }
-      if (plan === 'pro' || plan === 'agency') {
-        fetchStats();
-      }
-    } catch (error) {
-      console.error('Error fetching subscription:', error);
+      const callsRes = await fetchApi<{ calls_this_month?: number }>(
+        `/api/prospecting/stats?month_start=${monthStart.toISOString()}`
+      );
+      const callsUsed =
+        callsRes.success && callsRes.data ? (callsRes.data.calls_this_month ?? 0) : 0;
+      setVoiceCallsRemaining(Math.max(0, 30 - callsUsed));
+    } catch {
+      setVoiceCallsRemaining(30);
     }
   };
 
@@ -425,9 +418,16 @@ export default function ProspectingPage() {
   useEffect(() => {
     fetchListings();
     fetchFilters();
-    fetchUserSubscription();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- run when filters change only
   }, [statusFilter, platformFilter]);
+
+  useEffect(() => {
+    void fetchVoiceCallQuota();
+    if (userPlan === "pro" || userPlan === "agency") {
+      fetchStats();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- when plan from usage settles
+  }, [userPlan]);
 
   // Auto-refresh stats ogni 30 secondi (solo per PRO/AGENCY)
   useEffect(() => {
@@ -460,15 +460,22 @@ export default function ProspectingPage() {
         if (res.status === 403) {
           setUserPlan('free');
           toast({
-            title: t.premiumRequired,
-            description: res.message || res.error || t.premiumCallDesc,
+            ...premiumFeatureToast(
+              feedbackLocale,
+              "prospectingCommand",
+              res.message || res.error || t.premiumCallDesc
+            ),
             variant: "destructive",
           });
           return;
         }
         toast({
-          title: t.errorTitle,
-          description: res.error || res.message || t.callError,
+          ...apiFailureToast(
+            feedbackLocale,
+            "prospectingCommand",
+            { status: res.status, message: res.message, error: res.error },
+            t.callError
+          ),
           variant: "destructive",
         });
         return;
@@ -477,16 +484,21 @@ export default function ProspectingPage() {
         title: t.callStarted,
         description: t.callStartedDesc,
       });
-      addLiveFeedItem(`🤖 AI sta chiamando il proprietario di "${selectedListing?.title || 'un immobile'}" a ${selectedListing?.location || 'N/A'}`, 'info');
+      addLiveFeedItem(
+        t.liveFeedAiCalling
+          .replace('{title}', selectedListing?.title || t.propertyFallback)
+          .replace('{location}', selectedListing?.location || t.na),
+        'info'
+      );
       setTimeout(() => {
         fetchListings();
         fetchStats();
-        fetchUserSubscription();
+        void refreshUsagePlan();
+        void fetchVoiceCallQuota();
       }, 2000);
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: t.connectionError,
+        ...networkFailureToast(feedbackLocale, "prospectingCommand"),
         variant: "destructive",
       });
     } finally {
@@ -501,29 +513,24 @@ export default function ProspectingPage() {
     setSelectedListingForMessage(listing);
     setIsSmartMessageModalOpen(true);
 
-    // Genera messaggio WhatsApp persuasivo basato su lingua e caratteristiche
-    const locale = detectLocaleFromLocation(listing.location);
-    const yieldPercent = listing.price && listing.surface 
+    // Messaggio per il proprietario: lingua da location (non dalla UI dashboard)
+    const ownerLocale = detectLocaleFromLocation(listing.location);
+    const yieldPercent = listing.price && listing.surface
       ? ((listing.price / listing.surface) * 0.08).toFixed(1) // Stima yield 8%
       : null;
-    
-    const messages: Record<string, (listing: ExternalListing, yieldPercent: string | null) => string> = {
-      it: (l, y) => `Ciao! 👋 Ho visto il tuo immobile a ${l.location}. ${y ? `Il rendimento del ${y}% è pazzesco!` : 'Sembra un\'opportunità interessante!'} Sarebbe disponibile per una visita? Sono un agente qualificato e ho clienti interessati. 🏠✨`,
-      en: (l, y) => `Hi! 👋 I saw your property in ${l.location}. ${y ? `The ${y}% yield is amazing!` : 'It looks like an interesting opportunity!'} Would you be available for a viewing? I'm a qualified agent with interested clients. 🏠✨`,
-      es: (l, y) => `¡Hola! 👋 Vi tu propiedad en ${l.location}. ${y ? `¡El rendimiento del ${y}% es increíble!` : '¡Parece una oportunidad interesante!'} ¿Estarías disponible para una visita? Soy un agente cualificado con clientes interesados. 🏠✨`,
-      fr: (l, y) => `Bonjour! 👋 J'ai vu votre bien à ${l.location}. ${y ? `Le rendement de ${y}% est incroyable!` : 'Cela semble être une opportunité intéressante!'} Seriez-vous disponible pour une visite? Je suis un agent qualifié avec des clients intéressés. 🏠✨`,
-      de: (l, y) => `Hallo! 👋 Ich habe Ihre Immobilie in ${l.location} gesehen. ${y ? `Die Rendite von ${y}% ist erstaunlich!` : 'Es sieht nach einer interessanten Gelegenheit aus!'} Wären Sie für eine Besichtigung verfügbar? Ich bin ein qualifizierter Makler mit interessierten Kunden. 🏠✨`,
-      pt: (l, y) => `Olá! 👋 Vi seu imóvel em ${l.location}. ${y ? `O rendimento de ${y}% é incrível!` : 'Parece uma oportunidade interessante!'} Estaria disponível para uma visita? Sou um agente qualificado com clientes interessados. 🏠✨`,
-    };
 
-    const message = messages[locale]?.(listing, yieldPercent) || messages.en(listing, yieldPercent);
+    const message = buildProspectingWhatsappMessage(
+      ownerLocale,
+      listing.location,
+      yieldPercent
+    );
     setGeneratedMessage(message);
     
     toast({
       title: t.msgGenerated,
       description: t.msgGeneratedDesc,
     });
-    addLiveFeedItem(`💬 Messaggio WhatsApp generato per immobile a ${listing.location}`, 'info');
+    addLiveFeedItem(t.liveFeedWhatsAppGenerated.replace('{location}', listing.location), 'info');
   };
 
   const handleToggleAutoRun = async (filterId: string, currentValue: boolean) => {
@@ -539,42 +546,39 @@ export default function ProspectingPage() {
         fetchFilters();
         toast({
           title: t.autoRunUpdated,
-          description: `Auto-run ${!currentValue ? (isItalian ? 'attivato' : 'enabled') : (isItalian ? 'disattivato' : 'disabled')}`,
+          description: !currentValue ? t.autoRunEnabled : t.autoRunDisabled,
         });
       } else {
         toast({
-          title: t.errorTitle,
-          description: res.error || res.message || t.autoRunError,
+          ...apiFailureToast(
+            feedbackLocale,
+            "prospectingCommand",
+            { status: res.status, message: res.message, error: res.error },
+            t.autoRunError
+          ),
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch {
       toast({
-        title: t.errorTitle,
-        description: t.connectionError,
+        ...networkFailureToast(feedbackLocale, "prospectingCommand"),
         variant: "destructive",
       });
     }
   };
 
   const formatPrice = (price: number | null, location?: string) => {
-    if (!price) return 'N/A';
+    if (!price) return t.priceNa;
     // Se location fornita, usa formattazione basata su location
     if (location) {
       return formatPriceByLocation(price, location);
     }
     // Fallback: EUR (per compatibilità)
-    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(price);
+    return formatCurrencyForLocale(price, locale as Locale, currency);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('it-IT', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    return formatDateTimeForLocale(dateString, locale as Locale, timezone);
   };
 
   // Calcola GAP DI MERCATO - Analisi Professionale
@@ -646,57 +650,58 @@ export default function ProspectingPage() {
   };
 
   // Tag AI Image Insights (mock - in produzione da AI)
-  const getImageInsights = (listing: ExternalListing): string[] => {
-    // Mock tags basati su caratteristiche comuni
-    const mockTags = [
-      'Infissi da rifare',
-      'Cucina anni 70',
-      'Parquet ottimo stato',
-      'Bagno da ristrutturare',
-      'Impianto elettrico datato',
-      'Tetto in buone condizioni',
-    ];
-    // Ritorna 2-4 tag random
+  const getImageInsights = (_listing: ExternalListing): string[] => {
+    const mockTags = [...t.imageInsightTags];
     return mockTags.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 3) + 2);
   };
 
-  return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Global Stats Ticker */}
-        <div className="mb-4">
-          <GlobalStatsTicker />
-        </div>
+  const planBadgeLabel = (plan: string) => {
+    const p = plan.toLowerCase();
+    if (p === "agency") return t.planAgency;
+    if (p === "pro") return t.planPro;
+    if (p === "starter") return t.planStarter;
+    return t.planFree;
+  };
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="icon" aria-label={locale === "it" ? "Indietro" : "Back"}>
+  return (
+    <DashboardPageShell>
+      <div className="mb-4">
+        <GlobalStatsTicker />
+      </div>
+
+      <DashboardPageHeader
+        variant="dark"
+        title={t.heroTitle}
+        titleDataTestId="heading-prospecting"
+        subtitle={t.heroSubtitle}
+        planBadge={
+          !usagePlanLoading
+            ? { label: planBadgeLabel(userPlan), variant: "secondary" }
+            : undefined
+        }
+        contextualHelp={<ContextualHelpTrigger docSlug="prospecting/filters" />}
+        actions={
+          <div className="flex flex-wrap items-center gap-3 min-h-11 touch-manipulation">
+            <Link href="/dashboard" aria-label={t.backAria}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-11 min-h-11 w-11 touch-manipulation text-white/90 hover:text-white hover:bg-white/10"
+                aria-label={t.backAria}
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                <TrendingUp className="h-8 w-8 text-cyan-400" />
-                {t.heroTitle}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                {t.heroSubtitle}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-lg border">
+            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
               <Switch
                 checked={showTopMatchOnly}
                 onCheckedChange={setShowTopMatchOnly}
               />
-              <span className="text-sm font-medium">{t.topMatchOnly}</span>
+              <span className="text-sm font-medium text-white/90">{t.topMatchOnly}</span>
             </div>
-            <Button 
+            <Button
               onClick={() => {
-                const exportData = listings.map(l => ({
+                const exportData = listings.map((l) => ({
                   title: l.title,
                   location: l.location,
                   price: l.price,
@@ -709,29 +714,34 @@ export default function ProspectingPage() {
                   url: l.source_url,
                   created_at: l.created_at,
                 }));
-                // Import dinamico per evitare errori SSR
-                import('@/lib/utils/export-data').then(({ exportToCSV, exportToExcel }) => {
-                  const format = window.confirm('Esporta in Excel? (OK = Excel, Annulla = CSV)');
+                import("@/lib/utils/export-data").then(({ exportToCSV, exportToExcel }) => {
+                  const format = window.confirm(t.exportConfirm);
                   if (format) {
-                    exportToExcel(exportData, 'prospecting-export');
+                    exportToExcel(exportData, "prospecting-export");
                   } else {
-                    exportToCSV(exportData, 'prospecting-export');
+                    exportToCSV(exportData, "prospecting-export");
                   }
                 });
               }}
               variant="outline"
+              className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10"
             >
               <Download className="h-4 w-4 mr-2" />
               {t.exportLeads}
             </Button>
-            <Button onClick={fetchListings} variant="outline">
+            <Button
+              onClick={fetchListings}
+              variant="outline"
+              className="min-h-11 touch-manipulation border-white/20 bg-white/5 text-white hover:bg-white/10"
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               {t.refresh}
             </Button>
           </div>
-        </div>
+        }
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Sidebar Filtri */}
           <div className="lg:col-span-1">
             <Card>
@@ -745,7 +755,7 @@ export default function ProspectingPage() {
                     <div className="flex items-start gap-2">
                       <Sparkles className="h-4 w-4 text-purple-400 mt-0.5 flex-shrink-0" />
                       <p className="text-xs text-muted-foreground">
-                        <span className="font-medium text-purple-300">Aria:</span> {t.ariaMsg}
+                        <span className="font-medium text-purple-300">{t.ariaName}</span> {t.ariaMsg}
                       </p>
                     </div>
                   </div>
@@ -777,11 +787,18 @@ export default function ProspectingPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t.allPlatforms}</SelectItem>
-                      {Object.entries(platformConfig).map(([key, config]) => (
-                        <SelectItem key={key} value={key}>
-                          {config.emoji} {config.label}
-                        </SelectItem>
-                      ))}
+                      {PROSPECTING_PLATFORM_KEYS.map((key) => {
+                        const p = getProspectingPlatform(key);
+                        const Icon = PLATFORM_ICON[p.iconKey] ?? Home;
+                        return (
+                          <SelectItem key={key} value={key}>
+                            <span className="flex items-center gap-2">
+                              <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                              <span>{p.label}</span>
+                            </span>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
@@ -803,7 +820,16 @@ export default function ProspectingPage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toast({ title: t.filters, description: t.filtersComingSoon, duration: 4000 })}
+                      onClick={() =>
+                        toast({
+                          ...validationToast(
+                            feedbackLocale,
+                            "prospectingCommand",
+                            t.filtersComingSoon
+                          ),
+                          duration: 4000,
+                        })
+                      }
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -824,7 +850,7 @@ export default function ProspectingPage() {
                               <span className="text-sm font-medium">{filter.name}</span>
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6" aria-label="More options">
+                                  <Button variant="ghost" size="icon" className="h-6 w-6" aria-label={t.filterMoreOptionsAria}>
                                     <MoreHorizontal className="h-4 w-4" />
                                   </Button>
                                 </DropdownMenuTrigger>
@@ -871,10 +897,8 @@ export default function ProspectingPage() {
           <div className="lg:col-span-3">
             <Card>
               <CardHeader>
-                <CardTitle>Annunci Trovati ({listings.length})</CardTitle>
-                <CardDescription>
-                  Clicca su "Chiama Ora" per avviare una chiamata AI al proprietario
-                </CardDescription>
+                <CardTitle>{t.listingsFoundTitle.replace('{count}', String(listings.length))}</CardTitle>
+                <CardDescription>{t.listingsCardDesc}</CardDescription>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -964,8 +988,6 @@ export default function ProspectingPage() {
                           })
                           .map((listing) => {
                           const status = statusConfig[listing.status] || statusConfig.new;
-                          const platform = platformConfig[listing.source_platform] || { label: listing.source_platform, emoji: '🏠' };
-
                           const leadScore = listing.lead_score ?? 0;
                           const isGoldLead = leadScore >= 85; // TOP DEAL threshold
                           const isEliteDeal = leadScore > 90; // ELITE DEAL (SOLDI)
@@ -987,13 +1009,15 @@ export default function ProspectingPage() {
                                   <div className="flex items-center gap-2">
                                     <span className="truncate">{listing.title}</span>
                                     {isEliteDeal && (
-                                      <span className="diamond-soldi-badge">
-                                        💎 SOLDI
+                                      <span className="diamond-soldi-badge inline-flex items-center gap-1">
+                                        <Gem className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                        {t.eliteDealBadge}
                                       </span>
                                     )}
                                     {isGoldLead && !isEliteDeal && (
-                                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
-                                        🔥 TOP DEAL
+                                      <Badge className="inline-flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
+                                        <Flame className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                                        {t.topDealBadge}
                                       </Badge>
                                     )}
                                   </div>
@@ -1064,10 +1088,13 @@ export default function ProspectingPage() {
                                                 description: t.copiedDesc,
                                               });
                                               setTimeout(() => setCopiedListingId(null), 2000);
-                                            } catch (error) {
+                                            } catch {
                                               toast({
-                                                title: t.errorTitle,
-                                                description: t.copyError,
+                                                ...clipboardFailureToast(
+                                                  feedbackLocale,
+                                                  "prospectingCommand",
+                                                  t.copyError
+                                                ),
                                                 variant: "destructive",
                                               });
                                             }
@@ -1115,9 +1142,7 @@ export default function ProspectingPage() {
                                 )}
                               </TableCell>
                               <TableCell>
-                                <Badge variant="outline">
-                                  {platform.emoji} {platform.label}
-                                </Badge>
+                                <PlatformBadge sourcePlatform={listing.source_platform} />
                               </TableCell>
                               <TableCell>
                                 <Select
@@ -1132,13 +1157,32 @@ export default function ProspectingPage() {
                                         fetchListings();
                                         toast({
                                           title: t.statusUpdated,
-                                          description: t.statusUpdatedDesc(statusConfig[newStatus]?.label || newStatus),
+                                          description: t.statusUpdatedDesc.replace(
+                                            '{label}',
+                                            statusConfig[newStatus]?.label || newStatus
+                                          ),
+                                        });
+                                      } else {
+                                        toast({
+                                          ...apiFailureToast(
+                                            feedbackLocale,
+                                            "prospectingCommand",
+                                            {
+                                              status: res.status,
+                                              message: res.message,
+                                              error: res.error,
+                                            },
+                                            t.statusUpdateFailDesc
+                                          ),
+                                          variant: "destructive",
                                         });
                                       }
-                                    } catch (error) {
+                                    } catch {
                                       toast({
-                                        title: t.errorTitle,
-                                        description: t.statusUpdateFailDesc,
+                                        ...networkFailureToast(
+                                          feedbackLocale,
+                                          "prospectingCommand"
+                                        ),
                                         variant: "destructive",
                                       });
                                     }
@@ -1166,7 +1210,7 @@ export default function ProspectingPage() {
                                     ? Math.floor((new Date().getTime() - new Date(listing.updated_at).getTime()) / (1000 * 60 * 60 * 24))
                                     : 0;
                                   
-                                  const nextAction = suggestNextAction({
+                                  const nextAction = suggestNextAction(t.nextAction, {
                                     status: listing.status === 'new' ? 'new' :
                                             listing.status === 'called' ? 'called' :
                                             listing.status === 'appointment_set' ? 'in_negotiation' :
@@ -1178,6 +1222,7 @@ export default function ProspectingPage() {
                                     market_gap: marketGap,
                                   });
 
+                                  const NextIcon = NEXT_ACTION_ICON[nextAction.iconKey];
                                   return (
                                     <Badge
                                       variant="outline"
@@ -1187,10 +1232,10 @@ export default function ProspectingPage() {
                                           : nextAction.priority === 'medium'
                                           ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 text-amber-700 dark:text-amber-400'
                                           : 'bg-gray-50 dark:bg-gray-950/30 border-gray-300 text-gray-700 dark:text-gray-400'
-                                      } text-xs cursor-help`}
+                                      } inline-flex items-center gap-1 text-xs cursor-help`}
                                       title={nextAction.reasoning}
                                     >
-                                      <span className="mr-1">{nextAction.icon}</span>
+                                      <NextIcon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                                       {nextAction.action}
                                     </Badge>
                                   );
@@ -1252,7 +1297,9 @@ export default function ProspectingPage() {
                                               <div className="flex flex-col">
                                                 <span>{t.startAiCall}</span>
                                                 <span className="text-xs text-muted-foreground">
-                                                  {voiceCallsRemaining > 0 ? t.callsRemaining(voiceCallsRemaining) : t.callLimitReached}
+                                                  {voiceCallsRemaining > 0
+                                                    ? t.callsRemaining.replace('{n}', String(voiceCallsRemaining))
+                                                    : t.callLimitReached}
                                                 </span>
                                               </div>
                                             </DropdownMenuItem>
@@ -1281,19 +1328,22 @@ export default function ProspectingPage() {
                                                 title: t.auraVRTitle,
                                                 description: t.auraVRDesc,
                                               });
-                                              addLiveFeedItem(`✨ Aura VR avviato per immobile a ${listing.location}`, 'info');
+                                              addLiveFeedItem(
+                                                t.liveFeedAuraVrStarted.replace('{location}', listing.location),
+                                                'info'
+                                              );
                                             }}>
                                               <Sparkles className="h-4 w-4 mr-2 text-purple-500" />
                                               <div className="flex flex-col">
-                                                <span className="font-semibold">✨ Aura VR</span>
-                                                <span className="text-xs text-muted-foreground">Genera tour VR immersivo</span>
+                                                <span className="font-semibold">{t.auraVRMenuTitle}</span>
+                                                <span className="text-xs text-muted-foreground">{t.auraVRMenuDesc}</span>
                                               </div>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => setIsManualOverrideOpen(listing.id)}>
                                               <User className="h-4 w-4 mr-2 text-green-500" />
                                               <div className="flex flex-col">
-                                                <span className="font-semibold">👤 Manual Override</span>
-                                                <span className="text-xs text-muted-foreground">Accesso diretto dati proprietario</span>
+                                                <span className="font-semibold">{t.manualOverrideTitle}</span>
+                                                <span className="text-xs text-muted-foreground">{t.manualOverrideDesc}</span>
                                               </div>
                                             </DropdownMenuItem>
                                           </>
@@ -1310,7 +1360,7 @@ export default function ProspectingPage() {
                                       className="border-cyan-500 text-cyan-500 hover:bg-cyan-50"
                                     >
                                       <Phone className="h-4 w-4 mr-2" />
-                                      Upgrade per Outreach
+                                      {t.upgradeOutreach}
                                     </Button>
                                   )}
                                   {/* Aura VR Button - Disponibile per Pro e Agency */}
@@ -1322,15 +1372,18 @@ export default function ProspectingPage() {
                                         setSelectedListingForVR(listing);
                                         setIsAuraVRModalOpen(true);
                                         toast({
-                                          title: "Aura VR aperto",
-                                          description: "Genera un tour VR immersivo per questo immobile",
+                                          title: t.auraVRTitle,
+                                          description: t.auraVRDesc,
                                         });
-                                        addLiveFeedItem(`✨ Aura VR avviato per immobile a ${listing.location}`, 'info');
+                                        addLiveFeedItem(
+                                          t.liveFeedAuraVrStarted.replace('{location}', listing.location),
+                                          'info'
+                                        );
                                       }}
                                       className="border-purple-500/50 text-purple-400 hover:bg-purple-500/10 hover:border-purple-500"
                                     >
                                       <Sparkles className="h-4 w-4 mr-2" />
-                                      Aura VR
+                                      {t.auraVR}
                                     </Button>
                                   )}
                                   <Button
@@ -1356,7 +1409,6 @@ export default function ProspectingPage() {
             </Card>
           </div>
         </div>
-      </div>
 
       {/* Modal Analisi Investimento */}
       <InvestmentAnalysisModal
@@ -1376,58 +1428,61 @@ export default function ProspectingPage() {
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedListing?.title}</DialogTitle>
-            <DialogDescription>
-              Dettagli completi dell'annuncio
-            </DialogDescription>
+            <DialogTitle>{selectedListing?.title || t.detailModalTitle}</DialogTitle>
+            <DialogDescription>{t.detailModalDesc}</DialogDescription>
           </DialogHeader>
           {selectedListing && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Location</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.colLocation}</p>
                   <p className="text-lg">{selectedListing.location}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Prezzo</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.colPrice}</p>
                   <p className="text-lg font-bold">{formatPrice(selectedListing.price, selectedListing.location)}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Piattaforma</p>
-                  <Badge>
-                    {platformConfig[selectedListing.source_platform]?.emoji || '🏠'} {platformConfig[selectedListing.source_platform]?.label || selectedListing.source_platform}
-                  </Badge>
+                  <p className="text-sm font-medium text-muted-foreground">{t.colPlatform}</p>
+                  <PlatformBadge sourcePlatform={selectedListing.source_platform} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t.colStatus}</p>
                   <Badge className={statusConfig[selectedListing.status].bgColor + ' ' + statusConfig[selectedListing.status].color}>
                     {statusConfig[selectedListing.status].label}
                   </Badge>
                 </div>
                 {selectedListing.owner_name && userPlan === 'agency' && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Proprietario</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t.detailOwner}</p>
                     <p>{selectedListing.owner_name}</p>
                   </div>
                 )}
                 {selectedListing.phone_number && userPlan === 'agency' && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Telefono</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t.detailPhone}</p>
                     <p>{selectedListing.phone_number}</p>
                   </div>
                 )}
                 {(selectedListing.owner_name || selectedListing.phone_number) && userPlan !== 'agency' && (
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-muted-foreground">Dati Proprietario</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t.detailOwnerData}</p>
                     <div className="text-sm">
                       {selectedListing.owner_name && (
-                        <p className="text-amber-400/90 font-mono">Proprietario: {maskName(selectedListing.owner_name)}</p>
+                        <p className="text-amber-400/90 font-mono">
+                          {t.detailOwnerMaskedLabel}: {maskName(selectedListing.owner_name)}
+                        </p>
                       )}
                       {selectedListing.phone_number && (
-                        <p className="text-amber-400/90 font-mono mt-1">Telefono: {maskPhone(selectedListing.phone_number)}</p>
+                        <p className="text-amber-400/90 font-mono mt-1">
+                          {t.detailPhoneMaskedLabel}: {maskPhone(selectedListing.phone_number)}
+                        </p>
                       )}
                       <p className="text-amber-500/80 mt-2 text-xs">
-                        Sblocca i dati completi con piano Agency. <Link href="/dashboard/billing" className="underline hover:text-amber-400">Upgrade ora</Link>
+                        {t.detailUnlockAgency}{' '}
+                        <Link href="/dashboard/billing" className="underline hover:text-amber-400">
+                          {t.detailUpgradeNow}
+                        </Link>
                       </p>
                     </div>
                   </div>
@@ -1455,8 +1510,8 @@ export default function ProspectingPage() {
 
               {/* AI Virtual Staging */}
               <ProFeaturePaywall
-                title="Virtual Staging 3D"
-                description="Questa funzionalità è disponibile solo per gli utenti PRO e AGENCY. Aggiorna il tuo account per sbloccare il Virtual Staging professionale 3D."
+                title={t.virtualStagingPaywallTitle}
+                description={t.virtualStagingPaywallDesc}
                 isLocked={userPlan !== 'pro' && userPlan !== 'agency'}
               >
               <AIVirtualStaging listing={selectedListing} />
@@ -1467,14 +1522,12 @@ export default function ProspectingPage() {
                 <div className="bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/30 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingDown className="h-5 w-5 text-green-400" />
-                    <h3 className="font-semibold text-green-400">GAP DI MERCATO</h3>
+                    <h3 className="font-semibold text-green-400">{t.marketGapTitle}</h3>
                   </div>
                   <p className="text-2xl font-bold text-green-400">
-                    -{calculateMarketGap(selectedListing)!.toFixed(0)}% vs Mercato
+                    {t.marketGapVs.replace('{pct}', calculateMarketGap(selectedListing)!.toFixed(0))}
                   </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Prezzo inferiore alla media della zona - Opportunità di arbitraggio
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">{t.marketGapSubtitle}</p>
                 </div>
               )}
 
@@ -1482,7 +1535,7 @@ export default function ProspectingPage() {
               <div className="border-t pt-4">
                 <div className="flex items-center gap-2 mb-3">
                   <ImageIcon className="h-5 w-5 text-purple-400" />
-                  <h3 className="font-semibold">Analisi Foto IA</h3>
+                  <h3 className="font-semibold">{t.photoAnalysisTitle}</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {getImageInsights(selectedListing).map((tag, idx) => (
@@ -1501,31 +1554,31 @@ export default function ProspectingPage() {
                   className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Scarica Analisi Investimento
+                  {t.downloadInvestmentAnalysis}
                 </Button>
               </div>
 
               {selectedListing.ai_summary && Object.keys(selectedListing.ai_summary).length > 0 && (
                 <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-2">Analisi AI</h3>
+                  <h3 className="font-semibold mb-2">{t.aiAnalysisTitle}</h3>
                   {selectedListing.ai_summary.quality_score && (
                     <p className="text-sm">
-                      <strong>Quality Score:</strong> {selectedListing.ai_summary.quality_score}/100
+                      <strong>{t.aiQualityScore}</strong> {selectedListing.ai_summary.quality_score}/100
                     </p>
                   )}
                   {selectedListing.ai_summary.summary_note && (
                     <p className="text-sm mt-2">
-                      <strong>Nota:</strong> {selectedListing.ai_summary.summary_note}
+                      <strong>{t.aiNote}</strong> {selectedListing.ai_summary.summary_note}
                     </p>
                   )}
                   {selectedListing.ai_summary.best_time_to_call && (
                     <p className="text-sm mt-2">
-                      <strong>Orario migliore per chiamare:</strong> {selectedListing.ai_summary.best_time_to_call}
+                      <strong>{t.aiBestTimeToCall}</strong> {selectedListing.ai_summary.best_time_to_call}
                     </p>
                   )}
                   {selectedListing.ai_summary.call_transcript && (
                     <div className="mt-4">
-                      <p className="text-sm font-medium mb-2">Transcript Chiamata</p>
+                      <p className="text-sm font-medium mb-2">{t.aiCallTranscript}</p>
                       <div className="bg-muted p-3 rounded text-sm max-h-[200px] overflow-y-auto">
                         {selectedListing.ai_summary.call_transcript}
                       </div>
@@ -1541,7 +1594,7 @@ export default function ProspectingPage() {
                   rel="noopener noreferrer"
                   className="text-primary hover:underline text-sm"
                 >
-                  Vedi annuncio originale →
+                  {t.seeOriginalListing}
                 </a>
               </div>
             </div>
@@ -1575,23 +1628,21 @@ export default function ProspectingPage() {
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-green-500" />
-                  Manual Override - Accesso Dati Proprietario
+                  {t.manualOverrideDialogTitle}
                 </DialogTitle>
-                <DialogDescription>
-                  Come membro Agency, hai accesso diretto ai dati del proprietario per chiamate umane
-                </DialogDescription>
+                <DialogDescription>{t.manualOverrideDialogDesc}</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="p-4 bg-muted rounded-lg space-y-3">
                   {listing.owner_name && (
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Nome Proprietario</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">{t.manualOverrideOwnerLabel}</p>
                       <p className="text-lg font-semibold">{listing.owner_name}</p>
                     </div>
                   )}
                   {listing.phone_number && (
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Numero di Telefono</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">{t.manualOverridePhoneLabel}</p>
                       <div className="flex items-center gap-2">
                         <a 
                           href={`tel:${listing.phone_number}`}
@@ -1602,12 +1653,23 @@ export default function ProspectingPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => {
-                            navigator.clipboard.writeText(listing.phone_number || '');
-                            toast({
-                              title: "Copiato!",
-                              description: "Numero copiato negli appunti",
-                            });
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(listing.phone_number || '');
+                              toast({
+                                title: t.copiedTitle,
+                                description: t.phoneCopiedDesc,
+                              });
+                            } catch {
+                              toast({
+                                ...clipboardFailureToast(
+                                  feedbackLocale,
+                                  "prospectingCommand",
+                                  t.copyError
+                                ),
+                                variant: "destructive",
+                              });
+                            }
                           }}
                         >
                           <Copy className="h-4 w-4" />
@@ -1617,7 +1679,7 @@ export default function ProspectingPage() {
                   )}
                   {listing.location && (
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Location Immobile</p>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">{t.manualOverrideLocationLabel}</p>
                       <p className="text-base">{listing.location}</p>
                     </div>
                   )}
@@ -1628,7 +1690,7 @@ export default function ProspectingPage() {
                     onClick={() => setIsManualOverrideOpen(null)}
                     className="flex-1"
                   >
-                    Chiudi
+                    {t.manualOverrideClose}
                   </Button>
                   {listing.phone_number && (
                     <Button
@@ -1638,7 +1700,7 @@ export default function ProspectingPage() {
                       className="flex-1 bg-green-600 hover:bg-green-700"
                     >
                       <Phone className="h-4 w-4 mr-2" />
-                      Chiama Ora
+                      {t.manualOverrideCallNow}
                     </Button>
                   )}
                 </div>
@@ -1654,10 +1716,13 @@ export default function ProspectingPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-purple-500" />
-              Aura VR Generator
+              {t.auraVrModalTitle}
             </DialogTitle>
             <DialogDescription>
-              Genera un tour VR immersivo per {selectedListingForVR?.title || 'questo immobile'}
+              {t.auraVrModalDesc.replace(
+                '{title}',
+                selectedListingForVR?.title || t.propertyFallback
+              )}
             </DialogDescription>
           </DialogHeader>
           {selectedListingForVR && (
@@ -1676,16 +1741,19 @@ export default function ProspectingPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-blue-500" />
-              AI Smart Message
+              {t.smartMessageModalTitle}
             </DialogTitle>
             <DialogDescription>
-              Messaggio WhatsApp generato per {selectedListingForMessage?.title || 'questo immobile'}
+              {t.smartMessageModalDesc.replace(
+                '{title}',
+                selectedListingForMessage?.title || t.propertyFallback
+              )}
             </DialogDescription>
           </DialogHeader>
           {selectedListingForMessage && generatedMessage && (
             <div className="space-y-4">
               <div className="p-4 bg-muted rounded-lg border">
-                <p className="text-sm font-medium text-muted-foreground mb-2">Messaggio generato:</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">{t.generatedMessageLabel}</p>
                 <p className="text-base whitespace-pre-wrap">{generatedMessage}</p>
               </div>
               <div className="flex gap-3">
@@ -1694,13 +1762,16 @@ export default function ProspectingPage() {
                     try {
                       await navigator.clipboard.writeText(generatedMessage);
                       toast({
-                        title: "Copiato!",
-                        description: "Messaggio copiato negli appunti",
+                        title: t.copiedTitle,
+                        description: t.messageCopiedDesc,
                       });
-                    } catch (error) {
+                    } catch {
                       toast({
-                        title: "Errore",
-                        description: "Impossibile copiare",
+                        ...clipboardFailureToast(
+                          feedbackLocale,
+                          "prospectingCommand",
+                          t.copyError
+                        ),
                         variant: "destructive",
                       });
                     }
@@ -1709,7 +1780,7 @@ export default function ProspectingPage() {
                   className="flex-1"
                 >
                   <Copy className="h-4 w-4 mr-2" />
-                  Copia Messaggio
+                  {t.copyMessage}
                 </Button>
                 <Button
                   onClick={() => {
@@ -1721,14 +1792,14 @@ export default function ProspectingPage() {
                   disabled={!selectedListingForMessage.phone_number}
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  Invia su WhatsApp
+                  {t.sendWhatsapp}
                 </Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+    </DashboardPageShell>
   );
 }
 

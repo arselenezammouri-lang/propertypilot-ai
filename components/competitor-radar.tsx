@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { History, AlertTriangle, ExternalLink, RefreshCw, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, type SupportedLocale } from "@/lib/i18n/dictionary";
 import { formatCurrencyForLocale } from "@/lib/i18n/intl";
 import { Locale } from "@/lib/i18n/config";
 
@@ -26,31 +26,7 @@ export function CompetitorRadar() {
   const { locale, currency } = useLocaleContext();
   const [listings, setListings] = useState<ExpiredListing[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-  const t = {
-    it: {
-      na: "N/A",
-      title: "Radar Scadenze",
-      subtitle: "Immobili offline o fermi da 120+ giorni",
-      removed: "Rimosso",
-      stale: "Fermo",
-      aiNote: "AI Note",
-      offlineFor: "Offline da",
-      days: "giorni",
-      viewAll: "Vedi tutti",
-    },
-    en: {
-      na: "N/A",
-      title: "Expiration Radar",
-      subtitle: "Properties offline or stale for 120+ days",
-      removed: "Removed",
-      stale: "Stale",
-      aiNote: "AI Note",
-      offlineFor: "Offline for",
-      days: "days",
-      viewAll: "View all",
-    },
-  }[(locale === "it" ? "it" : "en") as "it" | "en"];
+  const t = getTranslation(locale as SupportedLocale).dashboard.competitorRadar;
 
   useEffect(() => {
     fetchExpiredListings();
@@ -112,7 +88,7 @@ export function CompetitorRadar() {
             size="icon"
             onClick={fetchExpiredListings}
             className="h-8 w-8"
-            aria-label={locale === "it" ? "Aggiorna elenco" : "Refresh list"}
+            aria-label={t.refreshAria}
           >
             <RefreshCw className="h-4 w-4" />
           </Button>

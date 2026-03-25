@@ -1,11 +1,14 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { DiamondPageHeader } from "@/components/diamond-page-header";
 import { FeaturesPageContent } from "@/components/features-page-content";
+import { getServerLocaleFromCookies } from "@/lib/i18n/server-locale";
+import { buildFeaturesPageMetadata } from "@/lib/i18n/page-metadata-builders";
+import type { SupportedLocale } from "@/lib/i18n/dictionary";
 
-export const metadata: Metadata = {
-  title: "Features | PropertyPilot AI",
-  description: "Scopri tutte le funzionalità AI di PropertyPilot AI: generazione annunci, CRM, compliance, traduzioni e altro.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocaleFromCookies();
+  return buildFeaturesPageMetadata(locale as SupportedLocale);
+}
 
 export default function FeaturesPage() {
   return (

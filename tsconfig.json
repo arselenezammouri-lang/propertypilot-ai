@@ -50,6 +50,8 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "playwright.config.ts",
-    "scripts/**"
+    "scripts/**",
+    "propertypilot-ai",
+    "_BACKUP_propertypilot-ai"
   ]
 }

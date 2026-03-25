@@ -21,8 +21,7 @@ import { buildAriaPrompt, getUpgradeSuggestions } from "@/lib/ai/aria-brain";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getSpeechRecognitionLocale, localeToSupportedLocale } from "@/lib/i18n/browser-locale";
-import { Locale } from "@/lib/i18n/config";
-import { ariaTranslations } from "@/lib/i18n/config";
+import { Locale, ariaTranslations } from "@/lib/i18n/config";
 import { useLocale } from "@/hooks/use-locale";
 
 interface Message {
@@ -384,7 +383,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
             const upgradeSuggestion: Message = {
               id: (Date.now() + 2).toString(),
               role: "aria",
-              content: `💡 ${suggestions[Math.floor(Math.random() * suggestions.length)]}`,
+              content: `${(ariaTranslations[currentLocale as Locale] || ariaTranslations.en).upgradeTipPrefix ?? "Tip:"} ${suggestions[Math.floor(Math.random() * suggestions.length)]}`,
               timestamp: new Date(),
             };
             setMessages((prev) => [...prev, upgradeSuggestion]);

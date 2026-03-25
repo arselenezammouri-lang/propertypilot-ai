@@ -29,6 +29,55 @@ export function DashboardClientWrapper({ children }: DashboardClientWrapperProps
   const d = getTranslation(locale as SupportedLocale).dashboardToasts;
 
   useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const warnKey = 'pp_connectivity_warn_shown';
+      try {
+        const res = await fetch('/api/health', { cache: 'no-store' });
+        const body = await res.json().catch(() => null);
+        if (cancelled || !body?.checks) return;
+        const bad =
+          body.checks.supabase?.status !== 'ok' ||
+          body.checks.environment?.status !== 'ok';
+        if (bad && typeof window !== 'undefined' && !sessionStorage.getItem(warnKey)) {
+          sessionStorage.setItem(warnKey, '1');
+          toast({
+            title: d.connectivityIssueTitle,
+            description: d.connectivityIssueDesc,
+            variant: 'destructive',
+            duration: 12_000,
+          });
+        }
+      } catch {
+        if (!cancelled && typeof window !== 'undefined' && !sessionStorage.getItem(warnKey)) {
+          sessionStorage.setItem(warnKey, '1');
+          toast({
+            title: d.connectivityIssueTitle,
+            description: d.connectivityIssueDesc,
+            variant: 'destructive',
+            duration: 12_000,
+          });
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [toast, d.connectivityIssueTitle, d.connectivityIssueDesc]);
+
+  useEffect(() => {
+    const key = 'pp_compliance_reminder_shown';
+    if (typeof window !== 'undefined' && !sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, '1');
+      toast({
+        title: d.complianceReminderTitle,
+        description: d.complianceReminderDesc,
+        duration: 10_000,
+      });
+    }
+  }, [toast, d.complianceReminderTitle, d.complianceReminderDesc]);
+
+  useEffect(() => {
     const success = searchParams.get('success');
     const boost = searchParams.get('boost');
     const canceled = searchParams.get('canceled');

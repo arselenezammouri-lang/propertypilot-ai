@@ -58,9 +58,24 @@ const REQUIRED_FOR_AI = [
   { key: 'OPENAI_API_KEY', desc: 'OpenAI API key for listings generation' },
 ];
 
+/** Supabase JWT (anon / service_role): three base64url segments — avoid false positives from `your-` inside payload. */
+function looksLikeJwt(val) {
+  const parts = val.split('.');
+  return (
+    parts.length === 3 &&
+    parts.every((p) => p.length > 10) &&
+    val.startsWith('eyJ')
+  );
+}
+
 function isPlaceholder(val) {
   if (!val || val.length < 5) return true;
-  return /^(sk-)?xxxxx|your-|re_xxxxx|eyJ.*\.\.\.$/.test(val) || val.includes('tudominio');
+  if (looksLikeJwt(val)) return false;
+  return (
+    /^(sk-)?xxxxx|your-supabase|re_xxxxx/i.test(val) ||
+    val.includes('tudominio') ||
+    /^eyJ.*\.\.\.$/.test(val)
+  );
 }
 
 function checkVars(vars, groupName) {

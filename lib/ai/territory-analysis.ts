@@ -1,31 +1,40 @@
 /**
  * AI Territory Analysis - Territory Commander
- * Analisi avanzata del territorio e della domanda immobiliare
+ * Mock analysis; copy localized via getTerritoryAnalysisStrings(locale).
  */
+
+import type { Locale } from '@/lib/i18n/config';
+import type {
+  DnaCategoryId,
+  TerritoryAnalysisStrings,
+} from '@/lib/i18n/territory-analysis-strings';
+import { getTerritoryAnalysisStrings } from '@/lib/i18n/territory-analysis-strings';
 
 export type DemandLevel = 'cold' | 'warm' | 'hot';
 
+export type { DnaCategoryId };
+
 export interface DemandPulse {
   level: DemandLevel;
-  score: number; // 0-100
+  score: number;
   description: string;
   trend: 'up' | 'down' | 'stable';
-  velocity: number; // giorni medi per vendita
+  velocity: number;
 }
 
 export interface NeighborhoodDNA {
   strengths: Array<{
-    category: string;
+    category: DnaCategoryId;
     icon: string;
     description: string;
-    score: number; // 0-100
+    score: number;
   }>;
   weaknesses: Array<{
-    category: string;
+    category: DnaCategoryId;
     description: string;
     impact: 'low' | 'medium' | 'high';
   }>;
-  overallScore: number; // 0-100
+  overallScore: number;
 }
 
 export interface SoldVelocity {
@@ -42,7 +51,7 @@ export interface CommercialIntelligence {
   recommendedActivities: Array<{
     activity: string;
     reason: string;
-    opportunityScore: number; // 0-100
+    opportunityScore: number;
   }>;
   marketGaps: Array<{
     category: string;
@@ -63,163 +72,221 @@ export interface TerritoryInsights {
   neighborhoodPitch: string;
 }
 
-/**
- * Analizza la domanda per un tipo di immobile in una zona
- */
+function locHasAny(locationLower: string, keys: string[]): boolean {
+  return keys.some((k) => locationLower.includes(k));
+}
+
+const EDU_KEYS = [
+  'scuola',
+  'liceo',
+  'università',
+  'universita',
+  'school',
+  'university',
+  'college',
+  'escuela',
+  'universidad',
+  'école',
+  'ecole',
+  'université',
+  'universite',
+  'schule',
+  'universität',
+  'universitat',
+  'escola',
+  'faculdade',
+  'مدرسة',
+  'جامعة',
+];
+
+const TRANSPORT_KEYS = [
+  'metro',
+  'tram',
+  'stazione',
+  'station',
+  'fermata',
+  'subway',
+  'underground',
+  'treno',
+  'train',
+  'bahnhof',
+  'gare',
+  'métro',
+  'estación',
+  'estacion',
+  'tren',
+  'محطة',
+  'قطار',
+];
+
+const GREEN_KEYS = [
+  'parco',
+  'giardino',
+  'verde',
+  'park',
+  'garden',
+  'jardin',
+  'jardín',
+  'parc',
+  'grün',
+  'grun',
+  'حديقة',
+  'green',
+];
+
+const BUSINESS_KEYS = [
+  'centro',
+  'commerciale',
+  'negozi',
+  'uffici',
+  'ufficio',
+  'shopping',
+  'downtown',
+  'office',
+  'commerce',
+  'geschäft',
+  'geschaft',
+  'retail',
+  'centro comercial',
+  'zona comercial',
+  'تجاري',
+];
+
+const HOT_ZONE_KEYS = [
+  'centro',
+  'milano',
+  'roma centro',
+  'navigli',
+  'trastevere',
+  'downtown',
+  'midtown',
+  'cbd',
+  'city center',
+  'centre ville',
+  'centro ciudad',
+  'وسط',
+];
+
+const WARM_ZONE_KEYS = ['zona', 'quartiere', 'neighborhood', 'district', 'barrio', 'quartier', 'stadtteil', 'bairro', 'periferia', 'suburb'];
+
 export function analyzeDemandPulse(
   location: string,
   propertyType: 'RESIDENTIAL_SALE' | 'RESIDENTIAL_RENT' | 'COMMERCIAL',
+  strings: TerritoryAnalysisStrings,
   priceRange?: { min: number; max: number }
 ): DemandPulse {
-  // Mock analysis (in produzione: integrare con dati reali da portali)
   const locationLower = location.toLowerCase();
-  
-  // Logica semplificata per determinare domanda
-  let score = 50; // Base
+
+  let score = 50;
   let level: DemandLevel = 'warm';
   let trend: 'up' | 'down' | 'stable' = 'stable';
-  let velocity = 90; // giorni medi
+  let velocity = 90;
 
-  // Zone calde (centro città, zone trendy)
-  if (
-    locationLower.includes('centro') ||
-    locationLower.includes('milano') ||
-    locationLower.includes('roma centro') ||
-    locationLower.includes('navigli') ||
-    locationLower.includes('trastevere')
-  ) {
+  if (locHasAny(locationLower, HOT_ZONE_KEYS)) {
     score = 85;
     level = 'hot';
     trend = 'up';
     velocity = 45;
-  }
-  // Zone tiepide (periferie ben collegate)
-  else if (
-    locationLower.includes('zona') ||
-    locationLower.includes('quartiere') ||
-    locationLower.includes('periferia')
-  ) {
+  } else if (locHasAny(locationLower, WARM_ZONE_KEYS)) {
     score = 60;
     level = 'warm';
     trend = 'stable';
     velocity = 75;
-  }
-  // Zone fredde (periferie lontane)
-  else {
+  } else {
     score = 35;
     level = 'cold';
     trend = 'down';
     velocity = 120;
   }
 
-  // Aggiusta per tipo immobile
   if (propertyType === 'RESIDENTIAL_RENT') {
-    score += 10; // Affitti sempre più richiesti
+    score += 10;
     velocity = Math.max(30, velocity - 20);
   } else if (propertyType === 'COMMERCIAL') {
-    score -= 5; // Commerciale più difficile
+    score -= 5;
     velocity += 30;
   }
 
-  const descriptions = {
-    hot: 'Bollente - Domanda altissima, immobili venduti in poche settimane',
-    warm: 'Tiepida - Domanda buona, tempi di vendita nella media',
-    cold: 'Fredda - Domanda bassa, tempi di vendita lunghi',
-  };
+  void priceRange;
 
   return {
     level,
     score,
-    description: descriptions[level],
+    description: strings.demandDescriptions[level],
     trend,
     velocity,
   };
 }
 
-/**
- * Genera Neighborhood DNA - punti di forza del quartiere
- */
-export function generateNeighborhoodDNA(location: string): NeighborhoodDNA {
+export function generateNeighborhoodDNA(
+  location: string,
+  strings: TerritoryAnalysisStrings
+): NeighborhoodDNA {
   const locationLower = location.toLowerCase();
   const strengths: NeighborhoodDNA['strengths'] = [];
   const weaknesses: NeighborhoodDNA['weaknesses'] = [];
 
-  // Analisi scuole
-  if (locationLower.includes('scuola') || locationLower.includes('liceo') || locationLower.includes('università')) {
+  if (locHasAny(locationLower, EDU_KEYS)) {
     strengths.push({
-      category: 'Istruzione',
-      icon: '🎓',
-      description: 'Presenza di scuole e università nelle vicinanze',
+      category: 'education',
+      icon: '',
+      description: strings.dna.educationStrengthDesc,
       score: 85,
     });
   } else {
     weaknesses.push({
-      category: 'Istruzione',
-      description: 'Poche scuole nelle immediate vicinanze',
+      category: 'education',
+      description: strings.dna.educationWeaknessDesc,
       impact: 'low',
     });
   }
 
-  // Analisi trasporti
-  if (
-    locationLower.includes('metro') ||
-    locationLower.includes('tram') ||
-    locationLower.includes('stazione') ||
-    locationLower.includes('fermata')
-  ) {
+  if (locHasAny(locationLower, TRANSPORT_KEYS)) {
     strengths.push({
-      category: 'Trasporti',
-      icon: '🚇',
-      description: 'Ottimi collegamenti con mezzi pubblici',
+      category: 'transport',
+      icon: '',
+      description: strings.dna.transportStrengthDesc,
       score: 90,
     });
   } else {
     weaknesses.push({
-      category: 'Trasporti',
-      description: 'Collegamenti pubblici limitati',
+      category: 'transport',
+      description: strings.dna.transportWeaknessDesc,
       impact: 'medium',
     });
   }
 
-  // Analisi parchi
-  if (locationLower.includes('parco') || locationLower.includes('giardino') || locationLower.includes('verde')) {
+  if (locHasAny(locationLower, GREEN_KEYS)) {
     strengths.push({
-      category: 'Verde',
-      icon: '🌳',
-      description: 'Aree verdi e parchi nelle vicinanze',
+      category: 'green',
+      icon: '',
+      description: strings.dna.greenStrengthDesc,
       score: 75,
     });
   }
 
-  // Analisi business density
-  if (
-    locationLower.includes('centro') ||
-    locationLower.includes('commerciale') ||
-    locationLower.includes('negozi') ||
-    locationLower.includes('uffici')
-  ) {
+  if (locHasAny(locationLower, BUSINESS_KEYS)) {
     strengths.push({
-      category: 'Business',
-      icon: '🏢',
-      description: 'Alta densità commerciale e uffici',
+      category: 'business',
+      icon: '',
+      description: strings.dna.businessStrengthDesc,
       score: 80,
     });
   }
 
-  // Analisi sicurezza (mock)
-  if (locationLower.includes('zona') && !locationLower.includes('periferia')) {
+  if (locHasAny(locationLower, WARM_ZONE_KEYS) && !locationLower.includes('periferia') && !locationLower.includes('suburb')) {
     strengths.push({
-      category: 'Sicurezza',
-      icon: '🛡️',
-      description: 'Zona residenziale tranquilla',
+      category: 'security',
+      icon: '',
+      description: strings.dna.securityStrengthDesc,
       score: 70,
     });
   }
 
-  // Calcola overall score
-  const overallScore = strengths.length > 0
-    ? Math.round(strengths.reduce((sum, s) => sum + s.score, 0) / strengths.length)
-    : 50;
+  const overallScore =
+    strengths.length > 0
+      ? Math.round(strengths.reduce((sum, s) => sum + s.score, 0) / strengths.length)
+      : 50;
 
   return {
     strengths,
@@ -228,17 +295,14 @@ export function generateNeighborhoodDNA(location: string): NeighborhoodDNA {
   };
 }
 
-/**
- * Calcola Sold Velocity - tempo medio di vendita
- */
 export function calculateSoldVelocity(
   location: string,
-  propertyType: 'RESIDENTIAL_SALE' | 'RESIDENTIAL_RENT' | 'COMMERCIAL'
+  propertyType: 'RESIDENTIAL_SALE' | 'RESIDENTIAL_RENT' | 'COMMERCIAL',
+  strings: TerritoryAnalysisStrings
 ): SoldVelocity {
-  const demandPulse = analyzeDemandPulse(location, propertyType);
+  const demandPulse = analyzeDemandPulse(location, propertyType, strings);
   const averageDays = demandPulse.velocity;
 
-  // Calcola categoria velocità
   let velocityCategory: SoldVelocity['velocityCategory'] = 'normal';
   if (averageDays < 30) velocityCategory = 'ultra-fast';
   else if (averageDays < 60) velocityCategory = 'fast';
@@ -246,7 +310,6 @@ export function calculateSoldVelocity(
   else if (averageDays < 150) velocityCategory = 'slow';
   else velocityCategory = 'very-slow';
 
-  // Mock comparison (in produzione: dati reali)
   const cityAverage = propertyType === 'RESIDENTIAL_RENT' ? 40 : 90;
   const neighborhoodAverage = averageDays;
 
@@ -265,73 +328,101 @@ export function calculateSoldVelocity(
   };
 }
 
-/**
- * Genera Commercial Intelligence per immobili commerciali
- */
-export function generateCommercialIntelligence(location: string): CommercialIntelligence {
+const COMMERCIAL_CENTRE_KEYS = [
+  'centro',
+  'downtown',
+  'city center',
+  'centre ville',
+  'cbd',
+  'uffici',
+  'ufficio',
+  'office',
+  'مكتب',
+];
+
+const COMMERCIAL_EDU_KEYS = [...EDU_KEYS];
+
+const RESIDENTIAL_KEYS = [
+  'residenziale',
+  'residential',
+  'quartiere',
+  'neighborhood',
+  'barrio',
+  'quartier',
+  'wohn',
+  'bairro',
+  'سكني',
+];
+
+const PHARMACY_KEYS = ['farmacia', 'pharmacy', 'pharmacie', 'apotheke', 'farmácia', 'صيدلية'];
+
+const FOOD_KEYS = ['food', 'ristorant', 'restaurant', 'gastro', 'مطعم'];
+
+const PED_KEYS = ['pedonale', 'pedestrian', 'peatonal', 'piéton', 'fußgänger'];
+
+export function generateCommercialIntelligence(
+  location: string,
+  strings: TerritoryAnalysisStrings
+): CommercialIntelligence {
   const locationLower = location.toLowerCase();
-  
+
   const recommendedActivities: CommercialIntelligence['recommendedActivities'] = [];
   const marketGaps: CommercialIntelligence['marketGaps'] = [];
-  
-  // Analisi attività consigliate
-  if (locationLower.includes('centro') || locationLower.includes('uffici')) {
+
+  if (locHasAny(locationLower, COMMERCIAL_CENTRE_KEYS)) {
     recommendedActivities.push({
-      activity: 'Coworking',
-      reason: 'Zona centrale con alta densità di professionisti',
+      activity: strings.commercial.coworkingActivity,
+      reason: strings.commercial.coworkingReason,
       opportunityScore: 85,
     });
   }
-  
-  if (locationLower.includes('scuola') || locationLower.includes('università')) {
+
+  if (locHasAny(locationLower, COMMERCIAL_EDU_KEYS)) {
     recommendedActivities.push({
-      activity: 'Bar/Caffetteria',
-      reason: 'Alta presenza di studenti e giovani',
+      activity: strings.commercial.barActivity,
+      reason: strings.commercial.barReason,
       opportunityScore: 80,
     });
   }
-  
-  if (locationLower.includes('residenziale') || locationLower.includes('quartiere')) {
+
+  if (locHasAny(locationLower, RESIDENTIAL_KEYS)) {
     recommendedActivities.push({
-      activity: 'Farmacia',
-      reason: 'Zona residenziale con potenziale bisogno di servizi sanitari',
+      activity: strings.commercial.pharmacyActivity,
+      reason: strings.commercial.pharmacyReason,
       opportunityScore: 75,
     });
   }
-  
-  // Analisi gap di mercato
-  if (!locationLower.includes('farmacia') && (locationLower.includes('residenziale') || locationLower.includes('quartiere'))) {
+
+  if (!locHasAny(locationLower, PHARMACY_KEYS) && locHasAny(locationLower, RESIDENTIAL_KEYS)) {
     marketGaps.push({
-      category: 'Farmacie',
-      description: 'Mancanza di farmacie in zona - Opportunità di mercato',
+      category: strings.commercial.gapPharmacyCategory,
+      description: strings.commercial.gapPharmacyDesc,
       potential: 'high',
     });
   }
-  
-  if (locationLower.includes('centro') && !locationLower.includes('food')) {
+
+  if (locHasAny(locationLower, HOT_ZONE_KEYS) && !locHasAny(locationLower, FOOD_KEYS)) {
     marketGaps.push({
-      category: 'Food & Beverage',
-      description: 'Alta domanda per ristoranti e bar in zona centrale',
+      category: strings.commercial.gapFoodCategory,
+      description: strings.commercial.gapFoodDesc,
       potential: 'high',
     });
   }
-  
-  // Analisi foot traffic
+
   let footTraffic: 'high' | 'medium' | 'low' = 'medium';
-  if (locationLower.includes('centro') || locationLower.includes('pedonale')) {
+  if (locHasAny(locationLower, [...HOT_ZONE_KEYS, ...PED_KEYS])) {
     footTraffic = 'high';
-  } else if (locationLower.includes('periferia') || locationLower.includes('zona')) {
+  } else if (locationLower.includes('periferia') || locationLower.includes('suburb')) {
     footTraffic = 'low';
   }
-  
-  // Analisi competizione
+
   let competitionLevel: 'low' | 'medium' | 'high' = 'medium';
-  if (locationLower.includes('centro') || locationLower.includes('commerciale')) {
+  if (locHasAny(locationLower, [...HOT_ZONE_KEYS]) || locationLower.includes('commerciale') || locationLower.includes('commercial')) {
     competitionLevel = 'high';
-  } else if (locationLower.includes('periferia')) {
+  } else if (locationLower.includes('periferia') || locationLower.includes('suburb')) {
     competitionLevel = 'low';
   }
-  
+
   return {
     recommendedActivities,
     marketGaps,
@@ -340,80 +431,86 @@ export function generateCommercialIntelligence(location: string): CommercialInte
   };
 }
 
-/**
- * Genera Pitch di Quartiere per Aria
- */
 export function generateNeighborhoodPitch(
-  insights: Omit<TerritoryInsights, 'neighborhoodPitch' | 'commercialIntelligence'>
+  insights: Omit<TerritoryInsights, 'neighborhoodPitch' | 'commercialIntelligence'>,
+  strings: TerritoryAnalysisStrings
 ): string {
   let pitch = '';
-  
-  // Inizio con domanda
+  const days = String(insights.soldVelocity.averageDays);
+  const p = strings.pitch;
+
   if (insights.demandPulse.level === 'hot') {
-    pitch += `🔥 Zona BOLLENTE! La domanda è altissima - gli immobili qui si vendono in media in ${insights.soldVelocity.averageDays} giorni. `;
+    pitch += p.hotIntro.replace('{days}', days);
   } else if (insights.demandPulse.level === 'warm') {
-    pitch += `🌡️ Zona TIEPIDA con buona domanda - tempi di vendita nella media (${insights.soldVelocity.averageDays} giorni). `;
+    pitch += p.warmIntro.replace('{days}', days);
   } else {
-    pitch += `❄️ Zona FREDDA - tempi di vendita più lunghi (${insights.soldVelocity.averageDays} giorni), ma opportunità per investitori pazienti. `;
+    pitch += p.coldIntro.replace('{days}', days);
   }
-  
-  // Aggiungi punti di forza
+
   if (insights.neighborhoodDNA.strengths.length > 0) {
     const topStrengths = insights.neighborhoodDNA.strengths.slice(0, 3);
-    pitch += `Il quartiere ha ${insights.neighborhoodDNA.strengths.length} punti di forza: `;
-    pitch += topStrengths.map(s => s.category.toLowerCase()).join(', ') + '. ';
+    const count = String(insights.neighborhoodDNA.strengths.length);
+    pitch += p.strengthsPrefix.replace('{count}', count);
+    pitch +=
+      topStrengths.map((s) => strings.categoryNames[s.category]).join(', ') + '. ';
   }
-  
-  // Aggiungi velocità
+
   if (insights.soldVelocity.trend === 'faster') {
-    pitch += `I tempi di vendita sono ${insights.soldVelocity.comparison.cityAverage - insights.soldVelocity.comparison.neighborhoodAverage} giorni più veloci della media città - segno di mercato dinamico. `;
+    const daysDiff = String(
+      insights.soldVelocity.comparison.cityAverage - insights.soldVelocity.comparison.neighborhoodAverage
+    );
+    pitch += p.fasterThanCity.replace('{daysDiff}', daysDiff);
   }
-  
-  // Conclusione strategica
+
   if (insights.demandPulse.level === 'hot' && insights.neighborhoodDNA.overallScore > 75) {
-    pitch += `Usa questi dati per convincere: "Questa zona è tra le più richieste della città, con ${insights.neighborhoodDNA.strengths.length} vantaggi strategici. Gli immobili qui si vendono rapidamente - non perdere l'opportunità."`;
+    pitch += p.hotClosing.replace('{count}', String(insights.neighborhoodDNA.strengths.length));
   } else if (insights.demandPulse.level === 'warm') {
-    pitch += `Pitch strategico: "Zona in crescita con ottime infrastrutture. Tempi di vendita nella media, ma con il prezzo giusto e un buon staging, puoi chiudere in ${insights.soldVelocity.averageDays} giorni."`;
+    pitch += p.warmClosing.replace('{days}', days);
   } else {
-    pitch += `Pitch per investitori: "Zona con potenziale inespresso. Prezzo competitivo e investimento mirato possono trasformare questo immobile in un affare d'oro."`;
+    pitch += p.coldClosing;
   }
-  
+
   return pitch;
 }
 
-/**
- * Genera insight completo del territorio
- */
 export function generateTerritoryInsights(
   location: string,
   propertyType: 'RESIDENTIAL_SALE' | 'RESIDENTIAL_RENT' | 'COMMERCIAL',
+  locale: Locale,
   price?: number
 ): TerritoryInsights {
-  const demandPulse = analyzeDemandPulse(location, propertyType, price ? { min: price * 0.8, max: price * 1.2 } : undefined);
-  const neighborhoodDNA = generateNeighborhoodDNA(location);
-  const soldVelocity = calculateSoldVelocity(location, propertyType);
+  const strings = getTerritoryAnalysisStrings(locale);
+  const demandPulse = analyzeDemandPulse(
+    location,
+    propertyType,
+    strings,
+    price ? { min: price * 0.8, max: price * 1.2 } : undefined
+  );
+  const neighborhoodDNA = generateNeighborhoodDNA(location, strings);
+  const soldVelocity = calculateSoldVelocity(location, propertyType, strings);
 
-  // Genera consiglio di mercato
   let marketAdvice = '';
+  const d = String(soldVelocity.averageDays);
   if (demandPulse.level === 'hot') {
-    marketAdvice = `🔥 Zona BOLLENTE! La domanda è altissima. Prezzi competitivi e tempi di esposizione brevi (${soldVelocity.averageDays} giorni). Ottima opportunità per vendite rapide.`;
+    marketAdvice = strings.marketAdvice.hot.replace('{days}', d);
   } else if (demandPulse.level === 'warm') {
-    marketAdvice = `🌡️ Zona TIEPIDA. Domanda buona ma non eccezionale. Tempi di vendita nella media (${soldVelocity.averageDays} giorni). Strategia: prezzo competitivo e staging professionale.`;
+    marketAdvice = strings.marketAdvice.warm.replace('{days}', d);
   } else {
-    marketAdvice = `❄️ Zona FREDDA. Domanda bassa, tempi di vendita lunghi (${soldVelocity.averageDays} giorni). Strategia: prezzo aggressivo o investimento in migliorie per aumentare appeal.`;
+    marketAdvice = strings.marketAdvice.cold.replace('{days}', d);
   }
 
   if (neighborhoodDNA.overallScore > 75) {
-    marketAdvice += ` Il quartiere ha un DNA forte (${neighborhoodDNA.strengths.length} punti di forza). Usa questi come leva di vendita.`;
+    marketAdvice += strings.marketAdvice.strongDnaSuffix.replace(
+      '{count}',
+      String(neighborhoodDNA.strengths.length)
+    );
   }
 
-  // Commercial Intelligence (solo per commerciale)
   let commercialIntelligence: CommercialIntelligence | undefined;
   if (propertyType === 'COMMERCIAL') {
-    commercialIntelligence = generateCommercialIntelligence(location);
+    commercialIntelligence = generateCommercialIntelligence(location, strings);
   }
 
-  // Genera base insights
   const baseInsights = {
     location,
     demandPulse,
@@ -422,8 +519,7 @@ export function generateTerritoryInsights(
     marketAdvice,
   };
 
-  // Genera Pitch di Quartiere
-  const neighborhoodPitch = generateNeighborhoodPitch(baseInsights);
+  const neighborhoodPitch = generateNeighborhoodPitch(baseInsights, strings);
 
   return {
     ...baseInsights,
@@ -431,4 +527,3 @@ export function generateTerritoryInsights(
     neighborhoodPitch,
   };
 }
-

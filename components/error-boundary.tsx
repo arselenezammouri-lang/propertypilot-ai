@@ -1,17 +1,22 @@
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useCallback, useMemo } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { logger } from '@/lib/utils/safe-logger';
 import { useLocale } from '@/lib/i18n/locale-context';
+import type { ErrorBoundaryUi } from '@/lib/i18n/error-boundary-ui';
+import { errorBoundaryModuleUiEn } from '@/lib/i18n/error-boundary-ui';
+import { getTranslation, type SupportedLocale } from '@/lib/i18n/dictionary';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   locale?: string;
+  /** Copy for the default error card (from `getTranslation(locale).errorBoundaryModule.boundary`) */
+  errorUi?: ErrorBoundaryUi;
 }
 
 interface State {
@@ -55,16 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      const isIt = (this.props.locale ?? 'it') !== 'en';
-      const eb = {
-        title: isIt ? 'Qualcosa è andato storto' : 'Something went wrong',
-        desc: isIt
-          ? 'Si è verificato un errore imprevisto. Non ti preoccupare, i tuoi dati sono al sicuro.'
-          : 'An unexpected error occurred. Your data is safe.',
-        unknown: isIt ? 'Errore sconosciuto' : 'Unknown error',
-        retry: isIt ? 'Riprova' : 'Retry',
-        reload: isIt ? 'Ricarica Pagina' : 'Reload Page',
-      };
+      const eb = this.props.errorUi ?? errorBoundaryModuleUiEn.boundary;
 
       return (
         <div className="flex items-center justify-center min-h-[400px] p-4">
@@ -110,10 +106,11 @@ export class ErrorBoundary extends Component<Props, State> {
 /**
  * Wrapper funzionale che inietta automaticamente il locale nell'ErrorBoundary
  */
-export function LocalizedErrorBoundary({ children, fallback, onError }: Omit<Props, 'locale'>) {
+export function LocalizedErrorBoundary({ children, fallback, onError }: Omit<Props, 'locale' | 'errorUi'>) {
   const { locale } = useLocale();
+  const errorUi = getTranslation(locale as SupportedLocale).errorBoundaryModule.boundary;
   return (
-    <ErrorBoundary locale={locale} fallback={fallback} onError={onError}>
+    <ErrorBoundary locale={locale} errorUi={errorUi} fallback={fallback} onError={onError}>
       {children}
     </ErrorBoundary>
   );
@@ -124,36 +121,34 @@ export function LocalizedErrorBoundary({ children, fallback, onError }: Omit<Pro
  */
 export function useAPIErrorHandler() {
   const { locale } = useLocale();
-  const isIt = locale !== 'en';
+  const apiHandler = useMemo(
+    () => getTranslation(locale as SupportedLocale).errorBoundaryModule.apiHandler,
+    [locale]
+  );
 
-  const handleAPIError = (error: any, context?: string): string => {
-    if (error?.message?.includes('API_KEY') || error?.message?.includes('SECRET')) {
-      return isIt
-        ? 'Errore di configurazione. Contatta il supporto.'
-        : 'Configuration error. Please contact support.';
-    }
+  const handleAPIError = useCallback(
+    (error: any, context?: string): string => {
+      if (error?.message?.includes('API_KEY') || error?.message?.includes('SECRET')) {
+        return apiHandler.configError;
+      }
 
-    if (error?.message?.includes('quota') || error?.message?.includes('billing')) {
-      return isIt
-        ? 'Quota AI temporaneamente esaurita. Riprova tra qualche minuto.'
-        : 'AI quota temporarily exhausted. Please try again in a few minutes.';
-    }
+      if (error?.message?.includes('quota') || error?.message?.includes('billing')) {
+        return apiHandler.quotaError;
+      }
 
-    if (error?.message?.includes('rate limit') || error?.code === 429) {
-      return isIt
-        ? 'Troppe richieste. Attendi qualche secondo prima di riprovare.'
-        : 'Too many requests. Please wait a few seconds before retrying.';
-    }
+      if (error?.message?.includes('rate limit') || error?.code === 429) {
+        return apiHandler.rateLimitError;
+      }
 
-    if (error?.message?.includes('timeout') || error?.code === 'ETIMEDOUT') {
-      return isIt
-        ? 'Il servizio sta impiegando troppo tempo. Riprova tra qualche secondo.'
-        : 'The service is taking too long to respond. Please try again in a moment.';
-    }
+      if (error?.message?.includes('timeout') || error?.code === 'ETIMEDOUT') {
+        return apiHandler.timeoutError;
+      }
 
-    const contextMsg = context ? `${context}: ` : '';
-    return `${contextMsg}${error?.message || (isIt ? 'Si è verificato un errore. Riprova più tardi.' : 'An error occurred. Please try again later.')}`;
-  };
+      const contextMsg = context ? `${context}: ` : '';
+      return `${contextMsg}${error?.message || apiHandler.genericError}`;
+    },
+    [apiHandler]
+  );
 
   return { handleAPIError };
 }
