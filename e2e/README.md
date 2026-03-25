@@ -68,6 +68,7 @@ npm run test:e2e:debug
 - **`npm run qa:premerge:local`** = stesso flusso ma carica **`.env`** e **`.env.local`**, poi esegue **`test:e2e:billing`** solo se `E2E_FOUNDER_EMAIL`/`E2E_FOUNDER_PASSWORD` o `E2E_TEST_EMAIL`/`E2E_TEST_PASSWORD` sono valorizzati; altrimenti stampa un messaggio e termina con successo. Un solo comando prima del merge su laptop.
 - Con **`npm run dev` acceso**: **`npm run check:connectivity`** — verifica `GET /api/health` e raggiungibilità Supabase (secondo terminale).
 - **`npm run dev`** lancia automaticamente **`validate:env:soft`** prima di Next (avvisi su `.env.local`, non blocca). Con `npx next dev` questo passo non parte.
+- **`npm run qa:local-solid`** — `validate:env:soft` + `tsc --noEmit` + **`npm test`** (tutta la suite Jest). Da lanciare prima di considerare il repo “verde” in locale.
 
 ## Note
 

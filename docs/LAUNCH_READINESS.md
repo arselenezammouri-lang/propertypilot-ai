@@ -18,6 +18,17 @@ Obiettivo: sapere **cosa è verificato automaticamente** e **cosa resta manuale*
 
 Eseguire: `npm run qa:launch` (stessa suite) oppure, prima del merge locale, **`npm run qa:premerge`** (Jest launch + **`npm run smoke:public`**, come in CI). Su **macchina founder** con `.env.local`: **`npm run qa:premerge:local`** — carica `.env` / `.env.local`, stesso flusso + **`npm run test:e2e:billing`** se sono impostate `E2E_FOUNDER_*` o `E2E_TEST_*` (altrimenti il billing viene saltato senza errore). Con **`npm run dev` avviato** in un altro terminale: **`npm run check:connectivity`** (GET `/api/health` + probe Supabase). Ogni **`npm run dev`** esegue prima **`validate:env:soft`** (solo avvisi, non blocca se `.env.local` è incompleto). In alternativa: `npx jest __tests__/launch ...` e `npm test` per tutto.
 
+### Checklist “localhost solido” (prima di sentirti sereno al marketing)
+
+1. **`npm ci`** (dipendenze identiche alla CI).
+2. **`npm run qa:local-solid`** — `validate:env:soft` + `tsc --noEmit` + **tutta** la suite Jest (333+ test).
+3. **`npm run build`** — stesso comando della CI; risolve errori TypeScript/build prima del deploy.
+4. **`npm run dev`** → in altro terminale **`npm run check:connectivity`**.
+5. **`npm run qa:premerge:local`** — smoke Playwright + (opzionale) billing E2E con credenziali.
+6. **Manuale**: tabella in **`DASHBOARD_FEATURE_QA_CHECKLIST.md`** — nessun test automatico sostituisce il click su ogni feature con il tuo account Agency/Pro.
+
+**Cosa non può essere “perfetto” solo dal codice:** chiamate a OpenAI, Stripe checkout reale, Bland, mappe, email — servono chiavi valide e rete; senza di esse alcune pagine rispondono con errore controllato, non con “tutto verde” inventato.
+
 ## Checklist funzionale dashboard (tracciamento manuale)
 
 - File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.

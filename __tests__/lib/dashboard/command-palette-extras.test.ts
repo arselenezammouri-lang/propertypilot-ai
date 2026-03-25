@@ -21,12 +21,12 @@ describe('command-palette-extras', () => {
     expect(en.every((x) => x.path.startsWith('/docs'))).toBe(true);
   });
 
-  it('ES locale inherits commandPaletteExtras from EN merge', () => {
+  it('ES locale has commandPaletteExtras and localized JTBD content heading', () => {
     const es = getTranslation('es');
+    const en = getTranslation('en');
     const quick = getCommandPaletteQuickLinks(es.commandPaletteExtras);
     expect(quick.some((x) => x.path === '/dashboard/billing')).toBe(true);
-    expect(es.dashboardNav.jtbd.content.heading).toBe(
-      getTranslation('en').dashboardNav.jtbd.content.heading
-    );
+    expect(es.dashboardNav.jtbd.content.heading.length).toBeGreaterThan(2);
+    expect(es.dashboardNav.jtbd.content.heading).not.toBe(en.dashboardNav.jtbd.content.heading);
   });
 });
