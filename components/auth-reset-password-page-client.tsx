@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { useSupabaseBrowserClient } from "@/hooks/use-supabase-browser-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +26,7 @@ function ResetPasswordClient() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
-  const supabase = createClient();
+  const { client: supabase, configError } = useSupabaseBrowserClient();
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +39,11 @@ function ResetPasswordClient() {
     }
     if (pwd !== confirm) {
       toast({ title: errorTitle, description: t.passwordMismatch, variant: "destructive" });
+      return;
+    }
+
+    if (!supabase) {
+      toast({ title: errorTitle, description: configError ?? tr.auth.toast.networkError, variant: "destructive" });
       return;
     }
 
@@ -105,6 +110,14 @@ function ResetPasswordClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {configError ? (
+              <div
+                role="alert"
+                className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-red-200"
+              >
+                {configError}
+              </div>
+            ) : null}
             <form onSubmit={handleReset} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="reset-password" className="text-white">{t.passwordLabel}</Label>
@@ -140,7 +153,7 @@ function ResetPasswordClient() {
                   className="bg-white/5 border-white/10 text-white"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || !supabase}>
                 {loading ? t.updateLoading : t.updateIdle}
               </Button>
             </form>

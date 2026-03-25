@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { useSupabaseBrowserClient } from "@/hooks/use-supabase-browser-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ export function AuthForgotPasswordPageClient() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const { toast } = useToast();
-  const supabase = createClient();
+  const { client: supabase, configError } = useSupabaseBrowserClient();
   const tr = getTranslation(locale as SupportedLocale);
   const t = tr.authPasswordRecovery.forgot;
   const errorTitle = tr.auth.toast.error;
@@ -30,6 +30,11 @@ export function AuthForgotPasswordPageClient() {
     const trimmedEmail = email?.trim();
     if (!trimmedEmail) {
       toast({ title: errorTitle, description: t.emailRequired, variant: "destructive" });
+      return;
+    }
+
+    if (!supabase) {
+      toast({ title: errorTitle, description: configError ?? tr.auth.toast.networkError, variant: "destructive" });
       return;
     }
 
@@ -81,6 +86,14 @@ export function AuthForgotPasswordPageClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {configError ? (
+              <div
+                role="alert"
+                className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-red-200"
+              >
+                {configError}
+              </div>
+            ) : null}
             {sent ? (
               <div className="text-center py-4">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -106,7 +119,7 @@ export function AuthForgotPasswordPageClient() {
                     />
                   </div>
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full" disabled={loading || !supabase}>
                   {loading ? t.sendLoading : t.sendIdle}
                 </Button>
               </form>

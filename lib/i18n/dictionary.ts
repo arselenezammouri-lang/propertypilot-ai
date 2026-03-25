@@ -1180,6 +1180,12 @@ export interface TranslationDictionary {
     checkoutCanceledDesc: string;
     limitNear: string;
     limitNearDesc: string;
+    /** One-time reminder after login: data protection / compliance (links to public /compliance in description). */
+    complianceReminderTitle: string;
+    complianceReminderDesc: string;
+    /** Shown when /api/health reports degraded Supabase from the browser (optional follow-up). */
+    connectivityIssueTitle: string;
+    connectivityIssueDesc: string;
   };
   
   // Landing Page
@@ -2226,6 +2232,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'Puoi riprovare in qualsiasi momento dalla pagina Fatturazione.',
       limitNear: 'Limite quasi raggiunto',
       limitNearDesc: 'Hai usato {used} dei tuoi {lim} annunci mensili (80%+). Valuta un upgrade per continuare.',
+      complianceReminderTitle: 'Uso conforme',
+      complianceReminderDesc:
+        'Tratta i dati dei clienti secondo GDPR e le norme del tuo mercato. Documentazione e centro compliance: pagina Compliance nel sito.',
+      connectivityIssueTitle: 'Backend o Supabase non rispondono',
+      connectivityIssueDesc:
+        'Ricarica la pagina. Se persiste: controlla rete/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL in .env.local e che npm run dev sia attivo.',
     },
     landing: {
       nav: {
@@ -3267,6 +3279,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'You can try again anytime from the Billing page.',
       limitNear: 'Limit almost reached',
       limitNearDesc: "You've used {used} of your {lim} monthly listings (80%+). Consider upgrading to continue.",
+      complianceReminderTitle: 'Compliant use',
+      complianceReminderDesc:
+        'Process client data under GDPR and applicable regulations. Documentation and compliance hub: Compliance page on the site.',
+      connectivityIssueTitle: 'Backend or Supabase unreachable',
+      connectivityIssueDesc:
+        'Reload the page. If it persists: check network/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL in .env.local, and that npm run dev is running.',
     },
     landing: {
       nav: {
@@ -3819,6 +3837,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'Puedes volver a intentarlo cuando quieras desde Facturación.',
       limitNear: 'Casi has alcanzado el límite',
       limitNearDesc: 'Has usado {used} de tus {lim} anuncios mensuales (80%+). Valora ampliar el plan para seguir.',
+      complianceReminderTitle: 'Uso conforme',
+      complianceReminderDesc:
+        'Trata los datos de clientes según el RGPD y la normativa aplicable. Documentación: página Cumplimiento del sitio.',
+      connectivityIssueTitle: 'Backend o Supabase no responden',
+      connectivityIssueDesc:
+        'Recarga la página. Si continúa: revisa red/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL en .env.local y que npm run dev esté en marcha.',
     },
     auraVR: {
       title: 'Generador Aura VR',
@@ -4467,6 +4491,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'Vous pouvez réessayer à tout moment depuis la page Facturation.',
       limitNear: 'Limite presque atteinte',
       limitNearDesc: 'Vous avez utilisé {used} sur {lim} annonces mensuelles (80%+). Envisagez une mise à niveau pour continuer.',
+      complianceReminderTitle: 'Usage conforme',
+      complianceReminderDesc:
+        'Traitez les données clients conformément au RGPD et aux lois applicables. Documentation : page Conformité du site.',
+      connectivityIssueTitle: 'Backend ou Supabase injoignable',
+      connectivityIssueDesc:
+        'Rechargez la page. Si cela persiste : vérifiez réseau/VPN/pare-feu, NEXT_PUBLIC_SUPABASE_URL dans .env.local et que npm run dev tourne.',
     },
     auraVR: {
       title: 'Générateur Aura VR',
@@ -5115,6 +5145,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'Sie können es jederzeit erneut auf der Seite Abrechnung versuchen.',
       limitNear: 'Limit fast erreicht',
       limitNearDesc: 'Sie haben {used} von {lim} monatlichen Inseraten genutzt (80%+). Erwägen Sie ein Upgrade, um fortzufahren.',
+      complianceReminderTitle: 'Konforme Nutzung',
+      complianceReminderDesc:
+        'Verarbeiten Sie Kundendaten gemäß DSGVO und geltendem Recht. Dokumentation: Compliance-Seite der Website.',
+      connectivityIssueTitle: 'Backend oder Supabase nicht erreichbar',
+      connectivityIssueDesc:
+        'Seite neu laden. Falls weiterhin: Netzwerk/VPN/Firewall prüfen, NEXT_PUBLIC_SUPABASE_URL in .env.local und ob npm run dev läuft.',
     },
     auraVR: {
       title: 'Aura VR Generator',
@@ -5763,6 +5799,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'Pode tentar novamente a qualquer momento na página de Faturação.',
       limitNear: 'Limite quase atingido',
       limitNearDesc: 'Utilizou {used} dos seus {lim} anúncios mensais (80%+). Considere fazer upgrade para continuar.',
+      complianceReminderTitle: 'Utilização conforme',
+      complianceReminderDesc:
+        'Trate dados de clientes em conformidade com o RGPD e a legislação aplicável. Documentação: página Compliance do site.',
+      connectivityIssueTitle: 'Backend ou Supabase indisponível',
+      connectivityIssueDesc:
+        'Recarregue a página. Se persistir: verifique rede/VPN/firewall, NEXT_PUBLIC_SUPABASE_URL no .env.local e se npm run dev está a correr.',
     },
     auraVR: {
       title: 'Gerador Aura VR',
@@ -6136,6 +6178,12 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
       checkoutCanceledDesc: 'يمكنك المحاولة مرة أخرى في أي وقت من صفحة الفوترة.',
       limitNear: 'اقتربت من الحد',
       limitNearDesc: 'استخدمت {used} من أصل {lim} إعلان شهري (أكثر من 80%). فكّر بالترقية للمتابعة.',
+      complianceReminderTitle: 'استخدام متوافق',
+      complianceReminderDesc:
+        'عالج بيانات العملاء وفق GDPR والأنظمة المعمول بها. التوثيق: صفحة الامتثال في الموقع.',
+      connectivityIssueTitle: 'الخادم أو Supabase لا يستجيب',
+      connectivityIssueDesc:
+        'أعد تحميل الصفحة. إذا استمر الأمر: تحقق من الشبكة/VPN/الجدار الناري وNEXT_PUBLIC_SUPABASE_URL في .env.local وتشغيل npm run dev.',
     },
     auraVR: {
       title: 'مولد Aura VR',

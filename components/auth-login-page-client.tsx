@@ -3,7 +3,7 @@
 import { useState, useCallback, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { useSupabaseBrowserClient } from "@/hooks/use-supabase-browser-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,7 +41,7 @@ function LoginClient() {
   const { toast } = useToast();
   const { locale, currency, setLocale, setCurrency } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
-  const supabase = createClient();
+  const { client: supabase, configError } = useSupabaseBrowserClient();
   
   const selectedPlan = searchParams.get('plan');
   const selectedPackage = searchParams.get('package');
@@ -81,6 +81,16 @@ function LoginClient() {
       toast({
         title: t.auth.toast.error,
         description: t.auth.toast.turnstileRequired,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (!supabase) {
+      toast({
+        title: t.auth.toast.error,
+        description: configError ?? t.auth.toast.networkError,
         variant: "destructive",
       });
       setLoading(false);
@@ -225,6 +235,14 @@ function LoginClient() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {configError ? (
+              <div
+                role="alert"
+                className="mb-5 rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-red-200"
+              >
+                {configError}
+              </div>
+            ) : null}
             <form onSubmit={handleLogin} method="post" action="#" className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-white">
@@ -303,6 +321,7 @@ function LoginClient() {
                 className="w-full h-11 text-base shadow-lg hover:shadow-xl transition-all" 
                 disabled={
                   loading ||
+                  !supabase ||
                   turnstileLoadFailed ||
                   (turnstileRequired && !turnstileToken)
                 }
