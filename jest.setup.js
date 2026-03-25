@@ -1,3 +1,75 @@
+// jsdom: define Headers before Request (Request constructor uses Headers)
+if (typeof globalThis.Headers === 'undefined') {
+  globalThis.Headers = class Headers {
+    constructor(init) {
+      this._m = new Map();
+      if (init && typeof init === 'object') {
+        if (Array.isArray(init)) {
+          init.forEach(([k, v]) => this._m.set(String(k).toLowerCase(), String(v)));
+        } else {
+          Object.entries(init).forEach(([k, v]) => this._m.set(String(k).toLowerCase(), String(v)));
+        }
+      }
+    }
+    get(name) {
+      return this._m.get(String(name).toLowerCase()) ?? null;
+    }
+    set(name, value) {
+      this._m.set(String(name).toLowerCase(), String(value));
+    }
+    has(name) {
+      return this._m.has(String(name).toLowerCase());
+    }
+    append(name, value) {
+      this.set(name, value);
+    }
+    forEach(fn) {
+      this._m.forEach((v, k) => fn(v, k, this));
+    }
+  };
+}
+
+if (typeof globalThis.Request === 'undefined') {
+  globalThis.Request = class Request {
+    constructor(input, init = {}) {
+      const url = typeof input === 'string' ? input : input?.url ?? 'http://localhost:3000';
+      this._url = url;
+      this.method = init.method || 'GET';
+      this.headers = new globalThis.Headers(init.headers);
+      this._body = init.body ?? null;
+    }
+    get url() {
+      return this._url;
+    }
+    async json() {
+      if (!this._body) return {};
+      if (typeof this._body === 'string') return JSON.parse(this._body);
+      return this._body;
+    }
+    async text() {
+      if (this._body == null) return '';
+      return typeof this._body === 'string' ? this._body : JSON.stringify(this._body);
+    }
+  };
+}
+
+if (typeof globalThis.Response === 'undefined') {
+  globalThis.Response = class Response {
+    constructor(body, init = {}) {
+      this._body = body;
+      this.status = init.status ?? 200;
+      this.headers = new globalThis.Headers(init.headers);
+    }
+    async json() {
+      if (typeof this._body === 'string') return JSON.parse(this._body);
+      return this._body ?? {};
+    }
+    async text() {
+      return typeof this._body === 'string' ? this._body : JSON.stringify(this._body ?? '');
+    }
+  };
+}
+
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 

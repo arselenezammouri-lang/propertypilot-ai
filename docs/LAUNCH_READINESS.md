@@ -39,6 +39,8 @@ hai **due installazioni di Next.js**: `git pull` / `npm ci` nella cartella **sba
 
 Poi da **quella** cartella: `npm ci` e `npm run qa:local-solid`.
 
+**Se la cartella annidata `propertypilot-ai/` dentro il genitore non ti serve:** puoi **eliminarla** (o rinominarla in backup e poi cancellarla) dopo aver verificato che non contenga file unici non committati. Jest e `tsc` sono configurati per **ignorare** quella sottocartella se resta per errore, ma tenerla crea confusione e doppi `npm ci`.
+
 ## Checklist funzionale dashboard (tracciamento manuale)
 
 - File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.
