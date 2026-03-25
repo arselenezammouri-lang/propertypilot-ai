@@ -29,6 +29,14 @@ Eseguire: `npm run qa:launch` (stessa suite) oppure, prima del merge locale, **`
 
 **Cosa non può essere “perfetto” solo dal codice:** chiamate a OpenAI, Stripe checkout reale, Bland, mappe, email — servono chiavi valide e rete; senza di esse alcune pagine rispondono con errore controllato, non con “tutto verde” inventato.
 
+### Windows: una sola cartella del progetto (evita 35+ errori TypeScript)
+
+Se vedi errori del tipo **`NextRequest` is not assignable** con percorsi che mescolano  
+`...\propilot-ai\node_modules\next\` e `...\propilot-ai\propertypilot-ai\node_modules\next\`,  
+hai **due installazioni di Next.js**: `git pull` / `npm ci` nella cartella **sbagliata** (genitore) mentre l’app vera è in **`propertypilot-ai\propertypilot-ai`**.
+
+**Cosa fare:** lavora **solo** nella cartella che contiene **`package.json`** del SaaS (quella con `app/`, `middleware.ts`). Elimina `node_modules` nella cartella **genitore** se l’hai creata per errore, oppure sposta/usa un unico clone. Poi da quella cartella: `npm ci` e `npm run qa:local-solid`.
+
 ## Checklist funzionale dashboard (tracciamento manuale)
 
 - File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.

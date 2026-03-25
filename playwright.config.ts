@@ -19,7 +19,10 @@ const resolvedBaseURL = externalBase ?? localTestBase;
  */
 export default defineConfig({
   testDir: './e2e',
-  
+
+  /** Max duration per test (Playwright 1.58+: top-level, not under `use`). */
+  timeout: 30_000,
+
   /* Run tests in files in parallel */
   fullyParallel: false, // Sequential per evitare conflitti con database
   
@@ -55,9 +58,6 @@ export default defineConfig({
     
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 10000,
-    
-    /* Maximum time each test can run. */
-    timeout: 30000,
   },
 
   /* Configure projects for major browsers */
