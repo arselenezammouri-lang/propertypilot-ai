@@ -41,6 +41,20 @@ Poi da **quella** cartella: `npm ci` e `npm run qa:local-solid`.
 
 **Se la cartella annidata `propertypilot-ai/` dentro il genitore non ti serve:** puoi **eliminarla** (o rinominarla in backup e poi cancellarla) dopo aver verificato che non contenga file unici non committati. Jest e `tsc` sono configurati per **ignorare** quella sottocartella se resta per errore, ma tenerla crea confusione e doppi `npm ci`.
 
+### PowerShell: `cd` al progetto
+
+Non usare letteralmente `cd <UNA-SOLA-CARTELLA>` (PowerShell interpreta `<` come operatore). Esempio:
+
+`cd C:\Users\utente\propilot-ai`
+
+(se quella è l’unica root con `package.json` e cartelle `app/`, `middleware.ts`).
+
+### `npm audit fix --force` — evitalo in sviluppo quotidiano
+
+- **`npm audit fix --force`** può aggiornare **Next**, **Vite**, **ESLint** a major incompatibili con il progetto (Next 14 → 16, ecc.) e **rompere build e CI**.
+- L’errore **`git@github.com: Permission denied`** durante l’audit indica che qualche dipendenza tenta di risolversi via **git+ssh** senza chiave SSH configurata: non è un problema del tuo codice SaaS.
+- **Cosa usare invece:** `npm audit` solo per **informazione**; in CI il repo usa già `npm audit --audit-level=critical` (blocco solo su critici). Per tornare allo stato del lockfile ufficiale dopo un `--force` andato male: `git checkout -- package.json package-lock.json` poi `npm ci`.
+
 ## Checklist funzionale dashboard (tracciamento manuale)
 
 - File: **[`DASHBOARD_FEATURE_QA_CHECKLIST.md`](./DASHBOARD_FEATURE_QA_CHECKLIST.md)** — colonne **route, auth, piano (indicativo), ultimo test, esito, note** + blocco Stripe.
