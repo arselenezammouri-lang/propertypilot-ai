@@ -7,6 +7,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
+    "predev": "npm run validate:env:soft",
     "dev": "next dev",
     "dev:free-port": "npx --yes kill-port 3000 3001 3002",
     "dev:clean": "npx --yes kill-port 3000 3001 3002 && next dev -p 3000",
