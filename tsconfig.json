@@ -50,6 +50,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "playwright.config.ts",
-    "scripts/**"
+    "scripts/**",
+    "propertypilot-ai"
   ]
 }

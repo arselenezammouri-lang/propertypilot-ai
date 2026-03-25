@@ -35,7 +35,9 @@ Se vedi errori del tipo **`NextRequest` is not assignable** con percorsi che mes
 `...\propilot-ai\node_modules\next\` e `...\propilot-ai\propertypilot-ai\node_modules\next\`,  
 hai **due installazioni di Next.js**: `git pull` / `npm ci` nella cartella **sbagliata** (genitore) mentre l’app vera è in **`propertypilot-ai\propertypilot-ai`**.
 
-**Cosa fare:** lavora **solo** nella cartella che contiene **`package.json`** del SaaS (quella con `app/`, `middleware.ts`). Elimina `node_modules` nella cartella **genitore** se l’hai creata per errore, oppure sposta/usa un unico clone. Poi da quella cartella: `npm ci` e `npm run qa:local-solid`.
+**Cosa fare:** lavora **solo** nella cartella che contiene **`package.json`** del SaaS (quella con `app/`, `middleware.ts`). **Non** eseguire `npm ci` / `git pull` in una cartella **padre** che contiene anche una sottocartella `propertypilot-ai/` con un’altra copia del repo: crea doppio `node_modules` e `tsc` può ancora leggere file vecchi lì dentro. Elimina `node_modules` (e, se serve, la sottocartella duplicata) dal genitore. Il `tsconfig.json` esclude la cartella `propertypilot-ai/` annidata per ridurre i danni, ma la regola d’oro resta: **un solo clone, un solo `npm ci`**.
+
+Poi da **quella** cartella: `npm ci` e `npm run qa:local-solid`.
 
 ## Checklist funzionale dashboard (tracciamento manuale)
 
