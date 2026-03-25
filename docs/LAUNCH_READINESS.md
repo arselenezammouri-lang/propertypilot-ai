@@ -41,6 +41,8 @@ Poi da **quella** cartella: `npm ci` e `npm run qa:local-solid`.
 
 **Se la cartella annidata `propertypilot-ai/` dentro il genitore non ti serve:** puoi **eliminarla** (o rinominarla in backup e poi cancellarla) dopo aver verificato che non contenga file unici non committati. Jest e `tsc` sono configurati per **ignorare** quella sottocartella se resta per errore, ma tenerla crea confusione e doppi `npm ci`.
 
+**Se rinomini la copia in `_BACKUP_propertypilot-ai` (o `**/_BACKUP_*`):** `tsconfig` e Jest **escludono** quelle cartelle così `npm run qa:local-solid` non compila né testa il backup. Il backup serve solo come recupero manuale, non come secondo progetto attivo.
+
 ### PowerShell: `cd` al progetto
 
 Non usare letteralmente `cd <UNA-SOLA-CARTELLA>` (PowerShell interpreta `<` come operatore). Esempio:
