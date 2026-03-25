@@ -66,6 +66,7 @@ npm run test:e2e:debug
 
 - **`npm run qa:premerge`** = `qa:launch` + `smoke:public` (come job GitHub **Pre-merge QA**).
 - **`npm run qa:premerge:local`** = stesso flusso ma carica **`.env`** e **`.env.local`**, poi esegue **`test:e2e:billing`** solo se `E2E_FOUNDER_EMAIL`/`E2E_FOUNDER_PASSWORD` o `E2E_TEST_EMAIL`/`E2E_TEST_PASSWORD` sono valorizzati; altrimenti stampa un messaggio e termina con successo. Un solo comando prima del merge su laptop.
+- Con **`npm run dev` acceso**: **`npm run check:connectivity`** — verifica `GET /api/health` e raggiungibilità Supabase (secondo terminale).
 
 ## Note
 
