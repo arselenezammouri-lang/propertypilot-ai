@@ -21,7 +21,7 @@ Eseguire: `npm run qa:launch` (stessa suite) oppure, prima del merge locale, **`
 ### Checklist “localhost solido” (prima di sentirti sereno al marketing)
 
 1. **`npm ci`** (dipendenze identiche alla CI).
-2. **`npm run qa:local-solid`** — `validate:env:soft` + `tsc --noEmit` + **tutta** la suite Jest (333+ test).
+2. **`npm run qa:local-solid`** — `validate:env:soft` + `tsc --noEmit` + **tutta** la suite Jest (333+ test). Su Windows, lo script usa già **8 GB heap** per `tsc` e Jest (come `npm run build`); se servisse di più: `set NODE_OPTIONS=--max-old-space-size=12288` prima del comando.
 3. **`npm run build`** — stesso comando della CI; risolve errori TypeScript/build prima del deploy.
 4. **`npm run dev`** → in altro terminale **`npm run check:connectivity`**.
 5. **`npm run qa:premerge:local`** — smoke Playwright + (opzionale) billing E2E con credenziali.
