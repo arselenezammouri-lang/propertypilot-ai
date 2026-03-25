@@ -157,7 +157,8 @@ export const authUiEs: AuthUi = {
     userAlreadyRegistered: 'Ya existe una cuenta con este correo. Inicia sesión o recupera la contraseña.',
     passwordTooShort: 'La contraseña no cumple los requisitos de longitud. Usa al menos 8 caracteres.',
     invalidEmail: 'Introduce una dirección de correo válida.',
-    networkError: 'Error de conexión. Comprueba tu red e inténtalo de nuevo.',
+    networkError:
+      'No se puede contactar con el login (Supabase). Revisa red, VPN/firewall/antivirus y NEXT_PUBLIC_SUPABASE_URL en .env.local.',
     sessionExpired: 'Tu sesión ha caducado. Vuelve a iniciar sesión.',
     signupDisabled: 'El registro de nuevas cuentas no está disponible en este momento.',
     oauthFailed: 'No se pudo completar el inicio de sesión social. Inténtalo de nuevo o usa email y contraseña.',
@@ -228,7 +229,8 @@ export const authUiFr: AuthUi = {
     userAlreadyRegistered: 'Un compte existe déjà avec cet e-mail. Connectez-vous ou réinitialisez le mot de passe.',
     passwordTooShort: 'Le mot de passe est trop court. Utilisez au moins 8 caractères.',
     invalidEmail: 'Saisissez une adresse e-mail valide.',
-    networkError: 'Erreur de connexion. Vérifiez votre réseau et réessayez.',
+    networkError:
+      'Connexion au service de connexion (Supabase) impossible. Vérifiez le réseau, VPN/pare-feu et NEXT_PUBLIC_SUPABASE_URL dans .env.local.',
     sessionExpired: 'Votre session a expiré. Reconnectez-vous.',
     signupDisabled: 'La création de compte n’est pas disponible pour le moment.',
     oauthFailed: 'La connexion sociale a échoué. Réessayez ou utilisez e-mail et mot de passe.',
@@ -299,7 +301,8 @@ export const authUiDe: AuthUi = {
     userAlreadyRegistered: 'Mit dieser E-Mail ist bereits ein Konto registriert. Melden Sie sich an oder setzen Sie das Passwort zurück.',
     passwordTooShort: 'Das Passwort ist zu kurz. Verwenden Sie mindestens 8 Zeichen.',
     invalidEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
-    networkError: 'Verbindungsfehler. Prüfen Sie Ihr Netzwerk und versuchen Sie es erneut.',
+    networkError:
+      'Anmeldung (Supabase) nicht erreichbar. Netzwerk, VPN/Firewall prüfen und NEXT_PUBLIC_SUPABASE_URL in .env.local.',
     sessionExpired: 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.',
     signupDisabled: 'Neue Registrierungen sind derzeit nicht möglich.',
     oauthFailed: 'Social-Login fehlgeschlagen. Bitte erneut versuchen oder E-Mail und Passwort nutzen.',
@@ -370,7 +373,8 @@ export const authUiPt: AuthUi = {
     userAlreadyRegistered: 'Já existe uma conta com este e-mail. Inicie sessão ou redefina a palavra-passe.',
     passwordTooShort: 'A palavra-passe é demasiado curta. Use pelo menos 8 caracteres.',
     invalidEmail: 'Introduza um endereço de e-mail válido.',
-    networkError: 'Erro de ligação. Verifique a rede e tente novamente.',
+    networkError:
+      'Não foi possível contactar o login (Supabase). Verifique rede, VPN/firewall e NEXT_PUBLIC_SUPABASE_URL em .env.local.',
     sessionExpired: 'A sua sessão expirou. Inicie sessão novamente.',
     signupDisabled: 'O registo de novas contas não está disponível de momento.',
     oauthFailed: 'Não foi possível concluir o login social. Tente novamente ou use e-mail e palavra-passe.',
@@ -441,7 +445,8 @@ export const authUiAr: AuthUi = {
     userAlreadyRegistered: 'يوجد حساب بهذا البريد. سجّل الدخول أو أعد تعيين كلمة المرور.',
     passwordTooShort: 'كلمة المرور قصيرة جداً. استخدم 8 أحرف على الأقل.',
     invalidEmail: 'أدخل عنوان بريد إلكتروني صالحاً.',
-    networkError: 'خطأ في الاتصال. تحقق من الشبكة وحاول مرة أخرى.',
+    networkError:
+      'تعذّر الوصول إلى خدمة تسجيل الدخول (Supabase). تحقق من الشبكة وVPN/الجدار الناري وNEXT_PUBLIC_SUPABASE_URL في .env.local.',
     sessionExpired: 'انتهت جلستك. سجّل الدخول مرة أخرى.',
     signupDisabled: 'تسجيل حسابات جديدة غير متاح حالياً.',
     oauthFailed: 'تعذر إكمال تسجيل الدخول الاجتماعي. حاول مرة أخرى أو استخدم البريد وكلمة المرور.',

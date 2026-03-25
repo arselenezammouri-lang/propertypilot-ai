@@ -1960,7 +1960,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         userAlreadyRegistered: 'Esiste già un account con questa email. Accedi o reimposta la password.',
         passwordTooShort: 'La password non rispetta la lunghezza minima. Usa almeno 8 caratteri.',
         invalidEmail: 'Inserisci un indirizzo email valido.',
-        networkError: 'Errore di connessione. Controlla la rete e riprova.',
+        networkError:
+          'Impossibile raggiungere il server di login (Supabase). Controlla rete, VPN/firewall/antivirus, che il progetto Supabase sia attivo e che NEXT_PUBLIC_SUPABASE_URL in .env.local sia l’URL https://….supabase.co corretto.',
         sessionExpired: 'Sessione scaduta. Accedi di nuovo.',
         signupDisabled: 'La registrazione di nuovi account non è al momento disponibile.',
         oauthFailed: 'Accesso social non riuscito. Riprova oppure usa email e password.',
@@ -3002,7 +3003,8 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         userAlreadyRegistered: 'An account with this email already exists. Sign in or reset your password.',
         passwordTooShort: 'Password does not meet length requirements. Use at least 8 characters.',
         invalidEmail: 'Enter a valid email address.',
-        networkError: 'Connection error. Check your network and try again.',
+        networkError:
+          'Cannot reach the login service (Supabase). Check network, VPN/firewall/antivirus, that your Supabase project is up, and NEXT_PUBLIC_SUPABASE_URL in .env.local matches https://….supabase.co.',
         sessionExpired: 'Your session has expired. Please sign in again.',
         signupDisabled: 'New account sign-ups are not available right now.',
         oauthFailed: 'Social sign-in could not be completed. Try again or use email and password.',
