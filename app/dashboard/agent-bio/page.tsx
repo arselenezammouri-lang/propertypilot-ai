@@ -75,6 +75,12 @@ interface FormData {
 
 type BioVariantKey = "professionale" | "emotiva" | "luxury" | "social" | "website";
 
+const TONE_ICON_MAP: Record<AgentBioTonoUi, typeof Briefcase> = {
+  professionale: Briefcase,
+  amichevole: Heart,
+  luxury: Crown,
+};
+
 export default function AgentBioPage() {
   const { locale } = useLocaleContext();
   const feedbackLocale = locale;
@@ -99,17 +105,11 @@ export default function AgentBioPage() {
   const [activeTab, setActiveTab] = useState("professionale");
   const { toast } = useToast();
 
-  const toneIconMap: Record<AgentBioTonoUi, typeof Briefcase> = {
-    professionale: Briefcase,
-    amichevole: Heart,
-    luxury: Crown,
-  };
-
   const toniOptions = useMemo(
     () =>
       t.toneOptions.map((o) => ({
         ...o,
-        icon: toneIconMap[o.value],
+        icon: TONE_ICON_MAP[o.value],
       })),
     [t]
   );

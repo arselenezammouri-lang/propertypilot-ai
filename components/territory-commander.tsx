@@ -87,6 +87,17 @@ export function TerritoryCommander({
     loadInsights();
   }, [location, propertyCategory, propertyPrice, locale]);
 
+  const categoryLabels = useMemo(
+    (): Record<DnaCategoryId, string> => ({
+      education: t.categoryEducation,
+      transport: t.categoryTransport,
+      green: t.categoryGreen,
+      business: t.categoryBusiness,
+      security: t.categorySecurity,
+    }),
+    [t]
+  );
+
   if (isLoading || !insights) {
     return (
       <Card className="border-cyan-500/30 bg-gradient-to-br from-[#0a0a0a] to-cyan-900/10">
@@ -138,17 +149,6 @@ export function TerritoryCommander({
     };
     return labels[category] || category;
   };
-
-  const categoryLabels = useMemo(
-    (): Record<DnaCategoryId, string> => ({
-      education: t.categoryEducation,
-      transport: t.categoryTransport,
-      green: t.categoryGreen,
-      business: t.categoryBusiness,
-      security: t.categorySecurity,
-    }),
-    [t]
-  );
 
   const DemandIcon = DEMAND_ICON[insights.demandPulse.level];
 

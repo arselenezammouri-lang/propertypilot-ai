@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, TrendingDown, Copy, Check, Phone } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useLocale } from "@/lib/i18n/locale-context";
@@ -51,13 +51,16 @@ export function PriceDropSniperModal({
 
   const intlLocale = toIntlLocale(locale as Locale);
 
-  const formatPrice = (price: number | null) => {
-    if (!price) return "N/A";
-    return new Intl.NumberFormat(intlLocale, {
-      style: "currency",
-      currency: "EUR",
-    }).format(price);
-  };
+  const formatPrice = useCallback(
+    (price: number | null) => {
+      if (!price) return "N/A";
+      return new Intl.NumberFormat(intlLocale, {
+        style: "currency",
+        currency: "EUR",
+      }).format(price);
+    },
+    [intlLocale]
+  );
 
   const ownerName = listing.owner_name?.trim() || t.ownerFallback;
   const sniperScript = useMemo(() => {
@@ -65,7 +68,7 @@ export function PriceDropSniperModal({
       .replace(/\{owner\}/g, ownerName)
       .replace(/\{location\}/g, listing.location)
       .replace(/\{price\}/g, formatPrice(listing.price));
-  }, [t.scriptTemplate, ownerName, listing.location, listing.price, intlLocale]);
+  }, [t.scriptTemplate, ownerName, listing.location, listing.price, formatPrice]);
 
   const chartData =
     listing.price_history && listing.price_history.length > 0
