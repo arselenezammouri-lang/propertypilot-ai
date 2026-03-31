@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 // Founder email — only this account can access admin
 const FOUNDER_EMAILS = [
   "arselenezammouri@gmail.com",
-  "arselen@propertypilot.ai",
+  "arselen@propertypilot.ai","arselenezammouri-lang@users.noreply.github.com",
 ];
 
 async function getAdminStats() {

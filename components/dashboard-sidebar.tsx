@@ -90,7 +90,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
       { label: "Referral", href: "/dashboard/referral", icon: Gift },
-      { label: "Settings", href: "/dashboard/settings/workspace", icon: Settings },
+      { label: "Settings", href: "/dashboard/settings/workspace", icon: Settings },`n      { label: "Admin", href: "/dashboard/admin", icon: Shield, badge: "Founder" },
     ],
   },
 ];
