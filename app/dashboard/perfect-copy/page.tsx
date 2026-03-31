@@ -822,7 +822,7 @@ export default function PerfectCopyPage() {
                             generated_content: {
                               professional: result.professionale?.descrizione || '',
                               short: result.breve?.descrizione || '',
-                              english: result.professionale?.descrizioneInglese || '',
+                              english: result.professionale?.descrizione || '',
                               titles: [
                                 result.professionale?.titolo,
                                 result.emotivo?.titolo,
