@@ -12,64 +12,78 @@ import { useState, useEffect } from "react";
 export function DashboardHeader() {
   const { locale } = useLocaleContext();
   const t = getTranslation(locale as SupportedLocale);
-  const isIt = locale !== 'en';
+  const isIt = locale !== "en";
   const [isMac, setIsMac] = useState(false);
 
   useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().includes('MAC'));
+    setIsMac(navigator.platform.toUpperCase().includes("MAC"));
   }, []);
 
-  const openCommandPalette = () => {
-    const event = new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true });
+  function openCommandPalette() {
+    const event = new KeyboardEvent("keydown", {
+      key: "k",
+      ctrlKey: true,
+      bubbles: true,
+    });
     document.dispatchEvent(event);
-  };
+  }
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 pp-glass border-b border-border/50"
-      data-testid="dashboard-header"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
-              <Home className="w-4 h-4 text-background" />
+    <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/50 h-16">
+      <div className="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+        {/* Left: logo area — offset for mobile hamburger */}
+        <div className="flex items-center gap-2.5 pl-10 lg:pl-0">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-md bg-foreground flex items-center justify-center">
+              <Home className="w-3.5 h-3.5 text-background" />
             </div>
-            <span className="text-base font-semibold tracking-tight hidden sm:block">
+            <span className="text-sm font-semibold tracking-tight hidden sm:block">
               PropertyPilot
             </span>
           </Link>
+        </div>
 
-          <nav className="flex items-center gap-1.5" aria-label="Main navigation">
+        {/* Right: actions */}
+        <div className="flex items-center gap-1.5">
+          {/* Command palette */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={openCommandPalette}
+            className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground h-8 px-3 rounded-lg"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span className="text-xs">{isIt ? "Cerca..." : "Search..."}</span>
+            <kbd className="hidden lg:inline-flex text-[10px] text-muted-foreground/60 bg-muted rounded px-1.5 py-0.5 font-mono ml-1">
+              {isMac ? "⌘" : "Ctrl"}K
+            </kbd>
+          </Button>
+
+          <LanguageSelector />
+          <ThemeToggle />
+
+          {/* Quick generate */}
+          <Link href="/dashboard/perfect-copy">
             <Button
+              size="sm"
+              className="h-8 gap-1.5 bg-foreground text-background hover:bg-foreground/90 rounded-lg text-xs font-medium"
+            >
+              <Zap className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{t.dashboard.generate}</span>
+            </Button>
+          </Link>
+
+          {/* Sign out */}
+          <form action="/auth/signout" method="post">
+            <Button
+              type="submit"
               variant="ghost"
               size="sm"
-              onClick={openCommandPalette}
-              className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground h-9 px-3 rounded-lg"
+              className="h-8 text-xs text-muted-foreground hover:text-foreground"
             >
-              <Search className="h-3.5 w-3.5" />
-              <span className="text-xs">{isIt ? "Cerca..." : "Search..."}</span>
-              <kbd className="hidden lg:inline-flex text-[10px] text-muted-foreground/60 bg-muted rounded px-1.5 py-0.5 font-mono ml-1">
-                {isMac ? '⌘' : 'Ctrl'}K
-              </kbd>
+              {t.dashboard.signOut}
             </Button>
-
-            <LanguageSelector />
-            <ThemeToggle />
-
-            <Link href="/dashboard/listings" className="hidden md:inline-flex">
-              <Button size="sm" className="h-9 gap-1.5 bg-foreground text-background hover:bg-foreground/90 rounded-lg text-xs font-medium">
-                <Zap className="h-3.5 w-3.5" />
-                {t.dashboard.generate}
-              </Button>
-            </Link>
-
-            <form action="/auth/signout" method="post">
-              <Button type="submit" variant="ghost" size="sm" className="h-9 text-xs text-muted-foreground hover:text-foreground">
-                {t.dashboard.signOut}
-              </Button>
-            </form>
-          </nav>
+          </form>
         </div>
       </div>
     </header>

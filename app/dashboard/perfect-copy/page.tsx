@@ -277,7 +277,8 @@ export default function PerfectCopyPage() {
     }
   }
 
-  const renderVariantCard = (variant: CopyVariant, name: string, icon: React.ReactNode, color: string) => (
+  function renderVariantCard(variant: CopyVariant, name: string, icon: React.ReactNode, color: string) {
+    return (
     <div className="space-y-4" data-testid={`variant-${name}`}>
       <div className="flex justify-end">
         <Button
@@ -451,7 +452,8 @@ export default function PerfectCopyPage() {
         </Card>
       </div>
     </div>
-  );
+    );
+  }
 
 
   return (
@@ -820,7 +822,7 @@ export default function PerfectCopyPage() {
                             generated_content: {
                               professional: result.professionale?.descrizione || '',
                               short: result.breve?.descrizione || '',
-                              english: result.professionale??.english || '',
+                              english: result.professionale?.descrizioneInglese || '',
                               titles: [
                                 result.professionale?.titolo,
                                 result.emotivo?.titolo,
