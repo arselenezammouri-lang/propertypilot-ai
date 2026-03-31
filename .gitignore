@@ -1,0 +1,33 @@
+node_modules/
+.next/
+.replit
+venv/
+*.log
+*.tmp
+*.temp
+*.tsbuildinfo
+.DS_Store
+.env
+.env.local
+.env.test
+.env.production
+debug.log
+test-results/
+playwright-report/
+e2e-results.json
+
+# Binary files that should never be committed
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build artifacts
+attached_assets/
+coverage/
+.vercel
+
+# OS files
+Thumbs.db
+*.swp
+*.swo

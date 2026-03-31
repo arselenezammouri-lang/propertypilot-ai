@@ -1,0 +1,239 @@
+"use client";
+
+import { useState, useEffect, type MouseEvent } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Gift, Copy, Users, Sparkles, Share2, Check } from "lucide-react";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { SupportedLocale } from "@/lib/i18n/dictionary";
+
+const referralMessages: Record<string, string> = {
+  it: "🏠 Invitami su PropertyPilot AI! Guadagna 10 crediti AI iscrivendoti con il mio link:",
+  en: "🏠 Join me on PropertyPilot AI! Get 10 AI credits by signing up with my link:",
+  es: "🏠 ¡Únete a mí en PropertyPilot AI! Obtén 10 créditos AI registrándote con mi enlace:",
+  fr: "🏠 Rejoins-moi sur PropertyPilot AI! Obtiens 10 crédits AI en t'inscrivant avec mon lien:",
+  de: "🏠 Komm zu mir auf PropertyPilot AI! Erhalte 10 AI-Credits mit meinem Anmeldelink:",
+  pt: "🏠 Junte-se a mim no PropertyPilot AI! Ganhe 10 créditos AI registrando-se com meu link:",
+  ar: "🏠 انضم إلي على PropertyPilot AI! احصل على 10 crédits AI بالتسجيل عبر رابطي:",
+};
+
+export function ReferralSection() {
+  const { toast } = useToast();
+  const { locale } = useLocaleContext();
+  const currentLocale = (locale as SupportedLocale) || "it";
+  const [referralData, setReferralData] = useState<{
+    referralCode: string;
+    referralLink: string;
+    bonusCredits: number;
+    totalReferrals: number;
+    setupRequired?: boolean;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const t = {
+    it: {
+      copied: "Link copiato!",
+      copiedDesc: "Condividilo con i tuoi colleghi per guadagnare crediti AI.",
+      error: "Errore",
+      copyError: "Impossibile copiare il link",
+      title: "Invita un Collega",
+      subtitle: "Guadagna 10 crediti AI per ogni amico che si iscrive",
+      invited: "Colleghi invitati",
+      credits: "Crediti bonus",
+      yourLink: "Il tuo link referral:",
+      bonusElite: "Bonus Elite:",
+      bonusDesc: "Invita 5 colleghi e ricevi 1 mese PRO gratis!",
+    },
+    en: {
+      copied: "Link copied!",
+      copiedDesc: "Share it with colleagues to earn AI credits.",
+      error: "Error",
+      copyError: "Unable to copy the link",
+      title: "Invite a Colleague",
+      subtitle: "Earn 10 AI credits for each friend who signs up",
+      invited: "Invited colleagues",
+      credits: "Bonus credits",
+      yourLink: "Your referral link:",
+      bonusElite: "Elite Bonus:",
+      bonusDesc: "Invite 5 colleagues and get 1 month of PRO for free!",
+    },
+  }[(currentLocale === "it" ? "it" : "en") as "it" | "en"];
+
+  useEffect(() => {
+    fetchReferralData();
+  }, []);
+
+  const fetchReferralData = async () => {
+    try {
+      const response = await fetch('/api/referral');
+      if (response.ok) {
+        const data = await response.json();
+        setReferralData(data);
+      } else {
+        setReferralData({
+          referralCode: '',
+          referralLink: '',
+          bonusCredits: 0,
+          totalReferrals: 0,
+          setupRequired: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching referral data:', error);
+      setReferralData({
+        referralCode: '',
+        referralLink: '',
+        bonusCredits: 0,
+        totalReferrals: 0,
+        setupRequired: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyToClipboard = async (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (!referralData?.referralLink) return;
+    
+    try {
+      await navigator.clipboard.writeText(referralData.referralLink);
+      setCopied(true);
+      toast({
+        title: t.copied,
+        description: t.copiedDesc,
+        duration: 3000,
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast({
+        title: t.error,
+        description: t.copyError,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const shareOnWhatsApp = (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (!referralData?.referralLink) return;
+    const messageText = referralMessages[currentLocale] || referralMessages['it'];
+    const message = encodeURIComponent(
+      `${messageText} ${referralData.referralLink}`
+    );
+    window.open(`https://wa.me/?text=${message}`, '_blank');
+  };
+
+  const shareOnLinkedIn = (event?: MouseEvent<HTMLButtonElement>) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    if (!referralData?.referralLink) return;
+    const url = encodeURIComponent(referralData.referralLink);
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="glass border-border animate-pulse">
+        <CardHeader>
+          <div className="h-6 bg-muted/50 rounded w-1/3"></div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-10 bg-muted/50 rounded mb-4"></div>
+          <div className="h-10 bg-muted/50 rounded"></div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="h-full flex flex-col pp-card border-border overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-blue-600/5 pointer-events-none" />
+      
+      <CardHeader className="relative">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg">
+            <Gift className="h-5 w-5 text-foreground" />
+          </div>
+          <div>
+            <CardTitle className="text-lg gradient-text-gold">{t.title}</CardTitle>
+            <CardDescription className="text-border/70">
+              {t.subtitle}
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="relative flex-1 flex flex-col space-y-5">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl bg-muted/30 border border-border text-center">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Users className="h-4 w-4 text-emerald-500" />
+              <span className="text-2xl font-bold text-foreground">{referralData?.totalReferrals || 0}</span>
+            </div>
+            <p className="text-xs text-border/60">{t.invited}</p>
+          </div>
+          <div className="p-4 rounded-xl bg-muted/30 border border-border text-center">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <Sparkles className="h-4 w-4 text-amber-500" />
+              <span className="text-2xl font-bold text-foreground">{referralData?.bonusCredits || 0}</span>
+            </div>
+            <p className="text-xs text-border/60">{t.credits}</p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-border/80">{t.yourLink}</label>
+          <div className="flex gap-2">
+            <Input 
+              value={referralData?.referralLink || ''} 
+              readOnly 
+              className="bg-muted/30 border-border text-sm"
+              placeholder={referralData?.setupRequired ? 'Referral setup in corso...' : ''}
+            />
+            <Button 
+              onClick={(event) => { void copyToClipboard(event); }}
+              type="button"
+              variant="outline"
+              className="shrink-0 border-border hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-black min-h-[36px]"
+            >
+              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <Button 
+            onClick={(event) => shareOnWhatsApp(event)}
+            type="button"
+            className="flex-1 bg-[#25D366] hover:bg-[#20BD5A] text-foreground min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            disabled={!referralData?.referralLink}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            WhatsApp
+          </Button>
+          <Button 
+            onClick={(event) => shareOnLinkedIn(event)}
+            type="button"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-foreground min-h-[36px] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            disabled={!referralData?.referralLink}
+          >
+            <Share2 className="h-4 w-4 mr-2" />
+            LinkedIn
+          </Button>
+        </div>
+
+        <div className="p-3 rounded-lg bg-gradient-to-r from-amber-400/10 to-blue-600/10 border border-amber-400/20">
+          <p className="text-xs text-center text-border/80">
+            <span className="font-semibold text-amber-500">{t.bonusElite}</span> {t.bonusDesc}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

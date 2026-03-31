@@ -1,0 +1,386 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { PropertyPilotLogo } from "@/components/logo";
+import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
+import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
+import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
+import {
+  Calendar,
+  CheckCircle,
+  ArrowRight,
+  MessageCircle,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
+  Shield,
+  Clock,
+  Star,
+  Quote,
+  Rocket,
+  Crown,
+  Building2,
+  BarChart3,
+  Mail,
+  Phone,
+} from "lucide-react";
+import { SiWhatsapp } from "react-icons/si";
+
+const valuePointIcons = [Sparkles, Users, Zap, BarChart3, Mail, Crown];
+
+export default function DemoPage() {
+  const { locale, currency, setLocale, setCurrency } = useLocaleContext();
+  const t = getTranslation(locale as SupportedLocale);
+  const calendlyUrl = "https://calendly.com/propertypilot-ai/demo";
+  const whatsappNumber = "+393401234567";
+  const isItalian = locale === "it";
+  const whatsappMessage = encodeURIComponent(
+    isItalian
+      ? "Ciao! Vorrei prenotare una demo di PropertyPilot AI."
+      : "Hello! I would like to book a PropertyPilot AI demo."
+  );
+  const testimonials = isItalian
+    ? [
+        {
+          name: "Marco R.",
+          role: "Agente Immobiliare, Milano",
+          quote: "PropertyPilot AI ha rivoluzionato il mio modo di lavorare. Creo annunci in 30 secondi invece di 30 minuti.",
+          rating: 5,
+        },
+        {
+          name: "Laura B.",
+          role: "Titolare Agenzia, Roma",
+          quote: "Il CRM e le automazioni mi hanno fatto risparmiare ore ogni settimana. Lo consiglio a tutti!",
+          rating: 5,
+        },
+        {
+          name: "Giuseppe T.",
+          role: "Property Manager, Napoli",
+          quote: "Finalmente una piattaforma italiana che capisce le nostre esigenze. Supporto eccezionale.",
+          rating: 5,
+        },
+      ]
+    : [
+        {
+          name: "Marco R.",
+          role: "Real Estate Agent, Milan",
+          quote: "PropertyPilot AI completely changed the way I work. I now create listings in 30 seconds instead of 30 minutes.",
+          rating: 5,
+        },
+        {
+          name: "Laura B.",
+          role: "Agency Owner, Rome",
+          quote: "The CRM and automations save me hours every week. I recommend it to every serious agency.",
+          rating: 5,
+        },
+        {
+          name: "Giuseppe T.",
+          role: "Property Manager, Naples",
+          quote: "Finally, a platform that understands what agencies really need. Exceptional support.",
+          rating: 5,
+        },
+      ];
+  const trustStats = isItalian
+    ? [
+        { icon: Clock, value: "30 min", label: "Demo gratuita", color: "text-emerald-500" },
+        { icon: Shield, value: "100%", label: "Senza impegno", color: "text-blue-500" },
+        { icon: Users, value: "500+", label: "Clienti soddisfatti", color: "text-blue-600" },
+        { icon: TrendingUp, value: "+40%", label: "Produttività media", color: "text-amber-500" },
+      ]
+    : [
+        { icon: Clock, value: "30 min", label: "Free demo", color: "text-emerald-500" },
+        { icon: Shield, value: "100%", label: "No commitment", color: "text-blue-500" },
+        { icon: Users, value: "500+", label: "Happy customers", color: "text-blue-600" },
+        { icon: TrendingUp, value: "+40%", label: "Average productivity", color: "text-amber-500" },
+      ];
+
+  return (
+    <main id="main-content" className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="glass border-b border-border sticky top-0 z-50 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            <Link href="/" className="flex items-center space-x-3 group" data-testid="link-home">
+              <PropertyPilotLogo className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 transition-all duration-300 group-hover:scale-110" />
+              <div className="hidden sm:block">
+                <h1 className="text-xl md:text-2xl font-bold text-gradient-blue">PropertyPilot AI</h1>
+                <p className="text-xs text-muted-foreground">{t.landing?.nav?.tagline ?? "Pilot Your Agency to the Next Level"}</p>
+              </div>
+            </Link>
+            
+            <nav className="flex items-center space-x-2 md:space-x-4">
+              <LocaleCurrencySelector currentLocale={locale} currentCurrency={currency} onLocaleChange={setLocale} onCurrencyChange={setCurrency} />
+              <ThemeToggle />
+              <Link href="/pricing">
+                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-blue-600 transition-colors" data-testid="button-pricing">
+                  {t.demo?.nav?.pricing ?? t.landing?.nav?.pricing ?? 'Pricing'}
+                </Button>
+              </Link>
+              <Link href="/auth/login">
+                <Button variant="ghost" size="sm" className="hidden sm:inline-flex hover:text-blue-600 transition-colors" data-testid="button-login">
+                  {t.demo?.nav?.login ?? t.landing?.nav?.login ?? 'Login'}
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button size="sm" className="neon-button" data-testid="button-signup">
+                  {t.demo?.nav?.startFree ?? t.landing?.nav?.getStarted ?? 'Start Free'}
+                  <Rocket className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 bg-gradient-hero opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--blue-600)/0.1),transparent_60%)]" />
+        
+        <div className="relative max-w-7xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center space-x-2 ai-badge mb-6 animate-fade-in-up">
+              <Calendar size={18} className="animate-pulse" />
+              <span className="text-sm font-bold">{t.demo?.hero?.badge ?? 'Book in 30 seconds'}</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 animate-fade-in-up delay-100" data-testid="text-demo-title">
+              {t.demo?.hero?.title ?? 'Book a Free Demo'}
+            </h1>
+            
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto animate-fade-in-up delay-200">
+              {t.demo?.hero?.subtitle ?? 'Discover how PropertyPilot AI can transform your real estate agency.'}
+            </p>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
+            {/* Calendly Embed */}
+            <div className="pp-card p-6 md:p-8 border-2 border-amber-200 shadow-sm animate-fade-in-up delay-300" data-testid="card-calendly">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-blue-600 flex items-center justify-center shadow-sm">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold gradient-text-gold">{t.demo?.calendly?.chooseDate ?? 'Choose Date & Time'}</h2>
+                  <p className="text-sm text-muted-foreground">{t.demo?.calendly?.demoFree ?? 'Free 30-minute demo'}</p>
+                </div>
+              </div>
+              
+              {/* Calendly Embed Placeholder */}
+              <div className="bg-muted/30 rounded-xl border border-border/50 overflow-hidden" style={{ minHeight: "600px" }}>
+                <iframe
+                  src={calendlyUrl}
+                  width="100%"
+                  height="600"
+                  frameBorder="0"
+                  title={isItalian ? "Prenota Demo PropertyPilot AI" : "Book PropertyPilot AI Demo"}
+                  className="w-full"
+                  data-testid="iframe-calendly"
+                />
+              </div>
+              
+              {/* Alternative Contact */}
+              <div className="mt-6 pt-6 border-t border-border/50">
+                <p className="text-sm text-muted-foreground mb-4 text-center">
+                  {t.demo?.calendly?.preferContact ?? 'Prefer to contact us directly?'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <a
+                    href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="w-full sm:w-auto bg-[#25D366] hover:bg-[#128C7E] text-white font-bold" data-testid="button-whatsapp">
+                      <SiWhatsapp className="mr-2 h-5 w-5" />
+                      {t.demo?.calendly?.whatsapp ?? 'WhatsApp'}
+                    </Button>
+                  </a>
+                  <Link href="/contatti">
+                    <Button variant="outline" className="w-full sm:w-auto border-2" data-testid="button-contact">
+                      <Mail className="mr-2 h-5 w-5" />
+                      {t.demo?.calendly?.sendEmail ?? 'Send Email'}
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Value Points */}
+            <div className="space-y-6 animate-fade-in-up delay-400">
+              <div className="mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold mb-3">
+                  {t.demo?.valuePoints?.sectionTitle ?? 'What You\'ll Discover in the Demo'}
+                </h2>
+                <p className="text-muted-foreground">
+                  {t.demo?.valuePoints?.sectionSubtitle ?? 'A complete overview of the features that will make your agency more efficient.'}
+                </p>
+              </div>
+              
+              <div className="grid gap-4">
+                {(t.demo?.valuePointsList ?? []).map((point, index) => (
+                  <div
+                    key={index}
+                    className="pp-card p-4 md:p-5 hover-lift border border-blue-500/20 group"
+                    data-testid={`card-value-${index}`}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        {React.createElement(valuePointIcons[index] ?? Sparkles, { className: "h-5 w-5 text-blue-500" })}
+                      </div>
+                      <div>
+                        <h3 className="font-bold mb-1 group-hover:text-blue-500 transition-colors">
+                          {point.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {point.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <div className="pt-6">
+                <a href="#calendly">
+                  <Button className="neon-button w-full text-lg py-6 shadow-sm" size="lg" data-testid="button-book-now">
+                    {t.demo?.valuePoints?.bookNow ?? 'Book Your Demo Now'}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-foreground/5 dark:bg-foreground/10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 animate-fade-in-up" data-testid="text-testimonials-title">
+              {t.demo?.testimonials?.title ?? 'What Our Customers Say'}
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in-up delay-100">
+              {t.demo?.testimonials?.subtitle ?? 'Agents and agencies who have transformed their business with PropertyPilot AI'}
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="pp-card p-6 md:p-8 hover-lift animate-fade-in-up border border-blue-600/20"
+                style={{ animationDelay: `${index * 100}ms` }}
+                data-testid={`card-testimonial-${index}`}
+              >
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="h-5 w-5 text-amber-500 fill-amber-400" />
+                  ))}
+                </div>
+                
+                <div className="relative mb-6">
+                  <Quote className="absolute -top-2 -left-2 h-8 w-8 text-blue-600/20" />
+                  <p className="text-muted-foreground italic pl-6">
+                    "{testimonial.quote}"
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Indicators */}
+      <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {trustStats.map((stat, index) => (
+              <div key={index} className="text-center group" data-testid={`stat-demo-${index}`}>
+                <div className="w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <stat.icon className={stat.color} size={28} />
+                </div>
+                <div className="text-3xl md:text-4xl font-black text-gradient-blue mb-1">{stat.value}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-cyber-glow opacity-10" />
+        <div className="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 animate-fade-in-up" data-testid="text-cta-title">
+            {isItalian ? (
+              <>Pronto a <span className="gradient-text-gold">Trasformare</span> la Tua Agenzia?</>
+            ) : (
+              <>Ready to <span className="gradient-text-gold">Transform</span> Your Agency?</>
+            )}
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-100">
+            {isItalian
+              ? "Prenota ora la tua demo gratuita e scopri come PropertyPilot AI può moltiplicare le tue vendite."
+              : "Book your free demo now and discover how PropertyPilot AI can multiply your sales."}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-200">
+            <a href="#calendly">
+              <Button className="neon-button text-lg px-10 py-6" size="lg" data-testid="button-final-cta">
+                {isItalian ? "Prenota Demo Gratuita" : "Book Free Demo"}
+                <Calendar className="ml-2 h-5 w-5" />
+              </Button>
+            </a>
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="text-lg px-10 py-6 border-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10" size="lg" data-testid="button-whatsapp-cta">
+                <SiWhatsapp className="mr-2 h-5 w-5" />
+                WhatsApp
+              </Button>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-foreground/5 dark:bg-foreground/10 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center space-x-3">
+              <PropertyPilotLogo className="w-10 h-10 flex-shrink-0" />
+              <div>
+                <p className="font-bold text-gradient-blue">PropertyPilot AI</p>
+                <p className="text-xs text-muted-foreground">© 2024 {isItalian ? "Tutti i diritti riservati" : "All rights reserved"}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <Link href="/" className="hover:text-foreground transition-colors">{t.demo?.footer?.home ?? 'Home'}</Link>
+              <Link href="/pricing" className="hover:text-foreground transition-colors">{t.demo?.footer?.pricing ?? 'Pricing'}</Link>
+              <Link href="/contatti" className="hover:text-foreground transition-colors">{t.demo?.footer?.contact ?? 'Contact'}</Link>
+              <Link href="/auth/login" className="hover:text-foreground transition-colors">{t.demo?.footer?.login ?? 'Login'}</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}

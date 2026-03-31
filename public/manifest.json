@@ -1,0 +1,46 @@
+{
+  "name": "PropertyPilot AI",
+  "short_name": "PropertyPilot",
+  "description": "The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Go to your AI dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Generate Listing",
+      "short_name": "Generate",
+      "description": "Create AI-powered property listings",
+      "url": "/dashboard?tool=listing",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    }
+  ]
+}

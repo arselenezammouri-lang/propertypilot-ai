@@ -1,0 +1,17 @@
+{
+  "crons": [
+    {
+      "path": "/api/prospecting/automate",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/activation-emails",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 8 * * 1"
+    }
+  ]
+}
+
