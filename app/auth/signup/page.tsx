@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff, Shield, Check } from "lucide-react";
 
 function SignupClient() {
   const [email, setEmail] = useState("");
@@ -307,6 +307,23 @@ function SignupClient() {
                   </>
                 )}
               </Button>
+
+
+              {/* Trust signals */}
+              <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground pt-1">
+                <span className="flex items-center gap-1">
+                  <Shield className="w-3 h-3" />
+                  {isItalian ? "Crittografia 256-bit" : "256-bit encryption"}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  GDPR
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  {isItalian ? "Cancella quando vuoi" : "Cancel anytime"}
+                </span>
+              </div>
 
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">

@@ -457,6 +457,52 @@ export default function PricingPage() {
         </div>
       </section>
 
+
+      {/* FAQ */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-12">
+            {isItalian ? "Domande Frequenti" : "Frequently Asked Questions"}
+          </h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: isItalian ? "Posso cancellare in qualsiasi momento?" : "Can I cancel anytime?",
+                a: isItalian ? "Sì, puoi cancellare il tuo abbonamento in qualsiasi momento dalla dashboard. Nessun vincolo, nessuna penale." : "Yes, you can cancel your subscription anytime from your dashboard. No lock-in, no penalties.",
+              },
+              {
+                q: isItalian ? "C'è un periodo di prova gratuito?" : "Is there a free trial?",
+                a: isItalian ? "Sì, offriamo 7 giorni di prova gratuita su tutti i piani. Non serve carta di credito per iniziare." : "Yes, we offer a 7-day free trial on all plans. No credit card required to start.",
+              },
+              {
+                q: isItalian ? "Quali portali immobiliari supportate?" : "Which property portals do you support?",
+                a: isItalian ? "Generiamo annunci ottimizzati per Immobiliare.it, Idealista, Casa.it, SeLoger, Rightmove e altri 20+ portali europei." : "We generate listings optimized for Immobiliare.it, Idealista, Casa.it, SeLoger, Rightmove, and 20+ European portals.",
+              },
+              {
+                q: isItalian ? "In quante lingue posso generare annunci?" : "How many languages can I generate listings in?",
+                a: isItalian ? "6 lingue: Italiano, Inglese, Francese, Spagnolo, Tedesco e Arabo. Traduzioni professionali, non Google Translate." : "6 languages: Italian, English, French, Spanish, German, and Arabic. Professional translations, not Google Translate.",
+              },
+              {
+                q: isItalian ? "Posso cambiare piano in qualsiasi momento?" : "Can I change plans anytime?",
+                a: isItalian ? "Sì, puoi passare a un piano superiore o inferiore in qualsiasi momento. La differenza viene calcolata automaticamente." : "Yes, you can upgrade or downgrade anytime. The difference is automatically prorated.",
+              },
+              {
+                q: isItalian ? "I miei dati sono sicuri?" : "Is my data secure?",
+                a: isItalian ? "Assolutamente. Utilizziamo crittografia AES-256, i server sono in EU (GDPR compliant), e non condividiamo mai i tuoi dati con terze parti." : "Absolutely. We use AES-256 encryption, servers are in the EU (GDPR compliant), and we never share your data with third parties.",
+              },
+            ].map((item, i) => (
+              <details key={i} className="group pp-card p-5 cursor-pointer">
+                <summary className="flex items-center justify-between font-medium text-sm list-none">
+                  <span>{item.q}</span>
+                  <span className="text-muted-foreground group-open:rotate-45 transition-transform text-lg">+</span>
+                </summary>
+                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border/20 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
