@@ -1,9 +1,13 @@
 import OpenAI from 'openai';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 export interface LeadFactor {
   nome: string;
@@ -184,7 +188,7 @@ IMPORTANTE:
   * Scrivi come parlerebbe un agente immobiliare esperto al suo collega`;
 
   const generateScore = async (signal: AbortSignal) => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },

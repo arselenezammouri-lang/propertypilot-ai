@@ -7,9 +7,13 @@ import type { Lead, CommunicationChannel, CommunicationTone } from '@/lib/types/
 
 export const dynamic = 'force-dynamic';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 const generateSchema = z.object({
   lead_id: z.string().uuid(),
@@ -71,7 +75,7 @@ ${channel === 'sms' ? 'Rispondi in formato JSON: {"message": "SMS di max 160 car
   `.trim();
 
   try {
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },

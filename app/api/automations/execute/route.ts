@@ -9,7 +9,13 @@ import type { Automation, FollowupPayload, ReminderPayload, WeeklyContentPayload
 
 export const dynamic = 'force-dynamic';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 async function generateFollowupEmail(payload: FollowupPayload): Promise<string> {
   const { client_name, property_type, property_location, email_type } = payload;
@@ -39,7 +45,7 @@ Formato richiesto:
 L'email deve essere professionale, personale e orientata alla conversione.`;
 
   const completion = await withRetryAndTimeout(async () => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: 'Sei un esperto di email marketing immobiliare italiano. Scrivi email persuasive e professionali.' },
@@ -77,7 +83,7 @@ Immobile: ${property_type} in ${property_location}
 Include: dettagli pratici, cosa aspettarsi, suggerimenti per la visita.`;
 
   const completion = await withRetryAndTimeout(async () => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: 'Sei un assistente immobiliare italiano. Comunica in modo professionale e cordiale.' },
@@ -123,7 +129,7 @@ ${contentRequests}
 Ogni contenuto deve essere pronto per l'uso, professionale e orientato al business.`;
 
   const completion = await withRetryAndTimeout(async () => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: 'Sei un content creator specializzato nel settore immobiliare. Crei contenuti professionali e coinvolgenti.' },

@@ -1,9 +1,13 @@
 import OpenAI from 'openai';
 import { withRetryAndTimeout } from '@/lib/utils/openai-retry';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 export interface StructuralAudit {
   titolo: {
@@ -133,7 +137,7 @@ async function generateQualityScore(
   const marketInfo = MARKET_CONTEXT[options.mercato];
   
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -185,7 +189,7 @@ async function generateStructuralAudit(
   options: AuditOptions
 ): Promise<StructuralAudit> {
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -233,7 +237,7 @@ async function generateSEOAudit(
   const marketInfo = MARKET_CONTEXT[options.mercato];
   
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -273,7 +277,7 @@ async function generateEmotionalAudit(
   options: AuditOptions
 ): Promise<EmotionalAudit> {
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -315,7 +319,7 @@ async function generateRedFlags(
   options: AuditOptions
 ): Promise<RedFlag[]> {
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -361,7 +365,7 @@ async function generateAISuggestions(
   options: AuditOptions
 ): Promise<AISuggestion[]> {
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -406,7 +410,7 @@ async function generateOptimizedVersion(
   const marketInfo = MARKET_CONTEXT[options.mercato];
   
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -452,7 +456,7 @@ async function analyzeTargetBuyer(
   options: AuditOptions
 ): Promise<string> {
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -481,7 +485,7 @@ async function analyzeMarketContext(
   const marketInfo = MARKET_CONTEXT[options.mercato];
   
   const response = await withRetryAndTimeout(async (signal) => {
-    return openai.chat.completions.create({
+    return getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {

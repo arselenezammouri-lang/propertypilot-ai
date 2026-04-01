@@ -13,9 +13,13 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 const followupRequestSchema = z.object({
   tone: z.enum(['persuasivo', 'gentile', 'emozionale']).default('gentile'),
@@ -629,7 +633,7 @@ async function generateFollowUpMessages(
   const [whatsappResponse, emailResponse, smsResponse] = await Promise.all([
     withRetryAndTimeout(
       async (signal) => {
-        const response = await openai.chat.completions.create(
+        const response = await getOpenAI().chat.completions.create(
           {
             model: 'gpt-4o',
             messages: [
@@ -651,7 +655,7 @@ async function generateFollowUpMessages(
     ),
     withRetryAndTimeout(
       async (signal) => {
-        const response = await openai.chat.completions.create(
+        const response = await getOpenAI().chat.completions.create(
           {
             model: 'gpt-4o',
             messages: [
@@ -673,7 +677,7 @@ async function generateFollowUpMessages(
     ),
     withRetryAndTimeout(
       async (signal) => {
-        const response = await openai.chat.completions.create(
+        const response = await getOpenAI().chat.completions.create(
           {
             model: 'gpt-4o',
             messages: [

@@ -1,9 +1,13 @@
 import OpenAI from 'openai';
 import { ScrapedListing } from '@/lib/scrapers/types';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 interface PropertyInput {
   type?: string;
@@ -56,7 +60,7 @@ function buildPropertyDescription(data: PropertyInput): string {
  * Generate professional listing (150-200 words with SEO optimization)
  */
 async function generateProfessionalListing(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -88,7 +92,7 @@ Regole:
  * Generate short listing (max 50 words for portals like Subito.it/Idealista)
  */
 async function generateShortListing(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -118,7 +122,7 @@ Regole:
  * Generate emotional description (story-driven, lifestyle-focused)
  */
 async function generateEmotionalListing(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -150,7 +154,7 @@ Regole:
  * Generate 5 catchy titles (max 8 words each)
  */
 async function generateTitles(propertyDescription: string): Promise<string[]> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -190,7 +194,7 @@ Regole:
  * Generate video script for Instagram Reels / TikTok (30-45 seconds)
  */
 async function generateVideoScript(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -221,7 +225,7 @@ Regole:
  * Generate follow-up email template for potential buyers
  */
 async function generateEmailFollowUp(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -252,7 +256,7 @@ Regole:
  * Analyze property strengths and weaknesses
  */
 async function analyzeStrengthsWeaknesses(propertyDescription: string): Promise<{ strengths: string[], weaknesses: string[] }> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -312,7 +316,7 @@ PUNTI DI DEBOLEZZA:
  * Generate home staging suggestions
  */
 async function generateHomeStagingSuggestions(propertyDescription: string): Promise<string[]> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -350,7 +354,7 @@ Regole:
  * Generate optimized description for Italian real estate portals
  */
 async function generatePortalDescription(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -382,7 +386,7 @@ Regole:
  * Generate English translation for international buyers
  */
 async function generateEnglishTranslation(propertyDescription: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {

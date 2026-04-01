@@ -26,9 +26,13 @@ const ariaChatRequestSchema = z.object({
   locale: z.string().optional(),
 });
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+  }
+  return _openai;
+}
 
 /**
  * POST /api/aria/chat
@@ -93,7 +97,7 @@ export async function POST(request: NextRequest) {
     const prompt = buildAriaPrompt(message, ariaContext, userLocale);
 
     // Chiama OpenAI
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4',
       messages: [
         {
