@@ -512,8 +512,7 @@ export default function EmotionalListingPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="location">{t.locationLabel}</Label>
-                <Input
-                  id="location"
+                <AddressAutocomplete
                   placeholder={t.locationPlaceholder}
                   value={formData.location}
                   onChange={(val) => handleInputChange("location", val)}
