@@ -1,0 +1,252 @@
+export interface BlogPost {
+  slug: string;
+  title: string;
+  titleIt: string;
+  excerpt: string;
+  excerptIt: string;
+  content: string;
+  contentIt: string;
+  date: string;
+  readTime: number;
+  category: string;
+  categoryIt: string;
+}
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "ai-real-estate-listings-2025",
+    title: "How AI Is Transforming Real Estate Listings in 2025",
+    titleIt: "Come l'AI sta trasformando gli annunci immobiliari nel 2025",
+    excerpt: "AI-powered listing tools save agents 10+ hours per week. Here's how the best agencies are using them.",
+    excerptIt: "Gli strumenti AI per annunci fanno risparmiare 10+ ore a settimana. Ecco come le migliori agenzie li usano.",
+    date: "2025-03-28",
+    readTime: 6,
+    category: "AI & Technology",
+    categoryIt: "AI e Tecnologia",
+    content: `The real estate industry is undergoing a massive transformation. In 2025, AI-powered tools are no longer a luxury — they're a competitive necessity.
+
+## The Problem: Manual Listing Creation
+
+The average real estate agent spends 2-3 hours creating a single property listing. This includes writing descriptions, optimizing for portals, translating for international buyers, and creating social media posts. For an agency handling 20+ properties per month, that's 40-60 hours of repetitive work.
+
+## The Solution: AI Listing Engines
+
+Modern AI listing engines can generate professional property descriptions in under 30 seconds. But the best tools go far beyond simple text generation:
+
+**Multi-variant generation** — Instead of one description, AI creates 5 variants optimized for different audiences: luxury buyers, investors, first-time buyers, international clients, and SEO-optimized portal listings.
+
+**Portal optimization** — Each real estate portal (Immobiliare.it, Idealista, SeLoger) has different character limits, formatting rules, and ranking algorithms. AI adapts your listing automatically.
+
+**Multi-language** — A single property description gets translated into Italian, English, French, Spanish, and German — maintaining the emotional appeal of the original.
+
+**SEO titles** — AI generates A/B testable titles designed to maximize click-through rates on portal search results.
+
+## Real Results from Early Adopters
+
+Agencies using AI listing tools report consistent results:
+
+- 85% reduction in listing creation time
+- 40% increase in portal inquiry rates
+- 3x more international leads from translated listings
+- 50% more social media engagement with AI-optimized posts
+
+## What to Look for in an AI Listing Tool
+
+Not all AI tools are created equal. The best platforms offer:
+
+1. **Real estate training** — Generic AI writes generic copy. Look for tools trained specifically on property listings.
+2. **Portal integration** — Direct publishing or easy copy-paste to major portals.
+3. **CRM integration** — Generated leads should flow directly into your pipeline.
+4. **Multi-language support** — Essential for European markets where buyers cross borders.
+5. **Team features** — Agencies need shared templates, brand guidelines, and usage analytics.
+
+## The Bottom Line
+
+AI listing tools are the single highest-ROI investment an agency can make in 2025. At €197-897/month, they pay for themselves within the first week of use. The question isn't whether to adopt AI — it's how quickly you can implement it before your competitors do.`,
+    contentIt: `Il settore immobiliare sta attraversando una trasformazione massiva. Nel 2025, gli strumenti AI non sono più un lusso — sono una necessità competitiva.
+
+## Il Problema: Creazione Manuale degli Annunci
+
+L'agente immobiliare medio spende 2-3 ore per creare un singolo annuncio. Questo include scrivere descrizioni, ottimizzare per i portali, tradurre per acquirenti internazionali e creare post per i social media. Per un'agenzia che gestisce 20+ immobili al mese, sono 40-60 ore di lavoro ripetitivo.
+
+## La Soluzione: Motori AI per Annunci
+
+I moderni motori AI possono generare descrizioni professionali in meno di 30 secondi. Ma i migliori strumenti vanno ben oltre la semplice generazione di testo:
+
+**Generazione multi-variante** — Invece di una descrizione, l'AI crea 5 varianti ottimizzate per diversi target: acquirenti luxury, investitori, primi acquirenti, clienti internazionali e annunci SEO per portali.
+
+**Ottimizzazione portali** — Ogni portale (Immobiliare.it, Idealista, SeLoger) ha limiti di caratteri, regole di formattazione e algoritmi di ranking diversi. L'AI adatta automaticamente il tuo annuncio.
+
+**Multi-lingua** — Una singola descrizione viene tradotta in italiano, inglese, francese, spagnolo e tedesco — mantenendo l'appeal emotivo dell'originale.
+
+**Titoli SEO** — L'AI genera titoli A/B testabili progettati per massimizzare il click-through rate.
+
+## Risultati Reali dai Primi Utilizzatori
+
+Le agenzie che usano strumenti AI per annunci riportano risultati consistenti:
+
+- Riduzione dell'85% nel tempo di creazione annunci
+- Aumento del 40% nelle richieste dai portali
+- 3x più lead internazionali dagli annunci tradotti
+- 50% più engagement sui social media
+
+## Cosa Cercare in uno Strumento AI
+
+Non tutti gli strumenti AI sono uguali. Le migliori piattaforme offrono:
+
+1. **Training immobiliare** — L'AI generico scrive copy generico. Cerca strumenti addestrati specificamente sugli annunci immobiliari.
+2. **Integrazione portali** — Pubblicazione diretta o copia facile sui principali portali.
+3. **Integrazione CRM** — I lead generati devono confluire direttamente nella tua pipeline.
+4. **Supporto multi-lingua** — Essenziale per i mercati europei dove gli acquirenti attraversano i confini.
+5. **Funzionalità team** — Le agenzie hanno bisogno di template condivisi e analytics.
+
+## La Conclusione
+
+Gli strumenti AI per annunci sono l'investimento con il ROI più alto che un'agenzia possa fare nel 2025. A €197-897/mese, si ripagano entro la prima settimana. La domanda non è se adottare l'AI — ma quanto velocemente puoi implementarla prima dei tuoi competitor.`,
+  },
+  {
+    slug: "crm-automation-real-estate",
+    title: "CRM Automation for Real Estate: The Complete Guide",
+    titleIt: "Automazione CRM per l'Immobiliare: La Guida Completa",
+    excerpt: "Stop losing leads. Learn how automated CRM pipelines can double your conversion rate.",
+    excerptIt: "Smetti di perdere lead. Scopri come le pipeline CRM automatizzate possono raddoppiare il tuo tasso di conversione.",
+    date: "2025-03-15",
+    readTime: 8,
+    category: "CRM & Sales",
+    categoryIt: "CRM e Vendite",
+    content: `Every real estate agency loses leads. The average agency follows up with only 27% of inbound inquiries within the first hour. The rest? They go to your competitors.
+
+## Why Follow-Up Speed Matters
+
+Research shows that responding to a lead within 5 minutes makes you 21x more likely to qualify that lead compared to responding after 30 minutes. In real estate, where deals are worth tens of thousands in commission, every lost lead is money left on the table.
+
+## The Automated CRM Pipeline
+
+A modern real estate CRM does more than store contacts. It automates your entire sales process:
+
+**Instant lead capture** — When someone fills out a form on Immobiliare.it or your website, the lead appears in your CRM within seconds, with AI-generated priority scoring.
+
+**Automated first response** — AI sends a personalized email within 60 seconds of lead capture. Not a generic template — a response that references the specific property they inquired about.
+
+**Smart follow-up sequences** — If the lead doesn't respond, AI sends a follow-up after 24 hours, then 3 days, then 7 days. Each message is unique and personalized.
+
+**Pipeline visualization** — See every lead's status at a glance: New → Contacted → Viewing Scheduled → Offer Made → Closed. Drag and drop to update.
+
+**AI lead scoring** — Not all leads are equal. AI analyzes behavior signals (which properties they viewed, how many times they visited, response speed) to prioritize your hottest prospects.
+
+## Implementation in 3 Steps
+
+1. **Connect your lead sources** — Portal inquiries, website forms, social media messages, phone calls.
+2. **Set up automation rules** — Define what happens when a new lead arrives, when they go cold, when they schedule a viewing.
+3. **Monitor and optimize** — Track conversion rates at each pipeline stage. Identify bottlenecks.
+
+## The ROI of CRM Automation
+
+Agencies that implement CRM automation typically see:
+
+- 2x increase in lead response rate
+- 35% improvement in lead-to-viewing conversion
+- 15 hours/week saved on manual follow-ups per agent
+- 25% increase in closed deals within 90 days
+
+The math is simple: if your average commission is €5,000 and automation helps you close just 2 more deals per month, that's €10,000 in additional revenue — for a tool that costs €497/month.`,
+    contentIt: `Ogni agenzia immobiliare perde lead. L'agenzia media risponde solo al 27% delle richieste entro la prima ora. Il resto? Va ai competitor.
+
+## Perché la Velocità di Risposta Conta
+
+Le ricerche mostrano che rispondere a un lead entro 5 minuti ti rende 21 volte più propenso a qualificarlo rispetto a una risposta dopo 30 minuti. Nell'immobiliare, dove le commissioni valgono decine di migliaia di euro, ogni lead perso è denaro lasciato sul tavolo.
+
+## La Pipeline CRM Automatizzata
+
+Un CRM immobiliare moderno fa molto di più che archiviare contatti. Automatizza l'intero processo di vendita:
+
+**Cattura lead istantanea** — Quando qualcuno compila un form su Immobiliare.it o sul tuo sito, il lead appare nel CRM in pochi secondi, con punteggio di priorità generato dall'AI.
+
+**Prima risposta automatica** — L'AI invia un'email personalizzata entro 60 secondi dalla cattura del lead. Non un template generico — una risposta che fa riferimento alla specifica proprietà.
+
+**Sequenze di follow-up intelligenti** — Se il lead non risponde, l'AI invia un follow-up dopo 24 ore, poi 3 giorni, poi 7 giorni. Ogni messaggio è unico e personalizzato.
+
+**Visualizzazione pipeline** — Vedi lo stato di ogni lead a colpo d'occhio: Nuovo → Contattato → Visita Fissata → Offerta → Chiuso.
+
+**Lead scoring AI** — Non tutti i lead sono uguali. L'AI analizza i segnali comportamentali per dare priorità ai prospect più caldi.
+
+## Il ROI dell'Automazione CRM
+
+Le agenzie che implementano l'automazione CRM vedono:
+
+- 2x di aumento nel tasso di risposta ai lead
+- 35% di miglioramento nella conversione lead-visita
+- 15 ore/settimana risparmiate sui follow-up manuali per agente
+- 25% di aumento nelle trattative chiuse entro 90 giorni
+
+La matematica è semplice: se la tua commissione media è di €5.000 e l'automazione ti aiuta a chiudere anche solo 2 trattative in più al mese, sono €10.000 di fatturato aggiuntivo — per uno strumento che costa €497/mese.`,
+  },
+  {
+    slug: "social-media-real-estate-ai",
+    title: "Social Media Marketing for Real Estate with AI",
+    titleIt: "Social Media Marketing Immobiliare con l'AI",
+    excerpt: "How to create scroll-stopping property posts in seconds using AI — Instagram, Facebook, LinkedIn, TikTok.",
+    excerptIt: "Come creare post immobiliari virali in pochi secondi con l'AI — Instagram, Facebook, LinkedIn, TikTok.",
+    date: "2025-03-01",
+    readTime: 5,
+    category: "Marketing",
+    categoryIt: "Marketing",
+    content: `Social media is where your next clients are scrolling right now. But creating consistent, engaging property content takes hours. AI changes that.
+
+## The Social Media Challenge for Agents
+
+Most agents know they should post on social media. Few do it consistently. Why? Because creating quality content for Instagram, Facebook, LinkedIn, and TikTok requires different formats, different tones, and different strategies for each platform.
+
+## AI-Powered Social Content
+
+Modern AI tools generate platform-specific content from a single property description:
+
+**Instagram** — Emotional, visual copy with relevant hashtags. Carousel-ready descriptions that tell a story.
+
+**Facebook** — Longer, more detailed posts with neighborhood highlights and lifestyle angles.
+
+**LinkedIn** — Professional market analysis angle, positioning you as an industry expert.
+
+**TikTok/Reels** — Short, punchy scripts designed for video format with hooks and calls to action.
+
+## Best Practices
+
+1. **Post consistently** — 4-5 times per week minimum. AI makes this sustainable.
+2. **Mix content types** — New listings, market insights, behind-the-scenes, client testimonials.
+3. **Use local hashtags** — AI can generate location-specific hashtag sets that actually reach buyers.
+4. **Engage, don't just broadcast** — Respond to comments and DMs within hours.
+
+## The Compound Effect
+
+Social media results compound over time. An agency posting AI-generated content 5x/week for 6 months will have 130+ pieces of content working for them. Each post is a potential touchpoint with a future client.
+
+The agencies winning on social media in 2025 aren't the ones with the biggest budgets — they're the ones using AI to produce more high-quality content than humanly possible.`,
+    contentIt: `I social media sono dove i tuoi prossimi clienti stanno scorrendo in questo momento. Ma creare contenuti immobiliari costanti e coinvolgenti richiede ore. L'AI cambia tutto.
+
+## La Sfida Social per gli Agenti
+
+La maggior parte degli agenti sa di dover pubblicare sui social. Pochi lo fanno con costanza. Perché? Creare contenuti di qualità per Instagram, Facebook, LinkedIn e TikTok richiede formati diversi, toni diversi e strategie diverse per ogni piattaforma.
+
+## Contenuti Social con l'AI
+
+Gli strumenti AI moderni generano contenuti specifici per piattaforma da una singola descrizione:
+
+**Instagram** — Copy emotivo e visuale con hashtag rilevanti. Descrizioni per carousel che raccontano una storia.
+
+**Facebook** — Post più lunghi e dettagliati con highlights del quartiere e angoli lifestyle.
+
+**LinkedIn** — Angolo di analisi di mercato professionale, posizionandoti come esperto del settore.
+
+**TikTok/Reels** — Script brevi e incisivi progettati per il formato video con hook e call to action.
+
+## L'Effetto Composto
+
+I risultati sui social media si accumulano nel tempo. Un'agenzia che pubblica contenuti AI 5 volte a settimana per 6 mesi avrà 130+ contenuti che lavorano per loro. Ogni post è un potenziale punto di contatto con un futuro cliente.
+
+Le agenzie che vincono sui social nel 2025 non sono quelle con i budget più grandi — sono quelle che usano l'AI per produrre più contenuti di alta qualità di quanto sia umanamente possibile.`,
+  },
+];
+
+export function getBlogPost(slug: string): BlogPost | undefined {
+  return BLOG_POSTS.find((p) => p.slug === slug);
+}
