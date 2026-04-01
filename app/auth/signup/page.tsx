@@ -313,7 +313,7 @@ function SignupClient() {
               <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground pt-1">
                 <span className="flex items-center gap-1">
                   <Shield className="w-3 h-3" />
-                  {isItalian ? "Crittografia 256-bit" : "256-bit encryption"}
+                  256-bit encryption
                 </span>
                 <span className="flex items-center gap-1">
                   <Check className="w-3 h-3" />
@@ -321,7 +321,7 @@ function SignupClient() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Check className="w-3 h-3" />
-                  {isItalian ? "Cancella quando vuoi" : "Cancel anytime"}
+                  Cancel anytime
                 </span>
               </div>
 
@@ -377,5 +377,3 @@ export default function SignupPage() {
     </Suspense>
   );
 }
-
-
