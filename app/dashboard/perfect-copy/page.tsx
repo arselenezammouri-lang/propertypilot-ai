@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { fetchApi } from '@/lib/api/client';
 import { useAPIErrorHandler } from '@/components/error-boundary';
+import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { MediaUpload, type MediaFile } from '@/components/media-upload';
 import { 
   Sparkles, 
   Loader2, 
@@ -188,6 +190,7 @@ export default function PerfectCopyPage() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [result, setResult] = useState<PerfectCopyResult | null>(null);
   const [activeTab, setActiveTab] = useState('professionale');
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
 
   const [formData, setFormData] = useState({
     tipoTransazione: 'vendita',
@@ -552,10 +555,10 @@ export default function PerfectCopyPage() {
                     <MapPin className="h-4 w-4 text-amber-500" />
                     {t.locationLabel}
                   </Label>
-                  <Input
+                  <AddressAutocomplete
                     placeholder={t.locationPlaceholder}
                     value={formData.zona}
-                    onChange={(e) => setFormData({ ...formData, zona: e.target.value })}
+                    onChange={(val) => setFormData({ ...formData, zona: val })}
                     data-testid="input-zona"
                   />
                 </div>
@@ -665,6 +668,19 @@ export default function PerfectCopyPage() {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Media Upload */}
+                <div className="space-y-2">
+                  <MediaUpload
+                    files={mediaFiles}
+                    onChange={setMediaFiles}
+                    maxFiles={10}
+                    acceptImages={true}
+                    acceptVideos={true}
+                    label={isItalian ? "Foto e Video (opzionale)" : "Photos & Videos (optional)"}
+                    description={isItalian ? "Carica le foto dell'immobile per annunci migliori" : "Upload property photos for better listings"}
+                  />
                 </div>
 
                 <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">

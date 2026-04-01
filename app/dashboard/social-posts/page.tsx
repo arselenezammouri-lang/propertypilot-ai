@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { MediaUpload, type MediaFile } from '@/components/media-upload';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
@@ -189,6 +191,7 @@ export default function SocialPostsPage() {
   });
   
   const [result, setResult] = useState<SocialPostResponse | null>(null);
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const generateMutation = useMutation({
@@ -436,11 +439,10 @@ export default function SocialPostsPage() {
                       </div>
                       <div>
                         <Label htmlFor="localita">{t.locationLabel}</Label>
-                        <Input
-                          id="localita"
+                        <AddressAutocomplete
                           placeholder={t.locationPlaceholder}
                           value={formData.localita}
-                          onChange={(e) => setFormData({ ...formData, localita: e.target.value })}
+                          onChange={(val) => setFormData({ ...formData, localita: val })}
                           className="mt-1.5"
                           data-testid="input-localita"
                         />

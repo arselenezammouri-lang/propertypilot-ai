@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { MediaUpload, type MediaFile } from '@/components/media-upload';
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -157,6 +159,7 @@ export default function EmotionalListingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<EmotionalListingResult | null>(null);
   const [activeTab, setActiveTab] = useState("storytelling");
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormData>({
@@ -513,7 +516,7 @@ export default function EmotionalListingPage() {
                   id="location"
                   placeholder={t.locationPlaceholder}
                   value={formData.location}
-                  onChange={(e) => handleInputChange("location", e.target.value)}
+                  onChange={(val) => handleInputChange("location", val)}
                   data-testid="input-location"
                 />
               </div>

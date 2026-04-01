@@ -16,6 +16,7 @@ import { HtmlLangDir } from "@/components/html-lang-dir";
 import NextDynamic from "next/dynamic";
 import type { Locale } from "@/lib/i18n/config";
 import { getBaseUrl } from "@/lib/env";
+import { GoogleAnalytics } from "@/components/google-analytics";
 
 const CookieBanner = NextDynamic(() => import("@/components/cookie-banner").then(m => ({ default: m.CookieBanner })), { ssr: false });
 
@@ -194,6 +195,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}>
         <SkipToContent />
         <HtmlLangDir />
+        <GoogleAnalytics />
         <Providers>
           <LocaleProvider>
             <ThemeProvider

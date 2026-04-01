@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { MediaUpload, type MediaFile } from '@/components/media-upload';
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
@@ -214,6 +216,7 @@ export default function TitlesPage() {
   });
   
   const [result, setResult] = useState<TitlesResponse | null>(null);
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [copiedTitle, setCopiedTitle] = useState<string | null>(null);
 
   const generateMutation = useMutation({
@@ -437,11 +440,10 @@ export default function TitlesPage() {
                     </div>
                     <div>
                       <Label htmlFor="localita">{t.locationLabel}</Label>
-                      <Input
-                        id="localita"
+                      <AddressAutocomplete
                         placeholder={t.locationPlaceholder}
                         value={formData.localita}
-                        onChange={(e) => setFormData({ ...formData, localita: e.target.value })}
+                        onChange={(val) => setFormData({ ...formData, localita: val })}
                         className="mt-1.5"
                         data-testid="input-localita"
                       />
