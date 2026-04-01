@@ -107,7 +107,17 @@ export default async function DashboardPage() {
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        {/* ONBOARDING CHECKLIST (shows until user completes or dismisses) */}
+        {/* WELCOME */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">
+            {profile?.full_name ? `Welcome back, ${profile.full_name.split(' ')[0]}` : 'Welcome back'}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {currentPlan === 'free' ? 'Start generating listings to grow your agency.' : `You're on the ${currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan.`}
+          </p>
+        </div>
+
+        {/* ONBOARDING CHECKLIST */}
         <OnboardingChecklist />
 
         {/* STATS GRID */}
