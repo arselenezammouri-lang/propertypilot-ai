@@ -190,7 +190,7 @@ export default function CompliancePage() {
         {/* Documents List */}
         <Card className="border-border bg-card">
           <CardHeader>
-            <CardTitle className="text-xl text-white flex items-center gap-2">
+            <CardTitle className="text-xl text-foreground flex items-center gap-2">
               <FileText className="h-5 w-5 text-cyan-400" />
               {t.docsTitle}
             </CardTitle>

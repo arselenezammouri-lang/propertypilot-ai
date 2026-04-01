@@ -765,7 +765,7 @@ export default function AutomationsPage() {
               </div>
             ) : automations.length === 0 ? (
               <div className="text-center py-12">
-                <Settings className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                <Settings className="h-16 w-16 mx-auto text-muted-foreground/70 mb-4" />
                 <h3 className="text-lg font-semibold mb-2">{t.noAutomations}</h3>
                 <p className="text-muted-foreground mb-6">{t.noAutomationDesc}</p>
                 <Button 

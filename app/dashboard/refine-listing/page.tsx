@@ -541,7 +541,7 @@ export default function RefineListingPage() {
           {!result && !isLoading && (
             <Card className="border-dashed border-2 border-muted">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                <Sparkles className="h-16 w-16 text-muted-foreground/50 mb-4" />
+                <Sparkles className="h-16 w-16 text-muted-foreground/70 mb-4" />
                 <h3 className="text-lg font-medium text-muted-foreground mb-2">
                   {t.noResult}
                 </h3>

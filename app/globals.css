@@ -69,6 +69,7 @@
     transition: box-shadow 0.2s ease, border-color 0.2s ease;
   }
   .pp-card:hover { @apply shadow-md border-border; }
+  .pp-glass { @apply bg-background/80 backdrop-blur-xl; }
 
   .pp-section { @apply py-20 md:py-28; }
   .pp-container { @apply max-w-6xl mx-auto px-5 sm:px-8; }

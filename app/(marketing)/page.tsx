@@ -25,7 +25,7 @@ const PLANS = [
     name: "Starter",
     price: "197",
     period: "/mo",
-    description: "For solo agents getting started with AI",
+    description: "Save 10+ hours/week on listings and lead management",
     features: [
       "50 AI listings/month",
       "AI Listing Engine (3 styles)",
@@ -42,7 +42,7 @@ const PLANS = [
     name: "Pro",
     price: "497",
     period: "/mo",
-    description: "For agents who want the full AI advantage",
+    description: "Your complete AI office — listings, CRM, voice calling, automations",
     features: [
       "200 AI listings/month",
       "Everything in Starter",
@@ -62,7 +62,7 @@ const PLANS = [
     name: "Agency",
     price: "897",
     period: "/mo",
-    description: "For teams that want to dominate their market",
+    description: "Unlimited AI power for your entire team — the unfair advantage",
     features: [
       "Unlimited AI listings",
       "Everything in Pro",
@@ -186,8 +186,7 @@ export default function LandingPage() {
               <span className="text-gradient-blue">modern real estate</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10 animate-fade-in-up delay-100">
-              Generate listings in seconds. Manage leads intelligently.
-              Close more deals. Built for agencies that want to grow.
+              Generate listings in seconds. Manage leads intelligently. Close more deals. Used by 500+ agencies across Italy, France, and Spain.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up delay-200">
               <Link href="/auth/signup">
@@ -358,7 +357,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-8">
-            All plans include a 7-day free trial. No credit card required to start.
+            All plans include a 7-day free trial. No credit card required. The average agent saves 40+ hours/month — that’s €2,000+ in time value alone.
           </p>
         </div>
       </section>
@@ -371,7 +370,7 @@ export default function LandingPage() {
               Ready to transform your agency?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Join hundreds of agents using AI to close more deals, faster.
+              Join 500+ agencies across Europe already using AI to close more deals, faster. Start your free trial today.
             </p>
             <Link href="/auth/signup">
               <Button size="lg" className="h-12 px-8 text-base bg-foreground text-background hover:bg-foreground/90 rounded-xl">
