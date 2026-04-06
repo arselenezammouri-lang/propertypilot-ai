@@ -30,6 +30,7 @@ import {
   Menu,
   X,
   Shield,
+  Bookmark,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Home },
       { label: "Saved Listings", href: "/dashboard/listings", icon: Folder },
+      { label: "Templates", href: "/dashboard/templates", icon: Bookmark },
+      { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     ],
   },
   {
