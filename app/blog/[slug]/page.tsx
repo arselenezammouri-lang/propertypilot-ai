@@ -1,14 +1,13 @@
 "use client";
 
-import { use } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Clock, Building2, ArrowRight } from "lucide-react";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getBlogPost, BLOG_POSTS } from "@/lib/blog-data";
 
-export default function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const slug = params.slug;
   const { locale } = useLocaleContext();
   const isIt = locale === "it";
 

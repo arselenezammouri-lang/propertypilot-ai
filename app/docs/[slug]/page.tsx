@@ -1,6 +1,5 @@
 "use client";
 
-import { use } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Book } from "lucide-react";
@@ -100,8 +99,8 @@ Uno script efficace può trasformare una chiamata in un mandato.
   },
 };
 
-export default function DocArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params);
+export default function DocArticlePage({ params }: { params: { slug: string } }) {
+  const resolvedParams = params;
   const { locale } = useLocale();
   const isItalian = locale === 'it';
   const slug = Array.isArray(resolvedParams.slug) 
