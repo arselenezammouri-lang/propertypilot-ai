@@ -85,6 +85,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/blog/property-photography-tips-ai`,
+      lastModified: new Date('2025-02-15'),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/lead-management-real-estate-2025`,
+      lastModified: new Date('2025-02-01'),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/dashboard`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
