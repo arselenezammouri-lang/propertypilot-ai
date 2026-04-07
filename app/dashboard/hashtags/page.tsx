@@ -27,6 +27,8 @@ import {
   Sparkles
 } from "lucide-react";
 import Link from "next/link";
+import { MediaUpload } from "@/components/media-upload";
+import { type MediaFile } from "@/components/media-upload";
 
 interface HashtagResult {
   virali: string[];
@@ -152,6 +154,7 @@ export default function HashtagsPage() {
   ] as const;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [result, setResult] = useState<HashtagResult | null>(null);
   const [activeTab, setActiveTab] = useState("virali");
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -457,6 +460,19 @@ export default function HashtagsPage() {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* Media Upload */}
+            <div className="mb-4">
+              <MediaUpload
+                files={mediaFiles}
+                onChange={setMediaFiles}
+                maxFiles={8}
+                acceptImages={true}
+                acceptVideos={true}
+                label={isItalian ? "Foto e Video (opzionale)" : "Photos & Videos (optional)"}
+                description={isItalian ? "Carica foto per hashtag migliori" : "Upload photos for better hashtags"}
+              />
             </div>
 
             <Button

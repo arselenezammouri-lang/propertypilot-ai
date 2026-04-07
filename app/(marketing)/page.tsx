@@ -363,6 +363,39 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── EUROPEAN COVERAGE ─── */}
+      <section className="pp-section bg-muted/30">
+        <div className="pp-container">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="pp-heading-lg mb-3">
+              Built for European real estate
+            </h2>
+            <p className="text-muted-foreground mb-10">
+              Optimized for the portals, languages, and regulations of every major European market.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+              {[
+                { flag: "🇮🇹", country: "Italy", portals: "Immobiliare.it, Casa.it" },
+                { flag: "🇫🇷", country: "France", portals: "SeLoger, LeBonCoin" },
+                { flag: "🇪🇸", country: "Spain", portals: "Idealista, Fotocasa" },
+                { flag: "🇩🇪", country: "Germany", portals: "ImmoScout24" },
+                { flag: "🇬🇧", country: "UK", portals: "Rightmove, Zoopla" },
+                { flag: "🇵🇹", country: "Portugal", portals: "Idealista PT" },
+              ].map((item) => (
+                <div key={item.country} className="pp-card p-4 text-center hover-lift">
+                  <span className="text-3xl block mb-2">{item.flag}</span>
+                  <p className="text-sm font-semibold">{item.country}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.portals}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-6">
+              6 languages: Italian, English, French, Spanish, German, Arabic — professional AI translations, not Google Translate.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ─── FINAL CTA ─── */}
       <section className="pp-section">
         <div className="pp-container">

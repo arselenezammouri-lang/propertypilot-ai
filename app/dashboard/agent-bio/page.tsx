@@ -28,6 +28,8 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
+import { MediaUpload } from "@/components/media-upload";
+import { type MediaFile } from "@/components/media-upload";
 
 interface BioVariant {
   fraseApertura: string;
@@ -74,6 +76,7 @@ export default function AgentBioPage() {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [result, setResult] = useState<AgentBioResult | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("professionale");
@@ -600,6 +603,19 @@ export default function AgentBioPage() {
                   <p className="text-sm text-muted-foreground mt-1">
                     {t.premiumIncludedDesc}
                   </p>
+                </div>
+
+                {/* Media Upload */}
+                <div className="mb-4">
+                  <MediaUpload
+                    files={mediaFiles}
+                    onChange={setMediaFiles}
+                    maxFiles={4}
+                    acceptImages={true}
+                    acceptVideos={false}
+                    label="Profile Photo (optional)"
+                    description="Upload a professional headshot"
+                  />
                 </div>
 
                 <Button
