@@ -559,6 +559,19 @@ export default function VideoScriptsPage() {
               </div>
             </div>
 
+            {/* Media Upload */}
+            <div className="mb-4">
+              <MediaUpload
+                files={mediaFiles}
+                onChange={setMediaFiles}
+                maxFiles={8}
+                acceptImages={true}
+                acceptVideos={true}
+                label={isItalian ? "Foto e Video dell'Immobile" : "Property Photos & Videos"}
+                description={isItalian ? "Carica media per script video migliori" : "Upload media for better video scripts"}
+              />
+            </div>
+
             <Button
               onClick={handleSubmit}
               disabled={isLoading}

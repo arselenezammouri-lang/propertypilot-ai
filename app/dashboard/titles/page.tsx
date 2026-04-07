@@ -529,6 +529,19 @@ export default function TitlesPage() {
                     </div>
                   </div>
 
+                  {/* Media Upload */}
+                  <div className="mb-4">
+                    <MediaUpload
+                      files={mediaFiles}
+                      onChange={setMediaFiles}
+                      maxFiles={8}
+                      acceptImages={true}
+                      acceptVideos={false}
+                      label={isItalian ? "Foto Immobile (opzionale)" : "Property Photos (optional)"}
+                      description={isItalian ? "Carica foto per titoli contestuali" : "Upload photos for context-aware titles"}
+                    />
+                  </div>
+
                   <Button
                     type="submit"
                     disabled={generateMutation.isPending}

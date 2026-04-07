@@ -520,6 +520,19 @@ export default function SocialPostsPage() {
                     </div>
                   </div>
 
+                  {/* Media Upload */}
+                  <div className="mb-4">
+                    <MediaUpload
+                      files={mediaFiles}
+                      onChange={setMediaFiles}
+                      maxFiles={8}
+                      acceptImages={true}
+                      acceptVideos={true}
+                      label={isItalian ? "Foto e Video (opzionale)" : "Photos & Videos (optional)"}
+                      description={isItalian ? "Carica foto per post social migliori" : "Upload photos for better social posts"}
+                    />
+                  </div>
+
                   <Button
                     type="submit"
                     disabled={generateMutation.isPending}
