@@ -244,7 +244,7 @@ Gli strumenti AI moderni generano contenuti specifici per piattaforma da una sin
 I risultati sui social media si accumulano nel tempo. Un'agenzia che pubblica contenuti AI 5 volte a settimana per 6 mesi avrà 130+ contenuti che lavorano per loro. Ogni post è un potenziale punto di contatto con un futuro cliente.
 
 Le agenzie che vincono sui social nel 2025 non sono quelle con i budget più grandi — sono quelle che usano l'AI per produrre più contenuti di alta qualità di quanto sia umanamente possibile.`,
-  },,
+  },
   {
     slug: "property-photography-tips-ai",
     title: "Property Photography Tips: How AI Enhances Your Listings",
