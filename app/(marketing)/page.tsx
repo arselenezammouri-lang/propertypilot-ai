@@ -396,6 +396,52 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── VS COMPETITORS ─── */}
+      <section className="pp-section">
+        <div className="pp-container">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="pp-heading-lg text-center mb-3">
+              Why agencies switch to PropertyPilot
+            </h2>
+            <p className="text-center text-muted-foreground mb-10">
+              One platform replaces 5+ tools. Save €500+/month and 40+ hours.
+            </p>
+            <div className="pp-card overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-4 font-medium text-muted-foreground">Feature</th>
+                      <th className="p-4 font-semibold text-center bg-primary/5 border-x border-border">PropertyPilot AI</th>
+                      <th className="p-4 font-medium text-center text-muted-foreground">Traditional Tools</th>
+                      <th className="p-4 font-medium text-center text-muted-foreground">Manual Work</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { feature: "Listing creation", pp: "30 seconds", trad: "15-30 min", manual: "1-2 hours" },
+                      { feature: "Languages", pp: "6 languages", trad: "1-2 max", manual: "Translator needed" },
+                      { feature: "Lead management", pp: "AI-powered CRM", trad: "Basic CRM", manual: "Spreadsheets" },
+                      { feature: "Social media posts", pp: "AI-generated", trad: "Template-based", manual: "30 min each" },
+                      { feature: "SEO titles", pp: "A/B tested by AI", trad: "Generic", manual: "Guesswork" },
+                      { feature: "Follow-ups", pp: "Automated 24/7", trad: "Semi-auto", manual: "Often forgotten" },
+                      { feature: "Monthly cost", pp: "From €197", trad: "€300-800+", manual: "€2,000+ in time" },
+                    ].map((row, i) => (
+                      <tr key={i} className="border-b border-border/50 last:border-0">
+                        <td className="p-4 font-medium">{row.feature}</td>
+                        <td className="p-4 text-center bg-primary/5 border-x border-border font-medium text-primary">{row.pp}</td>
+                        <td className="p-4 text-center text-muted-foreground">{row.trad}</td>
+                        <td className="p-4 text-center text-muted-foreground">{row.manual}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── FINAL CTA ─── */}
       <section className="pp-section">
         <div className="pp-container">
