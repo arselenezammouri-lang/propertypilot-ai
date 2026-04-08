@@ -507,7 +507,7 @@ export default function PricingPage() {
       <footer className="border-t border-border/20 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 PropertyPilot AI. {isItalian ? "Tutti i diritti riservati." : "All rights reserved."}
+            © 2026 PropertyPilot AI. {isItalian ? "Tutti i diritti riservati." : "All rights reserved."}
           </p>
           <div className="flex items-center gap-6 text-sm">
             <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">

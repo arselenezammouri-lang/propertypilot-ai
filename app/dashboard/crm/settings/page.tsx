@@ -428,7 +428,7 @@ export default function CRMSettingsPage() {
                   ) : (
                     <div className="space-y-4">
                       <div>
-                        <Label className="text-slate-300">{t.keyNameLabel}</Label>
+                        <Label className="text-foreground">{t.keyNameLabel}</Label>
                         <Input 
                           value={newKeyName}
                           onChange={(e) => setNewKeyName(e.target.value)}
@@ -439,7 +439,7 @@ export default function CRMSettingsPage() {
                       </div>
                       
                       <div>
-                        <Label className="text-slate-300">{t.defaultMarket}</Label>
+                        <Label className="text-foreground">{t.defaultMarket}</Label>
                         <Select value={newKeyMarket} onValueChange={(v: LeadMarket) => setNewKeyMarket(v)}>
                           <SelectTrigger className="bg-muted border-slate-600 mt-1" data-testid="select-market">
                             <SelectValue />
@@ -455,7 +455,7 @@ export default function CRMSettingsPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Sparkles className="h-4 w-4 text-cyan-400" />
-                            <Label className="text-slate-300">{t.autoLeadScore}</Label>
+                            <Label className="text-foreground">{t.autoLeadScore}</Label>
                           </div>
                           <Switch 
                             checked={autoLeadScore} 
@@ -470,7 +470,7 @@ export default function CRMSettingsPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Zap className="h-4 w-4 text-amber-400" />
-                            <Label className="text-slate-300">{t.autoFollowup}</Label>
+                            <Label className="text-foreground">{t.autoFollowup}</Label>
                           </div>
                           <Switch 
                             checked={autoFollowup} 
@@ -668,7 +668,7 @@ export default function CRMSettingsPage() {
             </DialogHeader>
             
             <div className="relative">
-              <pre className="p-4 rounded-lg bg-slate-950 border border-slate-700 overflow-auto max-h-[50vh] text-xs text-slate-300">
+              <pre className="p-4 rounded-lg bg-muted border border-border overflow-auto max-h-[50vh] text-xs text-foreground">
                 <code>{selectedKeyForEmbed ? getEmbedCode(selectedKeyForEmbed) : ''}</code>
               </pre>
               <Button

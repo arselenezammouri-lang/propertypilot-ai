@@ -13,7 +13,7 @@ export function PrivacyPageContent() {
     ? {
         title: "Privacy",
         highlight: "Policy",
-        updated: "Ultimo aggiornamento: Dicembre 2024",
+        updated: "Ultimo aggiornamento: Marzo 2026",
         sections: [
           {
             icon: Eye,
@@ -147,7 +147,7 @@ export function PrivacyPageContent() {
     : {
         title: "Privacy",
         highlight: "Policy",
-        updated: "Last updated: December 2024",
+        updated: "Last updated: March 2026",
         sections: [
           {
             icon: Eye,

@@ -13,7 +13,7 @@ export function TermsPageContent() {
     ? {
         title: "Termini e",
         highlight: "Condizioni",
-        updated: "Ultimo aggiornamento: Dicembre 2024",
+        updated: "Ultimo aggiornamento: Marzo 2026",
         sections: [
           {
             icon: FileText,
@@ -115,7 +115,7 @@ export function TermsPageContent() {
     : {
         title: "Terms and",
         highlight: "Conditions",
-        updated: "Last updated: December 2024",
+        updated: "Last updated: March 2026",
         sections: [
           {
             icon: FileText,
