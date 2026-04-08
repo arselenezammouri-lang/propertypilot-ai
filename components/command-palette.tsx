@@ -428,7 +428,7 @@ export function CommandPalette() {
                       <span className="font-medium text-sm">{item.label}</span>
                       {item.badge && (
                         <Badge
-                          className={`${item.badgeColor} text-foreground text-[10px] px-1.5 py-0 h-4`}
+                          className={`${item.badgeColor} text-white text-[10px] px-1.5 py-0 h-4`}
                         >
                           {item.badge}
                         </Badge>

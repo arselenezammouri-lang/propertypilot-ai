@@ -395,7 +395,7 @@ export default function AuditorPage() {
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-amber-400 bg-clip-text text-transparent">
               Real Estate Audit AI
             </h1>
-            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-foreground border-0">
+            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
               🔥 Expert
             </Badge>
           </div>
@@ -539,7 +539,7 @@ export default function AuditorPage() {
               data-testid="button-analyze"
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              className="w-full h-14 text-lg bg-gradient-to-r from-blue-600 via-purple-600 to-amber-500 hover:from-blue-500 hover:via-purple-500 hover:to-amber-400 text-foreground font-bold shadow-lg shadow-blue-500/25"
+              className="w-full h-14 text-lg bg-gradient-to-r from-blue-600 via-purple-600 to-amber-500 hover:from-blue-500 hover:via-purple-500 hover:to-amber-400 text-white font-bold shadow-lg shadow-blue-500/25"
               size="lg"
             >
               {isAnalyzing ? (
@@ -841,7 +841,7 @@ export default function AuditorPage() {
                 {auditResult.suggestions?.map((s, i) => (
                   <div key={i} className="p-4 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-50 border border-amber-500/20">
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-foreground font-bold shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold shrink-0">
                         {s.priorita}
                       </div>
                       <div className="flex-1">

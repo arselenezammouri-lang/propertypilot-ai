@@ -23,7 +23,7 @@ export function ThemeToggle() {
         aria-label="Toggle theme"
         suppressHydrationWarning
       >
-        <Moon className="h-4 w-4 text-purple-400" suppressHydrationWarning />
+        <Moon className="h-4 w-4 text-muted-foreground" suppressHydrationWarning />
         <span className="text-xs font-medium hidden sm:inline" suppressHydrationWarning>Ombra</span>
       </Button>
     );
@@ -42,7 +42,7 @@ export function ThemeToggle() {
     >
       {isDark ? (
         <>
-          <Moon className="h-4 w-4 text-purple-400" />
+          <Moon className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-medium hidden sm:inline">Ombra</span>
         </>
       ) : (

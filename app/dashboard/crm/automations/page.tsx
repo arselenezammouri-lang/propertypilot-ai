@@ -407,7 +407,7 @@ export default function AutomationCenterPage() {
                 <div>
                   <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
                     {t.pageTitle}
-                    <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-foreground text-xs">
+                    <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white text-xs">
                       {t.pageBadge}
                     </Badge>
                   </h1>
@@ -420,7 +420,7 @@ export default function AutomationCenterPage() {
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button 
-                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-foreground"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
                 data-testid="button-create-rule"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -646,7 +646,7 @@ export default function AutomationCenterPage() {
                 <Button
                   onClick={handleCreateRule}
                   disabled={saving || !formData.name.trim()}
-                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-foreground"
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
                   data-testid="button-save-rule"
                 >
                   {saving ? (
@@ -747,7 +747,7 @@ export default function AutomationCenterPage() {
                   <p className="text-foreground/60 mb-6">{t.noRulesDesc}</p>
                   <Button 
                     onClick={() => setShowCreateDialog(true)}
-                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-foreground"
+                    className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
                     data-testid="button-create-first-rule"
                   >
                     <Plus className="h-4 w-4 mr-2" />

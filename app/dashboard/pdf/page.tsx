@@ -873,7 +873,7 @@ export default function PdfGeneratorPage() {
                     </p>
                     <Button
                       onClick={downloadPdf}
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90 text-foreground"
+                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:opacity-90 text-white"
                       data-testid="button-download-pdf"
                     >
                       <Download className="mr-2 h-5 w-5" />

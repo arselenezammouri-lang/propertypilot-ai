@@ -633,7 +633,7 @@ export default function PredatorMapPage() {
                 <Button
                   onClick={() => setShowWhatsAppModal(true)}
                   disabled={!selectedMarker.listing.phone_number}
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-foreground"
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   Invia WhatsApp Progetto

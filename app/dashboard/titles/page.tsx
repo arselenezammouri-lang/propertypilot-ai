@@ -300,7 +300,7 @@ export default function TitlesPage() {
       data-testid={`title-${category}-${index}`}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-foreground text-xs font-bold">
+        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
           {index + 1}
         </span>
         <span className="text-sm text-slate-700 dark:text-slate-300 truncate">
@@ -373,7 +373,7 @@ export default function TitlesPage() {
                 {t.heroTitle}
               </span>
             </h1>
-            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-foreground border-0 shadow-lg shadow-green-500/25">
+            <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-lg shadow-green-500/25">
               <TrendingUp className="h-3 w-3 mr-1" />
               {t.subtitleBadge}
             </Badge>
@@ -545,7 +545,7 @@ export default function TitlesPage() {
                   <Button
                     type="submit"
                     disabled={generateMutation.isPending}
-                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-foreground shadow-lg shadow-purple-500/25"
+                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/25"
                     data-testid="button-generate"
                   >
                     {generateMutation.isPending ? (
@@ -602,7 +602,7 @@ export default function TitlesPage() {
             {result && (
               <div className="space-y-6">
                 <Card className="border-0 shadow-xl shadow-green-500/10 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 overflow-hidden" data-testid="card-best-title">
-                  <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-foreground">
+                  <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
                     <CardTitle className="flex items-center gap-2">
                       <Star className="h-5 w-5 fill-current" />
                       Miglior Titolo Consigliato

@@ -481,7 +481,7 @@ export default function PerfectCopyPage() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 bg-clip-text text-transparent">
                   {t.heroTitle}
                 </h1>
-                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-foreground border-0">
+                <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
                   {t.heroBadge}
                 </Badge>
               </div>
@@ -696,7 +696,7 @@ export default function PerfectCopyPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 hover:from-amber-600 hover:via-yellow-600 hover:to-orange-600 text-foreground shadow-lg shadow-amber-500/25"
+                  className="w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 hover:from-amber-600 hover:via-yellow-600 hover:to-orange-600 text-white shadow-lg shadow-amber-500/25"
                   size="lg"
                   data-testid="button-generate"
                 >

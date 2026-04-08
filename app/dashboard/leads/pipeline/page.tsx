@@ -260,7 +260,7 @@ export default function PipelinePage() {
                 <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
                   {t.heroTitle}
                 </h1>
-                <Badge className="bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-foreground border-0">
+                <Badge className="bg-gradient-to-r from-emerald-500 via-violet-500 to-purple-500 text-white border-0">
                   {t.heroBadge}
                 </Badge>
               </div>

@@ -632,7 +632,7 @@ export default function LeadsPage() {
               <Button
                 onClick={() => setIsAddModalOpen(true)}
                 aria-label="Add new lead"
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-foreground"
+                className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
                 data-testid="button-add-lead"
               >
                 <Plus className="h-4 w-4 mr-2" />
@@ -817,12 +817,12 @@ export default function LeadsPage() {
                           <div className="flex items-center gap-2">
                             <div className="font-medium">{lead.nome}</div>
                             {lead.lead_score > 90 && (
-                              <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-foreground font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
+                              <Badge className="bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 text-white font-bold px-3 py-1 animate-pulse shadow-lg shadow-purple-500/50 border border-cyan-400/50">
                                 💎 SOLDI
                               </Badge>
                             )}
                             {lead.lead_score >= 85 && lead.lead_score <= 90 && (
-                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-foreground font-bold px-2 py-0.5 animate-pulse shadow-lg">
+                              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold px-2 py-0.5 animate-pulse shadow-lg">
                                 🔥 TOP DEAL
                               </Badge>
                             )}

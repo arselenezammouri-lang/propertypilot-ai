@@ -421,7 +421,7 @@ export default function LeadScorePage() {
             <Button
               onClick={handleSubmit}
               disabled={isLoading || messaggioLead.trim().length < 20}
-              className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-foreground shadow-lg shadow-cyan-500/25"
+              className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-400 text-white shadow-lg shadow-cyan-500/25"
               data-testid="button-analizza-lead"
             >
               {isLoading ? (
@@ -559,7 +559,7 @@ export default function LeadScorePage() {
                       key={index}
                       className="flex items-start gap-4 p-4 rounded-xl bg-muted/50 border border-slate-700/50"
                     >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-foreground font-bold text-sm">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
                         {action.priorita}
                       </div>
                       <div className="flex-1">

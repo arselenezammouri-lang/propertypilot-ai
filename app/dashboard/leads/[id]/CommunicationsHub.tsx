@@ -395,7 +395,7 @@ export default function CommunicationsHub({ lead }: CommunicationsHubProps) {
             <Button
               onClick={handleSend}
               disabled={isSending || !message.trim()}
-              className={`flex-1 bg-gradient-to-r ${channelConfig[activeChannel].gradient} hover:opacity-90 text-foreground`}
+              className={`flex-1 bg-gradient-to-r ${channelConfig[activeChannel].gradient} hover:opacity-90 text-white`}
               data-testid="button-send-message"
             >
               {isSending ? (

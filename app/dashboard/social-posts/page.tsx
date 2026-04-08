@@ -536,7 +536,7 @@ export default function SocialPostsPage() {
                   <Button
                     type="submit"
                     disabled={generateMutation.isPending}
-                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-foreground shadow-lg shadow-purple-500/25"
+                    className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white shadow-lg shadow-purple-500/25"
                     data-testid="button-generate"
                   >
                     {generateMutation.isPending ? (
@@ -593,7 +593,7 @@ export default function SocialPostsPage() {
             {result && (
               <div className="space-y-4">
                 <Card className="border-0 shadow-xl shadow-pink-500/10 bg-white dark:bg-card overflow-hidden" data-testid="card-instagram">
-                  <CardHeader className="bg-gradient-to-r from-pink-500 to-purple-500 text-foreground">
+                  <CardHeader className="bg-gradient-to-r from-pink-500 to-purple-500 text-white">
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Instagram className="h-5 w-5" />
@@ -625,7 +625,7 @@ export default function SocialPostsPage() {
                 </Card>
 
                 <Card className="border-0 shadow-xl shadow-blue-500/10 bg-white dark:bg-card overflow-hidden" data-testid="card-facebook">
-                  <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-foreground">
+                  <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Facebook className="h-5 w-5" />
@@ -657,7 +657,7 @@ export default function SocialPostsPage() {
                 </Card>
 
                 <Card className="border-0 shadow-xl shadow-slate-500/10 bg-white dark:bg-card overflow-hidden" data-testid="card-hashtags">
-                  <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 text-foreground">
+                  <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 text-white">
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Hash className="h-5 w-5" />
@@ -693,7 +693,7 @@ export default function SocialPostsPage() {
                 </Card>
 
                 <Card className="border-0 shadow-xl shadow-cyan-500/10 bg-white dark:bg-card overflow-hidden" data-testid="card-tiktok">
-                  <CardHeader className="bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500 text-foreground">
+                  <CardHeader className="bg-gradient-to-r from-cyan-500 via-pink-500 to-purple-500 text-white">
                     <CardTitle className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <SiTiktok className="h-5 w-5" />

@@ -443,7 +443,7 @@ export default function AgentBioPage() {
                 {t.pageSubtitle}
               </p>
             </div>
-            <span className="ml-auto px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-foreground rounded-full shadow-lg shadow-blue-500/25">
+            <span className="ml-auto px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full shadow-lg shadow-blue-500/25">
               ✨ {t.agentBranding}
             </span>
           </div>
@@ -621,7 +621,7 @@ export default function AgentBioPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 text-foreground shadow-lg shadow-blue-500/25"
+                  className="w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-blue-600 hover:via-indigo-600 hover:to-purple-600 text-white shadow-lg shadow-blue-500/25"
                   size="lg"
                   data-testid="button-submit"
                 >

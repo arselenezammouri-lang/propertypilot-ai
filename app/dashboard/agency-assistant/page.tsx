@@ -378,7 +378,7 @@ export default function AgencyAssistantPage() {
                       <div
                         className={`p-4 rounded-2xl ${
                           message.role === 'user'
-                            ? 'bg-gradient-to-r from-blue-500 to-violet-500 text-foreground rounded-br-md'
+                            ? 'bg-gradient-to-r from-blue-500 to-violet-500 text-white rounded-br-md'
                             : 'bg-muted/50 border border-border rounded-bl-md'
                         }`}
                       >
@@ -390,7 +390,7 @@ export default function AgencyAssistantPage() {
                           <Link href={FEATURE_ROUTES[message.suggestedFeature]}>
                             <Button 
                               size="sm" 
-                              className="bg-gradient-to-r from-violet-500 to-purple-600 hover:opacity-90 text-foreground"
+                              className="bg-gradient-to-r from-violet-500 to-purple-600 hover:opacity-90 text-white"
                               data-testid={`button-suggested-${message.suggestedFeature}`}
                             >
                               {message.suggestedAction}

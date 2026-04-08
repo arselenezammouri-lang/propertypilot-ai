@@ -404,7 +404,7 @@ export default function VideoScriptsPage() {
       <CardContent className="space-y-3 pt-4">
         {hooks.map((hook, idx) => (
           <div key={idx} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg group hover:bg-muted transition-colors">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-foreground font-bold text-sm flex-shrink-0">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
               {idx + 1}
             </div>
             <p className="flex-1 text-foreground font-medium">"{hook}"</p>
@@ -433,7 +433,7 @@ export default function VideoScriptsPage() {
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-foreground">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white">
           <Video className="h-8 w-8" />
         </div>
         <div>
@@ -444,7 +444,7 @@ export default function VideoScriptsPage() {
             {t.heroSubtitle}
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-foreground border-0">
+        <Badge className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0">
           {t.heroBadge}
         </Badge>
       </div>
@@ -575,7 +575,7 @@ export default function VideoScriptsPage() {
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-foreground"
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
               data-testid="button-generate-scripts"
             >
               {isLoading ? (

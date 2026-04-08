@@ -327,7 +327,7 @@ export default function HashtagsPage() {
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 text-foreground">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
           <Hash className="h-8 w-8" />
         </div>
         <div>
@@ -338,7 +338,7 @@ export default function HashtagsPage() {
             {t.heroSubtitle}
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-yellow-500 to-orange-500 text-foreground border-0">
+        <Badge className="ml-auto bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">
           {t.heroBadge}
         </Badge>
       </div>
@@ -478,7 +478,7 @@ export default function HashtagsPage() {
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-foreground"
+              className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white"
               data-testid="button-generate-hashtags"
             >
               {isLoading ? (

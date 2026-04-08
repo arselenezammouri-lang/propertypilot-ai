@@ -992,7 +992,7 @@ export default function ProspectingPage() {
                                       </span>
                                     )}
                                     {isGoldLead && !isEliteDeal && (
-                                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-foreground text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
+                                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs px-3 py-1 font-bold animate-pulse shadow-lg">
                                         🔥 TOP DEAL
                                       </Badge>
                                     )}
@@ -1204,7 +1204,7 @@ export default function ProspectingPage() {
                                       size="sm"
                                       onClick={() => handleCall(listing.id)}
                                       disabled={callingListingId === listing.id || (userPlan === 'pro' && voiceCallsRemaining <= 0)}
-                                      className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-foreground font-bold px-4 py-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 animate-pulse"
+                                      className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white font-bold px-4 py-2 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 animate-pulse"
                                     >
                                       {callingListingId === listing.id ? (
                                         <>

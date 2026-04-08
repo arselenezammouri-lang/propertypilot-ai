@@ -291,7 +291,7 @@ export default function NotificationsSettingsPage() {
                 <Button
                   onClick={handleSendTest}
                   disabled={sendingTest || (!settings.morning_briefing_email && !settings.morning_briefing_whatsapp)}
-                  className="w-full bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-foreground"
+                  className="w-full bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
                 >
                   {sendingTest ? (
                     <>
@@ -346,7 +346,7 @@ export default function NotificationsSettingsPage() {
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-foreground"
+            className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white"
           >
             {saving ? (
               <>

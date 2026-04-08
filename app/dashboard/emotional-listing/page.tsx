@@ -448,7 +448,7 @@ export default function EmotionalListingPage() {
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-foreground">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 text-white">
           <Heart className="h-8 w-8" />
         </div>
         <div>
@@ -459,7 +459,7 @@ export default function EmotionalListingPage() {
             {t.heroSubtitle}
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-foreground border-0">
+        <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0">
           {t.heroBadge}
         </Badge>
       </div>
@@ -611,7 +611,7 @@ export default function EmotionalListingPage() {
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-foreground"
+              className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white"
               data-testid="button-generate-emotional"
             >
               {isLoading ? (

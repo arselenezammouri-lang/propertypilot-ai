@@ -54,7 +54,7 @@ export function DashboardHeader() {
           >
             <Search className="h-3.5 w-3.5" />
             <span className="text-xs">{isIt ? "Cerca..." : "Search..."}</span>
-            <kbd className="hidden lg:inline-flex text-[10px] text-muted-foreground/60 bg-muted rounded px-1.5 py-0.5 font-mono ml-1">
+            <kbd className="hidden lg:inline-flex text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5 font-mono ml-1">
               {isMac ? "⌘" : "Ctrl"}K
             </kbd>
           </Button>

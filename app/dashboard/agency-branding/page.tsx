@@ -205,7 +205,7 @@ export default function AgencyBrandingPage() {
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-foreground">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white">
           <Building2 className="h-8 w-8" />
         </div>
         <div>
@@ -216,7 +216,7 @@ export default function AgencyBrandingPage() {
             {t.pageSubtitle}
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-foreground border-0">
+        <Badge className="ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-0">
           🏢 White Label
         </Badge>
       </div>
@@ -412,7 +412,7 @@ export default function AgencyBrandingPage() {
           <Button
             onClick={handleSubmit}
             disabled={isSaving}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-foreground"
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white"
             size="lg"
             data-testid="button-save-branding"
           >

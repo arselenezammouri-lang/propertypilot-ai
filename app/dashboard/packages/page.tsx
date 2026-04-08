@@ -195,7 +195,7 @@ function PackagesPageContent() {
               <div className="flex items-center justify-between">
                 <Badge 
                   variant="secondary" 
-                  className="bg-gradient-to-r from-amber-400 to-orange-500 text-foreground border-0"
+                  className="bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0"
                 >
                   {t.packageScale}
                 </Badge>
@@ -243,7 +243,7 @@ function PackagesPageContent() {
 
             <CardFooter>
               <Button 
-                className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:opacity-90 text-foreground text-lg py-6"
+                className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:opacity-90 text-white text-lg py-6"
                 onClick={handlePurchase}
                 disabled={loadingPackage === 'boost'}
                 data-testid="btn-purchase-boost"

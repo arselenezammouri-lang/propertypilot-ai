@@ -474,7 +474,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
       </div>
 
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 text-foreground">
+        <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 text-white">
           <Mail className="h-8 w-8" />
         </div>
         <div>
@@ -485,7 +485,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
             {t.pageSubtitle}
           </p>
         </div>
-        <Badge className="ml-auto bg-gradient-to-r from-red-500 to-orange-500 text-foreground border-0">
+        <Badge className="ml-auto bg-gradient-to-r from-red-500 to-orange-500 text-white border-0">
           Lead Converter AI
         </Badge>
       </div>
@@ -607,7 +607,7 @@ export default function FollowUpEmailsPage({ searchParams }: FollowUpEmailsPageP
             <Button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-foreground"
+              className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white"
               data-testid="button-generate-emails"
             >
               {isLoading ? (

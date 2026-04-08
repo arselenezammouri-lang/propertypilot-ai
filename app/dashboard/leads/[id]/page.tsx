@@ -366,7 +366,7 @@ export default function LeadDetailPage() {
             <Button
               onClick={handleEnrichLead}
               disabled={isEnriching}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-foreground"
+              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white"
               data-testid="button-enrich-lead"
             >
               {isEnriching ? (

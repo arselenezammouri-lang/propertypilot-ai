@@ -343,7 +343,7 @@ export default function CRMSettingsPage() {
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
                 {t.pageTitle}
               </h1>
-              <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-foreground border-0">
+              <Badge className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 text-white border-0">
                 {t.pageBadge}
               </Badge>
             </div>
