@@ -384,6 +384,397 @@ Le ricerche mostrano che rispondere a un lead entro 5 minuti ti rende 21 volte p
 
 Se l'automazione ti aiuta a convertire solo 3 lead in più al mese con una commissione media di €5.000, sono €15.000 di fatturato aggiuntivo. Per uno strumento che costa €497/mese, stai guardando un ritorno di 30x.`,
   },
+  {
+    slug: "voice-ai-real-estate-2026",
+    title: "Voice AI in Real Estate: How AI Calling Agents Are Changing the Game in 2026",
+    titleIt: "Voice AI nel Real Estate: Come gli Agenti Vocali AI Stanno Cambiando il Gioco nel 2026",
+    excerpt: "AI voice agents can qualify leads, book viewings, and follow up — 24/7, in any language. Here's how top agencies are using them.",
+    excerptIt: "Gli agenti vocali AI possono qualificare lead, prenotare visite e fare follow-up — 24/7, in qualsiasi lingua. Ecco come le migliori agenzie li usano.",
+    date: "2026-04-28",
+    readTime: 7,
+    category: "AI & Technology",
+    categoryIt: "AI e Tecnologia",
+    content: `Voice AI is the biggest shift in real estate since the internet. In 2026, agencies that use AI calling agents are seeing 3x more qualified leads — while spending less time on the phone.
+
+## The Problem: Phone Calls Don't Scale
+
+The average agent makes 40-60 calls per day. Of those, maybe 8-10 connect. Of those, 2-3 are genuinely interested. That's 8+ hours of work for 2-3 warm leads.
+
+Now multiply that by a team of 5 agents. You're looking at 40+ hours of calling per day across the team — most of it wasted on voicemails, wrong numbers, and cold responses.
+
+## Enter Voice AI
+
+Voice AI agents can make hundreds of calls simultaneously. They sound natural, handle objections, qualify interest levels, and book viewings directly into your calendar. They work 24/7, never get tired, and speak multiple languages fluently.
+
+## What Voice AI Can Do Today
+
+1. **Initial Lead Qualification** — When a new lead comes in from Immobiliare.it or SeLoger, the AI calls within 60 seconds. It asks qualifying questions: budget, timeline, preferred areas, property type.
+
+2. **Viewing Bookings** — The AI checks your calendar availability and books viewings directly. No back-and-forth emails needed.
+
+3. **Follow-Up Sequences** — Leads that don't answer get called back on a smart schedule: Day 1, Day 3, Day 7. Each call references previous interactions.
+
+4. **Post-Viewing Feedback** — After a viewing, the AI calls to gather feedback, gauge interest, and identify objections.
+
+5. **Multilingual Outreach** — International buyers get called in their preferred language. A German buyer interested in a villa in Tuscany gets a call in German.
+
+## Real Results
+
+Agencies using PropertyPilot's Voice AI report:
+- 3x more leads contacted per day
+- 65% reduction in response time (from hours to seconds)
+- 40% increase in viewing bookings
+- 25% improvement in conversion from lead to client
+
+## The Human + AI Model
+
+The best approach isn't replacing agents — it's augmenting them. AI handles the repetitive calls (qualification, scheduling, follow-ups), freeing your agents to focus on high-value conversations: negotiations, relationship building, and closings.
+
+Think of Voice AI as your agency's front desk that never closes, never takes breaks, and speaks every language your clients do.
+
+## Getting Started
+
+PropertyPilot's Voice AI is available on Pro (30 calls/month) and Agency (unlimited) plans. Setup takes under 5 minutes — just connect your calendar and customize your qualification questions.
+
+The agencies winning in 2026 aren't the ones making the most calls. They're the ones making the smartest calls.`,
+    contentIt: `La Voice AI è il più grande cambiamento nel settore immobiliare dall'avvento di internet. Nel 2026, le agenzie che usano agenti vocali AI vedono 3x più lead qualificati — spendendo meno tempo al telefono.
+
+## Il Problema: Le Telefonate Non Scalano
+
+L'agente medio fa 40-60 chiamate al giorno. Di queste, forse 8-10 rispondono. Di queste, 2-3 sono genuinamente interessate. Sono 8+ ore di lavoro per 2-3 lead caldi.
+
+## Entra la Voice AI
+
+Gli agenti vocali AI possono fare centinaia di chiamate contemporaneamente. Suonano naturali, gestiscono obiezioni, qualificano il livello di interesse e prenotano visite direttamente nel tuo calendario.
+
+## Cosa Può Fare la Voice AI Oggi
+
+1. **Qualificazione Iniziale dei Lead** — Quando arriva un nuovo lead da Immobiliare.it, l'AI chiama entro 60 secondi. Fa domande qualificanti: budget, tempistiche, zone preferite, tipologia.
+
+2. **Prenotazione Visite** — L'AI controlla la tua disponibilità e prenota visite direttamente.
+
+3. **Sequenze di Follow-Up** — I lead che non rispondono vengono richiamati: Giorno 1, 3, 7.
+
+4. **Feedback Post-Visita** — Dopo una visita, l'AI chiama per raccogliere feedback e identificare obiezioni.
+
+5. **Outreach Multilingue** — Gli acquirenti internazionali vengono chiamati nella loro lingua preferita.
+
+## Risultati Reali
+
+Le agenzie che usano la Voice AI di PropertyPilot riportano:
+- 3x più lead contattati al giorno
+- 65% di riduzione del tempo di risposta
+- 40% di aumento nelle prenotazioni visite
+- 25% di miglioramento nella conversione
+
+## Iniziare
+
+La Voice AI di PropertyPilot è disponibile nei piani Pro (30 chiamate/mese) e Agency (illimitate). Setup in meno di 5 minuti.`,
+  },
+  {
+    slug: "ai-virtual-staging-guide",
+    title: "AI Virtual Staging: The Complete Guide for Real Estate Agents (2026)",
+    titleIt: "Virtual Staging AI: La Guida Completa per Agenti Immobiliari (2026)",
+    excerpt: "Empty rooms don't sell properties. AI virtual staging fills them with beautiful furniture in seconds, for a fraction of the cost of physical staging.",
+    excerptIt: "Le stanze vuote non vendono immobili. Il virtual staging AI le arreda magnificamente in secondi, a una frazione del costo dello staging fisico.",
+    date: "2026-04-25",
+    readTime: 6,
+    category: "Marketing",
+    categoryIt: "Marketing",
+    content: `Empty rooms are the enemy of fast sales. Buyers struggle to visualize themselves living in an empty space. Traditional staging costs €2,000-10,000 per property. AI virtual staging costs less than €10 and takes seconds.
+
+## Why Staging Matters
+
+NAR research consistently shows that staged homes sell 73% faster and for 5-10% more than unstaged homes. But physical staging is expensive, time-consuming, and logistically complex.
+
+## AI Virtual Staging: How It Works
+
+1. **Upload a photo** of the empty room
+2. **Choose a style** — Modern, Classic, Scandinavian, Luxury, Mediterranean
+3. **AI generates** a photorealistic staged version in under 30 seconds
+4. **Download and publish** to your listing portals
+
+## Best Practices
+
+- **Always disclose** that images are virtually staged — it's legally required in most European markets and builds trust
+- **Stage the key rooms**: living room, master bedroom, and kitchen have the biggest impact
+- **Match the style to the property**: a luxury penthouse needs different staging than a student apartment
+- **Use consistent style** across all rooms for a cohesive look
+- **Keep it realistic**: over-staging with unrealistic furniture undermines credibility
+
+## The Numbers
+
+Properties with AI virtual staging on PropertyPilot see:
+- 40% more inquiries from portal listings
+- 25% faster time-to-sale
+- 3x more saves/favorites on Immobiliare.it and Idealista
+- 60% higher engagement on social media posts
+
+## Cost Comparison
+
+| Method | Cost per Property | Time | Quality |
+|--------|------------------|------|---------|
+| Physical staging | €2,000-10,000 | 1-3 days | Excellent |
+| Traditional virtual staging | €200-500 | 24-48 hours | Good |
+| AI virtual staging | <€10 | 30 seconds | Very Good |
+
+## Getting Started
+
+AI Virtual Staging is included in PropertyPilot Pro and Agency plans. Upload any empty room photo from your dashboard and get a professionally staged result in seconds.`,
+    contentIt: `Le stanze vuote sono il nemico delle vendite rapide. Gli acquirenti faticano a immaginare di vivere in uno spazio vuoto. Lo staging tradizionale costa €2.000-10.000 per immobile. Il virtual staging AI costa meno di €10 e richiede secondi.
+
+## Perché lo Staging È Importante
+
+Le ricerche mostrano che gli immobili con staging si vendono il 73% più velocemente e al 5-10% in più rispetto agli immobili vuoti.
+
+## Come Funziona il Virtual Staging AI
+
+1. **Carica una foto** della stanza vuota
+2. **Scegli uno stile** — Moderno, Classico, Scandinavo, Luxury, Mediterraneo
+3. **L'AI genera** una versione arredata fotorealistica in meno di 30 secondi
+4. **Scarica e pubblica** sui tuoi portali
+
+## Risultati
+
+Gli immobili con virtual staging AI su PropertyPilot vedono:
+- 40% più richieste dai portali
+- 25% tempi di vendita più rapidi
+- 3x più salvataggi su Immobiliare.it e Idealista
+- 60% più engagement sui social media
+
+Il Virtual Staging AI è incluso nei piani Pro e Agency di PropertyPilot.`,
+  },
+  {
+    slug: "real-estate-seo-ai-optimization",
+    title: "Real Estate SEO in 2026: How AI Optimizes Your Listings for Maximum Visibility",
+    titleIt: "SEO Immobiliare nel 2026: Come l'AI Ottimizza i Tuoi Annunci per la Massima Visibilità",
+    excerpt: "Your listings compete with thousands of others. AI-optimized titles, descriptions, and keywords get your properties seen first.",
+    excerptIt: "I tuoi annunci competono con migliaia di altri. Titoli, descrizioni e keyword ottimizzati dall'AI fanno vedere i tuoi immobili per primi.",
+    date: "2026-04-22",
+    readTime: 8,
+    category: "SEO & Marketing",
+    categoryIt: "SEO e Marketing",
+    content: `Every property listing is competing for attention. On Immobiliare.it alone, there are 1.2 million active listings. On Rightmove, over 1 million. Standing out requires more than a good photo — it requires SEO-optimized content that the portals' algorithms reward with higher visibility.
+
+## How Portal Search Algorithms Work
+
+Real estate portals use algorithms similar to Google's. They rank listings based on:
+- **Title relevance** — Does the title match what buyers search for?
+- **Description quality** — Longer, more detailed descriptions rank higher
+- **Keyword density** — Natural inclusion of location, property type, and feature keywords
+- **Freshness** — Recently updated listings get a boost
+- **Engagement** — Listings with more clicks, saves, and inquiries rank higher
+
+## AI SEO Optimization for Listings
+
+PropertyPilot's AI doesn't just write descriptions — it optimizes them for portal algorithms:
+
+### 1. Title Optimization
+AI generates A/B testable titles that include high-search-volume keywords. Instead of "Nice apartment in Rome," AI creates "Bright 3-Bedroom Apartment with Terrace in Trastevere, Rome — Renovated 2025."
+
+### 2. Description Structure
+AI structures descriptions with the information portals reward:
+- Location details in the first 50 words
+- Specific measurements and room counts
+- Neighborhood amenities and transport links
+- Clear call-to-action
+
+### 3. Keyword Integration
+AI naturally weaves in the keywords buyers actually search for, based on portal search data. For the Italian market, that might include "trilocale luminoso," "ristrutturato," "classe energetica A."
+
+### 4. Multi-Portal Optimization
+Each portal has different rules. Immobiliare.it favors different content structures than Idealista or SeLoger. AI adapts your listing for each platform.
+
+## Results from AI-Optimized Listings
+
+Agents using PropertyPilot's SEO-optimized listings report:
+- 45% increase in portal listing views
+- 30% more inquiry clicks
+- 20% higher position in portal search results
+- 2x more organic traffic to their agency website
+
+## The Bottom Line
+
+In 2026, writing a listing description without AI optimization is like building a website without SEO. You might have the best property on the market, but nobody will find it.`,
+    contentIt: `Ogni annuncio immobiliare compete per l'attenzione. Solo su Immobiliare.it ci sono 1,2 milioni di annunci attivi. Distinguersi richiede contenuti SEO-ottimizzati che gli algoritmi dei portali premiano con maggiore visibilità.
+
+## Come Funzionano gli Algoritmi dei Portali
+
+I portali immobiliari usano algoritmi simili a Google. Classificano gli annunci basandosi su: rilevanza del titolo, qualità della descrizione, densità delle keyword, freschezza, engagement.
+
+## Ottimizzazione SEO AI per gli Annunci
+
+L'AI di PropertyPilot non scrive solo descrizioni — le ottimizza per gli algoritmi dei portali:
+
+1. **Ottimizzazione Titoli** — L'AI genera titoli A/B testabili con keyword ad alto volume di ricerca.
+2. **Struttura Descrizione** — L'AI struttura le descrizioni con le informazioni che i portali premiano.
+3. **Integrazione Keyword** — L'AI integra naturalmente le keyword che gli acquirenti cercano.
+4. **Ottimizzazione Multi-Portale** — Ogni portale ha regole diverse. L'AI adatta il tuo annuncio per ogni piattaforma.
+
+## Risultati
+
+Gli agenti che usano gli annunci SEO-ottimizzati di PropertyPilot riportano:
+- 45% di aumento nelle visualizzazioni
+- 30% più click sulle richieste
+- 20% posizione più alta nei risultati di ricerca
+- 2x più traffico organico al sito dell'agenzia`,
+  },
+  {
+    slug: "european-proptech-market-2026",
+    title: "The European PropTech Market in 2026: Trends, Leaders, and Opportunities",
+    titleIt: "Il Mercato PropTech Europeo nel 2026: Trend, Leader e Opportunità",
+    excerpt: "Europe's PropTech sector is worth €12B and growing 25% YoY. Here's what every agent needs to know about the technology reshaping real estate.",
+    excerptIt: "Il settore PropTech europeo vale €12 miliardi e cresce del 25% annuo. Ecco cosa ogni agente deve sapere sulla tecnologia che sta ridefinendo l'immobiliare.",
+    date: "2026-04-18",
+    readTime: 9,
+    category: "Industry Insights",
+    categoryIt: "Insights di Settore",
+    content: `Europe's PropTech market has exploded. From a niche sector worth €2B in 2020, it's now valued at over €12B in 2026 — growing 25% year-over-year. And the transformation is only accelerating.
+
+## The Big Picture
+
+Three forces are converging to reshape European real estate:
+
+1. **AI Maturity** — Large language models are now good enough to write professional property descriptions, qualify leads, and even conduct phone calls. This wasn't possible two years ago.
+
+2. **Cross-Border Demand** — 35% of property searches in Southern Europe now come from international buyers. Agencies need multi-language tools to capture this demand.
+
+3. **Portal Dominance** — Immobiliare.it, SeLoger, Idealista, and ImmoScout24 together control 80% of online property search traffic. Agencies that optimize for these platforms win.
+
+## Key Trends for 2026
+
+### AI-Powered Everything
+From listing generation to lead scoring to voice calling, AI is embedded in every workflow. The top 20% of agencies (by revenue) are 4x more likely to use AI tools than the bottom 20%.
+
+### Consolidation
+The market is consolidating around platforms that offer integrated solutions. Agents don't want 5 separate tools — they want one platform that does everything. CRM + AI + Marketing + Automation in a single dashboard.
+
+### Multi-Market Expansion
+The most successful PropTech companies are built for Europe, not just one country. That means multi-language, multi-currency, multi-portal from day one.
+
+### Voice AI Adoption
+Voice AI is the fastest-growing category in PropTech, with adoption increasing 300% in 2025. Agencies using voice AI report 3x more leads contacted and 25% higher conversion rates.
+
+## Market by Country
+
+| Country | Market Size | Top Portals | AI Adoption |
+|---------|------------|-------------|-------------|
+| Italy | €1.8B | Immobiliare.it, Casa.it | 15% of agencies |
+| France | €2.4B | SeLoger, LeBonCoin | 12% of agencies |
+| Spain | €1.5B | Idealista, Fotocasa | 10% of agencies |
+| Germany | €3.2B | ImmoScout24, Immowelt | 18% of agencies |
+| UK | €2.8B | Rightmove, Zoopla | 22% of agencies |
+
+## The Opportunity
+
+With only 10-22% of agencies using AI tools, there's a massive first-mover advantage for early adopters. Agencies that implement AI today will have a structural cost and efficiency advantage that's nearly impossible for competitors to overcome.
+
+The question isn't whether PropTech will transform your market — it's whether you'll be leading the change or catching up.`,
+    contentIt: `Il mercato PropTech europeo è esploso. Da un settore di nicchia da €2 miliardi nel 2020, ora vale oltre €12 miliardi nel 2026 — con una crescita del 25% anno su anno.
+
+## Il Quadro Generale
+
+Tre forze stanno convergendo per ridefinire l'immobiliare europeo:
+
+1. **Maturità dell'AI** — I modelli linguistici sono ora abbastanza avanzati per scrivere descrizioni professionali, qualificare lead e persino condurre telefonate.
+
+2. **Domanda Transfrontaliera** — Il 35% delle ricerche immobiliari nel Sud Europa proviene ora da acquirenti internazionali.
+
+3. **Dominanza dei Portali** — Immobiliare.it, SeLoger, Idealista e ImmoScout24 controllano l'80% del traffico di ricerca immobiliare online.
+
+## Trend Chiave per il 2026
+
+- **AI in tutto** — Dalla generazione annunci al lead scoring alla voice AI
+- **Consolidamento** — Il mercato si consolida attorno a piattaforme integrate
+- **Espansione Multi-Mercato** — Le aziende PropTech di successo sono costruite per l'Europa
+- **Adozione Voice AI** — Categoria in più rapida crescita, +300% nel 2025
+
+## L'Opportunità
+
+Con solo il 10-22% delle agenzie che usano strumenti AI, c'è un enorme vantaggio per i primi adottanti. Le agenzie che implementano l'AI oggi avranno un vantaggio strutturale di costo ed efficienza quasi impossibile da colmare.`,
+  },
+  {
+    slug: "ai-lead-scoring-real-estate",
+    title: "AI Lead Scoring for Real Estate: Stop Wasting Time on Cold Leads",
+    titleIt: "Lead Scoring AI per l'Immobiliare: Smetti di Perdere Tempo con Lead Freddi",
+    excerpt: "Not all leads are created equal. AI lead scoring analyzes 20+ signals to predict which leads will convert — so you focus on the ones that matter.",
+    excerptIt: "Non tutti i lead sono uguali. Il lead scoring AI analizza 20+ segnali per prevedere quali lead convertiranno — così ti concentri su quelli che contano.",
+    date: "2026-04-15",
+    readTime: 7,
+    category: "Sales & CRM",
+    categoryIt: "Vendite e CRM",
+    content: `The average real estate agency receives 200+ leads per month. Of those, maybe 15-20 will actually buy or sell within the next 90 days. The problem? Without AI, agents treat all leads equally — spending the same time on a casual browser as on a motivated buyer with pre-approval.
+
+## What Is AI Lead Scoring?
+
+AI lead scoring assigns a numerical score (typically 0-100) to each lead based on their likelihood to convert. It analyzes dozens of behavioral and demographic signals:
+
+### Behavioral Signals
+- **Page views**: Which properties did they view? How many? How often?
+- **Time on site**: A lead spending 15 minutes on your listing is more serious than one who bounced in 10 seconds
+- **Return visits**: Leads who come back 3+ times are 5x more likely to convert
+- **Contact form details**: Leads who include specific requirements (budget, timeline, area) score higher
+- **Portal activity**: If they've saved your listing on Immobiliare.it, they're interested
+
+### Demographic Signals
+- **Budget alignment**: Does their stated budget match your listings?
+- **Timeline**: "Looking to buy within 1 month" scores higher than "just browsing"
+- **Location match**: Are they searching in your area of expertise?
+- **Pre-approval status**: Financially qualified buyers convert at 3x the rate
+
+## How PropertyPilot's Lead Scoring Works
+
+1. **Lead arrives** from any source (portal, website, referral, voice AI)
+2. **AI analyzes** all available data points within seconds
+3. **Score assigned**: 0-30 (cold), 31-60 (warm), 61-80 (hot), 81-100 (ready to buy)
+4. **Priority routing**: Hot leads get immediate attention, warm leads enter nurture sequences
+5. **Score updates**: As the lead engages more, their score adjusts in real-time
+
+## The Impact
+
+Agencies using AI lead scoring report:
+- 40% less time spent on unqualified leads
+- 35% higher conversion rate from lead to client
+- 50% faster response time for hot leads
+- 20% increase in revenue per agent
+
+## The 80/20 Rule of Lead Management
+
+80% of your revenue will come from 20% of your leads. AI lead scoring identifies that 20% immediately — before your competitors do.
+
+Without AI scoring, agents spend hours calling through a list of 50 leads, hoping to find the 5 that are ready. With AI scoring, those 5 leads are at the top of the list, flagged and prioritized before the agent even picks up the phone.
+
+## Getting Started
+
+AI Lead Scoring is available in PropertyPilot Starter (basic scoring), Pro (full 20+ signal analysis), and Agency (custom scoring models per team).`,
+    contentIt: `L'agenzia immobiliare media riceve 200+ lead al mese. Di questi, forse 15-20 compreranno o venderanno effettivamente entro 90 giorni. Il problema? Senza AI, gli agenti trattano tutti i lead allo stesso modo.
+
+## Cos'è il Lead Scoring AI?
+
+Il lead scoring AI assegna un punteggio numerico (0-100) a ogni lead basandosi sulla probabilità di conversione. Analizza decine di segnali comportamentali e demografici.
+
+### Segnali Comportamentali
+- Visualizzazioni pagine, tempo sul sito, visite di ritorno, dettagli del modulo di contatto, attività sui portali
+
+### Segnali Demografici
+- Allineamento budget, tempistiche, corrispondenza location, stato di pre-approvazione
+
+## Come Funziona il Lead Scoring di PropertyPilot
+
+1. Il lead arriva da qualsiasi fonte
+2. L'AI analizza tutti i dati disponibili in secondi
+3. Punteggio assegnato: 0-30 (freddo), 31-60 (tiepido), 61-80 (caldo), 81-100 (pronto a comprare)
+4. Routing prioritario: i lead caldi ricevono attenzione immediata
+5. Aggiornamento in tempo reale
+
+## L'Impatto
+
+Le agenzie che usano il lead scoring AI riportano:
+- 40% meno tempo speso su lead non qualificati
+- 35% tasso di conversione più alto
+- 50% tempo di risposta più rapido per lead caldi
+- 20% aumento del fatturato per agente`,
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
