@@ -33,6 +33,10 @@ const QuickActions = NextDynamic(() => import("@/components/quick-actions").then
   ssr: false,
 });
 
+const PaymentSuccessBanner = NextDynamic(() => import("@/components/payment-success-banner").then(mod => ({ default: mod.PaymentSuccessBanner })), {
+  ssr: false,
+});
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const localMockMode = isLocalMockModeEnabled();
@@ -116,6 +120,9 @@ export default async function DashboardPage() {
             {currentPlan === 'free' ? 'Start generating listings to grow your agency.' : `You're on the ${currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)} plan.`}
           </p>
         </div>
+
+        {/* PAYMENT SUCCESS/CANCELED BANNER */}
+        <PaymentSuccessBanner />
 
         {/* ONBOARDING CHECKLIST */}
         <OnboardingChecklist />
