@@ -199,7 +199,7 @@ export default function RootLayout({
         <Providers>
           <LocaleProvider>
             <ThemeProvider
-              defaultTheme="light"
+              defaultTheme="dark"
               storageKey="propertypilot-theme"
             >
               <PerformanceMonitor />

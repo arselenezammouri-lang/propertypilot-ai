@@ -5,47 +5,47 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 224 71% 4%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 221 83% 53%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 245 58% 51%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 9% 46%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 220 14% 96%;
-    --accent-foreground: 224 71% 4%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 221 83% 53%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 245 58% 51%;
     --radius: 0.625rem;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 20% 98%;
-    --card: 224 71% 6%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71% 6%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 217 91% 60%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 5.5%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 5.5%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 245 58% 61%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 218 11% 65%;
-    --accent: 215 28% 17%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 217 91% 60%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 245 58% 61%;
   }
 
   * { @apply border-border; }
@@ -63,91 +63,231 @@
   }
 }
 
+/* ─────────────────────────────────────────
+   DESIGN SYSTEM — Premium SaaS Components
+   ───────────────────────────────────────── */
+
 @layer components {
-  .pp-card {
-    @apply bg-card rounded-xl border border-border/60 shadow-sm;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-  .pp-card:hover { @apply shadow-md border-border; }
-  .pp-glass { @apply bg-background/80 backdrop-blur-xl; }
 
-  .pp-section { @apply py-20 md:py-28; }
+  /* ─── Layout ─── */
   .pp-container { @apply max-w-6xl mx-auto px-5 sm:px-8; }
+  .pp-section   { @apply py-24 md:py-32; }
 
+  /* ─── Typography ─── */
   .pp-heading-xl {
-    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1];
-    letter-spacing: -0.025em;
+    @apply text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.08];
+    letter-spacing: -0.03em;
   }
   .pp-heading-lg {
-    @apply text-3xl sm:text-4xl font-bold tracking-tight leading-[1.15];
-    letter-spacing: -0.02em;
+    @apply text-3xl sm:text-4xl font-bold tracking-tight leading-[1.12];
+    letter-spacing: -0.025em;
   }
   .pp-heading-md { @apply text-xl sm:text-2xl font-semibold tracking-tight; }
 
+  /* ─── Gradient Text ─── */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(245 80% 67%), hsl(280 80% 65%), hsl(320 70% 65%));
+  }
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(245 80% 67%), hsl(280 80% 65%), hsl(320 70% 65%));
+  }
+  .text-gradient-subtle {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 70%));
+  }
+
+  /* ─── Badge ─── */
   .pp-badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium
-           bg-primary/10 text-primary border border-primary/20;
+    @apply inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium
+           border transition-colors;
+    background: hsl(var(--primary) / 0.08);
+    color: hsl(var(--primary));
+    border-color: hsl(var(--primary) / 0.15);
   }
 
-  .pp-feature-card { @apply pp-card p-6 sm:p-8 flex flex-col gap-4; }
+  /* ─── Glass Card ─── */
+  .pp-glass {
+    @apply backdrop-blur-2xl;
+    background: hsl(var(--background) / 0.7);
+  }
+
+  .pp-card {
+    @apply rounded-2xl border transition-all duration-300;
+    background: hsl(var(--card));
+    border-color: hsl(var(--border) / 0.6);
+  }
+  .pp-card:hover {
+    border-color: hsl(var(--border));
+    box-shadow: 0 0 0 1px hsl(var(--border) / 0.3);
+  }
+
+  /* ─── Glass Card (Glassmorphism) ─── */
+  .pp-glass-card {
+    @apply rounded-2xl border backdrop-blur-xl transition-all duration-300;
+    background: hsl(var(--card) / 0.5);
+    border-color: hsl(var(--border) / 0.4);
+  }
+  .pp-glass-card:hover {
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow: 0 0 30px -5px hsl(var(--primary) / 0.1);
+  }
+
+  /* ─── Feature Card ─── */
+  .pp-feature-card {
+    @apply pp-glass-card p-6 sm:p-8 flex flex-col gap-4;
+  }
   .pp-feature-icon {
-    @apply w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary;
+    @apply w-10 h-10 rounded-xl flex items-center justify-center;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(280 80% 65% / 0.1));
+    color: hsl(var(--primary));
   }
 
-  .pp-stat-card { @apply pp-card p-6 sm:p-8; }
-
-  .pp-pricing-card { @apply pp-card p-8 flex flex-col relative; }
-  .pp-pricing-card.featured { @apply border-primary shadow-lg ring-1 ring-primary/20; }
+  /* ─── Pricing Card ─── */
+  .pp-pricing-card {
+    @apply pp-glass-card p-8 flex flex-col relative overflow-hidden;
+  }
+  .pp-pricing-card.featured {
+    border-color: hsl(var(--primary) / 0.4);
+    background: linear-gradient(180deg, hsl(var(--primary) / 0.06) 0%, hsl(var(--card) / 0.8) 100%);
+    box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.2), inset 0 1px 0 0 hsl(var(--primary) / 0.1);
+  }
+  .pp-pricing-card.featured::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.6), transparent);
+  }
   .pp-pricing-popular {
-    @apply absolute -top-3 left-1/2 -translate-x-1/2
-           px-3 py-1 rounded-full text-xs font-semibold
-           bg-primary text-primary-foreground;
+    @apply absolute -top-px left-1/2 -translate-x-1/2
+           px-4 py-1 rounded-b-lg text-xs font-semibold;
+    background: linear-gradient(135deg, hsl(245 80% 60%), hsl(280 80% 60%));
+    color: white;
   }
 
+  /* ─── Stat Card ─── */
+  .pp-stat-card { @apply pp-glass-card p-6 sm:p-8; }
+
+  /* ─── Dashboard ─── */
   .pp-sidebar-link {
     @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
-           text-muted-foreground hover:text-foreground hover:bg-accent
+           text-muted-foreground hover:text-foreground hover:bg-accent/50
            transition-colors duration-150;
   }
-  .pp-sidebar-link.active { @apply text-foreground bg-accent; }
+  .pp-sidebar-link.active {
+    @apply text-foreground;
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+  }
 
   .dashboard-section { @apply mb-8; }
   .dashboard-card-row { @apply grid grid-cols-1 md:grid-cols-3 gap-6; }
-  .dashboard-card-equal { @apply min-h-0; }
+
+  /* ─── Button Variants ─── */
+  .btn-primary-gradient {
+    @apply relative inline-flex items-center justify-center font-semibold text-white rounded-xl
+           transition-all duration-300 overflow-hidden;
+    background: linear-gradient(135deg, hsl(245 80% 55%), hsl(280 70% 55%));
+    box-shadow: 0 0 20px -5px hsl(245 80% 55% / 0.4);
+  }
+  .btn-primary-gradient:hover {
+    box-shadow: 0 0 30px -5px hsl(245 80% 55% / 0.6);
+    transform: translateY(-1px);
+  }
+
+  .btn-glass {
+    @apply inline-flex items-center justify-center font-medium rounded-xl
+           backdrop-blur-lg border transition-all duration-200;
+    background: hsl(var(--card) / 0.5);
+    border-color: hsl(var(--border) / 0.5);
+  }
+  .btn-glass:hover {
+    background: hsl(var(--card) / 0.8);
+    border-color: hsl(var(--border));
+  }
 }
 
+/* ─────────────────────────────────────────
+   UTILITIES
+   ───────────────────────────────────────── */
+
 @layer utilities {
-  .text-gradient-blue {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500;
-  }
-  .animate-fade-in { animation: fadeIn 0.5s ease both; }
-  .animate-fade-in-up { animation: fadeInUp 0.5s ease both; }
+  .animate-fade-in     { animation: fadeIn 0.6s ease both; }
+  .animate-fade-in-up  { animation: fadeInUp 0.7s ease both; }
   .delay-100 { animation-delay: 0.1s; }
   .delay-200 { animation-delay: 0.2s; }
   .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
 
-  .hover-lift { @apply transition-all duration-200; }
-  .hover-lift:hover { transform: translateY(-2px); @apply shadow-md; }
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
 
+  /* Background patterns */
   .bg-grid {
     background-image:
-      linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
-      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+      linear-gradient(to right, hsl(var(--border) / 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.15) 1px, transparent 1px);
     background-size: 64px 64px;
   }
   .bg-dot {
-    background-image: radial-gradient(hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-image: radial-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px);
     background-size: 24px 24px;
+  }
+
+  /* Glow effects */
+  .glow-sm {
+    box-shadow: 0 0 15px -3px hsl(var(--primary) / 0.15);
+  }
+  .glow-md {
+    box-shadow: 0 0 30px -5px hsl(var(--primary) / 0.2);
+  }
+  .glow-lg {
+    box-shadow: 0 0 60px -10px hsl(var(--primary) / 0.25);
+  }
+
+  /* Gradient border trick */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(245 80% 60% / 0.4), hsl(280 80% 60% / 0.2), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Noise texture overlay */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
   }
 }
 
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Legacy compat — old class names still work */
+/* Legacy compat */
 .futuristic-card { @apply pp-card; }
-.gradient-text-purple { @apply text-gradient-blue; }
-.gradient-text { @apply text-gradient-blue; }
+.gradient-text-purple { @apply text-gradient; }
+.gradient-text { @apply text-gradient; }
 .shadow-glow-purple, .shadow-glow-blue, .shadow-glow-aqua { box-shadow: none; }
 .elite-card { @apply pp-card; }
 .diamond-force-black, .diamond-force-white-text, .diamond-silicon-elite { /* removed */ }
