@@ -236,7 +236,7 @@ export default function BillingPage() {
       case 'starter':
         return <Badge variant="default" className="bg-blue-500 text-foreground text-base px-4 py-1.5" data-testid="badge-status">🚀 Starter</Badge>;
       case 'pro':
-        return <Badge variant="default" className="bg-amber-400 text-black text-base px-4 py-1.5" data-testid="badge-status">⚡ Pro</Badge>;
+        return <Badge variant="default" className="bg-amber-400 text-background text-base px-4 py-1.5" data-testid="badge-status">⚡ Pro</Badge>;
       case 'agency':
         return <Badge variant="default" className="bg-blue-600 text-foreground text-base px-4 py-1.5" data-testid="badge-status">👑 Agency</Badge>;
       default:
@@ -676,7 +676,7 @@ export default function BillingPage() {
           <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-orange-100 to-transparent rounded-bl-[6rem] opacity-50 group-hover:opacity-70 transition-opacity" />
           
           <div className="absolute top-4 right-4">
-            <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+            <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-background text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
               UNA TANTUM
             </span>
           </div>

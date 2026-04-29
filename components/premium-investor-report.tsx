@@ -129,7 +129,7 @@ export function PremiumInvestorReport({
                 </h3>
                 <span className="text-xs text-purple-400">Print-Ready</span>
               </div>
-              <div className="bg-white rounded p-4 space-y-3 text-black">
+              <div className="bg-white rounded p-4 space-y-3 text-background">
                 {/* Header */}
                 <div className="border-b-2 border-purple-500 pb-3">
                   <div className="flex items-center justify-between">

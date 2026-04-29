@@ -1226,7 +1226,7 @@ export default function ProspectingPage() {
                                         <Button
                                           size="sm"
                                           disabled={callingListingId === listing.id || (userPlan === 'pro' && voiceCallsRemaining <= 0)}
-                                          className="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-black font-semibold"
+                                          className="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-background font-semibold"
                                         >
                                           {callingListingId === listing.id ? (
                                             <>

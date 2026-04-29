@@ -615,7 +615,7 @@ export default function PredatorMapPage() {
                 <Button
                   onClick={() => handleCall(selectedMarker.listing.id)}
                   disabled={callingListingId === selectedMarker.listing.id || !selectedMarker.listing.phone_number}
-                  className="w-full bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-black font-bold"
+                  className="w-full bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-background font-bold"
                 >
                   {callingListingId === selectedMarker.listing.id ? (
                     <>

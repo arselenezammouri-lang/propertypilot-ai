@@ -239,7 +239,7 @@ ROI POTENZIALE: ${roi}%
             </Button>
             <Button 
               onClick={handleDownload}
-              className="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-black font-bold"
+              className="bg-gradient-to-r from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-background font-bold"
             >
               <Download className="h-4 w-4 mr-2" />
               Scarica Analisi

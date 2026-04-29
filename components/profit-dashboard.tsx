@@ -111,11 +111,11 @@ export function ProfitDashboard() {
           <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-emerald-500" />
-              <span className="text-xs text-border/60 uppercase tracking-wide">{t.hoursSaved}</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.hoursSaved}</span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-bold text-foreground">{stats.hoursSaved}</span>
-              <span className="text-sm text-border/60">{t.hours}</span>
+              <span className="text-sm text-muted-foreground">{t.hours}</span>
             </div>
             <p className="text-xs text-muted/300 mt-1">
               ~{stats.avgTimePerGeneration} {t.perListing}
@@ -125,7 +125,7 @@ export function ProfitDashboard() {
           <div className="p-4 rounded-xl bg-gradient-to-br from-amber-400/10 to-transparent border border-amber-400/20">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-amber-500" />
-              <span className="text-xs text-border/60 uppercase tracking-wide">{t.valueGenerated}</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">{t.valueGenerated}</span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-bold text-foreground">{formatCurrencyForLocale(stats.valueGenerated, locale as Locale, currency)}</span>
@@ -140,7 +140,7 @@ export function ProfitDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-blue-500" />
-              <span className="text-sm text-border/80">{t.generatedListings}</span>
+              <span className="text-sm text-muted-foreground">{t.generatedListings}</span>
             </div>
             <span className="text-lg font-bold text-foreground">{stats.generationsThisMonth}</span>
           </div>
@@ -150,7 +150,7 @@ export function ProfitDashboard() {
           <div className="mt-3 p-2 rounded-lg bg-gradient-to-r from-blue-600/20 to-amber-100 border border-blue-600/30">
             <p className="text-xs text-center">
               <span className="text-amber-500 font-semibold">{t.amazing}</span>{' '}
-              <span className="text-border/80">{t.saved10Hours}</span>
+              <span className="text-muted-foreground">{t.saved10Hours}</span>
             </p>
           </div>
         )}

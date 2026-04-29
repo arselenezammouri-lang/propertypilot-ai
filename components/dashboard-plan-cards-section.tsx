@@ -127,7 +127,7 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
           <div className={`pp-card p-6 md:p-8 border-2 ${currentPlan === "pro" ? "border-amber-300 shadow-sm" : "border-border"} hover-lift relative overflow-hidden group`}>
             {currentPlan === "pro" && (
               <div className="absolute top-4 right-4">
-                <span className="pp-badge bg-gradient-to-r from-amber-400 to-amber-500 text-black">✓ {d.activeBadge}</span>
+                <span className="pp-badge bg-gradient-to-r from-amber-400 to-amber-500 text-background">✓ {d.activeBadge}</span>
               </div>
             )}
             <div className="w-12 h-12 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
@@ -148,10 +148,10 @@ export function DashboardPlanCardsSection({ currentPlan }: DashboardPlanCardsSec
               <li className="flex items-start gap-2"><Check className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" /><span className="text-sm">Agency Assistant AI</span></li>
             </ul>
             {currentPlan === "pro" ? (
-              <Button className="w-full bg-amber-400 text-black" disabled>✓ {d.yourCurrentPlan}</Button>
+              <Button className="w-full bg-amber-400 text-background" disabled>✓ {d.yourCurrentPlan}</Button>
             ) : (
               <Link href="/dashboard/billing">
-                <Button className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:opacity-90 text-black font-bold">
+                <Button className="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:opacity-90 text-background font-bold">
                   {currentPlan === "free" || currentPlan === "starter" ? (cta?.choosePro ?? "Choose Pro") : d.upgradeToPro}
                 </Button>
               </Link>

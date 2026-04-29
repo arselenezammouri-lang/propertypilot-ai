@@ -167,7 +167,7 @@ export function OnboardingTooltip({
         <Button
           onClick={markAsCompleted}
           size="sm"
-          className="flex-1 bg-emerald-500 hover:bg-emerald-500/80 text-black font-semibold"
+          className="flex-1 bg-emerald-500 hover:bg-emerald-500/80 text-background font-semibold"
         >
           <CheckCircle2 className="h-4 w-4 mr-1" />
           Capito!

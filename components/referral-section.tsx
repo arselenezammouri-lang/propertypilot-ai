@@ -161,8 +161,8 @@ export function ReferralSection() {
             <Gift className="h-5 w-5 text-foreground" />
           </div>
           <div>
-            <CardTitle className="text-lg gradient-text-gold">{t.title}</CardTitle>
-            <CardDescription className="text-border/70">
+            <CardTitle className="text-lg text-foreground font-bold">{t.title}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {t.subtitle}
             </CardDescription>
           </div>
@@ -176,19 +176,19 @@ export function ReferralSection() {
               <Users className="h-4 w-4 text-emerald-500" />
               <span className="text-2xl font-bold text-foreground">{referralData?.totalReferrals || 0}</span>
             </div>
-            <p className="text-xs text-border/60">{t.invited}</p>
+            <p className="text-xs text-muted-foreground">{t.invited}</p>
           </div>
           <div className="p-4 rounded-xl bg-muted/30 border border-border text-center">
             <div className="flex items-center justify-center gap-2 mb-1">
               <Sparkles className="h-4 w-4 text-amber-500" />
               <span className="text-2xl font-bold text-foreground">{referralData?.bonusCredits || 0}</span>
             </div>
-            <p className="text-xs text-border/60">{t.credits}</p>
+            <p className="text-xs text-muted-foreground">{t.credits}</p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-border/80">{t.yourLink}</label>
+          <label className="text-sm font-medium text-muted-foreground">{t.yourLink}</label>
           <div className="flex gap-2">
             <Input 
               value={referralData?.referralLink || ''} 
@@ -229,7 +229,7 @@ export function ReferralSection() {
         </div>
 
         <div className="p-3 rounded-lg bg-gradient-to-r from-amber-400/10 to-blue-600/10 border border-amber-400/20">
-          <p className="text-xs text-center text-border/80">
+          <p className="text-xs text-center text-muted-foreground">
             <span className="font-semibold text-amber-500">{t.bonusElite}</span> {t.bonusDesc}
           </p>
         </div>
