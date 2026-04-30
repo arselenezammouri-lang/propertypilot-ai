@@ -60,6 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: "AI Content",
     items: [
+      { label: "AI Listings v2", href: "/dashboard/ai-listings", icon: Sparkles, badge: "New" },
       { label: "Generate Listing", href: "/dashboard/perfect-copy", icon: Sparkles },
       { label: "Titles A/B Test", href: "/dashboard/titles", icon: Type },
       { label: "Social Posts", href: "/dashboard/social-posts", icon: Hash },
@@ -77,6 +78,12 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
       { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
       { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
+    ],
+  },
+  {
+    title: "Portals",
+    items: [
+      { label: "Portal Connections", href: "/dashboard/portals", icon: Globe, badge: "New" },
     ],
   },
   {
