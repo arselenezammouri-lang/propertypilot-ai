@@ -52,10 +52,52 @@ Repo: github.com/arselenezammouri-lang/propertypilot-ai
 - Agency yearly: price_1TSGj1A1is7KNmaeg9Uf6I0U (€8,601.60/yr = €716.80/mo)
 
 ## Portal Adapters (lib/portals/adapters/)
-- EstateSync: ImmoScout24 + Immowelt (Germany) — OAuth REST API
-- Immobiliare.it: XML feed at /api/feeds/immobiliare/[userId].xml
-- Idealista: Spain + Italy + Portugal — OAuth REST API
-- Portal rules for 11 EU portals in lib/portals/rules.ts
+16 adapters covering 6 EU countries:
+
+### Germany (EstateSync unified API)
+- ImmoScout24, Immowelt, Kleinanzeigen — OAuth 2.0 client_credentials
+
+### Italy
+- Immobiliare.it — XML feed at /api/feeds/immobiliare/[userId].xml
+- Casa.it — XML feed (same protocol as Immobiliare)
+- Idealista Italy — REST API OAuth
+
+### Spain
+- Idealista Spain — REST API OAuth
+- Fotocasa — Adevinta partner API (OAuth)
+
+### France
+- SeLoger — Aviv/KKR partner XML feed protocol
+- LeBonCoin — Adevinta partner API (OAuth)
+- Bien'ici — Poliris XML feed
+
+### UK
+- Rightmove — RTDF (Real Time Data Feed) v3, cert-based mTLS + API key
+- Zoopla — XML property feed
+- OnTheMarket — XML feed
+
+### Portugal
+- Idealista Portugal — REST API OAuth
+- Imovirtual — OLX Group XML feed
+
+Portal rules for all portals: lib/portals/rules.ts
+
+## ⚠️ FOUNDER ACTION: Portal Partner Applications
+The following portals require partner status before API access:
+1. **Rightmove RTDF** — Apply at https://www.rightmove.co.uk/developer/ (4-8 weeks)
+2. **SeLoger** — Apply via Aviv Group at https://www.avivgroup.com/partners
+3. **LeBonCoin** — Apply via Adevinta at https://adevinta.com/partners
+4. **Fotocasa** — Same Adevinta application as LeBonCoin
+5. **Bien'ici** — Apply via Poliris at https://www.poliris.com
+6. **Imovirtual** — Apply via OLX Group at https://www.olxgroup.com
+
+Portals that don't require partner status (self-service):
+- Immobiliare.it (XML feed setup in agency backoffice)
+- Casa.it (XML feed setup in agency backoffice)
+- Idealista (developer API key from https://developers.idealista.com)
+- ImmoScout24 / Immowelt (EstateSync at https://www.estatesync.com)
+- Zoopla (developer portal)
+- OnTheMarket (feed setup in agency backoffice)
 
 ## Design System
 - Dark theme default (v23+)

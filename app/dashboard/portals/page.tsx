@@ -49,9 +49,10 @@ const PORTALS: PortalMeta[] = [
       { value: "es", label: "🇪🇸 Spain" }, { value: "it", label: "🇮🇹 Italy" }, { value: "pt", label: "🇵🇹 Portugal" },
     ]},
   ]},
-  { id: "seloger", name: "SeLoger", flag: "🇫🇷", country: "FR", protocol: "API + Feed", requiredPlan: "starter", fields: [
-    { key: "apiKey", label: "API Key", type: "password", placeholder: "SeLoger API key", required: true },
-    { key: "agencyId", label: "Agency ID", type: "text", placeholder: "Your SeLoger agency ID", required: true },
+  { id: "seloger", name: "SeLoger", flag: "🇫🇷", country: "FR", protocol: "Aviv Partner API", requiredPlan: "starter", fields: [
+    { key: "agencyId", label: "Agency ID", type: "text", placeholder: "SeLoger agency ID", required: true },
+    { key: "apiKey", label: "Partner API Key", type: "password", placeholder: "Aviv partner API key", required: true },
+    { key: "feedEndpoint", label: "Feed Endpoint", type: "text", placeholder: "https://feed.seloger.com/...", required: true },
   ]},
   { id: "immoscout24", name: "ImmoScout24", flag: "🇩🇪", country: "DE", protocol: "EstateSync", requiredPlan: "starter", fields: [
     { key: "clientId", label: "EstateSync Client ID", type: "text", placeholder: "OAuth client ID", required: true },
@@ -61,21 +62,48 @@ const PORTALS: PortalMeta[] = [
     { key: "clientId", label: "EstateSync Client ID", type: "text", placeholder: "OAuth client ID", required: true },
     { key: "clientSecret", label: "Client Secret", type: "password", placeholder: "OAuth client secret", required: true },
   ]},
-  { id: "rightmove", name: "Rightmove", flag: "🇬🇧", country: "UK", protocol: "BLM Feed", requiredPlan: "starter", fields: [
+  { id: "rightmove", name: "Rightmove", flag: "🇬🇧", country: "UK", protocol: "RTDF", requiredPlan: "starter", fields: [
+    { key: "networkId", label: "Network ID", type: "text", placeholder: "RTDF network ID", required: true },
     { key: "branchId", label: "Branch ID", type: "text", placeholder: "Rightmove branch ID", required: true },
-    { key: "apiKey", label: "API Key", type: "password", placeholder: "API key", required: true },
+    { key: "apiKey", label: "RTDF API Key", type: "password", placeholder: "Partner API key", required: true },
   ]},
-  { id: "zoopla", name: "Zoopla", flag: "🇬🇧", country: "UK", protocol: "REST API", requiredPlan: "pro", fields: [
-    { key: "apiKey", label: "API Key", type: "password", placeholder: "Zoopla API key", required: true },
-    { key: "branchId", label: "Branch ID", type: "text", placeholder: "Branch ID", required: true },
+  { id: "zoopla", name: "Zoopla", flag: "🇬🇧", country: "UK", protocol: "XML Feed", requiredPlan: "pro", fields: [
+    { key: "apiKey", label: "API Key", type: "password", placeholder: "Zoopla developer API key", required: true },
+    { key: "branchId", label: "Branch ID", type: "text", placeholder: "Branch identifier", required: true },
+    { key: "feedUrl", label: "Feed URL", type: "text", placeholder: "https://feed.zoopla.co.uk/...", required: true },
   ]},
   { id: "idealista_pt", name: "Idealista PT", flag: "🇵🇹", country: "PT", protocol: "REST API", requiredPlan: "starter", fields: [
     { key: "clientId", label: "Client ID", type: "text", placeholder: "Idealista API client ID", required: true },
     { key: "clientSecret", label: "Client Secret", type: "password", placeholder: "API secret", required: true },
   ]},
-  { id: "fotocasa", name: "Fotocasa", flag: "🇪🇸", country: "ES", protocol: "XML Feed", requiredPlan: "pro", fields: [] },
-  { id: "casa_it", name: "Casa.it", flag: "🇮🇹", country: "IT", protocol: "XML Feed", requiredPlan: "pro", fields: [] },
-  { id: "leboncoin", name: "LeBonCoin", flag: "🇫🇷", country: "FR", protocol: "Feed", requiredPlan: "pro", fields: [] },
+  { id: "fotocasa", name: "Fotocasa", flag: "🇪🇸", country: "ES", protocol: "Adevinta API", requiredPlan: "pro", fields: [
+    { key: "clientId", label: "Adevinta Client ID", type: "text", placeholder: "OAuth client ID", required: true },
+    { key: "clientSecret", label: "Client Secret", type: "password", placeholder: "OAuth secret", required: true },
+  ]},
+  { id: "casa_it", name: "Casa.it", flag: "🇮🇹", country: "IT", protocol: "XML Feed", requiredPlan: "pro", fields: [
+    { key: "agencyId", label: "Agency ID", type: "text", placeholder: "Casa.it agency ID", required: true },
+    { key: "feedUsername", label: "Feed Username", type: "text", placeholder: "XML feed username", required: true },
+    { key: "feedPassword", label: "Feed Password", type: "password", placeholder: "XML feed password", required: true },
+  ]},
+  { id: "leboncoin", name: "LeBonCoin", flag: "🇫🇷", country: "FR", protocol: "Adevinta API", requiredPlan: "pro", fields: [
+    { key: "clientId", label: "Adevinta Client ID", type: "text", placeholder: "OAuth client ID", required: true },
+    { key: "clientSecret", label: "Client Secret", type: "password", placeholder: "OAuth secret", required: true },
+  ]},
+  { id: "onthemarket", name: "OnTheMarket", flag: "🇬🇧", country: "UK", protocol: "XML Feed", requiredPlan: "pro", fields: [
+    { key: "branchId", label: "Branch ID", type: "text", placeholder: "OTM branch ID", required: true },
+    { key: "apiKey", label: "API Key", type: "password", placeholder: "OTM feed API key", required: true },
+    { key: "feedUrl", label: "Feed URL", type: "text", placeholder: "https://feed.onthemarket.com/...", required: true },
+  ]},
+  { id: "bienici", name: "Bien'ici", flag: "🇫🇷", country: "FR", protocol: "Poliris Feed", requiredPlan: "agency", fields: [
+    { key: "polirisAgencyId", label: "Poliris Agency ID", type: "text", placeholder: "Poliris agency ID", required: true },
+    { key: "polirisFeedKey", label: "Feed Key", type: "password", placeholder: "Poliris feed key", required: true },
+    { key: "feedUrl", label: "Feed URL", type: "text", placeholder: "https://feed.poliris.com/...", required: true },
+  ]},
+  { id: "imovirtual", name: "Imovirtual", flag: "🇵🇹", country: "PT", protocol: "OLX Feed", requiredPlan: "pro", fields: [
+    { key: "apiKey", label: "OLX API Key", type: "password", placeholder: "OLX Group partner API key", required: true },
+    { key: "agencyId", label: "Agency ID", type: "text", placeholder: "Imovirtual agency ID", required: true },
+    { key: "feedUrl", label: "Feed URL", type: "text", placeholder: "https://feed.olxgroup.com/...", required: true },
+  ]},
 ];
 
 /* ─── Types ─── */

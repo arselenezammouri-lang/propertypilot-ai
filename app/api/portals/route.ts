@@ -91,14 +91,27 @@ export async function POST(request: NextRequest) {
   try {
     // Validate credentials have required fields per portal type
     const portalRequirements: Record<string, string[]> = {
+      // Germany — EstateSync
       immoscout24: ["clientId", "clientSecret"],
       immowelt: ["clientId", "clientSecret"],
+      // Italy
       immobiliare_it: ["agencyId", "feedUsername", "feedPassword"],
+      casa_it: ["agencyId", "feedUsername", "feedPassword"],
+      // Spain/Italy/Portugal — Idealista
       idealista: ["clientId", "clientSecret", "country"],
       idealista_pt: ["clientId", "clientSecret"],
-      seloger: ["apiKey", "agencyId"],
-      rightmove: ["branchId", "apiKey"],
-      zoopla: ["apiKey", "branchId"],
+      // France
+      seloger: ["agencyId", "apiKey", "feedEndpoint"],
+      leboncoin: ["clientId", "clientSecret"],
+      bienici: ["polirisAgencyId", "polirisFeedKey", "feedUrl"],
+      // UK
+      rightmove: ["branchId", "apiKey", "networkId"],
+      zoopla: ["apiKey", "branchId", "feedUrl"],
+      onthemarket: ["branchId", "apiKey", "feedUrl"],
+      // Spain — Fotocasa
+      fotocasa: ["clientId", "clientSecret"],
+      // Portugal — Imovirtual
+      imovirtual: ["apiKey", "agencyId", "feedUrl"],
     };
 
     const required = portalRequirements[parsed.portal_id] || [];
