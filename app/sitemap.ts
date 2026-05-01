@@ -44,6 +44,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/blog/european-proptech-market-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/blog/ai-lead-scoring-real-estate`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
 
+    // Blog — Italian market SEO articles (v27)
+    { url: `${baseUrl}/blog/idealista-vs-immobiliare-it-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/pubblicare-annunci-11-portali-europei`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/ai-vs-agenti-tradizionali-chi-vince`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/gdpr-agenzie-immobiliari-italia-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/confronto-software-immobiliari-europa-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+
     // Legal
     { url: `${baseUrl}/terms`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${baseUrl}/privacy`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },

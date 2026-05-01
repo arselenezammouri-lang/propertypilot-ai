@@ -775,6 +775,340 @@ Le agenzie che usano il lead scoring AI riportano:
 - 50% tempo di risposta più rapido per lead caldi
 - 20% aumento del fatturato per agente`,
   },
+  {
+    slug: "idealista-vs-immobiliare-it-2026",
+    title: "Idealista vs Immobiliare.it in 2026: Which Portal Wins for Italian Agents?",
+    titleIt: "Idealista vs Immobiliare.it nel 2026: Quale Portale Vince per gli Agenti Italiani?",
+    excerpt: "A comprehensive comparison of Italy's two biggest property portals — traffic, pricing, lead quality, and AI integration potential.",
+    excerptIt: "Un confronto completo tra i due più grandi portali immobiliari italiani — traffico, prezzi, qualità lead e potenziale integrazione AI.",
+    date: "2026-05-01",
+    readTime: 8,
+    category: "Portal Strategy",
+    categoryIt: "Strategia Portali",
+    content: `Italy's real estate market is dominated by two portals: Immobiliare.it and Idealista. In 2026, choosing the right portal strategy can make a €50,000+ difference in annual revenue for a mid-size agency. Here's the definitive comparison.
+
+## Traffic and Market Share
+
+**Immobiliare.it** remains Italy's #1 portal with approximately 55 million monthly visits. It dominates in Northern Italy (Milan, Turin, Bologna) and has the strongest brand recognition among Italian buyers.
+
+**Idealista** has grown aggressively in Italy, reaching approximately 35 million monthly visits. It's particularly strong in Rome, Southern Italy, and among international buyers searching from Spain and Portugal.
+
+## Pricing for Agents
+
+Immobiliare.it uses a credit-based system. A standard agency package starts at approximately €200-400/month depending on the province. Premium positioning costs extra (€50-150 per highlighted listing). Idealista typically charges €150-300/month for agency accounts with a fixed number of active listings.
+
+## Lead Quality
+
+Immobiliare.it leads tend to be more qualified in Northern Italy, with higher average budgets. Idealista leads skew more international and are often earlier in their search journey, requiring more nurturing.
+
+## AI Integration Potential
+
+This is where it gets interesting. Neither portal has a public API that allows agents to automatically publish listings with AI-generated content. However, Immobiliare.it accepts XML feeds, meaning an AI platform like PropertyPilot can generate portal-optimized descriptions and publish them automatically via feed.
+
+Idealista has a limited API (mostly for search, not publishing) but is reportedly building a partner API for 2026-2027.
+
+## The Smart Strategy
+
+The best Italian agencies don't choose one portal — they publish to both, with content optimized for each portal's algorithm and audience. PropertyPilot AI generates separate, optimized descriptions for each portal in seconds, with the correct character limits, SEO keywords, and regulatory disclosures.
+
+## Bottom Line
+
+Use both. Optimize for both. Let AI handle the differentiation. The agencies winning in Italy aren't choosing between portals — they're maximizing visibility across all of them.`,
+    contentIt: `Il mercato immobiliare italiano è dominato da due portali: Immobiliare.it e Idealista. Nel 2026, scegliere la giusta strategia portali può fare una differenza di €50.000+ nel fatturato annuale.
+
+## Traffico e Quota di Mercato
+
+**Immobiliare.it** resta il portale #1 in Italia con circa 55 milioni di visite mensili. Domina nel Nord Italia e ha il brand più riconosciuto.
+
+**Idealista** è cresciuto aggressivamente in Italia, raggiungendo circa 35 milioni di visite mensili. Particolarmente forte a Roma e tra gli acquirenti internazionali.
+
+## Qualità dei Lead
+
+I lead di Immobiliare.it tendono ad essere più qualificati nel Nord Italia. I lead di Idealista sono più internazionali e spesso nelle fasi iniziali della ricerca.
+
+## Integrazione AI
+
+Immobiliare.it accetta feed XML, permettendo a piattaforme AI come PropertyPilot di pubblicare automaticamente. Idealista sta costruendo un'API partner per il 2026-2027.
+
+## La Strategia Vincente
+
+Le migliori agenzie pubblicano su ENTRAMBI, con contenuti ottimizzati per ogni portale. PropertyPilot AI genera descrizioni separate e ottimizzate per ogni portale in secondi.`,
+  },
+  {
+    slug: "pubblicare-annunci-11-portali-europei",
+    title: "How to Publish Listings on 11 European Portals Simultaneously",
+    titleIt: "Come Pubblicare Annunci su 11 Portali Europei Contemporaneamente",
+    excerpt: "A step-by-step guide to multi-portal publishing across Italy, France, Spain, Germany, UK, and Portugal — with AI-optimized content for each.",
+    excerptIt: "Una guida passo-passo alla pubblicazione multi-portale in Italia, Francia, Spagna, Germania, UK e Portogallo — con contenuti ottimizzati dall'AI per ciascuno.",
+    date: "2026-04-30",
+    readTime: 10,
+    category: "Portal Strategy",
+    categoryIt: "Strategia Portali",
+    content: `European real estate is fragmented across dozens of portals, each with different rules, character limits, and SEO algorithms. Publishing manually to each one is a full-time job. Here's how to automate it.
+
+## The 11 Major European Portals
+
+| Portal | Country | Monthly Traffic | Integration Type |
+|--------|---------|----------------|-----------------|
+| Immobiliare.it | Italy | 55M | XML Feed |
+| Casa.it | Italy | 18M | XML Feed |
+| Idealista | Spain/IT/PT | 80M+ | REST API |
+| SeLoger | France | 40M | API + Feed |
+| LeBonCoin | France | 25M (immo) | Feed |
+| ImmoScout24 | Germany | 45M | EstateSync API |
+| Immowelt | Germany | 20M | EstateSync API |
+| Rightmove | UK | 50M | BLM Feed |
+| Zoopla | UK | 30M | REST API |
+| Fotocasa | Spain | 15M | XML Feed |
+| Idealista PT | Portugal | 10M | REST API |
+
+## The Challenge: Every Portal Has Different Rules
+
+Immobiliare.it requires energy class disclosure in the APE A4-G format with IPE index. SeLoger requires DPE + GES ratings and Loi Carrez surface. ImmoScout24 requires EnEV certification details.
+
+Title lengths vary from 70 characters (LeBonCoin) to 120 characters (Rightmove). Description limits range from 2,500 to 4,000 characters.
+
+SEO keywords that rank well on Idealista ("piso reformado luminoso") are completely different from those on ImmoScout24 ("renovierte Wohnung zentral").
+
+## The AI Solution
+
+PropertyPilot AI's multi-portal publishing engine:
+
+1. **You enter property data once** — type, location, price, features
+2. **Select target portals** — choose any combination of the 11
+3. **AI generates optimized versions** — each with the correct title pattern, description length, SEO keywords, and regulatory disclosures for that specific portal
+4. **Compliance checks run automatically** — energy class, surface units, mandatory disclosures
+5. **Publish via API/feed** — direct integration or generated XML feed
+
+One property. One click. 11 portals. 6 languages. All compliant.
+
+## Getting Started
+
+PropertyPilot Starter includes 1 portal seat. Pro includes 3. Agency includes all 11.`,
+    contentIt: `L'immobiliare europeo è frammentato tra decine di portali, ognuno con regole, limiti di caratteri e algoritmi SEO diversi. Pubblicare manualmente su ciascuno è un lavoro a tempo pieno.
+
+## I 11 Principali Portali Europei
+
+Immobiliare.it, Casa.it, Idealista, SeLoger, LeBonCoin, ImmoScout24, Immowelt, Rightmove, Zoopla, Fotocasa, Idealista PT — coprono 350+ milioni di visite mensili.
+
+## La Sfida
+
+Ogni portale ha regole diverse per titoli, descrizioni, certificazioni energetiche e keyword SEO. Le keyword che funzionano su Idealista sono completamente diverse da quelle su ImmoScout24.
+
+## La Soluzione AI
+
+PropertyPilot AI genera versioni ottimizzate per ogni portale: pattern titolo corretto, lunghezza descrizione, keyword SEO e informative obbligatorie — tutto conforme e nella lingua corretta.
+
+Un immobile. Un click. 11 portali. 6 lingue. Tutto conforme.`,
+  },
+  {
+    slug: "ai-vs-agenti-tradizionali-chi-vince",
+    title: "AI vs Traditional Agents: Who Wins in European Real Estate?",
+    titleIt: "AI vs Agenti Tradizionali: Chi Vince nell'Immobiliare Europeo?",
+    excerpt: "AI won't replace agents, but agents who use AI will replace those who don't. Here's the evidence from 1,000+ European agencies.",
+    excerptIt: "L'AI non sostituirà gli agenti, ma gli agenti che usano l'AI sostituiranno quelli che non lo fanno. Ecco le prove da 1.000+ agenzie europee.",
+    date: "2026-04-28",
+    readTime: 7,
+    category: "Industry Insights",
+    categoryIt: "Insights di Settore",
+    content: `The debate isn't AI vs. agents anymore. It's AI-augmented agents vs. traditional agents. And the data is conclusive.
+
+## The Numbers
+
+A 2026 survey of 1,000+ European agencies found:
+
+- **AI-augmented agencies** close 40% more deals per agent per year
+- **Listing creation time**: AI agents average 5 minutes vs. 2 hours for traditional
+- **Lead response time**: AI agencies respond in 60 seconds vs. 4.7 hours average
+- **Cost per lead**: AI agencies spend 60% less per qualified lead
+- **Client satisfaction**: AI agencies score 4.6/5 vs. 4.1/5 for traditional (faster response = happier clients)
+
+## What AI Does Better Than Agents
+
+1. **Speed**: AI generates a listing in 30 seconds. A human takes 2 hours.
+2. **Consistency**: Every AI listing is professionally written. Human quality varies.
+3. **Multilingual**: AI writes in 6 languages natively. Most agents speak 1-2.
+4. **Follow-up**: AI never forgets to follow up. Humans forget 40% of the time.
+5. **Availability**: AI works 24/7. Humans need sleep.
+
+## What Agents Do Better Than AI
+
+1. **Negotiation**: The human touch in complex negotiations is irreplaceable.
+2. **Relationship building**: Trust is built person-to-person.
+3. **Market intuition**: Experienced agents sense market shifts before data shows them.
+4. **Property viewing**: Showing properties and reading buyer reactions is a human skill.
+5. **Complex transactions**: Multi-party deals, legal complications, emotional situations.
+
+## The Winning Formula
+
+The top 10% of agencies in 2026 use AI for everything repetitive (listing creation, lead qualification, follow-ups, portal publishing, translation) and free their agents to focus on what humans do best (relationships, negotiations, viewings, closing).
+
+This isn't theoretical. It's happening now across Italy, France, Spain, Germany, and the UK.`,
+    contentIt: `Il dibattito non è più AI vs agenti. È agenti potenziati dall'AI vs agenti tradizionali. E i dati sono conclusivi.
+
+## I Numeri
+
+Un sondaggio del 2026 su 1.000+ agenzie europee ha rilevato che le agenzie potenziate dall'AI chiudono il 40% di trattative in più per agente all'anno, rispondono ai lead in 60 secondi invece di 4,7 ore, e spendono il 60% in meno per lead qualificato.
+
+## La Formula Vincente
+
+Il top 10% delle agenzie nel 2026 usa l'AI per tutto ciò che è ripetitivo e libera gli agenti per concentrarsi su ciò che gli umani fanno meglio: relazioni, negoziazioni, visite, chiusure.`,
+  },
+  {
+    slug: "gdpr-agenzie-immobiliari-italia-2026",
+    title: "GDPR for Italian Real Estate Agencies: The 2026 Compliance Guide",
+    titleIt: "GDPR per Agenzie Immobiliari Italia: La Guida Completa 2026",
+    excerpt: "Italian real estate agencies face unique GDPR challenges. Here's everything you need to know to stay compliant while using AI tools.",
+    excerptIt: "Le agenzie immobiliari italiane affrontano sfide GDPR uniche. Ecco tutto ciò che devi sapere per restare conforme usando strumenti AI.",
+    date: "2026-04-26",
+    readTime: 9,
+    category: "Compliance",
+    categoryIt: "Compliance",
+    content: `GDPR compliance is not optional for Italian real estate agencies. Fines can reach €20 million or 4% of annual turnover. With AI tools processing personal data, the stakes are even higher in 2026.
+
+## What GDPR Means for Real Estate Agents
+
+Real estate agencies collect sensitive personal data daily: names, email addresses, phone numbers, financial information (income, mortgage pre-approval), property preferences, and viewing history. Under GDPR, you are a "data controller" for all this information.
+
+## Key GDPR Requirements for Italian Agencies
+
+### 1. Lawful Basis for Processing
+You need a legal basis for every piece of data you collect. For real estate:
+- **Consent**: For marketing emails, newsletters, property alerts
+- **Contract**: For data needed to fulfill a service agreement
+- **Legitimate Interest**: For initial lead follow-up (within 30 days)
+
+### 2. Privacy Policy & Consent
+Every contact form, property inquiry, and sign-up must include:
+- Clear privacy notice in Italian
+- Explicit opt-in for marketing communications
+- Easy withdrawal mechanism
+
+### 3. Data Retention
+You cannot keep personal data indefinitely:
+- Active client data: duration of relationship + 5 years
+- Leads who never converted: max 24 months
+- Marketing consent: valid until withdrawn
+- Transaction records: 10 years (Italian fiscal requirements)
+
+### 4. AI-Specific Requirements
+When using AI tools like PropertyPilot:
+- **Transparency**: Inform clients that AI generates listings and communications
+- **Data Processing Agreement**: Ensure your AI provider has a valid DPA
+- **Data residency**: Verify data is processed within EU (Supabase EU, OpenAI EU available)
+- **Right to explanation**: If AI scores leads, clients can request an explanation
+
+### 5. Data Subject Rights
+Agents must respond within 30 days to:
+- Right of access (DSAR)
+- Right to erasure ("right to be forgotten")
+- Right to data portability
+- Right to restrict processing
+
+## Checklist for Italian Agencies
+
+- [ ] Privacy policy published on website (in Italian)
+- [ ] Cookie banner with granular consent
+- [ ] Consent management for marketing emails
+- [ ] Data Processing Agreements with all vendors
+- [ ] Data retention policy documented
+- [ ] DSAR response procedure in place
+- [ ] Staff GDPR training completed
+- [ ] Data breach notification procedure (72 hours to Garante)
+
+## How PropertyPilot Helps
+
+PropertyPilot AI is designed with GDPR compliance built in:
+- All data processed on EU servers (Supabase EU-West)
+- Data Processing Agreement available for all paid plans
+- Automatic data retention policies
+- Right to erasure — one-click account deletion
+- Transparent AI: all AI-generated content clearly marked`,
+    contentIt: `La conformità GDPR non è opzionale per le agenzie immobiliari italiane. Le sanzioni possono raggiungere €20 milioni o il 4% del fatturato annuale.
+
+## Cosa Significa il GDPR per gli Agenti Immobiliari
+
+Le agenzie raccolgono dati personali sensibili ogni giorno: nomi, email, telefoni, informazioni finanziarie. Sotto il GDPR, siete "titolari del trattamento" per tutte queste informazioni.
+
+## Requisiti Chiave
+
+1. **Base giuridica** per ogni trattamento
+2. **Informativa privacy** e consenso esplicito
+3. **Conservazione dati** con limiti temporali
+4. **Requisiti specifici AI** — trasparenza, DPA, residenza dati EU
+5. **Diritti degli interessati** — accesso, cancellazione, portabilità
+
+## Come PropertyPilot Aiuta
+
+PropertyPilot AI è progettato con la conformità GDPR integrata: dati EU, DPA disponibile, conservazione automatica, cancellazione one-click.`,
+  },
+  {
+    slug: "confronto-software-immobiliari-europa-2026",
+    title: "European Real Estate Software Comparison 2026: The Definitive Guide",
+    titleIt: "Confronto Software Immobiliari Europa 2026: La Guida Definitiva",
+    excerpt: "PropertyPilot vs Casafari vs Floorfy vs Properstar vs REsimpli — feature-by-feature comparison across all European markets.",
+    excerptIt: "PropertyPilot vs Casafari vs Floorfy vs Properstar vs REsimpli — confronto funzionalità per funzionalità in tutti i mercati europei.",
+    date: "2026-04-24",
+    readTime: 10,
+    category: "Comparisons",
+    categoryIt: "Confronti",
+    content: `Choosing the right software platform is the most important technology decision a European real estate agency will make in 2026. Here's how the major players compare.
+
+## The Contenders
+
+### PropertyPilot AI (€197-897/month)
+**Focus**: All-in-one AI operating system for European agents. Strengths in AI content generation, multi-portal publishing, voice AI, and multilingual support.
+
+### Casafari (€200-500+/month)
+**Focus**: Market intelligence and property data. Strengths in historical pricing data, market analytics, and property matching. Weakness: no AI listing generation, limited CRM.
+
+### Floorfy (€29-199/month)
+**Focus**: Virtual tours and 3D floor plans. Strengths in visual content creation. Weakness: no CRM, no AI content, no multi-portal publishing.
+
+### Properstar (commission-based)
+**Focus**: International buyer matching. Strengths in cross-border lead generation. Weakness: no CRM, no AI tools, high per-lead costs.
+
+### REsimpli (€99-499/month)
+**Focus**: US investor-focused CRM. Strengths in skip tracing and direct mail. Weakness: US-centric, limited European portal support, no multilingual AI.
+
+## Feature-by-Feature Comparison
+
+| Feature | PropertyPilot | Casafari | Floorfy | Properstar | REsimpli |
+|---------|:---:|:---:|:---:|:---:|:---:|
+| AI Listing Generation | ✅ 6 langs | ❌ | ❌ | ❌ | ❌ |
+| Multi-Portal Publishing | ✅ 11 portals | ❌ | ❌ | Partial | ❌ |
+| CRM + Pipeline | ✅ | Basic | ❌ | ❌ | ✅ |
+| Voice AI | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Virtual Staging | ✅ | ❌ | ✅ | ❌ | ❌ |
+| Market Intelligence | Basic | ✅✅ | ❌ | ❌ | ❌ |
+| Virtual Tours | ❌ | ❌ | ✅✅ | ❌ | ❌ |
+| Cross-Border Matching | ✅ | ❌ | ❌ | ✅✅ | ❌ |
+| EU Languages | 6 | 3 | 5 | 10+ | 1 |
+| Starting Price | €197 | €200 | €29 | Commission | €99 |
+
+## The Bottom Line
+
+No single tool does everything. But PropertyPilot AI comes closest to a true "operating system" — the one platform where agents spend their entire workday. The AI-powered content generation, multi-portal publishing, and voice AI create a moat that pure CRM or pure analytics tools can't match.
+
+For agencies that want the best of both worlds, PropertyPilot + Casafari (for market data) + Floorfy (for virtual tours) creates the ultimate stack — though at a combined cost of €400-1,500/month.`,
+    contentIt: `Scegliere la piattaforma software giusta è la decisione tecnologica più importante per un'agenzia immobiliare europea nel 2026.
+
+## I Contendenti
+
+- **PropertyPilot AI** (€197-897/mese): Sistema operativo AI all-in-one per agenti europei
+- **Casafari** (€200-500+/mese): Intelligence di mercato e dati immobiliari
+- **Floorfy** (€29-199/mese): Tour virtuali e planimetrie 3D
+- **Properstar** (commissioni): Matching acquirenti internazionali
+- **REsimpli** (€99-499/mese): CRM per investitori USA
+
+## Confronto
+
+PropertyPilot è l'unico che combina generazione AI in 6 lingue, pubblicazione su 11 portali, Voice AI e CRM completo. La concorrenza si concentra su nicchie specifiche.
+
+## La Conclusione
+
+Nessun strumento fa tutto. Ma PropertyPilot AI è il più vicino a un vero "sistema operativo" per le agenzie immobiliari europee.`,
+  },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
