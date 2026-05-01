@@ -51,6 +51,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/blog/gdpr-agenzie-immobiliari-italia-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/blog/confronto-software-immobiliari-europa-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
 
+    // Blog — French market SEO articles (v28)
+    { url: `${baseUrl}/blog/idealista-vs-seloger-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/publier-annonces-11-portails-europeens`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/ia-vs-agents-traditionnels-immobilier`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/rgpd-agences-immobilieres-france-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/comparatif-logiciels-immobiliers-europe-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+
+    // Blog — Spanish market SEO articles (v28)
+    { url: `${baseUrl}/blog/idealista-vs-fotocasa-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/publicar-en-11-portales-europeos`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/ia-vs-agentes-tradicionales-inmobiliaria`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/gdpr-agencias-inmobiliarias-espana-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/blog/comparativa-software-inmobiliario-europa-2026`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+
     // Legal
     { url: `${baseUrl}/terms`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${baseUrl}/privacy`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },

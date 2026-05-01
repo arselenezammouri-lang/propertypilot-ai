@@ -37,15 +37,19 @@ Repo: github.com/arselenezammouri-lang/propertypilot-ai
 2. Set STRIPE_WEBHOOK_SECRET (live webhook secret, starts with whsec_) in Vercel env vars
 3. Create a Stripe webhook endpoint pointing to:
    https://propertypilot-ai.vercel.app/api/stripe/webhook
-   Events to listen for:
-   - checkout.session.completed
-   - customer.subscription.created
-   - customer.subscription.updated
-   - customer.subscription.deleted
-   - invoice.paid
-   - invoice.payment_failed
+   Events: checkout.session.completed, customer.subscription.created/updated/deleted, invoice.paid/failed
 4. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY (live key, starts with pk_live_)
 5. Optionally enable Stripe Tax for automatic EU VAT collection
+6. Set RESEND_API_KEY for email automation (welcome, trial ending, re-engagement sequences)
+7. Set yearly price env vars (already created in Stripe):
+   - NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID=price_1TSGiwA1is7KNmaeuwZyZCrj
+   - NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID=price_1TSGiyA1is7KNmaeloBvSJTW
+   - NEXT_PUBLIC_STRIPE_AGENCY_YEARLY_PRICE_ID=price_1TSGj1A1is7KNmaeg9Uf6I0U
+
+## Stripe Yearly Prices (20% discount, created via MCP)
+- Starter yearly: price_1TSGiwA1is7KNmaeuwZyZCrj (€1,891.20/yr = €157.60/mo)
+- Pro yearly: price_1TSGiyA1is7KNmaeloBvSJTW (€4,761.60/yr = €396.80/mo)
+- Agency yearly: price_1TSGj1A1is7KNmaeg9Uf6I0U (€8,601.60/yr = €716.80/mo)
 
 ## Portal Adapters (lib/portals/adapters/)
 - EstateSync: ImmoScout24 + Immowelt (Germany) — OAuth REST API
