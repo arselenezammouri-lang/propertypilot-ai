@@ -48,7 +48,11 @@ function buildPortalPrompt(
   const rules = getPortalRules(portalId);
 
   const brandSection = brandVoice
-    ? `\n## BRAND VOICE\nTone: ${brandVoice.tone}\nPreferred vocabulary: ${brandVoice.vocabulary_preferences.join(", ")}\nForbidden words: ${brandVoice.forbidden_words.join(", ")}\nSignature phrases to use naturally: ${brandVoice.signature_phrases.join("; ")}\nTarget audience: ${brandVoice.target_audience}`
+    ? `\n## BRAND VOICE — Match this voice EXACTLY
+Name: "${brandVoice.name}"
+Tone: ${brandVoice.tone}
+Style keywords (use these words naturally): ${brandVoice.style_keywords.join(", ")}
+${brandVoice.example_text ? `\nExample of how this brand writes:\n"""${brandVoice.example_text.substring(0, 1500)}"""\n\nMimic this writing style, vocabulary, and sentence rhythm.` : ""}`
     : "";
 
   const regulatorySection = rules.regulatory.mandatoryDisclosures.length > 0
@@ -254,6 +258,7 @@ export async function POST(request: NextRequest) {
       input: parsed as ListingGenerationResult["input"],
       outputs,
       brandVoiceApplied: !!brandVoice,
+      brandVoiceName: brandVoice?.name || null,
       generatedAt: new Date().toISOString(),
       model: "structured-fallback-v1",
       tokensUsed: 0,

@@ -71,3 +71,10 @@ Repo: github.com/arselenezammouri-lang/propertypilot-ai
 - Semantic color tokens only (text-foreground, text-muted-foreground, NOT text-black/text-white)
 - Zod validation on all API inputs
 - Conventional commits (v1, v2, ... vN: description)
+
+## Future Enhancement: pgvector Brand Voice Embeddings
+When pgvector is enabled on Supabase, store embeddings of brand_voice_profiles.example_text.
+This allows semantic similarity search across multiple sample listings,
+enabling the AI to match brand voice even when the user provides dozens of examples.
+Migration: ALTER TABLE brand_voice_profiles ADD COLUMN embedding vector(1536);
+Create index: CREATE INDEX ON brand_voice_profiles USING ivfflat (embedding vector_cosine_ops);

@@ -9,15 +9,12 @@
 export interface BrandVoiceProfile {
   id: string;
   user_id: string;
-  agency_name: string;
-  tone: "professional" | "luxury" | "friendly" | "authoritative" | "modern";
-  vocabulary_preferences: string[];     // e.g. ["esclusivo", "raffinato"] vs ["accogliente", "luminoso"]
-  forbidden_words: string[];            // Words the agency never uses
-  signature_phrases: string[];          // e.g. "A new standard of living"
-  target_audience: "luxury" | "investment" | "family" | "first-time" | "international";
-  default_language: PortalLanguage;
+  name: string;
+  tone: "professional" | "luxury" | "friendly" | "casual" | "authoritative";
+  style_keywords: string[];
+  example_text: string;
+  is_default: boolean;
   created_at: string;
-  updated_at: string;
 }
 
 /* ─── Portal System ─── */
@@ -123,6 +120,7 @@ export interface ListingGenerationResult {
   input: ListingGenerationInput;
   outputs: PortalListingOutput[];
   brandVoiceApplied: boolean;
+  brandVoiceName: string | null;
   generatedAt: string;
   model: string;
   tokensUsed: number;
