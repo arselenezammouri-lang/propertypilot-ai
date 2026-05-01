@@ -24,9 +24,7 @@ export const STRIPE_PLANS = {
   starter: {
     name: 'Starter',
     price: 197,
-    yearlyPrice: 1891,
     priceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID || null,
-    yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID || 'price_1TSGiwA1is7KNmaeuwZyZCrj',
     tagline: 'AI Listing Engine + 1 Portal + 6 Languages',
     features: [
       '50 properties managed',
@@ -49,9 +47,7 @@ export const STRIPE_PLANS = {
   pro: {
     name: 'Pro',
     price: 497,
-    yearlyPrice: 4762,
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID || null,
-    yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID || 'price_1TSGiyA1is7KNmaeloBvSJTW',
     tagline: 'CRM + Voice AI + 3 Portals + AVM + Virtual Staging',
     features: [
       '500 properties managed',
@@ -79,9 +75,7 @@ export const STRIPE_PLANS = {
   agency: {
     name: 'Agency',
     price: 897,
-    yearlyPrice: 8602,
     priceId: process.env.NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID || null,
-    yearlyPriceId: process.env.NEXT_PUBLIC_STRIPE_AGENCY_YEARLY_PRICE_ID || 'price_1TSGj1A1is7KNmaeg9Uf6I0U',
     tagline: 'Unlimited Everything + ALL Portals + 10 Users + API',
     features: [
       'Unlimited properties',
