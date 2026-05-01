@@ -88,6 +88,7 @@ import { fetchApi } from "@/lib/api/client";
 import NextDynamic from "next/dynamic";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ListSkeleton } from "@/components/ui/skeleton-loaders";
+import { LeadScoreBadge } from "@/components/lead-score-badge";
 
 const ProFeaturePaywall = NextDynamic(() => import("@/components/demo-modal").then(mod => ({ default: mod.ProFeaturePaywall })), {
   ssr: false,
@@ -877,12 +878,23 @@ export default function LeadsPage() {
                         </TableCell>
                         <TableCell>
                           {lead.lead_score > 0 ? (
-                            <div className="flex items-center gap-1">
-                              <Target className="h-4 w-4 text-emerald-500" />
-                              <span className="font-bold">{lead.lead_score}</span>
-                            </div>
+                            <LeadScoreBadge score={lead.lead_score} size="sm" />
                           ) : (
-                            <span className="text-muted-foreground">-</span>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const res = await fetch("/api/leads/score", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ leadId: lead.id }),
+                                  });
+                                  if (res.ok) fetchLeads();
+                                } catch {}
+                              }}
+                              className="text-xs text-primary hover:underline"
+                            >
+                              Score now
+                            </button>
                           )}
                         </TableCell>
                         <TableCell>

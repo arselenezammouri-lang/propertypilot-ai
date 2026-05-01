@@ -17,6 +17,11 @@ const UsageIndicator = NextDynamic(() => import("@/components/usage-indicator").
   ssr: false,
 });
 
+const LeadScoreWidget = NextDynamic(() => import("@/components/lead-score-widget").then(mod => ({ default: mod.LeadScoreWidget })), {
+  loading: () => <div className="pp-card p-4 animate-pulse" />,
+  ssr: false,
+});
+
 const OnboardingFlow = NextDynamic(() => import("@/components/onboarding-flow").then(mod => ({ default: mod.OnboardingFlow })), {
   ssr: false,
 });
@@ -137,6 +142,11 @@ export default async function DashboardPage() {
           {/* QUICK ACTIONS */}
           <section className="dashboard-section">
             <QuickActions />
+          </section>
+
+          {/* LEAD SCORE ANALYTICS */}
+          <section className="dashboard-section">
+            <LeadScoreWidget currentPlan={currentPlan} />
           </section>
 
           {/* UPGRADE PROMPT — only for free and starter */}

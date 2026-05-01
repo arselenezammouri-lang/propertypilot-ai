@@ -51,6 +51,19 @@ export async function GET() {
       const portalId = conn.portal_id;
       const leadsFound = 0; // Placeholder until adapter APIs are connected
 
+      // Auto-scoring note: When real leads arrive, score them before insert:
+      // import { scoreLead } from "@/lib/ai/fast-lead-scoring";
+      // for (const lead of polledLeads) {
+      //   const score = scoreLead({
+      //     source: `portal:${portalId}`,
+      //     email: lead.email, phone: lead.phone,
+      //     message: lead.message, createdAt: lead.receivedAt,
+      //   });
+      //   await supabase.from("leads").upsert({
+      //     ...lead, lead_score: score.score, user_id: conn.user_id,
+      //   });
+      // }
+
       // When adapter is connected:
       // const adapter = createAdapter(portalId, JSON.parse(decryptedCredentials));
       // const leads = await adapter.pollLeads(since);

@@ -78,3 +78,10 @@ This allows semantic similarity search across multiple sample listings,
 enabling the AI to match brand voice even when the user provides dozens of examples.
 Migration: ALTER TABLE brand_voice_profiles ADD COLUMN embedding vector(1536);
 Create index: CREATE INDEX ON brand_voice_profiles USING ivfflat (embedding vector_cosine_ops);
+
+## Future: Speed-to-Lead Auto-Call (Phase 3 — Bland AI Voice)
+When voice agent v2 is complete, add auto-call trigger:
+- Lead scores 90+ AND status='new' AND business hours → auto-initiate Bland AI call
+- Call pathway: qualify interest, check budget, book viewing
+- Log call outcome in calls table, update lead score based on result
+- Requires: Bland AI pathways, per-country Twilio SIP numbers, ElevenLabs voice cloning
