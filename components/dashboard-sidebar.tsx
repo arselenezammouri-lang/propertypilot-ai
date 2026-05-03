@@ -31,6 +31,7 @@ import {
   X,
   Shield,
   Bookmark,
+  Phone,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -84,6 +85,12 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Portals",
     items: [
       { label: "Portal Connections", href: "/dashboard/portals", icon: Globe, badge: "New" },
+    ],
+  },
+  {
+    title: "Voice AI",
+    items: [
+      { label: "Voice Campaigns", href: "/dashboard/voice-campaigns", icon: Phone, badge: "New" },
     ],
   },
   {

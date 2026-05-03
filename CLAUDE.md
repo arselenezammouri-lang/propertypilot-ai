@@ -107,6 +107,30 @@ Portals that don't require partner status (self-service):
 - Animations: Framer Motion fadeUp, stagger, whileInView
 - Typography: Geist Sans/Mono, pp-heading-xl/lg/md, text-gradient
 
+## Voice Agent v2 (Priority 3)
+Architecture:
+- lib/voice/bland-client.ts — Bland AI API (createCall, getStatus, getTranscript)
+- lib/voice/pathways.ts — 3 pathways × 6 languages (inbound inquiry, lead callback, viewing booking)
+- lib/voice/elevenlabs.ts — Multilingual v2 voices, voice cloning (Agency tier)
+- lib/voice/twilio.ts — EU phone numbers (search, buy, release, list)
+- lib/integrations/cal-com.ts — Calendar booking (getSlots, bookSlot, listBookings)
+- app/api/voice/calls — CRUD (GET list, POST initiate, PATCH update)
+- app/api/voice/webhook — Bland AI webhooks (call_ended → save transcript/outcome)
+- app/api/voice/inbound — Twilio inbound → route to Bland pathway by number country
+
+Webhook URLs to configure:
+- Bland AI: https://propertypilot-ai.vercel.app/api/voice/webhook
+- Twilio Voice: https://propertypilot-ai.vercel.app/api/voice/inbound
+- Cal.com: https://propertypilot-ai.vercel.app/api/voice/webhook
+
+Supabase tables (run supabase/migrations/20260503_voice_agent_tables.sql):
+- phone_numbers, voice_clones, calendar_integrations
+- Enhanced: calls (pathway, language, direction, duration_seconds, recording_url)
+- Enhanced: usage_credits (voice_minutes_used)
+- RPC: increment_voice_minutes(user_id, minutes)
+
+Plan voice limits: Free=0, Starter=60min, Pro=300min, Agency=1500min
+
 ## Coding Standards
 - NEVER use `any` or `@ts-ignore`
 - Always run `npx tsc --noEmit` before pushing
