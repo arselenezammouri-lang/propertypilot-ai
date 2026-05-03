@@ -32,6 +32,7 @@ import {
   Shield,
   Bookmark,
   Phone,
+  MessageCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -91,6 +92,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Voice AI",
     items: [
       { label: "Voice Campaigns", href: "/dashboard/voice-campaigns", icon: Phone, badge: "New" },
+      { label: "WhatsApp AI", href: "/dashboard/whatsapp", icon: MessageCircle, badge: "New" },
     ],
   },
   {

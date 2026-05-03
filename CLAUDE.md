@@ -131,6 +131,34 @@ Supabase tables (run supabase/migrations/20260503_voice_agent_tables.sql):
 
 Plan voice limits: Free=0, Starter=60min, Pro=300min, Agency=1500min
 
+## WhatsApp AI Agent (Priority 4)
+Architecture:
+- lib/whatsapp/client.ts — Meta Cloud API (sendMessage, sendCarousel, sendTemplate, markAsRead)
+- lib/whatsapp/intent-classifier.ts — GPT-4o-mini intent detection (10 intents, 6 languages)
+- lib/whatsapp/responder.ts — Intent-based response generation with multilingual templates
+- lib/whatsapp/templates/index.ts — 5 pre-approved Meta templates (welcome, listing_alert, viewing_reminder, viewing_confirmation, re_engagement)
+- app/api/whatsapp/webhook — GET: Meta verification, POST: inbound message processing
+- app/api/whatsapp/send — GET: list conversations, POST: send manual message
+- app/dashboard/whatsapp — Conversation UI with AI/human filter, send modal
+
+Required env vars (set on Vercel):
+- WHATSAPP_BUSINESS_TOKEN — Meta Business bearer token
+- WHATSAPP_PHONE_ID — WhatsApp Business phone number ID
+- WHATSAPP_BUSINESS_ACCOUNT_ID — Meta Business account ID
+- WHATSAPP_VERIFY_TOKEN — Webhook verification token (default: propertypilot-wa-verify-2026)
+
+Setup: Meta Business Suite → WhatsApp Business Account → Create App → Generate Token → Set Webhook URL:
+  https://propertypilot-ai.vercel.app/api/whatsapp/webhook
+
+Template submission: Templates must be approved by Meta before production use.
+Submit via: Meta Business Suite → WhatsApp Manager → Message Templates
+
+Supabase tables (run supabase/migrations/20260503_whatsapp_tables.sql):
+- whatsapp_conversations, whatsapp_messages
+- Enhanced: usage_credits (whatsapp_conversations_used)
+
+Plan limits: Free=50 conv/mo, Starter=500, Pro=2000, Agency=10000
+
 ## Coding Standards
 - NEVER use `any` or `@ts-ignore`
 - Always run `npx tsc --noEmit` before pushing
