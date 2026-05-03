@@ -181,6 +181,31 @@ Future: XGBoost AVM model. When 10k+ transactions collected via portal feeds,
 train sklearn/XGBoost on (sqm, rooms, condition, zone, year_built, features) → price.
 Serve via Supabase Edge Function or external ML API.
 
+## Stripe EU Compliance (Priority 6)
+Checkout features:
+- automatic_tax: enabled (Stripe Tax handles VAT per country)
+- tax_id_collection: enabled (B2B VAT ID validation)
+- billing_address_collection: required
+- allow_promotion_codes: enabled
+- B2B reverse charge: automatic when valid EU VAT ID + cross-border
+
+Dunning (failed payments):
+- 1st failure: gentle email (update card link)
+- 2nd failure (3 days): urgent email (account at risk)
+- 3rd failure (7 days): downgrade to Free plan, final notice email
+- Overdue banner on dashboard when payment_failed_count > 0
+- Templates: lib/email/templates/dunning.ts
+
+Profiles tax fields: vat_id, vat_id_country, vat_id_valid, business_name, tax_address, account_type
+Subscriptions: payment_failed_count, payment_failed_at
+
+## ⚠️ FOUNDER ACTION: EU Tax Registration
+1. Register for OSS (One-Stop-Shop) at agenziaentrate.gov.it (Italy)
+2. Enable Stripe Tax in Stripe Dashboard → Settings → Tax
+3. Add Italy tax registration in Stripe Tax settings
+4. Quarterly MOSS/OSS filing deadlines: April 20, July 20, October 20, January 20
+5. Configure Stripe webhook to include: invoice.payment_failed, invoice.upcoming
+
 ## Coding Standards
 - NEVER use `any` or `@ts-ignore`
 - Always run `npx tsc --noEmit` before pushing

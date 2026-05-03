@@ -48,6 +48,11 @@ export async function createCheckoutSession(
     ],
     success_url: successUrl,
     cancel_url: cancelUrl,
+    // EU Tax Compliance
+    automatic_tax: { enabled: true },
+    tax_id_collection: { enabled: true },
+    // Allow promo codes
+    allow_promotion_codes: true,
     metadata: {
       user_id: userId,
       ...metadata,
@@ -58,6 +63,9 @@ export async function createCheckoutSession(
         ...metadata,
       },
     },
+    // EU billing address collection
+    billing_address_collection: 'required',
+    customer_update: customerId ? { address: 'auto', name: 'auto' } : undefined,
   };
 
   if (customerId) {

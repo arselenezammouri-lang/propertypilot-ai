@@ -80,6 +80,18 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object as Stripe.Invoice;
+        await handlePaymentFailed(invoice);
+        break;
+      }
+
+      case 'invoice.upcoming': {
+        const invoice = event.data.object as Stripe.Invoice;
+        await handleInvoiceUpcoming(invoice);
+        break;
+      }
+
       default:
         logger.debug('Unhandled event type', { eventType: event.type, endpoint: '/api/stripe/webhook' });
     }
@@ -438,5 +450,133 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   } catch (error) {
     logger.error('handleSubscriptionDeleted failed', error, { endpoint: '/api/stripe/webhook' });
     throw error;
+  }
+}
+
+/* ─── Invoice Payment Failed (Dunning) ─── */
+
+async function handlePaymentFailed(invoice: Stripe.Invoice) {
+  const supabaseAdmin = getSupabaseAdmin();
+  const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
+  if (!customerId) return;
+
+  // Find user by Stripe customer ID
+  const { data: sub } = await supabaseAdmin
+    .from('subscriptions')
+    .select('user_id, status')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+
+  if (!sub) return;
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('full_name, email')
+    .eq('id', sub.user_id)
+    .maybeSingle();
+
+  if (!profile?.email) return;
+
+  const attemptCount = invoice.attempt_count || 1;
+  const amount = invoice.amount_due ? `€${(invoice.amount_due / 100).toFixed(2)}` : 'your subscription';
+  const portalUrl = `https://propertypilot-ai.vercel.app/dashboard/billing`;
+
+  // Import dunning templates dynamically
+  const { dunningFirstFailure, dunningSecondFailure, dunningFinalNotice } = await import('@/lib/email/templates/dunning');
+
+  let emailTemplate;
+  if (attemptCount <= 1) {
+    emailTemplate = dunningFirstFailure(profile.full_name || 'there', amount, portalUrl);
+  } else if (attemptCount === 2) {
+    emailTemplate = dunningSecondFailure(profile.full_name || 'there', amount, portalUrl);
+  } else {
+    emailTemplate = dunningFinalNotice(profile.full_name || 'there', portalUrl);
+
+    // 3rd failure: downgrade to free
+    await supabaseAdmin
+      .from('subscriptions')
+      .update({ status: 'free' })
+      .eq('user_id', sub.user_id);
+    await supabaseAdmin
+      .from('profiles')
+      .update({ subscription_plan: 'free' })
+      .eq('id', sub.user_id);
+
+    logger.warn('Account downgraded due to payment failure', { userId: sub.user_id, attempts: attemptCount, endpoint: '/api/stripe/webhook' });
+  }
+
+  // Send dunning email via Resend
+  const resendKey = process.env.RESEND_API_KEY;
+  if (resendKey && emailTemplate) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM_EMAIL || 'PropertyPilot AI <billing@propertypilotai.com>',
+          to: [profile.email],
+          subject: emailTemplate.subject,
+          html: emailTemplate.html,
+        }),
+      });
+
+      // Log email
+      await supabaseAdmin.from('email_logs').insert({
+        user_id: sub.user_id,
+        to: profile.email,
+        subject: emailTemplate.subject,
+        status: 'sent',
+      });
+    } catch (emailError) {
+      logger.error('Dunning email send failed', emailError, { endpoint: '/api/stripe/webhook' });
+    }
+  }
+}
+
+/* ─── Invoice Upcoming ─── */
+
+async function handleInvoiceUpcoming(invoice: Stripe.Invoice) {
+  const supabaseAdmin = getSupabaseAdmin();
+  const customerId = typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id;
+  if (!customerId) return;
+
+  const { data: sub } = await supabaseAdmin
+    .from('subscriptions')
+    .select('user_id')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+
+  if (!sub) return;
+
+  const { data: profile } = await supabaseAdmin
+    .from('profiles')
+    .select('full_name, email')
+    .eq('id', sub.user_id)
+    .maybeSingle();
+
+  if (!profile?.email) return;
+
+  const amount = invoice.amount_due ? `€${(invoice.amount_due / 100).toFixed(2)}` : 'your plan fee';
+  const dueDate = invoice.due_date
+    ? new Date(invoice.due_date * 1000).toLocaleDateString('en-GB')
+    : 'soon';
+
+  const { invoiceUpcoming } = await import('@/lib/email/templates/dunning');
+  const emailTemplate = invoiceUpcoming(profile.full_name || 'there', amount, dueDate);
+
+  const resendKey = process.env.RESEND_API_KEY;
+  if (resendKey) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          from: process.env.RESEND_FROM_EMAIL || 'PropertyPilot AI <billing@propertypilotai.com>',
+          to: [profile.email],
+          subject: emailTemplate.subject,
+          html: emailTemplate.html,
+        }),
+      });
+    } catch { /* non-critical */ }
   }
 }

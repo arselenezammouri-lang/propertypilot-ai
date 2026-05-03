@@ -42,6 +42,10 @@ const PaymentSuccessBanner = NextDynamic(() => import("@/components/payment-succ
   ssr: false,
 });
 
+const OverduePaymentBanner = NextDynamic(() => import("@/components/overdue-payment-banner").then(mod => ({ default: mod.OverduePaymentBanner })), {
+  ssr: false,
+});
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const localMockMode = isLocalMockModeEnabled();
@@ -128,6 +132,7 @@ export default async function DashboardPage() {
 
         {/* PAYMENT SUCCESS/CANCELED BANNER */}
         <PaymentSuccessBanner />
+        <OverduePaymentBanner />
 
         {/* ONBOARDING CHECKLIST */}
         <OnboardingChecklist />
