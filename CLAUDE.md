@@ -159,6 +159,28 @@ Supabase tables (run supabase/migrations/20260503_whatsapp_tables.sql):
 
 Plan limits: Free=50 conv/mo, Starter=500, Pro=2000, Agency=10000
 
+## CMA / Valuation System (Priority 5)
+Architecture:
+- lib/cma/types.ts — CMAReport, Comparable, ValuationResult, CMACitation interfaces
+- lib/cma/avm.ts — Automated Valuation Model (weighted comparable analysis)
+  Condition adjustments, feature premiums (sea view +20%, pool +10%, etc.),
+  age adjustments, confidence scoring (data quality + similarity + proximity)
+- lib/cma/comparables-finder.ts — Haversine distance, 5-factor scoring
+  (location 40%, sqm 25%, bedrooms 15%, condition 10%, recency 10%)
+- lib/cma/market-trends.ts — 12-month price evolution, trend summary
+- app/api/cma/generate — Full CMA pipeline: comparables + AVM + trends + citations
+- app/dashboard/cma — Property form + valuation display + comparables grid + citations
+
+Supabase tables (run supabase/migrations/20260503_cma_tables.sql):
+- cma_reports, listings_history, cma_citations
+- usage_credits.cma_reports_generated
+
+Plan limits: Free=1 CMA/mo, Starter=10, Pro=100, Agency=unlimited
+
+Future: XGBoost AVM model. When 10k+ transactions collected via portal feeds,
+train sklearn/XGBoost on (sqm, rooms, condition, zone, year_built, features) → price.
+Serve via Supabase Edge Function or external ML API.
+
 ## Coding Standards
 - NEVER use `any` or `@ts-ignore`
 - Always run `npx tsc --noEmit` before pushing

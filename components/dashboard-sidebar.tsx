@@ -89,6 +89,12 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    title: "Valuation",
+    items: [
+      { label: "CMA Reports", href: "/dashboard/cma", icon: BarChart3, badge: "New" },
+    ],
+  },
+  {
     title: "Voice AI",
     items: [
       { label: "Voice Campaigns", href: "/dashboard/voice-campaigns", icon: Phone, badge: "New" },
