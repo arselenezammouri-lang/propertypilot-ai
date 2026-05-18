@@ -86,9 +86,9 @@ export async function withRetryAndTimeout<T>(
   throw lastError;
 }
 
-export function createOpenAIWithTimeout(apiKey: string): OpenAI {
+export function createOpenAIWithTimeout(apiKey?: string): OpenAI {
   return new OpenAI({
-    apiKey,
+    apiKey: apiKey || process.env.OPENAI_API_KEY || "sk-placeholder",
     timeout: 45000,
     maxRetries: 0,
   });

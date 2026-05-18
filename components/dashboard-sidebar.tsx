@@ -33,6 +33,14 @@ import {
   Bookmark,
   Phone,
   MessageCircle,
+  ImagePlus,
+  FileCheck,
+  FileSearch,
+  Store,
+  TrendingUp,
+  LayoutDashboard,
+  LineChart,
+  Plug,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -79,13 +87,18 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Leads", href: "/dashboard/leads", icon: Users },
       { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
       { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
-      { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
     ],
   },
   {
     title: "Portals",
     items: [
       { label: "Portal Connections", href: "/dashboard/portals", icon: Globe, badge: "New" },
+    ],
+  },
+  {
+    title: "Visual AI",
+    items: [
+      { label: "Visual AI Suite", href: "/dashboard/visual-ai", icon: ImagePlus, badge: "New" },
     ],
   },
   {
@@ -102,12 +115,35 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    title: "Compliance",
+    items: [
+      { label: "Compliance Check", href: "/dashboard/compliance", icon: FileCheck, badge: "New" },
+      { label: "Documents AI", href: "/dashboard/documents", icon: FileSearch, badge: "New" },
+    ],
+  },
+  {
+    title: "Automation",
+    items: [
+      { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
+      { label: "Market Reports", href: "/dashboard/market-reports", icon: LineChart, badge: "New" },
+    ],
+  },
+  {
     title: "Prospecting",
     items: [
       { label: "Market Search", href: "/dashboard/prospecting", icon: Search },
+      { label: "Predictive Leads", href: "/dashboard/predictive-leads", icon: TrendingUp, badge: "Pro" },
+      { label: "Marketplace", href: "/dashboard/marketplace", icon: Store, badge: "New" },
       { label: "Scraper", href: "/dashboard/scraper", icon: Globe },
       { label: "Analyze Link", href: "/dashboard/analyze", icon: BarChart3 },
       { label: "Auditor", href: "/dashboard/auditor", icon: Shield },
+    ],
+  },
+  {
+    title: "Agency",
+    items: [
+      { label: "Branding", href: "/dashboard/branding", icon: Palette, badge: "Agency" },
+      { label: "Integrations", href: "/dashboard/integrations", icon: Plug, badge: "New" },
     ],
   },
   {

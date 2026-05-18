@@ -11,7 +11,9 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
+function getOpenAI() {
+  return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
+}
 const aiCache = getAICacheService();
 
 const analyzeLinkSchema = z.object({
@@ -233,7 +235,7 @@ interface QualityAnalysis {
 
 async function analyzeListingQuality(listingContext: string): Promise<QualityAnalysis> {
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -307,7 +309,7 @@ interface RewrittenContent {
 
 async function generateRewrittenContent(listingContext: string): Promise<RewrittenContent> {
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
