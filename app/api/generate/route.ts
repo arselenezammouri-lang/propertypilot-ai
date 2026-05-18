@@ -17,9 +17,13 @@ import OpenAI from 'openai';
 
 export const dynamic = 'force-dynamic';
 
-const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
+function getOpenAI() {
+  return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
+}
 
-const aiCache = getAICacheService();
+function getAICache() {
+  return getAICacheService();
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -174,7 +178,7 @@ export async function POST(request: NextRequest) {
     
     // Include style and market in cache key for proper cache differentiation
     const cacheKey = `${propertyDescription}|style:${style}|market:${market}`;
-    const cachedResponse = await aiCache.get(cacheKey, 'generate_all');
+    const cachedResponse = await getAICache().get(cacheKey, 'generate_all');
     
     let generatedContent;
     let fromCache = false;
@@ -197,7 +201,7 @@ export async function POST(request: NextRequest) {
         english: englishResponse,
       };
 
-      await aiCache.set(cacheKey, 'generate_all', generatedContent);
+      await getAICache().set(cacheKey, 'generate_all', generatedContent);
     }
 
     await logGeneration(user.id, clientIp);
@@ -400,7 +404,7 @@ Usa termini: ${terminology.standard.join(', ')}`;
       }
     }
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -445,7 +449,7 @@ async function generateShortListing(
       ? 'مواقع مثل Property Finder و Bayut و Dubizzle'
       : 'portali come Subito.it, Idealista e Immobiliare.it';
     
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -489,7 +493,7 @@ async function generateTitles(
       ? `Create data-driven titles that highlight ROI, location growth, and investment potential.`
       : `Create SEO-optimized titles with high-traffic keywords for maximum portal visibility.`;
     
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -560,7 +564,7 @@ async function generateEnglishTranslation(
       ? `INVESTMENT STYLE: Use data-driven language. Focus on ROI, CAP rate, cash flow, appreciation potential, tax benefits.`
       : `STANDARD PRO STYLE: Use SEO-optimized language for portals. Focus on location, key features, move-in ready.`;
     
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {

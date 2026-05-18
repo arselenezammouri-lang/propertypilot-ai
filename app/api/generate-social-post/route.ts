@@ -9,7 +9,9 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
+function getOpenAI() {
+  return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
+}
 
 const SocialPostRequestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
@@ -96,7 +98,7 @@ async function generateInstagramPost(
   maxWords: number
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -134,7 +136,7 @@ async function generateFacebookPost(
   maxWords: number
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -179,7 +181,7 @@ async function generateHashtags(
       ? 'Includi hashtag per mercato luxury: #luxuryrealestate #luxuryhomes #premiumproperties' 
       : '';
 
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -225,7 +227,7 @@ async function generateTikTokScript(
   durationSeconds: number
 ): Promise<string> {
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {

@@ -8,7 +8,9 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
+function getOpenAI() {
+  return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
+}
 
 async function enrichLeadWithAI(lead: Lead): Promise<LeadEnrichmentResult> {
   const marketContext = lead.market === 'usa' 
@@ -96,7 +98,7 @@ REGOLE:
 - Sii specifico e pratico nei suggerimenti`;
 
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {

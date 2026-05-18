@@ -14,7 +14,9 @@ export const dynamic = 'force-dynamic';
 function getOpenAI() {
   return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
 }
-const aiCache = getAICacheService();
+function getAICache() {
+  return getAICacheService();
+}
 
 const analyzeLinkSchema = z.object({
   url: z.string().url('URL non valido'),
@@ -152,7 +154,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     }
     
     const cacheKey = `${scrapedData.title}:${descriptionForCache.substring(0, 200)}`;
-    const cachedAnalysis = await aiCache.get(cacheKey, 'analyze_listing');
+    const cachedAnalysis = await getAICache().get(cacheKey, 'analyze_listing');
     
     let analysis: ListingAnalysis;
     let fromCache = false;
@@ -164,7 +166,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<AnalyzeLi
     } else {
       logger.debug('[ANALYZE-LINK] Generating AI analysis');
       analysis = await generateListingAnalysis(scrapedData);
-      await aiCache.set(cacheKey, 'analyze_listing', analysis);
+      await getAICache().set(cacheKey, 'analyze_listing', analysis);
     }
 
     return NextResponse.json({

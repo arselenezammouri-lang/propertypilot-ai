@@ -10,7 +10,9 @@ import { logger } from '@/lib/utils/safe-logger';
 
 export const dynamic = 'force-dynamic';
 
-const openai = createOpenAIWithTimeout(process.env.OPENAI_API_KEY!);
+function getOpenAI() {
+  return createOpenAIWithTimeout(process.env.OPENAI_API_KEY || "");
+}
 
 const TitlesRequestSchema = z.object({
   tipoTransazione: z.enum(['vendita', 'affitto', 'affitto_breve']).optional().default('vendita'),
@@ -102,7 +104,7 @@ async function generateMainTitles(
   const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
   
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -155,7 +157,7 @@ async function generateClickbaitTitles(
   const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
   
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -203,7 +205,7 @@ async function generateLuxuryTitles(
   const transazione = TRANSAZIONE_PROMPTS[tipoTransazione || 'vendita'];
   
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -253,7 +255,7 @@ async function generateSEOTitles(
   const keywordAction = tipoTransazione === 'affitto' ? 'in affitto' : tipoTransazione === 'affitto_breve' ? 'affitto breve' : 'in vendita';
   
   return withRetryAndTimeout(async () => {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
@@ -300,7 +302,7 @@ async function selectBestTitle(
   return withRetryAndTimeout(async () => {
     const titlesText = allTitles.map((t, i) => `${i + 1}. ${t}`).join('\n');
     
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages: [
         {
