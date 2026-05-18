@@ -356,3 +356,41 @@ For full MCP SDK integration:
 2. Current implementation is compatible with all MCP clients (Claude Desktop, Cursor, Windsurf)
 3. OAuth bearer auth via api_key field in profiles table
 4. To generate API keys: add UI in /dashboard/settings or /dashboard/integrations
+
+## AI Feature Extraction (Competitive Gap — Properstar-style)
+- lib/feature-extraction/extractor.ts — GPT-4o-mini extracts 35+ structured amenities from free-text
+- app/api/feature-extraction/route.ts — POST with description text
+- Detects: property_type, bedrooms, bathrooms, sqm, pool, sea_view, mountain_view, parking, 
+  elevator, AC, furnished, solar_panels, EV charging, wheelchair accessible, and more
+- Increases searchable attributes by 40%+ per listing
+
+## GDPR DSAR + Consent Automation
+- lib/gdpr/types.ts — Consent types, DSAR handling, per-country DPA info
+- app/api/gdpr/route.ts — POST (create_dsar, update_consent, export_data), GET (list)
+- supabase/migrations/20260518_gdpr.sql — gdpr_consents + gdpr_dsar_requests + RLS
+- Countries: IT (Garante), FR (CNIL), ES (AEPD), DE (BfDI), UK (ICO), PT (CNPD)
+- 30-day DSAR deadline tracking, consent history, IP/UA logging
+
+## EU Tax/Transfer Cost Calculator
+- lib/tax-calculator/eu-transfer-costs.ts — 6 country calculators
+- IT: Imposta di Registro + IMU | FR: Droits de Mutation + Taxe Foncière
+- ES: ITP + IBI | DE: Grunderwerbsteuer + Grundsteuer
+- UK: SDLT + Council Tax | PT: IMT + IMI
+- First-home relief, notary fees, agency commission per country
+
+## Embeddable AI Chatbot Widget
+- app/api/chatbot-embed/route.ts — Chat API + widget config
+- Agency-branded, multilingual, logs to CRM
+- supabase/migrations/20260518_chatbot_gdpr.sql — chatbot_conversations + RLS
+- Embed: <script src="https://propertypilot-ai.vercel.app/chatbot-widget.js" data-agency-id="UUID"></script>
+
+## Free Tools (SEO magnets — top-of-funnel)
+1. /tools/ai-property-description — AI listing generator (existing)
+2. /tools/mortgage-calculator — Monthly payment calculator
+3. /tools/roi-calculator — Rental yield + capital gain ROI
+4. /tools/cma-calculator — EU transfer cost calculator (6 countries)
+
+## ⚠️ FOUNDER ACTION: Additional Migrations (v50)
+Run these after the P7-P16 migrations:
+9. 20260518_gdpr.sql — gdpr_consents + gdpr_dsar_requests + RLS
+10. 20260518_chatbot_gdpr.sql — chatbot_conversations + RLS
