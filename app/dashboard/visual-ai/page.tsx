@@ -14,6 +14,9 @@ import {
   Camera,
   Palette,
   Eye,
+  Download,
+  Plus,
+  GripVertical,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -470,44 +473,114 @@ export default function VisualAIPage() {
         )}
       </div>
 
-      {/* Before/After Modal */}
+      {/* Before/After Modal with Slider */}
       {selectedJob && selectedJob.status === "completed" && selectedJob.output_url && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
-          onClick={() => setSelectedJob(null)}
-        >
-          <div
-            className="bg-card rounded-2xl border border-border/50 max-w-5xl w-full overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 border-b border-border/50 flex items-center justify-between">
-              <h3 className="font-semibold capitalize">
-                {selectedJob.job_type.replace(/_/g, " ")} — Before / After
-              </h3>
-              <button
-                onClick={() => setSelectedJob(null)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-0">
-              <div className="relative">
-                <img src={selectedJob.input_url} alt="Before" className="w-full" />
-                <span className="absolute bottom-3 left-3 bg-black/60 text-white text-sm px-3 py-1 rounded-lg">
-                  Before
-                </span>
-              </div>
-              <div className="relative">
-                <img src={selectedJob.output_url} alt="After" className="w-full" />
-                <span className="absolute bottom-3 right-3 bg-violet-600/80 text-white text-sm px-3 py-1 rounded-lg">
-                  After — AI Enhanced
-                </span>
-              </div>
-            </div>
+        <BeforeAfterModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Interactive before/after slider modal */
+function BeforeAfterModal({ job, onClose }: { job: VisualJob; onClose: () => void }) {
+  const [sliderPos, setSliderPos] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const pos = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
+    setSliderPos(pos);
+  };
+
+  const handleDownload = () => {
+    if (!job.output_url) return;
+    const a = document.createElement("a");
+    a.href = job.output_url;
+    a.download = `propertypilot-${job.job_type}-${job.id}.jpg`;
+    a.click();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-card rounded-2xl border border-border/50 max-w-5xl w-full overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-4 border-b border-border/50 flex items-center justify-between">
+          <h3 className="font-semibold capitalize">
+            {job.job_type.replace(/_/g, " ")} — Before / After Comparison
+          </h3>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="text-xs gap-1" onClick={handleDownload}>
+              <Download className="w-3 h-3" /> Download HD
+            </Button>
+            <Button size="sm" className="text-xs gap-1 bg-violet-600 hover:bg-violet-500 text-white">
+              <Plus className="w-3 h-3" /> Add to Property
+            </Button>
+            <button
+              onClick={onClose}
+              className="text-muted-foreground hover:text-foreground ml-2"
+            >
+              ✕
+            </button>
           </div>
         </div>
-      )}
+
+        {/* Before/After Slider */}
+        <div
+          className="relative w-full aspect-video overflow-hidden cursor-col-resize select-none"
+          onMouseDown={() => setIsDragging(true)}
+          onMouseUp={() => setIsDragging(false)}
+          onMouseLeave={() => setIsDragging(false)}
+          onMouseMove={handleMove}
+          onTouchStart={() => setIsDragging(true)}
+          onTouchEnd={() => setIsDragging(false)}
+          onTouchMove={handleMove}
+        >
+          {/* After (full width, behind) */}
+          <img
+            src={job.output_url!}
+            alt="After"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Before (clipped) */}
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{ width: `${sliderPos}%` }}
+          >
+            <img
+              src={job.input_url}
+              alt="Before"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ minWidth: "100%", maxWidth: "none", width: `${100 / (sliderPos / 100)}%` }}
+            />
+          </div>
+          {/* Slider line */}
+          <div
+            className="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg z-10"
+            style={{ left: `${sliderPos}%` }}
+          >
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+              <GripVertical className="w-4 h-4 text-slate-700" />
+            </div>
+          </div>
+          {/* Labels */}
+          <span className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded z-20">
+            Before
+          </span>
+          <span className="absolute top-3 right-3 bg-violet-600/80 text-white text-xs px-2 py-1 rounded z-20">
+            After — AI
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -37,9 +37,16 @@ const plans = [
     borderColor: "border-blue-500/40",
     bgClass: "bg-background",
     includes: [
-      "Strumenti AI di base per annunci",
-      "Per singoli agenti",
-      "Accesso alle funzioni core di generazione annunci",
+      "50 AI-generated listings / month",
+      "AI property descriptions (3 styles × 6 languages)",
+      "Lead Scoring v2 + email automation",
+      "20 Visual AI jobs (staging, enhancement)",
+      "Compliance Shield (6 EU countries)",
+      "Document Intelligence (mandates, energy certs)",
+      "CMA Reports (10/month)",
+      "Portal connections (Immobiliare, Idealista...)",
+      "Weekly market reports",
+      "Email support",
     ],
     cta: "Inizia con Starter",
     popular: false,
@@ -56,9 +63,17 @@ const plans = [
     borderColor: "border-amber-400",
     bgClass: "bg-gradient-to-b from-amber-400/10 via-amber-50 to-background",
     includes: [
-      "Tutte le funzionalità Starter",
-      "CRM e automazioni",
-      "Strumenti AI avanzati per agenzie",
+      "Everything in Starter, plus:",
+      "200 listings + CRM with lead management",
+      "Speed-to-Lead automation (call, WhatsApp, email)",
+      "100 Visual AI jobs / month",
+      "Voice AI campaigns (300 min/mo)",
+      "WhatsApp AI agent (2,000 conversations/mo)",
+      "Predictive Seller Leads (likely-to-list AI)",
+      "Cross-border marketplace access",
+      "100 CMA Reports / month",
+      "20 automations + flow editor",
+      "Priority support",
     ],
     cta: "Passa a Pro",
     popular: true,
@@ -75,9 +90,17 @@ const plans = [
     borderColor: "border-emerald-500/50",
     bgClass: "bg-background",
     includes: [
-      "Tutte le funzionalità Pro",
-      "Pensato per team fino a 10 agenti",
-      "Gestione multi-utente / multi-agenzia",
+      "Everything in Pro, plus:",
+      "Unlimited listings + 10 agent seats",
+      "White-label client portal (your brand)",
+      "500 Visual AI jobs / month",
+      "Voice AI (1,500 min/mo) + voice cloning",
+      "MCP Server (AI assistant integration)",
+      "Custom domain for client portal",
+      "Unlimited CMA reports + automations",
+      "Auto-prospecting + API access",
+      "Cross-border marketplace commission deals",
+      "Dedicated account manager",
     ],
     cta: "Passa a Agency",
     popular: false,
@@ -94,9 +117,12 @@ const plans = [
     borderColor: "border-[#FFD700]",
     bgClass: "bg-gradient-to-b from-amber-50 via-amber-50/50 to-background",
     includes: [
-      "Setup completo \"done-for-you\"",
-      "Implementazione e onboarding guidato",
-      "Supporto premium per il lancio",
+      "Complete done-for-you setup",
+      "Portal connections configured",
+      "White-label branding setup",
+      "Team onboarding (up to 10 agents)",
+      "Custom automation workflows",
+      "30-day premium support",
     ],
     cta: "Acquista Agency Boost",
     popular: false,
@@ -182,8 +208,19 @@ export default function PricingPage() {
           tagline: isItalian ? "Strumenti AI per agenti individuali" : "AI listing tools for solo agents",
           period: isItalian ? "/ mese" : "/ month",
           includes: isItalian
-            ? ["Strumenti AI di base per annunci", "Per singoli agenti", "Accesso alle funzioni core di generazione annunci"]
-            : ["Core AI listing tools", "Built for solo agents", "Access to essential listing generation features"],
+            ? [
+                "50 annunci AI generati / mese",
+                "Descrizioni AI (3 stili × 6 lingue)",
+                "Lead Scoring v2 + automazione email",
+                "20 Visual AI (staging, enhancement)",
+                "Compliance Shield (6 Paesi EU)",
+                "Document Intelligence (mandati, APE)",
+                "10 Report CMA / mese",
+                "Connessioni portali (Immobiliare, Idealista...)",
+                "Report settimanali di mercato",
+                "Supporto email",
+              ]
+            : plan.includes,
           cta: isItalian ? "Inizia con Starter" : "Start with Starter",
         };
       case "pro":
@@ -192,8 +229,20 @@ export default function PricingPage() {
           tagline: isItalian ? "CRM, automazioni e strumenti AI" : "CRM, automations & AI tools",
           period: isItalian ? "/ mese" : "/ month",
           includes: isItalian
-            ? ["Tutte le funzionalità Starter", "CRM e automazioni", "Strumenti AI avanzati per agenzie"]
-            : ["Everything in Starter", "CRM and automations", "Advanced AI tools for agencies"],
+            ? [
+                "Tutto dello Starter, più:",
+                "200 annunci + CRM con gestione lead",
+                "Speed-to-Lead (chiamata, WhatsApp, email auto)",
+                "100 Visual AI / mese",
+                "Voice AI (300 min/mese)",
+                "WhatsApp AI agent (2.000 conversazioni/mese)",
+                "Predictive Seller Leads (AI likely-to-list)",
+                "Accesso marketplace cross-border",
+                "100 Report CMA / mese",
+                "20 automazioni + flow editor",
+                "Supporto prioritario",
+              ]
+            : plan.includes,
           cta: isItalian ? "Passa a Pro" : "Upgrade to Pro",
         };
       case "agency":
@@ -202,8 +251,20 @@ export default function PricingPage() {
           tagline: isItalian ? "Per team fino a 10 agenti" : "For teams up to 10 agents",
           period: isItalian ? "/ mese" : "/ month",
           includes: isItalian
-            ? ["Tutte le funzionalità Pro", "Pensato per team fino a 10 agenti", "Gestione multi-utente / multi-agenzia"]
-            : ["Everything in Pro", "Built for teams up to 10 agents", "Multi-user / multi-agency management"],
+            ? [
+                "Tutto del Pro, più:",
+                "Annunci illimitati + 10 posti agente",
+                "Portale clienti white-label (tuo brand)",
+                "500 Visual AI / mese",
+                "Voice AI (1.500 min/mese) + voice cloning",
+                "MCP Server (integrazione AI assistant)",
+                "Dominio personalizzato per portale clienti",
+                "CMA e automazioni illimitate",
+                "Auto-prospecting + accesso API",
+                "Marketplace cross-border + commissioni",
+                "Account manager dedicato",
+              ]
+            : plan.includes,
           cta: isItalian ? "Passa a Agency" : "Upgrade to Agency",
         };
       case "boost":
@@ -212,8 +273,15 @@ export default function PricingPage() {
           tagline: isItalian ? "Pacchetto setup done-for-you" : "Done-for-you setup package",
           period: isItalian ? "una tantum" : "one-time",
           includes: isItalian
-            ? ["Setup completo \"done-for-you\"", "Implementazione e onboarding guidato", "Supporto premium per il lancio"]
-            : ["Complete done-for-you setup", "Guided implementation and onboarding", "Premium launch support"],
+            ? [
+                "Setup completo done-for-you",
+                "Connessioni portali configurate",
+                "Setup branding white-label",
+                "Onboarding team (fino a 10 agenti)",
+                "Automazioni personalizzate",
+                "30 giorni supporto premium",
+              ]
+            : plan.includes,
           cta: isItalian ? "Acquista Agency Boost" : "Buy Agency Boost",
         };
       default:
@@ -381,15 +449,21 @@ export default function PricingPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {((pp?.features ?? [
-              { title: "AI GPT-4 Premium", desc: "Modelli AI più avanzati del mercato" },
-              { title: "100% Italiano", desc: "Contenuti ottimizzati per il mercato italiano" },
-              { title: "Generazione Istantanea", desc: "Risultati in meno di 30 secondi" },
-              { title: "Facile da Usare", desc: "Nessuna competenza tecnica richiesta" },
-              { title: "Annunci Professionali", desc: "Qualità da agenzia di comunicazione" },
-              { title: "Multi-Agenzia", desc: "Gestisci più sedi con un solo account" },
+              { title: "Visual AI Suite", desc: "Virtual staging, photo enhancement, floor plans — sell 73% faster" },
+              { title: "Compliance Shield", desc: "Pre-publish compliance checks for 6 EU countries (IT, FR, ES, DE, UK, PT)" },
+              { title: "Document Intelligence", desc: "Extract data from mandates, energy certs, deeds — save 10+ hours/week" },
+              { title: "Speed-to-Lead", desc: "Auto-call in 30s, WhatsApp in 60s, email in 90s — 2.3× more deals" },
+              { title: "16 Portal Integrations", desc: "Immobiliare.it, Idealista, ImmoScout24, Rightmove, SeLoger & more" },
+              { title: "Voice + WhatsApp AI", desc: "AI phone calls + WhatsApp conversations in 6 languages, 24/7" },
+              { title: "CMA Valuations", desc: "Automated property valuations with comparables, trends & AI citations" },
+              { title: "White-Label Portal", desc: "Branded client portal with mortgage calc, viewings & documents" },
+              { title: "Cross-Border Marketplace", desc: "Match buyers across 6 EU countries with AI translation" },
+              { title: "Predictive Seller Leads", desc: "AI identifies homeowners likely to list — get to them first" },
+              { title: "Weekly Market Reports", desc: "Auto-generated market intelligence with Idealista, ImmoScout24, Rightmove data" },
+              { title: "MCP Integration", desc: "Connect Claude Desktop, Cursor, or any AI assistant to your CRM" },
             ]) as { title: string; desc: string }[]).map((feat, index) => {
-              const icons = [Sparkles, Shield, Clock, Rocket, Crown, Building2];
-              const Icon = icons[index] ?? Sparkles;
+              const icons = [Sparkles, Shield, Clock, Rocket, Crown, Building2, Star, Headphones, Gift, Sparkles, Shield, Clock];
+              const Icon = icons[index % icons.length];
               return (
               <div 
                 key={index} 
