@@ -226,3 +226,119 @@ When voice agent v2 is complete, add auto-call trigger:
 - Call pathway: qualify interest, check budget, book viewing
 - Log call outcome in calls table, update lead score based on result
 - Requires: Bland AI pathways, per-country Twilio SIP numbers, ElevenLabs voice cloning
+
+## Visual AI Suite (Priority 7)
+Architecture:
+- lib/visual-ai/replicate-client.ts — Replicate API client (create, poll, cancel predictions)
+- lib/visual-ai/virtual-staging.ts — 6 styles × 7 room types, SDXL-based staging
+- lib/visual-ai/photo-enhancement.ts — HDR, sky replacement, declutter, color correction, twilight
+- lib/visual-ai/floor-plans.ts — 2D standard, 2D furnished, 3D rendered
+- app/api/visual-ai/ — POST create job, GET list jobs, webhook for Replicate callbacks
+- app/dashboard/visual-ai/ — 3-tab UI, before/after gallery, usage meter
+
+Required env var:
+- REPLICATE_API_TOKEN — Replicate API key (https://replicate.com/account/api-tokens)
+
+Webhook: https://propertypilot-ai.vercel.app/api/visual-ai/webhook
+Plan limits: Free=2, Starter=20, Pro=100, Agency=500 jobs/month
+
+## Compliance Shield (Priority 8)
+Architecture:
+- lib/compliance/rules/{it,fr,es,de,uk,pt}.ts — 35+ country-specific compliance rules
+- lib/compliance/checker.ts — Rule engine (errors -20pts, warnings -5pts)
+- lib/compliance/ai-verification.ts — GPT-4o deep compliance analysis
+- app/api/compliance/check/ — POST with listing data + country
+- app/dashboard/compliance/ — Green/yellow/red status with AI deep verification
+
+Countries covered: Italy (APE, conformità), France (DPE, GES, Loi ALUR, Loi Carrez),
+Spain (CEE), Germany (GEG Energieausweis, WoFlV, Maklergesetz),
+UK (EPC, Trading Standards), Portugal (SCE, licença de utilização)
+
+## Document Intelligence (Priority 9)
+Architecture:
+- lib/document-ai/extractor.ts — GPT-4o vision extraction with structured output
+- lib/document-ai/templates/{mandate,energy-certificate,deed,id-document}.ts — 48 fields
+- app/api/document-ai/extract/ — POST with image URL
+- app/dashboard/documents/ — Side-by-side view, click-to-cite
+
+## Lead Scoring v2 + Speed-to-Lead (Priority 10)
+Architecture:
+- lib/ai/lead-scoring-v2.ts — Hybrid 5-category scoring (engagement, recency, intent, profile, behavioral)
+- lib/automation/speed-to-lead.ts — Plan-aware automation: 90+→call, 80+→WhatsApp, 60+→email
+- app/dashboard/automations/ — 6 templates, threshold sliders, run history
+
+ML feature vector: 17 dimensions, stored as REAL[] for future XGBoost training.
+
+## White-Label Client Portal (Priority 11)
+Architecture:
+- app/client/[agencySlug]/ — Branded portal: properties, viewings, documents, chat, mortgage calc
+- lib/multi-tenant/theming.ts — CSS variables from branding config
+- app/api/agency/branding/ — GET/PUT branding (Agency plan only)
+- app/api/clients/ — CRUD for client management
+- app/dashboard/branding/ — Visual branding editor with live preview
+
+Agency plan only. Custom domain support via Vercel API.
+
+## MCP Server (Priority 12)
+Architecture:
+- lib/mcp/tools.ts — 10 tool definitions (listings, leads, scoring, CMA, compliance, analytics)
+- lib/mcp/executor.ts — Tool execution routing to Supabase queries
+- app/api/mcp/ — JSON-RPC 2.0 endpoint with Bearer auth
+
+MCP Endpoint: https://propertypilot-ai.vercel.app/api/mcp
+Auth: Bearer token (api_key field in profiles table)
+Compatible: Claude Desktop, Cursor, Windsurf, custom MCP clients
+
+## Cross-Border Marketplace (Priority 13)
+Architecture:
+- lib/marketplace/types.ts — Matching algorithm, 1.5% platform fee
+- app/api/marketplace/ — Public browse + agent list
+- app/dashboard/marketplace/ — Filterable grid with cross-border badges
+
+Stripe Connect escrow ready (escrow_transactions table).
+
+## Predictive Seller Leads (Priority 14)
+Architecture:
+- lib/predictive-leads/model.ts — 17-feature heuristic model
+- app/dashboard/predictive-leads/ — Probability bars, signal breakdown, action buttons
+- ML-ready: feature_vector as REAL[] for future XGBoost/LightGBM
+
+⚠️ FOUNDER ACTION: Casafari Partnership
+Apply for data partnership with Casafari (https://casafari.com) for property ownership data.
+This dramatically improves prediction accuracy for likely-to-list identification.
+
+## Native Mobile App (Priority 15)
+Location: apps/mobile/ (React Native/Expo)
+Screens: Dashboard, Leads CRM, Camera capture, Voice memos (Whisper), Settings, Login
+Shared Supabase auth with web app.
+Required: EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY, EXPO_PUBLIC_API_URL
+
+To run: cd apps/mobile && npm install && npx expo start
+
+## Market Reports (Priority 16)
+Architecture:
+- lib/market-reports/types.ts — Market indices, report generation, AI summary
+- app/api/cron/market-reports/ — Sunday 6am cron (Vercel Cron)
+- app/api/market-reports/ — GET list reports
+- app/dashboard/market-reports/ — Market indices table, highlights, recommendations
+
+Cron: "0 6 * * 0" (Sunday 6am) — configured in vercel.json
+Data sources: Idealista, ImmoScout24, Rightmove, SeLoger, ISTAT, INE, Destatis
+
+## ⚠️ FOUNDER ACTION: New Environment Variables (Q4 2026 + H1 2027)
+Set in Vercel Environment Variables:
+1. REPLICATE_API_TOKEN — For Visual AI Suite (staging, enhancement, floor plans)
+2. EXPO_PUBLIC_SUPABASE_URL — For mobile app
+3. EXPO_PUBLIC_SUPABASE_ANON_KEY — For mobile app
+4. EXPO_PUBLIC_API_URL — https://propertypilot-ai.vercel.app
+
+## ⚠️ FOUNDER ACTION: Supabase Migrations
+Run ALL SQL files in order from supabase/migrations/:
+1. 20260518_visual_ai.sql — visual_ai_jobs + RLS
+2. 20260518_compliance.sql — compliance_reports + RLS
+3. 20260518_documents.sql — extracted_documents + RLS
+4. 20260518_automations.sql — automation_configs, automation_runs, lead_scores_v2 + RLS
+5. 20260518_white_label.sql — agency_branding, clients, client_assigned_listings + RLS
+6. 20260518_marketplace.sql — marketplace_listings, buyer_searches, marketplace_matches, escrow_transactions + RLS
+7. 20260518_predictive_leads.sql — predictive_lead_features, predictive_training_data + RLS
+8. 20260518_market_reports.sql — market_report_configs, market_reports + RLS
