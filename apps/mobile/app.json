@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "PropertyPilot AI",
+    "slug": "propertypilot-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0f0f23"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.propertypilot.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "PropertyPilot needs camera access to capture property photos",
+        "NSMicrophoneUsageDescription": "PropertyPilot needs microphone access for voice memos",
+        "NSPhotoLibraryUsageDescription": "PropertyPilot needs photo library access to select property images"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f0f23"
+      },
+      "package": "com.propertypilot.mobile",
+      "permissions": ["CAMERA", "RECORD_AUDIO", "READ_EXTERNAL_STORAGE"]
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-av",
+      "expo-image-picker",
+      "expo-secure-store"
+    ]
+  }
+}
