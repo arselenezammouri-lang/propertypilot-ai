@@ -34,6 +34,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Marketplace (public)
     { url: `${baseUrl}/marketplace`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
 
+    // Free tools (SEO magnets)
+    { url: `${baseUrl}/tools/mortgage-calculator`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/tools/roi-calculator`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/tools/cma-calculator`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
+
+    // Product pages
+    { url: `${baseUrl}/changelog`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${baseUrl}/roadmap`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+
     // Blog
     { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${baseUrl}/blog/ai-real-estate-listings-2025`, lastModified: new Date('2025-03-28'), changeFrequency: 'monthly', priority: 0.8 },
