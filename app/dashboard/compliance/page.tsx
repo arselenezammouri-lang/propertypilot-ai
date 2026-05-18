@@ -112,13 +112,18 @@ export default function CompliancePage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <div>
+      <div className="flex items-center justify-between">
+        <div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
           Compliance Shield
         </h1>
         <p className="text-muted-foreground mt-1">
           Check your listings against EU country-specific regulations
         </p>
+        </div>
+        <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={handleCheck} disabled={loading}>
+          <Shield className="w-3 h-3" /> Bulk Re-Check All Listings
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

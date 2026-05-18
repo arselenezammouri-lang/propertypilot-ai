@@ -12,6 +12,8 @@ import {
   Sparkles,
   Eye,
   ChevronRight,
+  Home,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -211,18 +213,28 @@ export default function DocumentsPage() {
                     <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                     <span className="font-medium">Extraction Complete</span>
                   </div>
-                  <Badge
-                    variant="outline"
-                    className={`${
-                      confidence > 0.8
-                        ? "text-emerald-400 border-emerald-500/30"
-                        : confidence > 0.5
-                        ? "text-amber-400 border-amber-500/30"
-                        : "text-red-400 border-red-500/30"
-                    }`}
-                  >
-                    {Math.round(confidence * 100)}% confidence
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="outline"
+                      className={`${
+                        confidence > 0.8
+                          ? "text-emerald-400 border-emerald-500/30"
+                          : confidence > 0.5
+                          ? "text-amber-400 border-amber-500/30"
+                          : "text-red-400 border-red-500/30"
+                      }`}
+                    >
+                      {Math.round(confidence * 100)}% confidence
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-3">
+                  <Button size="sm" variant="outline" className="text-xs gap-1 flex-1">
+                    <Home className="w-3 h-3" /> Save to Property
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs gap-1 flex-1">
+                    <Users className="w-3 h-3" /> Save to Lead
+                  </Button>
                 </div>
               </Card>
 

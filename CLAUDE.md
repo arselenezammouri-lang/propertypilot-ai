@@ -342,3 +342,17 @@ Run ALL SQL files in order from supabase/migrations/:
 6. 20260518_marketplace.sql — marketplace_listings, buyer_searches, marketplace_matches, escrow_transactions + RLS
 7. 20260518_predictive_leads.sql — predictive_lead_features, predictive_training_data + RLS
 8. 20260518_market_reports.sql — market_report_configs, market_reports + RLS
+
+## ⚠️ FOUNDER ACTION: CubiCasa Floor Plans (Priority 7)
+When ready for production floor plan generation:
+1. Apply for CubiCasa API access: https://www.cubicasa.com/api
+2. Set CUBICASA_API_KEY in Vercel env vars
+3. Update lib/visual-ai/floor-plans.ts to use CubiCasa instead of Replicate placeholder
+
+## MCP Server Notes (Priority 12)
+Current implementation uses raw JSON-RPC 2.0 over HTTPS at /api/mcp.
+For full MCP SDK integration:
+1. npm install @modelcontextprotocol/sdk (when needed for advanced features)
+2. Current implementation is compatible with all MCP clients (Claude Desktop, Cursor, Windsurf)
+3. OAuth bearer auth via api_key field in profiles table
+4. To generate API keys: add UI in /dashboard/settings or /dashboard/integrations

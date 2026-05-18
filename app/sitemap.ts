@@ -31,6 +31,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Free tools (viral)
     { url: `${baseUrl}/tools/ai-property-description`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
 
+    // Marketplace (public)
+    { url: `${baseUrl}/marketplace`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+
     // Blog
     { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${baseUrl}/blog/ai-real-estate-listings-2025`, lastModified: new Date('2025-03-28'), changeFrequency: 'monthly', priority: 0.8 },

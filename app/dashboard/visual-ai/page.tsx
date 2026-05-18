@@ -113,6 +113,10 @@ export default function VisualAIPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    processFile(file);
+  };
+
+  const processFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
@@ -120,6 +124,21 @@ export default function VisualAIPage() {
       setImageUrl(result);
     };
     reader.readAsDataURL(file);
+  };
+
+  // Drag-drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      processFile(file);
+    }
   };
 
   // Submit job
@@ -217,7 +236,7 @@ export default function VisualAIPage() {
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-violet-400" /> Upload Empty Room
               </h3>
-              <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
+              <label onDragOver={handleDragOver} onDrop={handleDrop} className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
                 {imagePreview && activeTab === "virtual_staging" ? (
                   <img src={imagePreview} alt="Preview" className="h-full w-full object-cover rounded-xl" />
                 ) : (
@@ -292,7 +311,7 @@ export default function VisualAIPage() {
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-violet-400" /> Upload Photo
               </h3>
-              <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
+              <label onDragOver={handleDragOver} onDrop={handleDrop} className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
                 {imagePreview && activeTab === "photo_enhancement" ? (
                   <img src={imagePreview} alt="Preview" className="h-full w-full object-cover rounded-xl" />
                 ) : (
@@ -348,7 +367,7 @@ export default function VisualAIPage() {
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-violet-400" /> Upload Photo / Sketch
               </h3>
-              <label className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
+              <label onDragOver={handleDragOver} onDrop={handleDrop} className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-border/60 rounded-xl cursor-pointer hover:border-violet-500/50 transition-colors">
                 {imagePreview && activeTab === "floor_plan" ? (
                   <img src={imagePreview} alt="Preview" className="h-full w-full object-cover rounded-xl" />
                 ) : (
