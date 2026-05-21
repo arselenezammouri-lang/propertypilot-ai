@@ -4,7 +4,7 @@ import { ArrowRight, Building2, Sparkles, Users, Phone, Zap, Globe, BarChart3, S
 
 export const metadata: Metadata = {
   title: "AI Real Estate Software | PropertyPilot AI — #1 Platform in Europe",
-  description: "The most advanced AI real estate software in Europe. Generate professional listings in 30 seconds, manage leads with AI CRM, automate follow-ups. Used by 1,000+ agencies across Europe.",
+  description: "The most advanced AI real estate software in Europe. Generate professional listings in 30 seconds, manage leads with AI CRM, automate follow-ups. Built for agencies across 6 European markets.",
   keywords: ["AI real estate software", "artificial intelligence real estate", "real estate agency software", "listing generator AI", "real estate CRM", "AI property platform", "Rightmove AI", "Zoopla automation", "real estate automation", "property listing AI"],
   openGraph: { title: "AI Real Estate Software #1 in Europe | PropertyPilot AI", description: "Generate listings in 30 seconds. AI CRM. Voice AI. Used by 1,000+ European agencies.", locale: "en_US", type: "website" },
   alternates: {
@@ -50,7 +50,7 @@ export default function EnglishLandingPage() {
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇪🇺</span> The #1 AI Real Estate Software in Europe</div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">The AI operating system<br />for real estate agencies</h1>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Generate professional listings in 30 seconds. Manage leads with AI CRM. Automate follow-ups and calls. <span className="text-foreground font-medium">Used by 1,000+ agencies across Europe.</span></p>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Generate professional listings in 30 seconds. Manage leads with AI CRM. Automate follow-ups and calls. <span className="text-foreground font-medium">Built for agencies across 6 European markets.</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/auth/signup" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-foreground text-background px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-foreground/90">Start free trial <ArrowRight className="w-4 h-4" /></Link>
               <Link href="/demo" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-border px-8 py-3.5 rounded-xl text-base font-medium hover:bg-muted">See the demo</Link>
@@ -61,7 +61,7 @@ export default function EnglishLandingPage() {
 
         <section className="py-12 border-y border-border/40 bg-muted/30">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
-            {[{ v: "1,000+", l: "Agencies in Europe" }, { v: "10+", l: "Hours saved per week" }, { v: "3x", l: "Faster listing creation" }, { v: "85%", l: "Less repetitive work" }].map(s => (
+            {[{ v: "47+", l: "AI-powered tools" }, { v: "10+", l: "Hours saved per week" }, { v: "3x", l: "Faster listing creation" }, { v: "85%", l: "Less repetitive work" }].map(s => (
               <div key={s.l}><div className="text-3xl sm:text-4xl font-bold">{s.v}</div><div className="text-sm text-muted-foreground mt-1">{s.l}</div></div>
             ))}
           </div>
@@ -88,7 +88,7 @@ export default function EnglishLandingPage() {
         <section className="py-20">
           <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to transform your agency?</h2>
-            <p className="text-lg text-muted-foreground mb-8">Join 1,000+ agencies across Europe already using AI to close more deals, faster.</p>
+            <p className="text-lg text-muted-foreground mb-8">Join agencies across Europe already using AI to close more deals, faster.</p>
             <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-foreground/90">Start free trial <ArrowRight className="w-4 h-4" /></Link>
           </div>
         </section>

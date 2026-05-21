@@ -101,7 +101,7 @@ function LoginClient() {
             The AI operating system<br />for <span className="text-gradient">real estate</span>
           </h2>
           <p className="text-muted-foreground mb-10 leading-relaxed">
-            Join 500+ agencies across Europe using AI to generate listings, score leads, and close more deals.
+            Generate AI-powered listings, score leads automatically, and close more deals across 6 European markets.
           </p>
           {/* Testimonial */}
           <div className="pp-glass-card p-6">

@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle, Building2, Globe, Sparkles, Zap, Users, BarCha
 
 export const metadata: Metadata = {
   title: "Software Immobiliare AI | PropertyPilot AI — Piattaforma #1 in Italia",
-  description: "Il software immobiliare con intelligenza artificiale più avanzato d'Italia. Genera annunci professionali in 30 secondi, gestisci lead con CRM AI, automatizza follow-up. Usato da 500+ agenzie.",
+  description: "Il software immobiliare con intelligenza artificiale più avanzato d'Italia. Genera annunci professionali in 30 secondi, gestisci lead con CRM AI, automatizza follow-up. Pensato per agenzie.",
   keywords: [
     "software immobiliare AI",
     "intelligenza artificiale immobiliare",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Software Immobiliare AI #1 in Italia | PropertyPilot AI",
-    description: "Genera annunci in 30 secondi. CRM intelligente. Voice AI. Usato da 500+ agenzie italiane.",
+    description: "Genera annunci in 30 secondi. CRM intelligente. Voice AI. Pensato per agenzie italiane.",
     locale: "it_IT",
     type: "website",
   },
@@ -51,7 +51,7 @@ const testimonials = [
 ];
 
 const stats = [
-  { value: "500+", label: "Agenzie in Italia" },
+  { value: "47+", label: "Strumenti AI" },
   { value: "10+", label: "Ore risparmiate a settimana" },
   { value: "3x", label: "Più veloce nella creazione annunci" },
   { value: "85%", label: "Riduzione lavoro ripetitivo" },
@@ -125,7 +125,7 @@ export default function ItalyLandingPage() {
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
               Genera annunci professionali in 30 secondi. Gestisci lead con CRM intelligente. Automatizza follow-up e chiamate. 
-              <span className="text-foreground font-medium"> Usato da 500+ agenzie in Italia.</span>
+              <span className="text-foreground font-medium"> Pensato per agenzie in Italia.</span>
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link href="/auth/signup" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-foreground text-background px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-foreground/90 transition-colors">
@@ -239,7 +239,7 @@ export default function ItalyLandingPage() {
         <section className="py-20">
           <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Pronto a trasformare la tua agenzia?</h2>
-            <p className="text-lg text-muted-foreground mb-8">Unisciti a 500+ agenzie in Italia che usano già l&apos;AI per chiudere più trattative, più velocemente.</p>
+            <p className="text-lg text-muted-foreground mb-8">Unisciti a agenzie italiane in Italia che usano già l&apos;AI per chiudere più trattative, più velocemente.</p>
             <Link href="/auth/signup" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3.5 rounded-xl text-base font-semibold hover:bg-foreground/90 transition-colors">
               Inizia la prova gratuita <ArrowRight className="w-4 h-4" />
             </Link>
