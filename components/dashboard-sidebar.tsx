@@ -62,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Overview",
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Home },
+      { label: "Onboarding", href: "/dashboard/onboarding", icon: Sparkles, badge: "Start" },
       { label: "Saved Listings", href: "/dashboard/listings", icon: Folder },
       { label: "Templates", href: "/dashboard/templates", icon: Bookmark },
       { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
