@@ -394,3 +394,108 @@ For full MCP SDK integration:
 Run these after the P7-P16 migrations:
 9. 20260518_gdpr.sql — gdpr_consents + gdpr_dsar_requests + RLS
 10. 20260518_chatbot_gdpr.sql — chatbot_conversations + RLS
+
+## ═══════════════════════════════════════════════
+## CURRENT STATE — Post v60 Quality Polish
+## ═══════════════════════════════════════════════
+
+## Dashboard Pages (27 sidebar items, 44 route directories)
+Overview: Dashboard, Onboarding, Analytics
+AI Content: AI Listings, Social & Video, Agent Bio, Translate
+Visual AI: Visual AI Suite
+CRM & Leads: Leads, Lead Score, Follow-up Emails, Automations
+Communication: Voice AI, WhatsApp AI
+Compliance & Docs: Compliance Shield, Document AI
+Valuation: CMA Reports
+Market Intelligence: Market Search, Predictive Leads, Marketplace, Market Reports
+Portals & Integrations: Portal Connections, MCP / Integrations
+Agency: Branding
+Account: Billing, Referral, Settings
+
+Legacy pages still exist (with 301 redirects): perfect-copy, emotional-listing, titles,
+hashtags, video-scripts, scraper, analyze, auditor, templates, agency-branding
+
+## API Routes (98 endpoints)
+See full list: find app/api -name 'route.ts' | sort
+
+## SQL Migrations (15 files — run in order)
+1. add_agency_profile_columns.sql
+2. 20260503_voice_agent_tables.sql
+3. 20260503_whatsapp_tables.sql
+4. 20260503_cma_tables.sql
+5. 20260503_eu_tax_compliance.sql
+6. 20260518_visual_ai.sql
+7. 20260518_compliance.sql
+8. 20260518_documents.sql
+9. 20260518_automations.sql
+10. 20260518_white_label.sql
+11. 20260518_marketplace.sql
+12. 20260518_predictive_leads.sql
+13. 20260518_market_reports.sql
+14. 20260518_gdpr.sql
+15. 20260518_chatbot_gdpr.sql
+
+## All Environment Variables Needed
+### Required (core):
+- NEXT_PUBLIC_SUPABASE_URL — Supabase project URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY — Supabase anon key
+- SUPABASE_SERVICE_ROLE_KEY — Supabase service role (server-side only)
+- OPENAI_API_KEY — OpenAI API key (GPT-4o, GPT-4o-mini)
+- STRIPE_SECRET_KEY — Stripe secret key (sk_live_...)
+- STRIPE_WEBHOOK_SECRET — Stripe webhook signing secret (whsec_...)
+- NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY — Stripe publishable key (pk_live_...)
+- NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID — price_1StsWIA1is7KNmaevO6UdO0Z
+- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID — price_1StsZEA1is7KNmae5XkGgEr4
+- NEXT_PUBLIC_STRIPE_AGENCY_PRICE_ID — price_1StsbAA1is7KNmae4taYsNtk
+
+### Required (features):
+- REPLICATE_API_TOKEN — Replicate AI (Visual AI Suite)
+- RESEND_API_KEY — Resend email service
+- BLAND_AI_API_KEY — Bland AI voice agent
+- TWILIO_ACCOUNT_SID — Twilio for EU phone numbers
+- TWILIO_AUTH_TOKEN — Twilio auth
+- WHATSAPP_BUSINESS_TOKEN — Meta WhatsApp Cloud API
+- WHATSAPP_PHONE_ID — WhatsApp Business phone number ID
+- WHATSAPP_BUSINESS_ACCOUNT_ID — Meta Business account
+- WHATSAPP_VERIFY_TOKEN — Webhook verification (default: propertypilot-wa-verify-2026)
+
+### Optional:
+- NEXT_PUBLIC_STRIPE_STARTER_YEARLY_PRICE_ID — Yearly Starter
+- NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID — Yearly Pro
+- NEXT_PUBLIC_STRIPE_AGENCY_YEARLY_PRICE_ID — Yearly Agency
+- EXPO_PUBLIC_SUPABASE_URL — Mobile app
+- EXPO_PUBLIC_SUPABASE_ANON_KEY — Mobile app
+- EXPO_PUBLIC_API_URL — Mobile app API base
+
+## External APIs & Services
+| Service | Purpose | Setup |
+|---------|---------|-------|
+| Supabase | Auth, DB, Storage, RLS | supabase.com |
+| Stripe | Payments, subscriptions | stripe.com |
+| OpenAI | GPT-4o, GPT-4o-mini | platform.openai.com |
+| Replicate | Visual AI (staging, enhancement) | replicate.com |
+| Resend | Transactional + campaign email | resend.com |
+| Bland AI | Voice agent (outbound/inbound) | bland.ai |
+| Twilio | EU phone numbers (SIP) | twilio.com |
+| Meta WhatsApp | WhatsApp Business Cloud API | business.facebook.com |
+| ElevenLabs | Voice cloning (Agency tier) | elevenlabs.io |
+| Cal.com | Calendar booking integration | cal.com |
+| Vercel | Hosting, auto-deploy, crons | vercel.com |
+| CubiCasa | Floor plan API (future) | cubicasa.com |
+| CASAFARI | Property data partnership (future) | casafari.com |
+
+## Marketing Readiness Checklist
+✅ Landing page — Old design + all P1-P16 content
+✅ Pricing page — 10-11 features per plan, IT+EN localization
+✅ 6 country SEO pages — IT, FR, ES, DE, EN, PT
+✅ 4 free tools — AI description, mortgage calc, ROI calc, tax calc
+✅ Blog — 20+ SEO articles (IT, FR, ES, EN)
+✅ Public marketplace — /marketplace
+✅ Changelog + Roadmap — /changelog, /roadmap
+✅ Onboarding — 7-step checklist
+✅ 27-item consolidated sidebar — zero duplication
+✅ 301 redirects — 12 redirects for old URLs
+❌ Stripe live keys — founder must set on Vercel
+❌ SQL migrations — founder must run on Supabase
+❌ Portal partner applications — founder must apply
+❌ WhatsApp template approval — founder must submit to Meta
