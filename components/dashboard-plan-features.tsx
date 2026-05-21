@@ -190,7 +190,7 @@ const ALL_FEATURES: Feature[] = [
     name: "Agency Branding",
     description: "Personalizza il branding della tua agenzia",
     icon: <Building2 className="h-6 w-6" />,
-    href: "/dashboard/agency-branding",
+    href: "/dashboard/branding",
     availableIn: ["pro", "agency"],
   },
   {

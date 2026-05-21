@@ -213,7 +213,7 @@ function getCommandGroups(isIt: boolean, router: ReturnType<typeof useRouter>): 
           label: isIt ? "Automazioni CRM" : "CRM Automations",
           description: isIt ? "Regole automatiche per i lead" : "Automatic rules for leads",
           icon: <Zap className="h-4 w-4" />,
-          href: "/dashboard/crm/automations",
+          href: "/dashboard/automations",
           badge: "PRO",
           badgeColor: "bg-amber-500",
         },
@@ -293,7 +293,7 @@ function getCommandGroups(isIt: boolean, router: ReturnType<typeof useRouter>): 
           label: isIt ? "Brand Agenzia" : "Agency Branding",
           description: isIt ? "Logo, colori e stile del tuo brand" : "Logo, colors and style of your brand",
           icon: <Building2 className="h-4 w-4" />,
-          href: "/dashboard/agency-branding",
+          href: "/dashboard/branding",
         },
         {
           id: "agency-assistant",

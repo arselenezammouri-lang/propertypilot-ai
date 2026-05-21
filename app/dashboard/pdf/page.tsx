@@ -418,7 +418,7 @@ export default function PdfGeneratorPage() {
                       
                       <div className="flex items-center gap-3">
                         {!agencyBranding && (
-                          <Link href="/dashboard/agency-branding">
+                          <Link href="/dashboard/branding">
                             <Button variant="outline" size="sm" className="border-indigo-300">
                               <ExternalLink className="h-4 w-4 mr-1" />
                               Configura
