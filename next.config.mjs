@@ -25,6 +25,21 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
+  redirects: async () => [
+    // Consolidated pages — redirect old duplicates to canonical URLs
+    { source: '/dashboard/perfect-copy', destination: '/dashboard/ai-listings', permanent: true },
+    { source: '/dashboard/emotional-listing', destination: '/dashboard/ai-listings', permanent: true },
+    { source: '/dashboard/titles', destination: '/dashboard/ai-listings', permanent: true },
+    { source: '/dashboard/hashtags', destination: '/dashboard/social-posts', permanent: true },
+    { source: '/dashboard/scraper', destination: '/dashboard/prospecting', permanent: true },
+    { source: '/dashboard/analyze', destination: '/dashboard/prospecting', permanent: true },
+    { source: '/dashboard/auditor', destination: '/dashboard/prospecting', permanent: true },
+    { source: '/dashboard/agency-branding', destination: '/dashboard/branding', permanent: true },
+    { source: '/dashboard/crm/automations', destination: '/dashboard/automations', permanent: true },
+    { source: '/dashboard/crm/settings', destination: '/dashboard/settings/workspace', permanent: true },
+    { source: '/dashboard/video-scripts', destination: '/dashboard/social-posts', permanent: true },
+    { source: '/dashboard/templates', destination: '/dashboard/listings', permanent: true },
+  ],
   headers: async () => [
     {
       source: '/:path*',

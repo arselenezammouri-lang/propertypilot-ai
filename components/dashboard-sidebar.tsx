@@ -3,34 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  FileText,
   Users,
   BarChart3,
   Zap,
   Hash,
-  Type,
-  Heart,
-  Video,
   User,
   Globe,
   Palette,
-  Bot,
   Target,
   Mail,
   CreditCard,
   Settings,
   Gift,
   Search,
-  Folder,
-  PenTool,
   Sparkles,
   Home,
   ChevronLeft,
   ChevronRight,
   Menu,
   X,
-  Shield,
-  Bookmark,
   Phone,
   MessageCircle,
   ImagePlus,
@@ -38,7 +29,6 @@ import {
   FileSearch,
   Store,
   TrendingUp,
-  LayoutDashboard,
   LineChart,
   Plug,
 } from "lucide-react";
@@ -63,88 +53,73 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Home },
       { label: "Onboarding", href: "/dashboard/onboarding", icon: Sparkles, badge: "Start" },
-      { label: "Saved Listings", href: "/dashboard/listings", icon: Folder },
-      { label: "Templates", href: "/dashboard/templates", icon: Bookmark },
       { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     ],
   },
   {
     title: "AI Content",
     items: [
-      { label: "AI Listings v2", href: "/dashboard/ai-listings", icon: Sparkles, badge: "New" },
-      { label: "Generate Listing", href: "/dashboard/perfect-copy", icon: Sparkles },
-      { label: "Titles A/B Test", href: "/dashboard/titles", icon: Type },
-      { label: "Social Posts", href: "/dashboard/social-posts", icon: Hash },
-      { label: "Hashtags", href: "/dashboard/hashtags", icon: Hash },
-      { label: "Video Scripts", href: "/dashboard/video-scripts", icon: Video },
+      { label: "AI Listings", href: "/dashboard/ai-listings", icon: Sparkles },
+      { label: "Social & Video", href: "/dashboard/social-posts", icon: Hash },
       { label: "Agent Bio", href: "/dashboard/agent-bio", icon: User },
-      { label: "Emotional Copy", href: "/dashboard/emotional-listing", icon: Heart },
       { label: "Translate", href: "/dashboard/translate", icon: Globe },
-    ],
-  },
-  {
-    title: "CRM",
-    items: [
-      { label: "Leads", href: "/dashboard/leads", icon: Users },
-      { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
-      { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
-    ],
-  },
-  {
-    title: "Portals",
-    items: [
-      { label: "Portal Connections", href: "/dashboard/portals", icon: Globe, badge: "New" },
     ],
   },
   {
     title: "Visual AI",
     items: [
-      { label: "Visual AI Suite", href: "/dashboard/visual-ai", icon: ImagePlus, badge: "New" },
+      { label: "Visual AI Suite", href: "/dashboard/visual-ai", icon: ImagePlus },
+    ],
+  },
+  {
+    title: "CRM & Leads",
+    items: [
+      { label: "Leads", href: "/dashboard/leads", icon: Users },
+      { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
+      { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
+      { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
+    ],
+  },
+  {
+    title: "Communication",
+    items: [
+      { label: "Voice AI", href: "/dashboard/voice-campaigns", icon: Phone },
+      { label: "WhatsApp AI", href: "/dashboard/whatsapp", icon: MessageCircle },
+    ],
+  },
+  {
+    title: "Compliance & Docs",
+    items: [
+      { label: "Compliance Shield", href: "/dashboard/compliance", icon: FileCheck },
+      { label: "Document AI", href: "/dashboard/documents", icon: FileSearch },
     ],
   },
   {
     title: "Valuation",
     items: [
-      { label: "CMA Reports", href: "/dashboard/cma", icon: BarChart3, badge: "New" },
+      { label: "CMA Reports", href: "/dashboard/cma", icon: BarChart3 },
     ],
   },
   {
-    title: "Voice AI",
-    items: [
-      { label: "Voice Campaigns", href: "/dashboard/voice-campaigns", icon: Phone, badge: "New" },
-      { label: "WhatsApp AI", href: "/dashboard/whatsapp", icon: MessageCircle, badge: "New" },
-    ],
-  },
-  {
-    title: "Compliance",
-    items: [
-      { label: "Compliance Check", href: "/dashboard/compliance", icon: FileCheck, badge: "New" },
-      { label: "Documents AI", href: "/dashboard/documents", icon: FileSearch, badge: "New" },
-    ],
-  },
-  {
-    title: "Automation",
-    items: [
-      { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
-      { label: "Market Reports", href: "/dashboard/market-reports", icon: LineChart, badge: "New" },
-    ],
-  },
-  {
-    title: "Prospecting",
+    title: "Market Intelligence",
     items: [
       { label: "Market Search", href: "/dashboard/prospecting", icon: Search },
       { label: "Predictive Leads", href: "/dashboard/predictive-leads", icon: TrendingUp, badge: "Pro" },
-      { label: "Marketplace", href: "/dashboard/marketplace", icon: Store, badge: "New" },
-      { label: "Scraper", href: "/dashboard/scraper", icon: Globe },
-      { label: "Analyze Link", href: "/dashboard/analyze", icon: BarChart3 },
-      { label: "Auditor", href: "/dashboard/auditor", icon: Shield },
+      { label: "Marketplace", href: "/dashboard/marketplace", icon: Store },
+      { label: "Market Reports", href: "/dashboard/market-reports", icon: LineChart },
+    ],
+  },
+  {
+    title: "Portals & Integrations",
+    items: [
+      { label: "Portal Connections", href: "/dashboard/portals", icon: Globe },
+      { label: "MCP / Integrations", href: "/dashboard/integrations", icon: Plug },
     ],
   },
   {
     title: "Agency",
     items: [
       { label: "Branding", href: "/dashboard/branding", icon: Palette, badge: "Agency" },
-      { label: "Integrations", href: "/dashboard/integrations", icon: Plug, badge: "New" },
     ],
   },
   {
@@ -152,7 +127,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
       { label: "Referral", href: "/dashboard/referral", icon: Gift },
-      { label: "Agency Profile", href: "/dashboard/settings/profile", icon: User },
       { label: "Settings", href: "/dashboard/settings/workspace", icon: Settings },
     ],
   },
