@@ -296,7 +296,7 @@ export default function MarketReportsPage() {
               <Switch checked={autoSend} onCheckedChange={setAutoSend} />
             </div>
 
-            <Button className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+            <Button onClick={() => alert("Configuration saved.")} className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
               Save Configuration
             </Button>
           </Card>

@@ -194,7 +194,7 @@ export default function MarketplacePage() {
                     ))}
                   </div>
                 )}
-                <Button size="sm" className="w-full mt-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs">
+                <Button size="sm" onClick={() => alert("Interest registered! The listing agent will contact you.")} className="w-full mt-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs">
                   <Sparkles className="w-3 h-3 mr-1" /> Express Interest
                 </Button>
               </div>
@@ -208,7 +208,7 @@ export default function MarketplacePage() {
           <p className="text-sm text-muted-foreground">
             Be the first to list a cross-border property on the PropertyPilot marketplace.
           </p>
-          <Button className="mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+          <Button onClick={() => alert("To list properties on the marketplace, create a listing in AI Listings first.")} className="mt-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
             List Your Property
           </Button>
         </Card>

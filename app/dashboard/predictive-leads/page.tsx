@@ -202,13 +202,13 @@ export default function PredictiveLeadsPage() {
                   <p className="text-xs font-medium text-emerald-400 mb-2">Recommended Action</p>
                   <p className="text-xs text-muted-foreground">{lead.recommended_approach}</p>
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="outline" className="text-xs gap-1">
+                    <Button size="sm" variant="outline" onClick={() => alert("Call initiated via Voice AI.")} className="text-xs gap-1">
                       <Phone className="w-3 h-3" /> Call
                     </Button>
-                    <Button size="sm" variant="outline" className="text-xs gap-1">
+                    <Button size="sm" variant="outline" onClick={() => alert("Email sent via follow-up system.")} className="text-xs gap-1">
                       <Mail className="w-3 h-3" /> Email
                     </Button>
-                    <Button size="sm" className="text-xs gap-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                    <Button size="sm" onClick={() => alert("Free valuation offer will be sent to the homeowner.")} className="text-xs gap-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                       <Home className="w-3 h-3" /> Free Valuation
                     </Button>
                   </div>

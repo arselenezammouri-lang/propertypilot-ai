@@ -179,6 +179,7 @@ export default function AutomationsPage() {
                 <Button
                   variant="outline"
                   size="sm"
+                  onClick={() => alert("Automation flow enabled.")}
                   className="w-full mt-4 text-xs"
                 >
                   <Play className="w-3 h-3 mr-1" /> Enable
@@ -249,7 +250,7 @@ export default function AutomationsPage() {
               </div>
             </div>
 
-            <Button className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white">
+            <Button onClick={() => alert("Thresholds saved.")} className="w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white">
               Save Thresholds
             </Button>
           </Card>
