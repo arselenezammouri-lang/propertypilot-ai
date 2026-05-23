@@ -1,20 +1,46 @@
-declare namespace google {
-  namespace maps {
+// Google Maps JavaScript API type declarations
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+export {};
+
+declare global {
+  namespace google.maps {
+    class Map {
+      constructor(el: HTMLElement, opts?: any);
+      setCenter(pos: { lat: number; lng: number }): void;
+    }
+    class Marker {
+      constructor(opts?: any);
+      addListener(event: string, handler: () => void): void;
+    }
+    class InfoWindow {
+      constructor(opts?: any);
+      open(map: any, marker?: any): void;
+    }
+    class Geocoder {
+      geocode(
+        request: { address: string },
+        callback: (results: any[] | null, status: string) => void
+      ): void;
+    }
     namespace places {
       class AutocompleteService {
         getPlacePredictions(
-          request: { input: string; types?: string[] },
-          callback: (
-            predictions: Array<{ description: string; place_id: string }> | null,
-            status: string
-          ) => void
+          request: any,
+          callback: (predictions: any[] | null, status: any) => void
         ): void;
       }
-      const PlacesServiceStatus: {
-        OK: string;
-        ZERO_RESULTS: string;
-        ERROR: string;
-      };
+      class Autocomplete {
+        constructor(input: HTMLInputElement, opts?: any);
+        addListener(event: string, handler: () => void): void;
+        getPlace(): any;
+      }
+      const PlacesServiceStatus: { OK: string };
     }
+  }
+
+  interface Window {
+    google?: typeof google;
+    initGoogleMaps?: () => void;
   }
 }

@@ -466,6 +466,7 @@ See full list: find app/api -name 'route.ts' | sort
 - EXPO_PUBLIC_SUPABASE_URL — Mobile app
 - EXPO_PUBLIC_SUPABASE_ANON_KEY — Mobile app
 - EXPO_PUBLIC_API_URL — Mobile app API base
+- NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — Google Maps JavaScript API (for property maps)
 
 ## External APIs & Services
 | Service | Purpose | Setup |
