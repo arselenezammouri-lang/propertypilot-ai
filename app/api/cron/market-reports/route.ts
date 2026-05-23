@@ -3,7 +3,7 @@
  * Deploy as Vercel Cron: schedule "0 6 * * 0"
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateMarketIndices, generateMarketSummary } from "@/lib/market-reports/types";
 
@@ -19,7 +19,13 @@ const DEFAULT_CITIES: Record<string, string[]> = {
   PT: ["Lisboa", "Porto", "Faro", "Braga", "Coimbra", "Funchal"],
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Verify Vercel Cron authorization
+  const authHeader = request.headers.get("authorization");
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const supabase = await createClient();
 

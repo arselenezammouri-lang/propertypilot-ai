@@ -4,7 +4,7 @@
 // After save: runs Lead Scoring v2 → triggers Speed-to-Lead automation
 // vercel.json schedule: "every-15-min" => poll-portal-leads
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { calculateLeadScoreV2 } from "@/lib/ai/lead-scoring-v2";
 import type { LeadSignals } from "@/lib/ai/lead-scoring-v2";
@@ -13,7 +13,13 @@ import { determineAction, canExecuteAction, isWithinBusinessHours, getDefaultCon
 export const dynamic = "force-dynamic";
 
 // Vercel Cron handler — polls portal leads
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Verify Vercel Cron authorization
+  const authHeader = request.headers.get("authorization");
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
