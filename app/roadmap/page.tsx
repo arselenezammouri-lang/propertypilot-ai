@@ -6,7 +6,7 @@ import { CheckCircle2, Clock, Sparkles } from "lucide-react";
 
 const ROADMAP = [
   { quarter: "Q3 2026", status: "complete", items: [
-    { name: "Multilingual AI Listing Descriptions v2", status: "complete" },
+    { name: "Multilingual AI Listing Descriptions", status: "complete" },
     { name: "16 EU Portal Integrations", status: "complete" },
     { name: "Multilingual Voice Agent (Bland AI)", status: "complete" },
     { name: "WhatsApp AI Agent", status: "complete" },
@@ -17,7 +17,7 @@ const ROADMAP = [
     { name: "Visual AI Suite (staging, enhancement, floor plans)", status: "complete" },
     { name: "Compliance Shield (6 EU countries)", status: "complete" },
     { name: "Document Intelligence (mandates, energy certs)", status: "complete" },
-    { name: "Lead Scoring v2 + Speed-to-Lead", status: "complete" },
+    { name: "Lead Scoring + Speed-to-Lead", status: "complete" },
     { name: "White-Label Client Portal", status: "complete" },
   ]},
   { quarter: "H1 2027", status: "complete", items: [

@@ -5,14 +5,14 @@ import { Badge } from "@/components/ui/badge";
 
 const CHANGELOG = [
   { version: "v49", date: "2026-05-18", type: "feat", items: ["Drag-drop Visual AI uploads", "Compliance bulk re-check", "Document save-to-property/lead", "Sitemap + CLAUDE.md updates"] },
-  { version: "v48", date: "2026-05-18", type: "feat", items: ["Pricing page complete rewrite (38 features)", "Before/after slider for Visual AI", "Compliance pre-publish hook", "Speed-to-lead cron integration", "Client portal v2 (7 tabs)", "Public marketplace at /marketplace", "PDF report generator"] },
+  { version: "v48", date: "2026-05-18", type: "feat", items: ["Pricing page complete rewrite (38 features)", "Before/after slider for Visual AI", "Compliance pre-publish hook", "Speed-to-lead cron integration", "Client portal (7 tabs)", "Public marketplace at /marketplace", "PDF report generator"] },
   { version: "v47", date: "2026-05-18", type: "feat", items: ["Auto-weekly market reports", "Sunday 6am cron job", "Market indices table (Idealista, ImmoScout24, Rightmove)", "AI summary + recommendations"] },
   { version: "v46", date: "2026-05-18", type: "feat", items: ["Native mobile app (React Native/Expo)", "6 screens: Dashboard, CRM, Camera, Voice, Settings, Login", "Shared Supabase auth with web"] },
   { version: "v45", date: "2026-05-18", type: "feat", items: ["Predictive seller leads (likely-to-list)", "17-feature ML model", "Feature store for XGBoost training"] },
   { version: "v44", date: "2026-05-18", type: "feat", items: ["Cross-border buyer matching marketplace", "6-country property browse", "Stripe Connect escrow ready"] },
   { version: "v43", date: "2026-05-18", type: "feat", items: ["MCP Server (10 tools, JSON-RPC 2.0)", "Claude Desktop / Cursor compatible", "Bearer token auth"] },
   { version: "v42", date: "2026-05-18", type: "feat", items: ["White-label client portal", "Agency branding editor", "Custom domains", "Mortgage calculator"] },
-  { version: "v41", date: "2026-05-18", type: "feat", items: ["Lead Scoring v2 (5-category hybrid)", "Speed-to-lead automation", "ML feature vector", "6 automation templates"] },
+  { version: "v41", date: "2026-05-18", type: "feat", items: ["Lead Scoring (5-category hybrid)", "Speed-to-lead automation", "ML feature vector", "6 automation templates"] },
   { version: "v40", date: "2026-05-18", type: "feat", items: ["Document Intelligence (GPT-4o vision)", "4 EU document templates (48 fields)", "Click-to-cite citations"] },
   { version: "v39", date: "2026-05-18", type: "feat", items: ["Compliance Shield (6 EU countries)", "35+ country-specific rules", "AI deep verification"] },
   { version: "v38", date: "2026-05-18", type: "feat", items: ["Visual AI Suite (Replicate)", "Virtual staging (6 styles × 7 rooms)", "Photo enhancement (HDR, sky, twilight)", "Floor plan generation"] },

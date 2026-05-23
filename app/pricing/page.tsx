@@ -39,7 +39,7 @@ const plans = [
     includes: [
       "50 AI-generated listings / month",
       "AI property descriptions (3 styles × 6 languages)",
-      "Lead Scoring v2 + email automation",
+      "Lead Scoring + email automation",
       "20 Visual AI jobs (staging, enhancement)",
       "Compliance Shield (6 EU countries)",
       "Document Intelligence (mandates, energy certs)",
@@ -211,7 +211,7 @@ export default function PricingPage() {
             ? [
                 "50 annunci AI generati / mese",
                 "Descrizioni AI (3 stili × 6 lingue)",
-                "Lead Scoring v2 + automazione email",
+                "Lead Scoring + automazione email",
                 "20 Visual AI (staging, enhancement)",
                 "Compliance Shield (6 Paesi EU)",
                 "Document Intelligence (mandati, APE)",

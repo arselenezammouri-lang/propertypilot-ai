@@ -253,7 +253,7 @@ export default function AIListingsPage() {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">AI Listings Engine v2</h1>
+            <h1 className="text-2xl font-bold tracking-tight">AI Listings Engine</h1>
             <p className="text-sm text-muted-foreground">Portal-optimized · Multilingual · Brand voice · Compliance-checked</p>
           </div>
         </div>

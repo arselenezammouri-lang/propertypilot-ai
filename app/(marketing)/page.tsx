@@ -42,7 +42,7 @@ const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
 /* ─── Updated Feature Data (P1-P16) ─── */
 const FEATURES = [
   { icon: Sparkles, title: "AI Listing Engine", description: "Generate professional listings in 3 styles × 6 languages. Portal-optimized for Idealista, ImmoScout24, Rightmove." },
-  { icon: Users, title: "Smart CRM + Lead Scoring v2", description: "Kanban pipeline with behavioral + engagement scoring. Speed-to-lead: auto-call 30s, WhatsApp 60s, email 90s." },
+  { icon: Users, title: "Smart CRM + Lead Scoring", description: "Kanban pipeline with behavioral + engagement scoring. Speed-to-lead: auto-call 30s, WhatsApp 60s, email 90s." },
   { icon: Phone, title: "Voice AI Agent", description: "Multilingual voice calls 24/7. Inbound/outbound qualification, viewing booking, CRM sync. 6 languages." },
   { icon: ImagePlus, title: "Visual AI Suite", description: "Virtual staging (6 styles), photo enhancement (HDR, twilight), sky replacement, floor plan generation." },
   { icon: Shield, title: "Compliance Shield", description: "Pre-publish compliance for 6 EU countries. Energy class, surface rules, agency licence — block before fines." },

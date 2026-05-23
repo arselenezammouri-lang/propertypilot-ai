@@ -53,6 +53,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Home },
       { label: "Onboarding", href: "/dashboard/onboarding", icon: Sparkles, badge: "Start" },
+      { label: "Saved Listings", href: "/dashboard/listings", icon: Search },
       { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
     ],
   },
@@ -63,6 +64,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Social & Video", href: "/dashboard/social-posts", icon: Hash },
       { label: "Agent Bio", href: "/dashboard/agent-bio", icon: User },
       { label: "Translate", href: "/dashboard/translate", icon: Globe },
+      { label: "PDF Brochures", href: "/dashboard/pdf", icon: FileSearch },
     ],
   },
   {
@@ -78,6 +80,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
       { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
       { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
+      { label: "Opportunities", href: "/dashboard/opportunities", icon: TrendingUp },
     ],
   },
   {
@@ -85,6 +88,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Voice AI", href: "/dashboard/voice-campaigns", icon: Phone },
       { label: "WhatsApp AI", href: "/dashboard/whatsapp", icon: MessageCircle },
+      { label: "AI Assistant", href: "/dashboard/agency-assistant", icon: MessageCircle },
     ],
   },
   {
@@ -107,6 +111,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Predictive Leads", href: "/dashboard/predictive-leads", icon: TrendingUp, badge: "Pro" },
       { label: "Marketplace", href: "/dashboard/marketplace", icon: Store },
       { label: "Market Reports", href: "/dashboard/market-reports", icon: LineChart },
+      { label: "Map View", href: "/dashboard/map", icon: Globe },
     ],
   },
   {
@@ -120,6 +125,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Agency",
     items: [
       { label: "Branding", href: "/dashboard/branding", icon: Palette, badge: "Agency" },
+      { label: "Packages", href: "/dashboard/packages", icon: CreditCard },
     ],
   },
   {
