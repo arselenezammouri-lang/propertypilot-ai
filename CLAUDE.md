@@ -575,3 +575,31 @@ Uses: React Query mutations, fetch + try/catch, Zod validation.
 8. ☐ Submit Meta WhatsApp templates for approval
 9. ☐ Test Stripe checkout in live mode with real card
 10. ☐ Verify email delivery (Resend) for signup confirmation
+
+## DATABASE STATUS — May 23, 2026
+- ✅ All 15 SQL migrations executed on Supabase production (mbykkvyqhfqkcxplzhnz)
+- ✅ 29 tables from migrations + 25 tables from schema.sql = 50+ tables total
+- ✅ All tables have RLS enabled + policies
+- ✅ All indexes created
+
+## ⚠️ FOUNDER ACTION: Run supplementary migration
+Run supabase/migrations/20260523_supplementary_tables.sql to create 5 missing tables:
+- activities — activity log / audit trail
+- brand_voice_profiles — AI writing style per agency
+- calls — voice call records (base table for voice agent features)
+- email_logs — transactional email tracking
+- portal_connections — portal integration configs per agency
+These tables are referenced by 29+ code locations. Without them, some features will show errors.
+
+## FOUNDER'S FINAL LAUNCH CHECKLIST (in order)
+1. ☐ Run 20260523_supplementary_tables.sql on Supabase
+2. ☐ Set env vars on Vercel (see env vars section above)
+3. ☐ Configure Stripe LIVE mode webhook → /api/stripe/webhook
+4. ☐ Enable Stripe Tax for EU VAT
+5. ☐ Verify Resend domain + API key
+6. ☐ Test signup → login → AI listing → checkout (full cycle)
+7. ☐ Apply for portal partnerships (Rightmove, SeLoger, EstateSync)
+8. ☐ Set up WhatsApp Business webhook
+9. ☐ Get Replicate API token (Visual AI)
+10. ☐ Get Google Maps API key (maps on listings)
+11. ☐ Launch marketing — landing page is ready at /

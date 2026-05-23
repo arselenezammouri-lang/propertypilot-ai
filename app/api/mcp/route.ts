@@ -45,12 +45,12 @@ async function authenticateBearer(request: NextRequest): Promise<string | null> 
   // Validate API key against database
   const supabase = await createClient();
   const { data } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("api_key", token)
+    .from("user_api_keys")
+    .select("user_id")
+    .eq("api_key_encrypted", token)
     .single();
 
-  return data?.id ?? null;
+  return data?.user_id ?? null;
 }
 
 export async function POST(request: NextRequest) {
