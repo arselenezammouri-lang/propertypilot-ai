@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { PropertyMap } from "@/components/maps/property-map";
+import { PhotoUpload } from "@/components/photo-upload";
 import {
   Sparkles, Loader2, Copy, Check, Building2, MapPin, Globe, AlertTriangle,
   CheckCircle, ChevronRight, Zap, FileText, Shield, ArrowLeft, Plus,
@@ -309,6 +311,19 @@ export default function AIListingsPage() {
               <div><Label className="text-xs mb-1.5 block">Country</Label><Select value={country} onValueChange={setCountry}><SelectTrigger className="bg-background/50"><SelectValue /></SelectTrigger><SelectContent>{[{v:"IT",l:"🇮🇹 Italy"},{v:"FR",l:"🇫🇷 France"},{v:"ES",l:"🇪🇸 Spain"},{v:"DE",l:"🇩🇪 Germany"},{v:"UK",l:"🇬🇧 UK"},{v:"PT",l:"🇵🇹 Portugal"}].map((c)=><SelectItem key={c.v} value={c.v}>{c.l}</SelectItem>)}</SelectContent></Select></div>
               <div><Label className="text-xs mb-1.5 block">Location</Label><Input value={location} onChange={(e)=>setLocation(e.target.value)} placeholder="e.g. Trastevere, Marais..." className="bg-background/50"/></div>
               <div><Label className="text-xs mb-1.5 block">City</Label><Input value={city} onChange={(e)=>setCity(e.target.value)} placeholder="e.g. Rome, Paris..." className="bg-background/50"/></div>
+              {(location || city) && (
+                <div className="col-span-2">
+                  <PropertyMap address={`${location}, ${city}`} height="h-40" />
+                </div>
+              )}
+              <div className="col-span-2">
+                <PhotoUpload
+                  onUpload={() => {}}
+                  label="Upload property photos (optional)"
+                  sublabel="AI will auto-detect features from photos"
+                  maxFiles={6}
+                />
+              </div>
               <div><Label className="text-xs mb-1.5 block">Price ({country==="UK"?"£":"€"})</Label><Input type="number" value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="350000" className="bg-background/50"/></div>
               <div><Label className="text-xs mb-1.5 block">Surface (m²)</Label><Input type="number" value={surface} onChange={(e)=>setSurface(e.target.value)} placeholder="85" className="bg-background/50"/></div>
               <div><Label className="text-xs mb-1.5 block">Rooms</Label><Input type="number" value={rooms} onChange={(e)=>setRooms(e.target.value)} className="bg-background/50"/></div>

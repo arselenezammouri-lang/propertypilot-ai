@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { PropertyMap } from "@/components/maps/property-map";
 import {
   ArrowLeft, FileText, Loader2, TrendingUp, TrendingDown, Minus, Building2,
   MapPin, BarChart3, Download, Send, CheckCircle, AlertTriangle, Sparkles,
@@ -93,6 +94,9 @@ export default function CMAPage() {
         <div className="grid sm:grid-cols-3 gap-4">
           <div><Label className="text-xs mb-1.5 block">Address *</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Via Roma 15" className="bg-background/50" /></div>
           <div><Label className="text-xs mb-1.5 block">City *</Label><Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Milan" className="bg-background/50" /></div>
+          {(form.address || form.city) && (
+            <div className="col-span-full"><PropertyMap address={`${form.address}, ${form.city}`} height="h-40" /></div>
+          )}
           <div><Label className="text-xs mb-1.5 block">Country</Label><Select value={form.country} onValueChange={(v) => setForm({ ...form, country: v })}><SelectTrigger className="bg-background/50"><SelectValue /></SelectTrigger><SelectContent>{[{v:"IT",l:"🇮🇹 Italy"},{v:"FR",l:"🇫🇷 France"},{v:"ES",l:"🇪🇸 Spain"},{v:"DE",l:"🇩🇪 Germany"},{v:"UK",l:"🇬🇧 UK"},{v:"PT",l:"🇵🇹 Portugal"}].map((c)=><SelectItem key={c.v} value={c.v}>{c.l}</SelectItem>)}</SelectContent></Select></div>
           <div><Label className="text-xs mb-1.5 block">Type</Label><Select value={form.property_type} onValueChange={(v) => setForm({ ...form, property_type: v })}><SelectTrigger className="bg-background/50"><SelectValue /></SelectTrigger><SelectContent>{["Apartment","Villa","Penthouse","House","Studio"].map((t)=><SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent></Select></div>
           <div><Label className="text-xs mb-1.5 block">Surface (m²) *</Label><Input type="number" value={form.sqm} onChange={(e) => setForm({ ...form, sqm: e.target.value })} placeholder="85" className="bg-background/50" /></div>

@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { PropertyMap } from "@/components/maps/property-map";
 
 interface MarketplaceListing {
   id: string;
@@ -96,6 +97,9 @@ export default function MarketplacePage() {
           <Globe className="w-3 h-3 mr-1" /> {total} Properties
         </Badge>
       </div>
+
+      {/* Map View */}
+      <PropertyMap address="Europe" zoom={4} height="h-48" className="rounded-xl" />
 
       {/* Filters */}
       <Card className="p-4 bg-card/50 backdrop-blur border-border/50">
