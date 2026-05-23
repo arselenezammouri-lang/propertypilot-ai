@@ -254,7 +254,7 @@ export default function PerfectCopyPage() {
   };
 
   const copyFullVariant = (variant: CopyVariant, name: string) => {
-    const fullText = `TITOLO:\n${variant.titolo}\n\nDESCRIZIONE:\n${variant.descrizione}\n\nHIGHLIGHTS:\n${variant.highlights.map(h => `• ${h}`).join('\n')}\n\nPERCHÉ COMPRARLO:\n${variant.perchéComprarlo.map(p => `• ${p}`).join('\n')}\n\nCALL TO ACTION:\n${variant.cta}\n\nMETA DESCRIPTION SEO:\n${variant.metaDescription}`;
+    const fullText = `TITOLO:\n${variant.titolo}\n\nDESCRIZIONE:\n${variant.descrizione}\n\nHIGHLIGHTS:\n${variant?.highlights?.map(h => `• ${h}`).join('\n')}\n\nPERCHÉ COMPRARLO:\n${variant.perchéComprarlo.map(p => `• ${p}`).join('\n')}\n\nCALL TO ACTION:\n${variant.cta}\n\nMETA DESCRIPTION SEO:\n${variant.metaDescription}`;
     copyToClipboard(fullText, `full-${name}`);
   };
 
@@ -364,7 +364,7 @@ export default function PerfectCopyPage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {variant.highlights.map((highlight, i) => (
+              {variant?.highlights?.map((highlight, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <span className="text-amber-500 mt-0.5">✦</span>
                   {highlight}

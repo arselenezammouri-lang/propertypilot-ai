@@ -245,7 +245,7 @@ export default function LeadsPage() {
         });
         return;
       }
-      setLeads(res.data.data);
+      setLeads(Array.isArray(res?.data?.data) ? res.data.data : []);
     } catch (error) {
       toast({
         title: t.error,
@@ -574,13 +574,14 @@ export default function LeadsPage() {
     router.push(`/dashboard/lead-score?${params.toString()}`);
   };
 
+  const safeLeads = leads ?? [];
   const statsData = {
-    total: leads.length,
-    new: leads.filter(l => l.status === "new").length,
-    contacted: leads.filter(l => l.status === "contacted").length,
-    followup: leads.filter(l => l.status === "followup").length,
-    closed: leads.filter(l => l.status === "closed").length,
-    lost: leads.filter(l => l.status === "lost").length,
+    total: safeLeads.length,
+    new: safeLeads.filter(l => l.status === "new").length,
+    contacted: safeLeads.filter(l => l.status === "contacted").length,
+    followup: safeLeads.filter(l => l.status === "followup").length,
+    closed: safeLeads.filter(l => l.status === "closed").length,
+    lost: safeLeads.filter(l => l.status === "lost").length,
   };
 
   return (
@@ -757,7 +758,7 @@ export default function LeadsPage() {
                 </div>
                 <ListSkeleton items={6} />
               </div>
-            ) : leads.length === 0 ? (
+            ) : safeLeads.length === 0 ? (
               <EmptyState
                 icon={<Users />}
                 title={t.noLeads}
@@ -802,7 +803,7 @@ export default function LeadsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {leads.map((lead) => (
+                    {safeLeads.map((lead) => (
                       <TableRow 
                         key={lead.id} 
                         className={`cursor-pointer hover:bg-muted/50 ${
@@ -1250,7 +1251,7 @@ export default function LeadsPage() {
                 <div>
                   <h4 className="font-semibold mb-4 flex items-center gap-2">
                     <StickyNote className="h-4 w-4" />
-                    {t.notes} ({leadDetails?.notes.length || 0})
+                    {t.notes} ({leadDetails?.notes?.length || 0})
                   </h4>
                   <div className="flex gap-2 mb-4">
                     <Textarea
@@ -1271,7 +1272,7 @@ export default function LeadsPage() {
                   </div>
                   {leadDetails?.notes && leadDetails.notes.length > 0 ? (
                     <div className="space-y-2">
-                      {leadDetails.notes.map((note) => (
+                      {leadDetails.notes?.map((note) => (
                         <div key={note.id} className="bg-muted p-3 rounded-lg">
                           <p className="text-sm">{note.nota}</p>
                           <p className="text-xs text-muted-foreground mt-1">
@@ -1294,7 +1295,7 @@ export default function LeadsPage() {
                   </h4>
                   {leadDetails?.status_history && leadDetails.status_history.length > 0 ? (
                     <div className="space-y-2">
-                      {leadDetails.status_history.map((history) => (
+                      {leadDetails.status_history?.map((history) => (
                         <div key={history.id} className="flex items-center gap-2 text-sm">
                           <Clock className="h-3 w-3 text-muted-foreground" />
                           <span className="text-muted-foreground">

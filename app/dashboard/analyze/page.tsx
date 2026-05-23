@@ -431,10 +431,10 @@ export default function AnalyzePage() {
                   <div className="pp-card p-6 border-border">
                     <h4 className="font-bold text-green-500 mb-4 flex items-center gap-2">
                       <CheckCircle className="h-5 w-5" />
-                      {t.strengths} ({analysis.strengths.length})
+                      {t.strengths} ({analysis?.strengths?.length ?? 0})
                     </h4>
                     <ul className="space-y-2">
-                      {analysis.strengths.map((strength, i) => (
+                      {analysis?.strengths?.map((strength, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
                           <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                           <span>{strength}</span>
@@ -446,10 +446,10 @@ export default function AnalyzePage() {
                   <div className="pp-card p-6 border-red-500/30">
                     <h4 className="font-bold text-red-500 mb-4 flex items-center gap-2">
                       <AlertTriangle className="h-5 w-5" />
-                      {t.weaknesses} ({analysis.weaknesses.length})
+                      {t.weaknesses} ({analysis?.weaknesses?.length ?? 0})
                     </h4>
                     <ul className="space-y-2">
-                      {analysis.weaknesses.map((weakness, i) => (
+                      {analysis?.weaknesses?.map((weakness, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
                           <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
                           <span>{weakness}</span>

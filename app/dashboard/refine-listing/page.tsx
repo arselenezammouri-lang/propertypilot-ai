@@ -249,7 +249,7 @@ export default function RefineListingPage() {
   const copyFullListing = (listing: RefinedListing, version: string) => {
     const fullText = `${listing.titolo}\n\n` +
       `${listing.descrizione}\n\n` +
-      `✨ ${t.highlightsHeading}\n${listing.highlights.map(h => `• ${h}`).join('\n')}\n\n` +
+      `✨ ${t.highlightsHeading}\n${listing?.highlights?.map(h => `• ${h}`).join('\n')}\n\n` +
       `🎯 ${t.ctaHeading} ${listing.cta}\n\n` +
       `📝 ${t.metaHeading}\n${listing.metaDescription}`;
     
@@ -329,7 +329,7 @@ export default function RefineListingPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard(listing.highlights.map(h => `• ${h}`).join('\n'), `highlights-${version}`)}
+                onClick={() => copyToClipboard(listing?.highlights?.map(h => `• ${h}`).join('\n'), `highlights-${version}`)}
                 className="h-6 px-2"
                 data-testid={`button-copy-highlights-${version}`}
               >
@@ -337,7 +337,7 @@ export default function RefineListingPage() {
               </Button>
             </div>
             <ul className="space-y-2">
-              {listing.highlights.map((highlight, idx) => (
+              {listing?.highlights?.map((highlight, idx) => (
                 <li key={idx} className="flex items-start gap-2 p-2 bg-muted/30 rounded-lg">
                   <span className={`w-6 h-6 rounded-full bg-gradient-to-r ${tabInfo.gradient} flex items-center justify-center text-foreground text-xs font-bold flex-shrink-0`}>
                     {idx + 1}

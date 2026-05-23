@@ -64,7 +64,7 @@ export default function CMAPage() {
       const data = await res.json();
       if (data.success) {
         setReport(data.report);
-        toast({ title: "CMA Report generated", description: `${data.report.comparables.length} comparables analyzed` });
+        toast({ title: "CMA Report generated", description: `${data.report?.comparables?.length ?? 0} comparables analyzed` });
         fetchReports();
       } else { toast({ title: "Failed", description: data.error, variant: "destructive" }); }
     } catch { toast({ title: "Error", variant: "destructive" }); }
@@ -129,9 +129,9 @@ export default function CMAPage() {
 
           {/* Comparables Grid */}
           <div>
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Comparable Properties ({report.comparables.length})</h3>
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> Comparable Properties ({report?.comparables?.length ?? 0})</h3>
             <div className="grid sm:grid-cols-2 gap-3">
-              {report.comparables.map((comp, i) => (
+              {report?.comparables?.map((comp, i) => (
                 <div key={i} className="pp-glass-card p-4 flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{comp.address || `Comparable ${i + 1}`}</p>
@@ -154,11 +154,11 @@ export default function CMAPage() {
           </div>
 
           {/* AI Citations */}
-          {report.citations.length > 0 && (
+          {(report?.citations?.length ?? 0) > 0 && (
             <div>
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> AI Citations ({report.citations.length})</h3>
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><FileText className="w-4 h-4 text-primary" /> AI Citations ({report?.citations?.length ?? 0})</h3>
               <div className="pp-glass-card p-4 space-y-2">
-                {report.citations.map((c, i) => (
+                {report?.citations?.map((c, i) => (
                   <div key={i} className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground truncate flex-1">{c.claim_text}</span>
                     {c.source_url ? (

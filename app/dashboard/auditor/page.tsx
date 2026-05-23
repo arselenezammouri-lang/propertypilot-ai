@@ -634,7 +634,7 @@ export default function AuditorPage() {
                         <div className="mb-3">
                           <p className="text-xs font-semibold text-red-400 mb-1">Problemi:</p>
                           <ul className="text-sm text-red-300/80 space-y-1">
-                            {item.problemi.map((p, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 shrink-0" />{p}</li>)}
+                            {item?.problemi?.map((p, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 shrink-0" />{p}</li>)}
                           </ul>
                         </div>
                       )}
@@ -642,7 +642,7 @@ export default function AuditorPage() {
                         <div>
                           <p className="text-xs font-semibold text-emerald-400 mb-1">Suggerimenti:</p>
                           <ul className="text-sm text-emerald-300/80 space-y-1">
-                            {item.suggerimenti.map((s, i) => <li key={i} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />{s}</li>)}
+                            {item?.suggerimenti?.map((s, i) => <li key={i} className="flex items-start gap-2"><CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />{s}</li>)}
                           </ul>
                         </div>
                       )}
@@ -863,7 +863,7 @@ export default function AuditorPage() {
                     Versione Ottimizzata (Mini Perfect Copy)
                   </div>
                   <CopyButton 
-                    text={`${auditResult.optimizedVersion.titolo}\n\n${auditResult.optimizedVersion.descrizione}\n\n${auditResult.optimizedVersion.highlights.map(h => `• ${h}`).join('\n')}\n\n${auditResult.optimizedVersion.callToAction}`}
+                    text={`${auditResult.optimizedVersion.titolo}\n\n${auditResult.optimizedVersion.descrizione}\n\n${auditResult?.optimizedVersion?.highlights?.map(h => `• ${h}`).join('\n')}\n\n${auditResult.optimizedVersion.callToAction}`}
                     section="optimized"
                   />
                 </CardTitle>

@@ -408,7 +408,7 @@ export default function ListingsPage() {
                     </TabsContent>
                     <TabsContent value="titles" className="mt-4">
                       <div className="space-y-2">
-                        {selectedListing.generated_content.titles.map((title, i) => (
+                        {selectedListing?.generated_content?.titles?.map((title, i) => (
                           <div key={i} className="bg-muted p-3 rounded-lg">
                             <p className="text-sm font-medium" data-testid={`content-title-${i}`}>
                               {i + 1}. {title}

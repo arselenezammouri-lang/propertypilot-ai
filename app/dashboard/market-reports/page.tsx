@@ -164,7 +164,7 @@ export default function MarketReportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {report.indices.map((idx) => (
+                  {report?.indices?.map((idx) => (
                     <tr key={idx.city} className="border-b border-border/30 hover:bg-muted/20">
                       <td className="p-3 pl-4 font-medium flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-muted-foreground" />
@@ -227,7 +227,7 @@ export default function MarketReportsPage() {
                 <Sparkles className="w-4 h-4 text-teal-400" /> Key Highlights
               </h3>
               <ul className="space-y-2">
-                {report.highlights.map((h, i) => (
+                {report?.highlights?.map((h, i) => (
                   <li key={i} className="text-sm text-muted-foreground">{h}</li>
                 ))}
               </ul>
@@ -238,7 +238,7 @@ export default function MarketReportsPage() {
                 <TrendingUp className="w-4 h-4 text-teal-400" /> Recommendations
               </h3>
               <ul className="space-y-2">
-                {report.recommendations.map((r, i) => (
+                {report?.recommendations?.map((r, i) => (
                   <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
                     <span className="text-teal-400 mt-1">→</span> {r}
                   </li>
