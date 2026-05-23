@@ -1,7 +1,7 @@
 {
   "name": "PropertyPilot AI",
   "short_name": "PropertyPilot",
-  "description": "The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups.",
+  "description": "The AI Operating System for European Real Estate Agencies. Generate listings, score leads, automate calls across 6 EU countries.",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#000000",

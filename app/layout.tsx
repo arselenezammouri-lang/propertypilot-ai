@@ -36,7 +36,7 @@ const LOCALES: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'ar', 'pt'];
 
 const APP_URL = getBaseUrl();
 const APP_NAME = 'PropertyPilot AI';
-const APP_DESCRIPTION = 'The AI Operating System for Real Estate Agencies. Close more deals, write better listings, and automate follow-ups. Built for agents and teams in the US, Europe, and beyond.';
+const APP_DESCRIPTION = 'The AI Operating System for European Real Estate Agencies. Generate listings, score leads, automate calls, check compliance — across Italy, France, Spain, Germany, UK and Portugal.';
 const SUPPORT_EMAIL = 'support@propertypilotai.com';
 const SALES_EMAIL = 'sales@propertypilotai.com';
 
@@ -157,22 +157,15 @@ export default function RootLayout({
       '@type': 'AggregateOffer',
       priceCurrency: 'EUR',
       lowPrice: '0',
-      highPrice: '497',
+      highPrice: '897',
       offerCount: '4',
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '127',
-      bestRating: '5',
-      worstRating: '1',
     },
     author: {
       '@type': 'Organization',
       name: APP_NAME,
       url: APP_URL,
     },
-    areaServed: ['United States', 'Canada', 'Italy', 'Spain', 'Portugal', 'France', 'United Kingdom', 'Germany'],
+    areaServed: ['Italy', 'France', 'Spain', 'Germany', 'United Kingdom', 'Portugal'],
     availableLanguage: ['English', 'Italian', 'Spanish', 'Portuguese', 'French', 'German'],
   };
 

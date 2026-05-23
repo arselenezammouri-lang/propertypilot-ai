@@ -49,7 +49,6 @@ export default function CompliancePage() {
 
   const countries = [
     { code: 'IT', name: 'Italia', flag: '🇮🇹' },
-    { code: 'US', name: 'United States', flag: '🇺🇸' },
     { code: 'ES', name: 'España', flag: '🇪🇸' },
     { code: 'FR', name: 'France', flag: '🇫🇷' },
     { code: 'DE', name: 'Deutschland', flag: '🇩🇪' },
@@ -62,11 +61,6 @@ export default function CompliancePage() {
       { name: 'Terms of Service', type: 'terms', available: true },
       { name: 'Cookie Policy', type: 'cookies', available: true },
       { name: 'Data Processing Agreement', type: 'dpa', available: true },
-    ],
-    US: [
-      { name: 'Privacy Policy (CCPA)', type: 'privacy', available: true },
-      { name: 'Terms of Service', type: 'terms', available: true },
-      { name: 'Cookie Policy', type: 'cookies', available: true },
     ],
     ES: [
       { name: 'Política de Privacidad (GDPR)', type: 'privacy', available: true },
