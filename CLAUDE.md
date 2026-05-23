@@ -500,3 +500,9 @@ See full list: find app/api -name 'route.ts' | sort
 ❌ SQL migrations — founder must run on Supabase
 ❌ Portal partner applications — founder must apply
 ❌ WhatsApp template approval — founder must submit to Meta
+
+## v64-v66 Bug Fixes (Live Site Issues)
+- v64: Crash-proofed ALL dashboard pages — optional chaining on API data (.length, .map, .filter)
+- v65: Command palette navigation fixed — dual onSelect + onMouseDown, setTimeout for dialog close
+- v66: Google Maps + Photo Upload wired into ai-listings, cma, marketplace pages
+- NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — Google Maps JavaScript API key (founder sets on Vercel)
