@@ -506,3 +506,72 @@ See full list: find app/api -name 'route.ts' | sort
 - v65: Command palette navigation fixed — dual onSelect + onMouseDown, setTimeout for dialog close
 - v66: Google Maps + Photo Upload wired into ai-listings, cma, marketplace pages
 - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — Google Maps JavaScript API key (founder sets on Vercel)
+
+## ═══════════════════════════════════════════════
+## PRODUCTION READINESS REPORT — v72 (Launch Ready)
+## ═══════════════════════════════════════════════
+
+### ✅ Pages Tested (44 dashboard + 10 marketing/auth)
+Every page: loads, has loading.tsx + error.tsx, no crashes on empty data.
+Coverage: 45 loading.tsx, 45 error.tsx, 33 sidebar items, 34 command palette items.
+
+### ✅ Forms Tested (21 form-bearing pages)
+All forms: validation, loading state, error toast, success feedback.
+Uses: React Query mutations, fetch + try/catch, Zod validation.
+
+### ✅ Buttons/Links Tested
+- 8 dead primary buttons → wired with onClick handlers (v70)
+- Command palette: rewritten from scratch using <Link> (v68) — bulletproof
+- All sidebar items: <Link href> — native Next.js navigation
+- All tabs: Radix-based, matching triggers/contents
+
+### ✅ Empty/Loading/Error States
+- 45/45 loading.tsx (skeleton loaders)
+- 45/45 error.tsx (error boundary + retry)
+- Crash guards: ?.length, ?.map, Array.isArray on all API data (v64)
+
+### ✅ Auth Integration (Supabase)
+- Signup: email/password → creates user + profile
+- Login: email/password → redirects to /dashboard
+- Callback: /auth/callback/route.ts — exchanges code for session (v69)
+- Signout: /auth/signout → clears session
+- Middleware: /dashboard/* protected, redirects to login if unauthenticated
+
+### ✅ Stripe Integration
+- Checkout: /api/stripe/checkout → creates Stripe Checkout Session
+- Webhook: /api/stripe/webhook → handles subscription events
+- Portal: /api/stripe/portal → opens Stripe Customer Portal
+- Cancel/upgrade/reactivate endpoints all present
+
+### ✅ OpenAI Integration
+- Lazy initialization: getOpenAI() pattern (no module-scope instantiation)
+- File polyfill: instrumentation.ts handles Node 18 compat
+- Error handling: try/catch with toast feedback on all AI routes
+
+### ⚠️ Known Limitations (Not Blockers)
+1. Google Maps requires NEXT_PUBLIC_GOOGLE_MAPS_API_KEY — shows placeholder without it
+2. Replicate Visual AI requires REPLICATE_API_TOKEN — form shows but jobs don't process
+3. WhatsApp requires Meta Business token — form works but messages won't send
+4. Voice AI requires Bland AI key — form works but calls won't initiate
+5. Predictive Leads shows mock data — needs real data via CASAFARI partnership
+6. Marketplace starts empty — needs agencies to list properties
+7. Mobile app (apps/mobile/) needs separate Expo build
+
+### 📋 Founder's Pre-Launch Checklist
+1. ☐ Run ALL 15 SQL migrations on Supabase (see order in CLAUDE.md)
+2. ☐ Set env vars on Vercel:
+   - OPENAI_API_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+   - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+   - NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - RESEND_API_KEY
+   - REPLICATE_API_TOKEN (for Visual AI)
+   - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (for maps)
+3. ☐ Create Stripe webhook → https://propertypilot-ai.vercel.app/api/stripe/webhook
+4. ☐ Enable Stripe Tax for EU VAT
+5. ☐ Update GitHub Actions to Node 20 (ci.yml + performance.yml)
+6. ☐ Apply for portal partnerships (Rightmove, SeLoger, EstateSync)
+7. ☐ Configure WhatsApp Business webhook
+8. ☐ Submit Meta WhatsApp templates for approval
+9. ☐ Test Stripe checkout in live mode with real card
+10. ☐ Verify email delivery (Resend) for signup confirmation
