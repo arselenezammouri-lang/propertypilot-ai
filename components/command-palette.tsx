@@ -182,11 +182,14 @@ export function CommandPalette() {
   const handleSelect = useCallback(
     (item: CommandItem) => {
       setOpen(false);
-      if (item.action) {
-        item.action();
-      } else if (item.href) {
-        router.push(item.href);
-      }
+      // Use setTimeout to ensure dialog closes before navigation
+      setTimeout(() => {
+        if (item.action) {
+          item.action();
+        } else if (item.href) {
+          router.push(item.href);
+        }
+      }, 100);
     },
     [router]
   );
@@ -203,8 +206,12 @@ export function CommandPalette() {
               {group.items.map((item) => (
                 <CommandItem
                   key={item.id}
-                  value={`${item.label} ${item.description ?? ""}`}
+                  value={`${item.id} ${item.label} ${item.description ?? ""}`}
                   onSelect={() => handleSelect(item)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    handleSelect(item);
+                  }}
                   className="flex items-center gap-3 cursor-pointer"
                 >
                   <span className="flex items-center justify-center w-7 h-7 rounded-md bg-muted text-muted-foreground">
