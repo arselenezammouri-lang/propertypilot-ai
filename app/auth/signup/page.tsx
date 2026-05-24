@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleCurrencySelector } from "@/components/locale-currency-selector";
 import { useLocale as useLocaleContext } from "@/lib/i18n/locale-context";
 import { getTranslation, SupportedLocale } from "@/lib/i18n/dictionary";
-import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff, Shield, Check } from "lucide-react";
+import { Home, ArrowLeft, User, Mail, Lock, Sparkles, CheckCircle, Eye, EyeOff, Shield, Check, Building2 } from "lucide-react";
 
 function SignupClient() {
   const [email, setEmail] = useState("");
@@ -167,7 +167,7 @@ function SignupClient() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center space-x-3 mb-6 group">
             <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/70 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-              <Home className="text-foreground" size={24} />
+              <Building2 className="text-white" size={20} />
             </div>
             <div className="text-left">
               <h1 className="text-2xl font-bold gradient-text">PropertyPilot AI</h1>
