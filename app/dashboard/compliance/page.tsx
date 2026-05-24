@@ -396,9 +396,9 @@ export default function CompliancePage() {
           {score === null && !loading && (
             <Card className="p-12 bg-card/50 backdrop-blur border-border/50 text-center">
               <Shield className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <h3 className="font-semibold mb-1">No Compliance Check Yet</h3>
+              <h3 className="font-semibold mb-1">{isIt ? "Nessun Controllo Effettuato" : "No Compliance Check Yet"}</h3>
               <p className="text-sm text-muted-foreground">
-                Enter listing data and select a country to check compliance with local regulations.
+                {isIt ? "Inserisci i dati dell'annuncio e seleziona un Paese per verificare la conformità." : "Enter listing data and select a country to check compliance with local regulations."}
               </p>
             </Card>
           )}

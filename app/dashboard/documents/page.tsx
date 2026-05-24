@@ -300,7 +300,7 @@ export default function DocumentsPage() {
           ) : (
             <Card className="p-12 bg-card/50 backdrop-blur border-border/50 text-center">
               <FileSearch className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-              <h3 className="font-semibold mb-1">No Document Extracted Yet</h3>
+              <h3 className="font-semibold mb-1">{isIt ? "Nessun Documento Estratto" : "No Document Extracted Yet"}</h3>
               <p className="text-sm text-muted-foreground">
                 Upload a document and click Extract to see structured data with AI-powered citations.
               </p>

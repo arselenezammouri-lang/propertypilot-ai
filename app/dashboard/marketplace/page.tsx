@@ -207,7 +207,7 @@ export default function MarketplacePage() {
       ) : (
         <Card className="p-12 text-center bg-card/50 backdrop-blur border-border/50">
           <Store className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-          <h3 className="font-semibold mb-1">No Marketplace Listings Yet</h3>
+          <h3 className="font-semibold mb-1">{isIt ? "Nessun Annuncio nel Marketplace" : "No Marketplace Listings Yet"}</h3>
           <p className="text-sm text-muted-foreground">
             Be the first to list a cross-border property on the PropertyPilot marketplace.
           </p>
