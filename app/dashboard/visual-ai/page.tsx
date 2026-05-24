@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useCallback, useEffect } from "react";
 import {
@@ -83,6 +84,8 @@ const FLOOR_PLAN_STYLES: { value: FloorPlanStyle; label: string; desc: string }[
 
 // ─── Component ──────────────────────────────────────────────
 export default function VisualAIPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [activeTab, setActiveTab] = useState<JobType>("virtual_staging");
   const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);

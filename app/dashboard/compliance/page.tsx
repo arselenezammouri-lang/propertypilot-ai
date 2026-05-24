@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState } from "react";
 import {
@@ -48,6 +49,8 @@ const COUNTRIES: { code: Country; name: string; flag: string }[] = [
 ];
 
 export default function CompliancePage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [country, setCountry] = useState<Country>("IT");
   const [loading, setLoading] = useState(false);
   const [checks, setChecks] = useState<CheckDetail[]>([]);

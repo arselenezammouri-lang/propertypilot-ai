@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState } from "react";
 import {
@@ -106,6 +107,8 @@ const MOCK_RUNS: AutomationRun[] = [
 ];
 
 export default function AutomationsPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [automationsEnabled, setAutomationsEnabled] = useState(true);
   const [callThreshold, setCallThreshold] = useState(90);
   const [whatsappThreshold, setWhatsappThreshold] = useState(80);

@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState } from "react";
 import {
@@ -41,6 +42,8 @@ const MCP_CONFIG = `{
 }`;
 
 export default function MCPIntegrationsPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [copied, setCopied] = useState(false);
   const [configCopied, setConfigCopied] = useState(false);
 

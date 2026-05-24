@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useCallback, useEffect } from "react";
 import {
@@ -44,6 +45,8 @@ const DOC_TYPES: { value: DocumentType; label: string; icon: string }[] = [
 ];
 
 export default function DocumentsPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [docType, setDocType] = useState<DocumentType>("mandate");
   const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);

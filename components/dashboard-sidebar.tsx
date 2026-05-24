@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale } from "@/lib/i18n/locale-context";
 import {
   Users,
   BarChart3,
@@ -37,6 +38,7 @@ import { Button } from "@/components/ui/button";
 
 interface NavItem {
   label: string;
+  labelIt?: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
@@ -44,27 +46,28 @@ interface NavItem {
 
 interface NavGroup {
   title: string;
+  titleIt?: string;
   items: NavItem[];
 }
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    title: "Overview",
+    title: "Overview", titleIt: "Panoramica",
     items: [
       { label: "Dashboard", href: "/dashboard", icon: Home },
-      { label: "Onboarding", href: "/dashboard/onboarding", icon: Sparkles, badge: "Start" },
-      { label: "Saved Listings", href: "/dashboard/listings", icon: Search },
-      { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+      { label: "Onboarding", labelIt: "Configurazione", href: "/dashboard/onboarding", icon: Sparkles, badge: "Start" },
+      { label: "Saved Listings", labelIt: "Annunci Salvati", href: "/dashboard/listings", icon: Search },
+      { label: "Analytics", labelIt: "Statistiche", href: "/dashboard/analytics", icon: BarChart3 },
     ],
   },
   {
-    title: "AI Content",
+    title: "AI Content", titleIt: "Contenuti AI",
     items: [
-      { label: "AI Listings", href: "/dashboard/ai-listings", icon: Sparkles },
+      { label: "AI Listings", labelIt: "Annunci AI", href: "/dashboard/ai-listings", icon: Sparkles },
       { label: "Social & Video", href: "/dashboard/social-posts", icon: Hash },
-      { label: "Agent Bio", href: "/dashboard/agent-bio", icon: User },
-      { label: "Translate", href: "/dashboard/translate", icon: Globe },
-      { label: "PDF Brochures", href: "/dashboard/pdf", icon: FileSearch },
+      { label: "Agent Bio", labelIt: "Bio Agente", href: "/dashboard/agent-bio", icon: User },
+      { label: "Translate", labelIt: "Traduci", href: "/dashboard/translate", icon: Globe },
+      { label: "PDF Brochures", labelIt: "Brochure PDF", href: "/dashboard/pdf", icon: FileSearch },
     ],
   },
   {
@@ -74,72 +77,74 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    title: "CRM & Leads",
+    title: "CRM & Leads", titleIt: "CRM & Lead",
     items: [
       { label: "Leads", href: "/dashboard/leads", icon: Users },
-      { label: "Lead Score", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
-      { label: "Follow-up Emails", href: "/dashboard/followup-emails", icon: Mail },
-      { label: "Automations", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
-      { label: "Opportunities", href: "/dashboard/opportunities", icon: TrendingUp },
+      { label: "Lead Score", labelIt: "Punteggio Lead", href: "/dashboard/lead-score", icon: Target, badge: "Pro" },
+      { label: "Follow-up Emails", labelIt: "Email Follow-up", href: "/dashboard/followup-emails", icon: Mail },
+      { label: "Automations", labelIt: "Automazioni", href: "/dashboard/automations", icon: Zap, badge: "Pro" },
+      { label: "Opportunities", labelIt: "Opportunità", href: "/dashboard/opportunities", icon: TrendingUp },
     ],
   },
   {
-    title: "Communication",
+    title: "Communication", titleIt: "Comunicazione",
     items: [
       { label: "Voice AI", href: "/dashboard/voice-campaigns", icon: Phone },
       { label: "WhatsApp AI", href: "/dashboard/whatsapp", icon: MessageCircle },
-      { label: "AI Assistant", href: "/dashboard/agency-assistant", icon: MessageCircle },
+      { label: "AI Assistant", labelIt: "Assistente AI", href: "/dashboard/agency-assistant", icon: MessageCircle },
     ],
   },
   {
-    title: "Compliance & Docs",
+    title: "Compliance & Docs", titleIt: "Compliance & Documenti",
     items: [
       { label: "Compliance Shield", href: "/dashboard/compliance", icon: FileCheck },
-      { label: "Document AI", href: "/dashboard/documents", icon: FileSearch },
+      { label: "Document AI", labelIt: "Documenti AI", href: "/dashboard/documents", icon: FileSearch },
     ],
   },
   {
-    title: "Valuation",
+    title: "Valuation", titleIt: "Valutazione",
     items: [
-      { label: "CMA Reports", href: "/dashboard/cma", icon: BarChart3 },
+      { label: "CMA Reports", labelIt: "Report CMA", href: "/dashboard/cma", icon: BarChart3 },
     ],
   },
   {
-    title: "Market Intelligence",
+    title: "Market Intelligence", titleIt: "Intelligence di Mercato",
     items: [
-      { label: "Market Search", href: "/dashboard/prospecting", icon: Search },
-      { label: "Predictive Leads", href: "/dashboard/predictive-leads", icon: TrendingUp, badge: "Pro" },
+      { label: "Market Search", labelIt: "Ricerca Mercato", href: "/dashboard/prospecting", icon: Search },
+      { label: "Predictive Leads", labelIt: "Lead Predittivi", href: "/dashboard/predictive-leads", icon: TrendingUp, badge: "Pro" },
       { label: "Marketplace", href: "/dashboard/marketplace", icon: Store },
-      { label: "Market Reports", href: "/dashboard/market-reports", icon: LineChart },
-      { label: "Map View", href: "/dashboard/map", icon: Globe },
+      { label: "Market Reports", labelIt: "Report Mercato", href: "/dashboard/market-reports", icon: LineChart },
+      { label: "Map View", labelIt: "Mappa", href: "/dashboard/map", icon: Globe },
     ],
   },
   {
-    title: "Portals & Integrations",
+    title: "Portals & Integrations", titleIt: "Portali & Integrazioni",
     items: [
-      { label: "Portal Connections", href: "/dashboard/portals", icon: Globe },
-      { label: "MCP / Integrations", href: "/dashboard/integrations", icon: Plug },
+      { label: "Portal Connections", labelIt: "Connessioni Portali", href: "/dashboard/portals", icon: Globe },
+      { label: "MCP / Integrations", labelIt: "MCP / Integrazioni", href: "/dashboard/integrations", icon: Plug },
     ],
   },
   {
-    title: "Agency",
+    title: "Agency", titleIt: "Agenzia",
     items: [
       { label: "Branding", href: "/dashboard/branding", icon: Palette, badge: "Agency" },
-      { label: "Packages", href: "/dashboard/packages", icon: CreditCard },
+      { label: "Packages", labelIt: "Pacchetti", href: "/dashboard/packages", icon: CreditCard },
     ],
   },
   {
     title: "Account",
     items: [
-      { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
+      { label: "Billing", labelIt: "Abbonamento", href: "/dashboard/billing", icon: CreditCard },
       { label: "Referral", href: "/dashboard/referral", icon: Gift },
-      { label: "Settings", href: "/dashboard/settings/workspace", icon: Settings },
+      { label: "Settings", labelIt: "Impostazioni", href: "/dashboard/settings/workspace", icon: Settings },
     ],
   },
 ];
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -169,7 +174,7 @@ export function DashboardSidebar() {
           <div key={group.title}>
             {!collapsed && (
               <p className="px-3 mb-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                {group.title}
+                {isIt && group.titleIt ? group.titleIt : group.title}
               </p>
             )}
             <ul className="space-y-0.5">
@@ -184,12 +189,12 @@ export function DashboardSidebar() {
                           ? "bg-accent text-foreground font-medium"
                           : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                       } ${collapsed ? "justify-center" : ""}`}
-                      title={collapsed ? item.label : undefined}
+                      title={collapsed ? (isIt && item.labelIt ? item.labelIt : item.label) : undefined}
                     >
                       <item.icon className="w-4 h-4 flex-shrink-0" />
                       {!collapsed && (
                         <>
-                          <span className="flex-1 truncate">{item.label}</span>
+                          <span className="flex-1 truncate">{isIt && item.labelIt ? item.labelIt : item.label}</span>
                           {item.badge && (
                             <span className="text-[10px] font-semibold bg-primary/10 text-primary px-1.5 py-0.5 rounded">
                               {item.badge}

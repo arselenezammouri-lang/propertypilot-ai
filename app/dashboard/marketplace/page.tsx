@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useEffect } from "react";
 import {
@@ -52,6 +53,8 @@ const FLAG_MAP: Record<string, string> = {
 };
 
 export default function MarketplacePage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [listings, setListings] = useState<MarketplaceListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [country, setCountry] = useState("");

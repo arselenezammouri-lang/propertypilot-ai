@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -99,6 +100,8 @@ const STEPS: OnboardingStep[] = [
 ];
 
 export default function OnboardingPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 

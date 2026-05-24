@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useEffect } from "react";
 import {
@@ -17,6 +18,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function BrandingPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 

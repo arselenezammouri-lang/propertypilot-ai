@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState, useEffect } from "react";
 import {
@@ -85,6 +86,8 @@ const MOCK_REPORT: MarketReport = {
 };
 
 export default function MarketReportsPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [report] = useState(MOCK_REPORT);
   const [autoSend, setAutoSend] = useState(true);
 

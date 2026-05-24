@@ -1,4 +1,5 @@
 "use client";
+import { useLocale } from "@/lib/i18n/locale-context";
 
 import { useState } from "react";
 import {
@@ -97,6 +98,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function PredictiveLeadsPage() {
+  const { locale } = useLocale();
+  const isIt = locale === "it";
   const [leads] = useState(MOCK_LEADS);
   const [selectedLead, setSelectedLead] = useState<PredictiveLead | null>(null);
 
