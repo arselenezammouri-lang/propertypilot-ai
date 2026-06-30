@@ -50,7 +50,7 @@ export function welcomeEmail(name: string): { subject: string; html: string } {
     subject: `Welcome to PropertyPilot AI, ${name}! 🏠`,
     html: layout(`
       <h1>Welcome aboard, ${name}! 🎉</h1>
-      <p>You've just joined 500+ agencies across Europe who are using AI to close more deals, faster.</p>
+      <p>You've just joined a growing community of real estate professionals across Europe who are using AI to close more deals, faster.</p>
       <h2>Your first 3 steps:</h2>
       <ul>
         <li><strong>Generate your first listing</strong> — Go to AI Listings and create a portal-optimized description in 30 seconds</li>
