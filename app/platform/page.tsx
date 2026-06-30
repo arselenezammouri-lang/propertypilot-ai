@@ -1027,9 +1027,13 @@ export default function PlatformPage() {
             <div>
               <h3 className="text-foreground font-semibold mb-4">{t.landing.footer.support}</h3>
               <ul className="space-y-2 text-gray-400 text-sm font-light">
+                <li><Link href="/help" className="hover:text-purple-400 transition-colors">Help Center</Link></li>
+                <li><Link href="/status" className="hover:text-purple-400 transition-colors">System Status</Link></li>
+                <li><Link href="/security" className="hover:text-purple-400 transition-colors">Security</Link></li>
                 <li><Link href="/privacy" className="hover:text-purple-400 transition-colors">{t.landing.footer.privacy}</Link></li>
                 <li><Link href="/terms" className="hover:text-purple-400 transition-colors">{t.landing.footer.terms}</Link></li>
                 <li><Link href="/refund" className="hover:text-purple-400 transition-colors">{t.landing.footer.refund}</Link></li>
+                <li><Link href="/ai-disclosure" className="hover:text-purple-400 transition-colors">AI Disclosure</Link></li>
               </ul>
             </div>
           </div>
