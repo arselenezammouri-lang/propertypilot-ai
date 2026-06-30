@@ -159,8 +159,6 @@ export default function LeadDetailPage() {
         ? "Activité IA sur ce lead"
         : locale === 'pt'
         ? 'Atividade de IA neste lead'
-        : locale === 'ar'
-        ? 'نشاط الذكاء الاصطناعي لهذا العميل المحتمل'
         : isItalian
         ? 'Attività AI su questo lead'
         : 'AI Activity on this lead',
@@ -171,8 +169,6 @@ export default function LeadDetailPage() {
         ? "Résumé des analyses, automatisations et actions IA liées à ce lead."
         : locale === 'pt'
         ? 'Resumo de análises, automações e ações de IA relacionadas a este lead.'
-        : locale === 'ar'
-        ? 'ملخص التحليلات والأتمتة وإجراءات الذكاء الاصطناعي المرتبطة بهذا العميل المحتمل.'
         : isItalian
         ? 'Riepilogo di analisi, automazioni e azioni AI collegate a questo lead.'
         : 'Summary of analysis, automations and AI actions related to this lead.',
@@ -183,8 +179,6 @@ export default function LeadDetailPage() {
         ? 'Analyse Lead Insights terminée'
         : locale === 'pt'
         ? 'Análise Lead Insights concluída'
-        : locale === 'ar'
-        ? 'تم إكمال تحليل Lead Insights'
         : isItalian
         ? 'Analisi Lead Insights completata'
         : 'Lead Insights analysis completed',
@@ -195,8 +189,6 @@ export default function LeadDetailPage() {
         ? 'donnée récupérée du cache'
         : locale === 'pt'
         ? 'dado recuperado do cache'
-        : locale === 'ar'
-        ? 'البيانات من الذاكرة المؤقتة'
         : isItalian
         ? 'dato recuperato da cache'
         : 'data retrieved from cache',
@@ -207,8 +199,6 @@ export default function LeadDetailPage() {
         ? "Aucune activité IA enregistrée pour l'instant."
         : locale === 'pt'
         ? 'Ainda não há atividade de IA registada.'
-        : locale === 'ar'
-        ? 'لا يوجد نشاط للذكاء الاصطناعي حتى الآن.'
         : isItalian
         ? 'Nessuna attività AI registrata finora.'
         : 'No AI activity recorded yet.',
@@ -794,8 +784,6 @@ export default function LeadDetailPage() {
                       +{automationLogs.length - 3}{" "}
                       {locale === "es"
                         ? "acciones de IA más..."
-                        : locale === "ar"
-                        ? "إجراءات إضافية للذكاء الاصطناعي..."
                         : isItalian
                         ? "altre azioni AI..."
                         : "more AI actions..."}

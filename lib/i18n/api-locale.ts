@@ -24,7 +24,7 @@ export async function getUserLocale(
   
   if (headerLocale) {
     const langCode = headerLocale.split(',')[0].split('-')[0].toLowerCase();
-    if (['it', 'en', 'es', 'fr', 'de', 'ar'].includes(langCode)) {
+    if (['it', 'en', 'es', 'fr', 'de', 'pt'].includes(langCode)) {
       return langCode as SupportedLocale;
     }
   }
@@ -38,7 +38,7 @@ export async function getUserLocale(
         .eq('id', userId)
         .single();
       
-      if (profile?.locale && ['it', 'en', 'es', 'fr', 'de', 'ar'].includes(profile.locale)) {
+      if (profile?.locale && ['it', 'en', 'es', 'fr', 'de', 'pt'].includes(profile.locale)) {
         return profile.locale as SupportedLocale;
       }
     } catch (error) {
@@ -98,15 +98,6 @@ export const errorMessages: Record<SupportedLocale, Record<string, string>> = {
     rateLimit: 'Zu viele Anfragen. Bitte versuchen Sie es in einer Minute erneut.',
     subscriptionRequired: 'Abonnement erforderlich',
     invalidData: 'Ungültige Daten',
-  },
-  ar: {
-    unauthorized: 'غير مصرح',
-    notFound: 'غير موجود',
-    invalidRequest: 'طلب غير صالح',
-    internalError: 'خطأ داخلي في الخادم',
-    rateLimit: 'طلبات كثيرة جداً. يرجى المحاولة مرة أخرى بعد دقيقة.',
-    subscriptionRequired: 'اشتراك مطلوب',
-    invalidData: 'بيانات غير صالحة',
   },
   pt: {
     unauthorized: 'Não autorizado',

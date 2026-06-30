@@ -12,7 +12,7 @@ interface LocaleContextValue {
 }
 
 const LOCALE_COOKIE = "propertypilot_locale";
-const VALID_LOCALES = ["it", "en", "es", "fr", "de", "ar", "pt"] as const;
+const VALID_LOCALES = ["it", "en", "es", "fr", "de", "pt"] as const;
 
 function setLocaleCookie(locale: string) {
   try {
@@ -55,7 +55,6 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       if (newLocale && VALID_LOCALES.includes(newLocale)) {
         setLocaleState(newLocale);
         setLocaleCookie(newLocale);
-        document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
         document.documentElement.lang = newLocale;
       }
     };
@@ -80,7 +79,6 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       localStorage.setItem("propertypilot_locale", newLocale);
       setLocaleCookie(newLocale);
-      document.documentElement.dir = newLocale === "ar" ? "rtl" : "ltr";
       document.documentElement.lang = newLocale;
       window.dispatchEvent(new CustomEvent("locale-change", { detail: newLocale }));
     }

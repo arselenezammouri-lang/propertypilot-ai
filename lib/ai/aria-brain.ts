@@ -368,46 +368,6 @@ export function getLocaleConfig(locale: SupportedLocale, location?: string): Loc
     },
     
     // Medio Oriente - Focus su 0% tasse e ROI elevato
-    ar: {
-      region: 'Medio Oriente - Emirati Arabi / Qatar',
-      focus: [
-        '0% tasse su redditi da affitti e plusvalenze (UAE/Qatar)',
-        'ROI elevato 7-10% annui',
-        'Transazioni veloci e mercato liquido',
-        'Investimenti in valuta stabile (AED/USD)',
-        'Mercato del lusso Dubai/Qatar',
-      ],
-      taxes: [
-        '0% Income Tax - nessuna tassa sul reddito da affitti (UAE/Qatar)',
-        '0% Capital Gains Tax - nessuna tassa su plusvalenze',
-        '0% Property Tax - nessuna tassa annuale sugli immobili',
-        'Solo spese di registrazione e commissioni (circa 2-4% del valore)',
-        'Dubai: Freehold per stranieri, nessuna restrizione',
-        'Qatar: Investimenti diretti con permessi semplificati',
-      ],
-      marketDynamics: [
-        'Mercato ultra-liquido con transazioni veloci (settimane, non mesi)',
-        'ROI netto 7-10% annui (senza tasse)',
-        'Alta domanda da expat e investitori internazionali',
-        'Mercato del lusso in forte crescita (Dubai Marina, Palm Jumeirah, Doha West Bay)',
-        'Valuta stabile (AED agganciata a USD)',
-        'Infrastrutture di classe mondiale',
-      ],
-      investmentStrategy: [
-        'Focus su Dubai Marina, Palm Jumeirah, Downtown Dubai per lusso premium',
-        'Doha West Bay, The Pearl per investimenti Qatar',
-        'ROI target: 7-10% annui netti (senza tasse)',
-        'Transazioni veloci: contratti in settimane, non mesi',
-        'Considera appartamenti premium per expat e turismo',
-        'Valuta investimenti in valuta USD per stabilità',
-        'Mercato in crescita costante con infrastrutture in espansione',
-      ],
-      examples: [
-        'Dubai: Appartamento 2BR a Dubai Marina da 1.5M AED (408k USD) con affitto 120k AED/anno (32.7k USD) = ROI 8% annuo NETTO (0% tasse). Transazione in 2-3 settimane.',
-        'Qatar: Villa a Doha West Bay da 2M QAR (549k USD) con affitto 180k QAR/anno (49.4k USD) = ROI 9% annuo NETTO (0% tasse). Mercato del lusso in forte crescita.',
-        'Dubai Palm Jumeirah: Proprietà premium con ROI 7-10% annui, nessuna tassa, transazioni veloci. Investimento ideale per portafoglio internazionale.',
-      ],
-    },
   };
 
   return configs[detectedLocale] || configs.en;

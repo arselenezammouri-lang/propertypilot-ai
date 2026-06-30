@@ -87,7 +87,7 @@ export const MCP_TOOLS: MCPTool[] = [
       properties: {
         listing_id: { type: "string", description: "UUID of the listing" },
         style: { type: "string", description: "Writing style", enum: ["professional", "emotional", "luxury"] },
-        language: { type: "string", description: "Language code", enum: ["it", "en", "fr", "es", "de", "ar"] },
+        language: { type: "string", description: "Language code", enum: ["it", "en", "fr", "es", "de", "pt"] },
       },
       required: ["listing_id"],
     },

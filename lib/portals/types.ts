@@ -32,7 +32,7 @@ export type PortalId =
   | "fotocasa"
   | "idealista_pt";
 
-export type PortalLanguage = "it" | "en" | "fr" | "es" | "de" | "pt" | "ar";
+export type PortalLanguage = "it" | "en" | "fr" | "es" | "de" | "pt";
 
 export type PortalCountry = "IT" | "FR" | "ES" | "DE" | "UK" | "PT";
 

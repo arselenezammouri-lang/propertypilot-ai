@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { logger } from '@/lib/utils/safe-logger';
 import type { SupportedLocale } from '@/lib/i18n/dictionary';
 
-const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'es', 'fr', 'de', 'pt', 'ar'];
+const SUPPORTED_LOCALES: SupportedLocale[] = ['it', 'en', 'es', 'fr', 'de', 'pt'];
 function toSupportedLocale(s: string): SupportedLocale {
   return (SUPPORTED_LOCALES.includes(s as SupportedLocale) ? s : 'it') as SupportedLocale;
 }
@@ -120,7 +120,6 @@ export async function POST(request: NextRequest) {
       es: "Lo siento, no entendí. ¿Puedes reformular?",
       fr: "Désolé, je n'ai pas compris. Pouvez-vous reformuler?",
       de: "Entschuldigung, ich habe es nicht verstanden. Können Sie es umformulieren?",
-      ar: "عذراً، لم أفهم. هل يمكنك إعادة الصياغة؟",
     };
     
     const response = completion.choices[0]?.message?.content || (fallbackMessages[userLocale] || fallbackMessages['it']);

@@ -1,11 +1,11 @@
 /**
  * Internationalization Configuration
- * Supporto per: Italiano, Inglese, Spagnolo, Francese, Tedesco, Arabo
+ * 6 EU markets: Italy, UK/EN, Spain, France, Germany, Portugal
  */
 
-export type Locale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'ar' | 'pt';
+export type Locale = 'it' | 'en' | 'es' | 'fr' | 'de' | 'pt';
 
-export const locales: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'ar', 'pt'];
+export const locales: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'pt'];
 
 export const defaultLocale: Locale = 'it';
 
@@ -15,17 +15,15 @@ export const localeNames: Record<Locale, string> = {
   es: 'Español',
   fr: 'Français',
   de: 'Deutsch',
-  ar: 'العربية',
   pt: 'Português',
 };
 
 export const localeFlags: Record<Locale, string> = {
   it: '🇮🇹',
-  en: '🇺🇸',
+  en: '🇬🇧',
   es: '🇪🇸',
   fr: '🇫🇷',
   de: '🇩🇪',
-  ar: '🇦🇪',
   pt: '🇵🇹',
 };
 
@@ -185,37 +183,6 @@ export const ariaTranslations: Record<Locale, Record<string, string>> = {
     memberPremium: "Premium Network Member",
     signInToChat: "Aria ist dein AI-Coach im Dashboard. Melde dich an, um das Gespräch zu starten und personalisierte Ratschläge zu erhalten!",
     signInCta: "Anmelden zum Chatten mit Aria",
-  },
-  ar: {
-    welcome: "مرحباً! أنا آريا، شريكك الذكي للنجاح. السوق اليوم لك!",
-    analyzing: "أنا أحلل العقار...",
-    territory_analysis: "اكتمل تحليل المنطقة",
-    error: "خطأ",
-    microphoneError: "تعذر الوصول إلى الميكروفون. يرجى استخدام لوحة المفاتيح.",
-    recalibrating: "آريا تعيد معايرة الاتصالات. يرجى المحاولة مرة أخرى بعد لحظة.",
-    inputPlaceholder: "اكتب أو تحدث مع آريا...",
-    listening: "جاري الاستماع...",
-    freePlanRemaining: "لديك {minutes} دقيقة متبقية اليوم (الحد: ساعة/يوم). [فتح آريا غير المحدودة](/dashboard/billing)",
-    limitReachedTitle: "تم الوصول للحد اليومي",
-    limitReachedDesc: "استخدمت ساعة من آريا اليوم. افتح خطة لاستخدام آريا بدون حدود!",
-    upgradeMessage: "⏰ **تم الوصول للحد اليومي**\n\nاستخدمت ساعة من آريا اليوم مع الخطة المجانية.\n\n🚀 **فتح آريا غير المحدودة** باشتراك:\n- **Starter** (€197/شهر): آريا غير محدودة + 50 إعلان/شهر\n- **Pro** (€497/شهر): آريا غير محدودة + 200 إعلان/شهر + CRM\n- **Agency** (€897/شهر): آريا غير محدودة + إعلانات غير محدودة + Team\n\n[اختر الخطة](/dashboard/billing)",
-    micUnavailableTitle: "الميكروفون غير متاح",
-    micUnavailableDesc: "استخدم لوحة المفاتيح لكتابة رسالتك.",
-    openGuide: "فتح الدليل التفصيلي",
-    limitReachedBadge: "تم الوصول للحد - يلزم الترقية",
-    remainingToday: "متبقية اليوم",
-    commandUnlimited: "الأمر عبر الإنترنت • غير محدود",
-    commandCenter: "مركز القيادة • طريق الإيرادات",
-    welcomeIntro: "الجيش جاهز، {name}. مسحت العالم و**{count} صفقة ذهبية من ميامي وميلانو** في انتظارك. من أي مدينة نبدأ الغزو؟ 🌍💎\n\n",
-    attentionDeals: "🚨 **انتباه: هذه صفقات ذهبية قد تُغلق خلال 48 ساعة!** 💎\n\n",
-    agencyFeatures: "مع خطة **Agency بـ€897/شهر**، تحصل على:\n- **Voice Agent AI غير محدود**: مكالمات تلقائية 24/7 أثناء نومك\n- **Aura VR**: تحويل فيديوهات الهاتف لجولات VR غامرة (غير محدودة)\n- **Manual Override**: وصول مباشر لبيانات المالك للمكالمات البشرية عند تفضيلك\n- **Omnichannel Domination Suite**: SMS/WhatsApp AI، Google Calendar Sync، Auto-Prospecting 24/7\n\n**ROI**: بيع إضافي واحد شهرياً يغطي الاستثمار. مع {count} صفقة ذهبية جاهزة، الآن هو الوقت المثالي للتوسع. هل تريد أن أريك كيف يعمل؟ 🚀\n\n",
-    simpleDeals: "هذه صفقات ذهبية قد تُغلق خلال 48 ساعة إذا تصرفت الآن. هل تريد أن أُحضر العرض للاتصال بالمالكين؟ 📞\n\n",
-    premiumWelcome: "✨ **مرحباً بك في الشبكة العالمية PropertyPilot!** كـ{memberTitle}، لديك وصول لجميع الميزات المتقدمة. النظام يعمل بالفعل من أجلك 24/7. 🌍\n\n",
-    canAlsoHelp: "يمكنني أيضاً إرشادك لاستخدام PropertyPilot، أو اقتراح استراتيجيات البيع، أو مساعدتك لإيجاد ما تبحث عنه. اسأل فحسب!",
-    memberAgency: "عضو مؤسس Agency Intelligence",
-    memberPremium: "Premium Network Member",
-    signInToChat: "آريا هي مدربك الذكي في لوحة التحكم. سجّل الدخول لبدء المحادثة والحصول على نصائح مخصصة!",
-    signInCta: "تسجيل الدخول للدردشة مع آريا",
   },
   pt: {
     welcome: "Olá! Sou a Aria, sua AI Success Partner. Hoje o mercado é seu!",
@@ -381,32 +348,6 @@ export const demoTranslations: Record<Locale, Record<string, string>> = {
     chooseAgency: "Agency wählen",
     comparePlans: "Alle Pläne vergleichen",
     planWord: "Plan",
-  },
-  ar: {
-    bookDemo: "حجز Demo",
-    bookDemoTitle: "احجز عرضاً توضيحياً",
-    bookDemoDesc: "30 دقيقة مجانية مع خبيرنا لاكتشاف PropertyPilot AI",
-    chooseDate: "اختر التاريخ والوقت",
-    contactWhatsApp: "تواصل معنا على واتساب",
-    point1: "نظرة شاملة على المنصة",
-    point2: "عرض توضيحي حسب احتياجاتك",
-    point3: "إجابات على جميع أسئلتك",
-    point4: "بدون التزام، 100% مجاني",
-    trustBadge: "500+ وكالة اختارت بالفعل PropertyPilot AI",
-    unlockFeature: "افتح هذه الميزة بالترقية لخطتك",
-    updateNow: "تحديث الآن",
-    proFeature: "ميزة Pro",
-    proFeatureDesc: "هذه الميزة متاحة لمستخدمي Pro فقط",
-    unlockWithPro: "فتح مع Pro",
-    choosePlan: "اختر الخطة المثالية لك",
-    unlockAdvanced: "افتح الميزات المتقدمة ووسّع عملك العقاري",
-    recommended: "موصى به",
-    popular: "الأكثر شعبية",
-    chooseStarter: "اختر Starter",
-    choosePro: "اختر Pro",
-    chooseAgency: "اختر Agency",
-    comparePlans: "مقارنة جميع الخطط",
-    planWord: "خطة",
   },
   pt: {
     bookDemo: "Marcar Demo",

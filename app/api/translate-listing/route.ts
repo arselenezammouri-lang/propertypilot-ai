@@ -11,7 +11,7 @@ import { logger } from '@/lib/utils/safe-logger';
 export const dynamic = 'force-dynamic';
 
 const SUPPORTED_LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
+  { code: 'en', name: 'English', flag: '🇬🇧', country: 'UK/International' },
   { code: 'fr', name: 'Français', flag: '🇫🇷', country: 'Francia' },
   { code: 'es', name: 'Español', flag: '🇪🇸', country: 'Spagna' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪', country: 'Germania' },
@@ -401,7 +401,6 @@ export async function POST(request: NextRequest) {
           es: 'La traducción está tardando demasiado. Intenta con un texto más corto.',
           fr: 'La traduction prend trop de temps. Veuillez réessayer avec un texte plus court.',
           de: 'Die Übersetzung dauert zu lange. Bitte versuchen Sie es mit einem kürzeren Text.',
-          ar: 'الترجمة تستغرق وقتاً طويلاً. يرجى المحاولة بنص أقصر.',
           pt: 'A tradução está demorando muito. Tente com um texto mais curto.',
         };
         return NextResponse.json(
@@ -420,7 +419,6 @@ export async function POST(request: NextRequest) {
           es: 'Servicio AI temporalmente sobrecargado. Intenta de nuevo en unos minutos.',
           fr: 'Service IA temporairement surchargé. Veuillez réessayer dans quelques minutes.',
           de: 'KI-Service vorübergehend überlastet. Bitte versuchen Sie es in ein paar Minuten erneut.',
-          ar: 'الخدمة الذكية مثقلة مؤقتاً. يرجى المحاولة مرة أخرى بعد بضع دقائق.',
           pt: 'Serviço AI temporariamente sobrecarregado. Tente novamente em alguns minutos.',
         };
         return NextResponse.json(
@@ -439,7 +437,6 @@ export async function POST(request: NextRequest) {
           es: 'Cuota AI agotada. Contacta con soporte.',
           fr: 'Quota IA épuisée. Veuillez contacter le support.',
           de: 'KI-Quote erschöpft. Bitte kontaktieren Sie den Support.',
-          ar: 'تم استنفاد حصة الذكاء الاصطناعي. يرجى الاتصال بالدعم.',
           pt: 'Cota AI esgotada. Entre em contato com o suporte.',
         };
         return NextResponse.json(

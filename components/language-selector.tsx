@@ -20,7 +20,6 @@ const LANGUAGE_OPTIONS: { value: SupportedLocale; label: string; flag: string }[
   { value: 'fr', label: 'Français', flag: '🇫🇷' },
   { value: 'de', label: 'Deutsch', flag: '🇩🇪' },
   { value: 'pt', label: 'Português', flag: '🇵🇹' },
-  { value: 'ar', label: 'العربية', flag: '🇦🇪' },
 ];
 
 export function LanguageSelector() {

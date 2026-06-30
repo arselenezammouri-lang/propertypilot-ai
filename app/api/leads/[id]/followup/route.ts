@@ -146,11 +146,6 @@ const SYSTEM_PROMPTS: Record<SupportedLocale, { whatsapp: string; email: string;
     email: 'Você é um assistente de IA que gera emails profissionais para follow-up imobiliário. Sempre responda em JSON válido.',
     sms: 'Você é um assistente de IA que gera SMS para follow-up imobiliário. Sempre responda em JSON válido.',
   },
-  ar: {
-    whatsapp: 'أنت مساعد ذكاء اصطناعي يولد رسائل واتساب للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
-    email: 'أنت مساعد ذكاء اصطناعي يولد رسائل بريد إلكتروني للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
-    sms: 'أنت مساعد ذكاء اصطناعي يولد رسائل SMS للمتابعة العقارية. أجب دائماً بصيغة JSON صالحة.',
-  },
 };
 
 // Genera prompt per WhatsApp
@@ -366,34 +361,6 @@ Antworte NUR in gültigem JSON:
   "cta": "Klarer Call-to-Action",
   "ps": "Optionales Postskriptum für Dringlichkeit/Knappheit"
 }`,
-    ar: `أنت كاتب إعلانات عقارية محترف. أنشئ بريد إلكتروني احترافي من 150-200 كلمة.
-
-LEAD:
-الاسم: ${lead.nome}
-البريد الإلكتروني: ${lead.email || 'N/A'}
-الرسالة الأصلية: ${lead.messaggio || 'لا توجد رسالة محددة'}
-النقاط: ${lead.lead_score} - الفئة: ${categoria.toUpperCase()}${propertyInfo}
-
-القواعد:
-- بريد إلكتروني احترافي من 150-200 كلمة
-- رسمي لكن سهل الوصول
-- التركيز على تفاصيل العقار (إن كانت متاحة)
-- دعوة واضحة ومقنعة للعمل
-- النبرة: ${toneDesc}
-- استراتيجية الفئة: ${categoriaStrategy}
-- لا تستخدم placeholder [الاسم] - استخدم مباشرة "${lead.nome}"
-
-للـ HOT: موضوع مع إلحاح، اقتراح زيارة فورية، اذكر الندرة
-للـ WARM: موضوع إعلامي، أضف تفاصيل إضافية، اقتراح نهاية الأسبوع
-للـ COLD: موضوع تعليمي، ادع إلى التأهيل، دعوة ناعمة للعمل
-
-أجب فقط بصيغة JSON صالحة:
-{
-  "subject": "موضوع البريد الإلكتروني (حد أقصى 60 حرفاً)",
-  "body": "نص البريد الإلكتروني (150-200 كلمة)",
-  "cta": "دعوة واضحة للعمل",
-  "ps": "ملاحظة اختيارية للإلحاح/الندرة"
-}`,
     pt: `Você é um copywriter imobiliário profissional. Gere um EMAIL profissional de 150-200 palavras.
 
 LEAD:
@@ -568,30 +535,6 @@ Für COLD: "Hallo ${lead.nome}, können wir am Telefon darüber sprechen? Ich ru
 Antworte NUR in gültigem JSON:
 {
   "message": "SMS von max 160 Zeichen (zähle jedes Zeichen!)"
-}`,
-    ar: `أنت وكيل عقاري خبير. أنشئ رسالة SMS بحد أقصى 160 حرفاً (عد كل حرف!).
-
-LEAD:
-الاسم: ${lead.nome}
-الرسالة: ${lead.messaggio || 'لا توجد رسالة محددة'}
-النقاط: ${lead.lead_score} - الفئة: ${categoria.toUpperCase()}${propertyInfo}
-
-القواعد:
-- حد أقصى 160 حرفاً إجمالي (عد كل حرف، بما في ذلك المسافة!)
-- موجز ومباشر
-- معلومات أساسية فقط
-- دعوة قصيرة وواضحة للعمل
-- لا تستخدم placeholder [الاسم] - استخدم مباشرة "${lead.nome}"
-- النبرة: ${toneDesc}
-- استراتيجية الفئة: ${categoriaStrategy}
-
-للـ HOT: "مرحباً ${lead.nome}، متاح هذا المساء للزيارة؟ مهتمون آخرون."
-للـ WARM: "مرحباً ${lead.nome}، متاح نهاية الأسبوع؟ لدي عقارات مشابهة أخرى."
-للـ COLD: "مرحباً ${lead.nome}، هل يمكننا التحدث عبر الهاتف؟ سأتصل بك؟"
-
-أجب فقط بصيغة JSON صالحة:
-{
-  "message": "SMS بحد أقصى 160 حرفاً (عد كل حرف!)"
 }`,
     pt: `Você é um agente imobiliário experiente. Gere um SMS de MÁXIMO 160 caracteres (CONTE CADA CARACTERE!).
 

@@ -50,7 +50,7 @@ const REGION_CONFIGS: Record<Region, GeoConfig> = {
     currencySymbol: 'AED',
     primaryPortals: ['PropertyFinder', 'Bayut', 'Dubizzle'],
     secondaryPortals: ['JustProperty', 'Propertyscanner'],
-    defaultLanguage: 'ar',
+    defaultLanguage: 'en',
     taxInfo: 'UAE has 0% income tax. DLD fees apply for property transactions.',
     measurementUnit: 'sqft',
     dateFormat: 'DD/MM/YYYY',

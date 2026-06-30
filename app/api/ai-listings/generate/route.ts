@@ -165,7 +165,6 @@ function generateFallback(
     es: `${input.propertyType} en ${input.location} — ${input.rooms} hab, ${input.surface}m²`,
     de: `${input.propertyType} in ${input.location} — ${input.rooms} Zimmer, ${input.surface}m²`,
     pt: `${input.propertyType} em ${input.location} — T${input.rooms}, ${input.surface}m²`,
-    ar: `${input.propertyType} في ${input.location} — ${input.rooms} غرف`,
   };
 
   const descriptions: Record<PortalLanguage, string> = {
@@ -175,7 +174,6 @@ function generateFallback(
     es: `Presentamos este ${input.propertyType.toLowerCase()} de ${input.surface}m² ubicado en ${input.location}, ${input.city}. La propiedad cuenta con ${input.rooms} habitaciones y ${input.bathrooms} baños.${input.features.length > 0 ? ` Características: ${input.features.join(", ")}.` : ""} ${input.energyClass ? `Certificado energético: ${input.energyClass}.` : ""} Precio: ${priceStr} €. Contáctenos para más información.`,
     de: `Wir präsentieren diese ${input.surface}m² ${input.propertyType} in ${input.location}, ${input.city}. Die Immobilie verfügt über ${input.rooms} Zimmer und ${input.bathrooms} Badezimmer.${input.features.length > 0 ? ` Ausstattung: ${input.features.join(", ")}.` : ""} ${input.energyClass ? `Energieausweis: ${input.energyClass}.` : ""} Preis: ${priceStr} €. Kontaktieren Sie uns für weitere Informationen.`,
     pt: `Apresentamos este ${input.propertyType.toLowerCase()} de ${input.surface}m² localizado em ${input.location}, ${input.city}. O imóvel dispõe de ${input.rooms} quartos e ${input.bathrooms} casas de banho.${input.features.length > 0 ? ` Características: ${input.features.join(", ")}.` : ""} ${input.energyClass ? `Certificado energético: ${input.energyClass}.` : ""} Preço: ${priceStr} €. Contacte-nos para mais informações.`,
-    ar: `نقدم لكم ${input.propertyType} بمساحة ${input.surface}م² في ${input.location}, ${input.city}. يتكون العقار من ${input.rooms} غرف و ${input.bathrooms} حمامات. السعر: €${priceStr}.`,
   };
 
   return {

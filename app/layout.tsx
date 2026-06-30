@@ -24,15 +24,14 @@ export const dynamic = 'force-dynamic';
 
 const LOCALE_TO_OG: Record<Locale, string> = {
   it: 'it_IT',
-  en: 'en_US',
+  en: 'en_GB',
   es: 'es_ES',
   fr: 'fr_FR',
   de: 'de_DE',
-  ar: 'ar_AE',
   pt: 'pt_PT',
 };
 
-const LOCALES: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'ar', 'pt'];
+const LOCALES: Locale[] = ['it', 'en', 'es', 'fr', 'de', 'pt'];
 
 const APP_URL = getBaseUrl();
 const APP_NAME = 'PropertyPilot AI';

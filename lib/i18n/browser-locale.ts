@@ -32,13 +32,6 @@ const browserLocaleMap: Record<string, Locale> = {
   'de-DE': 'de',
   'de-AT': 'de',
   'de-CH': 'de',
-  'ar': 'ar',
-  'ar-AE': 'ar',
-  'ar-SA': 'ar',
-  'ar-QA': 'ar',
-  'ar-KW': 'ar',
-  'ar-BH': 'ar',
-  'ar-OM': 'ar',
   'pt': 'pt',
   'pt-PT': 'pt',
   'pt-BR': 'pt',
@@ -53,7 +46,6 @@ export const speechRecognitionLocaleMap: Record<Locale, string> = {
   'es': 'es-ES',
   'fr': 'fr-FR',
   'de': 'de-DE',
-  'ar': 'ar-AE',
   'pt': 'pt-PT',
 };
 
@@ -67,7 +59,7 @@ export function getBrowserLocale(): Locale {
 
   // 1. Prova a leggere da localStorage (preferenza utente)
   const savedLocale = localStorage.getItem('propertypilot_locale') as Locale;
-  if (savedLocale && ['it', 'en', 'es', 'fr', 'de', 'ar', 'pt'].includes(savedLocale)) {
+  if (savedLocale && ['it', 'en', 'es', 'fr', 'de', 'pt'].includes(savedLocale)) {
     return savedLocale;
   }
 
@@ -99,7 +91,6 @@ export function localeToSupportedLocale(locale: Locale): SupportedLocale {
     'es': 'es',
     'fr': 'fr',
     'de': 'de',
-    'ar': 'ar',
     'pt': 'pt',
   };
   return map[locale] || 'en';

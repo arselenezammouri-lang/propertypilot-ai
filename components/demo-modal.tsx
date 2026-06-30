@@ -22,7 +22,6 @@ const whatsappMessages: Record<Locale, string> = {
   es: "¡Hola! Me gustaría reservar una demo de PropertyPilot AI.",
   fr: "Bonjour! Je voudrais réserver une démo de PropertyPilot AI.",
   de: "Hallo! Ich möchte eine PropertyPilot AI Demo buchen.",
-  ar: "مرحباً! أود حجز عرض توضيحي لـ PropertyPilot AI.",
   pt: "Olá! Gostaria de marcar uma demo do PropertyPilot AI.",
 };
 
@@ -61,12 +60,6 @@ export function DemoModal() {
       goToDemo: "Zur Demo-Buchungsseite gehen",
       chooseTime: "Datum und Uhrzeit fur die Demo wahlen",
       whatsapp: "Kontaktieren Sie uns auf WhatsApp",
-    },
-    ar: {
-      openModal: "افتح نافذة حجز العرض التوضيحي",
-      goToDemo: "اذهب إلى صفحة حجز العرض التوضيحي",
-      chooseTime: "اختر تاريخ ووقت العرض التوضيحي",
-      whatsapp: "تواصل معنا عبر واتساب",
     },
     pt: {
       openModal: "Abrir a janela de agendamento da demo",

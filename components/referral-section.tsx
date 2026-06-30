@@ -16,7 +16,6 @@ const referralMessages: Record<string, string> = {
   fr: "🏠 Rejoins-moi sur PropertyPilot AI! Obtiens 10 crédits AI en t'inscrivant avec mon lien:",
   de: "🏠 Komm zu mir auf PropertyPilot AI! Erhalte 10 AI-Credits mit meinem Anmeldelink:",
   pt: "🏠 Junte-se a mim no PropertyPilot AI! Ganhe 10 créditos AI registrando-se com meu link:",
-  ar: "🏠 انضم إلي على PropertyPilot AI! احصل على 10 crédits AI بالتسجيل عبر رابطي:",
 };
 
 export function ReferralSection() {

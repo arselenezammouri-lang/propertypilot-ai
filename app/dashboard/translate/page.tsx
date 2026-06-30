@@ -14,13 +14,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useAPIErrorHandler } from "@/components/error-boundary";
 
 const LANGUAGES = [
-  { code: 'en', name: 'English', flag: '🇺🇸', country: 'USA/UK' },
+  { code: 'en', name: 'English', flag: '🇬🇧', country: 'UK/International' },
   { code: 'fr', name: 'Français', flag: '🇫🇷', country: 'Francia' },
   { code: 'es', name: 'Español', flag: '🇪🇸', country: 'Spagna' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪', country: 'Germania' },
   { code: 'pt', name: 'Português', flag: '🇵🇹', country: 'Portogallo' },
   { code: 'it', name: 'Italiano', flag: '🇮🇹', country: 'Italia' },
-  { code: 'ar', name: 'العربية', flag: '🇦🇪', country: 'Paesi Arabi' },
   { code: 'zh', name: '中文', flag: '🇨🇳', country: 'Cina' },
   { code: 'ru', name: 'Русский', flag: '🇷🇺', country: 'Russia' },
   { code: 'nl', name: 'Nederlands', flag: '🇳🇱', country: 'Paesi Bassi' },

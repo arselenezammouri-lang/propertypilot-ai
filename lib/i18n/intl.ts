@@ -7,7 +7,6 @@ const INTL_LOCALES: Record<Locale, string> = {
   fr: 'fr-FR',
   de: 'de-DE',
   pt: 'pt-PT',
-  ar: 'ar-AE',
 };
 
 export function toIntlLocale(locale: Locale): string {

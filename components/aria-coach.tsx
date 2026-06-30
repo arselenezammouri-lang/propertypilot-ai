@@ -219,7 +219,7 @@ export function AriaCoach({ userName, userPlan = "free", userLocation }: AriaCoa
           "la tua zona di mercato";
 
         const t = ariaTranslations[currentLocale] || ariaTranslations['en'];
-        const name = userName || (currentLocale === 'it' ? 'Capo' : currentLocale === 'es' ? 'Jefe' : currentLocale === 'fr' ? 'Chef' : currentLocale === 'de' ? 'Boss' : currentLocale === 'ar' ? 'رئيس' : 'Boss');
+        const name = userName || (currentLocale === 'it' ? 'Capo' : currentLocale === 'es' ? 'Jefe' : currentLocale === 'fr' ? 'Chef' : currentLocale === 'de' ? 'Boss' : 'Boss');
         let welcomeContent = (t.welcomeIntro || ariaTranslations['en'].welcomeIntro!)
           .replace('{name}', name)
           .replace('{count}', String(dealsCount));
