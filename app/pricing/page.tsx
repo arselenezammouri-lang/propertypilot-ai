@@ -174,6 +174,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 export default function PricingPage() {
   const router = useRouter();
   const { locale: currentLocale, currency } = useLocaleContext();
+  const [isAnnual, setIsAnnual] = useState(false);
 
   const handlePlanClick = async (planId: string, isSubscription: boolean) => {
     // Check if user is logged in
@@ -333,6 +334,58 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {/* Annual/Monthly Toggle */}
+      <section className="pb-4 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center gap-4 p-1.5 bg-muted/50 rounded-full border border-border">
+            <button
+              onClick={() => setIsAnnual(false)}
+              className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all ${
+                !isAnnual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {isItalian ? 'Mensile' : 'Monthly'}
+            </button>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={`flex-1 py-2.5 px-4 rounded-full text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                isAnnual ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {isItalian ? 'Annuale' : 'Annual'}
+              <span className="text-xs font-bold text-emerald-500">-20%</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Free Tier Banner */}
+      <section className="pb-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-2xl border border-border bg-muted/30 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-slate-600 flex items-center justify-center">
+                <Sparkles className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-foreground">Free — €0</h3>
+                <p className="text-sm text-muted-foreground">
+                  {isItalian
+                    ? '5 annunci AI/mese • Stima immobiliare • CMA base • PDF con watermark'
+                    : '5 AI listings/month • Property valuation • Basic CMA • Watermarked PDFs'}
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/auth/signup">
+                {isItalian ? 'Inizia Gratis' : 'Start Free'}
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Cards - 4 Plans */}
       <section className="py-12 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -392,12 +445,23 @@ export default function PricingPage() {
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl lg:text-5xl font-extrabold">
-                      {formatCurrencyForLocale(plan.price, currentLocale as Locale, currency)}
+                      {formatCurrencyForLocale(
+                        plan.isSubscription && isAnnual ? Math.round(plan.price * 0.8) : plan.price,
+                        currentLocale as Locale,
+                        currency
+                      )}
                     </span>
                     <span className="text-lg text-muted-foreground whitespace-nowrap">
-                      {plan.period}
+                      {plan.isSubscription && isAnnual
+                        ? (isItalian ? '/ mese (ann.)' : '/ mo (annual)')
+                        : plan.period}
                     </span>
                   </div>
+                  {plan.isSubscription && isAnnual && (
+                    <p className="text-sm text-emerald-500 font-medium mt-1">
+                      {isItalian ? `Risparmi €${Math.round(plan.price * 12 * 0.2)}/anno` : `Save €${Math.round(plan.price * 12 * 0.2)}/year`}
+                    </p>
+                  )}
                   {plan.price > 0 && (
                     <p className="text-xs text-muted-foreground mt-1">{isItalian ? "IVA esclusa" : "VAT excluded"}</p>
                   )}
