@@ -1,33 +1,52 @@
 node_modules/
 .next/
-.replit
-venv/
-*.log
-*.tmp
-*.temp
-*.tsbuildinfo
-.DS_Store
+.vercel/
+dist/
+coverage/
+test-results/
+playwright-report/
+
+# Environment
 .env
 .env.local
 .env.test
 .env.production
-debug.log
-test-results/
-playwright-report/
-e2e-results.json
+.env*.local
 
-# Binary files that should never be committed
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+.replit
+*.code-workspace
+
+# Logs
+*.log
+debug.log
+npm-debug.log*
+
+# Build
+*.tsbuildinfo
+*.tmp
+*.temp
+e2e-results.json
+attached_assets/
+
+# Patches (generated for Codespaces transfer)
+*.patch
+outputs/
+
+# Binary
 *.exe
 *.dll
 *.so
 *.dylib
 
-# Build artifacts
-attached_assets/
-coverage/
-.vercel
-
-# OS files
-Thumbs.db
-*.swp
-*.swo
+# Python
+venv/
+__pycache__/
