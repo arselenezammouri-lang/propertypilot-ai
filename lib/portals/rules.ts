@@ -302,6 +302,34 @@ export const PORTAL_RULES: Record<PortalId, PortalRules> = {
     },
     media: { maxPhotos: 30, maxVideoLength: 180, requiredPhotoTypes: [] },
   },
+  bienici: {
+    id: "bienici", name: "Bien'ici", country: "FR", language: "fr",
+    title: { maxLength: 100, mustInclude: ["property type"], forbidden: [], seoPattern: "{type} {rooms}p {city}" },
+    description: { minLength: 100, maxLength: 3000, requiredSections: ["description"], seoKeywords: [] },
+    regulatory: { energyClassRequired: true, energyClassFormat: "DPE A-G", surfaceUnit: "sqm", priceFormat: "{price} €", mandatoryDisclosures: [] },
+    media: { maxPhotos: 20, maxVideoLength: 120, requiredPhotoTypes: [] },
+  },
+  estatesync: {
+    id: "estatesync", name: "EstateSync", country: "DE", language: "de",
+    title: { maxLength: 120, mustInclude: ["property type"], forbidden: [], seoPattern: "{type} in {city}" },
+    description: { minLength: 50, maxLength: 5000, requiredSections: ["description"], seoKeywords: [] },
+    regulatory: { energyClassRequired: true, energyClassFormat: "GEG A+-H", surfaceUnit: "sqm", priceFormat: "{price} €", mandatoryDisclosures: [] },
+    media: { maxPhotos: 30, maxVideoLength: 180, requiredPhotoTypes: [] },
+  },
+  onthemarket: {
+    id: "onthemarket", name: "OnTheMarket", country: "UK", language: "en",
+    title: { maxLength: 100, mustInclude: ["bedrooms", "property type"], forbidden: ["URGENT"], seoPattern: "{beds} bed {type} in {city}" },
+    description: { minLength: 100, maxLength: 3000, requiredSections: ["description"], seoKeywords: [] },
+    regulatory: { energyClassRequired: true, energyClassFormat: "EPC A-G", surfaceUnit: "sqft", priceFormat: "£{price}", mandatoryDisclosures: ["EPC"] },
+    media: { maxPhotos: 30, maxVideoLength: 120, requiredPhotoTypes: ["exterior"] },
+  },
+  imovirtual: {
+    id: "imovirtual", name: "Imovirtual", country: "PT", language: "pt",
+    title: { maxLength: 100, mustInclude: ["property type"], forbidden: [], seoPattern: "{type} {rooms}T {city}" },
+    description: { minLength: 50, maxLength: 4000, requiredSections: ["description"], seoKeywords: [] },
+    regulatory: { energyClassRequired: true, energyClassFormat: "SCE A+-F", surfaceUnit: "sqm", priceFormat: "{price} €", mandatoryDisclosures: [] },
+    media: { maxPhotos: 25, maxVideoLength: 180, requiredPhotoTypes: [] },
+  },
 };
 
 /** Get rules for a specific portal */

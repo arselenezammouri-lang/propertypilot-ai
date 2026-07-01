@@ -23,14 +23,18 @@ export type PortalId =
   | "immobiliare_it"
   | "casa_it"
   | "idealista"
+  | "idealista_pt"
   | "seloger"
   | "leboncoin"
+  | "bienici"
   | "immoscout24"
   | "immowelt"
+  | "estatesync"
   | "rightmove"
   | "zoopla"
+  | "onthemarket"
   | "fotocasa"
-  | "idealista_pt";
+  | "imovirtual";
 
 export type PortalLanguage = "it" | "en" | "fr" | "es" | "de" | "pt";
 
