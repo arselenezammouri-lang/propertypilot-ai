@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight, Building2, Sparkles, Users, Phone, Zap, Globe, BarChart3, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Software Inmobiliario IA | PropertyPilot AI — Plataforma #1 en España",
+  title: "Software Inmobiliario IA | PropertyPilot AI — Plataforma AI para Agencias Inmobiliarias",
   description: "El software inmobiliario con inteligencia artificial más avanzado de España. Genera anuncios profesionales en 30 segundos, gestiona leads con CRM IA, automatiza seguimientos. Usado por 150+ agencias.",
   keywords: ["software inmobiliario IA", "inteligencia artificial inmobiliaria", "software agencia inmobiliaria", "generador anuncios inmobiliarios", "CRM inmobiliario", "IA inmobiliaria España", "Idealista IA", "Fotocasa automatización"],
-  openGraph: { title: "Software Inmobiliario IA #1 en España | PropertyPilot AI", description: "Genera anuncios en 30 segundos. CRM inteligente. Voice AI. Usado por 150+ agencias españolas.", locale: "es_ES", type: "website" },
+  openGraph: { title: "Software Inmobiliario IA para Agencias | PropertyPilot AI", description: "Genera anuncios en 30 segundos. CRM inteligente. Voice AI. Plataforma AI para agencias inmobiliarias europeas.", locale: "es_ES", type: "website" },
   alternates: {
     canonical: "https://propertypilot-ai.vercel.app/es/software-inmobiliario-ia",
     languages: { "it": "https://propertypilot-ai.vercel.app/it/software-immobiliare-ai", "en": "https://propertypilot-ai.vercel.app/en/ai-real-estate-software", "fr": "https://propertypilot-ai.vercel.app/fr/logiciel-immobilier-ia", "es": "https://propertypilot-ai.vercel.app/es/software-inmobiliario-ia", "de": "https://propertypilot-ai.vercel.app/de/immobilien-software-ki" },
@@ -48,7 +48,7 @@ export default function SpainLandingPage() {
 
         <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇪🇸</span> El #1 Software Inmobiliario IA en España</div>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇪🇸</span> Software Inmobiliario IA para Agencias Españolas</div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">El sistema operativo IA<br />para agencias inmobiliarias</h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Genera anuncios profesionales en 30 segundos. Gestiona leads con CRM inteligente. Automatiza seguimientos y llamadas. <span className="text-foreground font-medium">Usado por 150+ agencias en España.</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

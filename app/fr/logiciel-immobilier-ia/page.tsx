@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight, Building2, Sparkles, Users, Phone, Zap, Globe, BarChart3, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Logiciel Immobilier IA | PropertyPilot AI — Plateforme #1 en France",
+  title: "Logiciel Immobilier IA | PropertyPilot AI — Plateforme AI pour Agences Immobilières",
   description: "Le logiciel immobilier IA le plus avancé de France. Générez des annonces professionnelles en 30 secondes, gérez vos leads avec un CRM IA, automatisez vos suivis. Utilisé par 200+ agences.",
   keywords: ["logiciel immobilier IA", "intelligence artificielle immobilier", "logiciel agence immobilière", "générateur annonces immobilières", "CRM immobilier", "IA immobilier France", "SeLoger IA", "LeBonCoin automatisation"],
-  openGraph: { title: "Logiciel Immobilier IA #1 en France | PropertyPilot AI", description: "Générez des annonces en 30 secondes. CRM intelligent. Voice AI. Utilisé par 200+ agences françaises.", locale: "fr_FR", type: "website" },
+  openGraph: { title: "Logiciel Immobilier IA pour Agences | PropertyPilot AI", description: "Générez des annonces en 30 secondes. CRM intelligent. Voice AI. Plateforme AI pour agences immobilières européennes.", locale: "fr_FR", type: "website" },
   alternates: {
     canonical: "https://propertypilot-ai.vercel.app/fr/logiciel-immobilier-ia",
     languages: { "it": "https://propertypilot-ai.vercel.app/it/software-immobiliare-ai", "en": "https://propertypilot-ai.vercel.app/en/ai-real-estate-software", "fr": "https://propertypilot-ai.vercel.app/fr/logiciel-immobilier-ia", "es": "https://propertypilot-ai.vercel.app/es/software-inmobiliario-ia", "de": "https://propertypilot-ai.vercel.app/de/immobilien-software-ki" },
@@ -56,7 +56,7 @@ export default function FranceLandingPage() {
 
         <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇫🇷</span> Le #1 Logiciel Immobilier IA en France</div>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇫🇷</span> Logiciel Immobilier IA pour Agences Françaises</div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">Le système d&apos;exploitation IA<br />pour les agences immobilières</h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Générez des annonces professionnelles en 30 secondes. Gérez vos leads avec un CRM intelligent. Automatisez vos suivis et appels. <span className="text-foreground font-medium">Utilisé par 200+ agences en France.</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

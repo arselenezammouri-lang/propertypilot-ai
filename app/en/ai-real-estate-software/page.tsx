@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight, Building2, Sparkles, Users, Phone, Zap, Globe, BarChart3, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI Real Estate Software | PropertyPilot AI — #1 Platform in Europe",
+  title: "AI Real Estate Software | PropertyPilot AI — Platform in Europe",
   description: "The most advanced AI real estate software in Europe. Generate professional listings in 30 seconds, manage leads with AI CRM, automate follow-ups. Built for agencies across 6 European markets.",
   keywords: ["AI real estate software", "artificial intelligence real estate", "real estate agency software", "listing generator AI", "real estate CRM", "AI property platform", "Rightmove AI", "Zoopla automation", "real estate automation", "property listing AI"],
-  openGraph: { title: "AI Real Estate Software #1 in Europe | PropertyPilot AI", description: "Generate listings in 30 seconds. AI CRM. Voice AI. Used by 1,000+ European agencies.", locale: "en_US", type: "website" },
+  openGraph: { title: "AI Real Estate Software in Europe | PropertyPilot AI", description: "Generate listings in 30 seconds. AI CRM. Voice AI. Used by 1,000+ European agencies.", locale: "en_US", type: "website" },
   alternates: {
     canonical: "https://propertypilot-ai.vercel.app/en/ai-real-estate-software",
     languages: { "it": "https://propertypilot-ai.vercel.app/it/software-immobiliare-ai", "en": "https://propertypilot-ai.vercel.app/en/ai-real-estate-software", "fr": "https://propertypilot-ai.vercel.app/fr/logiciel-immobilier-ia", "es": "https://propertypilot-ai.vercel.app/es/software-inmobiliario-ia", "de": "https://propertypilot-ai.vercel.app/de/immobilien-software-ki" },
@@ -48,7 +48,7 @@ export default function EnglishLandingPage() {
 
         <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇪🇺</span> The #1 AI Real Estate Software in Europe</div>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇪🇺</span> The AI Real Estate Software in Europe</div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">The AI operating system<br />for real estate agencies</h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Generate professional listings in 30 seconds. Manage leads with AI CRM. Automate follow-ups and calls. <span className="text-foreground font-medium">Built for agencies across 6 European markets.</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

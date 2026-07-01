@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle, Building2, Globe, Sparkles, Zap, Users, BarChart3, Phone, Shield, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Software Immobiliare AI | PropertyPilot AI — Piattaforma #1 in Italia",
+  title: "Software Immobiliare AI | PropertyPilot AI — Piattaforma AI per Agenzie Immobiliari",
   description: "Il software immobiliare con intelligenza artificiale più avanzato d'Italia. Genera annunci professionali in 30 secondi, gestisci lead con CRM AI, automatizza follow-up. Pensato per agenzie.",
   keywords: [
     "software immobiliare AI",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "gestionale immobiliare intelligente",
   ],
   openGraph: {
-    title: "Software Immobiliare AI #1 in Italia | PropertyPilot AI",
+    title: "Software Immobiliare AI per Agenzie | PropertyPilot AI",
     description: "Genera annunci in 30 secondi. CRM intelligente. Voice AI. Pensato per agenzie italiane.",
     locale: "it_IT",
     type: "website",
@@ -58,7 +58,7 @@ const stats = [
 ];
 
 const portals = [
-  { name: "Immobiliare.it", desc: "Annunci ottimizzati per il portale #1 in Italia" },
+  { name: "Immobiliare.it", desc: "Annunci ottimizzati per il portale in Italia" },
   { name: "Casa.it", desc: "Formattazione e SEO specifici per Casa.it" },
   { name: "Idealista", desc: "Supporto completo per Idealista Italia" },
   { name: "Subito.it", desc: "Annunci brevi e efficaci per Subito" },
@@ -118,7 +118,7 @@ export default function ItalyLandingPage() {
         <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-              <span className="text-lg">🇮🇹</span> Il #1 Software Immobiliare AI in Italia
+              <span className="text-lg">🇮🇹</span> Software Immobiliare AI per Agenzie Italiane
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">
               Il sistema operativo AI<br />per le agenzie immobiliari

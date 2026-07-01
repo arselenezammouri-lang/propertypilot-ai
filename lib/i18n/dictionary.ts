@@ -1299,7 +1299,7 @@ export const translations: Record<SupportedLocale, DeepPartial<TranslationDictio
         time3Desc: 'Open PropertyPilot AI and find 3 appointments already scheduled, with all property details, owner contacts, and AI notes.',
       },
       testimonials: {
-        title: 'Loved by Agents Worldwide',
+        title: 'Built by Real Estate Technologists',
         subtitle: 'Thousands of real estate agents trust PropertyPilot AI',
         testimonial1: {
           name: 'AI Listing Engine',

@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Which languages are supported?",
-    a: "Italian, English, French, Spanish, German, and Arabic. All AI-generated, not machine translation.",
+    a: "Italian, English, French, Spanish, German, and Portuguese. All AI-generated, not machine translation.",
   },
 ];
 

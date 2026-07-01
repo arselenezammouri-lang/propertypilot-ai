@@ -10,14 +10,14 @@ interface PredatorLiveBadgeProps {
 }
 
 /**
- * Badge "LIVE: X Predatori Online" per creare senso di community d'élite
+ * Badge "LIVE: X Utenti Online" per creare senso di community d'élite
  * Mostrato solo al primo accesso (usando localStorage)
  */
 export function PredatorLiveBadge({ className }: PredatorLiveBadgeProps) {
   const { locale } = useLocaleContext();
   const [isVisible, setIsVisible] = useState(false);
   const [predatorCount, setPredatorCount] = useState(124);
-  const onlineLabel = locale === "it" ? "Predatori Online" : "Predators Online";
+  const onlineLabel = locale === "it" ? "Utenti Online" : "Users Online";
 
   useEffect(() => {
     // Controlla se è il primo accesso (non mostrato prima)

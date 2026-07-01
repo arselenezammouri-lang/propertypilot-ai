@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight, Building2, Sparkles, Users, Phone, Zap, Globe, BarChart3, Star } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Immobilien Software KI | PropertyPilot AI — #1 Plattform in Deutschland",
+  title: "Immobilien Software KI | PropertyPilot AI — Plattform in Deutschland",
   description: "Die fortschrittlichste KI-Immobiliensoftware Deutschlands. Erstellen Sie professionelle Anzeigen in 30 Sekunden, verwalten Sie Leads mit KI-CRM, automatisieren Sie Follow-ups. Von 100+ Agenturen genutzt.",
   keywords: ["Immobilien Software KI", "künstliche Intelligenz Immobilien", "Immobilienmakler Software", "Anzeigen Generator Immobilien", "CRM Immobilien", "KI Immobilien Deutschland", "ImmoScout24 KI", "Immowelt Automatisierung"],
-  openGraph: { title: "Immobilien Software KI #1 in Deutschland | PropertyPilot AI", description: "Anzeigen in 30 Sekunden erstellen. Intelligentes CRM. Voice AI. Von 100+ deutschen Agenturen genutzt.", locale: "de_DE", type: "website" },
+  openGraph: { title: "Immobilien Software KI in Deutschland | PropertyPilot AI", description: "Anzeigen in 30 Sekunden erstellen. Intelligentes CRM. Voice AI. Von 100+ deutschen Agenturen genutzt.", locale: "de_DE", type: "website" },
   alternates: {
     canonical: "https://propertypilot-ai.vercel.app/de/immobilien-software-ki",
     languages: { "it": "https://propertypilot-ai.vercel.app/it/software-immobiliare-ai", "en": "https://propertypilot-ai.vercel.app/en/ai-real-estate-software", "fr": "https://propertypilot-ai.vercel.app/fr/logiciel-immobilier-ia", "es": "https://propertypilot-ai.vercel.app/es/software-inmobiliario-ia", "de": "https://propertypilot-ai.vercel.app/de/immobilien-software-ki" },
@@ -48,7 +48,7 @@ export default function GermanyLandingPage() {
 
         <section className="pt-28 pb-16 sm:pt-36 sm:pb-24">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇩🇪</span> Die #1 KI-Immobiliensoftware in Deutschland</div>
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6"><span className="text-lg">🇩🇪</span> KI-Immobiliensoftware für deutsche Makler</div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight">Das KI-Betriebssystem<br />für Immobilienagenturen</h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">Erstellen Sie professionelle Anzeigen in 30 Sekunden. Verwalten Sie Leads mit intelligentem CRM. Automatisieren Sie Follow-ups und Anrufe. <span className="text-foreground font-medium">Von 100+ Agenturen in Deutschland genutzt.</span></p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
