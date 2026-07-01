@@ -1,241 +1,414 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import {
-  ArrowRight, Check, Globe, Sparkles, Phone, Shield,
-  FileSearch, ImagePlus, Zap, MessageCircle, BarChart3,
-  Building2, Bot, Target, ChevronRight, Users, Lock,
-  Home, FileText, Leaf, Calculator, TrendingUp, Star,
-  Mail, Play, ChevronDown, ExternalLink, Crown, Rocket,
-  Eye, Award, Scale, Landmark, Gift
+  ArrowRight,
+  Check,
+  Globe,
+  Star,
+  Sparkles,
+  Phone,
+  Shield,
+  FileSearch,
+  ImagePlus,
+  Zap,
+  MessageCircle,
+  BarChart3,
+  Store,
+  TrendingUp,
+  Plug,
+  Smartphone,
+  LineChart,
+  Building2,
+  Bot,
+  Target,
+  ChevronRight,
+  Users,
+  Lock,
+  Scale,
+  Leaf,
+  Calculator,
+  Award,
+  FileText,
+  Home,
+  ChevronDown,
 } from "lucide-react";
-import { useLocale } from "@/lib/i18n/locale-context";
-import { MarketingNavHeader } from "@/components/marketing-nav-header";
-import { PropertyPilotLogo } from "@/components/logo";
+import { useState } from "react";
 
-function FAQItem({ q, a }: { q: string; a: string }) {
+/* ─── Animation Variants (original) ─── */
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.6, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
+const stagger = { visible: { transition: { staggerChildren: 0.08 } } };
+
+/* ─── Updated Feature Data (P1-P16) ─── */
+const FEATURES = [
+  { icon: Sparkles, title: "AI Listing Engine", description: "Generate professional listings in 3 styles × 6 languages. Portal-optimized for Idealista, ImmoScout24, Rightmove." },
+  { icon: Users, title: "Smart CRM + Lead Scoring", description: "Kanban pipeline with behavioral + engagement scoring. Speed-to-lead: auto-call 30s, WhatsApp 60s, email 90s." },
+  { icon: Phone, title: "Voice AI Agent", description: "Multilingual voice calls 24/7. Inbound/outbound qualification, viewing booking, CRM sync. 6 languages." },
+  { icon: ImagePlus, title: "Visual AI Suite", description: "Virtual staging (6 styles), photo enhancement (HDR, twilight), sky replacement, floor plan generation." },
+  { icon: Shield, title: "Compliance Shield", description: "Pre-publish compliance for 6 EU countries. Energy class, surface rules, agency licence — block before fines." },
+  { icon: FileSearch, title: "Document Intelligence", description: "Extract data from mandates, energy certs, deeds with AI. Click-to-cite sources. Save 10+ hours/week." },
+  { icon: MessageCircle, title: "WhatsApp AI Agent", description: "AI-powered conversations, listing carousels, viewing booking. 24/7 multilingual auto-responses." },
+  { icon: BarChart3, title: "CMA Valuations", description: "Automated property valuations with comparables, market trends, and AI citations. Branded PDF reports." },
+  { icon: Globe, title: "16 Portal Integrations", description: "Publish to Immobiliare.it, Idealista, ImmoScout24, Rightmove, SeLoger, Zoopla, Fotocasa + 9 more." },
+  { icon: Store, title: "Cross-Border Marketplace", description: "Match buyers across 6 EU countries. AI translation, commission escrow, international deals." },
+  { icon: TrendingUp, title: "Predictive Seller Leads", description: "AI identifies homeowners likely to list. Behavioral signals, life events, market data." },
+  { icon: Target, title: "Speed-to-Lead Automations", description: "Set rules once, AI handles the rest. Auto-call hot leads, nurture warm ones, re-engage cold." },
+];
+
+/* ─── Updated Plans (P1-P16 features) ─── */
+const PLANS = [
+  {
+    name: "Starter", price: "197", period: "/mo",
+    description: "AI listing tools for solo agents",
+    features: ["50 AI listings/month", "20 Visual AI jobs", "Compliance Shield (6 countries)", "Document Intelligence", "10 CMA Reports", "Portal connections", "Weekly market reports", "Email support"],
+    cta: "Start with Starter", href: "/auth/signup?plan=starter", featured: false,
+  },
+  {
+    name: "Pro", price: "497", period: "/mo",
+    description: "CRM, voice AI & automations",
+    features: ["200 listings + full CRM", "Speed-to-Lead automation", "100 Visual AI jobs", "Voice AI (300 min/mo)", "WhatsApp AI (2K conv/mo)", "Predictive Seller Leads", "Marketplace access", "20 automations", "Priority support"],
+    cta: "Go Pro", href: "/auth/signup?plan=pro", featured: true,
+  },
+  {
+    name: "Agency", price: "897", period: "/mo",
+    description: "Unlimited power for your team",
+    features: ["Unlimited + 10 agents", "White-label client portal", "500 Visual AI jobs", "Voice AI (1,500 min) + cloning", "MCP Server + API access", "Custom domain", "Cross-border marketplace", "Dedicated CSM"],
+    cta: "Scale with Agency", href: "/auth/signup?plan=agency", featured: false,
+  },
+];
+
+function FAQItem({ q, a, i }: { q: string; a: string; i: number }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-border/30 last:border-0">
+    <motion.div variants={fadeUp} custom={i} className="border-b border-border/30 last:border-0">
       <button onClick={() => setOpen(!open)} className="w-full py-5 flex items-center justify-between text-left group">
         <span className="font-medium text-foreground group-hover:text-primary transition-colors pr-4">{q}</span>
         <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform flex-shrink-0 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && <p className="pb-5 text-muted-foreground text-sm leading-relaxed">{a}</p>}
-    </div>
+    </motion.div>
   );
 }
 
 export default function LandingPage() {
-  const { locale } = useLocale();
-  const it = locale === 'it';
-
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <MarketingNavHeader />
-
-      {/* ═══ HERO ═══ */}
-      <section className="relative overflow-hidden pt-20 pb-24 px-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/40 via-background to-background" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl" />
-
-        <div className="relative max-w-6xl mx-auto">
-          <div className="max-w-3xl">
-            <Badge className="mb-6 bg-blue-500/10 text-blue-400 border-blue-500/20 px-4 py-1.5">
-              <Sparkles className="h-3.5 w-3.5 mr-1.5" />
-              {it ? 'Piattaforma AI per il Real Estate EU' : 'AI Platform for EU Real Estate'}
-            </Badge>
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
-              {it ? (
-                <><span className="text-foreground">L'AI che </span><span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">vende case</span><span className="text-foreground"> per te.</span></>
-              ) : (
-                <><span className="text-foreground">The AI that </span><span className="bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">sells properties</span><span className="text-foreground"> for you.</span></>
-              )}
-            </h1>
-
-            <p className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl leading-relaxed">
-              {it
-                ? 'Genera annunci in 8 secondi. Pubblica su 16 portali EU. Chiama lead con Voice AI. Tutto GDPR-native, in 6 lingue.'
-                : 'Generate listings in 8 seconds. Publish to 16 EU portals. Call leads with Voice AI. All GDPR-native, in 6 languages.'}
-            </p>
-
-            <div className="flex flex-wrap gap-4 mb-8">
-              <Button size="lg" className="text-base px-8 h-12" asChild>
-                <Link href="/auth/signup">
-                  {it ? 'Prova gratis 14 giorni' : 'Start free 14-day trial'}
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="text-base px-8 h-12" asChild>
-                <Link href="/demo">
-                  <Play className="h-4 w-4 mr-2" />
-                  {it ? 'Guarda demo' : 'Watch demo'}
-                </Link>
-              </Button>
+    <div className="min-h-screen bg-background font-sans relative">
+      {/* ─── NAV (original design) ─── */}
+      <nav className="fixed top-0 inset-x-0 z-50 pp-glass border-b border-border/30">
+        <div className="pp-container flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <Building2 className="w-4 h-4 text-white" />
             </div>
-
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Globe className="h-4 w-4 text-blue-500" />EU-hosted</span>
-              <span className="flex items-center gap-1.5"><Shield className="h-4 w-4 text-emerald-500" />GDPR-native</span>
-              <span className="flex items-center gap-1.5"><Sparkles className="h-4 w-4 text-purple-500" />AI-powered</span>
-              <span className="flex items-center gap-1.5"><Check className="h-4 w-4 text-emerald-500" />{it ? 'Nessuna carta richiesta' : 'No credit card'}</span>
-            </div>
+            <span className="text-base font-semibold tracking-tight">PropertyPilot</span>
+          </Link>
+          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
+            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#pricing" className="hover:text-foreground transition-colors">Pricing</a>
+            <Link href="/marketplace" className="hover:text-foreground transition-colors">Marketplace</Link>
+            <Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link>
+            <Link href="/roadmap" className="hover:text-foreground transition-colors">Roadmap</Link>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/auth/login">
+              <Button variant="ghost" size="sm" className="text-sm h-9 text-muted-foreground hover:text-foreground">Log in</Button>
+            </Link>
+            <Link href="/auth/signup">
+              <button className="btn-primary-gradient text-sm h-9 px-5">
+                Get started free
+              </button>
+            </Link>
           </div>
         </div>
-      </section>
+      </nav>
 
-      {/* ═══ SOCIAL PROOF STRIP ═══ */}
-      <section className="border-y border-border/30 bg-muted/30 py-10 px-4">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-center text-sm text-muted-foreground mb-6">{it ? 'Costruito su tecnologie fidate da' : 'Built on trusted technologies'}</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 mb-8 opacity-60">
-            {['Vercel', 'Supabase', 'Stripe', 'OpenAI', 'Google Cloud'].map(name => (
-              <span key={name} className="text-sm font-semibold text-muted-foreground tracking-wide">{name}</span>
-            ))}
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {/* ─── HERO (original design, updated copy) ─── */}
+      <section className="pt-32 pb-24 md:pt-48 md:pb-36 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-violet-500/8 rounded-full blur-[100px]" />
+
+        <div className="pp-container relative">
+          <motion.div className="max-w-4xl mx-auto text-center" initial="hidden" animate="visible" variants={stagger}>
+            <motion.div custom={0} variants={fadeUp} className="pp-badge mb-8">
+              <Zap className="w-3.5 h-3.5" />
+              The AI operating system for real estate
+            </motion.div>
+
+            <motion.h1 custom={1} variants={fadeUp} className="pp-heading-xl mb-6">
+              Close more deals with{" "}
+              <span className="text-gradient">AI-powered</span>{" "}
+              real estate tools
+            </motion.h1>
+
+            <motion.p custom={2} variants={fadeUp} className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10">
+              Generate listings in seconds. Score leads automatically. Let AI handle calls and follow-ups.
+              Built for agencies across Italy, France, Spain, Germany, UK and Portugal.
+            </motion.p>
+
+            <motion.div custom={3} variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/auth/signup">
+                <button className="btn-primary-gradient h-12 px-8 text-base gap-2">
+                  Start free trial <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+              <Link href="/demo">
+                <button className="btn-glass h-12 px-8 text-base text-muted-foreground hover:text-foreground gap-2">
+                  See the demo <ChevronRight className="w-4 h-4" />
+                </button>
+              </Link>
+            </motion.div>
+
+            <motion.p custom={4} variants={fadeUp} className="text-xs text-muted-foreground mt-5">
+              7-day free trial · No credit card required · Cancel anytime
+            </motion.p>
+          </motion.div>
+
+          {/* Updated Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto"
+          >
             {[
-              { n: '100+', l: it ? 'Funzionalità' : 'Features' },
-              { n: '16', l: it ? 'Portali EU' : 'EU Portals' },
-              { n: '27', l: it ? 'Integrazioni' : 'Integrations' },
-              { n: '6', l: it ? 'Lingue' : 'Languages' },
-            ].map(s => (
-              <div key={s.l}>
-                <p className="text-3xl font-bold text-foreground">{s.n}</p>
-                <p className="text-sm text-muted-foreground">{s.l}</p>
+              { value: "47+", label: "AI-powered tools" },
+              { value: "16", label: "Portal integrations" },
+              { value: "6", label: "EU countries" },
+              { value: "6", label: "Languages supported" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-3xl sm:text-4xl font-bold tracking-tight text-gradient">{stat.value}</div>
+                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
               </div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── FEATURES (12 cards — all P1-P16) ─── */}
+      <section id="features" className="pp-section relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/[0.02] to-transparent" />
+        <div className="pp-container relative">
+          <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+            <div className="pp-badge mb-4"><Bot className="w-3.5 h-3.5" />Everything you need</div>
+            <h2 className="pp-heading-lg mb-4">One platform. Every tool.</h2>
+            <p className="text-lg text-muted-foreground">12 AI-powered modules built for the European real estate market. No other platform covers this much ground.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {FEATURES.map((f, i) => (
+              <motion.div key={f.title} className="pp-feature-card hover-lift" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.06 }}>
+                <div className="pp-feature-icon"><f.icon className="w-5 h-5" /></div>
+                <h3 className="text-lg font-semibold">{f.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{f.description}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ═══ TRY IT NOW ═══ */}
-      <section className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {it ? 'Prova ADESSO — Senza registrazione' : 'Try NOW — No signup required'}
-            </h2>
-            <p className="text-muted-foreground text-lg">{it ? '6 strumenti gratuiti. Nessuna carta. Nessun impegno.' : '6 free tools. No card. No commitment.'}</p>
+      {/* ─── MCP INTEGRATION (new section, old design language) ─── */}
+      <section className="pp-section relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-card/30 to-transparent" />
+        <div className="pp-container relative">
+          <motion.div className="max-w-3xl mx-auto text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="pp-badge mb-4"><Plug className="w-3.5 h-3.5" />AI Agent Ready</div>
+            <h2 className="pp-heading-lg mb-4">Connect your AI assistant to your CRM</h2>
+            <p className="text-lg text-muted-foreground mb-8">
+              First European real estate platform with MCP integration. Ask Claude, Cursor, or ChatGPT to query your leads, draft listings, or schedule viewings — directly from your data.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {["Claude Desktop", "Cursor", "Windsurf", "ChatGPT", "Custom AI"].map((c) => (
+                <span key={c} className="pp-glass-card px-4 py-2 text-sm">{c}</span>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── ADDITIONAL CAPABILITIES (new) ─── */}
+      <section className="pp-section">
+        <div className="pp-container">
+          <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+            <motion.div className="pp-glass-card p-6 text-center hover-lift" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0 }}>
+              <Smartphone className="w-8 h-8 text-indigo-400 mx-auto mb-3" />
+              <h3 className="font-semibold mb-1">Mobile App</h3>
+              <p className="text-sm text-muted-foreground">Property capture, CRM, voice memos. iOS + Android via Expo.</p>
+            </motion.div>
+            <motion.div className="pp-glass-card p-6 text-center hover-lift" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.08 }}>
+              <LineChart className="w-8 h-8 text-teal-400 mx-auto mb-3" />
+              <h3 className="font-semibold mb-1">Weekly Market Reports</h3>
+              <p className="text-sm text-muted-foreground">Auto-generated from Idealista, ImmoScout24, Rightmove indices.</p>
+            </motion.div>
+            <motion.div className="pp-glass-card p-6 text-center hover-lift" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.16 }}>
+              <Shield className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+              <h3 className="font-semibold mb-1">GDPR Native</h3>
+              <p className="text-sm text-muted-foreground">Consent tracking, DSAR automation, per-country DPA compliance.</p>
+            </motion.div>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        </div>
+      </section>
+
+      {/* ─── PRICING (original card design, updated features) ─── */}
+      <section id="pricing" className="pp-section relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-500/[0.02] to-transparent" />
+        <div className="pp-container relative">
+          <motion.div className="text-center max-w-2xl mx-auto mb-16" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <div className="pp-badge mb-4"><Star className="w-3.5 h-3.5" />Simple pricing</div>
+            <h2 className="pp-heading-lg mb-4">Plans that grow with you</h2>
+            <p className="text-lg text-muted-foreground">Start free. Upgrade when you&apos;re ready. No surprises.</p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+            {PLANS.map((plan, i) => (
+              <motion.div key={plan.name} className={`pp-pricing-card ${plan.featured ? "featured" : ""}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                {plan.featured && <div className="pp-pricing-popular">Most Popular</div>}
+                <div className="mb-6 pt-2">
+                  <h3 className="text-lg font-semibold mb-1">{plan.name}</h3>
+                  <p className="text-sm text-muted-foreground">{plan.description}</p>
+                </div>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold tracking-tight">€{plan.price}</span>
+                  <span className="text-muted-foreground text-sm">{plan.period}</span>
+                </div>
+                <ul className="space-y-3 mb-8 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm">
+                      <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" /><span className="text-muted-foreground">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={plan.href}>
+                  {plan.featured ? (
+                    <button className="btn-primary-gradient w-full h-11 text-sm gap-1">{plan.cta} <ChevronRight className="w-4 h-4" /></button>
+                  ) : (
+                    <button className="btn-glass w-full h-11 text-sm text-muted-foreground hover:text-foreground gap-1">{plan.cta} <ChevronRight className="w-4 h-4" /></button>
+                  )}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-8">All plans include 7-day free trial. No credit card required.</p>
+        </div>
+      </section>
+
+      {/* ─── EUROPE (original design, updated portals) ─── */}
+      <section className="pp-section">
+        <div className="pp-container">
+          <motion.div className="max-w-3xl mx-auto text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="pp-heading-lg mb-3">Built for European real estate</h2>
+            <p className="text-muted-foreground mb-10">Optimized for every major European market&apos;s portals, languages, and regulations.</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+              {[
+                { flag: "🇮🇹", country: "Italy", portals: "Immobiliare · Casa.it · Idealista" },
+                { flag: "🇫🇷", country: "France", portals: "SeLoger · LeBonCoin · Bien'ici" },
+                { flag: "🇪🇸", country: "Spain", portals: "Idealista · Fotocasa" },
+                { flag: "🇩🇪", country: "Germany", portals: "ImmoScout24 · Immowelt" },
+                { flag: "🇬🇧", country: "UK", portals: "Rightmove · Zoopla · OTM" },
+                { flag: "🇵🇹", country: "Portugal", portals: "Idealista PT · Imovirtual" },
+              ].map((item, i) => (
+                <motion.div key={item.country} className="pp-glass-card p-4 text-center hover-lift" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
+                  <span className="text-3xl block mb-2">{item.flag}</span>
+                  <p className="text-sm font-semibold">{item.country}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.portals}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── FINAL CTA (original design) ─── */}
+      <section className="pp-section relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-indigo-500/[0.04] to-transparent" />
+        <div className="pp-container relative">
+          <motion.div className="max-w-2xl mx-auto text-center" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="pp-heading-lg mb-4">Ready to transform your agency?</h2>
+            <p className="text-lg text-muted-foreground mb-8">Join the AI-powered agencies selling faster and closing more across Europe.</p>
+            <Link href="/auth/signup">
+              <button className="btn-primary-gradient h-13 px-10 text-base gap-2">
+                Get started free <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── FREE TOOLS SHOWCASE (new v116 content, old styling) ─── */}
+      <section className="py-24 px-6 bg-muted/20">
+        <div className="pp-container">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="text-center mb-12">
+            <motion.h2 variants={fadeUp} custom={0} className="pp-heading-lg mb-4">Try now — no signup</motion.h2>
+            <motion.p variants={fadeUp} custom={1} className="text-muted-foreground text-lg">6 free tools. No credit card required.</motion.p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
             {[
-              { icon: TrendingUp, name: it ? 'Valutazione Istantanea' : 'Instant Valuation', desc: it ? 'Stima qualsiasi immobile EU in 3 secondi' : 'Estimate any EU property in 3 seconds', href: '/tools/instant-valuation', color: 'text-emerald-500' },
-              { icon: Leaf, name: it ? 'Impronta CO₂' : 'Carbon Footprint', desc: it ? 'Calcola emissioni + incentivi green EU' : 'Calculate emissions + EU green incentives', href: '/tools/carbon-footprint', color: 'text-green-500' },
-              { icon: Landmark, name: it ? 'Calcolatore Mutuo' : 'Mortgage Calculator', desc: it ? 'Mutui con regole fiscali 6 paesi' : 'Mortgages with 6-country tax rules', href: '/tools/mortgage-calculator', color: 'text-blue-500' },
-              { icon: BarChart3, name: it ? 'Calcolatore ROI' : 'ROI Calculator', desc: it ? 'Analisi investimento immobiliare' : 'Real estate investment analysis', href: '/tools/roi-calculator', color: 'text-purple-500' },
-              { icon: Calculator, name: it ? 'Costi Trasferimento' : 'Transfer Costs', desc: it ? 'Tasse acquisto per paese EU' : 'Purchase taxes per EU country', href: '/tools/cma-calculator', color: 'text-orange-500' },
-              { icon: Sparkles, name: it ? 'Descrizione AI' : 'AI Description', desc: it ? 'Descrizione portale in 8 secondi' : 'Portal description in 8 seconds', href: '/tools/ai-property-description', color: 'text-indigo-500' },
-            ].map(tool => {
+              { icon: TrendingUp, name: "Instant Valuation", desc: "AI property estimate in 3 seconds", href: "/tools/instant-valuation", color: "text-emerald-500" },
+              { icon: Leaf, name: "Carbon Footprint", desc: "CO₂ emissions + EU green incentives", href: "/tools/carbon-footprint", color: "text-green-500" },
+              { icon: Calculator, name: "Mortgage Calculator", desc: "6-country tax rules included", href: "/tools/mortgage-calculator", color: "text-blue-500" },
+              { icon: BarChart3, name: "ROI Calculator", desc: "Investment analysis for real estate", href: "/tools/roi-calculator", color: "text-purple-500" },
+              { icon: Globe, name: "Transfer Costs", desc: "Purchase taxes per EU country", href: "/tools/cma-calculator", color: "text-orange-500" },
+              { icon: Sparkles, name: "AI Description", desc: "Portal listing in 8 seconds, 6 languages", href: "/tools/ai-property-description", color: "text-indigo-500" },
+            ].map((tool, i) => {
               const Icon = tool.icon;
               return (
-                <Link key={tool.href} href={tool.href}>
-                  <Card className="h-full hover:border-primary/40 transition-all hover:-translate-y-1 cursor-pointer group">
-                    <CardContent className="p-5 flex items-start gap-4">
-                      <div className={`p-2.5 rounded-xl bg-muted ${tool.color}`}><Icon className="h-5 w-5" /></div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{tool.name}</h3>
-                        <p className="text-sm text-muted-foreground mt-0.5">{tool.desc}</p>
-                      </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary flex-shrink-0 mt-1" />
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ 12 FEATURE CATEGORIES ═══ */}
-      <section className="py-24 px-4 bg-muted/20">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {it ? 'Tutto ciò che serve alla tua agenzia' : 'Everything your agency needs'}
-            </h2>
-            <p className="text-muted-foreground text-lg">{it ? '100+ funzionalità in 12 categorie. Una piattaforma unica.' : '100+ features in 12 categories. One platform.'}</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {[
-              { icon: Home, name: 'AI Listings', count: 8, items: [it ? 'Generazione 6 lingue' : '6-language generation', it ? 'SEO ottimizzato' : 'SEO optimized', it ? 'Compliance check' : 'Compliance check', it ? 'Multi-portale' : 'Multi-portal'], color: 'from-blue-500 to-indigo-500' },
-              { icon: Users, name: 'CRM & Leads', count: 10, items: [it ? 'Pipeline AI scoring' : 'AI scoring pipeline', it ? 'Predictive leads' : 'Predictive leads', 'Speed-to-Lead', 'Import CSV/Excel'], color: 'from-emerald-500 to-teal-500' },
-              { icon: BarChart3, name: it ? 'Analisi & Valutazioni' : 'Analysis & Valuations', count: 8, items: ['CMA + Google Maps', 'Instant AVM', 'ROI + Monte Carlo', 'Market Intelligence'], color: 'from-purple-500 to-violet-500' },
-              { icon: ImagePlus, name: 'Visual AI', count: 6, items: ['Virtual staging', it ? 'Rimozione oggetti' : 'Object removal', it ? 'Sostituzione cielo' : 'Sky replacement', '4x upscale'], color: 'from-pink-500 to-rose-500' },
-              { icon: Phone, name: 'Voice AI', count: 5, items: ['Bland AI agent', 'ElevenLabs cloning', it ? 'Voice tour narrazione' : 'Voice tour narration', it ? 'Auto-scheduling' : 'Auto-scheduling'], color: 'from-orange-500 to-amber-500' },
-              { icon: MessageCircle, name: 'WhatsApp & Chat', count: 6, items: ['WhatsApp Business AI', it ? 'Chatbot multi-canale' : 'Multi-channel chatbot', it ? 'Auto-traduzione' : 'Auto-translate', it ? 'Analisi sentimento' : 'Sentiment analysis'], color: 'from-green-500 to-emerald-500' },
-              { icon: Globe, name: it ? 'Portali (16+)' : 'Portals (16+)', count: 16, items: ['Immobiliare, Idealista', 'ImmoScout24, EstateSync', 'SeLoger, Rightmove', it ? '+ 10 altri EU' : '+ 10 more EU'], color: 'from-cyan-500 to-blue-500' },
-              { icon: Zap, name: it ? 'Automazioni' : 'Automations', count: 10, items: [it ? '10+ template' : '10+ templates', 'Email drip campaigns', 'Follow-up sequences', it ? 'Trigger comportamentali' : 'Behavioral triggers'], color: 'from-yellow-500 to-orange-500' },
-              { icon: FileText, name: it ? 'Documenti & E-Sign' : 'Documents & E-Sign', count: 7, items: [it ? '22 template legali' : '22 legal templates', 'DocuSign / YouSign', 'eIDAS compliant', it ? 'Mandati multi-paese' : 'Multi-country mandates'], color: 'from-slate-500 to-zinc-500' },
-              { icon: Building2, name: 'Team & White-label', count: 6, items: [it ? '5 ruoli utente' : '5 user roles', it ? 'Portale clienti branded' : 'Branded client portal', 'Custom domain', 'API + Webhooks'], color: 'from-indigo-500 to-blue-500' },
-              { icon: Shield, name: it ? 'Sicurezza & Compliance' : 'Security & Compliance', count: 8, items: ['GDPR-native', '2FA + audit log', 'EU AI Act disclosure', it ? 'Crittografia AES-256' : 'AES-256 encryption'], color: 'from-red-500 to-rose-500' },
-              { icon: Target, name: it ? 'Marketing Tools' : 'Marketing Tools', count: 6, items: ['Social publishing', 'Email campaigns', it ? 'Programma referral' : 'Referral program', it ? 'Retention flows' : 'Retention flows'], color: 'from-fuchsia-500 to-pink-500' },
-            ].map(cat => {
-              const Icon = cat.icon;
-              return (
-                <Card key={cat.name} className="hover:border-primary/30 transition-all group overflow-hidden">
-                  <CardContent className="p-5">
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center mb-3`}>
-                      <Icon className="h-5 w-5 text-white" />
+                <motion.div key={tool.href} variants={fadeUp} custom={i}>
+                  <Link href={tool.href} className="flex items-center gap-4 p-4 rounded-2xl border border-border bg-background hover:border-primary/40 transition-all hover:-translate-y-0.5 group">
+                    <div className={`p-2.5 rounded-xl bg-muted ${tool.color}`}><Icon className="h-5 w-5" /></div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm">{tool.name}</p>
+                      <p className="text-xs text-muted-foreground">{tool.desc}</p>
                     </div>
-                    <h3 className="font-semibold text-foreground mb-1">{cat.name}</h3>
-                    <p className="text-xs text-muted-foreground mb-3">{cat.count} {it ? 'funzionalità' : 'features'}</p>
-                    <ul className="space-y-1">
-                      {cat.items.map(item => (
-                        <li key={item} className="text-sm text-muted-foreground flex items-center gap-1.5">
-                          <Check className="h-3 w-3 text-emerald-500 flex-shrink-0" />{item}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                  </Link>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ═══ COMPARISON TABLE ═══ */}
-      <section className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {it ? 'Perché le agenzie EU scelgono PropertyPilot' : 'Why EU agencies choose PropertyPilot'}
-            </h2>
-            <p className="text-muted-foreground">{it ? 'Comparazione onesta con CRM generici e tool USA' : 'Honest comparison with generic CRMs and US tools'}</p>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-border rounded-xl overflow-hidden">
-              <thead>
-                <tr className="bg-muted/50">
-                  <th className="text-left py-3 px-4 font-medium">{it ? 'Funzionalità' : 'Feature'}</th>
-                  <th className="py-3 px-4 font-bold text-primary bg-primary/5">PropertyPilot</th>
-                  <th className="py-3 px-4 font-medium text-muted-foreground">Zoho</th>
-                  <th className="py-3 px-4 font-medium text-muted-foreground">HubSpot</th>
-                  <th className="py-3 px-4 font-medium text-muted-foreground hidden md:table-cell">Pipedrive</th>
-                </tr>
-              </thead>
+      {/* ─── COMPARISON TABLE (new v116 content, old styling) ─── */}
+      <section className="py-24 px-6">
+        <div className="pp-container">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="text-center mb-12">
+            <motion.h2 variants={fadeUp} custom={0} className="pp-heading-lg mb-4">Why agencies choose PropertyPilot</motion.h2>
+            <motion.p variants={fadeUp} custom={1} className="text-muted-foreground">Honest comparison with generic CRMs</motion.p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="overflow-x-auto max-w-4xl mx-auto">
+            <table className="w-full text-sm border border-border rounded-2xl overflow-hidden">
+              <thead><tr className="bg-muted/50">
+                <th className="text-left py-3 px-4 font-medium">Feature</th>
+                <th className="py-3 px-4 font-bold text-primary bg-primary/5">PropertyPilot</th>
+                <th className="py-3 px-4 font-medium text-muted-foreground">Zoho</th>
+                <th className="py-3 px-4 font-medium text-muted-foreground">HubSpot</th>
+                <th className="py-3 px-4 font-medium text-muted-foreground hidden md:table-cell">Pipedrive</th>
+              </tr></thead>
               <tbody>
                 {[
-                  [it ? 'AI Listings 6 lingue' : 'AI Listings 6 langs', '✅', '❌', '❌', '❌'],
-                  [it ? '16 portali EU' : '16 EU portals', '✅', '❌', '❌', '❌'],
-                  ['Voice AI', '✅', '❌', '❌', '❌'],
-                  ['WhatsApp AI', '✅', '❌', '⚠️', '❌'],
-                  [it ? 'Compliance Shield EU' : 'EU Compliance Shield', '✅', '❌', '❌', '❌'],
-                  ['Virtual Staging AI', '✅', '❌', '❌', '❌'],
-                  ['GDPR-native EU', '✅', '⚠️', '⚠️', '⚠️'],
-                  [it ? 'Specifico immobiliare' : 'Real estate specific', '✅', '❌', '❌', '❌'],
-                  [it ? 'Prezzo Starter' : 'Starter price', '€197', '€14', '€45', '€14'],
+                  ["AI Listings (6 langs)", "✅", "❌", "❌", "❌"],
+                  ["16 EU Portals", "✅", "❌", "❌", "❌"],
+                  ["Voice AI", "✅", "❌", "❌", "❌"],
+                  ["WhatsApp AI", "✅", "❌", "⚠️", "❌"],
+                  ["EU Compliance Shield", "✅", "❌", "❌", "❌"],
+                  ["Virtual Staging AI", "✅", "❌", "❌", "❌"],
+                  ["GDPR-native EU", "✅", "⚠️", "⚠️", "⚠️"],
+                  ["Real estate specific", "✅", "❌", "❌", "❌"],
+                  ["Starter price", "€197", "€14", "€45", "€14"],
                 ].map((row, i) => (
                   <tr key={i} className="border-t border-border/30">
                     <td className="py-3 px-4 text-foreground font-medium">{row[0]}</td>
-                    <td className="py-3 px-4 text-center bg-primary/5 font-medium">{row[1]}</td>
+                    <td className="py-3 px-4 text-center bg-primary/5 font-semibold">{row[1]}</td>
                     <td className="py-3 px-4 text-center text-muted-foreground">{row[2]}</td>
                     <td className="py-3 px-4 text-center text-muted-foreground">{row[3]}</td>
                     <td className="py-3 px-4 text-center text-muted-foreground hidden md:table-cell">{row[4]}</td>
@@ -243,198 +416,115 @@ export default function LandingPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-          <p className="text-sm text-muted-foreground text-center mt-6 max-w-2xl mx-auto">
-            {it
-              ? 'PropertyPilot è progettato ESCLUSIVAMENTE per agenzie immobiliari europee. Non un CRM generico adattato.'
-              : 'PropertyPilot is built EXCLUSIVELY for European real estate agencies. Not a generic CRM adapted.'}
+          </motion.div>
+          <p className="text-center text-sm text-muted-foreground mt-6 max-w-xl mx-auto">
+            Built <strong>exclusively</strong> for European real estate agencies. Not a generic CRM with a real estate label.
           </p>
         </div>
       </section>
 
-      {/* ═══ EARLY ACCESS ═══ */}
-      <section className="py-24 px-4 bg-muted/20">
-        <div className="max-w-4xl mx-auto text-center">
-          <Award className="h-10 w-10 text-primary mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-foreground mb-4">
-            {it ? 'Programma Early Access' : 'Early Access Program'}
-          </h2>
-          <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            {it
-              ? 'Cerchiamo le prime 20 agenzie partner in Europa. Sconto 50% per 6 mesi, onboarding personalizzato, canale diretto con il founder.'
-              : "We're looking for the first 20 partner agencies in Europe. 50% off for 6 months, personalized onboarding, direct channel with the founder."}
-          </p>
-          <Button size="lg" className="px-8" asChild>
-            <Link href="/auth/signup">
-              {it ? 'Applica per Early Access' : 'Apply for Early Access'}
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* ═══ PRICING PREVIEW ═══ */}
-      <section className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {it ? 'Prezzi trasparenti' : 'Transparent pricing'}
-            </h2>
-            <p className="text-muted-foreground">{it ? 'Nessuna sorpresa. Cancella quando vuoi.' : 'No surprises. Cancel anytime.'}</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      {/* ─── FAQ (new v116 content, old styling) ─── */}
+      <section className="py-24 px-6 bg-muted/20">
+        <div className="pp-container max-w-3xl">
+          <motion.h2 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0} className="pp-heading-lg text-center mb-12">Frequently asked questions</motion.h2>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
             {[
-              { name: 'Starter', price: 197, icon: Rocket, features: [it ? '50 AI listings/mese' : '50 AI listings/mo', it ? '1 portale' : '1 portal', it ? 'Lead Scoring' : 'Lead Scoring', it ? '1 utente' : '1 user'], popular: false },
-              { name: 'Pro', price: 497, icon: Crown, features: [it ? '200 AI listings' : '200 AI listings', it ? 'Tutti i 16 portali' : 'All 16 portals', 'Voice + WhatsApp AI', it ? '5 utenti' : '5 users'], popular: true },
-              { name: 'Agency', price: 897, icon: Building2, features: [it ? 'UNLIMITED tutto' : 'UNLIMITED everything', 'White-label + API', it ? '25 utenti' : '25 users', it ? 'Support dedicato 4h' : 'Dedicated support 4h'], popular: false },
-            ].map(plan => {
-              const Icon = plan.icon;
-              return (
-                <Card key={plan.name} className={`relative ${plan.popular ? 'border-primary shadow-lg shadow-primary/10 scale-105' : ''}`}>
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground px-3"><Star className="h-3 w-3 mr-1 fill-current" />{it ? 'Più scelto' : 'Most popular'}</Badge>
-                    </div>
-                  )}
-                  <CardContent className="p-6 pt-8">
-                    <Icon className="h-8 w-8 text-primary mb-3" />
-                    <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-                    <p className="text-3xl font-extrabold text-foreground mt-2">€{plan.price}<span className="text-base font-normal text-muted-foreground">/{it ? 'mese' : 'mo'}</span></p>
-                    <ul className="mt-4 space-y-2">
-                      {plan.features.map(f => (
-                        <li key={f} className="text-sm text-muted-foreground flex items-center gap-2">
-                          <Check className="h-4 w-4 text-emerald-500 flex-shrink-0" />{f}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button className="w-full mt-6" variant={plan.popular ? 'default' : 'outline'} asChild>
-                      <Link href="/auth/signup">{it ? 'Prova gratis 14 giorni' : 'Start free 14-day trial'}</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            {it ? 'IVA esclusa. Risparmia 20% con fatturazione annuale.' : 'VAT excluded. Save 20% with annual billing.'}
-            <Link href="/pricing" className="text-primary ml-2 hover:underline">{it ? 'Tutti i piani →' : 'All plans →'}</Link>
-          </p>
+              ["Do I need a credit card to start?", "No. The 14-day free trial requires no credit card."],
+              ["Which countries are supported?", "Italy, France, Spain, Germany, UK, Portugal. 6 full languages."],
+              ["How is it different from HubSpot or Zoho?", "PropertyPilot is built EXCLUSIVELY for EU real estate agencies. Native AI, EU portals, GDPR compliance. Not a generic CRM."],
+              ["Can I import my existing clients?", "Yes, via CSV/Excel with automatic duplicate detection."],
+              ["Can I cancel anytime?", "Yes. No binding contract. Cancel from the dashboard in 2 clicks."],
+              ["Is my data safe?", "EU servers (Ireland). GDPR native. AES-256 encryption. Zero data sold to third parties."],
+            ].map(([q, a], i) => (
+              <FAQItem key={q} q={q} a={a} i={i} />
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* ═══ TRUST & SECURITY ═══ */}
-      <section className="py-20 px-4 bg-muted/20">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold text-foreground text-center mb-10">{it ? 'Sicurezza e privacy. Priorità assoluta.' : 'Security and privacy. Absolute priority.'}</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { icon: Globe, title: 'EU-Hosted', desc: it ? 'Server Vercel + Supabase Ireland. Mai fuori dall\'UE.' : 'Vercel + Supabase Ireland servers. Never outside EU.' },
-              { icon: Shield, title: 'GDPR-Native', desc: it ? 'Cookie consent granulare, right to be forgotten, data portability.' : 'Granular cookie consent, right to be forgotten, data portability.' },
-              { icon: Lock, title: it ? 'Bank-Grade' : 'Bank-Grade', desc: it ? 'AES-256 encryption. 2FA. OWASP Top 10.' : 'AES-256 encryption. 2FA. OWASP Top 10.' },
-              { icon: Scale, title: 'EU AI Act', desc: it ? 'Trasparenza AI completa. Opt-out disponibile.' : 'Full AI transparency. Opt-out available.' },
-            ].map(item => {
-              const Icon = item.icon;
-              return (
-                <Card key={item.title} className="border-emerald-500/10">
-                  <CardContent className="p-5 text-center">
-                    <Icon className="h-6 w-6 text-emerald-500 mx-auto mb-3" />
-                    <h3 className="font-semibold text-foreground mb-1">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.desc}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          <p className="text-center mt-6"><Link href="/security" className="text-sm text-primary hover:underline">{it ? 'Vedi pagina sicurezza →' : 'See security page →'}</Link></p>
+      {/* ─── FINAL CTA (old styling, honest copy) ─── */}
+      <section className="py-24 px-6">
+        <div className="pp-container text-center">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger}>
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+              <Award className="h-4 w-4" />
+              Early Access Program
+            </motion.div>
+            <motion.h2 variants={fadeUp} custom={1} className="pp-heading-lg mb-4">Ready to transform your agency?</motion.h2>
+            <motion.p variants={fadeUp} custom={2} className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
+              Join the first 20 agencies in our Early Access program. 50% off for 6 months, personalized onboarding, direct Slack with the founder.
+            </motion.p>
+            <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4 justify-center">
+              <Button size="lg" className="text-base px-8" asChild>
+                <Link href="/auth/signup">Start free 14-day trial <ArrowRight className="h-4 w-4 ml-2" /></Link>
+              </Button>
+              <Button size="lg" variant="outline" className="text-base px-8" asChild>
+                <Link href="/demo">Book demo with founder</Link>
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ═══ FAQ ═══ */}
-      <section className="py-24 px-4">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-foreground text-center mb-12">{it ? 'Domande frequenti' : 'FAQ'}</h2>
-          {[
-            [it ? 'Devo inserire la carta di credito?' : 'Do I need a credit card?', it ? 'No. La prova gratuita di 14 giorni non richiede carta di credito.' : 'No. The 14-day free trial requires no credit card.'],
-            [it ? 'Quali paesi supporta?' : 'Which countries are supported?', it ? 'Italia, Francia, Spagna, Germania, UK, Portogallo. 6 lingue complete.' : 'Italy, France, Spain, Germany, UK, Portugal. 6 full languages.'],
-            [it ? 'Come funziona la pubblicazione portali?' : 'How does portal publishing work?', it ? 'Compili una volta, pubblichi su 16+ portali contemporaneamente con 1 click.' : 'Fill in once, publish to 16+ portals simultaneously with 1 click.'],
-            [it ? 'In cosa è diverso da HubSpot o Zoho?' : 'How is it different from HubSpot or Zoho?', it ? 'PropertyPilot è progettato ESCLUSIVAMENTE per agenzie immobiliari EU. AI native, portali EU, GDPR compliance. Non un CRM generico.' : 'PropertyPilot is built EXCLUSIVELY for EU real estate agencies. Native AI, EU portals, GDPR compliance. Not a generic CRM.'],
-            [it ? 'Posso importare i miei clienti?' : 'Can I import my existing clients?', it ? 'Sì, tramite CSV/Excel con rilevamento duplicati automatico.' : 'Yes, via CSV/Excel with automatic duplicate detection.'],
-            [it ? 'Posso cancellare quando voglio?' : 'Can I cancel anytime?', it ? 'Sì. Nessun contratto vincolante. Cancelli dal dashboard billing in 2 click.' : 'Yes. No binding contract. Cancel from dashboard billing in 2 clicks.'],
-            [it ? 'Che dati sono al sicuro?' : 'Is my data safe?', it ? 'Server EU (Ireland). GDPR native. AES-256 encryption. Zero data venduti a terzi.' : 'EU servers (Ireland). GDPR native. AES-256 encryption. Zero data sold to third parties.'],
-            [it ? "C'è un piano per grandi agenzie?" : 'Is there a plan for large agencies?', it ? 'Sì. Agency (€897/mese) copre 25 utenti. Per volumi superiori contattaci.' : 'Yes. Agency (€897/mo) covers 25 users. For larger volumes contact us.'],
-          ].map(([q, a]) => (
-            <FAQItem key={q} q={q} a={a} />
-          ))}
-        </div>
-      </section>
-
-      {/* ═══ FINAL CTA ═══ */}
-      <section className="py-24 px-4 bg-gradient-to-br from-blue-950 via-indigo-950 to-slate-950">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {it ? 'Pronto a rivoluzionare la tua agenzia?' : 'Ready to revolutionize your agency?'}
-          </h2>
-          <p className="text-blue-200/80 text-lg mb-8">
-            {it ? 'Prova PropertyPilot gratis per 14 giorni. Nessuna carta di credito.' : 'Try PropertyPilot free for 14 days. No credit card required.'}
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" className="text-base px-8 h-12 bg-white text-slate-900 hover:bg-white/90" asChild>
-              <Link href="/auth/signup">{it ? 'Inizia gratis ora' : 'Start free now'}<ArrowRight className="h-4 w-4 ml-2" /></Link>
-            </Button>
-            <Button size="lg" variant="outline" className="text-base px-8 h-12 border-white/30 text-white hover:bg-white/10" asChild>
-              <Link href="/demo"><Mail className="h-4 w-4 mr-2" />{it ? 'Prenota demo con founder' : 'Book demo with founder'}</Link>
-            </Button>
-          </div>
-          <p className="text-blue-300/60 text-sm mt-6">
-            {it ? 'Domande? support@propertypilot.ai — Rispondiamo entro 24h' : 'Questions? support@propertypilot.ai — We respond within 24h'}
-          </p>
-        </div>
-      </section>
-
-      {/* ═══ FOOTER ═══ */}
-      <footer className="py-12 px-4 border-t border-border">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <PropertyPilotLogo className="h-6 w-6" />
-              <span className="font-bold text-foreground">PropertyPilot AI</span>
+      {/* ─── FOOTER (comprehensive, old styling) ─── */}
+      <footer className="border-t border-border/30 py-12">
+        <div className="pp-container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-sm mb-8">
+            <div>
+              <p className="font-semibold mb-3">Product</p>
+              <div className="space-y-2 text-muted-foreground">
+                <Link href="/features" className="block hover:text-foreground transition-colors">Features</Link>
+                <Link href="/pricing" className="block hover:text-foreground transition-colors">Pricing</Link>
+                <Link href="/marketplace" className="block hover:text-foreground transition-colors">Marketplace</Link>
+                <Link href="/changelog" className="block hover:text-foreground transition-colors">Changelog</Link>
+                <Link href="/roadmap" className="block hover:text-foreground transition-colors">Roadmap</Link>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">{it ? "L'AI che vende case per te." : 'The AI that sells properties for you.'}</p>
+            <div>
+              <p className="font-semibold mb-3">Resources</p>
+              <div className="space-y-2 text-muted-foreground">
+                <Link href="/blog" className="block hover:text-foreground transition-colors">Blog</Link>
+                <Link href="/docs" className="block hover:text-foreground transition-colors">API Docs</Link>
+                <Link href="/tools/ai-property-description" className="block hover:text-foreground transition-colors">Free AI Tool</Link>
+                <Link href="/tools/mortgage-calculator" className="block hover:text-foreground transition-colors">Mortgage Calc</Link>
+                <Link href="/tools/roi-calculator" className="block hover:text-foreground transition-colors">ROI Calculator</Link>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold mb-3">Company</p>
+              <div className="space-y-2 text-muted-foreground">
+                <Link href="/about" className="block hover:text-foreground transition-colors">About</Link>
+                <Link href="/contact" className="block hover:text-foreground transition-colors">Contact</Link>
+                <Link href="/demo" className="block hover:text-foreground transition-colors">Book Demo</Link>
+              </div>
+            </div>
+            <div>
+              <p className="font-semibold mb-3">Legal &amp; Support</p>
+              <div className="space-y-2 text-muted-foreground">
+                <Link href="/terms" className="block hover:text-foreground transition-colors">Terms</Link>
+                <Link href="/privacy" className="block hover:text-foreground transition-colors">Privacy</Link>
+                <Link href="/refund" className="block hover:text-foreground transition-colors">Refund Policy</Link>
+                <Link href="/help" className="block hover:text-foreground transition-colors">Help Center</Link>
+                <Link href="/security" className="block hover:text-foreground transition-colors">Security</Link>
+                <Link href="/status" className="block hover:text-foreground transition-colors">Status</Link>
+                <Link href="/ai-disclosure" className="block hover:text-foreground transition-colors">AI Disclosure</Link>
+              </div>
+            </div>
           </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">{it ? 'Prodotto' : 'Product'}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/pricing" className="hover:text-primary">Pricing</Link></li>
-              <li><Link href="/features" className="hover:text-primary">Features</Link></li>
-              <li><Link href="/changelog" className="hover:text-primary">Changelog</Link></li>
-              <li><Link href="/docs/api" className="hover:text-primary">API Docs</Link></li>
-            </ul>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-border/30">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-md bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                <Building2 className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-sm font-semibold">PropertyPilot AI</span>
+            </div>
+            <div className="flex items-center gap-4">
+              {["🇮🇹", "🇫🇷", "🇪🇸", "🇩🇪", "🇬🇧", "🇵🇹"].map((f) => <span key={f}>{f}</span>)}
+            </div>
+            <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} PropertyPilot AI</p>
           </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">{it ? 'Azienda' : 'Company'}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/about" className="hover:text-primary">{it ? 'Chi siamo' : 'About'}</Link></li>
-              <li><Link href="/blog" className="hover:text-primary">Blog</Link></li>
-              <li><Link href="/contact" className="hover:text-primary">{it ? 'Contatti' : 'Contact'}</Link></li>
-              <li><Link href="/demo" className="hover:text-primary">Demo</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">{it ? 'Supporto' : 'Support'}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/help" className="hover:text-primary">Help Center</Link></li>
-              <li><Link href="/status" className="hover:text-primary">Status</Link></li>
-              <li><Link href="/security" className="hover:text-primary">{it ? 'Sicurezza' : 'Security'}</Link></li>
-              <li><Link href="/privacy" className="hover:text-primary">Privacy</Link></li>
-              <li><Link href="/terms" className="hover:text-primary">{it ? 'Termini' : 'Terms'}</Link></li>
-              <li><Link href="/ai-disclosure" className="hover:text-primary">AI Disclosure</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-6xl mx-auto border-t border-border pt-6 text-center text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} PropertyPilot AI. {it ? 'Tutti i diritti riservati.' : 'All rights reserved.'} Milano, Italia 🇮🇹
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
