@@ -84,5 +84,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // Docs
     { url: `${baseUrl}/docs`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/docs/api`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+
+    // New pages (v82-v116)
+    { url: `${baseUrl}/help`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/status`, lastModified: now, changeFrequency: 'daily', priority: 0.6 },
+    { url: `${baseUrl}/security`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/ai-disclosure`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${baseUrl}/tools/instant-valuation`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${baseUrl}/tools/carbon-footprint`, lastModified: now, changeFrequency: 'monthly', priority: 0.85 },
   ];
 }
